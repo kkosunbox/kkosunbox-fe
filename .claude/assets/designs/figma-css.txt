@@ -1,0 +1,1009 @@
+/* Login Page - Mobile */
+
+position: relative;
+width: 375px;
+height: 812px;
+left: 627px;
+top: 2603px;
+
+background: #FFFFFF;
+
+
+/* Rectangle 10 */
+
+position: absolute;
+width: 375px;
+height: 242px;
+right: 0px;
+top: 0px;
+
+background: #F6E9DD;
+border-radius: 0px 0px 60px 60px;
+
+
+/* Frame 35 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 15px 146px 15px 32px;
+gap: 16px;
+
+position: absolute;
+width: 327px;
+height: 52px;
+left: 24px;
+top: 284px;
+
+background: #F8F8F8;
+border-radius: 63px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 130px;
+height: 22px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* email@gmail.com */
+
+width: 130px;
+height: 22px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 140%;
+/* 또는 22px */
+
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 36 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 15px 32px;
+gap: 16px;
+
+position: absolute;
+width: 327px;
+height: 52px;
+left: 24px;
+top: 360px;
+
+background: #F8F8F8;
+border-radius: 63px;
+
+
+/* Frame 45 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 16px;
+
+width: 263px;
+height: 22px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+margin: 0 auto;
+width: 143px;
+height: 22px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 비밀번호를 입력하세요 */
+
+width: 143px;
+height: 22px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 140%;
+/* 또는 22px */
+
+color: #999999;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* view-off-slash - 24px */
+
+margin: 0 auto;
+width: 16px;
+height: 16px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 20.83%;
+bottom: 20.83%;
+
+border: 1px solid #9E9E9E;
+
+
+/* Vector */
+
+position: absolute;
+left: 37.5%;
+right: 41.67%;
+top: 41.67%;
+bottom: 37.5%;
+
+border: 1px solid #9E9E9E;
+
+
+/* Vector */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+border: 1px solid #9E9E9E;
+
+
+/* 비밀번호를 잃어버리셨나요? */
+
+position: absolute;
+width: 327px;
+height: 20px;
+left: 25px;
+top: 432px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 140%;
+/* 상자 높이와 동일 또는 20px */
+text-align: right;
+letter-spacing: -0.02em;
+text-decoration-line: underline;
+
+color: #7FB3FF;
+
+
+
+/* Navbar & Button */
+
+position: absolute;
+width: 375px;
+height: 812px;
+left: calc(50% - 375px/2);
+top: 0px;
+
+
+
+/* StatusBar */
+
+position: absolute;
+width: 375px;
+height: 59px;
+left: calc(50% - 375px/2);
+top: 0px;
+
+
+
+/* Iphone */
+
+position: absolute;
+width: 375px;
+height: 44px;
+left: calc(50% - 375px/2);
+top: 0px;
+
+
+
+/* Right Side */
+
+position: absolute;
+width: 66.66px;
+height: 11.34px;
+left: 283.67px;
+top: 17.33px;
+
+
+
+/* Battery */
+
+position: absolute;
+left: 86.93%;
+right: 6.58%;
+top: 39.39%;
+bottom: 34.85%;
+
+
+
+/* Rectangle */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 22px;
+height: 11.33px;
+right: 27px;
+top: 17.33px;
+
+mix-blend-mode: normal;
+opacity: 0.35;
+/* Light/Light-90 */
+border: 1px solid #252525;
+border-radius: 2.66667px;
+
+
+/* Combined Shape */
+
+position: absolute;
+width: 1.33px;
+height: 4px;
+right: 24.67px;
+top: 21px;
+
+/* Light/Light-90 */
+background: #252525;
+mix-blend-mode: normal;
+opacity: 0.4;
+
+
+/* Rectangle */
+
+position: absolute;
+width: 18px;
+height: 7.33px;
+right: 29px;
+top: 19.33px;
+
+/* Light/Light-90 */
+background: #252525;
+border-radius: 1.33333px;
+
+
+/* Wifi */
+
+position: absolute;
+left: 81.52%;
+right: 14.41%;
+top: 39.39%;
+bottom: 35.69%;
+
+/* Light/Light-90 */
+background: #252525;
+
+
+/* Wifi-path */
+
+position: absolute;
+width: 15.27px;
+height: 4.74px;
+right: 54.03px;
+top: 17.33px;
+
+background: #DADADA;
+
+
+/* Wifi-path */
+
+position: absolute;
+width: 9.95px;
+height: 3.63px;
+right: 56.69px;
+top: 21.12px;
+
+background: #DADADA;
+
+
+/* Wifi-path */
+
+position: absolute;
+width: 4.63px;
+height: 3.37px;
+right: 59.36px;
+top: 24.92px;
+
+background: #DADADA;
+
+
+/* Mobile Signal */
+
+position: absolute;
+left: 75.64%;
+right: 19.82%;
+top: 40.15%;
+bottom: 35.61%;
+
+/* Light/Light-90 */
+background: #252525;
+
+
+/* Cellular_Connection-path */
+
+position: absolute;
+width: 3px;
+height: 4px;
+right: 88.33px;
+top: 24.33px;
+
+background: #DADADA;
+
+
+/* Cellular_Connection-path */
+
+position: absolute;
+width: 3px;
+height: 6px;
+right: 83.67px;
+top: 22.33px;
+
+background: #DADADA;
+
+
+/* Cellular_Connection-path */
+
+position: absolute;
+width: 3px;
+height: 8.33px;
+right: 79px;
+top: 20px;
+
+background: #DADADA;
+
+
+/* Cellular_Connection-path */
+
+position: absolute;
+width: 3px;
+height: 10.67px;
+right: 74.33px;
+top: 17.67px;
+
+background: #DADADA;
+
+
+/* Recording Indicator */
+
+position: absolute;
+visibility: hidden;
+width: 6px;
+height: 6px;
+left: 298px;
+top: 8px;
+
+
+
+/* Indicator */
+
+position: absolute;
+width: 6px;
+height: 6px;
+right: 71px;
+top: 8px;
+
+/* SystemOrange / Light
+
+class var systemOrange: UIColor
+*/
+background: #FF9500;
+
+
+/* Time */
+
+position: absolute;
+width: 52px;
+height: 21px;
+left: 16px;
+top: 13px;
+
+border-radius: 32px;
+
+
+/* 9:41 */
+
+position: absolute;
+width: 28px;
+height: 10px;
+left: 12px;
+top: 5px;
+
+/* Light/Light-90 */
+background: #252525;
+
+
+/* HomeIndicator */
+
+position: absolute;
+width: 375px;
+height: 34px;
+left: calc(50% - 375px/2);
+bottom: 0px;
+
+
+
+/* Home Indicator */
+
+position: absolute;
+width: 134px;
+height: 5px;
+left: calc(50% - 134px/2 + 0.5px);
+bottom: 8px;
+
+background: #212121;
+border-radius: 100px;
+
+
+/* Frame 41 */
+
+position: absolute;
+width: 327px;
+height: 58px;
+left: calc(50% - 327px/2);
+top: 570px;
+
+background: #7FB3FF;
+border-radius: 128px;
+
+
+/* Label */
+
+position: absolute;
+width: 46px;
+height: 30px;
+left: 140px;
+top: 14px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 18px;
+line-height: 30px;
+/* 상자 높이와 동일 또는 167% */
+text-align: center;
+letter-spacing: -0.04em;
+font-feature-settings: 'liga' off;
+
+color: #FFFFFF;
+
+
+
+/* - 간편로그인 - */
+
+position: absolute;
+width: 244px;
+height: 20px;
+left: 65px;
+top: 646px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 140%;
+/* 상자 높이와 동일 또는 20px */
+text-align: center;
+letter-spacing: 0.2px;
+
+color: #999999;
+
+
+
+/* Frame 31 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+position: absolute;
+width: 185px;
+height: 20px;
+left: calc(50% - 185px/2);
+top: 744px;
+
+
+
+/* 계정이 없으신가요? */
+
+width: 105px;
+height: 20px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 140%;
+/* 상자 높이와 동일 또는 20px */
+letter-spacing: -0.02em;
+
+color: #553922;
+
+opacity: 0.4;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 회원가입하기 */
+
+width: 72px;
+height: 20px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 140%;
+/* 상자 높이와 동일 또는 20px */
+letter-spacing: -0.02em;
+
+color: #C3824E;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 1000004840 */
+
+position: absolute;
+width: 156px;
+height: 54px;
+left: calc(50% - 156px/2 - 0.5px);
+top: 124px;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 39.58px;
+height: 11.82px;
+left: 223.09px;
+top: 165px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 39.58px;
+height: 43.73px;
+left: 184.67px;
+top: 134.27px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 39.58px;
+height: 43.73px;
+left: 146.25px;
+top: 134.27px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 39.58px;
+height: 39px;
+left: 109px;
+top: 137.82px;
+
+background: #C97A3D;
+
+
+/* Group 1000004847 */
+
+position: absolute;
+width: 42.41px;
+height: 37.88px;
+left: 222.59px;
+top: 124px;
+
+
+
+/* Vector */
+
+position: absolute;
+height: 21.99px;
+left: 60.73%;
+right: 31.2%;
+top: 139.88px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+height: 11.92px;
+left: 65.05%;
+right: 32.29%;
+top: 124px;
+
+background: #C97A3D;
+transform: matrix(0.98, -0.22, 0.2, 0.98, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 9.9px;
+left: 59.36%;
+right: 38.16%;
+top: 134.45px;
+
+background: #C97A3D;
+transform: matrix(0.98, 0.21, -0.24, 0.97, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 11.94px;
+left: 61.63%;
+right: 35.71%;
+top: 124px;
+
+background: #C97A3D;
+transform: matrix(0.99, 0.13, -0.12, 0.99, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 11px;
+left: 68.18%;
+right: 29.33%;
+top: 135px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+height: 19.55px;
+left: 63.84%;
+right: 31.2%;
+top: 139.88px;
+
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+height: 8.19px;
+left: 59.69%;
+right: 38.88%;
+top: 137.31px;
+
+background: #2F2F2F;
+transform: matrix(0.94, -0.34, 0.38, 0.93, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 7.33px;
+left: 62.28%;
+right: 36.16%;
+top: 144.77px;
+
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+height: 6.11px;
+left: 68.49%;
+right: 29.33%;
+top: 133.78px;
+
+background: #2F2F2F;
+
+
+/* Group 8794 */
+
+position: absolute;
+width: 218px;
+height: 46px;
+left: 78px;
+top: 682px;
+
+
+
+/* 카카오 로그인 (축약형) */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 14px;
+gap: 40px;
+
+position: absolute;
+width: 46px;
+height: 45px;
+left: 78px;
+top: 682.5px;
+
+background: #FEE500;
+border-radius: 100px;
+
+
+/* 카카오 로고 */
+
+width: 18px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Path */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 3.33%;
+bottom: 3.33%;
+
+background: #000000;
+
+
+/* 로그인 */
+
+display: none;
+width: 36px;
+height: 23px;
+
+font-family: 'Apple SD Gothic Neo';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 150%;
+/* 상자 높이와 동일 또는 22px */
+display: flex;
+align-items: flex-end;
+
+color: rgba(0, 0, 0, 0.85);
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 네이버 로그인 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 40px;
+
+position: absolute;
+width: 46px;
+height: 46px;
+left: 164px;
+top: 682px;
+
+background: #03C75A;
+border-radius: 100px;
+
+
+/* 네이버 로고 */
+
+width: 20px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Path */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Light/Light-0 */
+background: #FFFFFF;
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* 카카오 로그인 (축약형) */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 14px;
+gap: 40px;
+
+position: absolute;
+width: 46px;
+height: 45px;
+left: 250px;
+top: 682.5px;
+
+background: #F8F8F8;
+border-radius: 100px;
+
+
+/* 로그인 */
+
+display: none;
+width: 36px;
+height: 23px;
+
+font-family: 'Apple SD Gothic Neo';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 150%;
+/* 상자 높이와 동일 또는 22px */
+display: flex;
+align-items: flex-end;
+
+color: rgba(0, 0, 0, 0.85);
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Social Icons */
+
+width: 20px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+width: 19.6px;
+height: 20px;
+left: calc(50% - 19.6px/2 - 0.2px);
+top: calc(50% - 20px/2 - 0px);
+
+
+
+/* Vector */
+
+position: absolute;
+left: 50%;
+right: 2%;
+top: 40.91%;
+bottom: 12.09%;
+
+background: #4285F4;
+
+
+/* Vector */
+
+position: absolute;
+left: 5.36%;
+right: 16.91%;
+top: 59.52%;
+bottom: 0%;
+
+background: #34A853;
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: 78%;
+top: 27.59%;
+bottom: 27.59%;
+
+background: #FBBC05;
+
+
+/* Vector */
+
+position: absolute;
+left: 5.36%;
+right: 16.55%;
+top: 0%;
+bottom: 59.5%;
+
+background: #EA4335;

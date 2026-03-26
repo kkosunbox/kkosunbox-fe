@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "GangwonEduAll Light";
+  src: url("/fonts/GangwonEduAll-Light.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GangwonEduAll Bold";
+  src: url("/fonts/GangwonEduAll-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GangwonEduPower";
+  src: url("/fonts/GangwonEduPower.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Griun Fromsol";
+  src: url("/fonts/Griun_Fromsol-Rg.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Griun PolFairness";
+  src: url("/fonts/Griun_PolFairness-Rg.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Griun Yuri Daggu";
+  src: url("/fonts/Griun_YuriDaggu-Rg.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  /* Brand */
+  --color-primary: #C97A3D;       /* Corgi Brown — 로고, 브랜드 아이콘, 메인 버튼 */
+  --color-secondary: #F6E9DD;     /* Warm Beige — 카드, 섹션 배경, 패키지 디자인 */
+  --color-accent: #7FB3FF;        /* Soft Sky Blue — 버튼, 링크, 강조 요소, CTA */
+  --color-accent-orange: #EE681A; /* Warm Orange — 데코 강조 ("for you" 등) */
+
+  /* Surface */
+  --color-background: #FFF9F3;    /* Cream White — 전체 기본 배경 */
+  --color-surface-dark: #171713;  /* Near Black — 다크 섹션 배경 (Stats Bar 등) */
+  --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
+  --color-surface-light: #F8F8F8;
+  --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
+  --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
+  --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
+
+  /* Tier */
+  --color-premium: #F07F3D;
+  --color-plus: #3E9ED9;
+  --color-basic: #3F6900;
+
+  /* Tier — card backgrounds */
+  --color-card-basic: #F2F6E3;
+  --color-card-standard: #EAF0F3;
+  --color-card-premium: #FBF4EE;
+
+  /* Tier — Ms Madi accent (lighter variant) */
+  --color-basic-light: #7DA83E;
+  --color-plus-light: #6DC1F6;
+  --color-premium-light: #FFA763;
+
+  /* Brown scale — 웜 배경 위 텍스트/장식 */
+  --color-brown-dark: #5C4634;    /* 웜 배경 위 메인 헤딩 */
+  --color-brown: #9B5825;         /* 브랜드 중간 브라운 헤딩 */
+  --color-brown-light: #D29A6F;   /* 라이트 브라운 서브텍스트 */
+  --color-amber: #A15300;         /* 앰버 — 재료/포인트 서브헤딩 */
+  --color-tag: #D69C70;           /* 해시태그 배경 */
+
+  /* Text */
+  --color-text: #2F2F2F;          /* Dark Gray — 기본 본문, UI 텍스트 */
+  --color-text-secondary: #999999;
+  --color-text-muted: #DDDDDD;
+  --color-text-warm: #917F71;     /* Warm Gray — 웜 섹션 서브텍스트 */
+  --color-text-on-warm: #555555;  /* 웜 섹션 헤딩 */
+  --color-text-body-warm: #5B5B5B;/* 웜 섹션 본문 */
+
+  /* Decoration */
+  --color-accent-rust: #DC5200;         /* Burnt Orange — hero Ms Madi 장식 텍스트 */
+  --color-divider-warm: #F3DFCF;        /* Warm Peach — 모바일 섹션 구분선 */
+  --color-link-warm: #C3824E;           /* Warm Link — 로그인 회원가입하기 링크 */
+
+  /* Gradient */
+  --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-text);
+
+  /* Brand */
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-accent-orange: var(--color-accent-orange);
+
+  /* Surface */
+  --color-surface-dark: var(--color-surface-dark);
+  --color-surface-warm: var(--color-surface-warm);
+  --color-surface-light: var(--color-surface-light);
+  --color-footer-bg: var(--color-footer-bg);
+  --color-footer-divider: var(--color-footer-divider);
+  --color-beige: var(--color-beige);
+
+  /* Tier */
+  --color-premium: var(--color-premium);
+  --color-plus: var(--color-plus);
+  --color-basic: var(--color-basic);
+  --color-card-basic: var(--color-card-basic);
+  --color-card-standard: var(--color-card-standard);
+  --color-card-premium: var(--color-card-premium);
+  --color-basic-light: var(--color-basic-light);
+  --color-plus-light: var(--color-plus-light);
+  --color-premium-light: var(--color-premium-light);
+
+  /* Brown scale */
+  --color-brown-dark: var(--color-brown-dark);
+  --color-brown: var(--color-brown);
+  --color-brown-light: var(--color-brown-light);
+  --color-amber: var(--color-amber);
+  --color-tag: var(--color-tag);
+
+  /* Decoration */
+  --color-accent-rust: var(--color-accent-rust);
+  --color-divider-warm: var(--color-divider-warm);
+  --color-link-warm: var(--color-link-warm);
+
+  /* Text */
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-warm: var(--color-text-warm);
+  --color-text-on-warm: var(--color-text-on-warm);
+  --color-text-body-warm: var(--color-text-body-warm);
+
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+
+  /* Layout */
+  --max-width-content: 1012px;
+  --max-width-content-narrow: 940px;
+  --max-width-content-wide: 1140px;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/*
+ * Typography utilities — @utility 디렉티브 사용 (필수)
+ *
+ * @layer utilities { .text-* { } } 대신 @utility를 사용해야 한다.
+ * @layer utilities의 커스텀 클래스는 @import "tailwindcss"로 생성된
+ * 반응형 변형(max-md:, md: 등)보다 CSS에서 항상 늦게 출력되어
+ * 미디어쿼리 오버라이드가 동작하지 않는 버그가 발생한다.
+ * @utility로 등록하면 Tailwind cascade에 완전히 통합되어 반응형 변형이
+ * 올바른 순서로 생성된다.
+ */
+
+/* Titles */
+@utility text-title-42-b  { font-size: 42px; line-height: 56px; font-weight: 700; }
+@utility text-title-40-r  { font-size: 40px; line-height: 64px; font-weight: 400; }
+@utility text-title-32-b  { font-size: 32px; line-height: 40px; font-weight: 700; }
+@utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
+@utility text-title-24-b  { font-size: 24px; line-height: 36px; font-weight: 700; }
+@utility text-title-24-sb { font-size: 24px; line-height: 36px; font-weight: 600; }
+@utility text-title-24-m  { font-size: 24px; line-height: 36px; font-weight: 500; }
+
+/* Section intros — Figma How it works: Griun PolFairness 24 / 28, -0.04em */
+@utility text-section-intro-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+/* Mobile variant: 14px / 22px */
+@utility text-section-intro-griun-sm {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+/* Subtitles */
+@utility text-subtitle-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; }
+@utility text-subtitle-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
+@utility text-subtitle-18-b  { font-size: 18px; line-height: 22px; font-weight: 700; }
+@utility text-subtitle-18-sb { font-size: 18px; line-height: 22px; font-weight: 600; }
+@utility text-subtitle-18-m  { font-size: 18px; line-height: 22px; font-weight: 500; }
+@utility text-subtitle-16-r  { font-size: 16px; line-height: 22px; font-weight: 400; }
+@utility text-subtitle-16-sb { font-size: 16px; line-height: 20px; font-weight: 600; }
+
+/* Body */
+@utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
+@utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 600; }
+@utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }
+@utility text-body-16-r  { font-size: 16px; line-height: 24px; font-weight: 400; }
+@utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 600; }
+@utility text-body-14-m  { font-size: 14px; line-height: 22px; font-weight: 500; }
+@utility text-body-14-r  { font-size: 14px; line-height: 22px; font-weight: 400; }
+@utility text-body-13-r  { font-size: 13px; line-height: 20px; font-weight: 400; }
+
+/* Footer nav (Figma: Pretendard 500, 14px / 24px line-height) */
+@utility text-footer-nav { font-size: 14px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
+
+/* Captions */
+@utility text-caption-12-sb { font-size: 12px; line-height: 20px; font-weight: 600; }
+@utility text-caption-12-r  { font-size: 12px; line-height: 20px; font-weight: 400; }
+@utility text-caption-12-m  { font-size: 12px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
+
+/* Action */
+@utility text-btn-14-m   { font-size: 14px; line-height: 18px; font-weight: 500; }
+@utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 600; }
+@utility text-btn-12-m   { font-size: 12px; line-height: 16px; font-weight: 500; }

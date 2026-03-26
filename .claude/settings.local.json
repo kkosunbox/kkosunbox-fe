@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"CLAUDE|cursor|copilot|\\\\.md$\")",
+      "Bash(ls \"C:/2026/ggosoonbox/app/\\(main\\)/\")"
+    ]
+  }
+}

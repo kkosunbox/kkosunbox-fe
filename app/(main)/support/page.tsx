@@ -1,5 +1,5 @@
-import { UnderConstruction } from "@/shared/ui";
+import { SupportSection } from "@/widgets/support/faq";
 
 export default function SupportPage() {
-  return <UnderConstruction />;
+  return <SupportSection />;
 }

@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(grep -E \"CLAUDE|cursor|copilot|\\\\.md$\")",
-      "Bash(ls \"C:/2026/ggosoonbox/app/\\(main\\)/\")"
+      "Bash(ls \"C:/2026/ggosoonbox/app/\\(main\\)/\")",
+      "Bash(pnpm build:*)",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/double-twinkle.png\" \"C:/2026/ggosoonbox/widgets/subscribe/recommend/assets/double-twinkle.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/stamp.png\" \"C:/2026/ggosoonbox/widgets/subscribe/recommend/assets/stamp.png\")",
+      "Bash(ls -la \"C:\\\\2026\\\\ggosoonbox/app/\\(main\\)/\")",
+      "Bash(find \"C:\\\\2026\\\\ggosoonbox/app/\\(main\\)\" -type f -name \"page.tsx\" -o -name \"layout.tsx\")",
+      "Bash(pnpm lint:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

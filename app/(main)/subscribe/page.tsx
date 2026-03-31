@@ -1,5 +1,5 @@
-import { UnderConstruction } from "@/shared/ui";
+import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 
 export default function SubscribePage() {
-  return <UnderConstruction />;
+  return <SubscribePlansSection />;
 }

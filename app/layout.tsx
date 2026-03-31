@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Ms_Madi, Give_You_Glory } from "next/font/google";
 import "@fontsource/pretendard";
 import "./globals.css";
+import { AuthProvider } from "@/features/auth";
+import { getAuthUser } from "@/features/auth/lib/session";
 
 const msMadi = Ms_Madi({
   weight: "400",
@@ -20,15 +22,19 @@ export const metadata: Metadata = {
   description: "강아지에게 맞춤 수제간식을 정기적으로 제공하는 프리미엄 패키지 구독 서비스",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialUser = await getAuthUser();
+
   return (
     <html lang="ko">
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
-        {children}
+        <AuthProvider initialUser={initialUser}>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

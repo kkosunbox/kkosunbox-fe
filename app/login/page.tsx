@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import logoMain2x from "@/shared/assets/logo-main@2x.png";
 import loginBannerHd from "@/shared/assets/login-banner-hd.png";
+import { useAuth } from "@/features/auth";
 
 const LOGO_WIDTH = 156;
 const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
@@ -56,9 +58,26 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [id, setId]                     = useState("");
+  const [password, setPassword]         = useState("");
+  const [error, setError]               = useState<string | null>(null);
+  const [isPending, startTransition]    = useTransition();
+
+  const { login } = useAuth();
+  const searchParams = useSearchParams();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    startTransition(async () => {
+      const next = searchParams.get("next") ?? undefined;
+      const result = await login(id, password, next);
+      if (result.error) setError(result.error);
+    });
+  }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col md:pt-[54px]">
+    <form onSubmit={handleSubmit} className="min-h-screen bg-white flex flex-col md:pt-[54px]">
 
       {/* ── 모바일 전용: 웜 상단 섹션 ── */}
       <div
@@ -68,47 +87,67 @@ export default function LoginPage() {
         <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto" priority />
       </div>
 
-      {/* ── 콘텐츠: 모바일 세로 / 데스크톱 2컬럼 ── */}
-      <div className="flex flex-col md:flex-row flex-1">
+      {/* ── 콘텐츠: 모바일 세로 / 데스크톱 2컬럼 (PC: 1012px 컨테이너) ── */}
+      <div className="flex flex-1 flex-col md:mx-auto md:w-full md:max-w-[var(--max-width-content)] md:flex-row">
 
         {/* 좌측 — 폼 */}
         <div className="flex-1 flex flex-col md:items-center md:justify-center md:min-h-[calc(100vh-54px)]">
-          <div className="flex-1 flex flex-col md:flex-none w-full md:max-w-[540px] px-6 md:px-0 pt-[42px] md:pt-0 pb-12 md:pb-0">
+          {/* Figma: 폼 너비 400px */}
+          <div className="flex-1 flex flex-col md:flex-none w-full md:max-w-[400px] px-6 md:px-0 pt-[42px] md:pt-0 pb-12 md:pb-0">
 
-            {/* 데스크톱 전용 헤딩 — Griun PolFairness 28px/400, center, --color-primary */}
-            <p
-              className="max-md:hidden text-center text-[var(--color-primary)] mb-7"
-              style={{
-                fontFamily: "Griun PolFairness",
-                fontSize: "28px",
-                fontWeight: 400,
-                lineHeight: "140%",
-                letterSpacing: "-0.02em",
-                textShadow: "2px 4px 8px rgba(252, 226, 206, 0.2)",
-              }}
-            >
-              우리 아이를 위한 건강한 간식,{"\n"}꼬순박스에 오신 걸 환영해요
-            </p>
+            {/* 데스크톱 전용 헤딩 — Figma: 79px 높이 컨테이너 / line1 20px / line2 36px */}
+            <div className="max-md:hidden text-center mb-8">
+              <p
+                className="text-[var(--color-primary)]"
+                style={{
+                  fontFamily: "Griun PolFairness",
+                  fontSize: "20px",
+                  fontWeight: 400,
+                  lineHeight: "140%",
+                  letterSpacing: "-0.02em",
+                  textShadow: "2px 4px 8px rgba(252, 226, 206, 0.2)",
+                }}
+              >
+                우리 아이를 위한 건강한 간식,
+              </p>
+              <p
+                className="text-[var(--color-text)]"
+                style={{
+                  fontFamily: "Griun PolFairness",
+                  fontSize: "36px",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                꼬순박스에 오신 걸 환영해요
+              </p>
+            </div>
 
-            {/* 이메일 입력 */}
+            {/* 아이디 입력 */}
             <input
-              type="email"
-              placeholder="email@gmail.com"
-              autoComplete="email"
+              type="text"
+              placeholder="아이디를 입력하세요"
+              autoComplete="username"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
               className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-semibold placeholder:font-semibold placeholder:text-[var(--color-text)]
                 h-[52px] px-8 text-[16px]
-                md:h-[72px] md:px-6 md:text-[24px] md:tracking-[0.2px]"
+                md:h-[54px] md:px-6 md:tracking-[0.2px]"
             />
 
             {/* 비밀번호 입력 */}
             <div className="relative mt-6">
+              {/* 비밀번호 입력 — Figma: h=54px, px=24px, 16px/500, placeholder #999 */}
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
                   h-[52px] px-8 pr-12 text-[16px]
-                  md:h-[72px] md:px-6 md:pr-16 md:text-[24px]"
+                  md:h-[54px] md:px-6 md:pr-16"
               />
               <button
                 type="button"
@@ -121,6 +160,13 @@ export default function LoginPage() {
                   : <EyeOffIcon className="w-4 h-4 md:w-6 md:h-6" />}
               </button>
             </div>
+
+            {/* 에러 메시지 */}
+            {error && (
+              <p className="mt-3 text-center text-[13px] font-medium" style={{ color: "var(--color-accent-rust)" }}>
+                {error}
+              </p>
+            )}
 
             {/* 비밀번호 찾기 */}
             <div className="mt-5 text-right">
@@ -136,26 +182,27 @@ export default function LoginPage() {
             {/* 모바일 전용 스페이서 (버튼을 하단으로 밀기) */}
             <div className="flex-1 min-h-[40px] md:hidden" />
 
-            {/* 로그인 버튼 — 모바일: h-58px/18px, 데스크톱: h-72px/24px */}
+            {/* 로그인 버튼 */}
             <button
               type="submit"
-              className="w-full rounded-full bg-[var(--color-accent)] text-white font-semibold transition-opacity hover:opacity-90 active:opacity-80
+              disabled={isPending}
+              className="w-full rounded-full bg-[var(--color-accent)] text-white font-semibold transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
                 h-[58px] text-[18px] tracking-[-0.04em]
-                md:h-[72px] md:text-[24px] md:tracking-[0.2px] md:mt-20"
+                md:h-[54px] md:text-[16px] md:tracking-[0.2px] md:mt-[68px]"
             >
-              로그인
+              {isPending ? "로그인 중..." : "로그인"}
             </button>
 
-            {/* 간편로그인 — 모바일: 14px, 데스크톱: 18px */}
+            {/* 간편로그인 — Figma: 14px/500 (모바일·데스크톱 동일), mt=24px on desktop */}
             <p
-              className="text-center text-[var(--color-text-secondary)] text-[14px] md:text-[18px] mt-[18px] md:mt-[34px]"
+              className="text-center text-[var(--color-text-secondary)] text-[14px] mt-[18px] md:mt-6"
               style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
             >
               - 간편로그인 -
             </p>
 
-            {/* 소셜 버튼 */}
-            <div className="flex items-center justify-center gap-[40px] mt-4 md:mt-7">
+            {/* 소셜 버튼 — Figma: gap=40px, mt=32px on desktop */}
+            <div className="flex items-center justify-center gap-[40px] mt-4 md:mt-8">
               <button type="button" aria-label="카카오로 로그인"
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "#FEE500" }}>
@@ -192,8 +239,8 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* 우측 — 데스크톱 전용 배너 */}
-        <div className="max-md:hidden flex-1 relative min-h-[calc(100vh-54px)]">
+        {/* 우측 — 데스크톱 전용 배너 — Figma: 548px fixed width */}
+        <div className="max-md:hidden md:w-[548px] md:shrink-0 relative min-h-[calc(100vh-54px)]">
           <Image
             src={loginBannerHd}
             alt="꼬순박스 배너"
@@ -204,6 +251,6 @@ export default function LoginPage() {
         </div>
 
       </div>
-    </div>
+    </form>
   );
 }

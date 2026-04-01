@@ -60,10 +60,10 @@ export default function PainPointsSection() {
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <circle cx="12" cy="12" r="8" fill="#E8CFB9" />
+                    <circle cx="12" cy="12" r="8" fill="var(--color-beige)" />
                     <path
                       d="M8.5 11L10.7929 13.2929C11.1834 13.6834 11.8166 13.6834 12.2071 13.2929L19.5 6"
-                      stroke="#222222"
+                      stroke="var(--color-text)"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />

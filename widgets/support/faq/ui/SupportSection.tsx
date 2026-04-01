@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Text } from "@/shared/ui";
 
+/* ── FAQ 데이터 ──────────────────────────────────────────── */
 const FAQ_ITEMS = [
   {
     question: "내 아이에게 맞는 플랜은 무엇인가요?",
@@ -69,29 +70,50 @@ const FAQ_ITEMS = [
 
 const ITEMS_PER_PAGE = 6;
 
+/* ── 아이콘 ──────────────────────────────────────────────── */
 function PawCircleIcon() {
   return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-secondary)]">
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        aria-hidden="true"
-      >
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-secondary)]">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <ellipse cx="12" cy="15.5" rx="5" ry="4" fill="var(--color-primary)" />
-        <ellipse cx="6.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-        <ellipse cx="10" cy="8.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-        <ellipse cx="14" cy="8.5" rx="2" ry="2.5" fill="var(--color-primary)" />
+        <ellipse cx="6.5"  cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
+        <ellipse cx="10"   cy="8.5"  rx="2" ry="2.5" fill="var(--color-primary)" />
+        <ellipse cx="14"   cy="8.5"  rx="2" ry="2.5" fill="var(--color-primary)" />
         <ellipse cx="17.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
       </svg>
     </div>
   );
 }
 
+function ChevronLeftIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <circle cx="6.5" cy="6.5" r="5" stroke="var(--color-text-secondary)" strokeWidth="1.22" />
+      <path d="M10.5 10.5L13.5 13.5" stroke="var(--color-text-secondary)" strokeWidth="1.22" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* ── 메인 컴포넌트 ───────────────────────────────────────── */
 export default function SupportSection() {
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [query, setQuery]   = useState("");
+  const [page, setPage]     = useState(1);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -103,8 +125,8 @@ export default function SupportSection() {
     );
   }, [query]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
+  const totalPages   = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage  = Math.min(page, totalPages);
   const currentItems = filtered.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -116,121 +138,95 @@ export default function SupportSection() {
   };
 
   return (
-    <div className="bg-[var(--color-background)] min-h-screen">
-      {/* Page header */}
-      <section className="pt-12 pb-8 text-center px-6">
-        <Text
-          as="h1"
-          variant="title-24-b"
-          className="text-[var(--color-primary)]"
-        >
-          꼬순박스 고객센터
-        </Text>
-        <Text
-          variant="body-16-r"
-          className="mt-2 text-[var(--color-text-secondary)]"
-        >
-          궁금하거나 요청하실 사항이 있으시면 상세히 안내해 드리겠습니다.
-        </Text>
-      </section>
+    <div className="bg-white min-h-screen py-12 md:py-[50px]">
+      <div className="mx-auto max-w-[var(--max-width-content)] px-4 md:px-8 flex flex-col gap-6">
 
-      <div className="mx-auto max-w-[var(--max-width-content)] px-4 pb-16 md:px-8">
-        {/* CTA card */}
-        <div className="mb-6 flex flex-col items-start justify-between gap-4 rounded-2xl bg-[var(--color-card-standard)] px-8 py-7 md:flex-row md:items-center">
-          <div>
-            <Text
-              as="h2"
-              variant="subtitle-20-b"
-              className="text-[var(--color-brown-dark)]"
+        {/* ── 배너 카드 ── */}
+        <div
+          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-2xl px-8 md:px-14 py-7 md:h-[124px]"
+          style={{ background: "var(--gradient-support-banner)" }}
+        >
+          <div className="flex flex-col gap-1">
+            <p
+              className="text-[24px] leading-[25px] tracking-[-0.04em] text-[var(--color-brown)]"
+              style={{ fontFamily: "'GangwonEduPower', sans-serif" }}
             >
               꼬순박스에 궁금한 점이 있으신가요?
-            </Text>
-            <Text
-              variant="body-16-r"
-              className="mt-1 text-[var(--color-text-secondary)]"
-            >
+            </p>
+            <Text variant="body-16-m" className="text-[var(--color-text)]">
               1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다.
             </Text>
           </div>
           <Link
             href="/inquiry"
-            className="inline-flex shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] px-8 text-white h-[44px] text-[16px] font-semibold leading-[24px] tracking-[-0.02em]"
+            className="shrink-0 inline-flex items-center justify-center rounded-full bg-[var(--color-accent)] text-white w-full md:w-[200px] h-[48px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em]"
           >
             문의하기
           </Link>
         </div>
 
-        {/* FAQ section */}
-        <div className="rounded-2xl border border-[var(--color-text-muted)] bg-white px-6 py-8 md:px-10 md:py-10">
-          {/* Search */}
-          <div className="relative mb-8">
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)]"
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              aria-hidden="true"
-            >
-              <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M12 12l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              placeholder="질문을 검색하세요"
-              value={query}
-              onChange={handleQueryChange}
-              className="w-full rounded-full border border-[var(--color-text-muted)] bg-[var(--color-surface-light)] py-3 pl-11 pr-4 text-body-14-r text-[var(--color-text)] outline-none focus:border-[var(--color-primary)] focus:bg-white"
-            />
+        {/* ── FAQ 섹션 ── */}
+        <div className="rounded-2xl bg-[var(--color-background)] px-6 py-8 md:px-[45px] md:py-10">
+
+          {/* 검색창 */}
+          <div className="flex justify-center mb-8">
+            <label className="relative w-full md:w-[320px]">
+              <span className="sr-only">질문 검색</span>
+              <span className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2">
+                <SearchIcon />
+              </span>
+              <input
+                type="text"
+                placeholder="질문을 검색하세요"
+                value={query}
+                onChange={handleQueryChange}
+                className="w-full h-[40px] rounded-full bg-white pl-[38px] pr-5 text-[14px] font-medium leading-[17px] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none"
+                style={{ boxShadow: "0px 0.74px 1.47px rgba(16, 24, 40, 0.05)" }}
+              />
+            </label>
           </div>
 
-          {/* Grid */}
+          {/* 카드 그리드 */}
           {currentItems.length > 0 ? (
-            <ul className="grid gap-4 max-md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {currentItems.map((item, idx) => (
                 <li
                   key={idx}
-                  className="flex flex-col gap-3 rounded-xl border border-[var(--color-text-muted)] bg-white p-6"
+                  className="flex flex-col gap-3 rounded-2xl bg-white p-4 md:p-[16px] min-h-[208px]"
                 >
                   <PawCircleIcon />
-                  <Text
-                    as="h3"
-                    variant="subtitle-16-sb"
-                    className="text-[var(--color-text)]"
-                  >
+                  <p className="text-body-14-sb text-[var(--color-text)] mt-1">
                     {item.question}
-                  </Text>
-                  <Text
-                    variant="body-13-r"
-                    className="text-[var(--color-text-secondary)]"
-                  >
+                  </p>
+                  <Text variant="body-14-m" className="text-[var(--color-text)]">
                     {item.answer}
                   </Text>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="flex flex-col items-center py-16 text-[var(--color-text-secondary)]">
-              <Text variant="body-16-r">검색 결과가 없습니다.</Text>
+            <div className="flex flex-col items-center py-16">
+              <Text variant="body-16-r" className="text-[var(--color-text-secondary)]">
+                검색 결과가 없습니다.
+              </Text>
             </div>
           )}
 
-          {/* Pagination */}
+          {/* 페이지네이션 */}
           {totalPages > 1 && (
             <nav
-              className="mt-10 flex items-center justify-center gap-1"
+              className="mt-8 flex items-center justify-center gap-2"
               aria-label="FAQ 페이지 탐색"
             >
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 aria-label="이전 페이지"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-secondary)] disabled:opacity-30 hover:bg-[var(--color-surface-light)]"
+                className="flex h-5 w-5 items-center justify-center text-[var(--color-text-muted)] disabled:opacity-40"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <ChevronLeftIcon />
               </button>
+
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
@@ -238,27 +234,27 @@ export default function SupportSection() {
                   aria-label={`${p}페이지`}
                   aria-current={currentPage === p ? "page" : undefined}
                   className={[
-                    "h-8 w-8 rounded-full text-body-14-m",
+                    "flex h-5 w-5 items-center justify-center rounded-full text-[13px] leading-[16px] font-normal",
                     currentPage === p
-                      ? "bg-[var(--color-primary)] text-white"
-                      : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)]",
+                      ? "text-[var(--color-text)]"
+                      : "text-[var(--color-text-secondary)]",
                   ].join(" ")}
                 >
                   {p}
                 </button>
               ))}
+
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 aria-label="다음 페이지"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-secondary)] disabled:opacity-30 hover:bg-[var(--color-surface-light)]"
+                className="flex h-5 w-5 items-center justify-center text-[var(--color-text-muted)] disabled:opacity-40"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <ChevronRightIcon />
               </button>
             </nav>
           )}
+
         </div>
       </div>
     </div>

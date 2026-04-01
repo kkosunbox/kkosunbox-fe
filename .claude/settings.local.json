@@ -9,7 +9,9 @@
       "Bash(ls -la \"C:\\\\2026\\\\ggosoonbox/app/\\(main\\)/\")",
       "Bash(find \"C:\\\\2026\\\\ggosoonbox/app/\\(main\\)\" -type f -name \"page.tsx\" -o -name \"layout.tsx\")",
       "Bash(pnpm lint:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)"
     ]
   }
 }

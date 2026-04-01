@@ -125,7 +125,7 @@ function PetAvatarPlaceholder() {
         className="absolute bottom-0 right-0 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white shadow-md"
       >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M9.5 1.5L11.5 3.5L4.5 10.5H2.5V8.5L9.5 1.5Z" stroke="#555" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M9.5 1.5L11.5 3.5L4.5 10.5H2.5V8.5L9.5 1.5Z" stroke="var(--color-text-on-warm)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
     </div>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { Button } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
 
 const NAV_ITEMS = [
   { href: "/", label: "홈" },
@@ -35,6 +36,7 @@ function UserIcon() {
 }
 
 export default function Header() {
+  const { isLoggedIn } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -73,9 +75,19 @@ export default function Header() {
             <Link href="/support" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-[var(--color-primary)]">
               고객센터
             </Link>
-            <Button as={Link} href="/login" size="sm">
-              로그인
-            </Button>
+            {isLoggedIn ? (
+              <Link
+                href="/mypage"
+                aria-label="마이페이지"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-text-secondary)] hover:opacity-80 transition-opacity"
+              >
+                <UserIcon />
+              </Link>
+            ) : (
+              <Button as={Link} href="/login" size="sm">
+                로그인
+              </Button>
+            )}
           </div>
         </div>
       </nav>
@@ -92,14 +104,16 @@ export default function Header() {
         {/* Top section — user / login */}
         <div className="flex items-center justify-between bg-[var(--color-surface-warm)] px-6 py-5">
           <Link
-            href="/login"
+            href={isLoggedIn ? "/mypage" : "/login"}
             onClick={closeMenu}
             className="flex items-center gap-3"
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--color-text-secondary)]">
               <UserIcon />
             </div>
-            <span className="text-body-16-m text-[var(--color-text)]">로그인 하기</span>
+            <span className="text-body-16-m text-[var(--color-text)]">
+              {isLoggedIn ? "마이페이지" : "로그인 하기"}
+            </span>
           </Link>
           <button
             onClick={closeMenu}

@@ -124,7 +124,7 @@ function SectionCard({
       >
         <span
           className="text-[18px] font-bold leading-[21px] tracking-[-0.04em]"
-          style={{ color: "#262525" }}
+          style={{ color: "var(--color-text)" }}
         >
           {title}
         </span>
@@ -329,7 +329,7 @@ export default function OrderSection() {
             {/* 피그마: font-weight 600, 16px, color #262525 */}
             <span
               className="text-[16px] font-semibold leading-[19px] tracking-[-0.04em]"
-              style={{ color: "#262525" }}
+              style={{ color: "var(--color-text)" }}
             >
               프리미엄 패키지 BOX
             </span>
@@ -556,7 +556,7 @@ export default function OrderSection() {
         >
           <span
             className="text-[18px] font-bold leading-[21px] tracking-[-0.04em]"
-            style={{ color: "#262525" }}
+            style={{ color: "var(--color-text)" }}
           >
             결제정보
           </span>
@@ -711,7 +711,7 @@ export default function OrderSection() {
             className="text-[14px] leading-[14px]"
             style={{
               fontFamily: '"GangwonEduPower", sans-serif',
-              color: "#262525",
+              color: "var(--color-text)",
             }}
           >
             브랜드 할인 쿠폰
@@ -722,7 +722,7 @@ export default function OrderSection() {
             style={{
               fontFamily: '"GangwonEduPower", sans-serif',
               letterSpacing: "-0.06em",
-              color: "#606060",
+              color: "var(--color-text-sub)",
             }}
           >
             최대 20%

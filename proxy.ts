@@ -7,7 +7,7 @@ const PROTECTED = ["/mypage"];
 /** 이미 로그인 상태에서 접근 시 홈으로 보낼 라우트 */
 const AUTH_ONLY = ["/login", "/register"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token      = request.cookies.get(COOKIE_NAME)?.value;
   const devToken   = process.env.DEV_AUTH_TOKEN ?? "dev-ggosoon-token";

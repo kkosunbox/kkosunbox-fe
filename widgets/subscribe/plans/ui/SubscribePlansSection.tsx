@@ -41,9 +41,9 @@ function CheckIcon({ color }: { color: string }) {
 function InfoIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" className="shrink-0" aria-hidden="true">
-      <circle cx="11" cy="11" r="10" stroke="#CCCCCC" strokeWidth="1.5" fill="none" />
-      <path d="M11 10V15" stroke="#CCCCCC" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="11" cy="7.5" r="1" fill="#CCCCCC" />
+      <circle cx="11" cy="11" r="10" stroke="var(--color-icon-muted)" strokeWidth="1.5" fill="none" />
+      <path d="M11 10V15" stroke="var(--color-icon-muted)" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="11" cy="7.5" r="1" fill="var(--color-icon-muted)" />
     </svg>
   );
 }

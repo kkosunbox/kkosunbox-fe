@@ -115,6 +115,7 @@ export default function DatePicker({
   const today = startOfDay(new Date());
 
   const [isOpen, setIsOpen] = useState(false);
+  const [openUp, setOpenUp] = useState(false);
   const [viewYear, setViewYear] = useState(
     () => value?.getFullYear() ?? today.getFullYear()
   );
@@ -123,6 +124,7 @@ export default function DatePicker({
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   /* 바깥 클릭 시 닫기 */
   useEffect(() => {
@@ -208,9 +210,20 @@ export default function DatePicker({
       {/* ── Trigger ── */}
       <button
         id={id}
+        ref={triggerRef}
         type="button"
         disabled={disabled}
-        onClick={() => !disabled && setIsOpen((v) => !v)}
+        onClick={() => {
+          if (disabled) return;
+          if (!isOpen) {
+            const btn = triggerRef.current;
+            if (btn) {
+              const { bottom } = btn.getBoundingClientRect();
+              setOpenUp(window.innerHeight - bottom < 340);
+            }
+          }
+          setIsOpen((v) => !v);
+        }}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label={value ? `선택된 날짜: ${formatDate(value)}` : placeholder}
@@ -235,7 +248,8 @@ export default function DatePicker({
           role="dialog"
           aria-label="날짜 선택 달력"
           className={[
-            "absolute left-0 top-[calc(100%+6px)] z-50",
+            "absolute left-0 z-50",
+            openUp ? "bottom-[calc(100%+6px)]" : "top-[calc(100%+6px)]",
             "w-72 overflow-hidden rounded-2xl border border-[var(--color-divider-warm)] bg-white",
             "shadow-[0_8px_32px_rgba(201,122,61,0.12)]",
           ].join(" ")}

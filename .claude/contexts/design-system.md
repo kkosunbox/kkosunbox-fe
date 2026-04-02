@@ -68,6 +68,7 @@
 |---|---|---|
 | `--color-text` | `#2F2F2F` | Dark Gray — 기본 본문, UI 텍스트 |
 | `--color-text-secondary` | `#999999` | 보조 텍스트 |
+| `--color-text-tertiary` | `#808080` | 비활성 메뉴 텍스트 (드롭다운 항목 등) |
 | `--color-text-muted` | `#DDDDDD` | 힌트, placeholder |
 | `--color-text-warm` | `#917F71` | Warm Gray — 웜 섹션 서브텍스트 |
 | `--color-text-on-warm` | `#555555` | 웜 섹션 헤딩 |

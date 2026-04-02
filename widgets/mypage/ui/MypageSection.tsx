@@ -256,7 +256,7 @@ function SubscriptionCard() {
         >
           {SUBSCRIPTION.tier}
         </span>
-        <Link href="/subscribe" className="text-[13px] text-[var(--color-accent)] hover:underline">
+        <Link href="/mypage/subscription" className="text-[13px] text-[var(--color-accent)] hover:underline">
           <span className="max-md:hidden">구독관리</span>
           <span className="md:hidden">구독변경하기</span>
         </Link>

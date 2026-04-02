@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import { ChecklistRecommendModal } from "@/shared/ui";
 
 const PACKAGES = [
   {
@@ -48,62 +49,6 @@ function InfoIcon() {
   );
 }
 
-function PawIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      <ellipse cx="20" cy="26" rx="8" ry="6.5" fill="var(--color-primary)" />
-      <ellipse cx="11" cy="18" rx="3.2" ry="4" fill="var(--color-primary)" />
-      <ellipse cx="16.5" cy="14" rx="3.2" ry="4" fill="var(--color-primary)" />
-      <ellipse cx="23.5" cy="14" rx="3.2" ry="4" fill="var(--color-primary)" />
-      <ellipse cx="29" cy="18" rx="3.2" ry="4" fill="var(--color-primary)" />
-    </svg>
-  );
-}
-
-function ChecklistModal({ onConfirm, onDismiss }: { onConfirm: () => void; onDismiss: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-5"
-      style={{ background: "rgba(0,0,0,0.45)" }}
-      onClick={onDismiss}
-    >
-      <div
-        className="w-full max-w-[360px] rounded-2xl bg-white px-7 py-8 text-center shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-4 flex justify-center">
-          <PawIcon />
-        </div>
-        <h2 className="mb-2 text-[18px] font-extrabold tracking-[-0.03em] text-[var(--color-text)]">
-          맞춤 패키지 추천받기
-        </h2>
-        <p className="mb-7 text-[14px] leading-[1.7] text-[var(--color-text-secondary)]">
-          체크리스트를 작성해서
-          <br />
-          맞춤형 제안을 받아보시겠어요?
-        </p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onDismiss}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-[14px] font-semibold text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
-          >
-            다음에 하기
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: "var(--color-accent)" }}
-          >
-            확인
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function SubscribePlansSection() {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
@@ -113,19 +58,18 @@ export default function SubscribePlansSection() {
     if (!done) setShowModal(true);
   }, []);
 
+  function handleClose() {
+    setShowModal(false);
+  }
+
   function handleConfirm() {
     setShowModal(false);
     router.push("/checklist");
   }
 
-  function handleDismiss() {
-    localStorage.setItem("kkosun_checklist_done", "true");
-    setShowModal(false);
-  }
-
   return (
     <>
-      {showModal && <ChecklistModal onConfirm={handleConfirm} onDismiss={handleDismiss} />}
+      {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
       <section className="bg-[var(--color-secondary)] py-16 md:py-20">
         <div className="mx-auto max-w-content px-6 md:px-0">

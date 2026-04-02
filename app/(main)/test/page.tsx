@@ -1,3 +1,5 @@
+import ModalTestButtons from "./ModalTestButtons";
+
 const SAMPLE_TEXT = `꼬순박스 디자인 테스트
 가나다라마바사 아자차카타파하
 ABC abc 1234567890
@@ -50,6 +52,8 @@ export default function FontTestPage() {
             포함된 5개 폰트가 어떻게 렌더링되는지 바로 비교할 수 있습니다.
           </p>
         </header>
+
+        <ModalTestButtons />
 
         <section className="grid gap-5 lg:grid-cols-2">
           {fontSamples.map((font) => (

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
@@ -35,9 +36,80 @@ function UserIcon() {
   );
 }
 
+function SwitchHorizontalIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 16H17M17 16L14 13M17 16L14 19" stroke="var(--color-border)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 8H7M7 8L10 5M7 8L10 11" stroke="var(--color-border)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ProfileDropdown({ user, onClose }: { user: { name: string } | null; onClose: () => void }) {
+  const { logout } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isPaymentActive = pathname.startsWith("/mypage/subscription");
+  const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive;
+
+  const menuItemClass = (active: boolean) =>
+    [
+      "w-full h-[52px] px-[30px] flex items-center text-left tracking-[-0.02em] transition-colors",
+      active
+        ? "text-body-14-sb text-[var(--color-primary)] bg-[var(--color-card-premium)]"
+        : "text-body-14-m text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-warm)]",
+    ].join(" ");
+
+  const handleLogout = async () => {
+    onClose();
+    await logout();
+  };
+
+  return (
+    <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[280px] rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden py-1">
+      <div className="flex flex-col gap-1">
+        {/* 프로필 헤더 */}
+        <div className="flex h-[73px] items-center px-[30px]">
+          <div className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-full bg-[var(--color-text-secondary)] border border-[var(--color-text-muted)] overflow-hidden">
+            <UserIcon />
+          </div>
+          <div className="flex items-center gap-1 ml-4 min-w-0">
+            <span className="text-body-16-sb text-[var(--color-text)] truncate">{user?.name ?? "사용자"}</span>
+            <SwitchHorizontalIcon />
+          </div>
+        </div>
+
+        <button onClick={() => { onClose(); router.push("/mypage"); }} className={menuItemClass(isMypageActive)}>
+          마이페이지
+        </button>
+        <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isPaymentActive)}>
+          결제관리
+        </button>
+        <button onClick={handleLogout} className={menuItemClass(false)}>
+          로그아웃
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Header() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isProfileOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [isProfileOpen]);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
@@ -76,13 +148,19 @@ export default function Header() {
               고객센터
             </Link>
             {isLoggedIn ? (
-              <Link
-                href="/mypage"
-                aria-label="마이페이지"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-text-secondary)] hover:opacity-80 transition-opacity"
-              >
-                <UserIcon />
-              </Link>
+              <div ref={profileRef} className="relative">
+                <button
+                  onClick={() => setIsProfileOpen((v) => !v)}
+                  aria-label="프로필 메뉴"
+                  aria-expanded={isProfileOpen}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-text-secondary)] hover:opacity-80 transition-opacity"
+                >
+                  <UserIcon />
+                </button>
+                {isProfileOpen && (
+                  <ProfileDropdown user={user} onClose={() => setIsProfileOpen(false)} />
+                )}
+              </div>
             ) : (
               <Button as={Link} href="/login" size="sm">
                 로그인

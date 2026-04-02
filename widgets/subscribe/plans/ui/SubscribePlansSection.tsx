@@ -6,6 +6,7 @@ import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import { ChecklistRecommendModal } from "@/shared/ui";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
+import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
 
 /* ── Data ──────────────────────────────────────────────────────── */
 
@@ -361,11 +362,20 @@ export default function SubscribePlansSection() {
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="bg-white py-16 md:pt-0 md:pb-20">
+      <section className="bg-white pb-16 md:pt-0 md:pb-20">
         <div className="mx-auto px-6 md:px-0">
           {/* Hero image */}
           <div className="mb-10 text-center md:mb-12">
-            <Image src={SubscribePlansHeroImage} alt="Subscribe Plans Hero" className="w-full h-auto" />
+            <Image
+              src={SubscribePlansHeroImageMobile}
+              alt="Subscribe Plans Hero"
+              className="md:hidden block w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
+            />
+            <Image
+              src={SubscribePlansHeroImage}
+              alt="Subscribe Plans Hero"
+              className="max-md:hidden w-full h-auto"
+            />
           </div>
 
           {selectedTier ? (

@@ -15,7 +15,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
       aria-modal="true"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
 
       {/* Group */}
       <div
@@ -38,7 +38,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
                      max-md:mt-[59px] md:mt-[80px]
                      max-md:rounded-[32px] md:rounded-[40px]
                      max-md:pt-[110px] md:pt-[140px]
-                     pb-8 px-6
+                     pb-6 px-6
                      flex flex-col items-center"
           style={{ background: "var(--gradient-modal-checklist)" }}
         >

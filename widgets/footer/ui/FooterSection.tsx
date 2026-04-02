@@ -4,9 +4,15 @@ import Link from "next/link";
 import logoMono from "@/shared/assets/logo-mono.png";
 
 const FOOTER_LINKS = [
-  { href: "/privacy", label: "개인정보처리방침" },
-  { href: "/brand", label: "브랜드 리소스" },
   { href: "/support", label: "자주 묻는 질문" },
+  { href: "/terms", label: "이용약관" },
+  { href: "/privacy", label: "개인정보처리방침" },
+] as const;
+
+const COMPANY_INFO_LINES = [
+  "주식회사 핑크코브라 | 사업자등록번호 : 103-87-01124 | 통신판매업신고번호 : 2021-서울강북-0945",
+  "대표이사 : 정진웅 | 대표번호 : 1533-4005 | 이메일 : support@talkgate.im",
+  "주소 : 서울특별시 강북구 삼양로173길 223(우이동)",
 ] as const;
 
 /** Figma SNS 아이콘 stroke/fill — #DDDDDD (= --color-text-muted) */
@@ -69,18 +75,41 @@ const SOCIAL_LINKS = [
 const LOGO_W = 88;
 const LOGO_H = 28;
 
-/** 1920 기준: 로고 ↔ 푸터 링크 묶음 사이 간격 (px). 필요 시 이 값만 수정 */
-const LOGO_TO_FOOTER_LINKS_GAP_PX = 86;
-
 export default function FooterSection() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="bg-[var(--color-footer-bg)] text-[var(--color-text-muted)]" aria-label="사이트 푸터">
 
-      {/* ── 모바일 레이아웃: nav → copyright → 소셜 (전부 12px, 아이콘 20px) ── */}
-      <div className="md:hidden flex flex-col items-center gap-6 px-8 py-10">
-        <nav className="flex items-center" aria-label="푸터 정책·고객 안내">
+      {/* ── 모바일 레이아웃 ── */}
+      <div className="md:hidden flex flex-col px-6 py-8">
+        <div className="space-y-1 text-center">
+          {COMPANY_INFO_LINES.map((line) => (
+            <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-text-muted)]">
+              {line}
+            </p>
+          ))}
+        </div>
+        <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5">
+          <p className="text-center text-caption-12-m text-[var(--color-text-muted)]">
+            Copyright © Kkosunbox {year}. All rights reserved.
+          </p>
+          <div className="mt-2 flex items-center justify-center gap-2">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center transition-opacity hover:opacity-80 [&>svg]:w-5 [&>svg]:h-5"
+                aria-label={social.label}
+              >
+                {social.icon}
+              </a>
+            ))}
+          </div>
+        </div>
+        <nav className="mt-4 flex items-center justify-center" aria-label="푸터 정책·고객 안내">
           {FOOTER_LINKS.map((item, idx) => (
             <Fragment key={item.href}>
               {idx > 0 && (
@@ -95,46 +124,22 @@ export default function FooterSection() {
             </Fragment>
           ))}
         </nav>
-        <p className="text-caption-12-m text-[var(--color-text-muted)] text-center">
-          Copyright © Kkosunbox {year}. All rights reserved.
-        </p>
-        <div className="flex items-center gap-3">
-          {SOCIAL_LINKS.map((social) => (
-            <a
-              key={social.label}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center transition-opacity hover:opacity-80 [&>svg]:w-5 [&>svg]:h-5"
-              aria-label={social.label}
-            >
-              {social.icon}
-            </a>
-          ))}
-        </div>
       </div>
 
       {/* ── 데스크톱 레이아웃 ── */}
       <div className="max-md:hidden mx-auto flex max-w-content-wide flex-col px-8">
-        <div className="flex items-center justify-between pt-[38px] mb-[38px]">
-          <div className="flex items-center">
+        <div className="flex items-start justify-between pt-[26px] pb-[26px]">
+          <div className="flex items-start gap-8">
             <Link href="/" className="shrink-0" aria-label="꼬순박스 홈">
               <Image src={logoMono} alt="" width={LOGO_W} height={LOGO_H} className="h-[28px] w-[88px]" />
             </Link>
-            <nav
-              className="flex items-center gap-x-[52px] ml-[86px]"
-              aria-label="푸터 정책·고객 안내"
-            >
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-footer-nav text-[var(--color-text-muted)] transition-opacity hover:opacity-80"
-                >
-                  {item.label}
-                </Link>
+            <div className="space-y-0.5">
+              {COMPANY_INFO_LINES.map((line) => (
+                <p key={line} className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-text-muted)]">
+                  {line}
+                </p>
               ))}
-            </nav>
+            </div>
           </div>
           <div className="flex shrink-0 items-center gap-3">
             {SOCIAL_LINKS.map((social) => (
@@ -151,10 +156,23 @@ export default function FooterSection() {
             ))}
           </div>
         </div>
-        <div className="border-t border-[var(--color-footer-divider)] pt-[18px] pb-[19px]">
-          <p className="text-caption-12-m text-[var(--color-text-muted)]">
-            Copyright © Kkosunbox {year}. All rights reserved.
-          </p>
+        <div className="border-t border-[var(--color-footer-divider)] pt-[8px] pb-[8px]">
+          <div className="flex items-center justify-between">
+            <p className="text-caption-12-m text-[var(--color-text-muted)]">
+              Copyright © Kkosunbox {year}. All rights reserved.
+            </p>
+            <nav className="flex items-center gap-x-6" aria-label="푸터 정책·고객 안내">
+              {FOOTER_LINKS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-footer-nav text-[var(--color-text-muted)] transition-opacity hover:opacity-80"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
 

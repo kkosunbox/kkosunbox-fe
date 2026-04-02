@@ -1,3 +1,5 @@
+import CollapseSection from "./CollapseSection";
+import DesignSystemPanels from "./DesignSystemPanels";
 import ModalTestButtons from "./ModalTestButtons";
 
 const SAMPLE_TEXT = `꼬순박스 디자인 테스트
@@ -38,48 +40,58 @@ const fontSamples = [
   },
 ] as const;
 
-export default function FontTestPage() {
+export default function TestPage() {
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-950">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8">
-        <header className="space-y-3">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+        <header className="space-y-2">
           <p className="text-sm font-medium text-zinc-500">/test</p>
-          <h1 className="text-3xl font-semibold tracking-tight">
-            Font Textarea Test
-          </h1>
+          <h1 className="text-3xl font-semibold tracking-tight">Design System Test</h1>
           <p className="max-w-3xl text-sm leading-6 text-zinc-600">
-            각 textarea에 직접 타이핑하면서 Pretendard와 현재 프로젝트에
-            포함된 5개 폰트가 어떻게 렌더링되는지 바로 비교할 수 있습니다.
+            색상 팔레트, 타이포그래피, 버튼, 폰트, 모달을 인터랙티브하게 테스트합니다.
           </p>
         </header>
 
-        <ModalTestButtons />
+        <DesignSystemPanels />
 
-        <section className="grid gap-5 lg:grid-cols-2">
-          {fontSamples.map((font) => (
-            <article
-              key={font.name}
-              className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
-              style={{ fontFamily: font.family }}
-            >
-              <div className="mb-3 flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-lg font-semibold">{font.name}</h2>
-                  <p className="text-sm text-zinc-500">{font.description}</p>
-                </div>
-                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-600">
-                  textarea
-                </span>
-              </div>
+        <CollapseSection
+          title="Custom Modal"
+          description="버튼을 눌러 각 커스텀 모달을 미리봅니다."
+          defaultOpen={false}
+        >
+          <ModalTestButtons />
+        </CollapseSection>
 
-              <textarea
-                className="min-h-56 w-full resize-y rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-lg leading-8 outline-none transition focus:border-zinc-400 focus:bg-white"
-                defaultValue={SAMPLE_TEXT}
+        <CollapseSection
+          title="Font"
+          description="textarea에 직접 타이핑해 폰트 렌더링을 확인합니다."
+          defaultOpen={false}
+        >
+          <section className="grid gap-5 lg:grid-cols-2">
+            {fontSamples.map((font) => (
+              <article
+                key={font.name}
+                className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
                 style={{ fontFamily: font.family }}
-              />
-            </article>
-          ))}
-        </section>
+              >
+                <div className="mb-3 flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-lg font-semibold">{font.name}</h2>
+                    <p className="text-sm text-zinc-500">{font.description}</p>
+                  </div>
+                  <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs text-zinc-600">
+                    textarea
+                  </span>
+                </div>
+                <textarea
+                  className="min-h-56 w-full resize-y rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-lg leading-8 outline-none transition focus:border-zinc-400 focus:bg-white"
+                  defaultValue={SAMPLE_TEXT}
+                  style={{ fontFamily: font.family }}
+                />
+              </article>
+            ))}
+          </section>
+        </CollapseSection>
       </div>
     </main>
   );

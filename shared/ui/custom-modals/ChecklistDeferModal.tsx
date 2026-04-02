@@ -14,7 +14,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
       aria-modal="true"
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
 
       {/* Group */}
       <div

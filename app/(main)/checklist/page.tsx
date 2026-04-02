@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 /* ─── Types ─── */
@@ -109,19 +109,31 @@ function OptionButton({
   );
 }
 
-function PetAvatarPlaceholder() {
+function PetAvatar({
+  src,
+  onButtonClick,
+}: {
+  src: string | null;
+  onButtonClick: () => void;
+}) {
   return (
     <div className="relative mx-auto mb-6 w-fit">
       <div
-        className="flex h-[88px] w-[88px] items-center justify-center rounded-full text-[44px]"
+        className="flex h-[88px] w-[88px] items-center justify-center rounded-full overflow-hidden"
         style={{ background: "var(--color-secondary)" }}
         aria-hidden="true"
       >
-        🐶
+        {src ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={src} alt="반려견 프로필" className="h-full w-full object-cover" />
+        ) : (
+          <span className="text-[44px]">🐶</span>
+        )}
       </div>
       <button
         type="button"
         aria-label="프로필 사진 변경"
+        onClick={onButtonClick}
         className="absolute bottom-0 right-0 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white shadow-md"
       >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -136,6 +148,18 @@ function PetAvatarPlaceholder() {
 export default function ChecklistPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(0);
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setAvatarSrc((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
+  }
   const [petInfo, setPetInfo] = useState<PetInfo>({
     name: "",
     age: "",
@@ -203,7 +227,17 @@ export default function ChecklistPage() {
           {/* ── Step 0: Pet info ── */}
           {step === 0 && (
             <div className="flex flex-col">
-              <PetAvatarPlaceholder />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+              <PetAvatar
+                src={avatarSrc}
+                onButtonClick={() => fileInputRef.current?.click()}
+              />
 
               <div className="grid grid-cols-2 gap-3 md:gap-4">
                 {/* 강아지 이름 */}

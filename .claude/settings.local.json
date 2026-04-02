@@ -11,7 +11,19 @@
       "Bash(pnpm lint:*)",
       "Bash(npx tsc:*)",
       "Bash(ls:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-01-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-01-upper.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-02-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-02-upper.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-03-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-03-upper.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-04-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-04-upper.png\")",
+      "Bash(cp \".claude/assets/designs/custom-modal/asset/custom-modal-01-contents.png\" \"public/images/modal/\")",
+      "Bash(cp \".claude/assets/designs/custom-modal/asset/custom-modal-02-contents.png\" \"public/images/modal/\")",
+      "Bash(cp \".claude/assets/designs/custom-modal/asset/custom-modal-03-contents.png\" \"public/images/modal/\")",
+      "Bash(cp \".claude/assets/designs/custom-modal/asset/custom-modal-04-contents.png\" \"public/images/modal/\")",
+      "Bash(python3 -c ':*)",
+      "Bash(powershell -Command 'Add-Type -AssemblyName System.Drawing; foreach \\($f in @\\('\\\\''public/images/modal/custom-modal-01-contents.png'\\\\'','\\\\''public/images/modal/custom-modal-02-contents.png'\\\\'','\\\\''public/images/modal/custom-modal-03-contents.png'\\\\'','\\\\''public/images/modal/custom-modal-04-contents.png'\\\\''\\)\\) { $img = [System.Drawing.Image]::FromFile\\(\\(Resolve-Path $f\\)\\); Write-Host \"$f: $\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\) }')",
+      "Bash(node -e ':*)",
+      "Bash(python -c ':*)"
     ]
   }
 }

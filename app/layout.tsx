@@ -4,6 +4,7 @@ import "@fontsource/pretendard";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
+import { ModalProvider } from "@/shared/ui";
 
 const msMadi = Ms_Madi({
   weight: "400",
@@ -33,7 +34,9 @@ export default async function RootLayout({
     <html lang="ko">
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
         <AuthProvider initialUser={initialUser}>
-          {children}
+          <ModalProvider>
+            {children}
+          </ModalProvider>
         </AuthProvider>
       </body>
     </html>

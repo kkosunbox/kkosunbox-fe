@@ -116,12 +116,16 @@
   --color-accent-rust: #DC5200;         /* Burnt Orange — hero Ms Madi 장식 텍스트 */
   --color-divider-warm: #F3DFCF;        /* Warm Peach — 모바일 섹션 구분선 */
   --color-link-warm: #C3824E;           /* Warm Link — 로그인 회원가입하기 링크 */
+  --color-link-blue: #1C67D4;           /* Blue Link — 체크리스트 모달 본문 강조 */
   --color-sage: #87AB7D;                /* Sage Green — About CTA 카드 배경 */
 
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
   --gradient-inquiry-bg: linear-gradient(105deg, var(--color-surface-warm) 0%, #ffffff 40%, var(--color-card-standard) 100%);
   --gradient-support-banner: linear-gradient(92.78deg, rgba(254, 234, 215, 0.5) 47.68%, rgba(173, 206, 255, 0.5) 105.7%);
+  --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
+  --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
+  --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
 }
 
 @theme inline {
@@ -164,6 +168,7 @@
   --color-accent-rust: var(--color-accent-rust);
   --color-divider-warm: var(--color-divider-warm);
   --color-link-warm: var(--color-link-warm);
+  --color-link-blue: var(--color-link-blue);
   --color-sage: var(--color-sage);
 
   /* Text */

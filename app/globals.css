@@ -60,6 +60,8 @@
   --color-surface-dark: #171713;  /* Near Black — 다크 섹션 배경 (Stats Bar 등) */
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
   --color-surface-light: #F8F8F8;
+  --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
+  --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
   --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
   --color-footer-text: #999999;   /* Footer 본문·링크·SNS 아이콘 */
@@ -123,6 +125,8 @@
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
   --gradient-inquiry-bg: linear-gradient(105deg, var(--color-surface-warm) 0%, #ffffff 40%, var(--color-card-standard) 100%);
+  /* 문의 페이지 히어로 (Figma: blue→peach, 263.72deg) */
+  --gradient-inquiry-hero: linear-gradient(263.72deg, rgba(173, 206, 255, 0.5) -25.5%, rgba(254, 234, 215, 0.5) 57.97%);
   --gradient-support-banner: linear-gradient(92.78deg, rgba(254, 234, 215, 0.5) 47.68%, rgba(173, 206, 255, 0.5) 105.7%);
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
@@ -143,6 +147,8 @@
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-warm: var(--color-surface-warm);
   --color-surface-light: var(--color-surface-light);
+  --color-support-faq-surface: var(--color-support-faq-surface);
+  --color-support-banner-heading: var(--color-support-banner-heading);
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);
   --color-footer-text: var(--color-footer-text);

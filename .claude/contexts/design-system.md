@@ -34,6 +34,8 @@
 | `--color-surface-dark` | `#171713` | Near Black — 다크 섹션 배경 (Stats Bar 등) |
 | `--color-surface-warm` | `#FFF8F2` | Warm Light — 따뜻한 섹션 배경 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
+| `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |
+| `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
 | `--color-footer-bg` | `#4A4440` | 사이트 푸터 배경 |
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
@@ -87,6 +89,7 @@
 | Token | 값 | 용도 |
 |---|---|---|
 | `--gradient-hero` | `radial-gradient(#F9D6B5→#ECA265)` | Hero 섹션 배경 |
+| `--gradient-inquiry-hero` | `linear-gradient(263.72deg, …)` | 문의 페이지 상단 히어로 (블루→피치) |
 
 ### Tailwind 예외 허용
 

@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { COOKIE_NAME } from "./constants";
 
 // ── Dev credentials (실제 인증으로 교체 시 이 파일만 수정) ──────────────
@@ -32,6 +31,5 @@ export async function loginAction(
 export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
-  redirect("/login");
 }
 

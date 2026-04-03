@@ -93,7 +93,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
       <div className="mx-auto max-w-content px-6 md:px-0">
 
         {/* Hero text */}
-        <div className="mb-10 text-center md:mb-12">
+        <div className="mb-10 text-center md:mb-8">
           <h1 className="text-[28px] font-extrabold leading-[1.35] tracking-[-0.04em] md:text-[36px]">
             <span style={{ color: "var(--color-primary)" }}>딱 맞는 패키지 BOX</span>
             <span className="text-[var(--color-text)]">를</span>

@@ -36,6 +36,7 @@
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-footer-bg` | `#4A4440` | 사이트 푸터 배경 |
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
+| `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
 | `--color-beige` | `#E8CFB9` | Beige — 테두리, 불릿, 서클 bg 등 장식 요소 |
 
 ### Tier

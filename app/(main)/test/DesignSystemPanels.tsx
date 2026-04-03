@@ -26,6 +26,7 @@ const COLOR_GROUPS: { group: string; colors: ColorEntry[] }[] = [
       { token: "surface-light", label: "Surface Light" },
       { token: "surface-dark", label: "Surface Dark" },
       { token: "footer-bg", label: "Footer BG" },
+      { token: "footer-text", label: "Footer Text" },
       { token: "beige", label: "Beige" },
     ],
   },

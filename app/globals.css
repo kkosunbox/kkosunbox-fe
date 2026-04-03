@@ -62,6 +62,7 @@
   --color-surface-light: #F8F8F8;
   --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
   --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
+  --color-footer-text: #999999;   /* Footer 본문·링크·SNS 아이콘 */
   --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
 
   /* Tier */
@@ -144,6 +145,7 @@
   --color-surface-light: var(--color-surface-light);
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);
+  --color-footer-text: var(--color-footer-text);
   --color-beige: var(--color-beige);
 
   /* Tier */

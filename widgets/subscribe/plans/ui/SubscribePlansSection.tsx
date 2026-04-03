@@ -80,15 +80,17 @@ function InfoIcon() {
   );
 }
 
-/* 하트: 채움은 항상 primary, 빈 하트는 #DDDDDD */
+/* 하트: 채움=--color-primary(#C97A3D), 빈 하트=#DDDDDD */
 function HeartIcon({ filled }: { filled: boolean }) {
+  const color = filled ? "var(--color-primary)" : "#DDDDDD";
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
-        d="M12 20.5S5 15 5 9.5a5 5 0 0 1 7-4.58A5 5 0 0 1 19 9.5C19 15 12 20.5 12 20.5Z"
-        fill={filled ? "var(--color-primary)" : "#DDDDDD"}
-        stroke={filled ? "var(--color-primary)" : "#DDDDDD"}
-        strokeWidth="1"
+        d="M4.45067 13.9082L11.4033 20.4395C11.6428 20.6644 11.7625 20.7769 11.9037 20.8046C11.9673 20.8171 12.0327 20.8171 12.0963 20.8046C12.2375 20.7769 12.3572 20.6644 12.5967 20.4395L19.5493 13.9082C21.5055 12.0706 21.743 9.0466 20.0978 6.92607L19.7885 6.52734C17.8203 3.99058 13.8696 4.41601 12.4867 7.31365C12.2913 7.72296 11.7087 7.72296 11.5133 7.31365C10.1304 4.41601 6.17972 3.99058 4.21154 6.52735L3.90219 6.92607C2.25695 9.0466 2.4945 12.0706 4.45067 13.9082Z"
+        fill={color}
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -109,7 +111,7 @@ function PackageDetailView({
 
   return (
     <div
-      className="relative overflow-hidden rounded-[20px] lg:min-h-[570px]"
+      className="relative overflow-hidden rounded-[20px]"
       style={{ background: "var(--color-surface-warm)" }}
     >
       {/* Close button */}
@@ -117,42 +119,44 @@ function PackageDetailView({
         type="button"
         onClick={onClose}
         aria-label="목록으로 돌아가기"
-        className="absolute right-7 top-5 z-10 flex h-6 w-6 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
+        className="absolute right-6 top-5 z-10 flex h-6 w-6 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
       >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
           <path d="M11.5 1.5L1.5 11.5M1.5 1.5L11.5 11.5" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
 
-      <div className="flex flex-col lg:flex-row lg:items-stretch">
+      <div className="flex flex-col lg:flex-row lg:items-stretch lg:min-h-[570px]">
 
-        {/* ── Left panel (full card height) ── */}
-        <div className="flex w-full flex-col p-7 lg:w-[32%] lg:shrink-0">
+        {/* ── Left panel ── */}
+        <div className="flex w-full flex-col px-7 pt-5 pb-7 lg:w-[327px] lg:shrink-0">
 
-          {/* Image area — badge overlaid top-left, image centered */}
-          <div className="relative mb-6 h-[220px] shrink-0">
+          {/* Badge — 카드와 동일한 mb-2.5 간격 */}
+          <div className="mb-2.5">
             <span
-              className="absolute left-0 top-0 z-10 rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
+              className="rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
               style={{ background: pkg.colorVar }}
             >
               {pkg.tier}
             </span>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Image
-                src={mockTempPackage}
-                alt={`${pkg.name} 이미지`}
-                className="h-[150px] w-auto object-contain"
-              />
-            </div>
           </div>
 
-          {/* Name */}
-          <h2 className="mb-5 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
+          {/* Image — 카드와 동일한 h-[150px] + mb-[56px] */}
+          <div className="mb-[56px] flex justify-center">
+            <Image
+              src={mockTempPackage}
+              alt={`${pkg.name} 이미지`}
+              className="h-[150px] w-auto object-contain"
+            />
+          </div>
+
+          {/* Name — 카드와 동일한 mb-7.5 */}
+          <h2 className="mb-7.5 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
             {pkg.name}
           </h2>
 
-          {/* Features */}
-          <ul className="mb-5 flex flex-col gap-[14px]">
+          {/* Features — 카드와 동일한 gap-[14px] gap-2 mb-7 */}
+          <ul className="mb-7 flex flex-col gap-[14px]">
             {pkg.items.map((item) => (
               <li
                 key={item}
@@ -164,43 +168,42 @@ function PackageDetailView({
             ))}
           </ul>
 
-          {/* Price + CTA pushed to bottom */}
-          <div className="mt-auto">
-            <div className="mb-5 flex items-center justify-between border-t border-white pt-5">
-              <span className="text-[14px] font-bold text-[var(--color-text)]">월 요금제</span>
-              <span className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em] text-[var(--color-text)]">
-                {pkg.price}
-              </span>
-            </div>
-            <button
-              type="button"
-              className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ background: pkg.colorVar }}
-            >
-              구독하기
-            </button>
+          {/* Price — 카드와 동일한 mt-auto border-t border-white pt-3 mb-7 */}
+          <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
+            <span className="text-[14px] font-bold text-black">월 요금제</span>
+            <span className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+              {pkg.price}
+            </span>
           </div>
+
+          {/* CTA */}
+          <button
+            type="button"
+            className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+            style={{ background: pkg.colorVar }}
+          >
+            구독하기
+          </button>
         </div>
 
-        {/* ── Right: white panel floating within card on desktop ── */}
-        {/*  Desktop margins: top 61px / bottom 32px / right 28px / left 0  */}
-        <div className="flex flex-1 flex-col p-4 pb-6 lg:pb-[32px] lg:pl-0 lg:pr-[28px] lg:pt-[61px]">
+        {/* ── Right: white card floating inside warm panel ── */}
+        {/* Figma: top 61px / bottom 32px / right 28px / left 0 */}
+        <div className="flex flex-1 flex-col p-4 pb-6 lg:pb-8 lg:pl-0 lg:pr-7 lg:pt-[61px]">
           <div className="flex flex-1 flex-col overflow-hidden rounded-[20px] bg-white">
 
-            {/* Tabs — 48px top padding before tab buttons */}
-            <div className="flex gap-[2px] px-8 pt-12">
+            {/* Tabs */}
+            <div className="flex gap-0.5 px-6 pt-8">
               {COMPARE_PACKAGES.map((p) => (
                 <button
                   key={p.tier}
                   type="button"
                   onClick={() => onSelectTier(p.tier)}
-                  className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors"
+                  className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-[13px]"
                   style={{
                     borderRadius: "20px 20px 0 0",
-                    background:
-                      selectedTier === p.tier ? p.tabActiveBg : "#EAEAEA",
+                    background: selectedTier === p.tier ? p.tabActiveBg : "#EAEAEA",
                     color: selectedTier === p.tier ? "#2F2F2F" : "#999999",
-                    fontSize: selectedTier === p.tier ? "16px" : "14px",
+                    fontSize: selectedTier === p.tier ? "14px" : "13px",
                   }}
                 >
                   {p.name}
@@ -209,18 +212,18 @@ function PackageDetailView({
             </div>
 
             {/* Tab bottom separator */}
-            <div className="mx-8 h-px bg-[#DDDDDD]" />
+            <div className="mx-6 h-px bg-[#DDDDDD]" />
 
             {/* Comparison table */}
-            <div className="overflow-x-auto">
-              <div className="min-w-[380px]">
+            <div className="flex-1 overflow-x-auto">
+              <div className="min-w-[360px] px-6">
 
                 {/* Tier badge row */}
-                <div className="grid grid-cols-3 border-b border-[#DDDDDD]">
+                <div className="grid grid-cols-3">
                   {COMPARE_PACKAGES.map((p) => (
-                    <div key={p.tier} className="flex items-center justify-center px-3 py-6">
+                    <div key={p.tier} className="flex items-center justify-center py-5">
                       <span
-                        className="inline-block rounded-full px-3 py-1 text-[12px] font-semibold text-white"
+                        className="inline-block rounded-full px-3 py-[3px] text-[13px] font-semibold text-white"
                         style={{
                           background: selectedTier === p.tier ? p.colorVar : "#DDDDDD",
                         }}
@@ -231,19 +234,16 @@ function PackageDetailView({
                   ))}
                 </div>
 
-                {/* Quote row — Griun PolFairness 폰트 사용 */}
-                <div className="grid grid-cols-3 divide-x divide-[#DDDDDD] border-b border-[#DDDDDD]">
+                {/* Quote row */}
+                <div className="grid grid-cols-3 divide-x divide-[#DDDDDD] border-t border-b border-[#DDDDDD]">
                   {COMPARE_PACKAGES.map((p) => (
                     <div
                       key={p.tier}
-                      className="flex items-center justify-center px-3 py-[13px]"
+                      className="flex items-center justify-center px-2 py-3"
                     >
                       <p
-                        className="text-center text-[13px] leading-[16px] text-[var(--color-text)]"
-                        style={{
-                          fontFamily:
-                            '"Griun PolFairness", "Griun Fromsol", cursive',
-                        }}
+                        className="text-center text-[13px] leading-[17px] text-[var(--color-text)]"
+                        style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
                       >
                         &ldquo;{p.quote}&rdquo;
                       </p>
@@ -256,12 +256,16 @@ function PackageDetailView({
                   {COMPARE_PACKAGES.map((p) => (
                     <div
                       key={p.tier}
-                      className="flex flex-col items-center justify-center gap-[2px] px-3 py-[13px]"
+                      className="flex flex-col items-center justify-center gap-0.5 px-2 py-3"
                     >
-                      {p.contents.map((c) => (
+                      {p.contents.map((c, i) => (
                         <p
                           key={c}
                           className="text-center text-[13px] leading-[18px] text-[var(--color-text)]"
+                          style={{
+                            fontWeight:
+                              p.tier === "Premium" && i === p.contents.length - 1 ? 700 : 400,
+                          }}
                         >
                           {c}
                         </p>
@@ -270,20 +274,17 @@ function PackageDetailView({
                   ))}
                 </div>
 
-                {/* Special row — Premium는 항상 var(--color-premium) */}
+                {/* Special row */}
                 <div className="grid grid-cols-3 divide-x divide-[#DDDDDD] border-b border-[#DDDDDD]">
                   {COMPARE_PACKAGES.map((p) => (
                     <div
                       key={p.tier}
-                      className="flex items-center justify-center px-3 py-[13px]"
+                      className="flex items-center justify-center px-2 py-3"
                     >
                       <p
                         className="text-center text-[13px] leading-[16px]"
                         style={{
-                          color:
-                            p.tier === "Premium"
-                              ? "var(--color-premium)"
-                              : "var(--color-text)",
+                          color: p.tier === "Premium" ? "var(--color-accent-orange)" : "var(--color-text)",
                           fontWeight: p.tier === "Premium" ? 600 : 400,
                         }}
                       >
@@ -298,7 +299,7 @@ function PackageDetailView({
                   {COMPARE_PACKAGES.map((p) => (
                     <div
                       key={p.tier}
-                      className="flex items-center justify-center px-3 py-[13px]"
+                      className="flex items-center justify-center px-2 py-3"
                     >
                       <p className="text-center text-[13px] leading-[16px] text-[var(--color-text)]">
                         {p.customization}
@@ -307,8 +308,8 @@ function PackageDetailView({
                   ))}
                 </div>
 
-                {/* Hearts row — 채움=primary, 빈=muted, 크기=24px */}
-                <div className="grid grid-cols-3 divide-x divide-[#DDDDDD] py-[13px]">
+                {/* Hearts row */}
+                <div className="grid grid-cols-3 divide-x divide-[#DDDDDD] py-3">
                   {COMPARE_PACKAGES.map((p) => (
                     <div
                       key={p.tier}
@@ -365,7 +366,7 @@ export default function SubscribePlansSection() {
       <section className="bg-white pb-16 md:pt-0 md:pb-20">
         <div className="mx-auto px-6 md:px-0">
           {/* Hero image */}
-          <div className="mb-10 text-center md:mb-12">
+          <div className="mb-10 text-center md:mb-8">
             <Image
               src={SubscribePlansHeroImageMobile}
               alt="Subscribe Plans Hero"
@@ -379,11 +380,13 @@ export default function SubscribePlansSection() {
           </div>
 
           {selectedTier ? (
-            <PackageDetailView
-              selectedTier={selectedTier}
-              onSelectTier={setSelectedTier}
-              onClose={() => setSelectedTier(null)}
-            />
+            <div className="mx-auto w-full max-w-[var(--max-width-content)]">
+              <PackageDetailView
+                selectedTier={selectedTier}
+                onSelectTier={setSelectedTier}
+                onClose={() => setSelectedTier(null)}
+              />
+            </div>
           ) : (
             /* Package cards */
             <div className="mx-auto max-w-content flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
@@ -392,7 +395,7 @@ export default function SubscribePlansSection() {
                   key={pkg.tier}
                   className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
                 >
-                  <div className="mb-5 flex items-center justify-between">
+                  <div className="mb-2.5 flex items-center justify-between">
                     <span
                       className="rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
                       style={{ background: pkg.colorVar }}
@@ -407,7 +410,7 @@ export default function SubscribePlansSection() {
                     </button>
                   </div>
 
-                  <div className="mb-6 flex justify-center">
+                  <div className="mb-[56px] flex justify-center">
                     <Image
                       src={mockTempPackage}
                       alt={`${pkg.name} 이미지`}
@@ -415,11 +418,11 @@ export default function SubscribePlansSection() {
                     />
                   </div>
 
-                  <h2 className="mb-4 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
+                  <h2 className="mb-7.5 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
                     {pkg.name}
                   </h2>
 
-                  <ul className="mb-6 flex flex-col gap-[14px]">
+                  <ul className="mb-7 flex flex-col gap-[14px]">
                     {pkg.items.map((item) => (
                       <li
                         key={item}
@@ -431,7 +434,7 @@ export default function SubscribePlansSection() {
                     ))}
                   </ul>
 
-                  <div className="mb-5 mt-auto flex items-center justify-between border-t border-white pt-5">
+                  <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">
                     <span className="text-[14px] font-bold text-black">월 요금제</span>
                     <span className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
                       {pkg.price}

@@ -35,9 +35,10 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   }, [router]);
 
   const logout = useCallback(async () => {
+    await logoutAction();
     setUser(null);
-    await logoutAction(); // redirect()가 throw하므로 반드시 await
-  }, []);
+    router.push("/login");
+  }, [router]);
 
   return (
     <AuthContext.Provider value={{ user, isLoggedIn: user !== null, login, logout }}>

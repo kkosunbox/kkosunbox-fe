@@ -66,6 +66,9 @@
   --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
   --color-footer-text: #999999;   /* Footer 본문·링크·SNS 아이콘 */
   --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
+  --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
+  --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
+  --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
 
   /* Tier */
   --color-premium: #F07F3D;
@@ -131,6 +134,7 @@
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
+  --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
 }
 
 @theme inline {
@@ -153,6 +157,9 @@
   --color-footer-divider: var(--color-footer-divider);
   --color-footer-text: var(--color-footer-text);
   --color-beige: var(--color-beige);
+  --color-cta-logo-bg: var(--color-cta-logo-bg);
+  --color-cta-sage-bg: var(--color-cta-sage-bg);
+  --color-text-cta: var(--color-text-cta);
 
   /* Tier */
   --color-premium: var(--color-premium);
@@ -244,6 +251,14 @@ button:disabled {
 @utility text-title-40-r  { font-size: 40px; line-height: 64px; font-weight: 400; }
 @utility text-title-32-b  { font-size: 32px; line-height: 40px; font-weight: 700; }
 @utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
+@utility text-title-28-sb { font-size: 28px; line-height: 150%; font-weight: 600; letter-spacing: -0.04em; }
+@utility text-title-28-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 28px;
+  line-height: 120%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
 @utility text-title-24-b  { font-size: 24px; line-height: 36px; font-weight: 700; }
 @utility text-title-24-sb { font-size: 24px; line-height: 36px; font-weight: 600; }
 @utility text-title-24-m  { font-size: 24px; line-height: 36px; font-weight: 500; }
@@ -280,6 +295,21 @@ button:disabled {
 @utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 600; }
 @utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }
 @utility text-body-16-r  { font-size: 16px; line-height: 24px; font-weight: 400; }
+/* Body + Griun PolFairness (About 등 인용·강조 문장) */
+@utility text-body-16-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-body-14-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
 @utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 600; }
 @utility text-body-14-m  { font-size: 14px; line-height: 22px; font-weight: 500; }
 @utility text-body-14-r  { font-size: 14px; line-height: 22px; font-weight: 400; }

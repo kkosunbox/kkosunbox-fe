@@ -1,78 +1,35 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { Text } from "@/shared/ui";
-import logoMain from "@/shared/assets/logo-main.svg";
-
-/* ── 아이콘 ──────────────────────────────────────────────── */
-function LeafIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M17 8C8 10 5.9 16.17 3.82 19.99c.02.01.04.01.06.01C8.09 20 17 18 17 8z"
-        fill="var(--color-basic)"
-      />
-      <path
-        d="M17 8s0 12-14 12"
-        stroke="var(--color-basic)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function HeartIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-        fill="var(--color-premium)"
-      />
-    </svg>
-  );
-}
-
-function DogIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="12" cy="8" r="3.5" fill="var(--color-accent-orange)" />
-      <path
-        d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7"
-        stroke="var(--color-accent-orange)"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <circle cx="7" cy="6" r="1.5" fill="var(--color-accent-orange)" opacity="0.5" />
-      <circle cx="17" cy="6" r="1.5" fill="var(--color-accent-orange)" opacity="0.5" />
-    </svg>
-  );
-}
+import aboutHeroCollage from "../assets/about-hero-collage.png";
+import aboutHeroTitle from "../assets/about-hero-title.png";
+import aboutFeatureHealthy from "../assets/about-feature-healty.png";
+import aboutFeatureCircle01 from "../assets/about-feature-circle-01.png";
+import aboutFeatureCircle02 from "../assets/about-feature-circle-02.png";
+import aboutFeatureCircle03 from "../assets/about-feature-circle-03.png";
+import aboutCtaProduct from "../assets/about-cta-product.png";
+import aboutCtaMark from "../assets/about-cta-mark.png";
+import aboutCtaLogo from "../assets/about-cta-logo.png";
 
 /* ── 피처 카드 ───────────────────────────────────────────── */
 type FeatureCardProps = {
-  icon: React.ReactNode;
-  iconBg: string;
+  circleIcon: typeof aboutFeatureCircle01;
   title: string;
   description: string;
 };
 
-function FeatureCard({ icon, iconBg, title, description }: FeatureCardProps) {
+function FeatureCard({ circleIcon, title, description }: FeatureCardProps) {
   return (
-    <div className="bg-[var(--color-surface-warm)] rounded-2xl px-6 py-8 flex flex-col items-start">
-      <div
-        className="w-12 h-12 rounded-full flex items-center justify-center mb-5"
-        style={{ background: iconBg }}
-      >
-        {icon}
+    <div
+      className="flex flex-col items-center gap-4 rounded-3xl px-6 py-6"
+      style={{ background: "rgba(255, 255, 255, 0.8)", boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.04)" }}
+    >
+      <Image src={circleIcon} alt="" width={52} height={52} aria-hidden />
+      <div className="flex flex-col items-center gap-2 text-center">
+        <p className="text-subtitle-20-b text-[var(--color-text)]">{title}</p>
+        <p className="whitespace-pre-line text-body-14-r text-[var(--color-text)]">{description}</p>
       </div>
-      <Text as="h3" variant="subtitle-18-b" mobileVariant="subtitle-16-sb" className="text-[var(--color-brown-dark)] mb-2">
-        {title}
-      </Text>
-      <Text variant="body-14-r" mobileVariant="body-13-r" className="text-[var(--color-text-body-warm)]">
-        {description}
-      </Text>
     </div>
   );
 }
@@ -82,224 +39,217 @@ export default function AboutSection() {
   return (
     <>
       {/* ━━━━ Section 1: 꼬순박스 소개 ━━━━ */}
-      <section className="bg-[var(--color-background)] py-14 md:py-20">
-        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:px-8 flex flex-col md:flex-row items-center gap-10 md:gap-16">
+      <section className="bg-white py-14 md:py-0">
+        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:pl-8 md:pr-0">
 
-          {/* Left — 텍스트 */}
-          <div className="flex-1 w-full">
-            <Text
-              as="h1"
-              variant="title-32-b"
-              mobileVariant="title-24-b"
-              className="text-[var(--color-brown-dark)] mb-5"
-            >
-              꼬순박스 소개
-            </Text>
-            <Text
-              variant="body-16-r"
-              mobileVariant="body-14-r"
-              className="text-[var(--color-text-body-warm)] mb-5"
-            >
-              우리는 반려견에게 건강을 고를 때 늘 고민했습니다.
-            </Text>
-            <div className="mb-5 flex flex-col gap-1">
-              <p
-                className="italic text-[var(--color-primary)] text-body-16-m"
-                style={{ fontFamily: "var(--font-give-you-glory, inherit)" }}
-              >
-                &ldquo;~ 건강한 것은 건강해!&rdquo;
-              </p>
-              <p
-                className="italic text-[var(--color-primary)] text-body-16-m"
-                style={{ fontFamily: "var(--font-give-you-glory, inherit)" }}
-              >
-                &ldquo;다는 materials 없는 건강해!&rdquo;
-              </p>
-            </div>
-            <Text
-              variant="body-14-r"
-              mobileVariant="body-13-r"
-              className="text-[var(--color-text-body-warm)] mb-6"
-            >
-              사람이 반려견에게 건강하다고 할 수 있는 안전한 간식을
-              올바르게 선택할 수 있도록 꼬순박스가 시작했습니다.
-            </Text>
-            <div className="flex gap-3 text-xl" aria-hidden>
-              <span>🐾</span>
-              <span>🧡</span>
-              <span>🐕</span>
-            </div>
-          </div>
+          {/* 모바일: 콜라주보다 위 — 데스크톱은 텍스트 열 타이틀만 사용 */}
+          <h1 className="mb-6 flex justify-center md:hidden">
+            <Image
+              src={aboutHeroTitle}
+              alt="꼬순박스 소개"
+              width={385}
+              height={59}
+              className="h-auto w-auto max-w-[280px]"
+              sizes="280px"
+              priority
+            />
+          </h1>
 
-          {/* Right — 사진 그리드 */}
-          <div className="flex-1 w-full max-w-[420px] md:max-w-none">
-            <div className="relative flex gap-3 items-start">
-              {/* 메인 사진 (노란 배경 코기) */}
-              <div className="flex-1 rounded-2xl overflow-hidden bg-[var(--color-photo-bg-yellow)] aspect-[3/4] flex items-center justify-center">
-                <span className="text-7xl" aria-hidden>🐕</span>
-                <span className="sr-only">코기 사진 1</span>
-              </div>
-              {/* 보조 사진 (보라 배경 코기) — 아래로 오프셋 */}
-              <div className="flex-1 mt-10 flex flex-col gap-3">
-                <div className="rounded-2xl overflow-hidden bg-[var(--color-photo-bg-lavender)] aspect-[3/4] flex items-center justify-center">
-                  <span className="text-6xl" aria-hidden>🐶</span>
-                  <span className="sr-only">코기 사진 2</span>
+          <div className="flex flex-col items-center gap-10 md:flex-row md:items-center md:gap-16">
+
+            {/* 이미지 — 모바일: 타이틀 아래 / 데스크톱: md:order-last 오른쪽 */}
+            <div className="flex w-full max-w-[520px] flex-1 shrink-0 md:max-h-[597px] md:max-w-none md:min-w-[640px] md:order-last">
+              <div className="flex w-full justify-center md:h-[597px] md:max-h-[597px] md:items-center md:justify-end">
+                <div className="w-full overflow-hidden rounded-2xl md:overflow-visible md:rounded-none">
+                  <Image
+                    src={aboutHeroCollage}
+                    alt="꼬순박스 소개 — 반려견 사진과 브랜드 로고가 담긴 콜라주"
+                    width={1186}
+                    height={1276}
+                    className="h-auto w-full object-contain md:max-h-[597px] md:w-auto md:max-w-none md:object-right"
+                    sizes="(max-width: 767px) 100vw, (min-width: 768px) min(720px, 50vw)"
+                    priority
+                  />
                 </div>
-                {/* Prettykim 크레딧 */}
-                <Text variant="caption-12-r" className="text-[var(--color-text-secondary)] text-right pr-1">
-                  Prettykim
-                </Text>
-              </div>
-              {/* 로고 배지 */}
-              <div className="absolute -top-3 right-[46%] bg-white rounded-xl px-3 py-2 shadow-md z-10">
-                <Image src={logoMain} alt="꼬순박스" className="w-[72px] h-auto" />
               </div>
             </div>
-          </div>
 
+            {/* 텍스트 — DOM 두 번째 (모바일: 이미지 아래, 데스크톱: 왼쪽) */}
+            <div className="flex w-full flex-1 flex-col max-md:items-center md:min-w-[426px]">
+              <h1 className="max-md:hidden mb-10 w-fit max-w-full">
+                <Image
+                  src={aboutHeroTitle}
+                  alt="꼬순박스 소개"
+                  width={385}
+                  height={59}
+                  className="h-auto w-full max-w-[385px]"
+                  sizes="385px"
+                  priority
+                />
+              </h1>
+              <div className="max-w-[426px] space-y-6 max-md:mx-auto max-md:text-center max-md:text-body-14-r text-body-16-r text-[var(--color-text)]">
+                <p>우리는 반려견에게 간식을 고를 때 늘 고민했습니다.</p>
+                <p className="max-md:text-body-14-r-griun text-body-16-r-griun">
+                  &ldquo;이 간식은 정말 건강할까?&rdquo;
+                  <br />
+                  &ldquo;우리 아이에게 맞는 간식일까?&rdquo;
+                </p>
+                <p>꼬순박스는 이런 고민에서 시작되었습니다.</p>
+                <p>
+                  사랑하는 반려견에게 안심하고 먹일 수 있는 건강한 수제간식을 정기적으로 전달하고
+                  싶었습니다.
+                </p>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
-      {/* ━━━━ Section 2: 믿을 수 있는 건강한 간식 ━━━━ */}
+      {/* ━━━━ Section 2: 믿을 수 있는 건강한 간식 + 피처 카드 ━━━━ */}
       <section className="bg-[var(--color-secondary)] py-14 md:py-[72px]">
-        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:px-8 flex flex-col md:flex-row items-center gap-10 md:gap-16">
+        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-12 px-6 md:px-8">
 
-          {/* Left — 음식 이미지 플레이스홀더 */}
-          <div className="flex-1 w-full flex justify-center">
-            <div
-              className="w-full max-w-[320px] md:max-w-[360px] aspect-square rounded-2xl flex items-center justify-center"
-              style={{ background: "var(--color-divider-warm)" }}
-            >
-              <span className="text-8xl" aria-hidden>🍰</span>
-              <span className="sr-only">건강한 수제 간식 이미지</span>
+          {/* 모바일 전용: 헤딩 최상단 (데스크톱에서 숨김) */}
+          <h2 className="md:hidden text-center text-title-28-r-griun text-[var(--color-amber)]">
+            믿을 수 있는 건강한 간식!
+          </h2>
+
+          {/* 상단: 이미지 + 텍스트 */}
+          <div className="flex flex-col items-center gap-10 md:flex-row md:gap-16">
+
+            {/* Left — 간식 이미지 */}
+            <div className="flex w-full flex-1 justify-center">
+              <Image
+                src={aboutFeatureHealthy}
+                alt="건강한 수제 간식"
+                width={378}
+                height={351}
+                className="h-auto w-full max-w-[320px] rounded-[30px] md:max-w-[378px]"
+                sizes="(max-width: 767px) min(100vw - 48px, 320px), 378px"
+              />
             </div>
+
+            {/* Right — 텍스트 */}
+            <div className="flex w-full flex-1 flex-col gap-4 max-md:items-center max-md:text-center">
+              {/* 데스크톱 전용 헤딩 (모바일에서 숨김) */}
+              <h2 className="max-md:hidden text-title-28-r-griun text-[var(--color-amber)]">
+                믿을 수 있는 건강한 간식!
+              </h2>
+              <div className="flex max-w-[426px] flex-col gap-4 text-body-16-m text-[var(--color-text)]">
+                <p>
+                  꼬순박스는 단순한 간식이 아닌<br />
+                  우리 아이의 건강과 행복을 위한 작은 정성이라고 생각합니다.
+                </p>
+                <p>좋은 재료로 정직하게 만들고,</p>
+                <p>
+                  반려견에게 꼭 필요한 영양을 고려하여<br />
+                  건강하고 안전한 간식을 제공합니다.
+                </p>
+              </div>
+            </div>
+
           </div>
 
-          {/* Right — 텍스트 */}
-          <div className="flex-1 w-full">
-            <Text
-              as="p"
-              variant="body-14-m"
-              mobileVariant="body-13-r"
-              className="text-[var(--color-amber)] mb-1"
-            >
-              믿을 수 있는
-            </Text>
-            <Text
-              as="h2"
-              variant="title-32-b"
-              mobileVariant="title-24-b"
-              className="text-[var(--color-brown-dark)] mb-6"
-            >
-              건강한 간식
-            </Text>
-            <Text
-              variant="body-16-r"
-              mobileVariant="body-14-r"
-              className="text-[var(--color-text-body-warm)] mb-4"
-            >
-              꼬순박스는 간식의 원재료부터 제조까지<br />
-              우리 아이 건강을 위해 합성 첨가물·방부제 없이 정직하게 만들었습니다.
-            </Text>
-            <Text
-              variant="body-16-r"
-              mobileVariant="body-14-r"
-              className="text-[var(--color-text-warm)]"
-            >
-              좋은 재료로 정성껏 만든 꼬순박스의<br />
-              간식으로 안전한 간식을 경험해보세요.
-            </Text>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ━━━━ Section 3: 피처 카드 3개 ━━━━ */}
-      <section className="bg-white py-14 md:py-[72px]">
-        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {/* 하단: 피처 카드 3개 */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
             <FeatureCard
-              icon={<LeafIcon />}
-              iconBg="rgba(63, 105, 0, 0.12)"
+              circleIcon={aboutFeatureCircle01}
               title="건강한 재료"
-              description="100% 국내산 휴먼그레이드 재료만 엄선하여 합성 첨가물 없이 제조합니다."
+              description={"반려견에게 안전하고 건강한\n재료만 사용합니다."}
             />
             <FeatureCard
-              icon={<HeartIcon />}
-              iconBg="rgba(240, 127, 61, 0.12)"
-              title="장난기 가득 수제간식"
-              description="사람이 직접 손으로 만든 수제 간식으로 우리 아이에게 기쁨을 드립니다."
+              circleIcon={aboutFeatureCircle02}
+              title="정성 가득 수제간식"
+              description={"사람의 손길로 정성을\n가득 넣어 만듭니다."}
             />
             <FeatureCard
-              icon={<DogIcon />}
-              iconBg="rgba(238, 104, 26, 0.10)"
+              circleIcon={aboutFeatureCircle03}
               title="우리 아이 맞춤 간식"
-              description="반려견의 연령·체중·알레르기에 맞춘 300g 단위 맞춤 패키지로 구성됩니다."
+              description={"반려견의 특성과\n건강 상태를 고려합니다."}
             />
           </div>
+
         </div>
       </section>
 
       {/* ━━━━ Section 4: CTA ━━━━ */}
-      <section className="bg-[var(--color-brown-dark)] py-14 md:py-[72px]">
-        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:px-8">
+      <section className="bg-[var(--color-support-faq-surface)] py-14 md:py-[72px]">
+        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-8 px-6 md:px-8">
+
+          {/* 헤딩 */}
           <Text
             as="h2"
-            variant="title-24-sb"
-            mobileVariant="subtitle-18-b"
-            className="text-white text-center mb-8 md:mb-10"
+            variant="title-28-sb"
+            mobileVariant="title-24-b"
+            className="text-center text-[var(--color-text-cta)]"
           >
             건강하고 안전한 간식을 선물하세요!
           </Text>
 
-          <div className="flex flex-col md:flex-row gap-4 items-stretch">
-            {/* Left — 스택 카드 2개 */}
-            <div className="flex flex-col gap-4 flex-1">
-              {/* 로고 카드 */}
-              <div className="bg-[var(--color-primary)] rounded-2xl flex items-center justify-center py-6 px-6 gap-3">
-                <Image src={logoMain} alt="꼬순박스" className="w-[96px] h-auto brightness-0 invert" />
-                <span className="text-white text-2xl" aria-hidden>🐾</span>
+          {/* 카드 영역 */}
+          <div className="flex flex-col items-stretch gap-4 md:flex-row md:gap-[25px]">
+
+            {/* Left: 로고 카드 + 텍스트 카드 — 모바일에서 상품 카드 아래 (order-2) */}
+            <div className="flex flex-col gap-5 max-md:order-2 md:w-[403px] md:shrink-0">
+
+              {/* 로고 카드 (피치) — h: 135px */}
+              <div className="flex items-center justify-center rounded-2xl bg-[var(--color-cta-logo-bg)] px-6 py-5 md:h-[135px] md:py-0">
+                <Image
+                  src={aboutCtaLogo}
+                  alt="꼬순박스"
+                  width={200}
+                  height={52}
+                  className="h-auto w-auto max-w-[200px]"
+                />
               </div>
-              {/* 세이지 텍스트 카드 */}
-              <div className="bg-[var(--color-sage)] rounded-2xl px-6 py-6 flex items-center">
-                <Text
-                  as="p"
-                  variant="subtitle-18-b"
-                  mobileVariant="subtitle-16-sb"
-                  className="text-white leading-relaxed"
-                >
+
+              {/* 텍스트 카드 (세이지 그린) — h: 314px */}
+              <div className="relative flex flex-1 flex-col justify-end rounded-2xl bg-[var(--color-cta-sage-bg)] px-6 pb-[42px] pt-10 md:h-[314px]">
+                <Image
+                  src={aboutCtaMark}
+                  alt=""
+                  width={53}
+                  height={44}
+                  aria-hidden
+                  className="absolute right-8 top-[14px] rotate-[19deg]"
+                />
+                <p className="max-md:text-subtitle-20-b text-title-28-sb text-[var(--color-text-cta)]">
                   우리 아이의<br />
                   행복한 간식 시간을<br />
                   꼬순박스와 함께하세요.
-                </Text>
+                </p>
               </div>
+
             </div>
 
-            {/* Right — 상품 이미지 플레이스홀더 */}
-            <div className="flex-1 flex items-center justify-center">
-              <div
-                className="w-full rounded-2xl flex items-center justify-center py-12"
-                style={{ background: "var(--color-amber)" }}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <span className="text-6xl" aria-hidden>📦</span>
-                  <span className="text-5xl -mt-4 rotate-6" aria-hidden>📦</span>
-                  <span className="sr-only">꼬순박스 상품 이미지</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 구독 CTA 링크 */}
-          <div className="flex justify-center mt-8">
-            <Link
-              href="/subscribe"
-              className="inline-flex items-center justify-center rounded-full bg-white text-[var(--color-brown-dark)] px-8 h-[52px] text-subtitle-16-sb hover:bg-[var(--color-secondary)] transition-colors"
+            {/* Right: 상품 이미지 카드 — 모바일에서 최상단 (order-1) */}
+            <div
+              className="relative min-h-[320px] flex-1 overflow-hidden rounded-2xl max-md:order-1 md:min-h-[469px]"
+              style={{ background: "var(--gradient-cta-product)" }}
             >
-              구독 시작하기
-            </Link>
-          </div>
+              {/* 장식 링 — Vector 229: top 106px, height 323px, 좌우 10px 안쪽 */}
+              <div
+                className="pointer-events-none absolute"
+                style={{
+                  top: 106,
+                  height: 323,
+                  left: 10,
+                  right: 10,
+                  border: "32px solid rgba(255, 249, 243, 0.3)",
+                }}
+              />
+              {/* 상품 이미지 */}
+              <Image
+                src={aboutCtaProduct}
+                alt="꼬순박스 상품"
+                fill
+                className="object-contain object-top"
+                sizes="(max-width: 767px) 100vw, 585px"
+              />
+            </div>
 
+          </div>
         </div>
       </section>
     </>

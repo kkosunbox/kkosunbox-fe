@@ -6,6 +6,7 @@ export type TypographyVariant =
   | "title-40-r"
   | "title-32-b"
   | "title-32-r"
+  | "title-28-sb"
   | "title-24-b"
   | "title-24-sb"
   | "title-24-m"
@@ -44,6 +45,7 @@ const BASE: Record<TypographyVariant, string> = {
   "title-40-r":             "text-title-40-r",
   "title-32-b":             "text-title-32-b",
   "title-32-r":             "text-title-32-r",
+  "title-28-sb":            "text-title-28-sb",
   "title-24-b":             "text-title-24-b",
   "title-24-sb":            "text-title-24-sb",
   "title-24-m":             "text-title-24-m",
@@ -85,6 +87,7 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "title-40-r":             "max-md:text-title-40-r",
   "title-32-b":             "max-md:text-title-32-b",
   "title-32-r":             "max-md:text-title-32-r",
+  "title-28-sb":            "max-md:text-title-28-sb",
   "title-24-b":             "max-md:text-title-24-b",
   "title-24-sb":            "max-md:text-title-24-sb",
   "title-24-m":             "max-md:text-title-24-m",

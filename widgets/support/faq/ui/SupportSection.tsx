@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
-import { Text } from "@/shared/ui";
+import Image from "next/image";
+import FaqTitle from "../assets/faq-title.png";
+import FaqQuestion from "../assets/faq-question.png";
+import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 /* ── FAQ 데이터 ──────────────────────────────────────────── */
 const FAQ_ITEMS = [
@@ -70,33 +73,65 @@ const FAQ_ITEMS = [
 
 const ITEMS_PER_PAGE = 6;
 
-/* ── 아이콘 ──────────────────────────────────────────────── */
-function PawCircleIcon() {
-  return (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-secondary)]">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <ellipse cx="12" cy="15.5" rx="5" ry="4" fill="var(--color-primary)" />
-        <ellipse cx="6.5"  cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-        <ellipse cx="10"   cy="8.5"  rx="2" ry="2.5" fill="var(--color-primary)" />
-        <ellipse cx="14"   cy="8.5"  rx="2" ry="2.5" fill="var(--color-primary)" />
-        <ellipse cx="17.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-      </svg>
-    </div>
-  );
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/** 검색어와 부분 일치 구간을 primary 색으로 강조 (필터와 동일하게 대소문자 무시). */
+function highlightMatch(text: string, rawQuery: string): ReactNode {
+  const q = rawQuery.trim();
+  if (!q) return text;
+  try {
+    const re = new RegExp(escapeRegExp(q), "gi");
+    const nodes: ReactNode[] = [];
+    let lastIndex = 0;
+    let m: RegExpExecArray | null;
+    let key = 0;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > lastIndex) {
+        nodes.push(text.slice(lastIndex, m.index));
+      }
+      nodes.push(
+        <span key={`faq-hl-${key++}`} className="text-[var(--color-primary)]">
+          {m[0]}
+        </span>,
+      );
+      lastIndex = m.index + m[0].length;
+    }
+    if (lastIndex < text.length) {
+      nodes.push(text.slice(lastIndex));
+    }
+    return nodes.length > 0 ? nodes : text;
+  } catch {
+    return text;
+  }
+}
+
+/* ── 아이콘 ──────────────────────────────────────────────── */
 function ChevronLeftIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M12.5 15L7.5 10L12.5 5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
 
 function ChevronRightIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M7.5 5L12.5 10L7.5 15"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -104,32 +139,36 @@ function ChevronRightIcon() {
 function SearchIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-      <circle cx="6.5" cy="6.5" r="5" stroke="var(--color-text-secondary)" strokeWidth="1.22" />
-      <path d="M10.5 10.5L13.5 13.5" stroke="var(--color-text-secondary)" strokeWidth="1.22" strokeLinecap="round" />
+      <circle cx="6.5" cy="6.5" r="5" stroke="var(--color-text-secondary)" strokeWidth="1.23" />
+      <path
+        d="M10.5 10.5L13.5 13.5"
+        stroke="var(--color-text-secondary)"
+        strokeWidth="1.23"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
 export default function SupportSection() {
-  const [query, setQuery]   = useState("");
-  const [page, setPage]     = useState(1);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return FAQ_ITEMS;
     return FAQ_ITEMS.filter(
       (item) =>
-        item.question.toLowerCase().includes(q) ||
-        item.answer.toLowerCase().includes(q)
+        item.question.toLowerCase().includes(q) || item.answer.toLowerCase().includes(q),
     );
   }, [query]);
 
-  const totalPages   = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const currentPage  = Math.min(page, totalPages);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
   const currentItems = filtered.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    currentPage * ITEMS_PER_PAGE,
   );
 
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,124 +177,153 @@ export default function SupportSection() {
   };
 
   return (
-    <div className="bg-white min-h-screen py-12 md:py-[50px]">
-      <div className="mx-auto max-w-[var(--max-width-content)] px-4 md:px-8 flex flex-col gap-6">
+    <div className="min-h-screen bg-white py-10 max-md:py-8 md:py-[50px]">
+      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-6 px-4 max-md:px-4 md:px-8">
+        {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
+        <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
+          <Image
+            src={FaqTitle}
+            width={172}
+            height={25}
+            alt="꼬순박스 고객센터"
+            className="h-[25px] w-auto"
+            priority
+          />
+          <p
+            className="max-w-[415px] text-[16px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
+            style={{
+              fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+            }}
+          >
+            궁금하거나 요청하실 사항이 있으시면 상세히 안내해 드리겠습니다.
+          </p>
+        </header>
 
-        {/* ── 배너 카드 ── */}
-        <div
-          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-2xl px-8 md:px-14 py-7 md:h-[124px]"
+        {/* ── CTA 배너 (Figma 118px, gradient, pill 버튼) ── */}
+        <section
+          className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] mt-4 px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
           style={{ background: "var(--gradient-support-banner)" }}
+          aria-label="1:1 문의 안내"
         >
-          <div className="flex flex-col gap-1">
-            <p
-              className="text-[24px] leading-[25px] tracking-[-0.04em] text-[var(--color-brown)]"
-              style={{ fontFamily: "'GangwonEduPower', sans-serif" }}
-            >
-              꼬순박스에 궁금한 점이 있으신가요?
-            </p>
-            <Text variant="body-16-m" className="text-[var(--color-text)]">
+          <div className="flex w-full flex-col gap-[11px] max-md:items-center max-md:text-center md:max-w-[330px] md:items-start md:text-left">
+            <Image
+              src={FaqQuestion}
+              alt="꼬순박스에 궁금한 점이 있으신가요?"
+              width={FaqQuestion.width}
+              height={FaqQuestion.height}
+              sizes="(max-width: 767px) 100vw, 320px"
+              className="h-auto max-md:w-full md:w-[320px]"
+            />
+            <p className="text-[14px] font-medium capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
               1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다.
-            </Text>
+            </p>
           </div>
           <Link
             href="/inquiry"
-            className="shrink-0 inline-flex items-center justify-center rounded-full bg-[var(--color-accent)] text-white w-full md:w-[200px] h-[48px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em]"
+            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
           >
             문의하기
           </Link>
-        </div>
+        </section>
 
-        {/* ── FAQ 섹션 ── */}
-        <div className="rounded-2xl bg-[var(--color-background)] px-6 py-8 md:px-[45px] md:py-10">
-
-          {/* 검색창 */}
-          <div className="flex justify-center mb-8">
-            <label className="relative w-full md:w-[320px]">
+        {/* ── FAQ 패널 (#FFF7EF) ── */}
+        <section
+          className="rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] md:pb-7 md:pt-6"
+          aria-label="자주 묻는 질문"
+        >
+          {/* 검색 + 내 문의내역 */}
+          <div className="mb-6 grid w-full grid-cols-1 gap-3 md:mb-8 md:grid-cols-[1fr_auto_1fr] md:items-center">
+            <div aria-hidden="true" className="max-md:hidden" />
+            <label className="mx-auto flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-full bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:mx-0 md:w-[320px] md:shrink-0">
               <span className="sr-only">질문 검색</span>
-              <span className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2">
-                <SearchIcon />
-              </span>
+              <SearchIcon />
               <input
-                type="text"
+                type="search"
                 placeholder="질문을 검색하세요"
                 value={query}
                 onChange={handleQueryChange}
-                className="w-full h-[40px] rounded-full bg-white pl-[38px] pr-5 text-[14px] font-medium leading-[17px] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none"
-                style={{ boxShadow: "0px 0.74px 1.47px rgba(16, 24, 40, 0.05)" }}
+                className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[14px] font-medium leading-[17px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
               />
             </label>
+            <div className="flex justify-center md:justify-end">
+              <Link
+                href="/support/history"
+                className="text-right text-[14px] font-medium leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
+              >
+                내 문의내역
+              </Link>
+            </div>
           </div>
 
-          {/* 카드 그리드 */}
           {currentItems.length > 0 ? (
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {currentItems.map((item, idx) => (
+            <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {currentItems.map((item) => (
                 <li
-                  key={idx}
-                  className="flex flex-col gap-3 rounded-2xl bg-white p-4 md:p-[16px] min-h-[208px]"
+                  key={item.question}
+                  className="flex min-h-[208px] flex-col gap-3 rounded-[20px] bg-white p-4 md:p-4"
                 >
                   <PawCircleIcon />
-                  <p className="text-body-14-sb text-[var(--color-text)] mt-1">
-                    {item.question}
-                  </p>
-                  <Text variant="body-14-m" className="text-[var(--color-text)]">
-                    {item.answer}
-                  </Text>
+                  <div className="flex flex-col gap-2">
+                    <p className="text-body-14-sb text-[var(--color-text)]">
+                      {highlightMatch(item.question, query)}
+                    </p>
+                    <p className="text-[14px] font-medium leading-5 text-[var(--color-text)]">
+                      {highlightMatch(item.answer, query)}
+                    </p>
+                  </div>
                 </li>
               ))}
             </ul>
           ) : (
             <div className="flex flex-col items-center py-16">
-              <Text variant="body-16-r" className="text-[var(--color-text-secondary)]">
-                검색 결과가 없습니다.
-              </Text>
+              <p className="text-[16px] text-[var(--color-text-secondary)]">검색 결과가 없습니다.</p>
             </div>
           )}
 
-          {/* 페이지네이션 */}
           {totalPages > 1 && (
-            <nav
-              className="mt-8 flex items-center justify-center gap-2"
-              aria-label="FAQ 페이지 탐색"
-            >
+            <nav className="mt-8 flex items-center justify-center gap-2" aria-label="FAQ 페이지 탐색">
               <button
+                type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
                 aria-label="이전 페이지"
-                className="flex h-5 w-5 items-center justify-center text-[var(--color-text-muted)] disabled:opacity-40"
+                className="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--color-ui-disabled)] disabled:opacity-40"
               >
                 <ChevronLeftIcon />
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  aria-label={`${p}페이지`}
-                  aria-current={currentPage === p ? "page" : undefined}
-                  className={[
-                    "flex h-5 w-5 items-center justify-center rounded-full text-[13px] leading-[16px] font-normal",
-                    currentPage === p
-                      ? "text-[var(--color-text)]"
-                      : "text-[var(--color-text-secondary)]",
-                  ].join(" ")}
-                >
-                  {p}
-                </button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
+                const active = currentPage === p;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setPage(p)}
+                    aria-label={`${p}페이지`}
+                    aria-current={active ? "page" : undefined}
+                    className={
+                      active
+                        ? "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-[13px] font-semibold leading-4 text-[var(--color-text)]"
+                        : "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-[13px] font-normal leading-4 text-[var(--color-text)]"
+                    }
+                  >
+                    {p}
+                  </button>
+                );
+              })}
 
               <button
+                type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
                 aria-label="다음 페이지"
-                className="flex h-5 w-5 items-center justify-center text-[var(--color-text-muted)] disabled:opacity-40"
+                className="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--color-ui-disabled)] disabled:opacity-40"
               >
                 <ChevronRightIcon />
               </button>
             </nav>
           )}
-
-        </div>
+        </section>
       </div>
     </div>
   );

@@ -53,6 +53,7 @@
   --color-primary: #C97A3D;       /* Corgi Brown — 로고, 브랜드 아이콘, 메인 버튼 */
   --color-secondary: #F6E9DD;     /* Warm Beige — 카드, 섹션 배경, 패키지 디자인 */
   --color-accent: #7FB3FF;        /* Soft Sky Blue — 버튼, 링크, 강조 요소, CTA */
+  --color-accent-soft: #E5F0FF;   /* Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) */
   --color-accent-orange: #EE681A; /* Warm Orange — 데코 강조 ("for you" 등) */
 
   /* Surface */
@@ -60,10 +61,15 @@
   --color-surface-dark: #171713;  /* Near Black — 다크 섹션 배경 (Stats Bar 등) */
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
   --color-surface-light: #F8F8F8;
+  --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
+  --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
   --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
   --color-footer-text: #999999;   /* Footer 본문·링크·SNS 아이콘 */
   --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
+  --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
+  --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
+  --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
 
   /* Tier */
   --color-premium: #F07F3D;
@@ -123,10 +129,15 @@
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
   --gradient-inquiry-bg: linear-gradient(105deg, var(--color-surface-warm) 0%, #ffffff 40%, var(--color-card-standard) 100%);
+  /* 문의 페이지 히어로 (Figma: blue→peach, 263.72deg) */
+  --gradient-inquiry-hero: linear-gradient(263.72deg, rgba(173, 206, 255, 0.5) -25.5%, rgba(254, 234, 215, 0.5) 57.97%);
+  /* 체크리스트 페이지 히어로 (Figma 268.21deg, 피치→크림) */
+  --gradient-checklist-hero: linear-gradient(268.21deg, rgba(255, 223, 173, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
   --gradient-support-banner: linear-gradient(92.78deg, rgba(254, 234, 215, 0.5) 47.68%, rgba(173, 206, 255, 0.5) 105.7%);
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
+  --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
 }
 
 @theme inline {
@@ -137,16 +148,22 @@
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
   --color-accent: var(--color-accent);
+  --color-accent-soft: var(--color-accent-soft);
   --color-accent-orange: var(--color-accent-orange);
 
   /* Surface */
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-warm: var(--color-surface-warm);
   --color-surface-light: var(--color-surface-light);
+  --color-support-faq-surface: var(--color-support-faq-surface);
+  --color-support-banner-heading: var(--color-support-banner-heading);
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);
   --color-footer-text: var(--color-footer-text);
   --color-beige: var(--color-beige);
+  --color-cta-logo-bg: var(--color-cta-logo-bg);
+  --color-cta-sage-bg: var(--color-cta-sage-bg);
+  --color-text-cta: var(--color-text-cta);
 
   /* Tier */
   --color-premium: var(--color-premium);
@@ -238,6 +255,14 @@ button:disabled {
 @utility text-title-40-r  { font-size: 40px; line-height: 64px; font-weight: 400; }
 @utility text-title-32-b  { font-size: 32px; line-height: 40px; font-weight: 700; }
 @utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
+@utility text-title-28-sb { font-size: 28px; line-height: 150%; font-weight: 600; letter-spacing: -0.04em; }
+@utility text-title-28-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 28px;
+  line-height: 120%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
 @utility text-title-24-b  { font-size: 24px; line-height: 36px; font-weight: 700; }
 @utility text-title-24-sb { font-size: 24px; line-height: 36px; font-weight: 600; }
 @utility text-title-24-m  { font-size: 24px; line-height: 36px; font-weight: 500; }
@@ -269,10 +294,26 @@ button:disabled {
 @utility text-subtitle-16-sb { font-size: 16px; line-height: 20px; font-weight: 600; }
 
 /* Body */
+@utility text-body-20-sb { font-size: 20px; line-height: 24px; font-weight: 600; }
 @utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
 @utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 600; }
 @utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }
 @utility text-body-16-r  { font-size: 16px; line-height: 24px; font-weight: 400; }
+/* Body + Griun PolFairness (About 등 인용·강조 문장) */
+@utility text-body-16-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-body-14-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
 @utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 600; }
 @utility text-body-14-m  { font-size: 14px; line-height: 22px; font-weight: 500; }
 @utility text-body-14-r  { font-size: 14px; line-height: 22px; font-weight: 400; }

@@ -24,6 +24,7 @@
 | `--color-primary` | `#C97A3D` | Corgi Brown — 로고, 브랜드 아이콘, 메인 버튼 |
 | `--color-secondary` | `#F6E9DD` | Warm Beige — 카드, 섹션 배경, 패키지 디자인 |
 | `--color-accent` | `#7FB3FF` | Soft Sky Blue — 링크, 강조 요소, CTA |
+| `--color-accent-soft` | `#E5F0FF` | Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) |
 | `--color-accent-orange` | `#EE681A` | Warm Orange — 데코 강조 ("for you" 등) |
 
 ### Surface
@@ -34,6 +35,8 @@
 | `--color-surface-dark` | `#171713` | Near Black — 다크 섹션 배경 (Stats Bar 등) |
 | `--color-surface-warm` | `#FFF8F2` | Warm Light — 따뜻한 섹션 배경 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
+| `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |
+| `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
 | `--color-footer-bg` | `#4A4440` | 사이트 푸터 배경 |
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
@@ -87,6 +90,8 @@
 | Token | 값 | 용도 |
 |---|---|---|
 | `--gradient-hero` | `radial-gradient(#F9D6B5→#ECA265)` | Hero 섹션 배경 |
+| `--gradient-inquiry-hero` | `linear-gradient(263.72deg, …)` | 문의 페이지 상단 히어로 (블루→피치) |
+| `--gradient-checklist-hero` | `linear-gradient(268.21deg, …)` | 체크리스트 페이지 상단 히어로 (피치→크림) |
 
 ### Tailwind 예외 허용
 

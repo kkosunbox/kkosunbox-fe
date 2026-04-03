@@ -42,10 +42,15 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 
 | Class | font-size | line-height | font-weight |
 |---|---|---|---|
+| `text-body-20-sb` | 20px | 24px | 600 |
 | `text-body-16-m` | 16px | 24px | 500 |
 | `text-body-16-r` | 16px | 24px | 400 |
+| `text-body-16-r-griun` | 16px | 24px | 400 |
 | `text-body-14-m` | 14px | 22px | 500 |
 | `text-body-14-r` | 14px | 22px | 400 |
+| `text-body-14-r-griun` | 14px | 22px | 400 |
+
+`text-body-16-r-griun` / `text-body-14-r-griun`: font-family **Griun PolFairness** (`globals.css` `@font-face`).
 
 ### Footer (피그마 푸터 링크)
 

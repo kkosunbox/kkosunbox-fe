@@ -6,6 +6,8 @@ export interface DatePickerProps {
   value: Date | null;
   onChange: (date: Date) => void;
   placeholder?: string;
+  /** 선택 시 트리거에 보여 줄 문자열 (미지정 시 `YYYY. MM. DD` 형식) */
+  formatDisplay?: (date: Date) => string;
   /** wrapper div에 적용할 className */
   className?: string;
   /** trigger 버튼에 추가로 적용할 className (기본 스타일을 오버라이드) */
@@ -49,20 +51,22 @@ function startOfDay(d: Date): Date {
 function CalendarTriggerIcon({ active }: { active: boolean }) {
   return (
     <svg
-      width="17"
-      height="17"
-      viewBox="0 0 17 17"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
       fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       className="shrink-0 transition-colors"
-      style={{ color: active ? "var(--color-primary)" : "var(--color-text-secondary)" }}
+      style={{ color: active ? "var(--color-accent)" : "var(--color-text-secondary)" }}
     >
-      <rect x="1.5" y="2.5" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M1.5 7h14" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M5.5 1v3M11.5 1v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-      <rect x="4" y="9.5" width="2" height="2" rx="0.4" fill="currentColor" />
-      <rect x="7.5" y="9.5" width="2" height="2" rx="0.4" fill="currentColor" />
-      <rect x="11" y="9.5" width="2" height="2" rx="0.4" fill="currentColor" />
+      <path
+        d="M6.66667 5.83333V2.5M13.3333 5.83333V2.5M5.83333 9.16667H14.1667M4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V5.83333C17.5 4.91286 16.7538 4.16667 15.8333 4.16667H4.16667C3.24619 4.16667 2.5 4.91286 2.5 5.83333V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5Z"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -105,6 +109,7 @@ export default function DatePicker({
   value,
   onChange,
   placeholder = "날짜 선택",
+  formatDisplay,
   className,
   triggerClassName,
   minDate,
@@ -114,6 +119,12 @@ export default function DatePicker({
 }: DatePickerProps) {
   const today = startOfDay(new Date());
 
+  const displayLabel = value
+    ? formatDisplay
+      ? formatDisplay(value)
+      : formatDate(value)
+    : null;
+
   const [isOpen, setIsOpen] = useState(false);
   const [openUp, setOpenUp] = useState(false);
   const [viewYear, setViewYear] = useState(
@@ -122,6 +133,17 @@ export default function DatePicker({
   const [viewMonth, setViewMonth] = useState(
     () => value?.getMonth() ?? today.getMonth()
   );
+
+  /* 외부에서 value가 바뀌면 달력이 보이는 연·월을 맞춤 (effect 대신 렌더 중 동기화 — cascading effect 경고 회피) */
+  const valueEpoch = value?.getTime() ?? null;
+  const [syncedValueEpoch, setSyncedValueEpoch] = useState<number | null>(() => valueEpoch);
+  if (valueEpoch !== syncedValueEpoch) {
+    setSyncedValueEpoch(valueEpoch);
+    if (value) {
+      setViewYear(value.getFullYear());
+      setViewMonth(value.getMonth());
+    }
+  }
 
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -147,14 +169,6 @@ export default function DatePicker({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen]);
-
-  /* value가 외부에서 변경되면 뷰 동기화 */
-  useEffect(() => {
-    if (value) {
-      setViewYear(value.getFullYear());
-      setViewMonth(value.getMonth());
-    }
-  }, [value]);
 
   const prevYear  = useCallback(() => setViewYear((y) => y - 1), []);
   const nextYear  = useCallback(() => setViewYear((y) => y + 1), []);
@@ -226,7 +240,7 @@ export default function DatePicker({
         }}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        aria-label={value ? `선택된 날짜: ${formatDate(value)}` : placeholder}
+        aria-label={value && displayLabel ? `선택된 날짜: ${displayLabel}` : placeholder}
         className={triggerBase}
       >
         <span
@@ -237,7 +251,7 @@ export default function DatePicker({
               : "font-medium text-[var(--color-text-secondary)]",
           ].join(" ")}
         >
-          {value ? formatDate(value) : placeholder}
+          {displayLabel ?? placeholder}
         </span>
         <CalendarTriggerIcon active={isOpen || !!value} />
       </button>

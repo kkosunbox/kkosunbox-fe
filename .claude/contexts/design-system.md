@@ -24,6 +24,7 @@
 | `--color-primary` | `#C97A3D` | Corgi Brown — 로고, 브랜드 아이콘, 메인 버튼 |
 | `--color-secondary` | `#F6E9DD` | Warm Beige — 카드, 섹션 배경, 패키지 디자인 |
 | `--color-accent` | `#7FB3FF` | Soft Sky Blue — 링크, 강조 요소, CTA |
+| `--color-accent-soft` | `#E5F0FF` | Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) |
 | `--color-accent-orange` | `#EE681A` | Warm Orange — 데코 강조 ("for you" 등) |
 
 ### Surface
@@ -90,6 +91,7 @@
 |---|---|---|
 | `--gradient-hero` | `radial-gradient(#F9D6B5→#ECA265)` | Hero 섹션 배경 |
 | `--gradient-inquiry-hero` | `linear-gradient(263.72deg, …)` | 문의 페이지 상단 히어로 (블루→피치) |
+| `--gradient-checklist-hero` | `linear-gradient(268.21deg, …)` | 체크리스트 페이지 상단 히어로 (피치→크림) |
 
 ### Tailwind 예외 허용
 

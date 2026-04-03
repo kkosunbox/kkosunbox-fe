@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.png";
+import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.png";
 
 interface FormState {
   name: string;
@@ -101,25 +102,34 @@ export default function InquirySection() {
     <div className="bg-white pb-16 pb-12">
       {/* 히어로 — Figma 215px, gradient */}
       <section
-        className="flex flex-col items-center md:min-h-[215px] px-4 pb-8 max-md:pb-6 max-md:pt-6 md:pb-10 md:pt-[42px]"
+        className="flex flex-col items-center min-h-[182px] md:min-h-[215px] px-4 pb-8 max-md:pb-6 max-md:pt-12 md:pb-10 md:pt-[42px]"
         style={{ background: "var(--gradient-inquiry-hero)" }}
         aria-label="문의 페이지 소개"
       >
         <Image
+          src={InquiryTitleMobile}
+          alt="문의하기"
+          width={97}
+          height={38}
+          sizes="97px"
+          className="max-md:block max-md:w-[97px] md:hidden"
+          priority
+        />
+        <Image
           src={InquiryTitle}
           alt="문의하기"
-          width={110}
-          height={40}
-          className=""
+          width={InquiryTitle.width}
+          height={InquiryTitle.height}
+          className="max-md:hidden md:block md:h-auto md:w-auto"
           priority
         />
         <p
-          className="mt-8 max-w-[345px] text-center text-[16px] font-normal leading-5 tracking-[-0.02em] text-[var(--color-text)]"
+          className="mt-4 md:mt-8 max-w-[345px] text-center text-[16px] font-normal leading-5 tracking-[-0.02em] text-[var(--color-text)]"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}
         >
-          우리 강아지가 꼬순박스만 오면 현관문 앞에서 기다려요!
+          궁금한 사항이 있으시면 상세히 안내해 드리겠습니다.
         </p>
       </section>
 
@@ -127,7 +137,7 @@ export default function InquirySection() {
       <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-8">
         <form
           onSubmit={handleSubmit}
-          className="-mt-10 max-md:-mt-8 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] md:px-8 md:py-12"
+          className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] md:px-8 md:py-12"
         >
           <div className="mx-auto flex w-full max-w-[718px] flex-col gap-6">
             {/* Row 1 */}

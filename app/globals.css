@@ -138,6 +138,7 @@
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
   --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
+  --gradient-checklist-result: linear-gradient(101.78deg, #FFF4EA 41.37%, #FFBF9A 118.84%); /* 체크리스트 결과 배너 (Figma) */
 }
 
 @theme inline {

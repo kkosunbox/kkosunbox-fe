@@ -3,26 +3,19 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.png";
+import checklistDoneTitle from "../assets/checklist-done-title.png";
+import doubleTwinkle from "@/widgets/subscribe/recommend/assets/double-twinkle.png";
+import stamp from "@/widgets/subscribe/recommend/assets/stamp.png";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
-import doubleTwinkle from "../assets/double-twinkle.png";
-import stamp from "../assets/stamp.png";
 import { PACKAGES } from "@/widgets/subscribe/plans/ui/packageData";
 import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
 import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
-
-export type RecommendedTier = "basic" | "standard" | "premium";
+import type { PetInfo, RecommendedTier } from "./types";
 
 const TIER_LABEL: Record<RecommendedTier, string> = {
   basic: "베이직",
   standard: "스탠다드",
   premium: "프리미엄",
-};
-
-const TIER_DISPLAY: Record<RecommendedTier, PackageTier> = {
-  basic: "Basic",
-  standard: "Standard",
-  premium: "Premium",
 };
 
 /* ── Icons ─── */
@@ -53,35 +46,25 @@ function InfoIcon() {
   );
 }
 
-function PetAvatarPlaceholder() {
-  return (
-    <div
-      className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] text-[28px] md:h-[78px] md:w-[78px] md:text-[34px]"
-      style={{ background: "var(--color-secondary)" }}
-      aria-hidden="true"
-    >
-      🐶
-    </div>
-  );
-}
-
-interface RecommendSectionProps {
+/* ── Props ─── */
+interface Props {
+  petInfo: PetInfo;
+  avatarSrc: string | null;
   recommendedTier: RecommendedTier;
-  petName: string;
 }
 
-export default function RecommendSection({ recommendedTier, petName }: RecommendSectionProps) {
+export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }: Props) {
   const router = useRouter();
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
 
+  const petName = petInfo.name.trim() || "우리 아이";
   const recommended = PACKAGES.find((p) => p.id === recommendedTier)!;
-  const petNameDisplay = petName || "우리 아이";
 
   /* 상세 뷰 */
   if (selectedTier) {
     return (
-      <section className="bg-white py-16 md:py-20">
-        <div className="mx-auto max-w-content px-6 md:px-0">
+      <section className="min-h-[calc(100vh-54px)] bg-white py-10 md:py-14">
+        <div className="mx-auto w-full max-w-[1013px] px-4 md:px-8">
           <PackageDetailView
             key={selectedTier}
             selectedTier={selectedTier}
@@ -94,61 +77,68 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
   }
 
   return (
-    <section className="bg-white py-16 md:pt-10 md:pb-16">
-      <div className="mx-auto max-w-content px-6 md:px-0">
+    <section className="min-h-[calc(100vh-54px)] bg-white py-10 md:py-14">
+      <div className="mx-auto w-full max-w-[1013px] px-4 md:px-8">
 
-        {/* Hero */}
-        <div className="mb-10 flex justify-center md:mb-8">
+        {/* 완료 타이틀 */}
+        <div className="mb-8 flex justify-center md:mb-10">
           <h1 className="m-0">
             <Image
               src={checklistDoneTitle}
               alt="체크리스트 분석 완료!"
-              className="mx-auto h-auto max-md:w-[min(100%,320px)] md:max-w-[198px] md:w-auto"
+              className="mx-auto h-auto max-md:w-[min(100%,280px)] md:w-auto md:max-w-[198px]"
               priority
             />
           </h1>
         </div>
 
-        {/* Recommendation banner */}
+        {/* 추천 배너 */}
         <div
-          className="mb-8 overflow-hidden rounded-[20px] md:mb-10 md:h-[126px]"
+          className="mb-6 flex items-center gap-5 overflow-hidden rounded-[20px] px-6 py-5 md:mb-8 md:gap-6 md:h-[126px] md:px-8 md:py-0"
           style={{ background: "var(--gradient-checklist-result)" }}
         >
-          <div className="relative flex items-center gap-5 px-6 py-5 md:h-full md:gap-6 md:px-8">
-            <PetAvatarPlaceholder />
-            <div className="flex flex-col gap-2">
-              <span
-                className="w-fit rounded-full px-3 py-1 text-[13px] font-semibold leading-[1] text-white md:px-4 md:text-[14px]"
-                style={{ background: recommended.colorVar }}
-              >
-                {TIER_DISPLAY[recommendedTier]}
-              </span>
-              <p
-                className="max-w-[537px] text-[13px] leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] md:text-[16px]"
-                style={{
-                  fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-                }}
-              >
-                체크리스트 분석 완료!{" "}
-                <strong className="font-bold" style={{ color: "var(--color-text)" }}>
-                  {petNameDisplay}
-                </strong>
-                에게 꼭 필요한 영양만 꽉 채운{" "}
-                <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>
-                입니다.
-              </p>
-            </div>
+          {/* 반려견 아바타 */}
+          <div
+            className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] md:h-[78px] md:w-[78px]"
+            style={{ background: "var(--color-secondary)" }}
+          >
+            {avatarSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-[32px] md:text-[38px]">🐶</span>
+            )}
+          </div>
+
+          {/* 추천 내용 */}
+          <div className="flex flex-col gap-2">
+            <span
+              className="w-fit rounded-full px-3 py-1 text-[13px] font-semibold leading-[1] text-white md:px-4 md:text-[14px]"
+              style={{ background: recommended.colorVar }}
+            >
+              {petName}
+            </span>
+            <p
+              className="text-[13px] leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] md:text-[16px]"
+              style={{
+                fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+              }}
+            >
+              체크리스트 분석 완료!{" "}
+              <strong className="font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+              <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>입니다.
+            </p>
           </div>
         </div>
 
-        {/* Package cards */}
+        {/* 패키지 카드 3종 */}
         <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
           {PACKAGES.map((pkg) => {
             const isRecommended = pkg.id === recommendedTier;
             return (
               <div
                 key={pkg.tier}
-                className="flex flex-col rounded-[20px] px-7 pb-7 pt-5"
+                className="flex flex-col rounded-[20px] px-6 pb-7 pt-5"
                 style={{ background: "var(--color-support-faq-surface)" }}
               >
                 {/* 상단: 칩 + ⓘ 버튼 */}
@@ -181,7 +171,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                     <Image
                       src={stamp}
                       alt="BEST CHOICE 추천 스탬프"
-                      className="absolute right-0 top-0 md:-right-3 md:-top-7 h-[72px] w-[72px] object-contain md:h-[140px] md:w-[140px]"
+                      className="absolute -right-5 -top-8 h-[72px] w-[72px] object-contain md:h-[140px] md:w-[140px]"
                     />
                   )}
                 </div>
@@ -193,7 +183,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                       src={doubleTwinkle}
                       alt=""
                       aria-hidden
-                      className="absolute -left-2 -top-5 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
+                      className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
                     />
                   )}
                   <h2 className="text-[20px] font-extrabold leading-[1.2] tracking-[-0.04em] text-[var(--color-text)]">
@@ -217,7 +207,10 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                 {/* 가격 */}
                 <div className="mb-5 mt-auto flex items-center justify-between border-t border-white pt-5">
                   <span className="text-[13px] font-bold text-[var(--color-text)]">월 요금제</span>
-                  <span className="text-[20px] font-extrabold leading-[1] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+                  <span
+                    className="text-[20px] font-extrabold leading-[1] tracking-[-0.05em]"
+                    style={{ color: "var(--color-surface-dark)" }}
+                  >
                     {pkg.price}
                   </span>
                 </div>
@@ -226,7 +219,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                 <button
                   type="button"
                   onClick={() => router.push("/order")}
-                  className="flex h-[52px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
+                  className="flex h-[48px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
                   style={{ background: pkg.colorVar }}
                 >
                   구독하기
@@ -235,7 +228,6 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
             );
           })}
         </div>
-
       </div>
     </section>
   );

@@ -1,156 +1,64 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DatePicker } from "@/shared/ui";
-import checklistHeroPcPattern from "../assets/checklist-hero-pc-pattern.png";
-import checklistHeroTitle from "../assets/checklist-hero-title.png";
+import { Button } from "@/shared/ui";
+import ChecklistHero from "./ChecklistHero";
+import ChecklistPetForm from "./ChecklistPetForm";
+import ChecklistQuestionStep from "./ChecklistQuestionStep";
+import ChecklistResult from "./ChecklistResult";
+import { mockRecommend } from "./types";
+import type { Step, PetInfo, Answers, RecommendedTier } from "./types";
 
-/* ─── Types ─── */
-type Step = 0 | 1 | 2 | 3 | 4;
-type Gender = "male" | "female" | null;
-type RecommendedTier = "basic" | "standard" | "premium";
+const CTA_CLASS =
+  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-[16px] font-semibold transition-opacity hover:opacity-90 active:opacity-80";
 
-interface PetInfo {
-  name: string;
-  birthDate: Date | null;
-  weight: string;
-  gender: Gender;
-}
-
-function formatBirthDateDisplay(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}.${m}.${d}`;
-}
-
-interface Answers {
-  allergies: string[];
-  healthCare: string[];
-  snack: string[];
-  texture: string[];
-}
-
-/* ─── Step config ─── */
-const STEPS = [
-  {
-    index: 1 as const,
-    title: "알러지가 있나요?",
-    label: "알러지 유무",
-    key: "allergies" as keyof Answers,
-    options: ["닭고기 알러지", "유제품(우유) 알러지", "소고기 알러지", "밀(곡물) 알러지"],
-    next: "다음",
-  },
-  {
-    index: 2 as const,
-    title: "어떤 건강 케어가 필요한가요?",
-    label: "건강 케어",
-    key: "healthCare" as keyof Answers,
-    options: ["피모 관리", "관절강화", "다이어트", "치아 건강"],
-    next: "다음",
-  },
-  {
-    index: 3 as const,
-    title: "선호하는 간식은 무엇인가요?",
-    label: "선호하는 간식",
-    key: "snack" as keyof Answers,
-    options: ["건조간식", "천연 껌 / 뼈", "동결건조", "수제쿠키"],
-    next: "다음",
-  },
-  {
-    index: 4 as const,
-    title: "선호하는 제형은 무엇인가요?",
-    label: "선호하는 제형",
-    key: "texture" as keyof Answers,
-    options: ["바삭형", "가루형", "딱딱형", "소프트형"],
-    next: "결과보기",
-  },
-] as const;
-
-/* ─── Mock recommendation logic (replace with API later) ─── */
-function mockRecommend(petInfo: PetInfo, answers: Answers): RecommendedTier {
-  const specialCare = answers.healthCare.filter((h) =>
-    ["관절강화", "다이어트"].includes(h)
-  ).length;
-  const score = answers.allergies.length + specialCare;
-  if (score >= 2) return "premium";
-  if (score >= 1) return "standard";
-  return "basic";
-}
-
-/* ─── Sub-components ─── */
-function ProgressBar({ current }: { current: number }) {
-  return (
-    <div className="flex gap-1.5 md:gap-2" aria-label={`${current} / 4 단계`}>
-      {[1, 2, 3, 4].map((n) => (
-        <div
-          key={n}
-          className="h-[5px] w-[52px] rounded-full transition-colors duration-300 md:w-[60px]"
-          style={{ background: n <= current ? "var(--color-accent)" : "var(--color-beige)" }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function OptionButton({
-  label,
-  selected,
-  onClick,
+/* ─── Leave confirm modal ─── */
+function LeaveConfirmModal({
+  onConfirm,
+  onCancel,
 }: {
-  label: string;
-  selected: boolean;
-  onClick: () => void;
+  onConfirm: () => void;
+  onCancel: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex h-[52px] w-full items-center justify-center rounded-full border-2 text-[14px] font-medium transition-colors md:text-[15px]"
-      style={{
-        borderColor: selected ? "var(--color-accent)" : "transparent",
-        background: selected ? "white" : "var(--color-surface-light)",
-        color: selected ? "var(--color-accent)" : "var(--color-text)",
-      }}
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="leave-modal-title"
     >
-      {label}
-    </button>
-  );
-}
-
-function PetAvatar({
-  src,
-  onButtonClick,
-}: {
-  src: string | null;
-  onButtonClick: () => void;
-}) {
-  return (
-    <div className="relative mx-auto mb-6 w-fit">
-      <div
-        className="flex h-[88px] w-[88px] items-center justify-center rounded-full overflow-hidden"
-        style={{ background: "var(--color-secondary)" }}
-        aria-hidden="true"
-      >
-        {src ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={src} alt="반려견 프로필" className="h-full w-full object-cover" />
-        ) : (
-          <span className="text-[44px]">🐶</span>
-        )}
+      <div className="absolute inset-0 bg-black/50" onClick={onCancel} aria-hidden="true" />
+      <div className="relative z-10 w-full max-w-[320px] rounded-[24px] bg-white px-6 py-8 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] md:max-w-[360px]">
+        <p
+          id="leave-modal-title"
+          className="text-center text-[17px] font-bold leading-[1.4] tracking-[-0.02em] text-[var(--color-text)] md:text-[18px]"
+        >
+          작성 중인 내용이 있어요
+        </p>
+        <p className="mt-3 text-center text-[13px] font-medium leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)] md:text-[14px]">
+          페이지를 나가면 지금까지 작성한
+          <br />
+          내용이 저장되지 않아요.
+        </p>
+        <div className="mt-7 flex flex-col gap-2.5">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="h-[48px] w-full rounded-full text-[14px] font-semibold tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 md:text-[15px]"
+            style={{ background: "var(--color-accent)" }}
+          >
+            계속 작성하기
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] text-[14px] font-medium tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70 md:text-[15px]"
+          >
+            나가기
+          </button>
+        </div>
       </div>
-      <button
-        type="button"
-        aria-label="프로필 사진 변경"
-        onClick={onButtonClick}
-        className="absolute bottom-0 right-0 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white shadow-md"
-      >
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M9.5 1.5L11.5 3.5L4.5 10.5H2.5V8.5L9.5 1.5Z" stroke="var(--color-text-on-warm)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
     </div>
   );
 }
@@ -160,32 +68,142 @@ export default function ChecklistSection() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(0);
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setAvatarSrc((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return url;
-    });
-  }
   const [petInfo, setPetInfo] = useState<PetInfo>({
     name: "",
     birthDate: null,
     weight: "",
     gender: null,
   });
-
-  const birthMaxDate = new Date();
-  const birthMinDate = new Date(birthMaxDate.getFullYear() - 40, 0, 1);
   const [answers, setAnswers] = useState<Answers>({
     allergies: [],
     healthCare: [],
     snack: [],
     texture: [],
   });
+  const [recommendedTier, setRecommendedTier] = useState<RecommendedTier | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const pendingNavigateRef = useRef<(() => void) | null>(null);
+
+  // step=5(결과)는 완료 상태 — 이탈 가드 불필요
+  const isDirty =
+    step > 0 &&
+    step < 5 &&
+    (petInfo.name !== "" ||
+      petInfo.birthDate !== null ||
+      petInfo.weight !== "" ||
+      petInfo.gender !== null);
+
+  const isDirtyRef = useRef(isDirty);
+  const isConfirmedLeaveRef = useRef(false);
+
+  useEffect(() => {
+    isDirtyRef.current = isDirty;
+  });
+
+  /* avatar URL 정리 */
+  function handleAvatarChange(src: string | null) {
+    setAvatarSrc((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return src;
+    });
+  }
+
+  /* ① beforeunload */
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (!isDirtyRef.current) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, []);
+
+  /* ② <a> 클릭 차단 */
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!isDirtyRef.current || isConfirmedLeaveRef.current) return;
+      const anchor = (e.target as Element).closest("a[href]") as HTMLAnchorElement | null;
+      if (!anchor) return;
+      try {
+        const url = new URL(anchor.href, window.location.origin);
+        if (url.origin !== window.location.origin) return;
+        if (url.pathname === window.location.pathname) return;
+      } catch {
+        return;
+      }
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const targetHref = anchor.href;
+      pendingNavigateRef.current = () => {
+        isConfirmedLeaveRef.current = true;
+        router.push(targetHref);
+      };
+      setShowLeaveModal(true);
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, [router]);
+
+  /* ③ history.pushState 패치 */
+  useEffect(() => {
+    const original = window.history.pushState.bind(window.history);
+    window.history.pushState = function (
+      state: unknown,
+      unused: string,
+      url?: string | URL | null,
+    ) {
+      if (isDirtyRef.current && !isConfirmedLeaveRef.current && url != null) {
+        try {
+          const targetPath = new URL(url.toString(), window.location.origin).pathname;
+          if (targetPath !== window.location.pathname) {
+            const targetUrl = url.toString();
+            pendingNavigateRef.current = () => {
+              isConfirmedLeaveRef.current = true;
+              router.push(targetUrl);
+            };
+            setShowLeaveModal(true);
+            return;
+          }
+        } catch {
+          /* URL 파싱 실패 시 통과 */
+        }
+      }
+      original(state, unused, url);
+    };
+    return () => {
+      window.history.pushState = original;
+    };
+  }, [router]);
+
+  /* ④ popstate: 뒤로가기 */
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handler = () => {
+      if (!isDirtyRef.current || isConfirmedLeaveRef.current) return;
+      window.history.pushState(null, "", window.location.href);
+      pendingNavigateRef.current = () => {
+        isConfirmedLeaveRef.current = true;
+        window.history.go(-2);
+      };
+      setShowLeaveModal(true);
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
+
+  function handleLeaveConfirm() {
+    setShowLeaveModal(false);
+    const navigate = pendingNavigateRef.current;
+    pendingNavigateRef.current = null;
+    navigate?.();
+  }
+
+  function handleLeaveCancel() {
+    setShowLeaveModal(false);
+    pendingNavigateRef.current = null;
+  }
 
   function toggleOption(key: keyof Answers, value: string) {
     setAnswers((prev) => {
@@ -199,10 +217,8 @@ export default function ChecklistSection() {
     });
   }
 
-  function handleStepNext() {
-    if (step < 4) {
-      setStep((prev) => (prev + 1) as Step);
-    }
+  function handleNext() {
+    if (step < 4) setStep((prev) => (prev + 1) as Step);
   }
 
   function handleBack() {
@@ -210,203 +226,118 @@ export default function ChecklistSection() {
   }
 
   function handleSubmit() {
-    const tier = mockRecommend(petInfo, answers);
+    isConfirmedLeaveRef.current = true;
+    const tier = mockRecommend(answers);
+    setRecommendedTier(tier);
     localStorage.setItem("kkosun_checklist_done", "true");
-    const petName = petInfo.name.trim() || "우리 아이";
-    router.push(`/recommend?tier=${tier}&petName=${encodeURIComponent(petName)}`);
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setStep(5);
+    }, 2500);
   }
 
-  const currentStepConfig = step > 0 ? STEPS[step - 1] : null;
-
-  return (
-    <div className="min-h-[calc(100vh-54px)] bg-white pb-12 md:pb-16">
-      <section
-        className="relative flex h-[210px] shrink-0 flex-col items-center justify-center overflow-hidden px-4"
-        style={{ background: "var(--gradient-checklist-hero)" }}
-        aria-label="체크리스트 페이지 소개"
-      >
-        {/* 중간층: 그라데이션 위 · 텍스트 아래 — max 940px, 히어로 내 가로·세로 중앙 */}
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center px-4"
-          aria-hidden
-        >
-          <Image
-            src={checklistHeroPcPattern}
-            alt=""
-            width={checklistHeroPcPattern.width}
-            height={checklistHeroPcPattern.height}
-            className="h-auto w-full max-w-[940px] object-contain"
-            sizes="(max-width: 940px) 100vw, 940px"
-            priority
+  /* 분석 로딩 화면 */
+  if (isAnalyzing) {
+    return (
+      <div className="flex min-h-[calc(100vh-54px)] flex-col items-center justify-center gap-6 bg-white px-4">
+        {/* 스피너 */}
+        <div className="relative h-16 w-16">
+          <div
+            className="absolute inset-0 animate-spin rounded-full border-4 border-transparent"
+            style={{ borderTopColor: "var(--color-accent-orange)", borderRightColor: "var(--color-accent-orange)" }}
+          />
+          <div
+            className="absolute inset-[6px] animate-spin rounded-full border-4 border-transparent [animation-direction:reverse] [animation-duration:0.8s]"
+            style={{ borderTopColor: "var(--color-basic)", borderRightColor: "var(--color-basic)" }}
           />
         </div>
-        {/* 최상층: 가운데 정렬 타이포 */}
-        <div className="relative z-10 flex flex-col items-center text-center">
-          <h1 className="m-0 flex w-full max-w-[940px] justify-center px-1">
-            <Image
-              src={checklistHeroTitle}
-              alt="체크리스트를 작성해주세요!"
-              width={checklistHeroTitle.width}
-              height={checklistHeroTitle.height}
-              className="h-auto w-full max-w-full object-contain"
-              sizes="(max-width: 940px) 100vw, 940px"
-              priority
-            />
-          </h1>
-          <p
-            className="mt-3 max-w-[345px] px-2 text-[16px] font-normal leading-5 tracking-[-0.02em] text-[var(--color-text)]"
-            style={{
-              fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-            }}
-          >
-            강아지의 특징과 선호하는 간식을 작성해주세요!
-          </p>
-        </div>
-      </section>
+        {/* 문구 */}
+        <p
+          className="text-center text-[16px] leading-[1.7] tracking-[-0.02em] text-[var(--color-text)] md:text-[18px]"
+          style={{
+            fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+          }}
+        >
+          체크리스트를 생성성하고 있습니다.
+          <br />
+          잠시만 기다려주세요
+        </p>
+      </div>
+    );
+  }
 
-      <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-8">
-        <div className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] md:px-8 md:py-12">
-          <div className="mx-auto w-full max-w-[900px]">
-            {step === 0 && (
-              <div className="flex flex-col">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarChange}
+  /* step=5: 결과 페이지 */
+  if (step === 5 && recommendedTier) {
+    return (
+      <ChecklistResult
+        petInfo={petInfo}
+        avatarSrc={avatarSrc}
+        recommendedTier={recommendedTier}
+      />
+    );
+  }
+
+  /* step 0~4: 히어로 + 폼 카드 */
+  const ctaLabel =
+    step === 0
+      ? "체크리스트 작성하기"
+      : step === 4
+        ? "결과보기"
+        : "다음";
+
+  function handleMobileCta() {
+    if (step === 4) handleSubmit();
+    else handleNext();
+  }
+
+  return (
+    <>
+      <div className="min-h-[calc(100vh-54px)] bg-white pb-12 max-md:bg-[var(--color-background)] md:bg-white md:pb-16">
+        <ChecklistHero />
+
+        <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 md:px-8">
+          <div className="rounded-[20px] bg-white px-5 py-8 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:-mt-12 md:-mt-[50px] md:px-8 md:py-12">
+            <div className="mx-auto w-full max-w-[900px]">
+              {step === 0 && (
+                <ChecklistPetForm
+                  petInfo={petInfo}
+                  setPetInfo={setPetInfo}
+                  avatarSrc={avatarSrc}
+                  onAvatarChange={handleAvatarChange}
+                  onNext={handleNext}
                 />
-                <PetAvatar
-                  src={avatarSrc}
-                  onButtonClick={() => fileInputRef.current?.click()}
+              )}
+              {step > 0 && step < 5 && (
+                <ChecklistQuestionStep
+                  step={step as 1 | 2 | 3 | 4}
+                  answers={answers}
+                  onToggle={toggleOption}
+                  onBack={handleBack}
+                  onNext={step === 4 ? handleSubmit : handleNext}
                 />
+              )}
+            </div>
+          </div>
 
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[12px] text-[var(--color-text-secondary)]">강아지 이름</label>
-                    <input
-                      type="text"
-                      placeholder="이름"
-                      value={petInfo.name}
-                      onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
-                      className="h-[52px] rounded-full bg-[var(--color-surface-light)] px-5 text-[14px] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="checklist-pet-birth" className="text-[12px] text-[var(--color-text-secondary)]">
-                      생년월일
-                    </label>
-                    <DatePicker
-                      id="checklist-pet-birth"
-                      value={petInfo.birthDate}
-                      onChange={(date) => setPetInfo((p) => ({ ...p, birthDate: date }))}
-                      placeholder="생년월일 선택"
-                      formatDisplay={formatBirthDateDisplay}
-                      minDate={birthMinDate}
-                      maxDate={birthMaxDate}
-                      triggerClassName="!h-[52px] !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[12px] text-[var(--color-text-secondary)]">몸무게</label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        placeholder=""
-                        value={petInfo.weight}
-                        onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
-                        className="h-[52px] w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-[14px] text-[var(--color-text)] outline-none"
-                      />
-                      <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[13px] text-[var(--color-text-secondary)]">
-                        kg
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[12px] text-[var(--color-text-secondary)]">성별</label>
-                    <div className="flex gap-2.5">
-                      {(["male", "female"] as const).map((g) => {
-                        const selected = petInfo.gender === g;
-                        return (
-                          <button
-                            key={g}
-                            type="button"
-                            onClick={() => setPetInfo((p) => ({ ...p, gender: g }))}
-                            className={[
-                              "flex h-10 min-w-0 flex-1 items-center justify-center rounded-[10px] px-2.5 text-[14px] font-semibold leading-[17px] transition-colors",
-                              selected
-                                ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
-                                : "bg-[var(--color-surface-light)] text-[var(--color-text)]",
-                            ].join(" ")}
-                          >
-                            {g === "male" ? "남" : "여"}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleStepNext}
-                  className="mt-8 flex h-[56px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: "var(--color-accent)" }}
-                >
-                  체크리스트 작성하기
-                </button>
-              </div>
-            )}
-
-            {step > 0 && currentStepConfig && (
-              <div className="flex flex-col">
-                <div className="mb-8 flex items-center justify-between gap-4">
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    className="flex items-center gap-1.5 text-[16px] font-bold text-[var(--color-text)] md:text-[18px]"
-                    aria-label="이전 단계로"
-                  >
-                    <svg width="9" height="16" viewBox="0 0 9 16" fill="none" aria-hidden="true">
-                      <path d="M8 1L1 8L8 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    {currentStepConfig.title}
-                  </button>
-                  <ProgressBar current={step} />
-                </div>
-
-                <div className="mb-8">
-                  <p className="mb-3 text-[12px] text-[var(--color-text-secondary)]">
-                    {currentStepConfig.label}
-                  </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {currentStepConfig.options.map((option) => (
-                      <OptionButton
-                        key={option}
-                        label={option}
-                        selected={answers[currentStepConfig.key].includes(option)}
-                        onClick={() => toggleOption(currentStepConfig.key, option)}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={step === 4 ? handleSubmit : handleStepNext}
-                  className="flex h-[56px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: "var(--color-accent)" }}
-                >
-                  {currentStepConfig.next}
-                </button>
-              </div>
-            )}
+          {/* 모바일 CTA */}
+          <div className="mt-6 w-full md:hidden">
+            <Button
+              type="button"
+              onClick={handleMobileCta}
+              variant="primary"
+              size="lg"
+              className={CTA_CLASS}
+            >
+              {ctaLabel}
+            </Button>
           </div>
         </div>
       </div>
-    </div>
+
+      {showLeaveModal && (
+        <LeaveConfirmModal onConfirm={handleLeaveConfirm} onCancel={handleLeaveCancel} />
+      )}
+    </>
   );
 }

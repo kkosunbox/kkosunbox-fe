@@ -96,10 +96,10 @@ function CancelModal({ onConfirm, onClose }: { onConfirm: () => void; onClose: (
         className="w-full max-w-[360px] rounded-2xl bg-white px-7 py-8 text-center shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-2 text-[18px] font-extrabold tracking-[-0.03em] text-[var(--color-text)]">
+        <h2 className="mb-2 text-subtitle-18-eb text-[var(--color-text)]">
           구독을 취소하시겠어요?
         </h2>
-        <p className="mb-7 text-[14px] leading-[1.7] text-[var(--color-text-secondary)]">
+        <p className="mb-7 text-body-14-r text-[var(--color-text-secondary)]">
           취소 후에는 현재 결제 기간이 끝날 때까지
           <br />
           서비스를 이용할 수 있습니다.
@@ -108,14 +108,14 @@ function CancelModal({ onConfirm, onClose }: { onConfirm: () => void; onClose: (
           <button
             type="button"
             onClick={onClose}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-[14px] font-semibold text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             유지하기
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
+            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-body-14-sb text-white transition-opacity hover:opacity-90"
             style={{ background: "var(--color-text-secondary)" }}
           >
             취소하기
@@ -150,30 +150,30 @@ function ChangePlanModal({
         className="w-full max-w-[360px] rounded-2xl bg-white px-7 py-8 text-center shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-2 text-[18px] font-extrabold tracking-[-0.03em] text-[var(--color-text)]">
+        <h2 className="mb-2 text-subtitle-18-eb text-[var(--color-text)]">
           구독 플랜을 변경할까요?
         </h2>
-        <p className="mb-1 text-[14px] leading-[1.7] text-[var(--color-text-secondary)]">
+        <p className="mb-1 text-body-14-r text-[var(--color-text-secondary)]">
           <span className="font-semibold" style={{ color: colorVar }}>
             {targetTier} 패키지
           </span>
           로 변경됩니다.
         </p>
-        <p className="mb-7 text-[13px] leading-[1.6] text-[var(--color-text-secondary)]">
+        <p className="mb-7 text-body-13-r text-[var(--color-text-secondary)]">
           다음 결제일부터 새 플랜이 적용됩니다.
         </p>
         <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-[14px] font-semibold text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             취소
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
+            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-body-14-sb text-white transition-opacity hover:opacity-90"
             style={{ background: colorVar }}
           >
             변경하기
@@ -229,11 +229,11 @@ export default function SubscriptionManagementSection() {
 
       <div className="min-h-screen bg-white">
         {/* Page header */}
-        <div className="mx-auto max-w-content px-4 pb-2 pt-6 md:px-8 md:pt-10">
+        <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-2 pt-6 md:pt-10">
           <button
             type="button"
             onClick={() => router.back()}
-            className="mb-6 flex items-center gap-1 text-[16px] font-semibold text-[var(--color-text)] hover:opacity-70"
+            className="mb-6 flex items-center gap-1 text-subtitle-16-sb text-[var(--color-text)] hover:opacity-70"
           >
             <ChevronLeftIcon />
             구독관리
@@ -254,7 +254,7 @@ export default function SubscriptionManagementSection() {
               </div>
               <div>
                 <span
-                  className="mb-2 inline-flex items-center rounded-full px-3 py-1 text-[12px] font-bold text-white"
+                  className="mb-2 inline-flex items-center rounded-full px-3 py-1 text-caption-12-b text-white"
                   style={{ background: currentPkg.colorVar }}
                 >
                   {cancelled ? "구독 취소됨" : currentTier}
@@ -285,7 +285,7 @@ export default function SubscriptionManagementSection() {
                 <button
                   type="button"
                   onClick={() => setShowCancelModal(true)}
-                  className="flex h-[40px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] px-5 text-[14px] font-semibold text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:flex-none"
+                  className="flex h-[40px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] px-5 text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:flex-none"
                 >
                   구독 취소
                 </button>
@@ -295,7 +295,7 @@ export default function SubscriptionManagementSection() {
                     const el = document.getElementById("subscription-plans");
                     el?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="flex h-[40px] flex-1 items-center justify-center rounded-full px-5 text-[14px] font-semibold text-white transition-opacity hover:opacity-90 md:flex-none"
+                  className="flex h-[40px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
                   style={{ background: "var(--color-accent)" }}
                 >
                   구독 변경
@@ -306,7 +306,7 @@ export default function SubscriptionManagementSection() {
         </div>
 
         {/* Plans section */}
-        <div id="subscription-plans" className="mx-auto max-w-content px-4 py-10 md:px-8">
+        <div id="subscription-plans" className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
           <Text as="h2" variant="subtitle-18-b" className="mb-6 text-[var(--color-text)]">
             구독 추가하기
           </Text>
@@ -327,14 +327,14 @@ export default function SubscriptionManagementSection() {
                   <div className="mb-5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span
-                        className="rounded-full px-4 py-1 text-[14px] font-semibold leading-[1] text-white"
+                        className="rounded-full px-4 py-1 text-body-14-sb leading-[1] text-white"
                         style={{ background: pkg.colorVar }}
                       >
                         {pkg.tier}
                       </span>
                       {isCurrentPlan && (
                         <span
-                          className="text-[16px] font-bold leading-[1] tracking-[-0.04em]"
+                          className="text-price-16-b"
                           style={{ color: pkg.colorVar }}
                         >
                           이용중
@@ -367,7 +367,7 @@ export default function SubscriptionManagementSection() {
                     {pkg.items.map((item) => (
                       <li
                         key={item}
-                        className="flex items-center gap-2 text-[14px] font-medium leading-[1] text-[var(--color-text)]"
+                        className="flex items-center gap-2 text-body-14-m leading-[1] text-[var(--color-text)]"
                       >
                         <CheckIcon color={pkg.colorVar} />
                         {item}
@@ -376,17 +376,17 @@ export default function SubscriptionManagementSection() {
                   </ul>
 
                   <div className="mb-5 mt-auto flex items-center justify-between border-t border-[var(--color-divider-warm)] pt-5">
-                    <span className="text-[14px] font-bold text-[var(--color-text)]">
+                    <span className="text-body-14-b text-[var(--color-text)]">
                       월 요금제
                     </span>
-                    <span className="text-[20px] font-extrabold leading-[1] tracking-[-0.05em] text-[var(--color-text)]">
+                    <span className="text-price-20-eb text-[var(--color-text)]">
                       {pkg.price}
                     </span>
                   </div>
 
                   {isCurrentPlan ? (
                     <div
-                      className="flex h-[52px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white opacity-70"
+                      className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white opacity-70"
                       style={{ background: pkg.colorVar }}
                     >
                       현재 구독중
@@ -395,7 +395,7 @@ export default function SubscriptionManagementSection() {
                     <button
                       type="button"
                       onClick={() => handleChangePlan(pkg.tier, pkg.colorVar)}
-                      className="flex h-[52px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
+                      className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                       style={{ background: pkg.colorVar }}
                     >
                       구독하기

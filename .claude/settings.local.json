@@ -23,7 +23,23 @@
       "Bash(python3 -c ':*)",
       "Bash(powershell -Command 'Add-Type -AssemblyName System.Drawing; foreach \\($f in @\\('\\\\''public/images/modal/custom-modal-01-contents.png'\\\\'','\\\\''public/images/modal/custom-modal-02-contents.png'\\\\'','\\\\''public/images/modal/custom-modal-03-contents.png'\\\\'','\\\\''public/images/modal/custom-modal-04-contents.png'\\\\''\\)\\) { $img = [System.Drawing.Image]::FromFile\\(\\(Resolve-Path $f\\)\\); Write-Host \"$f: $\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\) }')",
       "Bash(node -e ':*)",
-      "Bash(python -c ':*)"
+      "Bash(python -c ':*)",
+      "Bash(sed -n '700,730p' C:/2026/ggosoonbox/widgets/order/ui/OrderSection.tsx)",
+      "Bash(sed -n '745,810p' C:/2026/ggosoonbox/widgets/order/ui/OrderSection.tsx)",
+      "Bash(sed:*)",
+      "Bash(sed -i 's/stroke=\"#B0B0B0\"/stroke=\"var\\(--color-border\\)\"/g' widgets/mypage/ui/PaymentManagementSection.tsx)",
+      "Bash(sed -i 's/stroke=\"#999999\"/stroke=\"var\\(--color-text-secondary\\)\"/g; s/fill=\"#999999\"/fill=\"var\\(--color-text-secondary\\)\"/g' widgets/mypage/ui/ProfileSection.tsx)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-05-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-05-upper.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-05-contents.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-05-contents.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-06-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-06-upper.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-06-contents.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-06-contents.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-07-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-07-upper.png\")",
+      "Bash(pnpm tsc:*)",
+      "WebSearch",
+      "WebFetch(domain:roboticape.com)",
+      "WebFetch(domain:lab.rosebud.ai)"
     ]
   }
 }

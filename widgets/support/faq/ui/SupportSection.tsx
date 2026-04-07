@@ -180,7 +180,7 @@ export default function SupportSection() {
     <div className="min-h-screen bg-white py-10 max-md:py-8 md:py-[50px]">
       <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-6 px-4 max-md:px-4 md:px-8">
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
-        <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
+        {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image
             src={FaqTitle}
             width={172}
@@ -197,7 +197,7 @@ export default function SupportSection() {
           >
             궁금하거나 요청하실 사항이 있으시면 상세히 안내해 드리겠습니다.
           </p>
-        </header>
+        </header> */}
 
         {/* ── CTA 배너 (Figma 118px, gradient, pill 버튼) ── */}
         <section

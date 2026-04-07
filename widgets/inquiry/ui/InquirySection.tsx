@@ -118,9 +118,9 @@ export default function InquirySection() {
         <Image
           src={InquiryTitle}
           alt="문의하기"
-          width={InquiryTitle.width}
-          height={InquiryTitle.height}
-          className="max-md:hidden md:block md:h-auto md:w-auto"
+          width={110}
+          height={40}
+          className="max-md:hidden md:block md:h-auto md:w-[110px]"
           priority
         />
         <p

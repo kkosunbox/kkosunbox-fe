@@ -155,7 +155,7 @@ export default function InquiryHistorySection() {
   return (
     <div className="min-h-screen bg-white py-10 max-md:py-8 md:py-[50px]">
       <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-6 px-4 max-md:px-4 md:px-8">
-        <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
+        {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image
             src={FaqTitle}
             width={172}
@@ -172,7 +172,7 @@ export default function InquiryHistorySection() {
           >
             궁금하거나 요청하실 사항이 있으시면 상세히 안내해 드리겠습니다.
           </p>
-        </header>
+        </header> */}
 
         <section
           className="mt-4 flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"

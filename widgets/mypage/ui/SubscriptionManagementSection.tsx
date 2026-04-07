@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
-import { Text } from "@/shared/ui";
+import { Text, useModal } from "@/shared/ui";
 
 /* ─────────────────────────────
    Mock data
@@ -83,225 +83,121 @@ function InfoIcon() {
 }
 
 /* ─────────────────────────────
-   Cancel Confirm Modal
-───────────────────────────── */
-function CancelModal({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void }) {
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-5"
-      style={{ background: "rgba(0,0,0,0.45)" }}
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-[360px] rounded-2xl bg-white px-7 py-8 text-center shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-2 text-subtitle-18-eb text-[var(--color-text)]">
-          구독을 취소하시겠어요?
-        </h2>
-        <p className="mb-7 text-body-14-r text-[var(--color-text-secondary)]">
-          취소 후에는 현재 결제 기간이 끝날 때까지
-          <br />
-          서비스를 이용할 수 있습니다.
-        </p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
-          >
-            유지하기
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-body-14-sb text-white transition-opacity hover:opacity-90"
-            style={{ background: "var(--color-text-secondary)" }}
-          >
-            취소하기
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────
-   Change Plan Modal
-───────────────────────────── */
-function ChangePlanModal({
-  targetTier,
-  colorVar,
-  onConfirm,
-  onClose,
-}: {
-  targetTier: Tier;
-  colorVar: string;
-  onConfirm: () => void;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-5"
-      style={{ background: "rgba(0,0,0,0.45)" }}
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-[360px] rounded-2xl bg-white px-7 py-8 text-center shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-2 text-subtitle-18-eb text-[var(--color-text)]">
-          구독 플랜을 변경할까요?
-        </h2>
-        <p className="mb-1 text-body-14-r text-[var(--color-text-secondary)]">
-          <span className="font-semibold" style={{ color: colorVar }}>
-            {targetTier} 패키지
-          </span>
-          로 변경됩니다.
-        </p>
-        <p className="mb-7 text-body-13-r text-[var(--color-text-secondary)]">
-          다음 결제일부터 새 플랜이 적용됩니다.
-        </p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
-          >
-            취소
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex h-[48px] flex-1 items-center justify-center rounded-full text-body-14-sb text-white transition-opacity hover:opacity-90"
-            style={{ background: colorVar }}
-          >
-            변경하기
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────
    Main Section
 ───────────────────────────── */
 export default function SubscriptionManagementSection() {
   const router = useRouter();
+  const { openModal } = useModal();
   const [currentTier, setCurrentTier] = useState<Tier>(CURRENT_SUBSCRIPTION.tier);
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const [changingTo, setChangingTo] = useState<{ tier: Tier; colorVar: string } | null>(null);
   const [cancelled, setCancelled] = useState(false);
 
   const currentPkg = PACKAGES.find((p) => p.tier === currentTier)!;
 
-  function handleCancel() {
-    setShowCancelModal(false);
-    setCancelled(true);
+  function handleOpenCancelModal() {
+    openModal("subscription-cancel", () => setCancelled(true));
   }
 
-  function handleChangePlan(tier: Tier, colorVar: string) {
-    if (tier === currentTier) return;
-    setChangingTo({ tier, colorVar });
-  }
-
-  function handleConfirmChange() {
-    if (!changingTo) return;
-    setCurrentTier(changingTo.tier);
-    setCancelled(false);
-    setChangingTo(null);
+  function handleOpenSubscribeModal(tier: Tier) {
+    if (tier === currentTier && !cancelled) return;
+    openModal("subscription-restart", () => {
+      setCurrentTier(tier);
+      setCancelled(false);
+    });
   }
 
   return (
     <>
-      {showCancelModal && (
-        <CancelModal onConfirm={handleCancel} onClose={() => setShowCancelModal(false)} />
-      )}
-      {changingTo && (
-        <ChangePlanModal
-          targetTier={changingTo.tier}
-          colorVar={changingTo.colorVar}
-          onConfirm={handleConfirmChange}
-          onClose={() => setChangingTo(null)}
-        />
-      )}
-
       <div className="min-h-screen bg-white">
-        {/* Page header */}
-        <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-2 pt-6 md:pt-10">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="mb-6 flex items-center gap-1 text-subtitle-16-sb text-[var(--color-text)] hover:opacity-70"
-          >
-            <ChevronLeftIcon />
-            구독관리
-          </button>
+        {/* Upper band — warm peach background (Figma #FFF2E5) */}
+        <div style={{ background: "var(--color-surface-peach)" }}>
+          <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-8 pt-6 md:pt-10">
+            {/* Back button */}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
+            >
+              <ChevronLeftIcon />
+              구독관리
+            </button>
 
-          {/* Current subscription card */}
-          <div
-            className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-sm md:flex-row md:items-center md:justify-between md:p-6"
-          >
-            <div className="flex items-center gap-4">
-              <div className="relative h-[90px] w-[68px] shrink-0 overflow-hidden rounded-xl">
-                <Image
-                  src={mockTempPackage}
-                  alt={`${currentTier} 패키지 이미지`}
-                  fill
-                  className="object-cover object-center"
-                />
-              </div>
-              <div>
-                <span
-                  className="mb-2 inline-flex items-center rounded-full px-3 py-1 text-caption-12-b text-white"
-                  style={{ background: currentPkg.colorVar }}
-                >
-                  {cancelled ? "구독 취소됨" : currentTier}
-                </span>
-                <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
-                  {cancelled ? `${currentTier} 패키지` : currentPkg.name}
-                </Text>
-                {!cancelled && (
-                  <>
-                    <Text variant="body-14-r" className="mt-1 text-[var(--color-text-secondary)]">
-                      {CURRENT_SUBSCRIPTION.startDate} ~
-                    </Text>
-                    <Text variant="body-14-r" className="text-[var(--color-text-secondary)]">
-                      결제일 : {CURRENT_SUBSCRIPTION.billingDay}
-                    </Text>
-                  </>
-                )}
-                {cancelled && (
-                  <Text variant="body-14-r" className="mt-1 text-[var(--color-text-secondary)]">
-                    구독이 취소되었습니다.
+            {/* Current subscription card */}
+            <div className="flex flex-col gap-4 rounded-[20px] bg-white max-md:p-5 md:flex-row md:items-center md:justify-between md:px-10 md:py-6">
+              <div className="flex items-center gap-10">
+                {/* Package image — landscape */}
+                <div className="relative max-md:h-[72px] max-md:w-[100px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-xl">
+                  <Image
+                    src={mockTempPackage}
+                    alt={`${currentTier} 패키지 이미지`}
+                    fill
+                    className="object-cover object-center"
+                  />
+                </div>
+
+                {/* Info column */}
+                <div className="flex flex-col gap-2">
+                  <span
+                    className="inline-flex w-fit items-center rounded-full px-3 py-1 text-body-14-sb text-white"
+                    style={{ background: currentPkg.colorVar }}
+                  >
+                    {cancelled ? "구독 취소됨" : currentTier}
+                  </span>
+                  <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
+                    {cancelled ? `${currentTier} 패키지` : currentPkg.name}
                   </Text>
-                )}
+                  {!cancelled && (
+                    <>
+                      <Text variant="body-16-m" className="text-[var(--color-text-label)]">
+                        {CURRENT_SUBSCRIPTION.startDate} ~
+                      </Text>
+                      <Text variant="body-16-m" className="text-[var(--color-text-label)]">
+                        결제일 : {CURRENT_SUBSCRIPTION.billingDay}
+                      </Text>
+                    </>
+                  )}
+                  {cancelled && (
+                    <Text variant="body-16-m" className="text-[var(--color-text-label)]">
+                      구독이 취소되었습니다.
+                    </Text>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {!cancelled && (
-              <div className="flex gap-2 md:shrink-0">
+              {/* Action buttons */}
+              {!cancelled && (
+                <div className="flex gap-2 md:shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleOpenCancelModal}
+                    className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-80 md:flex-none"
+                    style={{ background: "var(--color-text-muted)" }}
+                  >
+                    구독 취소
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById("subscription-plans");
+                      el?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
+                    style={{ background: "var(--color-accent)" }}
+                  >
+                    구독 변경
+                  </button>
+                </div>
+              )}
+              {cancelled && (
                 <button
                   type="button"
-                  onClick={() => setShowCancelModal(true)}
-                  className="flex h-[40px] flex-1 items-center justify-center rounded-full border border-[var(--color-divider-warm)] px-5 text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:flex-none"
-                >
-                  구독 취소
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById("subscription-plans");
-                    el?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="flex h-[40px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
+                  onClick={() => handleOpenSubscribeModal(currentTier)}
+                  className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
                   style={{ background: "var(--color-accent)" }}
                 >
-                  구독 변경
+                  구독 재시작
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -394,7 +290,7 @@ export default function SubscriptionManagementSection() {
                   ) : (
                     <button
                       type="button"
-                      onClick={() => handleChangePlan(pkg.tier, pkg.colorVar)}
+                      onClick={() => handleOpenSubscribeModal(pkg.tier)}
                       className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                       style={{ background: pkg.colorVar }}
                     >

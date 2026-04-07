@@ -60,6 +60,7 @@
   --color-background: #FFF9F3;    /* Cream White — 전체 기본 배경 */
   --color-surface-dark: #171713;  /* Near Black — 다크 섹션 배경 (Stats Bar 등) */
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
+  --color-surface-peach: #FFF2E5; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-surface-light: #F8F8F8;
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
@@ -145,6 +146,8 @@
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
+  --gradient-modal-danger: #F07050;                                               /* 구독 취소/회원 탈퇴 모달 05/07 — 코럴 오렌지 */
+  --gradient-modal-restart: linear-gradient(180deg, #A8D4F5 0%, #EEF6FF 100%);  /* 구독 재시작 모달 06 — 라이트 블루 */
   --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
   --gradient-checklist-result: linear-gradient(101.78deg, #FFF4EA 41.37%, #FFBF9A 118.84%); /* 체크리스트 결과 배너 (Figma) */
 }
@@ -163,6 +166,7 @@
   /* Surface */
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-warm: var(--color-surface-warm);
+  --color-surface-peach: var(--color-surface-peach);
   --color-surface-light: var(--color-surface-light);
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-banner-heading: var(--color-support-banner-heading);
@@ -390,3 +394,21 @@ button:disabled {
 @utility text-btn-15-sb  { font-size: 15px; line-height: 20px; font-weight: 600; }
 @utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 600; }
 @utility text-btn-12-m   { font-size: 12px; line-height: 16px; font-weight: 500; }
+
+/* ─── Paw particle burst animation ───────────────────────────────────────── */
+@keyframes paw-particle-fly {
+  0% {
+    transform: translate(-50%, -50%) translate(0px, 0px) rotate(var(--rot, 0deg)) scale(1);
+    opacity: 1;
+  }
+  65% { opacity: 1; }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px)) rotate(var(--rot, 0deg)) scale(0.12);
+    opacity: 0;
+  }
+}
+
+@utility animate-paw-particle {
+  animation: paw-particle-fly var(--dur, 480ms) ease-out var(--delay, 0ms) forwards;
+  @media (prefers-reduced-motion: reduce) { animation: none; opacity: 0; }
+}

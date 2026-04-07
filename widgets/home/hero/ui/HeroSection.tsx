@@ -10,7 +10,7 @@ import heroItem from "../assets/hero-item.png";
 export default function HeroSection() {
   return (
     <section style={{ background: "var(--gradient-hero)" }} className="flex flex-col">
-      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-2 md:gap-16 px-8 pt-10 md:pt-0 w-full">
+      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-2 md:gap-16 max-md:px-8 md:px-0 pt-10 md:pt-0 w-full">
         {/* Left */}
         <div className="flex-1 w-full flex flex-col items-center md:items-start">
           {/* 모바일 로고 이미지 */}
@@ -34,7 +34,7 @@ export default function HeroSection() {
             <Image src={heroItem} alt="꼬순박스 패키지" className="h-auto w-full" />
             {/* 모바일 전용 — premium box 장식 텍스트 */}
             <p
-              className="md:hidden absolute -top-1 -right-8 w-[108px] text-center capitalize rotate-[-16deg] text-[32px] leading-[32px] font-normal text-[var(--color-accent-rust)]"
+              className="md:hidden absolute -top-1 -right-8 w-[108px] text-center capitalize rotate-[-16deg] text-emoji-32 font-normal text-[var(--color-accent-rust)]"
               style={{ fontFamily: "var(--font-ms-madi)" }}
             >
               premium box

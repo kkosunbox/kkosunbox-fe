@@ -10,7 +10,7 @@ import ingredientsContents02 from "../assets/ingredients-contents-02.png";
 export default function IngredientsSection() {
   return (
     <section className="bg-white pt-10 pb-10 md:pt-[62px] md:pb-[52px]">
-      <div className="mx-auto flex flex-col md:flex-row max-w-content items-center gap-10 md:gap-20 md:px-8">
+      <div className="mx-auto flex flex-col md:flex-row max-w-content items-center gap-10 md:gap-20 md:px-0">
         {/* Left */}
         <div className="flex-1 flex flex-col items-center md:items-start">
           <Image

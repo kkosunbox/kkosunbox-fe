@@ -24,7 +24,7 @@ function CheckIcon({ color }: { color: string }) {
 }
 
 function HeartIcon({ filled }: { filled: boolean }) {
-  const color = filled ? "var(--color-primary)" : "#DDDDDD";
+  const color = filled ? "var(--color-primary)" : "var(--color-text-muted)";
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
@@ -106,7 +106,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
         >
           <div className="mb-2.5 flex items-center justify-between">
             <span
-              className="rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
+              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
               style={{ background: pkg.colorVar }}
             >
               {pkg.tier}
@@ -121,7 +121,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             />
           </div>
 
-          <h2 className="mb-7.5 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
+          <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
             {pkg.name}
           </h2>
 
@@ -129,7 +129,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             {pkg.items.map((item) => (
               <li
                 key={item}
-                className="flex items-center gap-2 text-[13px] font-medium leading-[16px] text-black"
+                className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
               >
                 <CheckIcon color={pkg.colorVar} />
                 {item}
@@ -138,8 +138,8 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
           </ul>
 
           <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
-            <span className="text-[14px] font-bold text-black">월 요금제</span>
-            <span className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+            <span className="text-body-14-b text-black">월 요금제</span>
+            <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
               {pkg.price}
             </span>
           </div>
@@ -147,7 +147,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
           <button
             type="button"
             onClick={handleSubscribe}
-            className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+            className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
             style={{ background: pkg.colorVar }}
           >
             구독하기
@@ -163,13 +163,13 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             <CloseButton onClick={onClose} />
           </div>
 
-          <p className="mb-3 text-center text-[16px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+          <p className="mb-3 text-center text-subtitle-16-sb leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
             {comparePkg.name}
           </p>
 
           <div className="mb-4 flex justify-center">
             <span
-              className="rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
+              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
               style={{ background: comparePkg.colorVar }}
             >
               {comparePkg.tier}
@@ -179,7 +179,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
           <div className="overflow-hidden rounded-[20px] bg-white">
             <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
               <p
-                className="text-center text-[13px] leading-[20px] text-[var(--color-text)]"
+                className="text-center text-body-13-r text-[var(--color-text)]"
                 style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
               >
                 &ldquo;{comparePkg.quote}&rdquo;
@@ -193,7 +193,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                 return isHighlighted ? (
                   <span
                     key={c}
-                    className="relative inline-block text-[13px] font-bold leading-[20px] text-[var(--color-text)]"
+                    className="relative inline-block text-body-13-b leading-[20px] text-[var(--color-text)]"
                   >
                     <span className="absolute" style={{ top: "-8px", left: "-5px" }}>
                       <PawStampIcon size={12} />
@@ -201,7 +201,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                     {c}
                   </span>
                 ) : (
-                  <p key={c} className="text-center text-[13px] leading-[20px] text-[var(--color-text)]">
+                  <p key={c} className="text-center text-body-13-r text-[var(--color-text)]">
                     {c}
                   </p>
                 );
@@ -210,7 +210,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
 
             <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
               <p
-                className="text-center text-[13px] leading-[18px]"
+                className="text-center text-body-13-r leading-[18px]"
                 style={{
                   color:
                     comparePkg.tier === "Premium"
@@ -224,7 +224,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             </div>
 
             <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
-              <p className="text-center text-[13px] leading-[18px] text-[var(--color-text)]">
+              <p className="text-center text-body-13-r leading-[18px] text-[var(--color-text)]">
                 {comparePkg.customization}
               </p>
             </div>
@@ -270,7 +270,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
           <div className="flex w-full flex-col px-7 pb-7 pt-5 lg:w-[327px] lg:shrink-0">
             <div className="mb-2.5">
               <span
-                className="rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
+                className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                 style={{ background: pkg.colorVar }}
               >
                 {pkg.tier}
@@ -285,7 +285,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
               />
             </div>
 
-            <h2 className="mb-7.5 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
+            <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
               {pkg.name}
             </h2>
 
@@ -293,7 +293,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
               {pkg.items.map((item) => (
                 <li
                   key={item}
-                  className="flex items-center gap-2 text-[13px] font-medium leading-[16px] text-black"
+                  className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
                 >
                   <CheckIcon color={pkg.colorVar} />
                   {item}
@@ -302,8 +302,8 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             </ul>
 
             <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
-              <span className="text-[14px] font-bold text-black">월 요금제</span>
-              <span className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+              <span className="text-body-14-b text-black">월 요금제</span>
+              <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
                 {pkg.price}
               </span>
             </div>
@@ -311,7 +311,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             <button
               type="button"
               onClick={handleSubscribe}
-              className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+              className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
               style={{ background: pkg.colorVar }}
             >
               구독하기
@@ -329,10 +329,10 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                     key={p.tier}
                     type="button"
                     onClick={() => onSelectTier(p.tier)}
-                    className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-[13px]"
+                    className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-body-13-sb"
                     style={{
                       borderRadius: "20px 20px 0 0",
-                      background: selectedTier === p.tier ? p.tabActiveBg : "#EAEAEA",
+                      background: selectedTier === p.tier ? p.tabActiveBg : "var(--color-ui-inactive-bg)",
                       color: selectedTier === p.tier ? "var(--color-text)" : "var(--color-text-secondary)",
                       fontSize: selectedTier === p.tier ? "14px" : "13px",
                     }}
@@ -352,7 +352,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center py-5">
                         <span
-                          className="inline-block rounded-full px-3 py-[3px] text-[13px] font-semibold text-white"
+                          className="inline-block rounded-full px-3 py-[3px] text-body-13-sb text-white"
                           style={{
                             background:
                               selectedTier === p.tier ? p.colorVar : "var(--color-text-muted)",
@@ -368,7 +368,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center px-2 py-3">
                         <p
-                          className="text-center text-[13px] leading-[17px] text-[var(--color-text)]"
+                          className="text-center text-body-13-r leading-[17px] text-[var(--color-text)]"
                           style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
                         >
                           &ldquo;{p.quote}&rdquo;
@@ -386,7 +386,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                           return isHighlighted ? (
                             <span
                               key={c}
-                              className="relative inline-block text-[13px] font-bold leading-[18px] text-[var(--color-text)]"
+                              className="relative inline-block text-body-13-b text-[var(--color-text)]"
                             >
                               <span className="absolute" style={{ top: "-7px", left: "-4px" }}>
                                 <PawStampIcon size={11} />
@@ -394,7 +394,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                               {c}
                             </span>
                           ) : (
-                            <p key={c} className="text-center text-[13px] leading-[18px] text-[var(--color-text)]">
+                            <p key={c} className="text-center text-body-13-r leading-[18px] text-[var(--color-text)]">
                               {c}
                             </p>
                           );
@@ -407,7 +407,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center px-2 py-3">
                         <p
-                          className="text-center text-[13px] leading-[16px]"
+                          className="text-center text-body-13-r leading-[16px]"
                           style={{
                             color:
                               p.tier === "Premium"
@@ -425,7 +425,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                   <div className="grid grid-cols-3 divide-x divide-[var(--color-text-muted)] border-b border-[var(--color-text-muted)]">
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center px-2 py-3">
-                        <p className="text-center text-[13px] leading-[16px] text-[var(--color-text)]">
+                        <p className="text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
                           {p.customization}
                         </p>
                       </div>

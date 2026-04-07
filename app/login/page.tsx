@@ -81,7 +81,7 @@ export default function LoginPage() {
 
       {/* ── 모바일 전용: 웜 상단 섹션 ── */}
       <div
-        className="md:hidden flex items-center justify-center shrink-0"
+        className="max-md:flex md:hidden items-center justify-center shrink-0"
         style={{ background: "var(--color-secondary)", borderRadius: "0 0 60px 60px", height: "242px" }}
       >
         <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto" priority />
@@ -132,7 +132,7 @@ export default function LoginPage() {
               value={id}
               onChange={(e) => setId(e.target.value)}
               className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-semibold placeholder:font-semibold placeholder:text-[var(--color-text)]
-                h-[52px] px-8 text-[16px]
+                h-[52px] px-8 text-body-16-sb
                 md:h-[54px] md:px-6 md:tracking-[0.2px]"
             />
 
@@ -146,7 +146,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
-                  h-[52px] px-8 pr-12 text-[16px]
+                  h-[52px] px-8 pr-12 text-body-16-m
                   md:h-[54px] md:px-6 md:pr-16"
               />
               <button
@@ -163,7 +163,7 @@ export default function LoginPage() {
 
             {/* 에러 메시지 */}
             {error && (
-              <p className="mt-3 text-center text-[13px] font-medium" style={{ color: "var(--color-accent-rust)" }}>
+              <p className="mt-3 text-center text-body-13-m" style={{ color: "var(--color-accent-rust)" }}>
                 {error}
               </p>
             )}
@@ -172,7 +172,7 @@ export default function LoginPage() {
             <div className="mt-5 text-right">
               <Link
                 href="/forgot-password"
-                className="text-[var(--color-accent)] underline text-[14px] md:text-[16px]"
+                className="text-[var(--color-accent)] underline max-md:text-body-14-m md:text-body-16-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 비밀번호를 잃어버리셨나요?
@@ -186,16 +186,16 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-full bg-[var(--color-accent)] text-white font-semibold transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
-                h-[58px] text-[18px] tracking-[-0.04em]
-                md:h-[54px] md:text-[16px] md:tracking-[0.2px] md:mt-[68px]"
+              className="w-full rounded-full bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
+                h-[58px] max-md:text-subtitle-18-sb max-md:tracking-[-0.04em]
+                md:h-[54px] md:text-subtitle-16-sb md:tracking-[0.2px] md:mt-[68px]"
             >
               {isPending ? "로그인 중..." : "로그인"}
             </button>
 
             {/* 간편로그인 — Figma: 14px/500 (모바일·데스크톱 동일), mt=24px on desktop */}
             <p
-              className="text-center text-[var(--color-text-secondary)] text-[14px] mt-[18px] md:mt-6"
+              className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-[18px] md:mt-6"
               style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
             >
               - 간편로그인 -
@@ -205,12 +205,12 @@ export default function LoginPage() {
             <div className="flex items-center justify-center gap-[40px] mt-4 md:mt-8">
               <button type="button" aria-label="카카오로 로그인"
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
-                style={{ backgroundColor: "#FEE500" }}>
+                style={{ backgroundColor: "var(--color-kakao)" }}>
                 <KakaoIcon />
               </button>
               <button type="button" aria-label="네이버로 로그인"
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
-                style={{ backgroundColor: "#03C75A" }}>
+                style={{ backgroundColor: "var(--color-naver)" }}>
                 <NaverIcon />
               </button>
               <button type="button" aria-label="구글로 로그인"
@@ -222,14 +222,14 @@ export default function LoginPage() {
             {/* 회원가입 — 모바일: 14px gap-2, 데스크톱: 16px gap-1 */}
             <div className="flex items-center justify-center gap-2 md:gap-1 mt-4 md:mt-8">
               <span
-                className="text-[var(--color-brown-dark)] opacity-40 text-[14px] md:text-[16px]"
+                className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 계정이 없으신가요?
               </span>
               <Link
                 href="/register"
-                className="text-[var(--color-link-warm)] text-[14px] md:text-[16px]"
+                className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb"
                 style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 회원가입하기

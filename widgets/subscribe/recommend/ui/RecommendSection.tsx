@@ -56,7 +56,7 @@ function InfoIcon() {
 function PetAvatarPlaceholder() {
   return (
     <div
-      className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] text-[28px] md:h-[78px] md:w-[78px] md:text-[34px]"
+      className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] max-md:text-emoji-28 md:h-[78px] md:w-[78px] md:text-emoji-34"
       style={{ background: "var(--color-secondary)" }}
       aria-hidden="true"
     >
@@ -81,7 +81,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
   if (selectedTier) {
     return (
       <section className="bg-white py-16 md:py-20">
-        <div className="mx-auto max-w-content px-6 md:px-0">
+        <div className="mx-auto max-w-content max-md:px-6 md:px-0">
           <PackageDetailView
             key={selectedTier}
             selectedTier={selectedTier}
@@ -95,7 +95,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
 
   return (
     <section className="bg-white py-16 md:pt-10 md:pb-16">
-      <div className="mx-auto max-w-content px-6 md:px-0">
+      <div className="mx-auto max-w-content max-md:px-6 md:px-0">
 
         {/* Hero */}
         <div className="mb-10 flex justify-center md:mb-8">
@@ -118,13 +118,13 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
             <PetAvatarPlaceholder />
             <div className="flex flex-col gap-2">
               <span
-                className="w-fit rounded-full px-3 py-1 text-[13px] font-semibold leading-[1] text-white md:px-4 md:text-[14px]"
+                className="w-fit rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
                 style={{ background: recommended.colorVar }}
               >
                 {TIER_DISPLAY[recommendedTier]}
               </span>
               <p
-                className="max-w-[537px] text-[13px] leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] md:text-[16px]"
+                className="max-w-[537px] max-md:text-body-13-r md:text-body-16-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)]"
                 style={{
                   fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
                 }}
@@ -154,7 +154,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                 {/* 상단: 칩 + ⓘ 버튼 */}
                 <div className="mb-5 flex items-center justify-between">
                   <span
-                    className="rounded-full px-3 py-1 text-[13px] font-semibold leading-[1] text-white md:px-4 md:text-[14px]"
+                    className="rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
                     style={{ background: pkg.colorVar }}
                   >
                     {pkg.tier}
@@ -196,7 +196,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                       className="absolute -left-2 -top-5 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
                     />
                   )}
-                  <h2 className="text-[20px] font-extrabold leading-[1.2] tracking-[-0.04em] text-[var(--color-text)]">
+                  <h2 className="text-display-20-eb text-[var(--color-text)]">
                     {pkg.name}
                   </h2>
                 </div>
@@ -206,7 +206,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                   {pkg.items.map((item) => (
                     <li
                       key={item}
-                      className="flex items-center gap-2 text-[13px] font-medium leading-[1] text-[var(--color-text)]"
+                      className="flex items-center gap-2 text-body-13-m leading-[1] text-[var(--color-text)]"
                     >
                       <CheckIcon color={pkg.colorVar} />
                       {item}
@@ -216,8 +216,8 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
 
                 {/* 가격 */}
                 <div className="mb-5 mt-auto flex items-center justify-between border-t border-white pt-5">
-                  <span className="text-[13px] font-bold text-[var(--color-text)]">월 요금제</span>
-                  <span className="text-[20px] font-extrabold leading-[1] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+                  <span className="text-body-13-b text-[var(--color-text)]">월 요금제</span>
+                  <span className="text-price-20-eb text-[var(--color-surface-dark)]">
                     {pkg.price}
                   </span>
                 </div>
@@ -226,7 +226,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                 <button
                   type="button"
                   onClick={() => router.push("/order")}
-                  className="flex h-[52px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80"
+                  className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                   style={{ background: pkg.colorVar }}
                 >
                   구독하기

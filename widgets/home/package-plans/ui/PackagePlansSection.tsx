@@ -66,7 +66,7 @@ function CheckIcon({ color }: { color: string }) {
 export default function PackagePlansSection() {
   return (
     <section className="bg-[var(--color-secondary)] py-12 md:py-20">
-      <div className="mx-auto max-w-content px-8 md:px-0">
+      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
         <h2 className="sr-only">원하는 패키지로 선택 후 구독하세요!</h2>
         <Image
           src={packagePlanTitle01}
@@ -101,7 +101,7 @@ export default function PackagePlansSection() {
                   className="h-[151px] w-auto object-contain"
                 />
                 <span
-                  className={`absolute text-[40px] leading-[36px] tracking-[0.02em] capitalize ${
+                  className={`absolute text-emoji-40 leading-[36px] tracking-[0.02em] capitalize ${
                     idx === 0 ? "-bottom-1.5 right-5" : "-bottom-4.5 right-0"
                   }`}
                   style={{
@@ -116,7 +116,7 @@ export default function PackagePlansSection() {
 
               {/* Package name */}
               <h3
-                className="mb-4 text-center text-[28px] font-extrabold leading-[33px] tracking-[-0.04em] capitalize"
+                className="mb-4 text-center text-display-28-eb capitalize"
                 style={{ color: pkg.accentColor }}
               >
                 {pkg.name}

@@ -165,7 +165,7 @@ export default function InquiryHistorySection() {
             priority
           />
           <p
-            className="max-w-[415px] text-[16px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
+            className="max-w-[415px] text-body-16-r leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
             style={{
               fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
             }}
@@ -188,13 +188,13 @@ export default function InquiryHistorySection() {
               sizes="(max-width: 767px) 100vw, 280px"
               className="h-auto max-md:w-full md:w-[280px]"
             />
-            <p className="text-[14px] font-medium capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
+            <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
               1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다.
             </p>
           </div>
           <Link
             href="/inquiry"
-            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
+            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
           >
             문의하기
           </Link>
@@ -226,17 +226,17 @@ export default function InquiryHistorySection() {
                   <PawCircleIcon />
                   <div className="flex flex-col gap-2">
                     <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-                    <p className="text-[14px] font-medium leading-5 text-[var(--color-text)]">{item.body}</p>
+                    <p className="text-body-14-m leading-5 text-[var(--color-text)]">{item.body}</p>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
             <div className="flex flex-col items-center py-16">
-              <p className="text-[16px] text-[var(--color-text-secondary)]">문의 내역이 없습니다.</p>
+              <p className="text-body-16-r text-[var(--color-text-secondary)]">문의 내역이 없습니다.</p>
               <Link
                 href="/inquiry"
-                className="mt-4 text-[14px] font-medium text-[var(--color-accent)] underline underline-offset-2"
+                className="mt-4 text-body-14-m text-[var(--color-accent)] underline underline-offset-2"
               >
                 문의하기
               </Link>
@@ -266,8 +266,8 @@ export default function InquiryHistorySection() {
                     aria-current={active ? "page" : undefined}
                     className={
                       active
-                        ? "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-[13px] font-semibold leading-4 text-[var(--color-text)]"
-                        : "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-[13px] font-normal leading-4 text-[var(--color-text)]"
+                        ? "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-body-13-sb leading-4 text-[var(--color-text)]"
+                        : "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-body-13-r leading-4 text-[var(--color-text)]"
                     }
                   >
                     {p}

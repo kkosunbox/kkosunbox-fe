@@ -13,7 +13,7 @@ export default function BenefitsSection() {
   return (
     <>
     <section className="bg-[var(--color-background)] md:h-[370px]">
-      <div className="h-full mx-auto flex flex-col md:flex-row max-w-content items-center justify-between gap-7 md:gap-16 px-8 py-8.5 md:py-0">
+      <div className="h-full mx-auto flex flex-col md:flex-row max-w-content items-center justify-between gap-7 md:gap-16 max-md:px-8 md:px-0 py-8.5 md:py-0">
         {/* Left */}
         <div className="w-full flex flex-col items-center md:items-start">
           <span className="sr-only">Point 1</span>

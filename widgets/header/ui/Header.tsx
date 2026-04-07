@@ -121,10 +121,10 @@ export default function Header() {
   return (
     <>
       <nav className="fixed inset-x-0 top-0 z-50 h-[54px] bg-white shadow-[0_3px_30px_rgba(0,0,0,0.03)]">
-        <div className="mx-auto flex h-full max-w-content items-center justify-between px-6 md:px-8">
+        <div className="mx-auto flex h-full max-w-content items-center justify-between max-md:px-6 md:px-0">
           <div className="flex items-center gap-3">
             <button
-              className="md:hidden flex items-center justify-center"
+              className="max-md:flex md:hidden items-center justify-center"
               onClick={() => setIsMenuOpen(true)}
               aria-label="메뉴 열기"
               aria-expanded={isMenuOpen}

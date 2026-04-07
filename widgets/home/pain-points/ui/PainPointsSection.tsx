@@ -47,7 +47,7 @@ export default function PainPointsSection() {
             {PAIN_POINTS.map((item) => (
               <li key={item} className="flex flex-row-reverse md:flex-row justify-end gap-2 md:gap-3">
                 <span
-                  className="text-[var(--color-text-body-warm)] text-[12px] leading-[170%] md:text-[18px] max-md:text-left md:text-right"
+                  className="text-[var(--color-text-body-warm)] max-md:text-caption-12-r max-md:leading-[170%] md:text-body-18-r max-md:text-left md:text-right"
                   style={{ fontFamily: "Griun PolFairness" }}
                 >
                   {item}

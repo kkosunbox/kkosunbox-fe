@@ -17,7 +17,7 @@ function formatPrice(n: number) {
 /* ─── 공통 클래스 ────────────────────────────────────────── */
 /** 피그마 기준: h-8(32px), border-radius 4px, white bg, 테두리 없음 */
 const inputCls =
-  "h-8 w-full rounded-[4px] bg-white px-3 text-[13px] leading-[140%] font-medium text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
+  "h-8 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
 /* ─── 아이콘 ─────────────────────────────────────────────── */
 function ChevronIcon({ open }: { open: boolean }) {
@@ -57,32 +57,6 @@ function CheckIcon() {
   );
 }
 
-function CalendarIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect
-        x="3"
-        y="4"
-        width="14"
-        height="13"
-        rx="2"
-        stroke="var(--color-text-secondary)"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M3 8h14"
-        stroke="var(--color-text-secondary)"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M7 2v3M13 2v3"
-        stroke="var(--color-text-secondary)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 function PawPrint({ size = 80 }: { size?: number }) {
   return (
@@ -123,7 +97,7 @@ function SectionCard({
         className="w-full flex items-center justify-between py-7 text-left"
       >
         <span
-          className="text-[18px] font-bold leading-[21px] tracking-[-0.04em]"
+          className="text-subtitle-18-b tracking-[-0.04em]"
           style={{ color: "var(--color-text)" }}
         >
           {title}
@@ -165,7 +139,7 @@ function Checkbox({
       >
         {checked && <CheckIcon />}
       </button>
-      <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+      <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
         {label}
       </span>
     </label>
@@ -204,7 +178,7 @@ function RadioButton({
           <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]" />
         )}
       </button>
-      <span className="text-[14px] font-medium leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
+      <span className="text-body-14-m leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
         {label}
       </span>
     </label>
@@ -224,7 +198,7 @@ function FormRow({
 }) {
   return (
     <div className="flex items-center gap-0">
-      <span className="w-[70px] shrink-0 text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+      <span className="w-[70px] shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)]">
         {label}
       </span>
       <div className="flex-1 min-w-0">{children}</div>
@@ -321,21 +295,21 @@ export default function OrderSection() {
           <div className="flex flex-col gap-3">
             {/* 피그마: Premium badge — background #F07F3D, border-radius 30px, padding 4px 12px */}
             <span
-              className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-[14px] font-semibold leading-[17px] text-white w-fit"
+              className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
               style={{ background: "var(--color-premium)" }}
             >
               Premium
             </span>
             {/* 피그마: font-weight 600, 16px, color #262525 */}
             <span
-              className="text-[16px] font-semibold leading-[19px] tracking-[-0.04em]"
+              className="text-subtitle-16-sb tracking-[-0.04em]"
               style={{ color: "var(--color-text)" }}
             >
               프리미엄 패키지 BOX
             </span>
             {/* 피그마: font-weight 800, 16px, color #171713 */}
             <span
-              className="text-[16px] font-extrabold leading-[19px] tracking-[-0.05em]"
+              className="text-price-16-eb"
               style={{ color: "var(--color-surface-dark)" }}
             >
               월 요금제 {formatPrice(PRODUCT_PRICE)}
@@ -386,7 +360,7 @@ export default function OrderSection() {
               {/* 피그마: background #7FB3FF, border-radius 4px */}
               <button
                 type="button"
-                className="h-8 px-2 rounded-[4px] bg-[var(--color-accent)] text-white text-[13px] font-medium leading-[16px] whitespace-nowrap shrink-0"
+                className="h-8 px-2 rounded-[4px] bg-[var(--color-accent)] text-white text-body-13-m leading-[16px] whitespace-nowrap shrink-0"
               >
                 주소찾기
               </button>
@@ -499,7 +473,7 @@ export default function OrderSection() {
               label="쿠폰사용"
             />
             {useCoupon && (
-              <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
+              <span className="text-body-13-m leading-[16px] text-[var(--color-text-secondary)]">
                 가입축하쿠폰 -{formatPrice(COUPON_DISCOUNT_AMOUNT)}
               </span>
             )}
@@ -531,7 +505,7 @@ export default function OrderSection() {
               triggerClassName="!h-[34px] !rounded-[5px] !border-[var(--color-text-muted)] !px-3"
             />
           </div>
-          <p className="text-[13px] font-medium leading-[140%] text-[var(--color-text-secondary)]">
+          <p className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
             구독 시작일은 구매일로 부터 최대 3일 후까지 선택 가능합니다.
           </p>
         </div>
@@ -555,7 +529,7 @@ export default function OrderSection() {
           className="w-full flex items-center justify-between py-7 text-left"
         >
           <span
-            className="text-[18px] font-bold leading-[21px] tracking-[-0.04em]"
+            className="text-subtitle-18-b tracking-[-0.04em]"
             style={{ color: "var(--color-text)" }}
           >
             결제정보
@@ -568,26 +542,26 @@ export default function OrderSection() {
             {/* 가격 항목들 — 피그마: font-weight 500, 13px */}
             <div className="flex flex-col gap-8">
               <div className="flex justify-between items-center">
-                <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
                   주문상품금액
                 </span>
-                <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
                   {formatPrice(PRODUCT_PRICE)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
                   총 쿠폰 할인금액
                 </span>
-                <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
                   -{formatPrice(couponDiscount)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
                   총 배송비
                 </span>
-                <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
                   -{formatPrice(SHIPPING_FEE)}
                 </span>
               </div>
@@ -598,11 +572,11 @@ export default function OrderSection() {
 
             {/* 월 요금제 합계 — 피그마: label font-weight 700/14px, amount font-weight 800/20.6px */}
             <div className="flex justify-between items-center">
-              <span className="text-[14px] font-bold leading-[17px] text-[var(--color-text)]">
+              <span className="text-body-14-b leading-[17px] text-[var(--color-text)]">
                 월 요금제
               </span>
               <span
-                className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em]"
+                className="text-price-20-eb leading-8"
                 style={{ color: "var(--color-text)" }}
               >
                 {formatPrice(total)}
@@ -671,7 +645,7 @@ export default function OrderSection() {
             <button
               type="button"
               disabled={!agreeAll}
-              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-[18px] font-semibold leading-[27px] tracking-[-0.02em] text-center disabled:opacity-50 transition-opacity"
+              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb leading-[27px] tracking-[-0.02em] text-center disabled:opacity-50 transition-opacity"
             >
               결제하기
             </button>
@@ -691,7 +665,7 @@ export default function OrderSection() {
       >
         {/* 강아지 이미지 영역 */}
         <div
-          className="shrink-0 flex items-center justify-center text-[40px] select-none"
+          className="shrink-0 flex items-center justify-center text-emoji-40 select-none"
           style={{ width: "110px", height: "104px" }}
         >
           🐕
@@ -708,7 +682,7 @@ export default function OrderSection() {
           />
           {/* 피그마: GangwonEduPower, 14px, color #262525 */}
           <span
-            className="text-[14px] leading-[14px]"
+            className="text-brand-display-14"
             style={{
               fontFamily: '"GangwonEduPower", sans-serif',
               color: "var(--color-text)",
@@ -718,7 +692,7 @@ export default function OrderSection() {
           </span>
           {/* 피그마: GangwonEduPower, 24px, letter-spacing -0.06em, color #606060 */}
           <span
-            className="text-[24px] leading-[25px]"
+            className="text-brand-display-24"
             style={{
               fontFamily: '"GangwonEduPower", sans-serif',
               letterSpacing: "-0.06em",
@@ -747,11 +721,11 @@ export default function OrderSection() {
         </div>
         <div className="text-center px-4">
           <h1
-            className="text-[32px] md:text-[36px] font-bold leading-[1.4] tracking-[-0.04em] text-[var(--color-primary)] mb-2"
+            className="max-md:text-display-32-b md:text-display-36-b text-[var(--color-primary)] mb-2"
           >
             주문을 완료해주세요!
           </h1>
-          <p className="text-[14px] md:text-[16px] font-medium text-[var(--color-text-on-warm)]">
+          <p className="max-md:text-body-14-m md:text-body-16-m text-[var(--color-text-on-warm)]">
             입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요.
           </p>
         </div>
@@ -775,29 +749,29 @@ export default function OrderSection() {
               className="rounded-[20px] flex items-center justify-center h-20 gap-10"
               style={{ background: "var(--color-surface-warm)" }}
             >
-              <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
                 주문상품금액 {formatPrice(PRODUCT_PRICE)}
               </span>
-              <span className="text-[16px] font-semibold text-[var(--color-text)]">+</span>
-              <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
+              <span className="text-subtitle-16-sb text-[var(--color-text)]">+</span>
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
                 총 할인금액 {formatPrice(couponDiscount)}
               </span>
-              <span className="text-[16px] font-semibold text-[var(--color-text)]">-</span>
-              <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
+              <span className="text-subtitle-16-sb text-[var(--color-text)]">-</span>
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
                 총 배송비 {formatPrice(SHIPPING_FEE)}
               </span>
-              <span className="text-[16px] font-semibold text-[var(--color-text)]">=</span>
+              <span className="text-subtitle-16-sb text-[var(--color-text)]">=</span>
 
               {/* 총 주문금액 — 피그마: 두 요소 분리 (라벨 16px bold primary, 금액 20px bold primary) */}
               <div className="flex items-center gap-2">
                 <span
-                  className="text-[16px] font-bold leading-[19px] tracking-[-0.04em]"
+                  className="text-subtitle-16-b tracking-[-0.04em]"
                   style={{ color: "var(--color-primary)" }}
                 >
                   총 주문금액
                 </span>
                 <span
-                  className="text-[20px] font-bold leading-[24px] tracking-[-0.04em]"
+                  className="text-subtitle-20-b tracking-[-0.04em]"
                   style={{ color: "var(--color-primary)" }}
                 >
                   {formatPrice(total)}
@@ -808,13 +782,13 @@ export default function OrderSection() {
 
           {/* 콘텐츠 그리드 */}
           {/* 데스크톱: 670px + 16px gap + 327px = 1013px */}
-          <div className="hidden md:grid md:grid-cols-[1fr_327px] gap-4 items-start">
+          <div className="max-md:hidden md:grid md:grid-cols-[1fr_327px] gap-4 items-start">
             {leftSections}
             {rightColumn}
           </div>
 
           {/* 모바일: 단일 열 */}
-          <div className="md:hidden flex flex-col gap-4">
+          <div className="max-md:flex max-md:flex-col md:hidden gap-4">
             {leftSections}
             {rightColumn}
           </div>

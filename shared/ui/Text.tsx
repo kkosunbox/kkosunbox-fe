@@ -16,12 +16,14 @@ export type TypographyVariant =
   | "subtitle-18-b"
   | "subtitle-18-sb"
   | "subtitle-18-m"
+  | "subtitle-16-b"
   | "subtitle-16-r"
   | "subtitle-16-sb"
   // Body
   | "body-18-r"
   | "body-16-m"
   | "body-16-r"
+  | "body-14-sb"
   | "body-14-m"
   | "body-14-r"
   | "body-13-r"
@@ -54,11 +56,13 @@ const BASE: Record<TypographyVariant, string> = {
   "subtitle-18-b":          "text-subtitle-18-b",
   "subtitle-18-sb":         "text-subtitle-18-sb",
   "subtitle-18-m":          "text-subtitle-18-m",
+  "subtitle-16-b":          "text-subtitle-16-b",
   "subtitle-16-r":          "text-subtitle-16-r",
   "subtitle-16-sb":         "text-subtitle-16-sb",
   "body-18-r":              "text-body-18-r",
   "body-16-m":              "text-body-16-m",
   "body-16-r":              "text-body-16-r",
+  "body-14-sb":             "text-body-14-sb",
   "body-14-m":              "text-body-14-m",
   "body-14-r":              "text-body-14-r",
   "body-13-r":              "text-body-13-r",
@@ -96,11 +100,13 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "subtitle-18-b":          "max-md:text-subtitle-18-b",
   "subtitle-18-sb":         "max-md:text-subtitle-18-sb",
   "subtitle-18-m":          "max-md:text-subtitle-18-m",
+  "subtitle-16-b":          "max-md:text-subtitle-16-b",
   "subtitle-16-r":          "max-md:text-subtitle-16-r",
   "subtitle-16-sb":         "max-md:text-subtitle-16-sb",
   "body-18-r":              "max-md:text-body-18-r",
   "body-16-m":              "max-md:text-body-16-m",
   "body-16-r":              "max-md:text-body-16-r",
+  "body-14-sb":             "max-md:text-body-14-sb",
   "body-14-m":              "max-md:text-body-14-m",
   "body-14-r":              "max-md:text-body-14-r",
   "body-13-r":              "max-md:text-body-13-r",

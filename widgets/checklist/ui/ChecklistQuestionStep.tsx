@@ -40,7 +40,7 @@ export const STEPS = [
 ] as const;
 
 const CTA_CLASS =
-  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-[16px] font-semibold transition-opacity hover:opacity-90 active:opacity-80";
+  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
 function ProgressBar({ current }: { current: number }) {
   return (
@@ -73,7 +73,7 @@ function OptionButton({
       type="button"
       onClick={onClick}
       className={[
-        "flex w-full items-center justify-center border-2 text-[14px] font-medium transition-colors md:h-[52px] md:rounded-full md:text-[15px]",
+        "flex w-full items-center justify-center border-2 max-md:text-body-14-m md:text-body-15-m transition-colors md:h-[52px] md:rounded-full",
         "max-md:min-h-[52px] max-md:rounded-[14px] max-md:px-4 max-md:py-3.5",
         selected
           ? "max-md:border-[var(--color-accent)] max-md:bg-[var(--color-accent-soft)] max-md:text-[var(--color-text)] md:border-[var(--color-accent)] md:bg-white md:text-[var(--color-accent)]"
@@ -134,7 +134,7 @@ export default function ChecklistQuestionStep({
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 text-[16px] font-bold text-[var(--color-text)] md:text-[18px]"
+          className="flex items-center gap-1.5 max-md:text-subtitle-16-b md:text-subtitle-18-b text-[var(--color-text)]"
           aria-label="이전 단계로"
         >
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" aria-hidden="true">
@@ -153,7 +153,7 @@ export default function ChecklistQuestionStep({
 
       {/* 옵션 목록 */}
       <div className="mb-8 max-md:mt-0">
-        <p className="mb-3 text-[12px] text-[var(--color-text-secondary)]">{config.label}</p>
+        <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">{config.label}</p>
         <div className="max-md:flex max-md:flex-col max-md:gap-3 md:grid md:grid-cols-2 md:gap-3">
           {config.options.map((option) => (
             <OptionButton

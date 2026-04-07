@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="80" viewBox="0 0 480 80">
+  <!-- Frame 0 (x=0–80): empty -->
+
+  <!-- Frame 1 (x=80–160): tiny faint paw, opacity 0.28, scale 0.38 -->
+  <g transform="translate(120,40) scale(0.38)" opacity="0.28" fill="#C97A3D">
+    <ellipse cx="0" cy="6" rx="13" ry="10"/>
+    <circle cx="-11" cy="-9" r="6"/>
+    <circle cx="-3" cy="-15" r="6"/>
+    <circle cx="3" cy="-15" r="6"/>
+    <circle cx="11" cy="-9" r="6"/>
+  </g>
+
+  <!-- Frame 2 (x=160–240): medium paw, opacity 0.68, scale 0.72 -->
+  <g transform="translate(200,40) scale(0.72)" opacity="0.68" fill="#C97A3D">
+    <ellipse cx="0" cy="6" rx="13" ry="10"/>
+    <circle cx="-11" cy="-9" r="6"/>
+    <circle cx="-3" cy="-15" r="6"/>
+    <circle cx="3" cy="-15" r="6"/>
+    <circle cx="11" cy="-9" r="6"/>
+  </g>
+
+  <!-- Frame 3 (x=240–320): full paw + 4 impact stars, opacity 1.0, scale 1.0 -->
+  <g transform="translate(280,40)" opacity="1">
+    <ellipse cx="0" cy="6" rx="13" ry="10" fill="#C97A3D"/>
+    <circle cx="-11" cy="-9" r="6" fill="#C97A3D"/>
+    <circle cx="-3" cy="-15" r="6" fill="#C97A3D"/>
+    <circle cx="3" cy="-15" r="6" fill="#C97A3D"/>
+    <circle cx="11" cy="-9" r="6" fill="#C97A3D"/>
+    <!-- impact stars -->
+    <circle cx="-22" cy="2" r="3.5" fill="#F5A023"/>
+    <circle cx="22" cy="2" r="3.5" fill="#F5A023"/>
+    <circle cx="0" cy="-27" r="3.5" fill="#F5A023"/>
+    <circle cx="0" cy="22" r="3" fill="#F5A023"/>
+  </g>
+
+  <!-- Frame 4 (x=320–400): fading paw + spread stars, opacity 0.52, scale 1.12 -->
+  <g transform="translate(360,40) scale(1.12)" opacity="0.52">
+    <ellipse cx="0" cy="6" rx="13" ry="10" fill="#C97A3D"/>
+    <circle cx="-11" cy="-9" r="6" fill="#C97A3D"/>
+    <circle cx="-3" cy="-15" r="6" fill="#C97A3D"/>
+    <circle cx="3" cy="-15" r="6" fill="#C97A3D"/>
+    <circle cx="11" cy="-9" r="6" fill="#C97A3D"/>
+    <circle cx="-27" cy="2" r="3" fill="#F5A023"/>
+    <circle cx="27" cy="2" r="3" fill="#F5A023"/>
+    <circle cx="0" cy="-32" r="3" fill="#F5A023"/>
+    <circle cx="0" cy="26" r="2.5" fill="#F5A023"/>
+  </g>
+
+  <!-- Frame 5 (x=400–480): near-transparent, opacity 0.08 -->
+  <g transform="translate(440,40)" opacity="0.08" fill="#C97A3D">
+    <ellipse cx="0" cy="6" rx="13" ry="10"/>
+    <circle cx="-11" cy="-9" r="6"/>
+    <circle cx="-3" cy="-15" r="6"/>
+    <circle cx="3" cy="-15" r="6"/>
+    <circle cx="11" cy="-9" r="6"/>
+  </g>
+</svg>

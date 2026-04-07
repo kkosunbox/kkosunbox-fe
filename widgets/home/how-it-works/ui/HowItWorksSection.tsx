@@ -43,7 +43,7 @@ export default function HowItWorksSection() {
       className="bg-[var(--color-surface-light)] py-[60px] md:py-[90px] text-center"
       aria-labelledby="how-it-works-heading"
     >
-      <div className="mx-auto max-w-content px-8">
+      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
         <h2 id="how-it-works-heading" className="mb-6 md:mb-8 flex justify-center">
           <Image
             src={logoMain2x}

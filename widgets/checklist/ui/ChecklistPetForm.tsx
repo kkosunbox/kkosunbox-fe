@@ -12,7 +12,7 @@ function formatBirthDateDisplay(date: Date): string {
 }
 
 const CTA_CLASS =
-  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-[16px] font-semibold transition-opacity hover:opacity-90 active:opacity-80";
+  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
 function PetAvatar({
   src,
@@ -32,7 +32,7 @@ function PetAvatar({
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt="반려견 프로필" className="h-full w-full object-cover" />
         ) : (
-          <span className="text-[44px]">🐶</span>
+          <span className="text-emoji-44">🐶</span>
         )}
       </div>
       <button
@@ -97,20 +97,20 @@ export default function ChecklistPetForm({
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
         <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] text-[var(--color-text-secondary)]">강아지 이름</label>
+          <label className="text-caption-12-r text-[var(--color-text-secondary)]">강아지 이름</label>
           <input
             type="text"
             placeholder="이름"
             value={petInfo.name}
             onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
-            className="h-[52px] rounded-full bg-[var(--color-surface-light)] px-5 text-[14px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+            className="h-[52px] rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="checklist-pet-birth"
-            className="text-[12px] text-[var(--color-text-secondary)]"
+            className="text-caption-12-r text-[var(--color-text-secondary)]"
           >
             생년월일
           </label>
@@ -127,22 +127,22 @@ export default function ChecklistPetForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] text-[var(--color-text-secondary)]">몸무게</label>
+          <label className="text-caption-12-r text-[var(--color-text-secondary)]">몸무게</label>
           <div className="relative">
             <input
               type="number"
               value={petInfo.weight}
               onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
-              className="h-[52px] w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-[14px] text-[var(--color-text)] outline-none"
+              className="h-[52px] w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-body-14-r text-[var(--color-text)] outline-none"
             />
-            <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[13px] text-[var(--color-text-secondary)]">
+            <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-body-13-r text-[var(--color-text-secondary)]">
               kg
             </span>
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] text-[var(--color-text-secondary)]">성별</label>
+          <label className="text-caption-12-r text-[var(--color-text-secondary)]">성별</label>
           <div className="flex gap-2.5">
             {(["male", "female"] as const).map((g) => {
               const selected = petInfo.gender === g;
@@ -152,7 +152,7 @@ export default function ChecklistPetForm({
                   type="button"
                   onClick={() => setPetInfo((p) => ({ ...p, gender: g }))}
                   className={[
-                    "flex min-w-0 flex-1 items-center justify-center px-2.5 text-[14px] font-semibold leading-[17px] transition-colors max-md:h-11 max-md:rounded-full md:h-10 md:rounded-[10px]",
+                    "flex min-w-0 flex-1 items-center justify-center px-2.5 text-body-14-sb leading-[17px] transition-colors max-md:h-11 max-md:rounded-full md:h-10 md:rounded-[10px]",
                     selected
                       ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
                       : "bg-[var(--color-surface-light)] text-[var(--color-text)]",

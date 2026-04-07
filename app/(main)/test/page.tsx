@@ -1,6 +1,7 @@
 import CollapseSection from "./CollapseSection";
 import DesignSystemPanels from "./DesignSystemPanels";
 import ModalTestButtons from "./ModalTestButtons";
+import ButtonSpriteTestSection from "./ButtonSpriteTestSection";
 
 const SAMPLE_TEXT = `꼬순박스 디자인 테스트
 가나다라마바사 아자차카타파하
@@ -53,6 +54,14 @@ export default function TestPage() {
         </header>
 
         <DesignSystemPanels />
+
+        <CollapseSection
+          title="Button Sprite Animation"
+          description="발바닥 팝 스프라이트 애니메이션 — ButtonWithPawEffect 컴포넌트 테스트"
+          defaultOpen={true}
+        >
+          <ButtonSpriteTestSection />
+        </CollapseSection>
 
         <CollapseSection
           title="Custom Modal"

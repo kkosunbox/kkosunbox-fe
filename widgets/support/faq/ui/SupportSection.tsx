@@ -180,7 +180,7 @@ export default function SupportSection() {
     <div className="min-h-screen bg-white py-10 max-md:py-8 md:py-[50px]">
       <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-6 px-4 max-md:px-4 md:px-8">
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
-        <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
+        {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image
             src={FaqTitle}
             width={172}
@@ -190,14 +190,14 @@ export default function SupportSection() {
             priority
           />
           <p
-            className="max-w-[415px] text-[16px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
+            className="max-w-[415px] text-body-16-r leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
             style={{
               fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
             }}
           >
             궁금하거나 요청하실 사항이 있으시면 상세히 안내해 드리겠습니다.
           </p>
-        </header>
+        </header> */}
 
         {/* ── CTA 배너 (Figma 118px, gradient, pill 버튼) ── */}
         <section
@@ -214,13 +214,13 @@ export default function SupportSection() {
               sizes="(max-width: 767px) 100vw, 320px"
               className="h-auto max-md:w-full md:w-[320px]"
             />
-            <p className="text-[14px] font-medium capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
+            <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
               1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다.
             </p>
           </div>
           <Link
             href="/inquiry"
-            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
+            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
           >
             문의하기
           </Link>
@@ -242,13 +242,13 @@ export default function SupportSection() {
                 placeholder="질문을 검색하세요"
                 value={query}
                 onChange={handleQueryChange}
-                className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[14px] font-medium leading-[17px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+                className="min-w-0 flex-1 border-0 bg-transparent p-0 text-body-14-m leading-[17px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
               />
             </label>
             <div className="flex justify-center md:justify-end">
               <Link
                 href="/support/history"
-                className="text-right text-[14px] font-medium leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
+                className="text-right text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
               >
                 내 문의내역
               </Link>
@@ -267,7 +267,7 @@ export default function SupportSection() {
                     <p className="text-body-14-sb text-[var(--color-text)]">
                       {highlightMatch(item.question, query)}
                     </p>
-                    <p className="text-[14px] font-medium leading-5 text-[var(--color-text)]">
+                    <p className="text-body-14-m leading-5 text-[var(--color-text)]">
                       {highlightMatch(item.answer, query)}
                     </p>
                   </div>
@@ -276,7 +276,7 @@ export default function SupportSection() {
             </ul>
           ) : (
             <div className="flex flex-col items-center py-16">
-              <p className="text-[16px] text-[var(--color-text-secondary)]">검색 결과가 없습니다.</p>
+              <p className="text-body-16-r text-[var(--color-text-secondary)]">검색 결과가 없습니다.</p>
             </div>
           )}
 
@@ -303,8 +303,8 @@ export default function SupportSection() {
                     aria-current={active ? "page" : undefined}
                     className={
                       active
-                        ? "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-[13px] font-semibold leading-4 text-[var(--color-text)]"
-                        : "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-[13px] font-normal leading-4 text-[var(--color-text)]"
+                        ? "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-body-13-sb leading-4 text-[var(--color-text)]"
+                        : "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-body-13-r leading-4 text-[var(--color-text)]"
                     }
                   >
                     {p}

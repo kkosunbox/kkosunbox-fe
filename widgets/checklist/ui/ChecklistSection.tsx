@@ -11,7 +11,7 @@ import { mockRecommend } from "./types";
 import type { Step, PetInfo, Answers, RecommendedTier } from "./types";
 
 const CTA_CLASS =
-  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-[16px] font-semibold transition-opacity hover:opacity-90 active:opacity-80";
+  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
 /* ─── Leave confirm modal ─── */
 function LeaveConfirmModal({
@@ -32,11 +32,11 @@ function LeaveConfirmModal({
       <div className="relative z-10 w-full max-w-[320px] rounded-[24px] bg-white px-6 py-8 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] md:max-w-[360px]">
         <p
           id="leave-modal-title"
-          className="text-center text-[17px] font-bold leading-[1.4] tracking-[-0.02em] text-[var(--color-text)] md:text-[18px]"
+          className="text-center max-md:text-subtitle-17-b md:text-subtitle-18-b tracking-[-0.02em] text-[var(--color-text)]"
         >
           작성 중인 내용이 있어요
         </p>
-        <p className="mt-3 text-center text-[13px] font-medium leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)] md:text-[14px]">
+        <p className="mt-3 text-center max-md:text-body-13-m md:text-body-14-m leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)]">
           페이지를 나가면 지금까지 작성한
           <br />
           내용이 저장되지 않아요.
@@ -45,7 +45,7 @@ function LeaveConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="h-[48px] w-full rounded-full text-[14px] font-semibold tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 md:text-[15px]"
+            className="h-[48px] w-full rounded-full max-md:text-body-14-sb md:text-btn-15-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
             style={{ background: "var(--color-accent)" }}
           >
             계속 작성하기
@@ -53,7 +53,7 @@ function LeaveConfirmModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] text-[14px] font-medium tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70 md:text-[15px]"
+            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] max-md:text-body-14-m md:text-body-15-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
           >
             나가기
           </button>
@@ -254,7 +254,7 @@ export default function ChecklistSection() {
         </div>
         {/* 문구 */}
         <p
-          className="text-center text-[16px] leading-[1.7] tracking-[-0.02em] text-[var(--color-text)] md:text-[18px]"
+          className="text-center max-md:text-body-16-r md:text-subtitle-18-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}

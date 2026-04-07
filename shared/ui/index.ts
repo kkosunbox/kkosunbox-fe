@@ -7,3 +7,5 @@ export type { DatePickerProps } from "./DatePicker";
 export { ModalProvider, useModal } from "./modal";
 export type { ModalType } from "./modal";
 export { ChecklistRecommendModal, PlanChangeModal, ChecklistDeferModal, CouponIssuedModal } from "./custom-modals";
+export { default as ButtonWithPawEffect } from "./ButtonWithPawEffect";
+export { default as CursorPaw } from "./CursorPaw";

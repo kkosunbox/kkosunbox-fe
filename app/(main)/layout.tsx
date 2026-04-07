@@ -1,5 +1,6 @@
 import { Header } from "@/widgets/header";
 import { FooterSection } from "@/widgets/footer";
+// import { CursorPaw } from "@/shared/ui";
 
 export default function MainLayout({
   children,
@@ -8,6 +9,7 @@ export default function MainLayout({
 }) {
   return (
     <>
+      {/* <CursorPaw /> */}
       <Header />
       <main className="pt-[54px]">{children}</main>
       <FooterSection />

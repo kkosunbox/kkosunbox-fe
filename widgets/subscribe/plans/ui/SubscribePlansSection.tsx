@@ -76,7 +76,7 @@ export default function SubscribePlansSection() {
             <Image
               src={SubscribePlansHeroImageMobile}
               alt="Subscribe Plans Hero"
-              className="md:hidden block w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
+              className="max-md:block md:hidden w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
             />
             <Image
               src={SubscribePlansHeroImage}
@@ -104,7 +104,7 @@ export default function SubscribePlansSection() {
                 >
                   <div className="mb-2.5 flex items-center justify-between">
                     <span
-                      className="rounded-full px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
+                      className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                       style={{ background: pkg.colorVar }}
                     >
                       {pkg.tier}
@@ -128,7 +128,7 @@ export default function SubscribePlansSection() {
                     />
                   </div>
 
-                  <h2 className="mb-7.5 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]">
+                  <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
                     {pkg.name}
                   </h2>
 
@@ -136,7 +136,7 @@ export default function SubscribePlansSection() {
                     {pkg.items.map((item) => (
                       <li
                         key={item}
-                        className="flex items-center gap-2 text-[13px] font-medium leading-[16px] text-black"
+                        className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
                       >
                         <CheckIcon color={pkg.colorVar} />
                         {item}
@@ -145,8 +145,8 @@ export default function SubscribePlansSection() {
                   </ul>
 
                   <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">
-                    <span className="text-[14px] font-bold text-black">월 요금제</span>
-                    <span className="text-[20px] font-extrabold leading-[32px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+                    <span className="text-body-14-b text-black">월 요금제</span>
+                    <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
                       {pkg.price}
                     </span>
                   </div>
@@ -155,7 +155,7 @@ export default function SubscribePlansSection() {
                   <button
                     type="button"
                     onClick={() => router.push("/order")}
-                    className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+                    className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
                     style={{ background: pkg.colorVar }}
                   >
                     구독하기

@@ -17,10 +17,10 @@ interface FormState {
 }
 
 const fieldClass =
-  "min-h-[42px] w-full rounded-full bg-[var(--color-surface-light)] px-5 py-[15px] text-[14px] font-medium leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0";
+  "min-h-[42px] w-full rounded-full bg-[var(--color-surface-light)] px-5 py-[15px] text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0";
 
 const labelClass =
-  "text-[13px] font-medium leading-4 text-[var(--color-text-secondary)] opacity-80";
+  "text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80";
 
 function PaperclipIcon() {
   return (
@@ -118,13 +118,13 @@ export default function InquirySection() {
         <Image
           src={InquiryTitle}
           alt="문의하기"
-          width={InquiryTitle.width}
-          height={InquiryTitle.height}
-          className="max-md:hidden md:block md:h-auto md:w-auto"
+          width={110}
+          height={40}
+          className="max-md:hidden md:block md:h-auto md:w-[110px]"
           priority
         />
         <p
-          className="mt-4 md:mt-8 max-w-[345px] text-center text-[16px] font-normal leading-5 tracking-[-0.02em] text-[var(--color-text)]"
+          className="mt-4 md:mt-8 max-w-[345px] text-center text-body-16-r leading-5 tracking-[-0.02em] text-[var(--color-text)]"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}
@@ -228,7 +228,7 @@ export default function InquirySection() {
                 value={form.message}
                 onChange={handleChange}
                 rows={5}
-                className="min-h-[124px] w-full resize-none rounded-2xl bg-[var(--color-surface-light)] px-5 py-3 text-[14px] font-medium leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0"
+                className="min-h-[124px] w-full resize-none rounded-2xl bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0"
               />
             </div>
 
@@ -248,12 +248,12 @@ export default function InquirySection() {
                 <span className="shrink-0" aria-hidden>
                   {form.agreeTerms ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
                 </span>
-                <span className="text-[13px] font-medium leading-4 text-[var(--color-text)]">
+                <span className="text-body-13-m leading-4 text-[var(--color-text)]">
                   이용약관에 동의합니다.
                 </span>
                 <Link
                   href="/terms"
-                  className="text-[13px] font-normal leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+                  className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
                   onClick={(e) => e.stopPropagation()}
                 >
                   전체보기
@@ -274,12 +274,12 @@ export default function InquirySection() {
                 <span className="shrink-0" aria-hidden>
                   {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
                 </span>
-                <span className="text-[13px] font-medium leading-4 text-[var(--color-text)]">
+                <span className="text-body-13-m leading-4 text-[var(--color-text)]">
                   개인정보 수집 및 활용에 동의합니다.
                 </span>
                 <Link
                   href="/privacy"
-                  className="text-[13px] font-normal leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+                  className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
                   onClick={(e) => e.stopPropagation()}
                 >
                   전체보기
@@ -291,7 +291,7 @@ export default function InquirySection() {
               <button
                 type="submit"
                 disabled={!isSubmittable}
-                className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-[18px] font-semibold leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+                className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-subtitle-18-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
               >
                 제출하기
               </button>

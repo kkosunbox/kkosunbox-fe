@@ -27,6 +27,24 @@ const MODAL_ITEMS: { type: ModalType; label: string; description: string; color:
     description: "할인쿠폰 발급",
     color: "bg-[#F8CE38] text-[var(--color-text)]",
   },
+  {
+    type: "subscription-cancel",
+    label: "Modal 05",
+    description: "구독 취소 확인",
+    color: "bg-[#F07050] text-white",
+  },
+  {
+    type: "subscription-restart",
+    label: "Modal 06",
+    description: "구독 재시작",
+    color: "bg-[#A8D4F5] text-[var(--color-text)]",
+  },
+  {
+    type: "member-withdraw",
+    label: "Modal 07",
+    description: "회원 탈퇴 확인",
+    color: "bg-[#F07050] text-white",
+  },
 ];
 
 export default function ModalTestButtons() {

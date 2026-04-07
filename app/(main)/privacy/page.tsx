@@ -68,7 +68,7 @@ const PRIVACY_SECTIONS = [
 export default function PrivacyPage() {
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-content px-8 py-14 max-md:px-6 max-md:py-10">
+      <div className="mx-auto max-w-content md:px-0 py-14 max-md:px-6 max-md:py-10">
         <h1 className="text-title-40-b max-md:text-title-28-b text-[var(--color-primary)]">개인정보처리방침</h1>
         <p className="mt-3 text-body-16-r max-md:text-body-14-r text-[var(--color-text-secondary)]">
           본 방침은 임시 게시본이며, 추후 서비스 정책에 따라 변경될 수 있습니다.

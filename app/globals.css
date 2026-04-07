@@ -60,6 +60,7 @@
   --color-background: #FFF9F3;    /* Cream White — 전체 기본 배경 */
   --color-surface-dark: #171713;  /* Near Black — 다크 섹션 배경 (Stats Bar 등) */
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
+  --color-surface-peach: #FFF2E5; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-surface-light: #F8F8F8;
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
@@ -118,6 +119,14 @@
 
   /* Icon */
   --color-icon-muted: #CCCCCC;        /* Muted icon — 비활성 아이콘 (정보 아이콘 등) */
+  --color-icon-gray: #BABABA;         /* Gray icon — 배송·아이콘 기본 선 색상 */
+
+  /* Social login brand colors */
+  --color-kakao: #FEE500;
+  --color-naver: #03C75A;
+
+  /* UI state */
+  --color-ui-inactive-bg: #EAEAEA;      /* 비활성 탭·컨트롤 배경 */
 
   /* Decoration */
   --color-accent-rust: #DC5200;         /* Burnt Orange — hero Ms Madi 장식 텍스트 */
@@ -137,6 +146,8 @@
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
+  --gradient-modal-danger: #F07050;                                               /* 구독 취소/회원 탈퇴 모달 05/07 — 코럴 오렌지 */
+  --gradient-modal-restart: linear-gradient(180deg, #A8D4F5 0%, #EEF6FF 100%);  /* 구독 재시작 모달 06 — 라이트 블루 */
   --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
   --gradient-checklist-result: linear-gradient(101.78deg, #FFF4EA 41.37%, #FFBF9A 118.84%); /* 체크리스트 결과 배너 (Figma) */
 }
@@ -155,6 +166,7 @@
   /* Surface */
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-warm: var(--color-surface-warm);
+  --color-surface-peach: var(--color-surface-peach);
   --color-surface-light: var(--color-surface-light);
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-banner-heading: var(--color-support-banner-heading);
@@ -216,9 +228,20 @@
 
   /* Icon */
   --color-icon-muted: var(--color-icon-muted);
+  --color-icon-gray: var(--color-icon-gray);
+
+  /* Social login */
+  --color-kakao: var(--color-kakao);
+  --color-naver: var(--color-naver);
+
+  /* UI state */
+  --color-ui-inactive-bg: var(--color-ui-inactive-bg);
 
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+
+  /* Tracking */
+  --tracking-tightest: -0.04em;
 
   /* Layout */
   --max-width-content: 1012px;
@@ -253,9 +276,11 @@ button:disabled {
 
 /* Titles */
 @utility text-title-42-b  { font-size: 42px; line-height: 56px; font-weight: 700; }
+@utility text-title-40-b  { font-size: 40px; line-height: 56px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-title-40-r  { font-size: 40px; line-height: 64px; font-weight: 400; }
 @utility text-title-32-b  { font-size: 32px; line-height: 40px; font-weight: 700; }
 @utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
+@utility text-title-28-b  { font-size: 28px; line-height: 150%; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-title-28-sb { font-size: 28px; line-height: 150%; font-weight: 600; letter-spacing: -0.04em; }
 @utility text-title-28-r-griun {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
@@ -286,11 +311,16 @@ button:disabled {
 }
 
 /* Subtitles */
+@utility text-subtitle-24-b  { font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-subtitle-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; }
 @utility text-subtitle-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-subtitle-18-b  { font-size: 18px; line-height: 22px; font-weight: 700; }
 @utility text-subtitle-18-sb { font-size: 18px; line-height: 22px; font-weight: 600; }
 @utility text-subtitle-18-m  { font-size: 18px; line-height: 22px; font-weight: 500; }
+@utility text-subtitle-18-eb { font-size: 18px; line-height: 22px; font-weight: 800; letter-spacing: -0.03em; }
+@utility text-subtitle-17-b  { font-size: 17px; line-height: 1.4;  font-weight: 700; letter-spacing: -0.02em; }
+@utility text-subtitle-17-sb { font-size: 17px; line-height: 1.2;  font-weight: 600; }
+@utility text-subtitle-16-b  { font-size: 16px; line-height: 22px; font-weight: 700; }
 @utility text-subtitle-16-r  { font-size: 16px; line-height: 22px; font-weight: 400; }
 @utility text-subtitle-16-sb { font-size: 16px; line-height: 20px; font-weight: 600; }
 
@@ -315,20 +345,70 @@ button:disabled {
   font-weight: 400;
   letter-spacing: -0.04em;
 }
+@utility text-body-15-m  { font-size: 15px; line-height: 20px; font-weight: 500; }
 @utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 600; }
+@utility text-body-14-b  { font-size: 14px; line-height: 22px; font-weight: 700; }
 @utility text-body-14-m  { font-size: 14px; line-height: 22px; font-weight: 500; }
 @utility text-body-14-r  { font-size: 14px; line-height: 22px; font-weight: 400; }
 @utility text-body-13-r  { font-size: 13px; line-height: 20px; font-weight: 400; }
+@utility text-body-13-m  { font-size: 13px; line-height: 18px; font-weight: 500; }
+@utility text-body-13-sb { font-size: 13px; line-height: 18px; font-weight: 600; }
+@utility text-body-13-b  { font-size: 13px; line-height: 18px; font-weight: 700; }
 
 /* Footer nav (Figma: Pretendard 500, 14px / 24px line-height) */
 @utility text-footer-nav { font-size: 14px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
 
 /* Captions */
+@utility text-caption-11-r  { font-size: 11px; line-height: 1;    font-weight: 400; }
 @utility text-caption-12-sb { font-size: 12px; line-height: 20px; font-weight: 600; }
+@utility text-caption-12-b  { font-size: 12px; line-height: 20px; font-weight: 700; }
 @utility text-caption-12-r  { font-size: 12px; line-height: 20px; font-weight: 400; }
 @utility text-caption-12-m  { font-size: 12px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
 
+/* Price display (tight leading, for numbers/amounts) */
+@utility text-price-16-b  { font-size: 16px; line-height: 1;    font-weight: 700; letter-spacing: -0.04em; }
+@utility text-price-16-eb { font-size: 16px; line-height: 19px; font-weight: 800; letter-spacing: -0.05em; }
+@utility text-price-20-eb { font-size: 20px; line-height: 1;    font-weight: 800; letter-spacing: -0.05em; }
+
+/* Display (hero/section headings, large extrabold) */
+@utility text-display-20-eb { font-size: 20px; line-height: 1.2;  font-weight: 800; letter-spacing: -0.04em; }
+@utility text-display-28-eb { font-size: 28px; line-height: 1.2;  font-weight: 800; letter-spacing: -0.04em; }
+@utility text-display-32-b  { font-size: 32px; line-height: 1.4;  font-weight: 700; letter-spacing: -0.04em; }
+@utility text-display-32-eb { font-size: 32px; line-height: 1.4;  font-weight: 800; letter-spacing: -0.04em; }
+@utility text-display-36-b  { font-size: 36px; line-height: 1.4;  font-weight: 700; letter-spacing: -0.04em; }
+
+/* Emoji display (size-only, no weight/line-height constraints) */
+@utility text-emoji-28 { font-size: 28px; line-height: 1; }
+@utility text-emoji-32 { font-size: 32px; line-height: 1; }
+@utility text-emoji-34 { font-size: 34px; line-height: 1; }
+@utility text-emoji-38 { font-size: 38px; line-height: 1; }
+@utility text-emoji-40 { font-size: 40px; line-height: 1; }
+@utility text-emoji-44 { font-size: 44px; line-height: 1; }
+
+/* Brand display (GangwonEduPower — size/line-height only, family set via style prop) */
+@utility text-brand-display-14 { font-size: 14px; line-height: 14px; }
+@utility text-brand-display-24 { font-size: 24px; line-height: 25px; }
+
 /* Action */
 @utility text-btn-14-m   { font-size: 14px; line-height: 18px; font-weight: 500; }
+@utility text-btn-15-sb  { font-size: 15px; line-height: 20px; font-weight: 600; }
 @utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 600; }
 @utility text-btn-12-m   { font-size: 12px; line-height: 16px; font-weight: 500; }
+
+/* ─── Paw particle burst animation ───────────────────────────────────────── */
+@keyframes paw-particle-fly {
+  0% {
+    transform: translate(-50%, -50%) translate(0px, 0px) rotate(var(--rot, 0deg)) scale(1);
+    opacity: 1;
+  }
+  65% { opacity: 1; }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--tx, 0px), var(--ty, 0px)) rotate(var(--rot, 0deg)) scale(0.12);
+    opacity: 0;
+  }
+}
+
+@utility animate-paw-particle {
+  animation: paw-particle-fly var(--dur, 480ms) ease-out var(--delay, 0ms) forwards;
+  @media (prefers-reduced-motion: reduce) { animation: none; opacity: 0; }
+}

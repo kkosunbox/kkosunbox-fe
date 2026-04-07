@@ -53,7 +53,7 @@ export default function ChecklistHero() {
           />
         </h1>
         <p
-          className="max-w-[345px] px-2 text-[16px] font-normal leading-5 tracking-[-0.02em] text-[var(--color-text)] max-md:mt-2 md:mt-3"
+          className="max-w-[345px] px-2 text-body-16-r leading-5 tracking-[-0.02em] text-[var(--color-text)] max-md:mt-2 md:mt-3"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}

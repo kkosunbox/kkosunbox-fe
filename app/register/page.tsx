@@ -49,17 +49,17 @@ function ChevronUpIcon() {
 
 /* ─── Shared styles ─── */
 const inputCls =
-  "h-[44px] w-full rounded-lg border border-[var(--color-divider-warm)] bg-white px-4 text-[14px] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]";
+  "h-[44px] w-full rounded-lg border border-[var(--color-divider-warm)] bg-white px-4 text-body-14-r text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none focus:border-[var(--color-accent)]";
 
 const actionBtnCls =
-  "h-[44px] shrink-0 rounded-lg bg-[var(--color-accent)] px-4 text-[13px] font-semibold text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80";
+  "h-[44px] shrink-0 rounded-lg bg-[var(--color-accent)] px-4 text-body-13-sb text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80";
 
 /* ─── Label + Row helpers ─── */
 const LABEL_W = "w-[66px] md:w-[96px]";
 
 function RequiredLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-[13px] font-semibold leading-tight text-[var(--color-text)] md:text-[14px]">
+    <span className="max-md:text-body-13-sb md:text-body-14-sb leading-tight text-[var(--color-text)]">
       {children}
       <span style={{ color: "var(--color-accent-rust)" }}>*</span>
     </span>
@@ -84,7 +84,7 @@ function FormRow({
 /* ─── Password helper text ─── */
 function PasswordHint({ className }: { className?: string }) {
   return (
-    <div className={["text-[12px] leading-[1.7] text-[var(--color-text-secondary)]", className].filter(Boolean).join(" ")}>
+    <div className={["text-caption-12-r leading-[1.7] text-[var(--color-text-secondary)]", className].filter(Boolean).join(" ")}>
       <p>* 비밀번호는 최소 8자 이상이어야 합니다.</p>
       <p>* 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.</p>
     </div>
@@ -130,12 +130,12 @@ export default function RegisterPage() {
         {/* ── 타이틀 ── */}
         <div className="mb-7 text-center md:mb-8">
           <h1
-            className="text-[28px] font-extrabold tracking-[-0.04em] md:text-[32px]"
+            className="max-md:text-display-28-eb md:text-display-32-eb"
             style={{ color: "var(--color-primary)" }}
           >
             회원가입
           </h1>
-          <p className="mt-3 text-[13px] text-[var(--color-text-secondary)] md:text-[14px]">
+          <p className="mt-3 max-md:text-body-13-r md:text-body-14-r text-[var(--color-text-secondary)]">
             회원가입을 위해 필수 입력사항을 입력해주세요.
           </p>
         </div>
@@ -240,7 +240,7 @@ export default function RegisterPage() {
               className="flex items-center gap-2 text-left"
             >
               <CheckboxIcon checked={allChecked} />
-              <span className="text-[14px] font-semibold text-[var(--color-text)]">
+              <span className="text-body-14-sb text-[var(--color-text)]">
                 전체 동의
               </span>
               <span className="ml-1 text-[var(--color-text-secondary)]">
@@ -255,7 +255,7 @@ export default function RegisterPage() {
                   <button type="button" onClick={() => toggleOne(key)}>
                     <CheckboxIcon checked={agreements[key]} />
                   </button>
-                  <span className="flex-1 text-[13px] text-[var(--color-text)] md:text-[14px]">
+                  <span className="flex-1 max-md:text-body-13-r md:text-body-14-r text-[var(--color-text)]">
                     {label}{" "}
                     <span className="text-[var(--color-text-secondary)]">
                       ({required ? "필수" : "선택"})
@@ -263,7 +263,7 @@ export default function RegisterPage() {
                   </span>
                   <button
                     type="button"
-                    className="shrink-0 text-[12px] text-[var(--color-text-secondary)] underline md:text-[13px]"
+                    className="shrink-0 max-md:text-caption-12-r md:text-body-13-r text-[var(--color-text-secondary)] underline"
                   >
                     보기
                   </button>
@@ -277,7 +277,7 @@ export default function RegisterPage() {
         {/* ── 가입하기 버튼 ── */}
         <button
           type="submit"
-          className="mt-6 flex h-[54px] w-full items-center justify-center rounded-full text-[16px] font-semibold text-white transition-opacity hover:opacity-90 active:opacity-80 md:mt-8 md:h-[58px] md:text-[17px]"
+          className="mt-6 flex h-[54px] w-full items-center justify-center rounded-full max-md:text-subtitle-16-sb md:text-subtitle-17-sb text-white transition-opacity hover:opacity-90 active:opacity-80 md:mt-8 md:h-[58px]"
           style={{ background: "var(--color-accent)" }}
         >
           가입하기

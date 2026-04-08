@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.png";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import doubleTwinkle from "../assets/double-twinkle.png";
 import stamp from "../assets/stamp.png";
-import { PACKAGES } from "@/widgets/subscribe/plans/ui/packageData";
+import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
+import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import {
+  PACKAGES,
+  comparePlansForDisplayOrder,
+  tierFromSubscriptionPlan,
+} from "@/widgets/subscribe/plans/ui/packageData";
 import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
 import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
 
@@ -73,21 +79,55 @@ interface RecommendSectionProps {
 export default function RecommendSection({ recommendedTier, petName }: RecommendSectionProps) {
   const router = useRouter();
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
+  const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
+
+  const sortedPlans = useMemo(
+    () => [...apiPlans].sort(comparePlansForDisplayOrder),
+    [apiPlans],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    getSubscriptionPlans()
+      .then((res) => {
+        if (!cancelled) setApiPlans(res.plans);
+      })
+      .catch(() => {
+        if (!cancelled) setApiPlans([]);
+      })
+      .finally(() => {
+        if (!cancelled) setPlansLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const recommended = PACKAGES.find((p) => p.id === recommendedTier)!;
   const petNameDisplay = petName || "우리 아이";
 
   /* 상세 뷰 */
   if (selectedTier) {
+    const detailPlan = sortedPlans.find((p) => tierFromSubscriptionPlan(p) === selectedTier);
     return (
       <section className="bg-white py-16 md:py-20">
         <div className="mx-auto max-w-content max-md:px-6 md:px-0">
-          <PackageDetailView
-            key={selectedTier}
-            selectedTier={selectedTier}
-            onSelectTier={setSelectedTier}
-            onClose={() => setSelectedTier(null)}
-          />
+          {plansLoading ? (
+            <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">플랜 정보를 불러오는 중…</p>
+          ) : detailPlan ? (
+            <PackageDetailView
+              key={detailPlan.id}
+              plan={detailPlan}
+              allPlans={sortedPlans}
+              onSelectPlan={(p) => setSelectedTier(tierFromSubscriptionPlan(p))}
+              onClose={() => setSelectedTier(null)}
+            />
+          ) : (
+            <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+              플랜 정보를 불러오지 못했습니다. 구독 페이지에서 다시 확인해 주세요.
+            </p>
+          )}
         </div>
       </section>
     );
@@ -225,7 +265,13 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                 {/* 구독하기 → 결제 페이지 */}
                 <button
                   type="button"
-                  onClick={() => router.push("/order")}
+                  onClick={() => {
+                    const match = sortedPlans.find(
+                      (p) => tierFromSubscriptionPlan(p) === pkg.tier,
+                    );
+                    if (match) router.push(`/order?planId=${match.id}`);
+                    else router.push("/subscribe");
+                  }}
                   className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                   style={{ background: pkg.colorVar }}
                 >

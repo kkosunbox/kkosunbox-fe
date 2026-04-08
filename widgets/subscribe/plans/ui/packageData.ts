@@ -1,5 +1,39 @@
 export type PackageTier = "Basic" | "Standard" | "Premium";
 
+/** API sortOrder(1-based) → 마케팅 티어. `sortOrder`가 0이면 항상 Basic이 되므로 UI는 `tierFromSubscriptionPlan` 사용 권장 */
+export function sortOrderToPackageTier(sortOrder: number): PackageTier {
+  const idx = Math.min(Math.max(sortOrder - 1, 0), 2);
+  const tiers: PackageTier[] = ["Basic", "Standard", "Premium"];
+  return tiers[idx];
+}
+
+/** 구독 플랜 DTO에서 티어 판별 (sortOrder 미설정·0 대응) */
+export type SubscriptionPlanLike = {
+  id: number;
+  name: string;
+  sortOrder: number;
+};
+
+export function tierFromSubscriptionPlan(plan: SubscriptionPlanLike): PackageTier {
+  if (plan.sortOrder >= 1 && plan.sortOrder <= 3) {
+    return sortOrderToPackageTier(plan.sortOrder);
+  }
+  const n = plan.name ?? "";
+  if (/프리미엄|premium/i.test(n)) return "Premium";
+  if (/스탠다드|standard/i.test(n)) return "Standard";
+  if (/베이직|basic/i.test(n)) return "Basic";
+  if (plan.id === 1) return "Basic";
+  if (plan.id === 2) return "Standard";
+  if (plan.id === 3) return "Premium";
+  return "Basic";
+}
+
+/** 목록 정렬: sortOrder 우선, 동일 시 id */
+export function comparePlansForDisplayOrder(a: SubscriptionPlanLike, b: SubscriptionPlanLike): number {
+  if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+  return a.id - b.id;
+}
+
 export interface PackageData {
   tier: PackageTier;
   id: "basic" | "standard" | "premium";
@@ -64,3 +98,26 @@ const COMPARE_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 export const COMPARE_PACKAGES = COMPARE_ORDER.map(
   (t) => PACKAGES.find((p) => p.tier === t)!
 );
+
+/** 피그마·PACKAGES와 동일한 티어별 색/라벨 */
+const TIER_LABEL_KO: Record<PackageTier, string> = {
+  Basic: "베이직",
+  Standard: "스탠다드",
+  Premium: "프리미엄",
+};
+
+export function packageThemeForPlan(plan: SubscriptionPlanLike): {
+  colorVar: string;
+  tabActiveBg: string;
+  tierLabelKo: string;
+  tier: PackageTier;
+} {
+  const tier = tierFromSubscriptionPlan(plan);
+  const pkg = PACKAGES.find((p) => p.tier === tier)!;
+  return {
+    colorVar: pkg.colorVar,
+    tabActiveBg: pkg.tabActiveBg,
+    tierLabelKo: TIER_LABEL_KO[tier],
+    tier,
+  };
+}

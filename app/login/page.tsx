@@ -58,7 +58,7 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [id, setId]                     = useState("");
+  const [email, setEmail]               = useState("");
   const [password, setPassword]         = useState("");
   const [error, setError]               = useState<string | null>(null);
   const [isPending, startTransition]    = useTransition();
@@ -71,7 +71,7 @@ export default function LoginPage() {
     setError(null);
     startTransition(async () => {
       const next = searchParams.get("next") ?? undefined;
-      const result = await login(id, password, next);
+      const result = await login(email, password, next);
       if (result.error) setError(result.error);
     });
   }
@@ -127,10 +127,10 @@ export default function LoginPage() {
             {/* 아이디 입력 */}
             <input
               type="text"
-              placeholder="아이디를 입력하세요"
-              autoComplete="username"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              placeholder="이메일을 입력하세요"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-semibold placeholder:font-semibold placeholder:text-[var(--color-text)]
                 h-[52px] px-8 text-body-16-sb
                 md:h-[54px] md:px-6 md:tracking-[0.2px]"

@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { createInquiry } from "@/features/inquiry/api";
+import { ApiError } from "@/shared/lib/api/types";
 import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.png";
 import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.png";
 
@@ -60,7 +63,10 @@ function ConsentCheckboxUnchecked() {
 }
 
 export default function InquirySection() {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isPending, startTransition] = useTransition();
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>({
     name: "",
     phone: "",
@@ -87,7 +93,34 @@ export default function InquirySection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("문의가 접수되었습니다. 빠르게 답변 드리겠습니다.");
+    setSubmitError(null);
+    const name = form.name.trim();
+    const phone = form.phone.trim();
+    const email = form.email.trim();
+    const message = form.message.trim();
+    if (!name || !phone || !email || !message || !form.agreeTerms || !form.agreePrivacy) return;
+
+    const titleBase = `[문의] ${name}`;
+    const title = titleBase.length > 200 ? `${titleBase.slice(0, 197)}...` : titleBase;
+    const content = `${message}\n\n---\n작성자: ${name}\n연락처: ${phone}\n이메일: ${email}`;
+    const contact = `${phone} / ${email}`.slice(0, 100);
+
+    startTransition(async () => {
+      try {
+        await createInquiry({
+          title,
+          content,
+          contact,
+        });
+        router.push("/support/history");
+      } catch (err) {
+        const msg =
+          err instanceof ApiError
+            ? err.message
+            : "문의 접수에 실패했습니다. 잠시 후 다시 시도해 주세요.";
+        setSubmitError(msg);
+      }
+    });
   };
 
   const isSubmittable =
@@ -213,6 +246,9 @@ export default function InquirySection() {
                   onChange={handleFileChange}
                   aria-label="파일 첨부"
                 />
+                <p className="text-body-12-r leading-4 text-[var(--color-text-secondary)]">
+                  첨부 파일 URL 업로드는 준비 중입니다. 접수 시 본문에 필요한 내용을 적어 주세요.
+                </p>
               </div>
             </div>
 
@@ -287,13 +323,19 @@ export default function InquirySection() {
               </label>
             </div>
 
+            {submitError && (
+              <p className="text-center text-body-13-m" style={{ color: "var(--color-accent-rust)" }}>
+                {submitError}
+              </p>
+            )}
+
             <div className="flex justify-center pt-2">
               <button
                 type="submit"
-                disabled={!isSubmittable}
+                disabled={!isSubmittable || isPending}
                 className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-subtitle-18-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
               >
-                제출하기
+                {isPending ? "접수 중…" : "제출하기"}
               </button>
             </div>
           </div>

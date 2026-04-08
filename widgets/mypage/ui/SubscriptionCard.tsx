@@ -2,9 +2,47 @@ import Image from "next/image";
 import Link from "next/link";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import { Text } from "@/shared/ui";
-import { SUBSCRIPTION } from "./mypage-mock";
+import type { UserSubscriptionDto } from "@/features/subscription/api/types";
+import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 
-export function SubscriptionCard() {
+function billingDayLabel(nextBillingDate: string): string {
+  const day = parseInt(nextBillingDate.slice(8, 10), 10);
+  return `매월 ${day}일`;
+}
+
+function SubscriptionEmpty() {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-4 py-4 text-center">
+      <Text
+        variant="body-16-m"
+        mobileVariant="body-14-m"
+        className="text-[var(--color-text-secondary)]"
+      >
+        아직 구독 전이시군요!
+        <br />
+        꼬순박스 구독으로 건강한 간식을 만나보세요.
+      </Text>
+      <Link
+        href="/subscribe"
+        className="inline-flex h-[44px] w-full max-w-[260px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-16-sb text-white transition-opacity hover:opacity-90"
+      >
+        구독하러 가기
+      </Link>
+    </div>
+  );
+}
+
+export function SubscriptionCard({ subscription }: { subscription: UserSubscriptionDto | null }) {
+  if (!subscription) {
+    return (
+      <div className="flex rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:bg-[var(--color-background)] md:min-h-[173px] md:px-6 md:py-5">
+        <SubscriptionEmpty />
+      </div>
+    );
+  }
+
+  const planTheme = packageThemeForPlan(subscription.plan);
+
   return (
     <div className="relative rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:bg-[var(--color-background)] md:min-h-[173px] md:px-6 md:py-5">
       <Link
@@ -18,7 +56,7 @@ export function SubscriptionCard() {
         <div className="relative max-md:h-[67px] max-md:w-[91px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-[12px] bg-white">
           <Image
             src={mockTempPackage}
-            alt="꼬순박스 프리미엄 패키지"
+            alt="꼬순박스 패키지"
             fill
             className="object-cover"
           />
@@ -26,30 +64,30 @@ export function SubscriptionCard() {
         <div className="flex flex-col gap-2">
           <span
             className="inline-flex h-[24px] w-fit items-center rounded-full px-[12px] max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white"
-            style={{ background: "var(--color-accent-orange)" }}
+            style={{ background: planTheme.colorVar }}
           >
-            {SUBSCRIPTION.tier}
+            {planTheme.tierLabelKo}
           </span>
           <Text
             variant="subtitle-16-sb"
             mobileVariant="body-14-sb"
             className="tracking-[-0.04em] text-[var(--color-text)]"
           >
-            {SUBSCRIPTION.name}
+            {subscription.plan.name} 구독중
           </Text>
           <Text
             variant="body-16-m"
             mobileVariant="body-14-m"
             className="text-[var(--color-text-secondary)]"
           >
-            {SUBSCRIPTION.startDate} ~
+            결제일 : {billingDayLabel(subscription.nextBillingDate)}
           </Text>
           <Text
             variant="body-16-m"
             mobileVariant="body-14-m"
             className="text-[var(--color-text-secondary)]"
           >
-            결제일 : {SUBSCRIPTION.billingDay}
+            다음 결제 : {subscription.nextBillingDate.replace(/-/g, ".")}
           </Text>
         </div>
       </div>

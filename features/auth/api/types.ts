@@ -49,8 +49,11 @@ export interface SignupRequest {
   isAllowMarketing: boolean;
 }
 
-export interface SignupResponse extends AuthTokens {
-  user: User;
+// API 스펙: 성공(200)이어도 accessToken / refreshToken / user 가 null 일 수 있음
+export interface SignupResponse {
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: User | null;
 }
 
 // ── 이메일/패스워드 로그인 ────────────────────────────────────────
@@ -60,8 +63,11 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse extends AuthTokens {
-  user: User;
+// API 스펙: 성공(200)이어도 accessToken / refreshToken / user 가 null 일 수 있음
+export interface LoginResponse {
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: User | null;
 }
 
 // ── 소셜 로그인 ───────────────────────────────────────────────────

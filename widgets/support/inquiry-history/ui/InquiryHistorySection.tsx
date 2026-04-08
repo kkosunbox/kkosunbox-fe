@@ -1,118 +1,29 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import FaqTitle from "../../faq/assets/faq-title.png";
+import type { InquiryDto, InquiryStatus } from "@/features/inquiry/api";
+import { getInquiries } from "@/features/inquiry/api";
+import { ApiError } from "@/shared/lib/api/types";
 import FaqQuestion from "../../faq/assets/faq-question.png";
 import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 const ITEMS_PER_PAGE = 4;
 
-type InquiryRecord = { id: string; title: string; body: string };
+const STATUS_LABEL: Record<InquiryStatus, string> = {
+  pending: "접수",
+  in_progress: "처리 중",
+  resolved: "완료",
+};
 
-const INITIAL_MOCK: InquiryRecord[] = [
-  {
-    id: "1",
-    title: "내 아이에게 맞는 플랜은 무엇인가요?",
-    body: "구독 신청 전 체크리스트를 작성해주시면 아이에게 딱 맞는 구독 플랜을 추천드립니다!",
-  },
-  {
-    id: "2",
-    title: "알레르기가 있는 아이도 먹을 수 있나요?",
-    body: "네 가능합니다, 주문 전 체크리스트를 작성하시면 '못 먹는 원재료'의 해당 성분을 제외한 대체 간식으로 맞춤 구성하여 보내드립니다. 아이의 건강을 최우선으로 생각합니다.",
-  },
-  {
-    id: "3",
-    title: "정기 구독 배송일은 언제인가요?",
-    body: "매달 지정하신 결제일에 맞춰 신선하게 제작된 후 2~3일 내로 발송됩니다. 배송 시작 시 알림톡으로 송장 번호를 안내해 드리고 있습니다.",
-  },
-  {
-    id: "4",
-    title: "이번 달만 건너뛰거나 해지할 수 있나요?",
-    body: "마이페이지에서 언제든 '이번 달 건너뛰기' 또는 '구독 해지'가 가능합니다. 단, 이미 제작이 시작된 경우에는 다음 달부터 적용되니 결제일 전 확인 부탁드립니다.",
-  },
-  {
-    id: "5",
-    title: "배송 일정 문의",
-    body: "이번 주 주문 건은 결제 확인 후 수요일 출고 예정입니다. 송장은 출고 당일 알림톡으로 안내드립니다.",
-  },
-  {
-    id: "6",
-    title: "구독 플랜 변경",
-    body: "스탠다드에서 프리미엄으로 변경 요청 접수되었습니다. 다음 결제일부터 새 구성이 적용됩니다.",
-  },
-  {
-    id: "7",
-    title: "결제 오류",
-    body: "카드사 승인 지연으로 일시 오류가 있었습니다. 재시도 후 정상 결제 확인되었습니다. 불편을 드려 죄송합니다.",
-  },
-  {
-    id: "8",
-    title: "선물 배송지 수정",
-    body: "선물 수령인 연락처만 변경 가능하며, 출고 전까지 수정 완료했습니다.",
-  },
-  {
-    id: "9",
-    title: "간식 보관 문의",
-    body: "개봉 후 냉장 보관 시 일주일, 냉동 보관 시 한 달 권장드립니다. 실온 장시간 보관은 피해 주세요.",
-  },
-  {
-    id: "10",
-    title: "휴무일 배송",
-    body: "공휴일 전후로 택배사 집하가 지연될 수 있어 하루 정도 늦어질 수 있습니다.",
-  },
-  {
-    id: "11",
-    title: "영수증 발급",
-    body: "결제 완료 메일에 영수증 링크가 포함되어 있습니다. 별도 발급이 필요하면 말씀해 주세요.",
-  },
-  {
-    id: "12",
-    title: "첫 구독 할인",
-    body: "첫 달 프로모션 코드 적용 여부 확인 후 안내드렸습니다. 다음 회차부터는 정상가로 청구됩니다.",
-  },
-  {
-    id: "13",
-    title: "패키지 파손",
-    body: "배송 중 파손 확인되어 동일 구성으로 재발송 처리했습니다. 사진 첨부 감사합니다.",
-  },
-  {
-    id: "14",
-    title: "구독 일시 정지",
-    body: "한 달 건너뛰기로 반영했습니다. 재개 원하시면 마이페이지에서 날짜만 선택해 주시면 됩니다.",
-  },
-  {
-    id: "15",
-    title: "제품 구성 문의",
-    body: "이번 달 박스에는 표시된 구성 외 샘플 간식 1종이 포함되어 있습니다.",
-  },
-  {
-    id: "16",
-    title: "맞춤 구성 변경",
-    body: "다음 달 구성 변경 요청 접수되었습니다. 결제 전날까지 변경 가능하오니 참고 부탁드립니다.",
-  },
-  {
-    id: "17",
-    title: "구독 재개 문의",
-    body: "일시 정지 해제 후 다음 결제일 기준으로 자동 재개됩니다. 추가 설정은 필요하지 않습니다.",
-  },
-  {
-    id: "18",
-    title: "샘플 간식 요청",
-    body: "박스 구성 내 샘플 요청은 접수 기준 다음 달부터 반영됩니다. 원하시는 종류를 알려주시면 최대한 맞춰드리겠습니다.",
-  },
-  {
-    id: "19",
-    title: "결제 수단 변경",
-    body: "마이페이지에서 직접 카드 정보를 변경하실 수 있습니다. 다음 결제일 전까지 변경하시면 바로 적용됩니다.",
-  },
-  {
-    id: "20",
-    title: "포인트 적립 문의",
-    body: "결제 완료 후 3영업일 내로 포인트가 적립됩니다. 적립 내역은 마이페이지에서 확인하실 수 있습니다.",
-  },
-];
+function formatInquiryBody(row: InquiryDto): string {
+  const lines: string[] = [row.content];
+  if (row.isAnswered && row.answer?.trim()) {
+    lines.push("", "답변:", row.answer.trim());
+  }
+  return lines.join("\n");
+}
 
 function ChevronLeftIcon() {
   return (
@@ -144,12 +55,44 @@ function ChevronRightIcon() {
 
 export default function InquiryHistorySection() {
   const [page, setPage] = useState(1);
+  const [rows, setRows] = useState<InquiryDto[]>([]);
+  const [loadState, setLoadState] = useState<"loading" | "ok" | "error" | "unauthorized">("loading");
+  const [loadMessage, setLoadMessage] = useState<string | null>(null);
 
-  const totalPages = Math.max(1, Math.ceil(INITIAL_MOCK.length / ITEMS_PER_PAGE));
+  useEffect(() => {
+    let cancelled = false;
+    getInquiries()
+      .then((res) => {
+        if (cancelled) return;
+        const sorted = [...res.inquiries].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+        setRows(sorted);
+        setPage(1);
+        setLoadState("ok");
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        if (err instanceof ApiError && err.isUnauthorized) {
+          setLoadState("unauthorized");
+          setLoadMessage(null);
+          return;
+        }
+        setLoadState("error");
+        setLoadMessage(
+          err instanceof ApiError ? err.message : "문의 내역을 불러오지 못했습니다.",
+        );
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const totalPages = Math.max(1, Math.ceil(rows.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(Math.max(1, page), totalPages);
   const currentItems = useMemo(
-    () => INITIAL_MOCK.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
-    [currentPage],
+    () => rows.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [rows, currentPage],
   );
 
   return (
@@ -216,7 +159,35 @@ export default function InquiryHistorySection() {
             </Link>
           </div>
 
-          {currentItems.length > 0 ? (
+          {loadState === "loading" && (
+            <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
+              문의 내역을 불러오는 중…
+            </p>
+          )}
+
+          {loadState === "unauthorized" && (
+            <div className="flex flex-col items-center py-16">
+              <p className="text-center text-body-16-r text-[var(--color-text-secondary)]">
+                로그인 후 이용할 수 있습니다.
+              </p>
+              <Link
+                href="/login?next=/support/history"
+                className="mt-4 text-body-14-m text-[var(--color-accent)] underline underline-offset-2"
+              >
+                로그인하기
+              </Link>
+            </div>
+          )}
+
+          {loadState === "error" && (
+            <div className="flex flex-col items-center py-16">
+              <p className="text-center text-body-16-r text-[var(--color-text-secondary)]">
+                {loadMessage ?? "문의 내역을 불러오지 못했습니다."}
+              </p>
+            </div>
+          )}
+
+          {loadState === "ok" && currentItems.length > 0 ? (
             <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {currentItems.map((item) => (
                 <li
@@ -225,13 +196,28 @@ export default function InquiryHistorySection() {
                 >
                   <PawCircleIcon />
                   <div className="flex flex-col gap-2">
-                    <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-                    <p className="text-body-14-m leading-5 text-[var(--color-text)]">{item.body}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
+                      <span className="rounded-full bg-[var(--color-accent-soft)] px-2 py-0.5 text-body-12-m text-[var(--color-accent)]">
+                        {STATUS_LABEL[item.status]}
+                      </span>
+                    </div>
+                    <p className="text-body-12-r text-[var(--color-text-secondary)]">
+                      {new Date(item.createdAt).toLocaleString("ko-KR", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </p>
+                    <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
+                      {formatInquiryBody(item)}
+                    </p>
                   </div>
                 </li>
               ))}
             </ul>
-          ) : (
+          ) : null}
+
+          {loadState === "ok" && rows.length === 0 ? (
             <div className="flex flex-col items-center py-16">
               <p className="text-body-16-r text-[var(--color-text-secondary)]">문의 내역이 없습니다.</p>
               <Link
@@ -241,9 +227,9 @@ export default function InquiryHistorySection() {
                 문의하기
               </Link>
             </div>
-          )}
+          ) : null}
 
-          {totalPages > 1 && (
+          {loadState === "ok" && totalPages > 1 && (
             <nav className="mt-8 flex items-center justify-center gap-2" aria-label="문의 내역 페이지 탐색">
               <button
                 type="button"

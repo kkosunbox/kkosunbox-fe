@@ -1,14 +1,19 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import { ChecklistRecommendModal } from "@/shared/ui";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
-import { PACKAGES, type PackageTier } from "./packageData";
+import { comparePlansForDisplayOrder, packageThemeForPlan } from "./packageData";
 import PackageDetailView from "./PackageDetailView";
+import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+
+function formatMonthlyPrice(n: number) {
+  return n.toLocaleString("ko-KR") + "원";
+}
 
 /* ── Icons (카드 목록용) ──────────────────────────────────────────── */
 
@@ -38,12 +43,21 @@ function InfoIcon() {
   );
 }
 
+interface Props {
+  plans: SubscriptionPlanDto[];
+}
+
 /* ── Main Section ───────────────────────────────────────────────── */
 
-export default function SubscribePlansSection() {
+export default function SubscribePlansSection({ plans }: Props) {
   const router = useRouter();
   const [isDismissed, setIsDismissed] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
+
+  const sortedPlans = useMemo(
+    () => [...plans].sort(comparePlansForDisplayOrder),
+    [plans],
+  );
 
   const isChecklistDone = useSyncExternalStore(
     (onStoreChange) => {
@@ -85,83 +99,108 @@ export default function SubscribePlansSection() {
             />
           </div>
 
-          {selectedTier ? (
+          {selectedPlan ? (
             <div className="mx-auto w-full max-w-[var(--max-width-content)]">
               <PackageDetailView
-                key={selectedTier}
-                selectedTier={selectedTier}
-                onSelectTier={setSelectedTier}
-                onClose={() => setSelectedTier(null)}
+                key={selectedPlan.id}
+                plan={selectedPlan}
+                allPlans={sortedPlans}
+                onSelectPlan={setSelectedPlan}
+                onClose={() => setSelectedPlan(null)}
               />
             </div>
+          ) : sortedPlans.length === 0 ? (
+            <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
+              표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
+            </p>
           ) : (
             /* Package cards */
             <div className="mx-auto max-w-content flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
-              {PACKAGES.map((pkg) => (
-                <div
-                  key={pkg.tier}
-                  className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
-                >
-                  <div className="mb-2.5 flex items-center justify-between">
-                    <span
-                      className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-                      style={{ background: pkg.colorVar }}
-                    >
-                      {pkg.tier}
-                    </span>
-                    {/* 우상단 ⓘ 버튼 → 상세 뷰 */}
+              {sortedPlans.map((plan) => {
+                const theme = packageThemeForPlan(plan);
+                const color = theme.colorVar;
+                return (
+                  <div
+                    key={plan.id}
+                    className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
+                  >
+                    <div className="mb-2.5 flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+                          style={{ background: color }}
+                        >
+                          {theme.tierLabelKo}
+                        </span>
+                        {plan.isRecommended ? (
+                          <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
+                            추천
+                          </span>
+                        ) : null}
+                      </div>
+                      {/* 우상단 ⓘ 버튼 → 상세 뷰 */}
+                      <button
+                        type="button"
+                        aria-label={`${plan.name} 패키지 상세 정보`}
+                        onClick={() => setSelectedPlan(plan)}
+                        className="flex shrink-0 items-center justify-center"
+                      >
+                        <InfoIcon />
+                      </button>
+                    </div>
+
+                    <div className="mb-[56px] flex justify-center">
+                      <Image
+                        src={mockTempPackage}
+                        alt={`${plan.name} 이미지`}
+                        className="h-[150px] w-auto object-contain"
+                      />
+                    </div>
+
+                    <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
+                      {plan.name}
+                    </h2>
+
+                    {plan.description ? (
+                      <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
+                        {plan.description}
+                      </p>
+                    ) : null}
+
+                    <ul className="mb-7 flex flex-col gap-[14px]">
+                      <li className="flex items-center gap-2 text-body-13-m leading-[16px] text-black">
+                        <CheckIcon color={color} />
+                        월 정기 배송
+                      </li>
+                      <li className="flex items-center gap-2 text-body-13-m leading-[16px] text-black">
+                        <CheckIcon color={color} />
+                        맞춤 간식 구성
+                      </li>
+                      <li className="flex items-center gap-2 text-body-13-m leading-[16px] text-black">
+                        <CheckIcon color={color} />
+                        구독 관리는 마이페이지에서
+                      </li>
+                    </ul>
+
+                    <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">
+                      <span className="text-body-14-b text-black">월 요금제</span>
+                      <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
+                        {formatMonthlyPrice(plan.monthlyPrice)}
+                      </span>
+                    </div>
+
+                    {/* 구독하기 → 결제 페이지 */}
                     <button
                       type="button"
-                      aria-label={`${pkg.tier} 패키지 상세 정보`}
-                      onClick={() => setSelectedTier(pkg.tier)}
-                      className="flex items-center justify-center"
+                      onClick={() => router.push(`/order?planId=${plan.id}`)}
+                      className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+                      style={{ background: color }}
                     >
-                      <InfoIcon />
+                      구독하기
                     </button>
                   </div>
-
-                  <div className="mb-[56px] flex justify-center">
-                    <Image
-                      src={mockTempPackage}
-                      alt={`${pkg.name} 이미지`}
-                      className="h-[150px] w-auto object-contain"
-                    />
-                  </div>
-
-                  <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-                    {pkg.name}
-                  </h2>
-
-                  <ul className="mb-7 flex flex-col gap-[14px]">
-                    {pkg.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
-                      >
-                        <CheckIcon color={pkg.colorVar} />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">
-                    <span className="text-body-14-b text-black">월 요금제</span>
-                    <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-                      {pkg.price}
-                    </span>
-                  </div>
-
-                  {/* 구독하기 → 결제 페이지 */}
-                  <button
-                    type="button"
-                    onClick={() => router.push("/order")}
-                    className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-                    style={{ background: pkg.colorVar }}
-                  >
-                    구독하기
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

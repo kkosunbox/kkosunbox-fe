@@ -1,25 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState, useTransition, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { DatePicker } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
+import { ApiError } from "@/shared/lib/api";
+import { registerBilling, getBillingTerms } from "@/features/billing/api/billingApi";
+import type { BillingTermsType } from "@/features/billing/api/types";
+import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
+import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import type { Profile } from "@/features/profile/api/types";
+import {
+  createSubscription,
+  getCouponInfo,
+} from "@/features/subscription/api/subscriptionApi";
+import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 
-/* ─── 가격 상수 ──────────────────────────────────────────── */
-const PRODUCT_PRICE = 25000;
-const COUPON_DISCOUNT_AMOUNT = 5000;
-const SHIPPING_FEE = 0;
+const inputCls =
+  "h-8 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
 function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-/* ─── 공통 클래스 ────────────────────────────────────────── */
-/** 피그마 기준: h-8(32px), border-radius 4px, white bg, 테두리 없음 */
-const inputCls =
-  "h-8 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
+function addDays(d: Date, n: number): Date {
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  return x;
+}
 
-/* ─── 아이콘 ─────────────────────────────────────────────── */
+function toYmd(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function digitsOnly(s: string) {
+  return s.replace(/\D/g, "");
+}
+
 function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
@@ -57,7 +79,6 @@ function CheckIcon() {
   );
 }
 
-
 function PawPrint({ size = 80 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -70,14 +91,6 @@ function PawPrint({ size = 80 }: { size?: number }) {
   );
 }
 
-/* ─── 섹션 카드 ──────────────────────────────────────────── */
-/**
- * 피그마 기준:
- * - background: #FFF7EF (--color-surface-warm)
- * - border-radius: 20px
- * - 내부 패딩: 28px (px-7)
- * - 타이틀: font-weight 700, 18px, color #262525
- */
 function SectionCard({
   title,
   open,
@@ -96,12 +109,7 @@ function SectionCard({
         onClick={onToggle}
         className="w-full flex items-center justify-between py-7 text-left"
       >
-        <span
-          className="text-subtitle-18-b tracking-[-0.04em]"
-          style={{ color: "var(--color-text)" }}
-        >
-          {title}
-        </span>
+        <span className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
         <ChevronIcon open={open} />
       </button>
       {open && <div className="pb-7">{children}</div>}
@@ -109,13 +117,6 @@ function SectionCard({
   );
 }
 
-/* ─── 체크박스 ───────────────────────────────────────────── */
-/**
- * 피그마 기준:
- * - 체크 시: background #7FB3FF, border-radius 5px
- * - 미체크 시: border 1px solid #B0B0B0, border-radius 5px
- * - 라벨: font-weight 500, 13px, color #2F2F2F
- */
 function Checkbox({
   checked,
   onChange,
@@ -132,27 +133,16 @@ function Checkbox({
         onClick={onChange}
         className={[
           "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
-          checked
-            ? "bg-[var(--color-accent)]"
-            : "border border-[var(--color-border)] bg-white",
+          checked ? "bg-[var(--color-accent)]" : "border border-[var(--color-border)] bg-white",
         ].join(" ")}
       >
         {checked && <CheckIcon />}
       </button>
-      <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
-        {label}
-      </span>
+      <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">{label}</span>
     </label>
   );
 }
 
-/* ─── 라디오 버튼 ────────────────────────────────────────── */
-/**
- * 피그마 기준:
- * - 선택 시: border 2px solid #7FB3FF, inner circle #7FB3FF
- * - 미선택 시: border 1px solid #B0B0B0
- * - 라벨: font-weight 500, 14px, letter-spacing -0.02em
- */
 function RadioButton({
   checked,
   onChange,
@@ -169,14 +159,10 @@ function RadioButton({
         onClick={onChange}
         className={[
           "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
-          checked
-            ? "border-2 border-[var(--color-accent)]"
-            : "border border-[var(--color-border)]",
+          checked ? "border-2 border-[var(--color-accent)]" : "border border-[var(--color-border)]",
         ].join(" ")}
       >
-        {checked && (
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]" />
-        )}
+        {checked && <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]" />}
       </button>
       <span className="text-body-14-m leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
         {label}
@@ -185,17 +171,7 @@ function RadioButton({
   );
 }
 
-/* ─── 폼 행 (레이블 + 입력 영역) ─────────────────────────── */
-/**
- * 피그마 기준: 레이블 너비 70px 고정, 입력 영역 flex-1
- */
-function FormRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function FormRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-0">
       <span className="w-[70px] shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)]">
@@ -206,57 +182,119 @@ function FormRow({
   );
 }
 
-/* ─── 타입 ───────────────────────────────────────────────── */
-type PaymentMethod = "card" | "kakao" | "transfer" | "bank";
+const BILLING_TERM_TYPES: BillingTermsType[] = [
+  "ElectronicFinancialTransactions",
+  "CollectPersonalInfo",
+  "SharingPersonalInformation",
+];
 
-interface FormState {
-  name: string;
-  email: string;
-  postalCode: string;
-  addressDetail: string;
-  mobile: string;
-  phone: string;
-  deliveryNote: string;
-  saveDelivery: boolean;
+export interface OrderSectionProps {
+  plan: SubscriptionPlanDto;
+  profiles: Profile[];
+  initialAddresses: DeliveryAddress[];
+  hasBilling: boolean;
 }
 
-/* ─── 메인 컴포넌트 ──────────────────────────────────────── */
-export default function OrderSection() {
+export default function OrderSection({
+  plan,
+  profiles,
+  initialAddresses,
+  hasBilling: hasBillingProp,
+}: OrderSectionProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   const [openSections, setOpenSections] = useState({
     product: true,
+    pet: true,
     customer: true,
     payment: true,
     date: true,
     summary: true,
   });
 
-  const [form, setForm] = useState<FormState>({
-    name: "",
-    email: "",
-    postalCode: "",
+  const [addresses, setAddresses] = useState<DeliveryAddress[]>(initialAddresses);
+  const [selectedProfileId, setSelectedProfileId] = useState<number>(profiles[0]!.id);
+  const [addressMode, setAddressMode] = useState<"existing" | "new">(
+    initialAddresses.length ? "existing" : "new",
+  );
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
+    initialAddresses[0]?.id ?? null,
+  );
+
+  const [newAddr, setNewAddr] = useState({
+    receiverName: "",
+    phoneNumber: "",
+    zipCode: "",
+    address: "",
     addressDetail: "",
-    mobile: "",
-    phone: "",
-    deliveryNote: "",
-    saveDelivery: true,
+    memo: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
-  const [useCoupon, setUseCoupon] = useState(false);
+  const [couponCodeInput, setCouponCodeInput] = useState("");
+  const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+
+  const today = new Date();
+  const minBillingDate = addDays(today, 7);
+  const maxBillingDate = addDays(today, 365);
   const [subscriptionDate, setSubscriptionDate] = useState<Date | null>(null);
+
   const [agreeOpen, setAgreeOpen] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
+  const [agreeBillingTerms, setAgreeBillingTerms] = useState(false);
 
-  function toggleSection(key: keyof typeof openSections) {
-    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  }
+  const [billingRegistered, setBillingRegistered] = useState(hasBillingProp);
+  const [card, setCard] = useState({
+    cardNo: "",
+    expYear: "",
+    expMonth: "",
+    idNo: "",
+    cardPw: "",
+    buyerName: "",
+    buyerEmail: "",
+    buyerTel: "",
+  });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  }
+  const [billingTerms, setBillingTerms] = useState<
+    Partial<Record<BillingTermsType, { title: string; content: string }>>
+  >({});
+  const [termsOpen, setTermsOpen] = useState(false);
+
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (hasBillingProp) return;
+    let cancelled = false;
+    Promise.all(
+      BILLING_TERM_TYPES.map(async (t) => {
+        const res = await getBillingTerms(t);
+        return [t, res] as const;
+      }),
+    )
+      .then((pairs) => {
+        if (cancelled) return;
+        const next: Partial<Record<BillingTermsType, { title: string; content: string }>> = {};
+        for (const [t, res] of pairs) {
+          next[t] = { title: res.termsTitle, content: res.content };
+        }
+        setBillingTerms(next);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [hasBillingProp]);
+
+  const basePrice = plan.monthlyPrice;
+  const couponDiscount = useMemo(() => {
+    if (!couponInfo?.canUse || !couponInfo.discountRate) return 0;
+    return Math.floor((basePrice * couponInfo.discountRate) / 100);
+  }, [basePrice, couponInfo]);
+
+  const total = Math.max(0, basePrice - couponDiscount);
 
   const agreeAll = agreeTerms && agreePrivacy && agreeAge;
   function handleAgreeAll() {
@@ -266,272 +304,418 @@ export default function OrderSection() {
     setAgreeAge(next);
   }
 
-  const couponDiscount = useCoupon ? COUPON_DISCOUNT_AMOUNT : 0;
-  const total = PRODUCT_PRICE - couponDiscount - SHIPPING_FEE;
+  function toggleSection(key: keyof typeof openSections) {
+    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
 
-  const today = new Date();
-  const minDate = new Date(today);
-  minDate.setDate(today.getDate() + 1);
-  const maxDate = new Date(today);
-  maxDate.setDate(today.getDate() + 3);
+  async function handleApplyCoupon() {
+    setCouponError(null);
+    const code = couponCodeInput.trim();
+    if (!code) {
+      setCouponError("쿠폰 코드를 입력해 주세요.");
+      setCouponInfo(null);
+      return;
+    }
+    try {
+      const info = await getCouponInfo({ code });
+      setCouponInfo(info);
+      if (!info.canUse) {
+        setCouponError(info.unavailableReason ?? "사용할 수 없는 쿠폰입니다.");
+      }
+    } catch (err) {
+      setCouponInfo(null);
+      if (err instanceof ApiError) {
+        setCouponError(err.message || "쿠폰 확인에 실패했습니다.");
+      } else {
+        setCouponError("쿠폰 확인에 실패했습니다.");
+      }
+    }
+  }
 
-  /* ── 좌측 섹션 ── */
+  function handlePay() {
+    setSubmitError(null);
+    if (!agreeAll) {
+      setSubmitError("필수 약관에 동의해 주세요.");
+      return;
+    }
+    if (!billingRegistered && !agreeBillingTerms) {
+      setSubmitError("전자금융거래 약관에 동의해 주세요.");
+      return;
+    }
+    if (!subscriptionDate) {
+      setSubmitError("구독 결제일을 선택해 주세요.");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        let deliveryAddressId = selectedAddressId;
+
+        if (addressMode === "new") {
+          if (
+            !newAddr.receiverName.trim() ||
+            !digitsOnly(newAddr.phoneNumber) ||
+            !newAddr.zipCode.trim() ||
+            !newAddr.address.trim()
+          ) {
+            setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
+            return;
+          }
+          const created = await createDeliveryAddress({
+            receiverName: newAddr.receiverName.trim(),
+            phoneNumber: digitsOnly(newAddr.phoneNumber),
+            zipCode: newAddr.zipCode.trim(),
+            address: newAddr.address.trim(),
+            addressDetail: newAddr.addressDetail.trim() || undefined,
+            memo: newAddr.memo.trim() || undefined,
+          });
+          deliveryAddressId = created.id;
+          setAddresses((prev) => [...prev, created]);
+          setSelectedAddressId(created.id);
+        }
+
+        if (deliveryAddressId === null) {
+          setSubmitError("배송지를 선택하거나 입력해 주세요.");
+          return;
+        }
+
+        if (!billingRegistered) {
+          const cardNo = digitsOnly(card.cardNo);
+          if (cardNo.length < 15 || card.expMonth.length !== 2 || card.expYear.length !== 2) {
+            setSubmitError("카드 번호와 유효기간을 확인해 주세요.");
+            return;
+          }
+          if (card.idNo.length < 6 || card.cardPw.length !== 2) {
+            setSubmitError("생년월일(또는 사업자번호)과 카드 비밀번호 앞 2자리를 입력해 주세요.");
+            return;
+          }
+          await registerBilling({
+            cardNo,
+            expYear: card.expYear,
+            expMonth: card.expMonth,
+            idNo: card.idNo,
+            cardPw: card.cardPw,
+            buyerName: card.buyerName.trim() || undefined,
+            buyerEmail: card.buyerEmail.trim() || undefined,
+            buyerTel: digitsOnly(card.buyerTel) || undefined,
+          });
+          setBillingRegistered(true);
+        }
+
+        await createSubscription({
+          petProfileId: selectedProfileId,
+          deliveryAddressId,
+          planId: plan.id,
+          billingDate: toYmd(subscriptionDate),
+          couponCode:
+            couponInfo?.canUse && couponCodeInput.trim() ? couponCodeInput.trim() : undefined,
+        });
+
+        router.refresh();
+        router.push("/mypage/subscription");
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setSubmitError(err.message || `처리 실패 (${err.code})`);
+        } else {
+          setSubmitError("처리 중 오류가 발생했습니다.");
+        }
+      }
+    });
+  }
+
+  const orderPlanTheme = packageThemeForPlan(plan);
+
   const leftSections = (
     <div className="flex flex-col gap-4">
-
-      {/* 제품 정보 */}
       <SectionCard
         title="제품 정보"
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
-        {/* 피그마: 내부 흰색 카드 background #FFFFFF, border-radius 20px */}
         <div className="rounded-[20px] bg-white px-7 py-7 flex items-center gap-6">
-          {/* 상품 이미지 */}
           <div className="w-[120px] h-[120px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl bg-[var(--color-card-premium)] text-4xl select-none">
             📦
           </div>
-          {/* 상품 정보 */}
           <div className="flex flex-col gap-3">
-            {/* 피그마: Premium badge — background #F07F3D, border-radius 30px, padding 4px 12px */}
             <span
               className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
-              style={{ background: "var(--color-premium)" }}
+              style={{ background: orderPlanTheme.colorVar }}
             >
-              Premium
+              {orderPlanTheme.tierLabelKo}
             </span>
-            {/* 피그마: font-weight 600, 16px, color #262525 */}
-            <span
-              className="text-subtitle-16-sb tracking-[-0.04em]"
-              style={{ color: "var(--color-text)" }}
-            >
-              프리미엄 패키지 BOX
+            <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
+              {plan.name}
             </span>
-            {/* 피그마: font-weight 800, 16px, color #171713 */}
-            <span
-              className="text-price-16-eb"
-              style={{ color: "var(--color-surface-dark)" }}
-            >
-              월 요금제 {formatPrice(PRODUCT_PRICE)}
+            <span className="text-price-16-eb text-[var(--color-surface-dark)]">
+              월 요금제 {formatPrice(plan.monthlyPrice)}
             </span>
           </div>
         </div>
       </SectionCard>
 
-      {/* 주문고객 / 배송지 정보 */}
+      {profiles.length > 1 ? (
+        <SectionCard title="반려동물 프로필" open={openSections.pet} onToggle={() => toggleSection("pet")}>
+          <div className="flex flex-col gap-3">
+            {profiles.map((p) => (
+              <RadioButton
+                key={p.id}
+                checked={selectedProfileId === p.id}
+                onChange={() => setSelectedProfileId(p.id)}
+                label={p.name?.trim() || `프로필 #${p.id}`}
+              />
+            ))}
+          </div>
+        </SectionCard>
+      ) : null}
+
       <SectionCard
-        title="주문고객 / 배송지 정보"
+        title="배송지 정보"
         open={openSections.customer}
         onToggle={() => toggleSection("customer")}
       >
         <div className="flex flex-col gap-4">
-          {/* 받는분 + 이메일 (데스크톱: 2열, 모바일: 1열) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-[34px]">
-            <FormRow label="받는분">
-              <input
-                name="name"
-                placeholder="이름"
-                value={form.name}
-                onChange={handleChange}
-                className={inputCls}
+          {addresses.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              <RadioButton
+                checked={addressMode === "existing"}
+                onChange={() => setAddressMode("existing")}
+                label="저장된 배송지"
               />
-            </FormRow>
-            <FormRow label="이메일">
-              <input
-                name="email"
-                type="email"
-                placeholder="이메일"
-                value={form.email}
-                onChange={handleChange}
-                className={inputCls}
-              />
-            </FormRow>
-          </div>
-
-          {/* 우편번호 */}
-          <FormRow label="우편번호">
-            <div className="flex gap-2">
-              <input
-                name="postalCode"
-                value={form.postalCode}
-                onChange={handleChange}
-                className={`${inputCls} flex-1 min-w-0`}
-              />
-              {/* 피그마: background #7FB3FF, border-radius 4px */}
-              <button
-                type="button"
-                className="h-8 px-2 rounded-[4px] bg-[var(--color-accent)] text-white text-body-13-m leading-[16px] whitespace-nowrap shrink-0"
-              >
-                주소찾기
-              </button>
-            </div>
-          </FormRow>
-
-          {/* 상세 주소 */}
-          <FormRow label="">
-            <input
-              name="addressDetail"
-              placeholder="상세 주소를 입력해주세요"
-              value={form.addressDetail}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, addressDetail: e.target.value }))
-              }
-              className={inputCls}
-            />
-          </FormRow>
-
-          {/* 휴대폰 + 전화번호 (데스크톱: 2열, 모바일: 1열) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-[34px]">
-            <FormRow label="휴대폰">
-              <input
-                name="mobile"
-                type="tel"
-                placeholder="-를 제외한 숫자만 입력해주세요"
-                value={form.mobile}
-                onChange={handleChange}
-                className={inputCls}
-              />
-            </FormRow>
-            <FormRow label="전화번호">
-              <input
-                name="phone"
-                type="tel"
-                placeholder="-를 제외한 숫자만 입력해주세요"
-                value={form.phone}
-                onChange={handleChange}
-                className={inputCls}
-              />
-            </FormRow>
-          </div>
-
-          {/* 배송메모 + 배송지 정보 저장 (데스크톱: 한 행) */}
-          <div className="flex flex-col md:flex-row md:items-center gap-3">
-            <FormRow label="배송메모">
-              <input
-                name="deliveryNote"
-                placeholder="배송 시 요청사항을 입력해주세요"
-                value={form.deliveryNote}
-                onChange={handleChange}
-                className={inputCls}
-              />
-            </FormRow>
-            <div className="pl-[70px] md:pl-0 md:shrink-0">
-              <Checkbox
-                checked={form.saveDelivery}
-                onChange={() =>
-                  setForm((prev) => ({
-                    ...prev,
-                    saveDelivery: !prev.saveDelivery,
-                  }))
-                }
-                label="배송지 정보 저장"
+              {addressMode === "existing" ? (
+                <div className="ml-7 flex flex-col gap-2 border-t border-white pt-3">
+                  {addresses.map((a) => (
+                    <RadioButton
+                      key={a.id}
+                      checked={selectedAddressId === a.id}
+                      onChange={() => {
+                        setSelectedAddressId(a.id);
+                        setAddressMode("existing");
+                      }}
+                      label={`${a.receiverName} · ${a.address}`}
+                    />
+                  ))}
+                </div>
+              ) : null}
+              <RadioButton
+                checked={addressMode === "new"}
+                onChange={() => setAddressMode("new")}
+                label="새 배송지 입력"
               />
             </div>
-          </div>
+          ) : null}
 
-          {/* 피그마: 구분선 border 1px solid #FFFFFF */}
+          {(addressMode === "new" || addresses.length === 0) && (
+            <div className="flex flex-col gap-4 border-t border-white pt-4">
+              <FormRow label="받는분">
+                <input
+                  value={newAddr.receiverName}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
+                  className={inputCls}
+                  placeholder="이름"
+                />
+              </FormRow>
+              <FormRow label="연락처">
+                <input
+                  value={newAddr.phoneNumber}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, phoneNumber: e.target.value }))}
+                  className={inputCls}
+                  placeholder="- 없이 숫자만"
+                />
+              </FormRow>
+              <FormRow label="우편번호">
+                <input
+                  value={newAddr.zipCode}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, zipCode: e.target.value }))}
+                  className={inputCls}
+                />
+              </FormRow>
+              <FormRow label="주소">
+                <input
+                  value={newAddr.address}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, address: e.target.value }))}
+                  className={inputCls}
+                  placeholder="기본 주소"
+                />
+              </FormRow>
+              <FormRow label="">
+                <input
+                  value={newAddr.addressDetail}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
+                  className={inputCls}
+                  placeholder="상세 주소"
+                />
+              </FormRow>
+              <FormRow label="배송메모">
+                <input
+                  value={newAddr.memo}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
+                  className={inputCls}
+                  placeholder="요청사항 (선택)"
+                />
+              </FormRow>
+            </div>
+          )}
+
           <div className="border-t border-white" />
         </div>
       </SectionCard>
 
-      {/* 결제수단 선택 */}
       <SectionCard
-        title="결제수단 선택"
+        title="결제 수단"
         open={openSections.payment}
         onToggle={() => toggleSection("payment")}
       >
-        <div className="flex flex-col gap-6">
-          {/* 피그마: 결제 방법 — flex row, gap 32px */}
-          <div className="flex flex-wrap gap-x-8 gap-y-3">
-            <RadioButton
-              checked={paymentMethod === "card"}
-              onChange={() => setPaymentMethod("card")}
-              label="신용카드"
-            />
-            <RadioButton
-              checked={paymentMethod === "kakao"}
-              onChange={() => setPaymentMethod("kakao")}
-              label="카카오페이"
-            />
-            <RadioButton
-              checked={paymentMethod === "transfer"}
-              onChange={() => setPaymentMethod("transfer")}
-              label="무통장입금"
-            />
-            <RadioButton
-              checked={paymentMethod === "bank"}
-              onChange={() => setPaymentMethod("bank")}
-              label="계좌이체"
-            />
-          </div>
+        <div className="flex flex-col gap-4">
+          {billingRegistered ? (
+            <p className="text-body-13-m text-[var(--color-text-secondary)]">
+              등록된 카드로 정기 결제가 진행됩니다.
+            </p>
+          ) : (
+            <>
+              <p className="text-body-13-m text-[var(--color-text-secondary)]">
+                신용카드 정보를 입력해 주세요. (정기 결제 빌링 등록)
+              </p>
+              <FormRow label="카드번호">
+                <input
+                  value={card.cardNo}
+                  onChange={(e) => setCard((s) => ({ ...s, cardNo: e.target.value }))}
+                  className={inputCls}
+                  placeholder="16자리"
+                  inputMode="numeric"
+                />
+              </FormRow>
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <FormRow label="월">
+                  <input
+                    value={card.expMonth}
+                    onChange={(e) => setCard((s) => ({ ...s, expMonth: e.target.value }))}
+                    className={inputCls}
+                    placeholder="MM"
+                    maxLength={2}
+                  />
+                </FormRow>
+                <FormRow label="년">
+                  <input
+                    value={card.expYear}
+                    onChange={(e) => setCard((s) => ({ ...s, expYear: e.target.value }))}
+                    className={inputCls}
+                    placeholder="YY"
+                    maxLength={2}
+                  />
+                </FormRow>
+              </div>
+              <FormRow label="생년월일">
+                <input
+                  value={card.idNo}
+                  onChange={(e) => setCard((s) => ({ ...s, idNo: e.target.value }))}
+                  className={inputCls}
+                  placeholder="YYMMDD 또는 사업자번호"
+                />
+              </FormRow>
+              <FormRow label="카드비밀번호">
+                <input
+                  type="password"
+                  value={card.cardPw}
+                  onChange={(e) => setCard((s) => ({ ...s, cardPw: e.target.value }))}
+                  className={inputCls}
+                  placeholder="앞 2자리"
+                  maxLength={2}
+                />
+              </FormRow>
+              <div className="flex flex-col gap-2 border-t border-white pt-3">
+                <Checkbox
+                  checked={agreeBillingTerms}
+                  onChange={() => setAgreeBillingTerms((v) => !v)}
+                  label="결제·개인정보 관련 약관에 동의합니다 (필수)"
+                />
+                <button
+                  type="button"
+                  onClick={() => setTermsOpen((o) => !o)}
+                  className="text-left text-body-13-m text-[var(--color-accent)]"
+                >
+                  {termsOpen ? "약관 접기" : "약관 내용 보기"}
+                </button>
+                {termsOpen ? (
+                  <div className="max-h-48 overflow-y-auto rounded-[8px] bg-white p-3 text-body-12-r text-[var(--color-text-secondary)]">
+                    {BILLING_TERM_TYPES.map((t) => {
+                      const block = billingTerms[t];
+                      if (!block) return null;
+                      return (
+                        <div key={t} className="mb-3">
+                          <p className="font-semibold text-[var(--color-text)]">{block.title}</p>
+                          <p className="whitespace-pre-wrap">{block.content}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </div>
+            </>
+          )}
 
-          {/* 쿠폰 사용 */}
-          <div className="flex items-center gap-4">
-            <Checkbox
-              checked={useCoupon}
-              onChange={() => setUseCoupon((prev) => !prev)}
-              label="쿠폰사용"
-            />
-            {useCoupon && (
-              <span className="text-body-13-m leading-[16px] text-[var(--color-text-secondary)]">
-                가입축하쿠폰 -{formatPrice(COUPON_DISCOUNT_AMOUNT)}
-              </span>
-            )}
+          <div className="flex flex-col gap-2 border-t border-white pt-4">
+            <FormRow label="쿠폰">
+              <div className="flex gap-2">
+                <input
+                  value={couponCodeInput}
+                  onChange={(e) => setCouponCodeInput(e.target.value)}
+                  className={`${inputCls} flex-1 min-w-0`}
+                  placeholder="코드 입력"
+                />
+                <button
+                  type="button"
+                  onClick={() => void handleApplyCoupon()}
+                  className="h-8 shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                >
+                  적용
+                </button>
+              </div>
+            </FormRow>
+            {couponError ? (
+              <p className="text-body-12-m text-red-600 pl-[70px]">{couponError}</p>
+            ) : null}
+            {couponInfo?.canUse ? (
+              <p className="text-body-13-m text-[var(--color-text-secondary)] pl-[70px]">
+                할인 {couponInfo.discountRate}% 적용 예상
+              </p>
+            ) : null}
           </div>
         </div>
       </SectionCard>
 
-      {/* 구독 날짜 선택 */}
       <SectionCard
-        title="구독 날짜 선택"
+        title="구독 결제일"
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
-        {/*
-          피그마: 날짜 피커(120px)와 설명 텍스트를 한 행에 나란히 배치
-          - 피커: left 28px, top 73px (카드 기준)
-          - 텍스트: left 164px (28+120+16), top 81px (피커와 수직 중앙 정렬)
-          모바일: 세로 스택
-        */}
         <div className="flex flex-col md:flex-row md:items-center gap-3">
-          {/* wrapper로 폭 고정 → trigger w-full이 120px로 채워짐 */}
           <div className="w-[120px] shrink-0">
             <DatePicker
               value={subscriptionDate}
               onChange={setSubscriptionDate}
               placeholder="날짜 선택"
-              minDate={minDate}
-              maxDate={maxDate}
+              minDate={minBillingDate}
+              maxDate={maxBillingDate}
               triggerClassName="!h-[34px] !rounded-[5px] !border-[var(--color-text-muted)] !px-3"
             />
           </div>
           <p className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
-            구독 시작일은 구매일로 부터 최대 3일 후까지 선택 가능합니다.
+            첫 정기 결제일은 오늘 기준 최소 7일 이후부터 선택할 수 있습니다.
           </p>
         </div>
       </SectionCard>
     </div>
   );
 
-  /* ── 우측 컬럼 ── */
   const rightColumn = (
     <div className="flex flex-col gap-4">
-      {/*
-        피그마: 결제정보 카드
-        - background #FFF7EF, border-radius 20px
-        - 결제정보 + 동의 + 결제하기 버튼 모두 포함
-      */}
       <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-7">
-        {/* 결제정보 헤더 */}
         <button
           type="button"
           onClick={() => toggleSection("summary")}
           className="w-full flex items-center justify-between py-7 text-left"
         >
-          <span
-            className="text-subtitle-18-b tracking-[-0.04em]"
-            style={{ color: "var(--color-text)" }}
-          >
+          <span className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">
             결제정보
           </span>
           <ChevronIcon open={openSections.summary} />
@@ -539,73 +723,36 @@ export default function OrderSection() {
 
         {openSections.summary && (
           <div className="pb-7 flex flex-col gap-8">
-            {/* 가격 항목들 — 피그마: font-weight 500, 13px */}
             <div className="flex flex-col gap-8">
               <div className="flex justify-between items-center">
-                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
-                  주문상품금액
-                </span>
-                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
-                  {formatPrice(PRODUCT_PRICE)}
-                </span>
+                <span className="text-body-13-m text-[var(--color-text)]">주문상품금액</span>
+                <span className="text-body-13-m text-[var(--color-text)]">{formatPrice(basePrice)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
-                  총 쿠폰 할인금액
-                </span>
-                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
+                <span className="text-body-13-m text-[var(--color-text)]">쿠폰 할인</span>
+                <span className="text-body-13-m text-[var(--color-text)]">
                   -{formatPrice(couponDiscount)}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
-                  총 배송비
-                </span>
-                <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">
-                  -{formatPrice(SHIPPING_FEE)}
-                </span>
-              </div>
             </div>
 
-            {/* 피그마: 구분선 border 1px solid #FFFFFF */}
             <div className="border-t border-white" />
 
-            {/* 월 요금제 합계 — 피그마: label font-weight 700/14px, amount font-weight 800/20.6px */}
             <div className="flex justify-between items-center">
-              <span className="text-body-14-b leading-[17px] text-[var(--color-text)]">
-                월 요금제
-              </span>
-              <span
-                className="text-price-20-eb leading-8"
-                style={{ color: "var(--color-text)" }}
-              >
-                {formatPrice(total)}
-              </span>
+              <span className="text-body-14-b text-[var(--color-text)]">월 요금제 (예상)</span>
+              <span className="text-price-20-eb text-[var(--color-text)]">{formatPrice(total)}</span>
             </div>
 
-            {/* 모두 동의합니다 — 피그마: 체크박스 + 펼침 화살표 */}
             <div>
               <div className="flex items-center justify-between">
-                <Checkbox
-                  checked={agreeAll}
-                  onChange={handleAgreeAll}
-                  label="모두 동의합니다."
-                />
+                <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="모두 동의합니다." />
                 <button
                   type="button"
-                  onClick={() => setAgreeOpen((prev) => !prev)}
+                  onClick={() => setAgreeOpen((p) => !p)}
                   className="transition-transform duration-200"
-                  style={{
-                    transform: agreeOpen ? "matrix(1,0,0,-1,0,0)" : "none",
-                  }}
+                  style={{ transform: agreeOpen ? "matrix(1,0,0,-1,0,0)" : "none" }}
                 >
-                  {/* 피그마: Icon/Outline/cheveron-down, 20px */}
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                  >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path
                       d="M5 7.5L10 12.5L15 7.5"
                       stroke="var(--color-text-secondary)"
@@ -637,60 +784,42 @@ export default function OrderSection() {
               )}
             </div>
 
-            {/*
-              결제하기 버튼
-              피그마: background #7FB3FF, border-radius 30px, height 48px
-              font-weight 600, 18px, color white
-            */}
+            {submitError ? (
+              <p className="text-body-13-m text-red-600" role="alert">
+                {submitError}
+              </p>
+            ) : null}
+
             <button
               type="button"
-              disabled={!agreeAll}
-              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb leading-[27px] tracking-[-0.02em] text-center disabled:opacity-50 transition-opacity"
+              disabled={!agreeAll || isPending}
+              onClick={handlePay}
+              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb disabled:opacity-50"
             >
-              결제하기
+              {isPending ? "처리 중…" : "결제하기"}
             </button>
           </div>
         )}
       </div>
 
-      {/*
-        쿠폰 배너
-        피그마: background #F8F8F8, border-radius 20px, width 327px, height 104px
-        - 강아지 이미지 96x96
-        - "브랜드 할인 쿠폰" / "최대 20%": GangwonEduPower 폰트
-      */}
       <div
         className="rounded-[20px] flex items-center gap-0 overflow-hidden"
         style={{ background: "var(--color-surface-light)", height: "104px" }}
       >
-        {/* 강아지 이미지 영역 */}
         <div
           className="shrink-0 flex items-center justify-center text-emoji-40 select-none"
           style={{ width: "110px", height: "104px" }}
         >
           🐕
         </div>
-
-        {/* 텍스트 영역 */}
         <div className="flex flex-col gap-1">
-          <Image
-            src={logoMain}
-            alt="꼬순박스"
-            width={64}
-            height={22}
-            className="object-contain object-left"
-          />
-          {/* 피그마: GangwonEduPower, 14px, color #262525 */}
+          <Image src={logoMain} alt="꼬순박스" width={64} height={22} className="object-contain object-left" />
           <span
             className="text-brand-display-14"
-            style={{
-              fontFamily: '"GangwonEduPower", sans-serif',
-              color: "var(--color-text)",
-            }}
+            style={{ fontFamily: '"GangwonEduPower", sans-serif', color: "var(--color-text)" }}
           >
             브랜드 할인 쿠폰
           </span>
-          {/* 피그마: GangwonEduPower, 24px, letter-spacing -0.06em, color #606060 */}
           <span
             className="text-brand-display-24"
             style={{
@@ -708,7 +837,6 @@ export default function OrderSection() {
 
   return (
     <div>
-      {/* ── 히어로 영역 (따뜻한 배경 유지) ── */}
       <div
         className="py-10 md:py-14 relative overflow-hidden"
         style={{ background: "var(--color-surface-warm)" }}
@@ -720,9 +848,7 @@ export default function OrderSection() {
           <PawPrint size={100} />
         </div>
         <div className="text-center px-4">
-          <h1
-            className="max-md:text-display-32-b md:text-display-36-b text-[var(--color-primary)] mb-2"
-          >
+          <h1 className="max-md:text-display-32-b md:text-display-36-b text-[var(--color-primary)] mb-2">
             주문을 완료해주세요!
           </h1>
           <p className="max-md:text-body-14-m md:text-body-16-m text-[var(--color-text-on-warm)]">
@@ -731,63 +857,36 @@ export default function OrderSection() {
         </div>
       </div>
 
-      {/* ── 히어로 아래: 흰색 배경 ── */}
       <div className="bg-white">
         <div
           className="mx-auto px-4 md:px-6 py-6 md:py-8"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
-          {/*
-            가격 요약 바 (데스크톱 전용)
-            피그마: background #FFF7EF, border-radius 20px, height 80px
-            아이템: font-weight 600, 16px, gap 40px
-            총 주문금액: font-weight 700, color #C97A3D
-            총 주문금액 금액: font-weight 700, 20px
-          */}
           <div className="max-md:hidden mb-4">
             <div
               className="rounded-[20px] flex items-center justify-center h-20 gap-10"
               style={{ background: "var(--color-surface-warm)" }}
             >
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-                주문상품금액 {formatPrice(PRODUCT_PRICE)}
-              </span>
-              <span className="text-subtitle-16-sb text-[var(--color-text)]">+</span>
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-                총 할인금액 {formatPrice(couponDiscount)}
+              <span className="text-subtitle-16-sb text-[var(--color-text)]">
+                주문상품금액 {formatPrice(basePrice)}
               </span>
               <span className="text-subtitle-16-sb text-[var(--color-text)]">-</span>
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-                총 배송비 {formatPrice(SHIPPING_FEE)}
+              <span className="text-subtitle-16-sb text-[var(--color-text)]">
+                쿠폰 할인 {formatPrice(couponDiscount)}
               </span>
               <span className="text-subtitle-16-sb text-[var(--color-text)]">=</span>
-
-              {/* 총 주문금액 — 피그마: 두 요소 분리 (라벨 16px bold primary, 금액 20px bold primary) */}
               <div className="flex items-center gap-2">
-                <span
-                  className="text-subtitle-16-b tracking-[-0.04em]"
-                  style={{ color: "var(--color-primary)" }}
-                >
-                  총 주문금액
-                </span>
-                <span
-                  className="text-subtitle-20-b tracking-[-0.04em]"
-                  style={{ color: "var(--color-primary)" }}
-                >
-                  {formatPrice(total)}
-                </span>
+                <span className="text-subtitle-16-b text-[var(--color-primary)]">월 예상 금액</span>
+                <span className="text-subtitle-20-b text-[var(--color-primary)]">{formatPrice(total)}</span>
               </div>
             </div>
           </div>
 
-          {/* 콘텐츠 그리드 */}
-          {/* 데스크톱: 670px + 16px gap + 327px = 1013px */}
           <div className="max-md:hidden md:grid md:grid-cols-[1fr_327px] gap-4 items-start">
             {leftSections}
             {rightColumn}
           </div>
 
-          {/* 모바일: 단일 열 */}
           <div className="max-md:flex max-md:flex-col md:hidden gap-4">
             {leftSections}
             {rightColumn}

@@ -1,17 +1,21 @@
-/** 환경변수 타입 안전 접근. 누락 시 빌드 타임에 에러를 낸다. */
+/**
+ * 환경변수 타입 안전 접근.
+ *
+ * ⚠️ process.env[key] (동적 대괄호 접근)는 Next.js/Turbopack이 빌드 타임에
+ *    값을 인라인할 수 없어 브라우저 런타임에서 undefined가 됩니다.
+ *    NEXT_PUBLIC_* 변수는 반드시 리터럴 점 표기법(process.env.NEXT_PUBLIC_XXX)으로만
+ *    참조해야 Next.js가 클라이언트 번들에 정적으로 삽입합니다.
+ */
 
-function required(key: string): string {
-  const value = process.env[key];
-  if (!value) throw new Error(`환경변수 ${key} 가 설정되지 않았습니다.`);
-  return value;
-}
+const _apiUrl = process.env.NEXT_PUBLIC_API_URL;
+if (!_apiUrl) throw new Error("환경변수 NEXT_PUBLIC_API_URL 가 설정되지 않았습니다.");
 
 export const env = {
-  apiUrl: required("NEXT_PUBLIC_API_URL"),
+  apiUrl: _apiUrl.replace(/\/$/, ""),
 
   oauth: {
-    google: { clientId: required("NEXT_PUBLIC_GOOGLE_CLIENT_ID") },
-    naver: { clientId: required("NEXT_PUBLIC_NAVER_CLIENT_ID") },
-    kakao: { clientId: required("NEXT_PUBLIC_KAKAO_CLIENT_ID") },
+    google: { clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "" },
+    naver:  { clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID  ?? "" },
+    kakao:  { clientId: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID  ?? "" },
   },
 } as const;

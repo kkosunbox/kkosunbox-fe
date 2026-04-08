@@ -3,15 +3,85 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
+import { getChecklistQuestions, getProfiles, updateProfile } from "@/features/profile/api/profileApi";
+import type { ChecklistAnswerInput, ChecklistQuestion, Profile } from "@/features/profile/api/types";
+import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
+import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import ChecklistHero from "./ChecklistHero";
 import ChecklistPetForm from "./ChecklistPetForm";
 import ChecklistQuestionStep from "./ChecklistQuestionStep";
 import ChecklistResult from "./ChecklistResult";
-import { mockRecommend } from "./types";
-import type { Step, PetInfo, Answers, RecommendedTier } from "./types";
+import type { PetInfo, RecommendedTier } from "./types";
 
 const CTA_CLASS =
   "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
+
+function fallbackRecommend(answers: ChecklistAnswerInput[]): RecommendedTier {
+  const n = answers.reduce((s, a) => s + a.optionIds.length, 0);
+  if (n >= 6) return "premium";
+  if (n >= 3) return "standard";
+  return "basic";
+}
+
+function parseProfileBirthDate(iso: string | null | undefined): Date | null {
+  if (!iso?.trim()) return null;
+  const day = iso.slice(0, 10);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
+  if (!m) return null;
+  const y = Number(m[1]);
+  const mo = Number(m[2]) - 1;
+  const d = Number(m[3]);
+  return new Date(y, mo, d);
+}
+
+function profileToPetInfo(p: Profile): PetInfo {
+  return {
+    name: p.name?.trim() ?? "",
+    birthDate: parseProfileBirthDate(p.birthDate),
+    weight: p.weight != null && !Number.isNaN(Number(p.weight)) ? String(p.weight) : "",
+    gender: p.gender ?? null,
+  };
+}
+
+function clonePetInfo(p: PetInfo): PetInfo {
+  return {
+    name: p.name,
+    birthDate: p.birthDate ? new Date(p.birthDate.getTime()) : null,
+    weight: p.weight,
+    gender: p.gender,
+  };
+}
+
+function petInfoEqual(a: PetInfo, b: PetInfo): boolean {
+  if (a.name !== b.name || a.weight !== b.weight || a.gender !== b.gender) return false;
+  const at = a.birthDate?.getTime() ?? null;
+  const bt = b.birthDate?.getTime() ?? null;
+  return at === bt;
+}
+
+function answersEqual(a: Record<number, number[]>, b: Record<number, number[]>): boolean {
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)].map(Number));
+  for (const k of keys) {
+    const ak = [...(a[k] ?? [])].sort((x, y) => x - y);
+    const bk = [...(b[k] ?? [])].sort((x, y) => x - y);
+    if (ak.length !== bk.length || !ak.every((x, i) => x === bk[i])) return false;
+  }
+  return true;
+}
+
+interface ChecklistBaseline {
+  petInfo: PetInfo;
+  avatarSrc: string | null;
+  answers: Record<number, number[]>;
+}
+
+const EMPTY_PET_INFO: PetInfo = {
+  name: "",
+  birthDate: null,
+  weight: "",
+  gender: null,
+};
 
 /* ─── Leave confirm modal ─── */
 function LeaveConfirmModal({
@@ -66,7 +136,15 @@ function LeaveConfirmModal({
 /* ─── Widget ─── */
 export default function ChecklistSection() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>(0);
+  const { isLoggedIn } = useAuth();
+
+  const [questions, setQuestions] = useState<ChecklistQuestion[] | null>(null);
+  const [questionsError, setQuestionsError] = useState<string | null>(null);
+
+  const [step, setStep] = useState(0);
+  const stepRef = useRef(0);
+  const [initReady, setInitReady] = useState(false);
+  const [baseline, setBaseline] = useState<ChecklistBaseline | null>(null);
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const [petInfo, setPetInfo] = useState<PetInfo>({
     name: "",
@@ -74,25 +152,86 @@ export default function ChecklistSection() {
     weight: "",
     gender: null,
   });
-  const [answers, setAnswers] = useState<Answers>({
-    allergies: [],
-    healthCare: [],
-    snack: [],
-    texture: [],
-  });
+  const [answersByQuestion, setAnswersByQuestion] = useState<Record<number, number[]>>({});
   const [recommendedTier, setRecommendedTier] = useState<RecommendedTier | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const pendingNavigateRef = useRef<(() => void) | null>(null);
 
-  // step=5(결과)는 완료 상태 — 이탈 가드 불필요
+  const resultStep = questions && questions.length > 0 ? questions.length + 1 : 6;
+
+  useEffect(() => {
+    let cancelled = false;
+    getChecklistQuestions()
+      .then((res) => {
+        if (cancelled) return;
+        const sorted = [...res.questions].sort((a, b) => a.sortOrder - b.sortOrder);
+        setQuestions(sorted);
+      })
+      .catch(() => {
+        if (!cancelled) setQuestionsError("체크리스트 질문을 불러오지 못했습니다.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
+
+  useEffect(() => {
+    if (questions === null) return;
+    if (stepRef.current > 0) return;
+
+    let cancelled = false;
+
+    void (async () => {
+      let pet = EMPTY_PET_INFO;
+      let av: string | null = null;
+
+      if (isLoggedIn) {
+        try {
+          const { profiles } = await getProfiles();
+          const p = profiles[0];
+          if (p && !cancelled) {
+            pet = profileToPetInfo(p);
+            av = p.profileImageUrl;
+          }
+        } catch {
+          /* 비로그인·오류 시 빈 폼 */
+        }
+      }
+
+      if (cancelled) return;
+
+      setPetInfo(pet);
+      setAvatarSrc((prev) => {
+        if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+        return av;
+      });
+      setAnswersByQuestion({});
+      setBaseline({
+        petInfo: clonePetInfo(pet),
+        avatarSrc: av,
+        answers: {},
+      });
+      setInitReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [questions, isLoggedIn]);
+
   const isDirty =
+    questions !== null &&
+    baseline !== null &&
     step > 0 &&
-    step < 5 &&
-    (petInfo.name !== "" ||
-      petInfo.birthDate !== null ||
-      petInfo.weight !== "" ||
-      petInfo.gender !== null);
+    step < resultStep &&
+    (!petInfoEqual(petInfo, baseline.petInfo) ||
+      avatarSrc !== baseline.avatarSrc ||
+      !answersEqual(answersByQuestion, baseline.answers));
 
   const isDirtyRef = useRef(isDirty);
   const isConfirmedLeaveRef = useRef(false);
@@ -101,15 +240,13 @@ export default function ChecklistSection() {
     isDirtyRef.current = isDirty;
   });
 
-  /* avatar URL 정리 */
   function handleAvatarChange(src: string | null) {
     setAvatarSrc((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
+      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
       return src;
     });
   }
 
-  /* ① beforeunload */
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       if (!isDirtyRef.current) return;
@@ -120,7 +257,6 @@ export default function ChecklistSection() {
     return () => window.removeEventListener("beforeunload", handler);
   }, []);
 
-  /* ② <a> 클릭 차단 */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!isDirtyRef.current || isConfirmedLeaveRef.current) return;
@@ -146,7 +282,6 @@ export default function ChecklistSection() {
     return () => document.removeEventListener("click", handler, true);
   }, [router]);
 
-  /* ③ history.pushState 패치 */
   useEffect(() => {
     const original = window.history.pushState.bind(window.history);
     window.history.pushState = function (
@@ -167,7 +302,7 @@ export default function ChecklistSection() {
             return;
           }
         } catch {
-          /* URL 파싱 실패 시 통과 */
+          /* ignore */
         }
       }
       original(state, unused, url);
@@ -177,7 +312,6 @@ export default function ChecklistSection() {
     };
   }, [router]);
 
-  /* ④ popstate: 뒤로가기 */
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
     const handler = () => {
@@ -205,61 +339,95 @@ export default function ChecklistSection() {
     pendingNavigateRef.current = null;
   }
 
-  function toggleOption(key: keyof Answers, value: string) {
-    setAnswers((prev) => {
-      const current = prev[key];
-      return {
-        ...prev,
-        [key]: current.includes(value)
-          ? current.filter((v) => v !== value)
-          : [...current, value],
-      };
+  function toggleOptionForQuestion(questionId: number, optionId: number, multi: boolean) {
+    setAnswersByQuestion((prev) => {
+      const cur = prev[questionId] ?? [];
+      if (multi) {
+        return {
+          ...prev,
+          [questionId]: cur.includes(optionId)
+            ? cur.filter((x) => x !== optionId)
+            : [...cur, optionId],
+        };
+      }
+      return { ...prev, [questionId]: [optionId] };
     });
   }
 
   function handleNext() {
-    if (step < 4) setStep((prev) => (prev + 1) as Step);
+    if (!questions?.length) return;
+    if (step === 0) {
+      setStep(1);
+      return;
+    }
+    if (step < questions.length) {
+      setStep((s) => s + 1);
+    }
   }
 
   function handleBack() {
-    if (step > 0) setStep((prev) => (prev - 1) as Step);
+    if (step > 0) setStep((s) => s - 1);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    if (!questions?.length) return;
     isConfirmedLeaveRef.current = true;
-    const tier = mockRecommend(answers);
+    setIsAnalyzing(true);
+
+    const checklistAnswers: ChecklistAnswerInput[] = questions.map((q) => ({
+      questionId: q.id,
+      optionIds: answersByQuestion[q.id] ?? [],
+    }));
+
+    let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
+    try {
+      if (isLoggedIn) {
+        const { profiles } = await getProfiles();
+        const profile = profiles[0];
+        if (profile) {
+          await updateProfile(profile.id, { checklistAnswers });
+          const planRes = await getSubscriptionPlans(profile.id);
+          const rec = planRes.plans.find((p) => p.isRecommended);
+          if (rec) {
+            const pt = tierFromSubscriptionPlan(rec);
+            tier =
+              pt === "Premium" ? "premium" : pt === "Standard" ? "standard" : "basic";
+          }
+        }
+      }
+    } catch (e) {
+      console.error("[ChecklistSection] save or plan fetch failed", e);
+    }
+
     setRecommendedTier(tier);
     localStorage.setItem("kkosun_checklist_done", "true");
-    setIsAnalyzing(true);
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      setStep(5);
-    }, 2500);
+    setIsAnalyzing(false);
+    setStep(resultStep);
   }
 
-  /* 분석 로딩 화면 */
   if (isAnalyzing) {
     return (
       <div className="flex min-h-[calc(100vh-54px)] flex-col items-center justify-center gap-6 bg-white px-4">
-        {/* 스피너 */}
         <div className="relative h-16 w-16">
           <div
             className="absolute inset-0 animate-spin rounded-full border-4 border-transparent"
-            style={{ borderTopColor: "var(--color-accent-orange)", borderRightColor: "var(--color-accent-orange)" }}
+            style={{
+              borderTopColor: "var(--color-accent-orange)",
+              borderRightColor: "var(--color-accent-orange)",
+            }}
           />
           <div
             className="absolute inset-[6px] animate-spin rounded-full border-4 border-transparent [animation-direction:reverse] [animation-duration:0.8s]"
             style={{ borderTopColor: "var(--color-basic)", borderRightColor: "var(--color-basic)" }}
           />
         </div>
-        {/* 문구 */}
         <p
           className="text-center max-md:text-body-16-r md:text-subtitle-18-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}
         >
-          체크리스트를 생성성하고 있습니다.
+          체크리스트를 생성하고 있습니다.
           <br />
           잠시만 기다려주세요
         </p>
@@ -267,8 +435,7 @@ export default function ChecklistSection() {
     );
   }
 
-  /* step=5: 결과 페이지 */
-  if (step === 5 && recommendedTier) {
+  if (step === resultStep && recommendedTier) {
     return (
       <ChecklistResult
         petInfo={petInfo}
@@ -278,16 +445,13 @@ export default function ChecklistSection() {
     );
   }
 
-  /* step 0~4: 히어로 + 폼 카드 */
+  const qLen = questions?.length ?? 0;
+  const lastQuestionStep = qLen;
   const ctaLabel =
-    step === 0
-      ? "체크리스트 작성하기"
-      : step === 4
-        ? "결과보기"
-        : "다음";
+    step === 0 ? "체크리스트 작성하기" : step === lastQuestionStep ? "결과보기" : "다음";
 
   function handleMobileCta() {
-    if (step === 4) handleSubmit();
+    if (step === lastQuestionStep) void handleSubmit();
     else handleNext();
   }
 
@@ -299,39 +463,64 @@ export default function ChecklistSection() {
         <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 md:px-8">
           <div className="rounded-[20px] bg-white px-5 py-8 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:-mt-12 md:-mt-[50px] md:px-8 md:py-12">
             <div className="mx-auto w-full max-w-[900px]">
-              {step === 0 && (
-                <ChecklistPetForm
-                  petInfo={petInfo}
-                  setPetInfo={setPetInfo}
-                  avatarSrc={avatarSrc}
-                  onAvatarChange={handleAvatarChange}
-                  onNext={handleNext}
-                />
-              )}
-              {step > 0 && step < 5 && (
-                <ChecklistQuestionStep
-                  step={step as 1 | 2 | 3 | 4}
-                  answers={answers}
-                  onToggle={toggleOption}
-                  onBack={handleBack}
-                  onNext={step === 4 ? handleSubmit : handleNext}
-                />
+              {questionsError ? (
+                <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">{questionsError}</p>
+              ) : questions === null ? (
+                <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">불러오는 중…</p>
+              ) : !initReady ? (
+                <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">프로필 불러오는 중…</p>
+              ) : questions.length === 0 ? (
+                <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+                  표시할 질문이 없습니다.
+                </p>
+              ) : (
+                <>
+                  {step === 0 && (
+                    <ChecklistPetForm
+                      petInfo={petInfo}
+                      setPetInfo={setPetInfo}
+                      avatarSrc={avatarSrc}
+                      onAvatarChange={handleAvatarChange}
+                      onNext={handleNext}
+                    />
+                  )}
+                  {step > 0 && step <= qLen && questions[step - 1] ? (
+                    <ChecklistQuestionStep
+                      key={questions[step - 1].id}
+                      question={questions[step - 1]}
+                      stepIndex={step}
+                      totalSteps={qLen}
+                      selectedOptionIds={answersByQuestion[questions[step - 1].id] ?? []}
+                      onToggleOption={(optionId) =>
+                        toggleOptionForQuestion(
+                          questions[step - 1].id,
+                          optionId,
+                          questions[step - 1].isMultiSelect,
+                        )
+                      }
+                      onBack={handleBack}
+                      onNext={step === lastQuestionStep ? () => void handleSubmit() : handleNext}
+                      isLastQuestion={step === lastQuestionStep}
+                    />
+                  ) : null}
+                </>
               )}
             </div>
           </div>
 
-          {/* 모바일 CTA */}
-          <div className="mt-6 w-full md:hidden">
-            <Button
-              type="button"
-              onClick={handleMobileCta}
-              variant="primary"
-              size="lg"
-              className={CTA_CLASS}
-            >
-              {ctaLabel}
-            </Button>
-          </div>
+          {questions && questions.length > 0 && initReady ? (
+            <div className="mt-6 w-full md:hidden">
+              <Button
+                type="button"
+                onClick={handleMobileCta}
+                variant="primary"
+                size="lg"
+                className={CTA_CLASS}
+              >
+                {ctaLabel}
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
 

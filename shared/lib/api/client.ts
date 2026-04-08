@@ -71,7 +71,7 @@ async function request<T>(
     });
   };
 
-  let accessToken = token ?? tokenStore.getAccess();
+  const accessToken = token ?? tokenStore.getAccess();
   let res = await doFetch(accessToken);
 
   // 401 → 토큰 갱신 후 1회 재시도
@@ -89,6 +89,9 @@ async function request<T>(
     } catch {
       // 응답 바디가 없는 경우 무시
     }
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`[api] ${method} ${path} ${res.status}`, errorBody ?? res.statusText);
+    }
     throw new ApiError(
       res.status,
       errorBody?.code ?? "UNKNOWN_ERROR",
@@ -98,10 +101,16 @@ async function request<T>(
 
   // 204 No Content
   if (res.status === 204 || res.headers.get("content-length") === "0") {
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[api] ${method} ${path}`, "(no content)");
+    }
     return undefined as T;
   }
 
   const json: ApiResponse<T> = await res.json();
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[api] ${method} ${path}`, json.data);
+  }
   return json.data;
 }
 

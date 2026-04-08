@@ -1,56 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import { Text, useModal } from "@/shared/ui";
-
-/* ─────────────────────────────
-   Mock data
-───────────────────────────── */
-const CURRENT_SUBSCRIPTION = {
-  tier: "Premium" as Tier,
-  name: "프리미엄 패키지 구독중",
-  startDate: "2026.01.21",
-  billingDay: "매달 21일",
-};
-
-type Tier = "Basic" | "Standard" | "Premium";
-
-const PACKAGES: {
-  tier: Tier;
-  colorVar: string;
-  name: string;
-  items: string[];
-  price: string;
-  priceNum: number;
-}[] = [
-  {
-    tier: "Basic",
-    colorVar: "var(--color-basic)",
-    name: "베이직 패키지 BOX",
-    items: ["100% 원물 프리미엄 져키", "인공 첨가물 0%", "이중 안심 포장"],
-    price: "15,000원",
-    priceNum: 15000,
-  },
-  {
-    tier: "Standard",
-    colorVar: "var(--color-plus)",
-    name: "스탠다드 패키지 BOX",
-    items: ["베이직의 모든 구성 포함", "영양 강화 플러스 져키", "균형 잡힌 영양 설계"],
-    price: "20,000원",
-    priceNum: 20000,
-  },
-  {
-    tier: "Premium",
-    colorVar: "var(--color-premium)",
-    name: "프리미엄 패키지 BOX",
-    items: ["휴먼그레이드 프리미엄 져키", "1:1 맞춤 큐레이션", "최상의 재료로 만든 패키지"],
-    price: "25,000원",
-    priceNum: 25000,
-  },
-];
+import { cancelSubscription, reactivateSubscription, changePlan } from "@/features/subscription/api/subscriptionApi";
+import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 
 /* ─────────────────────────────
    Icons
@@ -83,32 +40,79 @@ function InfoIcon() {
 }
 
 /* ─────────────────────────────
+   Props
+───────────────────────────── */
+interface Props {
+  subscription: UserSubscriptionDto | null;
+  plans: SubscriptionPlanDto[];
+}
+
+/* ─────────────────────────────
    Main Section
 ───────────────────────────── */
-export default function SubscriptionManagementSection() {
+export default function SubscriptionManagementSection({ subscription, plans }: Props) {
   const router = useRouter();
   const { openModal } = useModal();
-  const [currentTier, setCurrentTier] = useState<Tier>(CURRENT_SUBSCRIPTION.tier);
-  const [cancelled, setCancelled] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const currentPkg = PACKAGES.find((p) => p.tier === currentTier)!;
+  const isCancelled = !subscription?.isActive || subscription?.status === "cancelled";
+  const currentTheme = subscription ? packageThemeForPlan(subscription.plan) : null;
+  const currentColor = currentTheme?.colorVar ?? "var(--color-basic)";
 
-  function handleOpenCancelModal() {
-    openModal("subscription-cancel", () => setCancelled(true));
+  /* 결제일 포맷: YYYY-MM-DD → 매달 D일 */
+  function formatBillingDay(dateStr: string): string {
+    const day = new Date(dateStr).getDate();
+    return `매달 ${day}일`;
   }
 
-  function handleOpenSubscribeModal(tier: Tier) {
-    if (tier === currentTier && !cancelled) return;
-    openModal("subscription-restart", () => {
-      setCurrentTier(tier);
-      setCancelled(false);
+  /* 구독 시작일 포맷: cancelledAt or nextBillingDate로 역산하기 어려우므로 nextBillingDate 앞달 표시 */
+  function formatNextBilling(dateStr: string): string {
+    return dateStr.replace(/-/g, ".");
+  }
+
+  function handleCancel() {
+    if (!subscription) return;
+    openModal("subscription-cancel", () => {
+      startTransition(async () => {
+        await cancelSubscription(subscription.id).catch(console.error);
+        router.refresh();
+      });
     });
+  }
+
+  function handleReactivate(planId?: number) {
+    if (!subscription) return;
+    openModal("subscription-restart", () => {
+      startTransition(async () => {
+        await reactivateSubscription(subscription.id).catch(console.error);
+        // 플랜 변경이 함께 요청된 경우
+        if (planId !== undefined && planId !== subscription.plan.id) {
+          await changePlan(subscription.id, { newPlanId: planId }).catch(console.error);
+        }
+        router.refresh();
+      });
+    });
+  }
+
+  function handleChangePlan(plan: SubscriptionPlanDto) {
+    if (!subscription) return;
+    if (!isCancelled && plan.id === subscription.plan.id) return;
+    if (isCancelled) {
+      handleReactivate(plan.id);
+    } else {
+      openModal("subscription-restart", () => {
+        startTransition(async () => {
+          await changePlan(subscription.id, { newPlanId: plan.id }).catch(console.error);
+          router.refresh();
+        });
+      });
+    }
   }
 
   return (
     <>
-      <div className="min-h-screen bg-white">
-        {/* Upper band — warm peach background (Figma #FFF2E5) */}
+      <div className="min-h-screen bg-white" aria-busy={isPending}>
+        {/* Upper band */}
         <div style={{ background: "var(--color-surface-peach)" }}>
           <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-8 pt-6 md:pt-10">
             {/* Back button */}
@@ -124,11 +128,11 @@ export default function SubscriptionManagementSection() {
             {/* Current subscription card */}
             <div className="flex flex-col gap-4 rounded-[20px] bg-white max-md:p-5 md:flex-row md:items-center md:justify-between md:px-10 md:py-6">
               <div className="flex items-center gap-10">
-                {/* Package image — landscape */}
+                {/* Package image */}
                 <div className="relative max-md:h-[72px] max-md:w-[100px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-xl">
                   <Image
                     src={mockTempPackage}
-                    alt={`${currentTier} 패키지 이미지`}
+                    alt="패키지 이미지"
                     fill
                     className="object-cover object-center"
                   />
@@ -138,38 +142,50 @@ export default function SubscriptionManagementSection() {
                 <div className="flex flex-col gap-2">
                   <span
                     className="inline-flex w-fit items-center rounded-full px-3 py-1 text-body-14-sb text-white"
-                    style={{ background: currentPkg.colorVar }}
+                    style={{ background: currentColor }}
                   >
-                    {cancelled ? "구독 취소됨" : currentTier}
+                    {isCancelled
+                      ? "구독 취소됨"
+                      : subscription
+                        ? currentTheme!.tierLabelKo
+                        : "구독중"}
                   </span>
                   <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
-                    {cancelled ? `${currentTier} 패키지` : currentPkg.name}
+                    {isCancelled
+                      ? (subscription?.plan.name ?? "패키지")
+                      : `${subscription?.plan.name ?? ""} 구독중`}
                   </Text>
-                  {!cancelled && (
+                  {!isCancelled && subscription && (
                     <>
                       <Text variant="body-16-m" className="text-[var(--color-text-label)]">
-                        {CURRENT_SUBSCRIPTION.startDate} ~
+                        결제일 : {formatBillingDay(subscription.nextBillingDate)}
                       </Text>
                       <Text variant="body-16-m" className="text-[var(--color-text-label)]">
-                        결제일 : {CURRENT_SUBSCRIPTION.billingDay}
+                        다음 결제일 : {formatNextBilling(subscription.nextBillingDate)}
                       </Text>
                     </>
                   )}
-                  {cancelled && (
+                  {isCancelled && (
                     <Text variant="body-16-m" className="text-[var(--color-text-label)]">
                       구독이 취소되었습니다.
+                    </Text>
+                  )}
+                  {!subscription && (
+                    <Text variant="body-16-m" className="text-[var(--color-text-label)]">
+                      현재 활성 구독이 없습니다.
                     </Text>
                   )}
                 </div>
               </div>
 
               {/* Action buttons */}
-              {!cancelled && (
+              {subscription && !isCancelled && (
                 <div className="flex gap-2 md:shrink-0">
                   <button
                     type="button"
-                    onClick={handleOpenCancelModal}
-                    className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-80 md:flex-none"
+                    onClick={handleCancel}
+                    disabled={isPending}
+                    className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60 md:flex-none"
                     style={{ background: "var(--color-text-muted)" }}
                   >
                     구독 취소
@@ -187,11 +203,12 @@ export default function SubscriptionManagementSection() {
                   </button>
                 </div>
               )}
-              {cancelled && (
+              {subscription && isCancelled && (
                 <button
                   type="button"
-                  onClick={() => handleOpenSubscribeModal(currentTier)}
-                  className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
+                  onClick={() => handleReactivate()}
+                  disabled={isPending}
+                  className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60 md:flex-none"
                   style={{ background: "var(--color-accent)" }}
                 >
                   구독 재시작
@@ -207,100 +224,114 @@ export default function SubscriptionManagementSection() {
             구독 추가하기
           </Text>
 
-          <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-5">
-            {PACKAGES.map((pkg) => {
-              const isCurrentPlan = !cancelled && pkg.tier === currentTier;
+          {plans.length === 0 ? (
+            <p className="text-body-14-m text-[var(--color-text-label)]">
+              플랜 정보를 불러올 수 없습니다.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-5">
+              {plans.map((plan) => {
+                const theme = packageThemeForPlan(plan);
+                const color = theme.colorVar;
+                const isCurrentPlan = !isCancelled && subscription?.plan.id === plan.id;
+                const items = plan.description
+                  ? plan.description.split("|").map((s) => s.trim())
+                  : [];
 
-              return (
-                <div
-                  key={pkg.tier}
-                  className="flex flex-col rounded-[20px] px-6 pb-7 pt-5 shadow-sm"
-                  style={{
-                    background: "var(--color-background)",
-                    ...(isCurrentPlan ? { boxShadow: `0 0 0 2px ${pkg.colorVar}` } : {}),
-                  }}
-                >
-                  <div className="mb-5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="rounded-full px-4 py-1 text-body-14-sb leading-[1] text-white"
-                        style={{ background: pkg.colorVar }}
-                      >
-                        {pkg.tier}
-                      </span>
-                      {isCurrentPlan && (
-                        <span
-                          className="text-price-16-b"
-                          style={{ color: pkg.colorVar }}
-                        >
-                          이용중
-                        </span>
-                      )}
-                    </div>
-                    <button aria-label={`${pkg.tier} 패키지 상세 정보`} className="flex items-center justify-center">
-                      <InfoIcon />
-                    </button>
-                  </div>
-
-                  <div className="mb-6 flex justify-center">
-                    <Image
-                      src={mockTempPackage}
-                      alt={`${pkg.name} 이미지`}
-                      className="h-[140px] w-auto object-contain md:h-[120px]"
-                    />
-                  </div>
-
-                  <Text
-                    as="h3"
-                    variant="subtitle-18-b"
-                    mobileVariant="subtitle-18-b"
-                    className="mb-4 text-[var(--color-text)]"
+                return (
+                  <div
+                    key={plan.id}
+                    className="flex flex-col rounded-[20px] px-6 pb-7 pt-5 shadow-sm"
+                    style={{
+                      background: "var(--color-background)",
+                      ...(isCurrentPlan ? { boxShadow: `0 0 0 2px ${color}` } : {}),
+                    }}
                   >
-                    {pkg.name}
-                  </Text>
-
-                  <ul className="mb-6 flex flex-col gap-3">
-                    {pkg.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-center gap-2 text-body-14-m leading-[1] text-[var(--color-text)]"
-                      >
-                        <CheckIcon color={pkg.colorVar} />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mb-5 mt-auto flex items-center justify-between border-t border-[var(--color-divider-warm)] pt-5">
-                    <span className="text-body-14-b text-[var(--color-text)]">
-                      월 요금제
-                    </span>
-                    <span className="text-price-20-eb text-[var(--color-text)]">
-                      {pkg.price}
-                    </span>
-                  </div>
-
-                  {isCurrentPlan ? (
-                    <div
-                      className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white opacity-70"
-                      style={{ background: pkg.colorVar }}
-                    >
-                      현재 구독중
+                    <div className="mb-5 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="rounded-full px-4 py-1 text-body-14-sb leading-[1] text-white"
+                          style={{ background: color }}
+                        >
+                          {theme.tierLabelKo}
+                        </span>
+                        {isCurrentPlan && (
+                          <span
+                            className="text-price-16-b"
+                            style={{ color }}
+                          >
+                            이용중
+                          </span>
+                        )}
+                      </div>
+                      <button aria-label={`${plan.name} 패키지 상세 정보`} className="flex items-center justify-center">
+                        <InfoIcon />
+                      </button>
                     </div>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleOpenSubscribeModal(pkg.tier)}
-                      className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
-                      style={{ background: pkg.colorVar }}
+
+                    <div className="mb-6 flex justify-center">
+                      <Image
+                        src={mockTempPackage}
+                        alt={`${plan.name} 이미지`}
+                        className="h-[140px] w-auto object-contain md:h-[120px]"
+                      />
+                    </div>
+
+                    <Text
+                      as="h3"
+                      variant="subtitle-18-b"
+                      mobileVariant="subtitle-18-b"
+                      className="mb-4 text-[var(--color-text)]"
                     >
-                      구독하기
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                      {plan.name} 패키지 BOX
+                    </Text>
+
+                    {items.length > 0 && (
+                      <ul className="mb-6 flex flex-col gap-3">
+                        {items.map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-center gap-2 text-body-14-m leading-[1] text-[var(--color-text)]"
+                          >
+                            <CheckIcon color={color} />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    <div className="mb-5 mt-auto flex items-center justify-between border-t border-[var(--color-divider-warm)] pt-5">
+                      <span className="text-body-14-b text-[var(--color-text)]">
+                        월 요금제
+                      </span>
+                      <span className="text-price-20-eb text-[var(--color-text)]">
+                        {plan.monthlyPrice.toLocaleString("ko-KR")}원
+                      </span>
+                    </div>
+
+                    {isCurrentPlan ? (
+                      <div
+                        className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white opacity-70"
+                        style={{ background: color }}
+                      >
+                        현재 구독중
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleChangePlan(plan)}
+                        disabled={isPending}
+                        className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                        style={{ background: color }}
+                      >
+                        {isCancelled ? "구독하기" : "플랜 변경"}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </>

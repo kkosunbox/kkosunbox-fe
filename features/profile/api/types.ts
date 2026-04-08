@@ -2,7 +2,9 @@
 
 export interface ChecklistOption {
   id: number;
-  // TODO: options 하위 필드 스펙 확인 필요
+  /** 표시용 라벨 (백엔드 필드명이 text | label 등일 수 있음) */
+  text?: string;
+  label?: string;
   [key: string]: unknown;
 }
 

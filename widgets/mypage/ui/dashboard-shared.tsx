@@ -27,11 +27,16 @@ export function SectionHeader({
   title,
   href,
   linkLabel,
+  onLinkClick,
 }: {
   title: string;
   href?: string;
   linkLabel?: string;
+  onLinkClick?: () => void;
 }) {
+  const linkCls =
+    "max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
+
   return (
     <div className="mb-6 flex items-center justify-between gap-3">
       <Text
@@ -42,11 +47,12 @@ export function SectionHeader({
       >
         {title}
       </Text>
-      {href && linkLabel ? (
-        <Link
-          href={href}
-          className="max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
-        >
+      {onLinkClick && linkLabel ? (
+        <button type="button" onClick={onLinkClick} className={linkCls}>
+          {linkLabel}
+        </button>
+      ) : href && linkLabel ? (
+        <Link href={href} className={linkCls}>
           {linkLabel}
         </Link>
       ) : null}

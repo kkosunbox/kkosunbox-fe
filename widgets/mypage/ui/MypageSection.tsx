@@ -4,15 +4,30 @@ import { SubscriptionCard } from "./SubscriptionCard";
 import { PaymentCard } from "./PaymentCard";
 import { DeliveryCard } from "./DeliveryCard";
 import { InquiryCard } from "./InquiryCard";
+import type { Profile } from "@/features/profile/api/types";
+import type { UserSubscriptionDto } from "@/features/subscription/api/types";
+import type { BillingInfo } from "@/features/billing/api/types";
+import type { InquiryDto } from "@/features/inquiry/api/types";
 
-export default function MypageSection() {
+interface MypageSectionProps {
+  profile: Profile | null;
+  subscription: UserSubscriptionDto | null;
+  billingInfo: BillingInfo | null;
+  inquiries: InquiryDto[];
+}
+
+export default function MypageSection({
+  profile,
+  subscription,
+  billingInfo,
+  inquiries,
+}: MypageSectionProps) {
   return (
     <div className="min-h-screen bg-[var(--color-background)] pb-12 md:pb-16">
-      <ProfileSection />
+      <ProfileSection profile={profile} />
 
       <section className="pt-4 md:pt-5">
         <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0">
-          {/* 데스크톱: 흰색 카드 래퍼 / 모바일: 투명(크림 배경) */}
           <div className="md:rounded-[30px] md:bg-white md:px-5 md:py-5 md:shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
             <Text
               as="h2"
@@ -24,10 +39,10 @@ export default function MypageSection() {
             </Text>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-3">
-              <SubscriptionCard />
-              <PaymentCard />
+              <SubscriptionCard subscription={subscription} />
+              <PaymentCard billingInfo={billingInfo} subscription={subscription} />
               <DeliveryCard />
-              <InquiryCard />
+              <InquiryCard inquiries={inquiries} />
             </div>
           </div>
         </div>

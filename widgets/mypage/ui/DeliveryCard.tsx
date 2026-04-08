@@ -1,3 +1,5 @@
+"use client";
+
 import { Text } from "@/shared/ui";
 import { DashboardCard, SectionHeader } from "./dashboard-shared";
 import { DELIVERY_STEPS } from "./mypage-mock";
@@ -93,10 +95,22 @@ function DeliveredIcon() {
 
 const DELIVERY_ICON_COMPONENTS = [OrderIcon, PackingIcon, TruckIcon, DeliveredIcon];
 
+function openAddressPopup() {
+  const w = 420;
+  const h = 680;
+  const left = (screen.width - w) / 2;
+  const top = (screen.height - h) / 2;
+  window.open(
+    "/address",
+    "addressPopup",
+    `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+  );
+}
+
 export function DeliveryCard() {
   return (
     <DashboardCard>
-      <SectionHeader title="배송관리" href="/mypage/profile" linkLabel="배송지관리" />
+      <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" />
       <div className="grid grid-cols-4 gap-2.5 pt-1">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];

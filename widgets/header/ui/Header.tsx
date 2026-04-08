@@ -45,7 +45,7 @@ function SwitchHorizontalIcon() {
   );
 }
 
-function ProfileDropdown({ user, onClose }: { user: { name: string } | null; onClose: () => void }) {
+function ProfileDropdown({ user, onClose }: { user: { email: string } | null; onClose: () => void }) {
   const { logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -75,7 +75,7 @@ function ProfileDropdown({ user, onClose }: { user: { name: string } | null; onC
             <UserIcon />
           </div>
           <div className="flex items-center gap-1 ml-4 min-w-0">
-            <span className="text-body-16-sb text-[var(--color-text)] truncate">{user?.name ?? "사용자"}</span>
+            <span className="text-body-16-sb text-[var(--color-text)] truncate">{user?.email ?? "사용자"}</span>
             <SwitchHorizontalIcon />
           </div>
         </div>

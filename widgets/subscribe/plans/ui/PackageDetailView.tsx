@@ -4,7 +4,17 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
-import { PACKAGES, COMPARE_PACKAGES, type PackageTier } from "./packageData";
+import {
+  PACKAGES,
+  COMPARE_PACKAGES,
+  tierFromSubscriptionPlan,
+  type PackageTier,
+} from "./packageData";
+import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+
+function formatMonthlyPrice(n: number) {
+  return n.toLocaleString("ko-KR") + "원";
+}
 
 /* ─── Icons ─── */
 function CheckIcon({ color }: { color: string }) {
@@ -77,13 +87,15 @@ function CloseButton({ onClick }: { onClick: () => void }) {
 
 /* ─── Props ─── */
 interface Props {
-  selectedTier: PackageTier;
-  onSelectTier: (tier: PackageTier) => void;
+  plan: SubscriptionPlanDto;
+  allPlans: SubscriptionPlanDto[];
+  onSelectPlan: (plan: SubscriptionPlanDto) => void;
   onClose: () => void;
 }
 
-export default function PackageDetailView({ selectedTier, onSelectTier, onClose }: Props) {
+export default function PackageDetailView({ plan, allPlans, onSelectPlan, onClose }: Props) {
   const router = useRouter();
+  const selectedTier = tierFromSubscriptionPlan(plan);
   const pkg = PACKAGES.find((p) => p.tier === selectedTier)!;
   const [compareIndex, setCompareIndex] = useState(
     COMPARE_PACKAGES.findIndex((p) => p.tier === selectedTier)
@@ -91,7 +103,12 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
   const comparePkg = COMPARE_PACKAGES[compareIndex];
 
   function handleSubscribe() {
-    router.push("/order");
+    router.push(`/order?planId=${plan.id}`);
+  }
+
+  function selectTier(tier: PackageTier) {
+    const next = allPlans.find((ap) => tierFromSubscriptionPlan(ap) === tier);
+    if (next) onSelectPlan(next);
   }
 
   return (
@@ -122,8 +139,11 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
           </div>
 
           <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-            {pkg.name}
+            {plan.name || pkg.name}
           </h2>
+          {plan.description ? (
+            <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">{plan.description}</p>
+          ) : null}
 
           <ul className="mb-7 flex flex-col gap-[14px]">
             {pkg.items.map((item) => (
@@ -140,7 +160,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
           <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
             <span className="text-body-14-b text-black">월 요금제</span>
             <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-              {pkg.price}
+              {formatMonthlyPrice(plan.monthlyPrice)}
             </span>
           </div>
 
@@ -286,8 +306,11 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             </div>
 
             <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-              {pkg.name}
+              {plan.name || pkg.name}
             </h2>
+            {plan.description ? (
+              <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">{plan.description}</p>
+            ) : null}
 
             <ul className="mb-7 flex flex-col gap-[14px]">
               {pkg.items.map((item) => (
@@ -304,7 +327,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
             <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
               <span className="text-body-14-b text-black">월 요금제</span>
               <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-                {pkg.price}
+                {formatMonthlyPrice(plan.monthlyPrice)}
               </span>
             </div>
 
@@ -328,7 +351,7 @@ export default function PackageDetailView({ selectedTier, onSelectTier, onClose 
                   <button
                     key={p.tier}
                     type="button"
-                    onClick={() => onSelectTier(p.tier)}
+                    onClick={() => selectTier(p.tier)}
                     className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-body-13-sb"
                     style={{
                       borderRadius: "20px 20px 0 0",

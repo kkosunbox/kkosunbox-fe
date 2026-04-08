@@ -1,54 +1,24 @@
 "use client";
 
 import { Button, Text } from "@/shared/ui";
-import type { Answers } from "./types";
+import type { ChecklistOption, ChecklistQuestion } from "@/features/profile/api/types";
 
-/* ─── Step config ─── */
-export const STEPS = [
-  {
-    index: 1 as const,
-    title: "알러지가 있나요?",
-    label: "알러지 유무",
-    key: "allergies" as keyof Answers,
-    options: ["닭고기 알러지", "소고기 알러지", "유제품(우유) 알러지", "밀(곡물) 알러지"],
-    next: "다음",
-  },
-  {
-    index: 2 as const,
-    title: "어떤 건강 케어가 필요한가요?",
-    label: "건강 케어",
-    key: "healthCare" as keyof Answers,
-    options: ["피모 관리", "관절강화", "다이어트", "치아 건강"],
-    next: "다음",
-  },
-  {
-    index: 3 as const,
-    title: "선호하는 간식은 무엇인가요?",
-    label: "선호하는 간식",
-    key: "snack" as keyof Answers,
-    options: ["건조간식", "천연 껌 / 뼈", "동결건조", "수제쿠키"],
-    next: "다음",
-  },
-  {
-    index: 4 as const,
-    title: "선호하는 제형은 무엇인가요?",
-    label: "선호하는 제형",
-    key: "texture" as keyof Answers,
-    options: ["바삭형", "가루형", "딱딱형", "소프트형"],
-    next: "결과보기",
-  },
-] as const;
+function optionLabel(o: ChecklistOption): string {
+  if (typeof o.text === "string" && o.text) return o.text;
+  if (typeof o.label === "string" && o.label) return o.label;
+  return `선택지 ${o.id}`;
+}
 
 const CTA_CLASS =
   "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
-function ProgressBar({ current }: { current: number }) {
+function ProgressBar({ current, total }: { current: number; total: number }) {
   return (
     <div
       className="flex gap-1 max-md:min-w-0 max-md:flex-1 md:flex-none md:gap-2"
-      aria-label={`${current} / 4 단계`}
+      aria-label={`${current} / ${total} 단계`}
     >
-      {[1, 2, 3, 4].map((n) => (
+      {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
         <div
           key={n}
           className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
@@ -86,25 +56,31 @@ function OptionButton({
 }
 
 interface Props {
-  step: 1 | 2 | 3 | 4;
-  answers: Answers;
-  onToggle: (key: keyof Answers, value: string) => void;
+  question: ChecklistQuestion;
+  /** 1-based 질문 순번 (진행 바) */
+  stepIndex: number;
+  totalSteps: number;
+  selectedOptionIds: number[];
+  onToggleOption: (optionId: number) => void;
   onBack: () => void;
   onNext: () => void;
+  isLastQuestion: boolean;
 }
 
 export default function ChecklistQuestionStep({
-  step,
-  answers,
-  onToggle,
+  question,
+  stepIndex,
+  totalSteps,
+  selectedOptionIds,
+  onToggleOption,
   onBack,
   onNext,
+  isLastQuestion,
 }: Props) {
-  const config = STEPS[step - 1];
+  const nextLabel = isLastQuestion ? "결과보기" : "다음";
 
   return (
     <div className="flex flex-col">
-      {/* 모바일 헤더: 뒤로가기 + 진행 바 */}
       <div className="mb-4 flex items-center gap-3 md:hidden">
         <button
           type="button"
@@ -122,14 +98,13 @@ export default function ChecklistQuestionStep({
             />
           </svg>
         </button>
-        <ProgressBar current={step} />
+        <ProgressBar current={stepIndex} total={totalSteps} />
       </div>
 
       <Text as="h2" variant="subtitle-18-b" className="mb-2 text-[var(--color-text)] md:hidden">
-        {config.title}
+        {question.text}
       </Text>
 
-      {/* PC 헤더: 뒤로가기 + 타이틀 + 진행 바 */}
       <div className="mb-8 max-md:hidden md:flex md:items-center md:justify-between md:gap-4">
         <button
           type="button"
@@ -146,36 +121,33 @@ export default function ChecklistQuestionStep({
               strokeLinejoin="round"
             />
           </svg>
-          {config.title}
+          {question.text}
         </button>
-        <ProgressBar current={step} />
+        <ProgressBar current={stepIndex} total={totalSteps} />
       </div>
 
-      {/* 옵션 목록 */}
       <div className="mb-8 max-md:mt-0">
-        <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">{config.label}</p>
+        {question.description ? (
+          <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">{question.description}</p>
+        ) : null}
+        <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">
+          {question.isMultiSelect ? "복수 선택 가능" : "한 가지를 선택해 주세요"}
+        </p>
         <div className="max-md:flex max-md:flex-col max-md:gap-3 md:grid md:grid-cols-2 md:gap-3">
-          {config.options.map((option) => (
+          {question.options.map((option) => (
             <OptionButton
-              key={option}
-              label={option}
-              selected={answers[config.key].includes(option)}
-              onClick={() => onToggle(config.key, option)}
+              key={option.id}
+              label={optionLabel(option)}
+              selected={selectedOptionIds.includes(option.id)}
+              onClick={() => onToggleOption(option.id)}
             />
           ))}
         </div>
       </div>
 
-      {/* PC CTA (모바일은 카드 바깥에서 렌더) */}
       <div className="w-full max-md:hidden md:mx-auto md:max-w-[380px]">
-        <Button
-          type="button"
-          onClick={onNext}
-          variant="primary"
-          size="lg"
-          className={CTA_CLASS}
-        >
-          {config.next}
+        <Button type="button" onClick={onNext} variant="primary" size="lg" className={CTA_CLASS}>
+          {nextLabel}
         </Button>
       </div>
     </div>

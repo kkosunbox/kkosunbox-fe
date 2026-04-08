@@ -2,34 +2,102 @@
 
 import { cookies } from "next/headers";
 import { COOKIE_NAME } from "./constants";
+import { login as loginApi, signup as signupApi } from "../api/authApi";
+import { ApiError } from "@/shared/lib/api";
+import type { AuthUser } from "../model/types";
 
-// ── Dev credentials (실제 인증으로 교체 시 이 파일만 수정) ──────────────
-const DEV_ID       = process.env.DEV_LOGIN_ID       ?? "admin";
-const DEV_PASSWORD = process.env.DEV_LOGIN_PASSWORD  ?? "admin1234!";
-const DEV_TOKEN    = process.env.DEV_AUTH_TOKEN      ?? "dev-ggosoon-token";
+const COOKIE_OPTS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+  maxAge: 60 * 60 * 24 * 7, // 7일
+};
 
 export async function loginAction(
-  id: string,
+  email: string,
   password: string,
-): Promise<{ error?: string }> {
-  if (id !== DEV_ID || password !== DEV_PASSWORD) {
-    return { error: "아이디 또는 비밀번호가 올바르지 않습니다." };
+): Promise<{
+  user?: AuthUser;
+  accessToken?: string;
+  refreshToken?: string;
+  error?: string;
+}> {
+  try {
+    const data = await loginApi({ email, password });
+
+    // API 스펙상 200이어도 null 가능
+    if (!data.accessToken || !data.refreshToken || !data.user) {
+      return { error: "로그인 처리 중 오류가 발생했습니다." };
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
+
+    return {
+      user: { id: data.user.id, email: data.user.email },
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    };
+  } catch (err) {
+    if (err instanceof ApiError) {
+      console.error("[loginAction] ApiError", err.statusCode, err.code, err.message);
+      if (err.isUnauthorized || err.statusCode === 400) {
+        return { error: "아이디 또는 비밀번호가 올바르지 않습니다." };
+      }
+      return { error: `로그인 오류 (${err.code})` };
+    }
+    console.error("[loginAction] Unexpected error:", err);
+    return { error: "로그인 중 오류가 발생했습니다." };
   }
+}
 
-  const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, DEV_TOKEN, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7일
-  });
+export async function signupAction(
+  emailVerifiedToken: string,
+  password: string,
+  isAllowTerms: boolean,
+  isAllowPrivacy: boolean,
+  isAllowMarketing: boolean,
+): Promise<{
+  user?: AuthUser;
+  accessToken?: string;
+  refreshToken?: string;
+  error?: string;
+}> {
+  try {
+    const data = await signupApi({
+      emailVerifiedToken,
+      password,
+      isAllowTerms,
+      isAllowPrivacy,
+      isAllowMarketing,
+    });
 
-  return {};
+    // API 스펙상 200이어도 null 가능
+    if (!data.accessToken || !data.refreshToken || !data.user) {
+      return { error: "회원가입 처리 중 오류가 발생했습니다." };
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
+
+    return {
+      user: { id: data.user.id, email: data.user.email },
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    };
+  } catch (err) {
+    if (err instanceof ApiError) {
+      console.error("[signupAction] ApiError", err.statusCode, err.code, err.message);
+      if (err.isConflict) return { error: "이미 사용 중인 이메일입니다." };
+      if (err.statusCode === 400) return { error: "입력 정보를 확인해주세요." };
+    }
+    console.error("[signupAction] Unexpected error:", err);
+    return { error: "회원가입 중 오류가 발생했습니다." };
+  }
 }
 
 export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
-

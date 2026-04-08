@@ -1,4 +1,6 @@
 export const PET = {
+  hasProfile: false,   // false = 펫 정보 미입력
+  hasChecklist: false, // false = 체크리스트 미작성
   name: "몽몽이",
   birth: "2020.10.27",
   gender: "여자",
@@ -12,30 +14,28 @@ export const PET = {
   ],
 };
 
-export const SUBSCRIPTION = {
-  tier: "프리미엄",
-  name: "프리미엄 패키지 구독중",
-  startDate: "2026.01.21",
-  billingDay: "매달 21일",
-};
+// null = 구독 없음
+export const SUBSCRIPTION: {
+  tier: string;
+  name: string;
+  startDate: string;
+  billingDay: string;
+} | null = null;
 
 export const PAYMENT = {
+  hasMethod: false, // false = 결제수단 미등록
   method: "신용카드 결제",
   card: "국민카드 (1234 - **** - **** - ****)",
   nextDate: "2026.04.21 (카드결제)",
 };
 
 export const DELIVERY_STEPS = [
-  { label: "주문접수", count: 1 },
+  { label: "주문접수", count: 0 },
   { label: "배송준비중", count: 0 },
   { label: "배송중", count: 0 },
   { label: "배송완료", count: 0 },
 ];
 
-export const INQUIRIES = [
-  { id: 1, text: "제품 문의드립니다.", date: "26.03.14", status: "처리중" },
-  { id: 2, text: "배송 언제쯤 도착하나요?", date: "26.03.12", status: "처리완료" },
-  { id: 3, text: "아이가 먹어도 안전한가요?", date: "26.03.12", status: "처리완료" },
-];
+export const INQUIRIES: { id: number; text: string; date: string; status: string }[] = [];
 
-export const INQUIRY_TOTAL_PAGES = 5;
+export const INQUIRY_TOTAL_PAGES = 1;

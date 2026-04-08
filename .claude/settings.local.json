@@ -39,7 +39,10 @@
       "Bash(pnpm tsc:*)",
       "WebSearch",
       "WebFetch(domain:roboticape.com)",
-      "WebFetch(domain:lab.rosebud.ai)"
+      "WebFetch(domain:lab.rosebud.ai)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\)\")",
+      "Bash(pnpm add:*)",
+      "Bash(npx next:*)"
     ]
   }
 }

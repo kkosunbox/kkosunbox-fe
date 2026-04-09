@@ -48,7 +48,7 @@ export default function IngredientsSection() {
     <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-10 pb-10 md:pt-16 md:pb-16">
       <div className="mx-auto flex flex-col md:flex-row max-w-content justify-between items-center gap-10 md:gap-[76px] md:px-0">
         {/* Left — 이미지 + 발바닥 장식 */}
-        <div className="relative flex w-full items-center justify-center md:max-w-[645px]">
+        <div className="relative flex w-full items-center justify-center md:max-w-[645px] px-6 md:px-0">
           <Image
             src={ingredientsDetailHappy}
             alt="행복한 강아지와 수제간식 재료"

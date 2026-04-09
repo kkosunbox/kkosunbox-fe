@@ -57,7 +57,7 @@ function ProfileDropdown({ user, onClose }: { user: { email: string } | null; on
     [
       "w-full h-[52px] px-[30px] flex items-center text-left tracking-[-0.02em] transition-colors",
       active
-        ? "text-body-14-sb text-[var(--color-primary)] bg-[var(--color-card-premium)]"
+        ? "text-body-14-sb text-primary bg-[var(--color-card-premium)]"
         : "text-body-14-m text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-warm)]",
     ].join(" ");
 
@@ -138,13 +138,13 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex items-center gap-8">
-            <Link href="/about" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-[var(--color-primary)]">
+            <Link href="/about" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
               꼬순박스 소개
             </Link>
-            <Link href="/subscribe" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-[var(--color-primary)]">
+            <Link href="/subscribe" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
               구독 시작하기
             </Link>
-            <Link href="/support" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-[var(--color-primary)]">
+            <Link href="/support" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
               고객센터
             </Link>
             {isLoggedIn ? (

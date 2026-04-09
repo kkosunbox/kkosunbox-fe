@@ -92,7 +92,7 @@ function highlightMatch(text: string, rawQuery: string): ReactNode {
         nodes.push(text.slice(lastIndex, m.index));
       }
       nodes.push(
-        <span key={`faq-hl-${key++}`} className="text-[var(--color-primary)]">
+        <span key={`faq-hl-${key++}`} className="text-primary">
           {m[0]}
         </span>,
       );

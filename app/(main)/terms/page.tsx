@@ -78,7 +78,7 @@ export default function TermsPage() {
   return (
     <section className="bg-white">
       <div className="mx-auto max-w-content md:px-0 py-14 max-md:px-6 max-md:py-10">
-        <h1 className="text-title-40-b max-md:text-title-28-b text-[var(--color-primary)]">이용약관</h1>
+        <h1 className="text-title-40-b max-md:text-title-28-b text-primary">이용약관</h1>
         <p className="mt-3 text-body-16-r max-md:text-body-14-r text-[var(--color-text-secondary)]">
           본 약관은 임시 게시본이며, 추후 서비스 정책에 따라 변경될 수 있습니다.
         </p>
@@ -86,7 +86,7 @@ export default function TermsPage() {
         <div className="mt-10 space-y-7 max-md:mt-8">
           {TERMS_SECTIONS.map((section) => (
             <article key={section.title} className="space-y-3">
-              <h2 className="text-subtitle-24-b max-md:text-subtitle-20-b text-[var(--color-primary)]">
+              <h2 className="text-subtitle-24-b max-md:text-subtitle-20-b text-primary">
                 {section.title}
               </h2>
               {"content" in section && (

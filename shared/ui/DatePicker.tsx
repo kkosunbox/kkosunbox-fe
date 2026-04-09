@@ -337,7 +337,7 @@ export default function DatePicker({
                 const colorCls = isSel
                   ? "bg-[var(--color-primary)] text-white font-semibold shadow-sm"
                   : isToday
-                  ? "ring-[1.5px] ring-inset ring-[var(--color-primary)] text-[var(--color-primary)] font-semibold hover:bg-[var(--color-secondary)]"
+                  ? "ring-[1.5px] ring-inset ring-[var(--color-primary)] text-primary font-semibold hover:bg-[var(--color-secondary)]"
                   : disabled
                   ? "cursor-not-allowed text-[var(--color-text-muted)]"
                   : dow === 0
@@ -389,7 +389,7 @@ function NavBtn({
         "flex h-7 w-7 items-center justify-center rounded-full transition-colors",
         secondary
           ? "text-[var(--color-text-secondary)] hover:bg-[var(--color-beige)]"
-          : "text-[var(--color-primary)] hover:bg-[var(--color-beige)]",
+          : "text-primary hover:bg-[var(--color-beige)]",
       ].join(" ")}
     >
       {children}

@@ -848,7 +848,7 @@ export default function OrderSection({
           <PawPrint size={100} />
         </div>
         <div className="text-center px-4">
-          <h1 className="max-md:text-display-32-b md:text-display-36-b text-[var(--color-primary)] mb-2">
+          <h1 className="max-md:text-display-32-b md:text-display-36-b text-primary mb-2">
             주문을 완료해주세요!
           </h1>
           <p className="max-md:text-body-14-m md:text-body-16-m text-[var(--color-text-on-warm)]">
@@ -876,8 +876,8 @@ export default function OrderSection({
               </span>
               <span className="text-subtitle-16-sb text-[var(--color-text)]">=</span>
               <div className="flex items-center gap-2">
-                <span className="text-subtitle-16-b text-[var(--color-primary)]">월 예상 금액</span>
-                <span className="text-subtitle-20-b text-[var(--color-primary)]">{formatPrice(total)}</span>
+                <span className="text-subtitle-16-b text-primary">월 예상 금액</span>
+                <span className="text-subtitle-20-b text-primary">{formatPrice(total)}</span>
               </div>
             </div>
           </div>

@@ -1,9 +1,10 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Text } from "@/shared/ui";
-import packagePlanTitle01 from "../assets/home-package-plans-title-01.png";
 import mockTempPackage from "../assets/mock-temp-package.png";
+import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 
 const PACKAGES = [
   {
@@ -63,78 +64,195 @@ function CheckIcon({ color }: { color: string }) {
   );
 }
 
-export default function PackagePlansSection() {
+function PackageCard({
+  pkg,
+  idx,
+  isActive,
+}: {
+  pkg: (typeof PACKAGES)[number];
+  idx: number;
+  isActive: boolean;
+}) {
   return (
-    <section className="bg-[var(--color-secondary)] py-12 md:py-20">
-      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
-        <h2 className="sr-only">원하는 패키지로 선택 후 구독하세요!</h2>
+    <div
+      className={[
+        "flex flex-col items-center rounded-[20px] px-6 transition-all duration-500 ease-in-out",
+        isActive ? "pt-6 md:pt-12" : "pt-6",
+        isActive ? "h-[446px] w-[375px] pb-9" : "h-[374px] w-[280px] pb-8",
+      ].join(" ")}
+      style={{ background: pkg.cardBg }}
+    >
+      <span
+        className="text-body-14-sb rounded-full px-3 py-1 text-white !leading-[1]"
+        style={{ background: pkg.colorVar }}
+      >
+        {pkg.tier}
+      </span>
+
+      <div
+        className={[
+          "relative mb-5.5 flex w-full items-center justify-center",
+          isActive ? "h-[171px]" : "h-[152px]",
+        ].join(" ")}
+      >
         <Image
-          src={packagePlanTitle01}
-          alt=""
-          aria-hidden
-          className="mx-auto h-full w-full object-cover md:max-h-[160px] max-md:max-w-[245px] md:max-w-[306px]"
+          src={mockTempPackage}
+          alt={`${pkg.name} 이미지`}
+          className={[
+            "w-auto object-contain transition-all duration-500 ease-in-out",
+            isActive ? "h-[151px]" : "h-[130px]",
+          ].join(" ")}
         />
-        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7.5 mt-7 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
+        <span
+          className={[
+            "absolute text-emoji-40 leading-[36px] tracking-[0.02em] capitalize",
+            idx === 0 ? "-bottom-1.5 right-5" : "-bottom-4.5 right-0",
+          ].join(" ")}
+          style={{
+            fontFamily: "var(--font-ms-madi)",
+            color: pkg.msMadiColor,
+            transform: `rotate(${pkg.rotate}deg)`,
+          }}
+        >
+          {pkg.tierLabel}
+        </span>
+      </div>
+
+      <h3
+        className={[
+          "mb-4 text-center capitalize tracking-[-0.04em]",
+          isActive ? "text-[28px] leading-[33px] font-extrabold" : "text-[20px] leading-[24px] font-extrabold",
+        ].join(" ")}
+        style={{ color: pkg.accentColor }}
+      >
+        {pkg.name}
+      </h3>
+
+      <ul className="flex w-full flex-col gap-3 max-md:pl-9 md:pl-6">
+        {pkg.items.map((item) => (
+          <li
+            key={item}
+            className="text-body-14-m flex items-center gap-2 text-black !leading-[1]"
+          >
+            <CheckIcon color={pkg.accentColor} />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function PackagePlansSection() {
+  const [activeIndex, setActiveIndex] = useState(1);
+  const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
+  const total = PACKAGES.length;
+  const sideOffset = 348;
+  const autoRotateMs = 10000;
+  const autoRotateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const getRelativeOffset = (index: number) => {
+    const raw = (index - activeIndex + total) % total;
+    return raw > total / 2 ? raw - total : raw;
+  };
+
+  const clearAutoRotateTimer = useCallback(() => {
+    if (autoRotateTimerRef.current) {
+      clearTimeout(autoRotateTimerRef.current);
+      autoRotateTimerRef.current = null;
+    }
+  }, []);
+
+  const goToNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const scheduleAutoRotate = useCallback(() => {
+    clearAutoRotateTimer();
+    autoRotateTimerRef.current = setTimeout(() => {
+      goToNext();
+    }, autoRotateMs);
+  }, [clearAutoRotateTimer, goToNext]);
+
+  const handleIndicatorClick = (index: number) => {
+    setActiveIndex(index);
+    scheduleAutoRotate();
+  };
+
+  useEffect(() => {
+    if (isAutoPlayPaused) {
+      clearAutoRotateTimer();
+      return;
+    }
+    scheduleAutoRotate();
+    return clearAutoRotateTimer;
+  }, [activeIndex, isAutoPlayPaused, scheduleAutoRotate, clearAutoRotateTimer]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsAutoPlayPaused(document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  return (
+    <section className="bg-white py-12 md:pt-[68px] md:pb-12">
+      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
+        <Image
+          src={packagePlansTitle02}
+          alt="원하는 패키지로 선택 후 구독하세요!"
+          className="mx-auto h-auto w-full max-w-[260px] md:max-w-[306px]"
+        />
+        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7.5 md:mb-11 mt-7 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
           설문조사 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
         </Text>
 
-        <div className="max-md:flex max-md:flex-col-reverse md:grid md:grid-cols-3 gap-5">
-          {PACKAGES.map((pkg, idx) => (
+        <div className="md:hidden">
+          <div className="mx-auto w-full max-w-[375px]">
+            <PackageCard pkg={PACKAGES[activeIndex]} idx={activeIndex} isActive />
+          </div>
+        </div>
+
+        <div
+          className="relative mx-auto hidden h-[446px] w-full max-w-[1012px] md:block"
+          onMouseEnter={() => setIsAutoPlayPaused(true)}
+          onMouseLeave={() => setIsAutoPlayPaused(false)}
+        >
+          {PACKAGES.map((pkg, index) => {
+            const offset = getRelativeOffset(index);
+            const isActive = offset === 0;
+            return (
             <div
               key={pkg.tier}
-              className="flex flex-col items-center rounded-[20px] px-6 pb-8 pt-6"
-              style={{ background: pkg.cardBg }}
+              className="absolute left-1/2 top-0 -translate-x-1/2 transition-all duration-500 ease-in-out"
+              style={{
+                left: `calc(50% + ${offset * sideOffset}px)`,
+                top: isActive ? 0 : 36,
+                zIndex: isActive ? 20 : 10 - Math.abs(offset),
+              }}
             >
-              {/* Tier chip */}
-              <span
-                className="text-body-14-sb rounded-full px-3 py-1 text-white !leading-[1]"
-                style={{ background: pkg.colorVar }}
-              >
-                {pkg.tier}
-              </span>
-
-              {/* Package image + Ms Madi label */}
-              <div className="relative mb-5.5 flex h-[152px] w-full items-center justify-center">
-                <Image
-                  src={mockTempPackage}
-                  alt={`${pkg.name} 이미지`}
-                  className="h-[151px] w-auto object-contain"
-                />
-                <span
-                  className={`absolute text-emoji-40 leading-[36px] tracking-[0.02em] capitalize ${
-                    idx === 0 ? "-bottom-1.5 right-5" : "-bottom-4.5 right-0"
-                  }`}
-                  style={{
-                    fontFamily: "var(--font-ms-madi)",
-                    color: pkg.msMadiColor,
-                    transform: `rotate(${pkg.rotate}deg)`,
-                  }}
-                >
-                  {pkg.tierLabel}
-                </span>
-              </div>
-
-              {/* Package name */}
-              <h3
-                className="mb-4 text-center text-display-28-eb capitalize"
-                style={{ color: pkg.accentColor }}
-              >
-                {pkg.name}
-              </h3>
-
-              {/* Feature list */}
-              <ul className="flex w-full flex-col gap-3 max-md:pl-9 md:pl-12">
-                {pkg.items.map((item) => (
-                  <li
-                    key={item}
-                    className="text-body-14-m flex items-center gap-2 text-black !leading-[1]"
-                  >
-                    <CheckIcon color={pkg.accentColor} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <PackageCard pkg={pkg} idx={index} isActive={isActive} />
             </div>
+            );
+          })}
+        </div>
+
+        {/* 캐러셀 인디케이터 */}
+        <div className="mt-8 flex items-center justify-center gap-3">
+          {PACKAGES.map((pkg, index) => (
+            <button
+              key={pkg.tier}
+              type="button"
+              aria-label={`${pkg.tier} 패키지 보기`}
+              aria-pressed={activeIndex === index}
+              onClick={() => handleIndicatorClick(index)}
+              className={[
+                "h-3 w-3 rounded-full transition-colors duration-300",
+                activeIndex === index ? "bg-[var(--color-accent)]" : "bg-[var(--color-text-muted)]",
+              ].join(" ")}
+            />
           ))}
         </div>
       </div>

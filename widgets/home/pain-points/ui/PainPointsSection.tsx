@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Text } from "@/shared/ui";
-import painPointSolutionPackage from "../assets/pain-point-solution-package.png";
+import painPointDogs from "../assets/pain-point-dogs.png";
 import painPointQuestion from "../assets/pain-point-question.png";
 
 const PAIN_POINTS = [
@@ -14,45 +13,27 @@ const PAIN_POINTS = [
 
 export default function PainPointsSection() {
   return (
-    <section className="bg-[var(--color-surface-warm)] pt-8">
-<div className="mx-auto flex flex-col-reverse md:flex-row justify-between max-w-content-narrow items-center md:gap-20 max-md:pl-8 max-md:pr-5 md:px-8">
-        {/* Left — 제품 이미지 */}
-        <div className="flex h-auto md:h-[434px] w-full max-md:max-w-[235px] md:w-[290px] shrink-0 items-center justify-center max-md:pt-6 md:py-0">
-          <Image
-            src={painPointSolutionPackage}
-            alt="Pain Point Solution Package"
-            className="object-cover max-h-[353px] md:max-h-none translate-x-10 md:translate-x-0"
-          />
-        </div>
-
-        {/* Right */}
-        <div className="flex flex-col items-center md:items-end pb-4 md:pb-8 md:pt-0 w-full md:w-auto">
-          <Text
-            as="p"
-            variant="title-40-r"
-            mobileVariant="title-32-r"
-            className="mb-1 text-[var(--color-accent-orange)] underline tracking-[-0.08em]"
+    <section style={{ background: "var(--color-ingredients-bg)" }} className="pb-10 md:pb-16 md:pt-[46px]">
+      <div className="mx-auto flex max-w-content flex-col items-center max-md:px-8 md:flex-row md:items-start md:justify-start md:gap-8 md:px-0">
+        {/* Left — 텍스트 (남는 가로 공간 우선 확보, 체크리스트가 중앙선 넘어 확장 가능) */}
+        <div className="flex w-full min-w-0 flex-col items-start md:flex-1 md:pr-4 md:pt-8">
+          <p
+            className="text-[32px] md:text-[40px] leading-[64px] tracking-[-0.08em] underline lowercase text-[var(--color-accent-orange)] mb-0 md:mb-3"
             style={{ fontFamily: "var(--font-give-you-glory)" }}
           >
             for you
-          </Text>
+          </p>
           <Image
             src={painPointQuestion}
-            alt="Pain Point Question"
-            className="object-cover max-md:max-w-[280px] md:max-w-[324px]"
+            alt="이런 고민 있으신가요?"
+            className="mb-6 h-auto w-full max-w-[258px] md:mb-8 md:max-w-[323px]"
           />
           {/* 모바일 전용 구분선 */}
-          <div className="md:hidden mt-6 w-[294px] border-t border-[var(--color-divider-warm)]" />
-          <ul className="max-md:mt-3 md:mt-6 flex flex-col gap-1 md:gap-4 w-full">
+          <div className="md:hidden mb-3 w-full max-w-[294px] border-t border-[var(--color-divider-warm)]" />
+          <ul className="flex flex-col gap-2 md:gap-0 w-full">
             {PAIN_POINTS.map((item) => (
-              <li key={item} className="flex flex-row-reverse md:flex-row justify-end gap-2 md:gap-3">
-                <span
-                  className="text-[var(--color-text-body-warm)] max-md:text-caption-12-r max-md:leading-[170%] md:text-body-18-r max-md:text-left md:text-right"
-                  style={{ fontFamily: "Griun PolFairness" }}
-                >
-                  {item}
-                </span>
-                <div className="md:mt-1">
+              <li key={item} className="flex items-start gap-2 md:gap-3">
+                <div className="mt-1 shrink-0">
                   <svg
                     width="24"
                     height="24"
@@ -69,9 +50,24 @@ export default function PainPointsSection() {
                     />
                   </svg>
                 </div>
+                <span
+                  className="text-[var(--color-text-body-warm)] max-md:text-[14px] max-md:leading-[170%] md:text-[20px] md:leading-[170%] md:whitespace-nowrap"
+                  style={{ fontFamily: "Griun PolFairness" }}
+                >
+                  {item}
+                </span>
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Right — 강아지 이미지 2장 */}
+        <div className="flex w-full shrink-0 items-end justify-center max-md:pt-8 md:w-auto md:flex-none md:py-0">
+          <Image
+            src={painPointDogs}
+            alt="귀여운 강아지들"
+            className="object-contain w-full max-w-[320px] md:max-w-[495px] h-auto"
+          />
         </div>
       </div>
     </section>

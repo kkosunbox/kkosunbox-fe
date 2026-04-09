@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button, Text } from "@/shared/ui";
 import ingredientsDetailHappy from "../assets/ingredients-detail-happy.png";
 import ingredientsDetailFlavor from "../assets/ingredients-detail-flavor.png";
@@ -76,7 +77,7 @@ export default function IngredientsSection() {
           >
             체크리스트 작성 후 우리 아이에게 적절한<br className="hidden md:block"/> 원재료가 들어간 패키지 박스를<br className="hidden md:block" /> 추천받을 수 있습니다!
           </Text>
-          <Button size="lg" className="max-md:hidden">
+          <Button as={Link} href="/checklist" size="lg" className="max-md:hidden">
             체크리스트 작성하기
           </Button>
         </div>

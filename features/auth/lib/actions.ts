@@ -96,6 +96,60 @@ export async function signupAction(
   }
 }
 
+export async function socialLoginAction(
+  provider: "google" | "naver" | "kakao",
+  code: string,
+  callbackUrl: string,
+): Promise<{
+  user?: AuthUser;
+  accessToken?: string;
+  refreshToken?: string;
+  isNewUser?: boolean;
+  error?: string;
+}> {
+  try {
+    const { loginWithGoogle, loginWithNaver, loginWithKakao } = await import(
+      "../api/authApi"
+    );
+
+    const apiByProvider = {
+      google: loginWithGoogle,
+      naver: loginWithNaver,
+      kakao: loginWithKakao,
+    } as const;
+
+    const data = await apiByProvider[provider]({ code, callbackUrl });
+
+    if (!data.accessToken || !data.refreshToken || !data.user) {
+      return { error: "소셜 로그인 처리 중 오류가 발생했습니다." };
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
+
+    return {
+      user: { id: data.user.id, email: data.user.email },
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      isNewUser: data.isNewUser,
+    };
+  } catch (err) {
+    if (err instanceof ApiError) {
+      console.error(
+        `[socialLoginAction:${provider}] ApiError`,
+        err.statusCode,
+        err.code,
+        err.message,
+      );
+    } else {
+      console.error(`[socialLoginAction:${provider}] Unexpected error:`, err);
+    }
+    return {
+      error: getErrorMessage(err, "소셜 로그인 중 오류가 발생했습니다."),
+    };
+  }
+}
+
 export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);

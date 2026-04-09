@@ -1,0 +1,2923 @@
+/* Group 1000005156 */
+
+position: absolute;
+width: 1013px;
+height: 1039px;
+left: 454px;
+top: 246px;
+
+
+
+/* Group 1000005076 */
+
+position: absolute;
+width: 670px;
+height: 135px;
+left: 454px;
+top: 1150px;
+
+
+
+/* Rectangle 973 */
+
+position: absolute;
+width: 670px;
+height: 135px;
+left: 454px;
+top: 1150px;
+
+background: #FFF9F3;
+border-radius: 20px;
+
+
+/* Group 1000005076 */
+
+position: absolute;
+width: 318px;
+height: 18px;
+left: 620px;
+top: 1231px;
+
+
+
+/* 구독 시작일은 구매일로 부터 최대 3일 후까지 선택 가능합니다. */
+
+position: absolute;
+width: 318px;
+height: 18px;
+left: 620px;
+top: 1231px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Sub test */
+color: #999999;
+
+
+
+/* Group 1000004954 */
+
+position: absolute;
+width: 614px;
+height: 79px;
+left: 482px;
+top: 1178px;
+
+
+
+/* 구독 날짜 선택 */
+
+position: absolute;
+width: 97px;
+height: 21px;
+left: 482px;
+top: 1178px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+color: #262525;
+
+
+
+/* Icon/Outline/cheveron-up */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 1072px;
+top: 1178px;
+
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 37.5%;
+bottom: 33.33%;
+
+/* Sub test */
+border: 2px solid #999999;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* calender */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 12px;
+gap: 10px;
+
+position: absolute;
+width: 120px;
+height: 34px;
+left: 482px;
+top: 1223px;
+
+background: #FFFFFF;
+/* Sub line */
+border: 1px solid #DDDDDD;
+border-radius: 5px;
+
+
+/* Frame 53 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 96px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 2026. 04. 11 */
+
+width: 64px;
+height: 14px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 14px;
+letter-spacing: -0.02em;
+
+/* Light/Light-100 */
+color: #000000;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Icon/Outline/calendar */
+
+width: 20px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Icon */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Sub test */
+border: 2px solid #999999;
+
+
+/* Group 1000005155 */
+
+position: absolute;
+width: 1013px;
+height: 888px;
+left: 454px;
+top: 246px;
+
+
+
+/* Group 1000004879 */
+
+position: absolute;
+width: 1013px;
+height: 80px;
+left: calc(50% - 1013px/2 + 0.5px);
+top: 246px;
+
+
+
+/* Rectangle 972 */
+
+position: absolute;
+width: 1013px;
+height: 80px;
+left: 454px;
+top: 246px;
+
+background: #FFF9F3;
+border-radius: 20px;
+
+
+/* Frame 1000004891 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 40px;
+
+position: absolute;
+width: 825px;
+height: 24px;
+left: 548px;
+top: 274px;
+
+
+
+/* 주문상품금액 25,000원 */
+
+width: 153px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* + */
+
+width: 11px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 총 할인금액 -5000원 */
+
+width: 137px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* - */
+
+width: 8px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 총 배송비 0원 */
+
+width: 89px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* = */
+
+width: 11px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 5;
+flex-grow: 0;
+
+
+/* Group 1000004945 */
+
+width: 176px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 6;
+flex-grow: 0;
+
+
+/* 총 주문금액 */
+
+position: absolute;
+width: 70px;
+height: 19px;
+left: 649px;
+top: 2px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Primary-Main */
+color: #C97A3D;
+
+
+
+/* 25,000원 */
+
+position: absolute;
+width: 82px;
+height: 24px;
+left: 743px;
+top: 0px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 20px;
+line-height: 24px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Primary-Main */
+color: #C97A3D;
+
+
+
+/* Frame 1000004873 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+position: absolute;
+width: 1013px;
+height: 792px;
+left: 454px;
+top: 342px;
+
+
+
+/* Group 1000004856 */
+
+width: 670px;
+height: 792px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Rectangle 971 */
+
+position: absolute;
+width: 670px;
+height: 261px;
+left: 0px;
+top: 0px;
+
+background: #FFF9F3;
+border-radius: 20px;
+
+
+/* Icon/Outline/cheveron-up */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 618px;
+top: 28px;
+
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 37.5%;
+bottom: 33.33%;
+
+/* Sub test */
+border: 2px solid #999999;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Rectangle 972 */
+
+position: absolute;
+width: 670px;
+height: 325px;
+left: 0px;
+top: 277px;
+
+background: #FFF9F3;
+border-radius: 20px;
+
+
+/* Icon/Outline/cheveron-up */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 618px;
+top: 305px;
+
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 37.5%;
+bottom: 33.33%;
+
+/* Sub test */
+border: 2px solid #999999;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Rectangle 973 */
+
+position: absolute;
+width: 670px;
+height: 174px;
+left: 0px;
+top: 618px;
+
+background: #FFF9F3;
+border-radius: 20px;
+
+
+/* Icon/Outline/cheveron-up */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 618px;
+top: 646px;
+
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 37.5%;
+bottom: 33.33%;
+
+/* Sub test */
+border: 2px solid #999999;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Group 1000004955 */
+
+position: absolute;
+width: 614px;
+height: 160px;
+left: 28px;
+top: 73px;
+
+
+
+/* Rectangle 972 */
+
+position: absolute;
+width: 614px;
+height: 160px;
+left: 28px;
+top: 73px;
+
+background: #FFFFFF;
+border-radius: 20px;
+
+
+/* image 1933 */
+
+position: absolute;
+width: 160px;
+height: 117px;
+left: 74px;
+top: 86px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* Frame 1000004892 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+position: absolute;
+width: 162px;
+height: 86px;
+left: 285px;
+top: 109px;
+
+
+
+/* chip2 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 12px;
+gap: 10px;
+
+width: 82px;
+height: 24px;
+
+/* Premium */
+background: #F07F3D;
+border-radius: 30px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 6096 Marjolaine Land */
+
+width: 58px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 프리미엄 패키지 BOX */
+
+width: 162px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Group 33796 */
+
+width: 124px;
+height: 19px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Group 1000004854 */
+
+position: absolute;
+width: 124px;
+height: 19px;
+left: 0px;
+top: 67px;
+
+
+
+/* 월 요금제 25,000원 */
+
+position: absolute;
+width: 124px;
+height: 19px;
+left: 0px;
+top: 67px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 800;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.05em;
+text-transform: capitalize;
+
+color: #171713;
+
+
+
+/* 제품 정보 */
+
+position: absolute;
+width: 64px;
+height: 21px;
+left: 28px;
+top: 28px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004954 */
+
+position: absolute;
+width: 440px;
+height: 65px;
+left: 28px;
+top: 646px;
+
+
+
+/* Frame 1000000966 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 32px;
+
+position: absolute;
+width: 440px;
+height: 20px;
+left: 28px;
+top: 691px;
+
+
+
+/* Group 8859 */
+
+width: 80px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 8856 */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 0px;
+top: 0px;
+
+
+
+/* radio */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 0px;
+top: 0px;
+
+border-radius: 5px;
+
+
+/* box */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Accent */
+border: 1px solid #7FB3FF;
+border-radius: 50px;
+
+
+/* box */
+
+position: absolute;
+left: 25%;
+right: 25%;
+top: 25%;
+bottom: 25%;
+
+/* Accent */
+background: #7FB3FF;
+border-radius: 50px;
+
+
+/* Group 8857 */
+
+position: absolute;
+width: 48px;
+height: 17px;
+left: 32px;
+top: 2px;
+
+
+
+/* 신용카드 */
+
+position: absolute;
+width: 48px;
+height: 17px;
+left: 32px;
+top: 2px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.02em;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 8860 */
+
+width: 92px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 8856 */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 112px;
+top: 0px;
+
+
+
+/* radio */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 112px;
+top: 0px;
+
+border-radius: 5px;
+
+
+/* box */
+
+box-sizing: border-box;
+
+position: absolute;
+height: 20px;
+left: 0%;
+right: 0%;
+top: calc(50% - 20px/2);
+
+/* Light/Light-50 */
+border: 1px solid #B0B0B0;
+border-radius: 50px;
+
+
+/* Group 8857 */
+
+position: absolute;
+width: 60px;
+height: 17px;
+left: 144px;
+top: 2px;
+
+
+
+/* 카카오페이 */
+
+position: absolute;
+width: 60px;
+height: 17px;
+left: 144px;
+top: 2px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.02em;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 8861 */
+
+width: 92px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Group 8856 */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 236px;
+top: 0px;
+
+
+
+/* radio */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 236px;
+top: 0px;
+
+border-radius: 5px;
+
+
+/* box */
+
+box-sizing: border-box;
+
+position: absolute;
+height: 20px;
+left: 0%;
+right: 0%;
+top: calc(50% - 20px/2);
+
+/* Light/Light-50 */
+border: 1px solid #B0B0B0;
+border-radius: 50px;
+
+
+/* Group 8857 */
+
+position: absolute;
+width: 60px;
+height: 17px;
+left: 268px;
+top: 2px;
+
+
+
+/* 무통장입금 */
+
+position: absolute;
+width: 60px;
+height: 17px;
+left: 268px;
+top: 2px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.02em;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 8858 */
+
+width: 80px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* radio */
+
+position: absolute;
+width: 20px;
+height: 20px;
+left: 360px;
+top: 0px;
+
+border-radius: 5px;
+
+
+/* box */
+
+box-sizing: border-box;
+
+position: absolute;
+height: 20px;
+left: 0%;
+right: 0%;
+top: calc(50% - 20px/2);
+
+/* Light/Light-50 */
+border: 1px solid #B0B0B0;
+border-radius: 50px;
+
+
+/* 계좌이체 */
+
+position: absolute;
+width: 48px;
+height: 17px;
+left: 392px;
+top: 2px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.02em;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* 결제수단 선택 */
+
+position: absolute;
+width: 94px;
+height: 21px;
+left: 28px;
+top: 646px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004990 */
+
+position: absolute;
+width: 614px;
+height: 269px;
+left: 28px;
+top: 305px;
+
+
+
+/* 주문고객 / 배송지 정보 */
+
+position: absolute;
+width: 151px;
+height: 21px;
+left: 28px;
+top: 305px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004953 */
+
+position: absolute;
+width: 614px;
+height: 224px;
+left: 28px;
+top: 350px;
+
+
+
+/* Group 1000004949 */
+
+position: absolute;
+width: 290px;
+height: 32px;
+left: 28px;
+top: 350px;
+
+
+
+/* Frame 36 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 220px;
+height: 32px;
+left: 98px;
+top: 350px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 34px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 김직원 */
+
+width: 34px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 받는분 */
+
+position: absolute;
+width: 46px;
+height: 16px;
+left: 28px;
+top: 358px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004950 */
+
+position: absolute;
+width: 290px;
+height: 32px;
+left: 352px;
+top: 350px;
+
+
+
+/* Frame 1000004893 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 220px;
+height: 32px;
+left: 422px;
+top: 350px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 103px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 1234@naver.com */
+
+width: 103px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이메일 */
+
+position: absolute;
+width: 46px;
+height: 16px;
+left: 352px;
+top: 358px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004952 */
+
+position: absolute;
+width: 614px;
+height: 80px;
+left: 28px;
+top: 398px;
+
+
+
+/* Frame 1000004895 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 544px;
+height: 32px;
+left: 98px;
+top: 446px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* 서울시 강남구 테헤란로 1234-5 */
+
+width: 166px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 1000004951 */
+
+position: absolute;
+width: 363px;
+height: 32px;
+left: 28px;
+top: 398px;
+
+
+
+/* chip2 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 8px;
+gap: 10px;
+
+position: absolute;
+width: 61px;
+height: 32px;
+left: 330px;
+top: 398px;
+
+background: #7FB3FF;
+border-radius: 4px;
+
+
+/* 6096 Marjolaine Land */
+
+width: 45px;
+height: 16px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1000004894 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 220px;
+height: 32px;
+left: 98px;
+top: 398px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 38px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 12345 */
+
+width: 38px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 우편번호 */
+
+position: absolute;
+width: 46px;
+height: 16px;
+left: 28px;
+top: 406px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004946 */
+
+position: absolute;
+width: 290px;
+height: 32px;
+left: 28px;
+top: 494px;
+
+
+
+/* Frame 1000004896 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 220px;
+height: 32px;
+left: 98px;
+top: 494px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 95px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 010-1234-5678 */
+
+width: 95px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 휴대폰 */
+
+position: absolute;
+width: 46px;
+height: 16px;
+left: 28px;
+top: 502px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004948 */
+
+position: absolute;
+width: 415px;
+height: 32px;
+left: 28px;
+top: 542px;
+
+
+
+/* Frame 1000004896 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 220px;
+height: 32px;
+left: 98px;
+top: 542px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 167px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 문앞에 놔주세요 */
+
+width: 167px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 배송메모 */
+
+position: absolute;
+width: 46px;
+height: 16px;
+left: 28px;
+top: 550px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 8845 */
+
+position: absolute;
+width: 113px;
+height: 20px;
+left: 330px;
+top: 548px;
+
+
+
+/* Group 8844 */
+
+position: absolute;
+width: 113px;
+height: 20px;
+left: 330px;
+top: 548px;
+
+
+
+/* Frame 1000000963 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+position: absolute;
+width: 113px;
+height: 20px;
+left: 330px;
+top: 548px;
+
+
+
+/* box */
+
+width: 20px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Accent */
+background: #7FB3FF;
+border-radius: 5px;
+
+
+/* Icon/Outline/check */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 29.17%;
+bottom: 29.17%;
+
+border: 2px solid #FFFFFF;
+
+
+/* Apple Watch */
+
+width: 85px;
+height: 16px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+mix-blend-mode: normal;
+opacity: 0.8;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 1000004947 */
+
+position: absolute;
+width: 290px;
+height: 32px;
+left: 352px;
+top: 494px;
+
+
+
+/* Frame 1000004896 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+position: absolute;
+width: 220px;
+height: 32px;
+left: 422px;
+top: 494px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 162px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Text */
+
+width: 162px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 전화번호 */
+
+position: absolute;
+width: 46px;
+height: 16px;
+left: 352px;
+top: 502px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004960 */
+
+position: absolute;
+width: 359px;
+height: 32px;
+left: 28px;
+top: 746px;
+
+
+
+/* Group 8845 */
+
+position: absolute;
+width: 359px;
+height: 32px;
+left: 28px;
+top: 746px;
+
+
+
+/* Group 8844 */
+
+position: absolute;
+width: 359px;
+height: 32px;
+left: 28px;
+top: 746px;
+
+
+
+/* Frame 1000000963 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+position: absolute;
+width: 359px;
+height: 32px;
+left: 28px;
+top: 746px;
+
+
+
+/* Apple Watch */
+
+width: 62px;
+height: 16px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1000004894 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 15px 146px 15px 12px;
+gap: 16px;
+
+width: 220px;
+height: 32px;
+
+background: #FFFFFF;
+border-radius: 4px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 34 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+width: 69px;
+height: 18px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 1qa2ws3ed */
+
+width: 69px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 140%;
+/* 또는 18px */
+
+/* Main text */
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* chip2 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 8px;
+gap: 10px;
+
+width: 61px;
+height: 32px;
+
+background: #7FB3FF;
+border-radius: 4px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 6096 Marjolaine Land */
+
+width: 45px;
+height: 16px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 1000004989 */
+
+position: absolute;
+width: 159px;
+height: 16px;
+left: 483px;
+top: 754px;
+
+
+
+/* 가입축하쿠폰 20% */
+
+position: absolute;
+width: 99px;
+height: 16px;
+left: 483px;
+top: 754px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+text-align: right;
+
+/* Sub test */
+color: #999999;
+
+
+
+/* Group 1000004987 */
+
+position: absolute;
+width: 52px;
+height: 16px;
+left: 590px;
+top: 754px;
+
+
+
+/* -5,000원 */
+
+position: absolute;
+width: 52px;
+height: 16px;
+left: 590px;
+top: 754px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+text-align: right;
+
+/* Sub test */
+color: #999999;
+
+
+
+/* Line 2 */
+
+position: absolute;
+width: 614px;
+height: 1px;
+left: 28px;
+top: 731px;
+
+mix-blend-mode: normal;
+border: 1px solid #FFFFFF;
+
+
+/* Group 1000004858 */
+
+width: 327px;
+height: 487px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Rectangle 971 */
+
+position: absolute;
+width: 327px;
+height: 367px;
+left: 686px;
+top: 0px;
+
+background: #FFF9F3;
+border-radius: 20px;
+
+
+/* Icon/Outline/cheveron-up */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 961px;
+top: 28px;
+
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 37.5%;
+bottom: 33.33%;
+
+/* Sub test */
+border: 2px solid #999999;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Group 1000004957 */
+
+position: absolute;
+width: 327px;
+height: 104px;
+left: 686px;
+top: 383px;
+
+
+
+/* Rectangle 972 */
+
+position: absolute;
+width: 327px;
+height: 104px;
+left: 686px;
+top: 383px;
+
+background: #F8F8F8;
+border-radius: 20px;
+
+
+/* Group 1000004840 */
+
+position: absolute;
+width: 81px;
+height: 26px;
+left: 855px;
+top: 394px;
+
+
+
+/* Group 1000004840 */
+
+position: absolute;
+width: 81px;
+height: 26px;
+left: 855px;
+top: 394px;
+
+
+
+/* Group 1000004840 */
+
+position: absolute;
+width: 81px;
+height: 26px;
+left: 855px;
+top: 394px;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 20.55px;
+height: 5.91px;
+left: 914.24px;
+top: 413.5px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 20.55px;
+height: 21.86px;
+left: 894.29px;
+top: 398.14px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 20.55px;
+height: 21.86px;
+left: 874.34px;
+top: 398.14px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 20.55px;
+height: 19.5px;
+left: 855px;
+top: 399.91px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+left: 90.49%;
+right: 7.96%;
+top: 50.72%;
+bottom: 47.94%;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+left: 91.32%;
+right: 8.17%;
+top: 49.75%;
+bottom: 49.52%;
+
+background: #C97A3D;
+transform: matrix(0.98, -0.2, 0.21, 0.98, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+left: 90.23%;
+right: 9.3%;
+top: 50.39%;
+bottom: 49.01%;
+
+background: #C97A3D;
+transform: matrix(0.98, 0.2, -0.26, 0.97, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+left: 90.66%;
+right: 8.83%;
+top: 49.75%;
+bottom: 49.52%;
+
+background: #C97A3D;
+transform: matrix(0.99, 0.12, -0.13, 0.99, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+left: 91.92%;
+right: 7.6%;
+top: 50.42%;
+bottom: 48.91%;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+left: 91.09%;
+right: 7.96%;
+top: 50.72%;
+bottom: 48.09%;
+
+/* Main text */
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+left: 90.29%;
+right: 9.44%;
+top: 50.56%;
+bottom: 48.93%;
+
+/* Main text */
+background: #2F2F2F;
+transform: matrix(0.95, -0.32, 0.4, 0.91, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+left: 90.79%;
+right: 8.91%;
+top: 51.02%;
+bottom: 48.54%;
+
+/* Main text */
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+left: 91.98%;
+right: 7.6%;
+top: 50.34%;
+bottom: 49.28%;
+
+/* Main text */
+background: #2F2F2F;
+
+
+/* 최대 20% */
+
+position: absolute;
+width: 91px;
+height: 25px;
+left: 855px;
+top: 450px;
+
+font-family: 'GangwonEduPower';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 25px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.06em;
+text-transform: uppercase;
+
+color: #606060;
+
+
+
+/* 브랜드 할인 쿠폰 */
+
+position: absolute;
+width: 95px;
+height: 14px;
+left: 855px;
+top: 428px;
+
+font-family: 'GangwonEduPower';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 14px;
+text-transform: uppercase;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* image 1935 */
+
+position: absolute;
+width: 96px;
+height: 96px;
+left: 729px;
+top: 391px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* 결제정보 */
+
+position: absolute;
+width: 61px;
+height: 21px;
+left: 714px;
+top: 28px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 33796 */
+
+position: absolute;
+width: 271px;
+height: 146px;
+left: 714px;
+top: 85px;
+
+
+
+/* Group 1000004943 */
+
+position: absolute;
+width: 263px;
+height: 16px;
+left: 714px;
+top: 85px;
+
+
+
+/* 주문상품금액 */
+
+position: absolute;
+width: 68px;
+height: 16px;
+left: 714px;
+top: 85px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* 25,000원 */
+
+position: absolute;
+width: 54px;
+height: 16px;
+left: 923px;
+top: 85px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+text-align: right;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004942 */
+
+position: absolute;
+width: 263px;
+height: 16px;
+left: 714px;
+top: 117px;
+
+
+
+/* 총 쿠폰 할인금액 */
+
+position: absolute;
+width: 85px;
+height: 16px;
+left: 714px;
+top: 117px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* -5,000원 */
+
+position: absolute;
+width: 52px;
+height: 16px;
+left: 925px;
+top: 117px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+text-align: right;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 1000004944 */
+
+position: absolute;
+width: 263px;
+height: 16px;
+left: 714px;
+top: 149px;
+
+
+
+/* 총 배송비 */
+
+position: absolute;
+width: 49px;
+height: 16px;
+left: 714px;
+top: 149px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* -0원 */
+
+position: absolute;
+width: 25px;
+height: 16px;
+left: 952px;
+top: 149px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+text-align: right;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Line 2 */
+
+position: absolute;
+width: 271px;
+height: 1px;
+left: 714px;
+top: 185px;
+
+mix-blend-mode: normal;
+border: 1px solid #FFFFFF;
+
+
+/* Group 1000004854 */
+
+position: absolute;
+width: 255px;
+height: 33px;
+left: 722px;
+top: 198px;
+
+
+
+/* 월 요금제 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 722px;
+top: 206px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+text-align: right;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* 20,000원 */
+
+position: absolute;
+width: 86px;
+height: 33px;
+left: 891px;
+top: 198px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 800;
+font-size: 20.5975px;
+line-height: 32px;
+/* 또는 156% */
+text-align: right;
+letter-spacing: -0.05em;
+text-transform: capitalize;
+
+/* Main text */
+color: #2F2F2F;
+
+
+
+/* Group 33804 */
+
+position: absolute;
+width: 271px;
+height: 84px;
+left: 714px;
+top: 255px;
+
+
+
+/* Group 33805 */
+
+position: absolute;
+width: 271px;
+height: 84px;
+left: 714px;
+top: 255px;
+
+
+
+/* Button */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 13px 24px;
+gap: 10px;
+
+position: absolute;
+width: 271px;
+height: 48px;
+left: 714px;
+top: 291px;
+
+/* Accent */
+background: #7FB3FF;
+border-radius: 30px;
+
+
+/* 결제하기 */
+
+width: 62px;
+height: 27px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 18px;
+line-height: 150%;
+/* 상자 높이와 동일 또는 27px */
+text-align: center;
+letter-spacing: -0.02em;
+
+color: #FFFFFF;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 8845 */
+
+position: absolute;
+width: 142px;
+height: 20px;
+left: 714px;
+top: 255px;
+
+
+
+/* Group 8844 */
+
+position: absolute;
+width: 142px;
+height: 20px;
+left: 714px;
+top: 255px;
+
+
+
+/* Frame 1000000963 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+position: absolute;
+width: 142px;
+height: 20px;
+left: 714px;
+top: 255px;
+
+
+
+/* box */
+
+width: 20px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+/* Accent */
+background: #7FB3FF;
+border-radius: 5px;
+
+
+/* Icon/Outline/check */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 29.17%;
+bottom: 29.17%;
+
+border: 2px solid #FFFFFF;
+
+
+/* Apple Watch */
+
+width: 86px;
+height: 16px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+/* Main text */
+color: #2F2F2F;
+
+mix-blend-mode: normal;
+opacity: 0.8;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Icon/Outline/cheveron-down */
+
+width: 20px;
+height: 20px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Icon */
+
+position: absolute;
+left: 20.83%;
+right: 20.83%;
+top: 37.5%;
+bottom: 33.33%;
+
+border: 1.5px solid #999999;
+

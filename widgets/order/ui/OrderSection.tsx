@@ -2,10 +2,14 @@
 
 import { useMemo, useState, useTransition, useEffect } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { DatePicker, useModal } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { getErrorMessage } from "@/shared/lib/api";
+import orderTitleImage from "@/widgets/order/assets/order-title-please-order.png";
+import orderProductThumbnail from "@/widgets/order/assets/order-product-thumbnail.png";
+import orderDogImage from "@/widgets/order/assets/order-advertise-banner.png";
 import { registerBilling, getBillingTerms } from "@/features/billing/api/billingApi";
 import type { BillingTermsType } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
@@ -58,6 +62,21 @@ function ChevronIcon({ open }: { open: boolean }) {
         d="M6 9L12 15L18 9"
         stroke="var(--color-text-secondary)"
         strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CheckCircleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="9" cy="9" r="8" stroke="var(--color-accent)" strokeWidth="1.5" />
+      <path
+        d="M5.5 9L8 11.5L12.5 6.5"
+        stroke="var(--color-accent)"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -216,29 +235,58 @@ export default function OrderSection({
 
   const [addresses, setAddresses] = useState<DeliveryAddress[]>(initialAddresses);
   const [selectedProfileId, setSelectedProfileId] = useState<number>(profiles[0]!.id);
-  const [addressMode, setAddressMode] = useState<"existing" | "new">(
-    initialAddresses.length ? "existing" : "new",
-  );
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
     initialAddresses[0]?.id ?? null,
   );
 
+  const selectedAddress = useMemo(
+    () => addresses.find((a) => a.id === selectedAddressId) ?? null,
+    [addresses, selectedAddressId],
+  );
+
+  // /address 새 창에서 선택한 배송지 수신
+  useEffect(() => {
+    function handleMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === "ADDRESS_SELECTED" && e.data.address) {
+        const addr = e.data.address as DeliveryAddress;
+        setAddresses((prev) => {
+          const idx = prev.findIndex((a) => a.id === addr.id);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = addr;
+            return next;
+          }
+          return [...prev, addr];
+        });
+        setSelectedAddressId(addr.id);
+      }
+    }
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   const [newAddr, setNewAddr] = useState({
     receiverName: "",
+    email: "",
     phoneNumber: "",
+    tel: "",
     zipCode: "",
     address: "",
     addressDetail: "",
     memo: "",
   });
+  const [saveInfo, setSaveInfo] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<string>("신용카드");
+  const [couponEnabled, setCouponEnabled] = useState(false);
 
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
 
   const today = new Date();
-  const minBillingDate = addDays(today, 7);
-  const maxBillingDate = addDays(today, 365);
+  const minBillingDate = addDays(today, 1);
+  const maxBillingDate = addDays(today, 3);
   const [subscriptionDate, setSubscriptionDate] = useState<Date | null>(null);
 
   const [agreeOpen, setAgreeOpen] = useState(false);
@@ -348,7 +396,8 @@ export default function OrderSection({
       try {
         let deliveryAddressId = selectedAddressId;
 
-        if (addressMode === "new") {
+        if (!selectedAddress) {
+          // 저장된 배송지 없음 → 새 배송지 생성
           if (
             !newAddr.receiverName.trim() ||
             !digitsOnly(newAddr.phoneNumber) ||
@@ -416,6 +465,27 @@ export default function OrderSection({
     });
   }
 
+  function handleChangeAddress() {
+    const url = selectedAddressId
+      ? `/address?selectedId=${selectedAddressId}`
+      : "/address";
+    window.open(url, "addressPopup", "width=480,height=700,scrollbars=yes");
+  }
+
+  function handleSearchAddress() {
+    if (typeof window !== "undefined" && window.daum) {
+      const postcode = new window.daum.Postcode({
+        oncomplete(data: { zonecode: string; roadAddress: string; jibunAddress: string; addressType: string }) {
+          const addr = data.addressType === "R" ? data.roadAddress : data.jibunAddress;
+          setNewAddr((s) => ({ ...s, zipCode: data.zonecode, address: addr }));
+        },
+        width: "100%",
+        height: "100%",
+      }) as { embed: (el: HTMLElement) => void; open: () => void };
+      postcode.open();
+    }
+  }
+
   const orderPlanTheme = packageThemeForPlan(plan);
 
   const leftSections = (
@@ -426,8 +496,14 @@ export default function OrderSection({
         onToggle={() => toggleSection("product")}
       >
         <div className="rounded-[20px] bg-white px-7 py-7 flex items-center gap-6">
-          <div className="w-[120px] h-[120px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl bg-[var(--color-card-premium)] text-4xl select-none">
-            📦
+          <div className="w-[120px] h-[120px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl overflow-hidden">
+            <Image
+              src={orderProductThumbnail}
+              alt={plan.name}
+              width={160}
+              height={117}
+              className="object-contain"
+            />
           </div>
           <div className="flex flex-col gap-3">
             <span
@@ -462,43 +538,47 @@ export default function OrderSection({
       ) : null}
 
       <SectionCard
-        title="배송지 정보"
+        title="주문고객 / 배송지 정보"
         open={openSections.customer}
         onToggle={() => toggleSection("customer")}
       >
-        <div className="flex flex-col gap-4">
-          {addresses.length > 0 ? (
-            <div className="flex flex-col gap-2">
-              <RadioButton
-                checked={addressMode === "existing"}
-                onChange={() => setAddressMode("existing")}
-                label="저장된 배송지"
-              />
-              {addressMode === "existing" ? (
-                <div className="ml-7 flex flex-col gap-2 border-t border-white pt-3">
-                  {addresses.map((a) => (
-                    <RadioButton
-                      key={a.id}
-                      checked={selectedAddressId === a.id}
-                      onChange={() => {
-                        setSelectedAddressId(a.id);
-                        setAddressMode("existing");
-                      }}
-                      label={`${a.receiverName} · ${a.address}`}
-                    />
-                  ))}
-                </div>
-              ) : null}
-              <RadioButton
-                checked={addressMode === "new"}
-                onChange={() => setAddressMode("new")}
-                label="새 배송지 입력"
-              />
+        {selectedAddress ? (
+          /* ── 저장된 배송지 읽기 전용 뷰 ── */
+          <div className="flex flex-col gap-3 pb-1">
+            {/* 라벨 + 이름 | 전화번호 | 이메일 */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-body-13-m text-[var(--color-text)]">우리집</span>
+              <CheckCircleIcon />
+              <span className="text-body-13-m text-[var(--color-text)]">{selectedAddress.receiverName}</span>
+              <span className="text-body-13-m text-[var(--color-text-secondary)]">|</span>
+              <span className="text-body-13-m text-[var(--color-text)]">{selectedAddress.phoneNumber}</span>
             </div>
-          ) : null}
-
-          {(addressMode === "new" || addresses.length === 0) && (
-            <div className="flex flex-col gap-4 border-t border-white pt-4">
+            {/* 주소 + 배송지 변경 버튼 */}
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-body-13-m text-[var(--color-text)]">
+                {selectedAddress.address}
+                {selectedAddress.addressDetail ? ` ${selectedAddress.addressDetail}` : ""}
+              </span>
+              <button
+                type="button"
+                onClick={handleChangeAddress}
+                className="shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 py-1.5 text-body-13-m text-white"
+              >
+                배송지 변경
+              </button>
+            </div>
+            {/* 메모 */}
+            {selectedAddress.memo && (
+              <span className="text-body-13-m text-[var(--color-text-secondary)]">
+                {selectedAddress.memo}
+              </span>
+            )}
+          </div>
+        ) : (
+          /* ── 새 배송지 입력 폼 ── */
+          <div className="flex flex-col gap-4">
+            {/* 받는분 / 이메일 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormRow label="받는분">
                 <input
                   value={newAddr.receiverName}
@@ -507,64 +587,112 @@ export default function OrderSection({
                   placeholder="이름"
                 />
               </FormRow>
-              <FormRow label="연락처">
+              <FormRow label="이메일">
                 <input
-                  value={newAddr.phoneNumber}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, phoneNumber: e.target.value }))}
+                  value={newAddr.email}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, email: e.target.value }))}
                   className={inputCls}
-                  placeholder="- 없이 숫자만"
+                  placeholder="이메일"
+                  type="email"
                 />
               </FormRow>
-              <FormRow label="우편번호">
+            </div>
+            {/* 우편번호 + 주소찾기 */}
+            <FormRow label="우편번호">
+              <div className="flex gap-2">
                 <input
                   value={newAddr.zipCode}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, zipCode: e.target.value }))}
-                  className={inputCls}
+                  readOnly
+                  className={`${inputCls} flex-1 min-w-0 cursor-default bg-[var(--color-surface-light)]`}
                 />
-              </FormRow>
-              <FormRow label="주소">
-                <input
-                  value={newAddr.address}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, address: e.target.value }))}
-                  className={inputCls}
-                  placeholder="기본 주소"
-                />
-              </FormRow>
-              <FormRow label="">
+                <button
+                  type="button"
+                  onClick={handleSearchAddress}
+                  className="h-8 shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                >
+                  주소찾기
+                </button>
+              </div>
+            </FormRow>
+            {/* 상세 주소 */}
+            <FormRow label="">
+              {newAddr.address ? (
+                <div className="flex flex-col gap-2">
+                  <p className="text-body-13-m text-[var(--color-text)]">{newAddr.address}</p>
+                  <input
+                    value={newAddr.addressDetail}
+                    onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
+                    className={inputCls}
+                    placeholder="상세 주소를 입력해주세요"
+                  />
+                </div>
+              ) : (
                 <input
                   value={newAddr.addressDetail}
                   onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
                   className={inputCls}
-                  placeholder="상세 주소"
+                  placeholder="상세 주소를 입력해주세요"
+                />
+              )}
+            </FormRow>
+            {/* 휴대폰 / 전화번호 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormRow label="휴대폰">
+                <input
+                  value={newAddr.phoneNumber}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, phoneNumber: e.target.value }))}
+                  className={inputCls}
+                  placeholder="-를 제외한 숫자만 입력해주세요"
                 />
               </FormRow>
-              <FormRow label="배송메모">
+              <FormRow label="전화번호">
                 <input
-                  value={newAddr.memo}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
+                  value={newAddr.tel}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, tel: e.target.value }))}
                   className={inputCls}
-                  placeholder="요청사항 (선택)"
+                  placeholder="-를 제외한 숫자만 입력해주세요"
                 />
               </FormRow>
             </div>
-          )}
-
-          <div className="border-t border-white" />
-        </div>
+            {/* 배송메모 + 배송지 정보 저장 */}
+            <div className="flex items-center gap-4">
+              <div className="flex-1 min-w-0">
+                <FormRow label="배송메모">
+                  <input
+                    value={newAddr.memo}
+                    onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
+                    className={inputCls}
+                    placeholder="배송 시 요청사항을 입력해주세요"
+                  />
+                </FormRow>
+              </div>
+              <Checkbox checked={saveInfo} onChange={() => setSaveInfo((v) => !v)} label="배송지 정보 저장" />
+            </div>
+          </div>
+        )}
       </SectionCard>
 
       <SectionCard
-        title="결제 수단"
+        title="결제수단 선택"
         open={openSections.payment}
         onToggle={() => toggleSection("payment")}
       >
         <div className="flex flex-col gap-4">
-          {billingRegistered ? (
-            <p className="text-body-13-m text-[var(--color-text-secondary)]">
-              등록된 카드로 정기 결제가 진행됩니다.
-            </p>
-          ) : (
-            <>
+          {/* 결제 수단 라디오 */}
+          <div className="flex items-center gap-8 flex-wrap">
+            {["신용카드", "카카오페이", "무통장입금", "계좌이체"].map((method) => (
+              <RadioButton
+                key={method}
+                checked={paymentMethod === method}
+                onChange={() => setPaymentMethod(method)}
+                label={method}
+              />
+            ))}
+          </div>
+
+          {/* 빌링 등록 (카드 미등록 시) */}
+          {!billingRegistered && paymentMethod === "신용카드" && (
+            <div className="flex flex-col gap-4 border-t border-white pt-4">
               <p className="text-body-13-m text-[var(--color-text-secondary)]">
                 신용카드 정보를 입력해 주세요. (정기 결제 빌링 등록)
               </p>
@@ -643,41 +771,61 @@ export default function OrderSection({
                   </div>
                 ) : null}
               </div>
-            </>
+            </div>
           )}
 
-          <div className="flex flex-col gap-2 border-t border-white pt-4">
-            <FormRow label="쿠폰">
-              <div className="flex gap-2">
-                <input
-                  value={couponCodeInput}
-                  onChange={(e) => setCouponCodeInput(e.target.value)}
-                  className={`${inputCls} flex-1 min-w-0`}
-                  placeholder="코드 입력"
-                />
-                <button
-                  type="button"
-                  onClick={() => void handleApplyCoupon()}
-                  className="h-8 shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
-                >
-                  적용
-                </button>
+          {/* 쿠폰 사용 */}
+          <div className="flex flex-col gap-3 border-t border-white pt-4">
+            <Checkbox
+              checked={couponEnabled}
+              onChange={() => {
+                setCouponEnabled((v) => !v);
+                if (couponEnabled) {
+                  setCouponCodeInput("");
+                  setCouponInfo(null);
+                  setCouponError(null);
+                }
+              }}
+              label="쿠폰사용"
+            />
+            {couponEnabled && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-4">
+                  <span className="w-[70px] shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)]">
+                    쿠폰입력
+                  </span>
+                  <div className="flex gap-2 flex-1 min-w-0">
+                    <input
+                      value={couponCodeInput}
+                      onChange={(e) => setCouponCodeInput(e.target.value)}
+                      className={`${inputCls} flex-1 min-w-0`}
+                      placeholder="코드 입력"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => void handleApplyCoupon()}
+                      className="h-8 shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                    >
+                      쿠폰적용
+                    </button>
+                  </div>
+                  {couponInfo?.canUse ? (
+                    <span className="shrink-0 text-body-13-m text-[var(--color-text-secondary)]">
+                      {couponInfo.name ?? `할인쿠폰`} {couponInfo.discountRate}% -{formatPrice(couponDiscount)}
+                    </span>
+                  ) : null}
+                </div>
+                {couponError ? (
+                  <p className="text-body-12-m text-red-600 pl-[70px]">{couponError}</p>
+                ) : null}
               </div>
-            </FormRow>
-            {couponError ? (
-              <p className="text-body-12-m text-red-600 pl-[70px]">{couponError}</p>
-            ) : null}
-            {couponInfo?.canUse ? (
-              <p className="text-body-13-m text-[var(--color-text-secondary)] pl-[70px]">
-                할인 {couponInfo.discountRate}% 적용 예상
-              </p>
-            ) : null}
+            )}
           </div>
         </div>
       </SectionCard>
 
       <SectionCard
-        title="구독 결제일"
+        title="구독 날짜 선택"
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
@@ -693,7 +841,7 @@ export default function OrderSection({
             />
           </div>
           <p className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
-            첫 정기 결제일은 오늘 기준 최소 7일 이후부터 선택할 수 있습니다.
+            구독 시작일은 구매일로 부터 최대 3일 후까지 선택 가능합니다.
           </p>
         </div>
       </SectionCard>
@@ -716,23 +864,25 @@ export default function OrderSection({
 
         {openSections.summary && (
           <div className="pb-7 flex flex-col gap-8">
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <span className="text-body-13-m text-[var(--color-text)]">주문상품금액</span>
                 <span className="text-body-13-m text-[var(--color-text)]">{formatPrice(basePrice)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-body-13-m text-[var(--color-text)]">쿠폰 할인</span>
+                <span className="text-body-13-m text-[var(--color-text)]">총 쿠폰 할인금액</span>
                 <span className="text-body-13-m text-[var(--color-text)]">
                   -{formatPrice(couponDiscount)}
                 </span>
               </div>
+              <div className="flex justify-between items-center">
+                <span className="text-body-13-m text-[var(--color-text)]">총 배송비</span>
+                <span className="text-body-13-m text-[var(--color-text)]">-0원</span>
+              </div>
             </div>
 
-            <div className="border-t border-white" />
-
             <div className="flex justify-between items-center">
-              <span className="text-body-14-b text-[var(--color-text)]">월 요금제 (예상)</span>
+              <span className="text-body-14-b text-[var(--color-text)]">월 요금제</span>
               <span className="text-price-20-eb text-[var(--color-text)]">{formatPrice(total)}</span>
             </div>
 
@@ -796,32 +946,29 @@ export default function OrderSection({
       </div>
 
       <div
-        className="rounded-[20px] flex items-center gap-0 overflow-hidden"
+        className="rounded-[20px] flex justify-center items-center gap-0 overflow-hidden"
         style={{ background: "var(--color-surface-light)", height: "104px" }}
       >
-        <div
-          className="shrink-0 flex items-center justify-center text-emoji-40 select-none"
-          style={{ width: "110px", height: "104px" }}
-        >
-          🐕
+        <div className="shrink-0 flex items-center justify-center" style={{ width: "110px", height: "104px" }}>
+          <Image
+            src={orderDogImage}
+            alt="강아지"
+            width={96}
+            height={96}
+            className="object-contain"
+          />
         </div>
         <div className="flex flex-col gap-1">
           <Image src={logoMain} alt="꼬순박스" width={64} height={22} className="object-contain object-left" />
           <span
-            className="text-brand-display-14"
-            style={{ fontFamily: '"GangwonEduPower", sans-serif', color: "var(--color-text)" }}
+            style={{ fontFamily: '"Griun Fromsol", sans-serif', fontSize: "16px", lineHeight: "21px", color: "var(--color-text)" }}
           >
-            브랜드 할인 쿠폰
+            100% 국내산
           </span>
           <span
-            className="text-brand-display-24"
-            style={{
-              fontFamily: '"GangwonEduPower", sans-serif',
-              letterSpacing: "-0.06em",
-              color: "var(--color-text-sub)",
-            }}
+            style={{ fontFamily: '"Griun Fromsol", sans-serif', fontSize: "16px", lineHeight: "21px", color: "var(--color-text)" }}
           >
-            최대 20%
+            휴먼그레이드 수제간식 구독
           </span>
         </div>
       </div>
@@ -830,6 +977,10 @@ export default function OrderSection({
 
   return (
     <div>
+      <Script
+        src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+        strategy="afterInteractive"
+      />
       <div
         className="py-10 md:py-14 relative overflow-hidden"
         style={{ background: "var(--color-surface-warm)" }}
@@ -840,10 +991,15 @@ export default function OrderSection({
         <div className="max-md:hidden absolute right-12 top-1/2 -translate-y-1/2 opacity-[0.07]">
           <PawPrint size={100} />
         </div>
-        <div className="text-center px-4">
-          <h1 className="max-md:text-display-32-b md:text-display-36-b text-primary mb-2">
-            주문을 완료해주세요!
-          </h1>
+        <div className="text-center px-4 flex flex-col items-center gap-2">
+          <Image
+            src={orderTitleImage}
+            alt="주문을 완료해주세요!"
+            width={400}
+            height={60}
+            className="max-md:w-[200px] md:w-[268px] h-auto object-contain"
+            priority
+          />
           <p className="max-md:text-body-14-m md:text-body-16-m text-[var(--color-text-on-warm)]">
             입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요.
           </p>
@@ -860,17 +1016,24 @@ export default function OrderSection({
               className="rounded-[20px] flex items-center justify-center h-20 gap-10"
               style={{ background: "var(--color-surface-warm)" }}
             >
-              <span className="text-subtitle-16-sb text-[var(--color-text)]">
-                주문상품금액 {formatPrice(basePrice)}
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
+                주문상품금액&nbsp;&nbsp;{formatPrice(basePrice)}
+              </span>
+              <span className="text-subtitle-16-sb text-[var(--color-text)]">+</span>
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
+                총 할인금액&nbsp;&nbsp;
+                <span className={couponDiscount > 0 ? "text-[var(--color-primary)]" : ""}>
+                  -{formatPrice(couponDiscount)}
+                </span>
               </span>
               <span className="text-subtitle-16-sb text-[var(--color-text)]">-</span>
-              <span className="text-subtitle-16-sb text-[var(--color-text)]">
-                쿠폰 할인 {formatPrice(couponDiscount)}
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
+                총 배송비&nbsp;&nbsp;0원
               </span>
               <span className="text-subtitle-16-sb text-[var(--color-text)]">=</span>
-              <div className="flex items-center gap-2">
-                <span className="text-subtitle-16-b text-primary">월 예상 금액</span>
-                <span className="text-subtitle-20-b text-primary">{formatPrice(total)}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-subtitle-16-b tracking-[-0.04em] text-[var(--color-primary)]">총 주문금액</span>
+                <span className="text-subtitle-20-b tracking-[-0.04em] text-[var(--color-primary)]">{formatPrice(total)}</span>
               </div>
             </div>
           </div>

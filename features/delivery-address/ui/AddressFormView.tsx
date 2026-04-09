@@ -165,31 +165,29 @@ export default function AddressFormView({
           </div>
         </div>
 
-        {/* 상세 주소 */}
-        <div className="flex items-center gap-3">
-          <span className="w-[72px] shrink-0" />
-          {pendingAddress ? (
-            <div className="flex flex-1 flex-col gap-2">
-              <p className="text-body-13-r text-[var(--color-text-secondary)]">
-                {pendingAddress}
-              </p>
-              <input
-                type="text"
-                value={addressDetail}
-                onChange={(e) => setAddressDetail(e.target.value)}
-                placeholder="상세 주소를 입력해주세요"
-                className={INPUT_CLS}
-              />
-            </div>
-          ) : (
+        {/* 도로명 주소 (검색 결과) */}
+        {pendingAddress ? (
+          <div className="flex items-center gap-3">
+            <label className={LABEL_CLS}>주소</label>
             <input
               type="text"
-              value={addressDetail}
-              onChange={(e) => setAddressDetail(e.target.value)}
-              placeholder="상세 주소를 입력해주세요"
-              className={INPUT_CLS}
+              value={pendingAddress}
+              readOnly
+              className={`${INPUT_CLS} cursor-default bg-[var(--color-surface-light)]`}
             />
-          )}
+          </div>
+        ) : null}
+
+        {/* 상세 주소 */}
+        <div className="flex items-center gap-3">
+          <label className={LABEL_CLS}>상세주소</label>
+          <input
+            type="text"
+            value={addressDetail}
+            onChange={(e) => setAddressDetail(e.target.value)}
+            placeholder="상세 주소를 입력해주세요"
+            className={INPUT_CLS}
+          />
         </div>
 
         {/* 휴대폰 */}

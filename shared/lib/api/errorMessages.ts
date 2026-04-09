@@ -31,6 +31,20 @@ const ERROR_MESSAGES: Record<string, string> = {
   MISSING_AUTHENTICATION_TOKEN: "로그인이 필요합니다.",
   INVALID_ACCESS_TOKEN: "로그인이 만료되었습니다. 다시 로그인해주세요.",
   BAD_REQUEST: "요청 정보를 확인해주세요.",
+
+  // 구독
+  SUBSCRIPTION_NOT_FOUND: "구독 정보를 찾을 수 없습니다.",
+  SUBSCRIPTION_PLAN_NOT_FOUND: "구독 플랜을 찾을 수 없습니다.",
+  SUBSCRIPTION_EXPIRED: "만료된 구독입니다.",
+  SUBSCRIPTION_INACTIVE: "비활성 상태의 구독입니다.",
+
+  // 쿠폰
+  INVALID_COUPON: "유효하지 않은 쿠폰입니다.",
+  COUPON_EXPIRED: "만료된 쿠폰입니다.",
+
+  // 결제 이력
+  PAYMENT_NOT_FOUND: "결제 내역을 찾을 수 없습니다.",
+  CONTENT_NOT_FOUND: "요청한 정보를 찾을 수 없습니다.",
 };
 
 const DEFAULT_FALLBACK = "오류가 발생했습니다. 잠시 후 다시 시도해주세요.";

@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { COOKIE_NAME } from "./constants";
 import { login as loginApi, signup as signupApi } from "../api/authApi";
-import { ApiError } from "@/shared/lib/api";
+import { ApiError, getErrorMessage } from "@/shared/lib/api";
 import type { AuthUser } from "../model/types";
 
 const COOKIE_OPTS = {
@@ -45,10 +45,10 @@ export async function loginAction(
       if (err.isUnauthorized || err.statusCode === 400) {
         return { error: "아이디 또는 비밀번호가 올바르지 않습니다." };
       }
-      return { error: `로그인 오류 (${err.code})` };
+    } else {
+      console.error("[loginAction] Unexpected error:", err);
     }
-    console.error("[loginAction] Unexpected error:", err);
-    return { error: "로그인 중 오류가 발생했습니다." };
+    return { error: getErrorMessage(err, "로그인 중 오류가 발생했습니다.") };
   }
 }
 
@@ -89,11 +89,10 @@ export async function signupAction(
   } catch (err) {
     if (err instanceof ApiError) {
       console.error("[signupAction] ApiError", err.statusCode, err.code, err.message);
-      if (err.isConflict) return { error: "이미 사용 중인 이메일입니다." };
-      if (err.statusCode === 400) return { error: "입력 정보를 확인해주세요." };
+    } else {
+      console.error("[signupAction] Unexpected error:", err);
     }
-    console.error("[signupAction] Unexpected error:", err);
-    return { error: "회원가입 중 오류가 발생했습니다." };
+    return { error: getErrorMessage(err, "회원가입 중 오류가 발생했습니다.") };
   }
 }
 

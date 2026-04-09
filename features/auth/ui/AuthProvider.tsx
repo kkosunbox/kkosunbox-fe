@@ -32,18 +32,22 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialUser]);
 
-  // 페이지 새로고침 후 세션 복구:
-  // SSR에서 accessToken이 만료돼 initialUser가 null이어도
-  // localStorage의 refreshToken이 유효하면 자동으로 갱신 후 유저 상태를 복구한다.
-  // apiClient는 env.ts를 의존하므로 루트 레이아웃에서 정적 import하면 크래시.
-  // useEffect(클라이언트 전용) 안에서 dynamic import로 지연 로드한다.
+  // 클라이언트 세션 복구:
+  // 1) user가 null + refreshToken 존재 → 페이지 새로고침 후 세션 복구
+  // 2) user는 있지만 accessToken이 메모리에 없음 → 새 탭/새 창에서 열린 경우
+  //    SSR 쿠키로 initialUser는 내려오지만 클라이언트 apiClient에 토큰이 없다.
+  //    refreshToken으로 accessToken을 복구해야 클라이언트 API 호출이 가능하다.
   useEffect(() => {
-    if (user !== null) return;
     if (!tokenStore.getRefresh()) return;
+
+    // accessToken이 이미 메모리에 있으면 복구 불필요
+    if (tokenStore.getAccess()) return;
 
     import("../api/authApi")
       .then(({ getUser }) => getUser())
-      .then((apiUser) => setUser({ id: apiUser.id, email: apiUser.email }))
+      .then((apiUser) => {
+        if (!user) setUser({ id: apiUser.id, email: apiUser.email });
+      })
       .catch(() => tokenStore.clear());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

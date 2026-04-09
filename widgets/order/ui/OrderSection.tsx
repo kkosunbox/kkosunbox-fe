@@ -3,9 +3,9 @@
 import { useMemo, useState, useTransition, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { DatePicker } from "@/shared/ui";
+import { DatePicker, useModal } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
-import { ApiError } from "@/shared/lib/api";
+import { getErrorMessage } from "@/shared/lib/api";
 import { registerBilling, getBillingTerms } from "@/features/billing/api/billingApi";
 import type { BillingTermsType } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
@@ -202,6 +202,7 @@ export default function OrderSection({
   hasBilling: hasBillingProp,
 }: OrderSectionProps) {
   const router = useRouter();
+  const { openAlert } = useModal();
   const [isPending, startTransition] = useTransition();
 
   const [openSections, setOpenSections] = useState({
@@ -324,11 +325,7 @@ export default function OrderSection({
       }
     } catch (err) {
       setCouponInfo(null);
-      if (err instanceof ApiError) {
-        setCouponError(err.message || "쿠폰 확인에 실패했습니다.");
-      } else {
-        setCouponError("쿠폰 확인에 실패했습니다.");
-      }
+      setCouponError(getErrorMessage(err, "쿠폰 확인에 실패했습니다."));
     }
   }
 
@@ -414,11 +411,7 @@ export default function OrderSection({
         router.refresh();
         router.push("/mypage/subscription");
       } catch (err) {
-        if (err instanceof ApiError) {
-          setSubmitError(err.message || `처리 실패 (${err.code})`);
-        } else {
-          setSubmitError("처리 중 오류가 발생했습니다.");
-        }
+        openAlert({ title: getErrorMessage(err, "결제 처리 중 오류가 발생했습니다.") });
       }
     });
   }

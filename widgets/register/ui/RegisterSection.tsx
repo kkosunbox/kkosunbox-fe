@@ -11,7 +11,8 @@ import {
 import { signupAction } from "@/features/auth/lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
 import { useAuth } from "@/features/auth";
-import { ApiError } from "@/shared/lib/api";
+import { getErrorMessage } from "@/shared/lib/api";
+import { useModal } from "@/shared/ui";
 import registerTitle from "../assets/register-title.png";
 import registerTitleMobi from "../assets/register-title-mobi.png";
 import registerPaw from "../assets/register-pow.png";
@@ -65,16 +66,6 @@ function EyeIcon({ className }: { className?: string }) {
   );
 }
 
-/* ─── 에러 메시지 ─── */
-function ErrorMsg({ msg }: { msg: string | null }) {
-  if (!msg) return null;
-  return (
-    <p className="mt-1 text-caption-12-r" style={{ color: "var(--color-accent-rust)" }}>
-      {msg}
-    </p>
-  );
-}
-
 /* ─── 약관 목록 ─── */
 const AGREEMENTS = [
   { key: "terms"     as const, label: "서비스 이용약관 동의",    required: true  },
@@ -113,9 +104,9 @@ export default function RegisterSection() {
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { login: authLogin } = useAuth();
+  const { openAlert } = useModal();
 
   /* ── 상태 ── */
-  const [error, setError] = useState<string | null>(null);
   const [isPending, start] = useTransition();
 
   /* ── 이메일 ── */
@@ -145,6 +136,11 @@ export default function RegisterSection() {
     agreements.terms &&
     !isPending;
 
+  /** 에러를 알림 모달로 표시 */
+  function showError(msg: string) {
+    openAlert({ title: msg });
+  }
+
   /* ── 타이머 정리 ── */
   useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current); }, []);
 
@@ -162,8 +158,7 @@ export default function RegisterSection() {
 
   /* ── 인증코드 발송 ── */
   function handleSendCode() {
-    if (!email.trim()) { setError("이메일을 입력해주세요."); return; }
-    setError(null);
+    if (!email.trim()) { showError("이메일을 입력해주세요."); return; }
     start(async () => {
       try {
         if (codeSent) {
@@ -174,37 +169,29 @@ export default function RegisterSection() {
         startCountdown();
         setCodeSent(true);
       } catch (err) {
-        if (err instanceof ApiError && err.isConflict)
-          setError("이미 가입된 이메일입니다.");
-        else
-          setError("인증코드 발송 중 오류가 발생했습니다.");
+        showError(getErrorMessage(err, "인증코드 발송 중 오류가 발생했습니다."));
       }
     });
   }
 
   /* ── OTP 확인 ── */
   function handleVerifyOtp() {
-    if (!otp.trim()) { setError("인증코드를 입력해주세요."); return; }
-    setError(null);
+    if (!otp.trim()) { showError("인증코드를 입력해주세요."); return; }
     start(async () => {
       try {
         const res = await verifyEmail({ email: email.trim(), otp: otp.trim() });
         setEmailVerifiedToken(res.emailVerifiedToken);
       } catch (err) {
-        if (err instanceof ApiError)
-          setError("인증코드가 올바르지 않습니다.");
-        else
-          setError("인증 확인 중 오류가 발생했습니다.");
+        showError(getErrorMessage(err, "인증 확인 중 오류가 발생했습니다."));
       }
     });
   }
 
   /* ── 회원가입 ── */
   function handleSignup() {
-    if (!agreements.terms) { setError("서비스 이용약관에 동의해주세요."); return; }
-    if (password.length < 8) { setError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
-    if (password !== passwordConfirm) { setError("비밀번호가 일치하지 않습니다."); return; }
-    setError(null);
+    if (!agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
+    if (password.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
+    if (password !== passwordConfirm) { showError("비밀번호가 일치하지 않습니다."); return; }
     start(async () => {
       const result = await signupAction(
         emailVerifiedToken,
@@ -213,7 +200,7 @@ export default function RegisterSection() {
         agreements.privacy,
         agreements.marketing,
       );
-      if (result.error) { setError(result.error); return; }
+      if (result.error) { showError(result.error); return; }
 
       if (result.accessToken && result.refreshToken)
         tokenStore.setTokens(result.accessToken, result.refreshToken);
@@ -450,13 +437,6 @@ export default function RegisterSection() {
             style={{ transform: "rotate(-24.12deg)" }}
           />
         </div>
-
-        {/* 에러 메시지 */}
-        {error && (
-          <div className="mt-4 text-center">
-            <ErrorMsg msg={error} />
-          </div>
-        )}
 
         {/* ─── CTA 버튼 ─── */}
         <button

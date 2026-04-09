@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import { Text, useModal } from "@/shared/ui";
+import { getErrorMessage } from "@/shared/lib/api";
 import { cancelSubscription, reactivateSubscription, changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
@@ -52,7 +53,7 @@ interface Props {
 ───────────────────────────── */
 export default function SubscriptionManagementSection({ subscription, plans }: Props) {
   const router = useRouter();
-  const { openModal } = useModal();
+  const { openModal, openAlert } = useModal();
   const [isPending, startTransition] = useTransition();
 
   const isCancelled = !subscription?.isActive || subscription?.status === "cancelled";
@@ -74,8 +75,12 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
     if (!subscription) return;
     openModal("subscription-cancel", () => {
       startTransition(async () => {
-        await cancelSubscription(subscription.id).catch(console.error);
-        router.refresh();
+        try {
+          await cancelSubscription(subscription.id);
+          router.refresh();
+        } catch (err) {
+          openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
+        }
       });
     });
   }
@@ -84,12 +89,15 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
     if (!subscription) return;
     openModal("subscription-restart", () => {
       startTransition(async () => {
-        await reactivateSubscription(subscription.id).catch(console.error);
-        // 플랜 변경이 함께 요청된 경우
-        if (planId !== undefined && planId !== subscription.plan.id) {
-          await changePlan(subscription.id, { newPlanId: planId }).catch(console.error);
+        try {
+          await reactivateSubscription(subscription.id);
+          if (planId !== undefined && planId !== subscription.plan.id) {
+            await changePlan(subscription.id, { newPlanId: planId });
+          }
+          router.refresh();
+        } catch (err) {
+          openAlert({ title: getErrorMessage(err, "구독 재시작 처리 중 오류가 발생했습니다.") });
         }
-        router.refresh();
       });
     });
   }
@@ -102,8 +110,12 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
     } else {
       openModal("subscription-restart", () => {
         startTransition(async () => {
-          await changePlan(subscription.id, { newPlanId: plan.id }).catch(console.error);
-          router.refresh();
+          try {
+            await changePlan(subscription.id, { newPlanId: plan.id });
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "플랜 변경 중 오류가 발생했습니다.") });
+          }
         });
       });
     }

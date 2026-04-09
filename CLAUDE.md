@@ -116,3 +116,35 @@ className="hidden md:block"
 
 // ❌ 금지 — {mobile} md:{base} 패턴은 베이스 클래스 우선 적용 버그 발생
 ```
+
+### API 에러 처리 규칙 (필수)
+
+**백엔드 에러 메시지를 사용자에게 직접 노출하지 않는다.** 모든 에러는 한국어 메시지로 변환한다.
+
+**에러 메시지 중앙 관리:** `shared/lib/api/errorMessages.ts`의 `ERROR_MESSAGES` 맵에서 백엔드 `code` → 한국어 메시지를 관리한다.
+
+**모달 vs 인라인 판단 기준:**
+- **인라인** — 짧은 폼(한 화면), 필드 귀속, 재시도 빈도 높음 (예: 로그인 비밀번호 틀림)
+- **모달** — 긴 폼(스크롤 밖 가능), 서버 API 응답, 필드 귀속 불가, 흐름 차단 (예: 이메일 중복)
+- 간단 분류: **클라이언트 검증 → 인라인, 서버 응답 → 모달**
+- 상세 전략·도메인별 체크리스트: `.claude/contexts/error-handling.md`
+
+```tsx
+// ✅ 모달 — 컴포넌트 안
+const { openAlert } = useModal();
+openAlert({ title: getErrorMessage(err, "fallback 메시지") });
+
+// ✅ 모달 — React 밖 (API 레이어 등)
+import { openAlertModal } from "@/shared/ui";
+openAlertModal({ title: "세션이 만료되었습니다." });
+
+// ✅ 인라인 — 짧은 폼의 필드 귀속 검증
+const [fieldError, setFieldError] = useState<string | null>(null);
+
+// ❌ 금지 — 호출부에서 에러 코드별 메시지를 직접 작성
+if (err instanceof ApiError && err.isConflict) setError("이미 가입된...");
+```
+
+**새 에러 코드 대응 시:**
+1. `shared/lib/api/errorMessages.ts`의 `ERROR_MESSAGES`에 코드-메시지 쌍 추가
+2. 호출부에서는 `getErrorMessage()`만 사용, 표시는 판단 기준에 따라 모달 또는 인라인

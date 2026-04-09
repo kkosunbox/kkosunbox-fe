@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useModal } from "@/shared/ui";
+import { getErrorMessage } from "@/shared/lib/api";
 import { getPaymentReceipt } from "@/features/subscription/api/subscriptionApi";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
@@ -140,6 +142,7 @@ interface Props {
 export default function PaymentManagementSection({ billingInfo, subscription, payments }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
+  const { openAlert } = useModal();
 
   const totalPages = Math.ceil(payments.length / ITEMS_PER_PAGE);
   const currentPage = Math.min(page, Math.max(1, totalPages));
@@ -174,8 +177,8 @@ export default function PaymentManagementSection({ billingInfo, subscription, pa
       try {
         const data = await getPaymentReceipt(String(paymentId));
         window.open(data.receiptUrl, "_blank", "noopener,noreferrer");
-      } catch {
-        // 영수증 URL 조회 실패 시 무시
+      } catch (err) {
+        openAlert({ title: getErrorMessage(err, "영수증을 불러올 수 없습니다.") });
       }
     });
   }

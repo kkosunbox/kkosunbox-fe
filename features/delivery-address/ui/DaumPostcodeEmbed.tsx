@@ -56,7 +56,7 @@ export default function DaumPostcodeEmbed({ onComplete, onClose }: Props) {
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-screen flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-6 pb-4 pt-8">
         <h2 className="text-subtitle-20-b tracking-tightest text-[var(--color-text)]">

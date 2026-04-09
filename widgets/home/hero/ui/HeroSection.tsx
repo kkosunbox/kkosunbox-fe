@@ -2,52 +2,55 @@
 
 import Image from "next/image";
 import { Text, Button } from "@/shared/ui";
-import heroContents01 from "../assets/hero-contents-01.png";
-import heroContents01Mobi from "../assets/hero-contents-01-mobi.png";
-import heroContents02 from "../assets/hero-contents-02.png";
-import heroItem from "../assets/hero-item.png";
+import logoMain from "@/shared/assets/logo-main.svg";
+import heroItemExpanded from "../assets/hero-item-expanded.png";
+import heroPremiumPackage from "../assets/hero-premium-package.png";
 
 export default function HeroSection() {
   return (
-    <section style={{ background: "var(--gradient-hero)" }} className="flex flex-col">
-      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-2 md:gap-16 max-md:px-8 md:px-0 pt-10 md:pt-0 w-full">
-        {/* Left */}
-        <div className="flex-1 w-full flex flex-col items-center md:items-start">
-          {/* 모바일 로고 이미지 */}
-          <Image src={heroContents01} alt="꼬순박스 로고" className="md:hidden w-full max-w-[94px] max-h-[32px] mb-6" />
-          <Image src={heroContents01Mobi} alt="꼬순박스 프리미엄 패키지 BOX" className="md:hidden w-full max-w-[265px] max-h-[96px] mb-2" />
-          {/* 데스크톱 로고 이미지 */}
-          <Image src={heroContents01} alt="꼬순박스 로고" className="max-md:hidden w-full max-w-[146px] max-h-[50px]" />
-          <Image src={heroContents02} alt="패키지 알아보기" className="max-md:hidden mt-6 w-full" />
-          <Text variant="title-24-sb" mobileVariant="body-14-m" className="text-white text-center md:text-left">
-            100% 국내산 휴먼그레이드 수제간식 구독
-          </Text>
-          {/* 데스크톱 전용 버튼 */}
-          <Button variant="primary" size="lg" className="mt-5 max-md:hidden">
-            구독하러 가기
-          </Button>
+    <section className="bg-[var(--color-hero-bg)] flex flex-col overflow-hidden">
+      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-2 md:gap-0 max-md:px-8 md:px-0 pt-10 md:pt-0 w-full">
+        {/* Left — 장식 도형 + 패키지 이미지 */}
+        <div className="relative order-2 md:order-1 flex flex-1 w-full items-end md:h-full">
+          {/* 패키지 이미지 */}
+          <div className="relative z-10 w-full max-w-[280px] md:max-w-[410px]">
+            <Image
+              src={heroItemExpanded}
+              alt="꼬순박스 프리미엄 패키지"
+              className="h-auto w-full"
+              priority
+            />
+          </div>
         </div>
 
-        {/* Right */}
-        <div className="flex flex-1 w-full items-end justify-center md:translate-x-[20%] md:h-full md:pb-0">
-          <div className="relative w-full max-w-[280px] md:max-w-[324px]">
-            <Image src={heroItem} alt="꼬순박스 패키지" className="h-auto w-full" />
-            {/* 모바일 전용 — premium box 장식 텍스트 */}
-            <p
-              className="md:hidden absolute -top-1 -right-8 w-[108px] text-center capitalize rotate-[-16deg] text-emoji-32 font-normal text-[var(--color-accent-rust)]"
-              style={{ fontFamily: "var(--font-ms-madi)" }}
-            >
-              premium box
-            </p>
-            {/* 모바일 전용 — 이미지 하단에 걸쳐 있는 버튼, 뷰포트 기준 좌우 24px 여백 */}
-            <Button
-              variant="primary"
-              size="lg"
-              className="md:hidden absolute bottom-[26px] left-1/2 -translate-x-1/2 w-[calc(100vw-48px)]"
-            >
-              구독하러 가기
-            </Button>
-          </div>
+        {/* Right — 텍스트 + CTA */}
+        <div className="order-1 md:order-2 flex flex-1 w-full flex-col items-center md:items-start md:justify-center md:h-full md:pl-7.5">
+          {/* 꼬순박스 로고 */}
+          <Image
+            src={logoMain}
+            alt="꼬순박스 로고"
+            className="w-full max-w-[94px] md:max-w-[146px] max-h-[32px] md:max-h-[50px] mb-4 md:mb-6"
+          />
+          {/* Premium Package 이미지 타이틀 */}
+          <Image
+            src={heroPremiumPackage}
+            alt="Premium Package"
+            className="w-full max-w-[287px] md:max-w-[291px] h-auto mb-4 md:mb-6"
+          />
+          <Text
+            variant="subtitle-20-m"
+            mobileVariant="body-14-m"
+            className="text-primary text-center md:text-left mb-5"
+          >
+            100% 국내산 휴먼그레이드 수제간식 구독
+          </Text>
+          <Button
+            variant="primary"
+            size="lg"
+            className="max-md:h-[44px] max-md:px-6 max-md:text-[16px] max-md:leading-[24px] whitespace-nowrap"
+          >
+            구독하러 가기
+          </Button>
         </div>
       </div>
     </section>

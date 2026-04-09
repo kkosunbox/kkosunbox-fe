@@ -98,7 +98,7 @@ export default function LoginPage() {
             {/* 데스크톱 전용 헤딩 — Figma: 79px 높이 컨테이너 / line1 20px / line2 36px */}
             <div className="max-md:hidden text-center mb-8">
               <p
-                className="text-[var(--color-primary)]"
+                className="text-primary"
                 style={{
                   fontFamily: "Griun PolFairness",
                   fontSize: "20px",

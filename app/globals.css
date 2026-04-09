@@ -62,6 +62,10 @@
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
   --color-surface-peach: #FFF2E5; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-surface-light: #F8F8F8;
+  --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
+  --color-hero-shape: #F2D0B1;        /* Hero 장식 도형 배경 */
+  --color-hero-heading: #464646;      /* Hero Premium Package 텍스트 */
+  --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
@@ -134,6 +138,8 @@
   --color-link-warm: #C3824E;           /* Warm Link — 로그인 회원가입하기 링크 */
   --color-link-blue: #1C67D4;           /* Blue Link — 체크리스트 모달 본문 강조 */
   --color-sage: #87AB7D;                /* Sage Green — About CTA 카드 배경 */
+  --color-star: #FDD264;                /* Gold — 리뷰 별점 아이콘 */
+  --color-review-text: #2C2C2C;         /* 리뷰 카드 본문/이름 텍스트 */
 
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
@@ -150,6 +156,7 @@
   --gradient-modal-restart: linear-gradient(180deg, #A8D4F5 0%, #EEF6FF 100%);  /* 구독 재시작 모달 06 — 라이트 블루 */
   --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
   --gradient-checklist-result: linear-gradient(101.78deg, #FFF4EA 41.37%, #FFBF9A 118.84%); /* 체크리스트 결과 배너 (Figma) */
+  --gradient-reviews: linear-gradient(180deg, #FFF9F3 0%, #E3EEFF 100%); /* 리뷰 섹션 배경 (크림 위 → 블루 아래) */
 }
 
 @theme inline {
@@ -168,6 +175,9 @@
   --color-surface-warm: var(--color-surface-warm);
   --color-surface-peach: var(--color-surface-peach);
   --color-surface-light: var(--color-surface-light);
+  --color-hero-bg: var(--color-hero-bg);
+  --color-hero-shape: var(--color-hero-shape);
+  --color-hero-heading: var(--color-hero-heading);
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-banner-heading: var(--color-support-banner-heading);
   --color-footer-bg: var(--color-footer-bg);
@@ -202,6 +212,8 @@
   --color-link-warm: var(--color-link-warm);
   --color-link-blue: var(--color-link-blue);
   --color-sage: var(--color-sage);
+  --color-star: var(--color-star);
+  --color-review-text: var(--color-review-text);
 
   /* Text */
   --color-text: var(--color-text);

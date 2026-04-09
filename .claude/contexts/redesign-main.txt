@@ -1,0 +1,3445 @@
+/* Group 1000005125 */
+
+position: absolute;
+width: 1922px;
+height: 3333px;
+left: -1px;
+top: 0px;
+
+
+
+/* Rectangle 4284 */
+
+position: absolute;
+width: 1920px;
+height: 1116px;
+left: -1px;
+top: 1455px;
+
+background: rgba(254, 234, 215, 0.3);
+
+
+/* Rectangle 4285 */
+
+position: absolute;
+width: 1920px;
+height: 762px;
+left: 0px;
+top: 2571px;
+
+background: linear-gradient(0deg, #FFF9F3 0%, #E3EEFF 100%);
+transform: matrix(1, 0, 0, -1, 0, 0);
+
+
+/* Rectangle 4283 */
+
+position: absolute;
+width: 1920px;
+height: 804px;
+right: -1px;
+top: 654px;
+
+background: #FFFFFF;
+
+
+/* Frame 1000004773 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+position: absolute;
+width: 60px;
+height: 12px;
+left: 932px;
+top: 1399px;
+
+
+
+/* Ellipse 26 */
+
+width: 12px;
+height: 12px;
+
+background: #CFCFCF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Ellipse 22 */
+
+width: 12px;
+height: 12px;
+
+/* Accent */
+background: #7FB3FF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Ellipse 25 */
+
+width: 12px;
+height: 12px;
+
+background: #CFCFCF;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Image */
+
+position: absolute;
+width: 645px;
+height: 520px;
+left: 453px;
+top: 1517px;
+
+background: url(Gemini_Generated_Image_q53wa9q53wa9q53w.png);
+border-radius: 52px;
+
+
+/* Group 1000005104 */
+
+position: absolute;
+width: 69.65px;
+height: 58.05px;
+left: 929px;
+top: 1541px;
+
+transform: rotate(-24.12deg);
+
+
+/* Vector */
+
+position: absolute;
+width: 48.06px;
+height: 32.08px;
+left: 948.9px;
+top: 1569.37px;
+
+background: rgba(255, 255, 255, 0.8);
+transform: rotate(-24.12deg);
+
+
+/* Vector */
+
+position: absolute;
+width: 15.93px;
+height: 16.17px;
+left: 984.85px;
+top: 1556.23px;
+
+background: rgba(255, 255, 255, 0.8);
+transform: rotate(-24.12deg);
+
+
+/* Vector */
+
+position: absolute;
+width: 16.5px;
+height: 18.45px;
+left: 962.66px;
+top: 1548.4px;
+
+background: rgba(255, 255, 255, 0.8);
+transform: matrix(0.81, -0.59, 0.59, 0.81, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 15.41px;
+height: 15.34px;
+left: 939.24px;
+top: 1579.2px;
+
+background: rgba(255, 255, 255, 0.8);
+transform: matrix(0.98, -0.22, 0.16, 0.99, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 16.51px;
+height: 18.43px;
+left: 944.04px;
+top: 1557.85px;
+
+background: rgba(255, 255, 255, 0.8);
+transform: matrix(0.96, -0.3, 0.29, 0.96, 0, 0);
+
+
+/* Group 1000005134 */
+
+position: absolute;
+width: 47.85px;
+height: 39.88px;
+left: 996.62px;
+top: 1626.03px;
+
+transform: rotate(19.08deg);
+
+
+/* Vector */
+
+position: absolute;
+width: 33.02px;
+height: 22.04px;
+left: 1003.22px;
+top: 1645.18px;
+
+background: rgba(255, 255, 255, 0.5);
+transform: rotate(19.08deg);
+
+
+/* Vector */
+
+position: absolute;
+width: 10.95px;
+height: 11.11px;
+left: 1037.16px;
+top: 1648.93px;
+
+background: rgba(255, 255, 255, 0.5);
+transform: rotate(19.08deg);
+
+
+/* Vector */
+
+position: absolute;
+width: 11.33px;
+height: 12.67px;
+left: 1030.37px;
+top: 1636.15px;
+
+background: rgba(255, 255, 255, 0.5);
+transform: matrix(0.99, 0.13, -0.12, 0.99, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 10.59px;
+height: 10.54px;
+left: 1002.7px;
+top: 1637.4px;
+
+background: rgba(255, 255, 255, 0.5);
+transform: matrix(0.86, 0.51, -0.56, 0.83, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 11.34px;
+height: 12.67px;
+left: 1014.74px;
+top: 1629.73px;
+
+background: rgba(255, 255, 255, 0.5);
+transform: matrix(0.9, 0.44, -0.44, 0.9, 0, 0);
+
+
+/* Group 1000005133 */
+
+position: absolute;
+width: 1013px;
+height: 353px;
+left: calc(50% - 1013px/2 - 0.5px);
+top: 2146px;
+
+
+
+/* Group 1000005129 */
+
+position: absolute;
+width: 495px;
+height: 353px;
+left: 971px;
+top: 2146px;
+
+
+
+/* Image */
+
+position: absolute;
+width: 250.77px;
+height: 294.95px;
+left: 971px;
+top: 2204.05px;
+
+background: url(photo_2026-03-11_17-54-00.jpg);
+border-radius: 10px;
+
+
+/* Image */
+
+position: absolute;
+width: 224.57px;
+height: 295.88px;
+left: 1241.43px;
+top: 2146px;
+
+background: url(photo_2026-03-11_17-53-30.jpg);
+border-radius: 10px;
+transform: matrix(-1, 0, 0, 1, 0, 0);
+
+
+/* Group 1000005132 */
+
+position: absolute;
+width: 502px;
+height: 285px;
+left: 453px;
+top: 2187px;
+
+
+
+/* 이런 고민 있으신가요? */
+
+position: absolute;
+width: 323px;
+height: 41px;
+left: calc(50% - 323px/2 - 345.5px);
+top: 2262px;
+
+font-family: 'GangwonEduPower';
+font-style: normal;
+font-weight: 400;
+font-size: 40px;
+line-height: 41px;
+text-align: center;
+letter-spacing: -0.08em;
+text-transform: capitalize;
+
+color: #555555;
+
+
+
+/* for you */
+
+position: absolute;
+width: 113px;
+height: 64px;
+left: calc(50% - 113px/2 - 450.5px);
+top: 2187px;
+
+font-family: 'Give You Glory';
+font-style: normal;
+font-weight: 400;
+font-size: 40px;
+line-height: 64px;
+text-align: center;
+letter-spacing: -0.08em;
+text-decoration-line: underline;
+text-transform: lowercase;
+
+color: #EE681A;
+
+
+
+/* Group 1000004891 */
+
+position: absolute;
+width: 24px;
+height: 126px;
+left: 453px;
+top: 2341px;
+
+
+
+/* Done_round_duotone */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 453px;
+top: 2341px;
+
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 16.67%;
+bottom: 16.67%;
+
+background: #E8CFB9;
+border-radius: 2px;
+
+
+/* Line 2 */
+
+position: absolute;
+left: 35.42%;
+right: 31.25%;
+top: 25%;
+bottom: 29.17%;
+
+border: 1.5px solid #222222;
+border-radius: 1px;
+transform: rotate(90deg);
+
+
+/* Done_round_duotone */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 453px;
+top: 2375px;
+
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 16.67%;
+bottom: 16.67%;
+
+background: #E8CFB9;
+border-radius: 2px;
+
+
+/* Line 2 */
+
+position: absolute;
+left: 35.42%;
+right: 31.25%;
+top: 25%;
+bottom: 29.17%;
+
+border: 1.5px solid #222222;
+border-radius: 1px;
+transform: rotate(90deg);
+
+
+/* Done_round_duotone */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 453px;
+top: 2409px;
+
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 16.67%;
+bottom: 16.67%;
+
+background: #E8CFB9;
+border-radius: 2px;
+
+
+/* Line 2 */
+
+position: absolute;
+left: 35.42%;
+right: 31.25%;
+top: 25%;
+bottom: 29.17%;
+
+border: 1.5px solid #222222;
+border-radius: 1px;
+transform: rotate(90deg);
+
+
+/* Done_round_duotone */
+
+position: absolute;
+width: 24px;
+height: 24px;
+left: 453px;
+top: 2443px;
+
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 16.67%;
+bottom: 16.67%;
+
+background: #E8CFB9;
+border-radius: 2px;
+
+
+/* Line 2 */
+
+position: absolute;
+left: 35.42%;
+right: 31.25%;
+top: 25%;
+bottom: 29.17%;
+
+border: 1.5px solid #222222;
+border-radius: 1px;
+transform: rotate(90deg);
+
+
+/* 시중 간식 성분이 걱정돼서 아무거나 먹이기 불안해요 우리 강아지 입맛이 까다로워서 간식 고르기 어려워요 건강한 간식을 주고 싶은데 어떤 걸 골라야 할지 모르겠어요 매번 간식 쇼핑하기가 번거로워요 */
+
+position: absolute;
+width: 475px;
+height: 136px;
+right: 965px;
+top: 2336px;
+
+font-family: 'Griun PolFairness';
+font-style: normal;
+font-weight: 400;
+font-size: 20px;
+line-height: 170%;
+/* 또는 34px */
+
+color: #5B5B5B;
+
+
+
+/* 설문조사 후 우리 아이에게 적절한 패키지 박스를 추천받을 수 있습니다! */
+
+position: absolute;
+width: 496px;
+height: 28px;
+left: calc(50% - 496px/2 - 1px);
+top: 851px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 18px;
+line-height: 28px;
+/* 상자 높이와 동일 또는 156% */
+text-align: center;
+
+color: #917F71;
+
+
+
+/* Group 1000005131 */
+
+position: absolute;
+width: 291px;
+height: 291px;
+left: 1175px;
+top: 1689px;
+
+
+
+/* 생생한 재료의 맛 */
+
+position: absolute;
+width: 251px;
+height: 41px;
+left: calc(50% - 251px/2 + 340.5px);
+top: 1736px;
+
+font-family: 'GangwonEduPower';
+font-style: normal;
+font-weight: 400;
+font-size: 40px;
+line-height: 41px;
+text-align: center;
+letter-spacing: -0.08em;
+text-transform: capitalize;
+
+color: #555555;
+
+
+
+/* 원재료에서 느껴지는 */
+
+position: absolute;
+width: 209px;
+height: 35px;
+left: calc(50% - 209px/2 + 319.5px);
+top: 1689px;
+
+font-family: 'Griun PolFairness';
+font-style: normal;
+font-weight: 400;
+font-size: 28px;
+line-height: 35px;
+text-align: center;
+letter-spacing: -0.08em;
+text-transform: capitalize;
+
+color: #A15300;
+
+
+
+/* 체크리스트 작성 후 우리 아이에게 적절한 원재료가 들어간 패키지 박스를 추천받을 수 있습니다! */
+
+position: absolute;
+width: 291px;
+height: 84px;
+left: calc(50% - 291px/2 + 360.5px);
+top: 1809px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 18px;
+line-height: 28px;
+/* 또는 156% */
+
+color: #5B5B5B;
+
+
+
+/* Adjustable / Primary / Large */
+
+position: absolute;
+width: 196px;
+height: 52px;
+left: 1175px;
+top: 1928px;
+
+/* Main text */
+background: #2F2F2F;
+border-radius: 50px;
+
+
+/* Label */
+
+position: absolute;
+width: 123px;
+height: 30px;
+left: calc(50% - 123px/2 + 0.5px);
+top: calc(50% - 30px/2);
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 30px;
+/* 상자 높이와 동일 또는 188% */
+text-align: center;
+letter-spacing: -0.04em;
+font-feature-settings: 'liga' off;
+
+color: #FFFFFF;
+
+
+
+/* 원하는 패키지로 선택 후 구독하세요! */
+
+position: absolute;
+width: 306px;
+height: 100px;
+left: calc(50% - 306px/2 + 1px);
+top: 723px;
+
+font-family: 'GangwonEduPower';
+font-style: normal;
+font-weight: 400;
+font-size: 40px;
+line-height: 50px;
+/* 또는 125% */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+/* Primary-Main */
+color: #C97A3D;
+
+
+
+/* Group 1000005136 */
+
+position: absolute;
+width: 1011px;
+height: 560px;
+left: 455px;
+top: 2657px;
+
+
+
+/* Reviews card */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 84px 32px 32px;
+gap: 24px;
+isolation: isolate;
+
+position: absolute;
+width: 313px;
+min-width: 300px;
+height: 360px;
+left: 455px;
+top: 2857px;
+
+background: #FFFFFF;
+box-shadow: 0px 4px 10px rgba(82, 82, 82, 0.1);
+border-radius: 16px;
+
+
+/* Stars */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 120px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* 처음엔 가격대가 있어서 고민했는데 받아보고 생각 바뀌었어요. 포장부터 너무 깔끔하고 고급스럽고, 무엇보다 우리 강아지가 진짜 잘 먹어요. 평소 간식 가리던 아이인데 꼬순박스는 뜯자마자 달려오네요ㅎㅎ 재구독 의사 100%입니다! */
+
+width: 249px;
+height: 126px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 140%;
+/* 또는 20px */
+
+color: #2C2C2C;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Name */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 249px;
+height: 46px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+z-index: 2;
+
+
+/* 코코 (웰시코기) */
+
+width: 112px;
+height: 21px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+text-align: center;
+
+color: #2C2C2C;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 구독 32일째, 프리미엄 */
+
+width: 249px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+text-align: center;
+
+color: #777777;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon Strategy */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 17.71px 19.25px;
+gap: 7.7px;
+
+position: absolute;
+width: 120px;
+height: 120px;
+left: calc(50% - 120px/2 + 0.5px);
+top: -60px;
+
+background: url(photo_2026-03-11_17-53-10.jpg);
+border: 8px solid #FFFFFF;
+border-radius: 60px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+z-index: 3;
+
+
+/* Reviews card */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 84px 32px 32px;
+gap: 24px;
+isolation: isolate;
+
+position: absolute;
+width: 313px;
+min-width: 300px;
+height: 360px;
+left: 804px;
+top: 2857px;
+
+background: #FFFFFF;
+box-shadow: 0px 4px 10px rgba(82, 82, 82, 0.1);
+border-radius: 16px;
+
+
+/* Stars */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 120px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* 성분 보고 선택했는데 진짜 만족이에요. 불필요한 첨가물 없고 믿고 먹일 수 있어서 좋아요. 간식 종류도 다양해서 매번 새로운 느낌이라 강아지도 질려하지 않네요. 구독 서비스 중에서는 제일 만족스러워요. */
+
+width: 249px;
+height: 126px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 140%;
+/* 또는 20px */
+
+color: #2C2C2C;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Name */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 249px;
+height: 46px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+z-index: 2;
+
+
+/* 보리 (웰시코기) */
+
+width: 112px;
+height: 21px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+text-align: center;
+
+color: #2C2C2C;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 구독 58일째, 스탠다드 */
+
+width: 249px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+text-align: center;
+
+color: #777777;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon Strategy */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 17.71px 19.25px;
+gap: 7.7px;
+
+position: absolute;
+width: 120px;
+height: 120px;
+left: calc(50% - 120px/2 + 0.5px);
+top: -60px;
+
+background: url(photo_2026-03-11_17-31-39.jpg);
+border: 8px solid #FFFFFF;
+border-radius: 60px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+z-index: 3;
+
+
+/* Reviews card */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 84px 32px 32px;
+gap: 24px;
+isolation: isolate;
+
+position: absolute;
+width: 313px;
+min-width: 300px;
+height: 360px;
+left: 1153px;
+top: 2857px;
+
+background: #FFFFFF;
+box-shadow: 0px 4px 10px rgba(82, 82, 82, 0.1);
+border-radius: 16px;
+
+
+/* Stars */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 120px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+z-index: 0;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* ic:baseline-star */
+
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Vector */
+
+position: absolute;
+left: 8.33%;
+right: 8.33%;
+top: 8.33%;
+bottom: 12.5%;
+
+background: #FDD264;
+
+
+/* 강아지 키우면서 간식 고민 많았는데 꼬순박스로 정착했어요. 매달 어떤 구성이 올지 기대하는 재미도 있고, 퀄리티가 확실히 일반 간식이랑 달라요. 주변 견주들한테도 추천 많이 하고 있어요 */
+
+width: 249px;
+height: 126px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 140%;
+/* 또는 20px */
+
+color: #2C2C2C;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+z-index: 1;
+
+
+/* Name */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 249px;
+height: 46px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+z-index: 2;
+
+
+/* 두부 (리트리버) */
+
+width: 112px;
+height: 21px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 700;
+font-size: 18px;
+line-height: 21px;
+text-align: center;
+
+color: #2C2C2C;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 구독 91일째, 프리미엄 */
+
+width: 249px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+text-align: center;
+
+color: #777777;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Icon Strategy */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 17.71px 19.25px;
+gap: 7.7px;
+
+position: absolute;
+width: 120px;
+height: 120px;
+left: calc(50% - 120px/2 + 0.5px);
+top: -60px;
+
+background: url(premium_photo-1661951641996-3685492b78ed.jpg);
+border: 8px solid #FFFFFF;
+border-radius: 60px;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+z-index: 3;
+
+
+/* 실제 꼬순박스 패키지를 구매하신 고객님들의 생생한 리뷰입니다. */
+
+position: absolute;
+width: 391px;
+height: 19px;
+left: calc(50% - 391px/2 - 0.5px);
+top: 2723px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 19px;
+/* 상자 높이와 동일 */
+text-align: center;
+letter-spacing: -0.02em;
+
+color: #917F71;
+
+
+
+/* 생생한 리뷰를 확인하세요! */
+
+position: absolute;
+width: 412px;
+height: 50px;
+left: calc(50% - 412px/2 + 1px);
+top: 2657px;
+
+font-family: 'GangwonEduPower';
+font-style: normal;
+font-weight: 400;
+font-size: 40px;
+line-height: 50px;
+/* 상자 높이와 동일 또는 125% */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+color: #5C4634;
+
+
+
+/* Rectangle 4282 */
+
+position: absolute;
+width: 1920px;
+height: 64px;
+left: -1px;
+top: 591px;
+
+background: #171713;
+
+
+/* Group 1000004884 */
+
+position: absolute;
+width: 136px;
+height: 32px;
+left: 452px;
+top: 607px;
+
+
+
+/* Group 1000005126 */
+
+position: absolute;
+width: 136px;
+height: 32px;
+left: 452px;
+top: 607px;
+
+
+
+/* check */
+
+position: absolute;
+width: 32px;
+height: 32px;
+left: 452px;
+top: 607px;
+
+
+
+/* Vector */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 25%;
+bottom: 29.17%;
+
+border: 3px solid #F6E9DD;
+
+
+/* Small foam, big difference - pores will appreciate */
+
+position: absolute;
+width: 100px;
+height: 26px;
+left: 488px;
+top: 608px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 160%;
+/* 상자 높이와 동일 또는 26px */
+text-align: center;
+letter-spacing: -0.02em;
+
+color: #F6E9DD;
+
+
+
+/* Group 1000005127 */
+
+position: absolute;
+width: 132px;
+height: 28px;
+left: 893px;
+top: 609px;
+
+
+
+/* Small foam, big difference - pores will appreciate */
+
+position: absolute;
+width: 100px;
+height: 26px;
+left: 925px;
+top: 610px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 160%;
+/* 상자 높이와 동일 또는 26px */
+text-align: center;
+letter-spacing: -0.02em;
+
+color: #F6E9DD;
+
+
+
+/* Box */
+
+position: absolute;
+width: 28px;
+height: 28px;
+left: 893px;
+top: 609px;
+
+
+
+/* Rectangle 1 */
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 20.83%;
+bottom: 16.67%;
+
+border: 2px solid #F6E9DD;
+border-radius: 2px;
+
+
+/* Vector 3 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 16.67%;
+right: 16.67%;
+top: 41.67%;
+bottom: 58.33%;
+
+border: 2px solid #F6E9DD;
+border-radius: 2px;
+
+
+/* Rectangle 2 */
+
+position: absolute;
+left: 36.11%;
+right: 36.11%;
+top: 37.5%;
+bottom: 35.06%;
+
+background: #F6E9DD;
+
+
+/* Group 1000005128 */
+
+position: absolute;
+width: 132px;
+height: 28px;
+left: 1335px;
+top: 609px;
+
+
+
+/* Small foam, big difference - pores will appreciate */
+
+position: absolute;
+width: 100px;
+height: 26px;
+left: 1367px;
+top: 610px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 160%;
+/* 상자 높이와 동일 또는 26px */
+text-align: center;
+letter-spacing: -0.02em;
+
+color: #F6E9DD;
+
+
+
+/* Bubble */
+
+position: absolute;
+width: 28px;
+height: 28px;
+left: 1335px;
+top: 609px;
+
+
+
+/* Ellipse 148 */
+
+position: absolute;
+width: 10px;
+height: 10px;
+left: 15px;
+top: 4px;
+
+border: 2px solid #F6E9DD;
+border-radius: 0.8px;
+
+
+/* Ellipse 149 */
+
+position: absolute;
+width: 8px;
+height: 8px;
+left: 10px;
+top: 16px;
+
+border: 2px solid #F6E9DD;
+border-radius: 0.8px;
+
+
+/* Ellipse 150 */
+
+position: absolute;
+width: 6px;
+height: 6px;
+left: 4px;
+top: 8px;
+
+border: 2px solid #F6E9DD;
+border-radius: 0.8px;
+
+
+/* photo-1577017077260-0f6fef54ec0c 1 */
+
+position: absolute;
+width: 1920px;
+height: 537px;
+left: 1px;
+top: 54px;
+
+background: #F6E1CE;
+
+
+/* PremiumPackage */
+
+position: absolute;
+width: 291px;
+height: 128px;
+left: calc(50% - 291px/2 + 178.5px);
+top: 247px;
+
+font-family: 'Mont';
+font-style: normal;
+font-weight: 900;
+font-size: 68px;
+line-height: 64px;
+/* 또는 94% */
+text-align: center;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+color: #464646;
+
+
+
+/* photo-1577017077260-0f6fef54ec0c 2 */
+
+position: absolute;
+width: 289px;
+height: 355px;
+left: 460px;
+top: 104px;
+
+background: #F2D0B1;
+border-radius: 120px 0px;
+
+
+/* Adjustable / Primary / Large */
+
+position: absolute;
+width: 196px;
+height: 52px;
+left: 992px;
+top: 439px;
+
+/* Main text */
+background: #2F2F2F;
+border-radius: 50px;
+
+
+/* Label */
+
+position: absolute;
+width: 83px;
+height: 30px;
+left: calc(50% - 83px/2 + 0.5px);
+top: calc(50% - 30px/2);
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 30px;
+/* 상자 높이와 동일 또는 188% */
+text-align: center;
+letter-spacing: -0.04em;
+font-feature-settings: 'liga' off;
+
+color: #FFFFFF;
+
+
+
+/* image 1933 */
+
+position: absolute;
+width: 325px;
+height: 487px;
+left: calc(50% - 325px/2 - 252.5px);
+top: 104px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* Group 1000004898 */
+
+position: absolute;
+width: 1920px;
+height: 54px;
+left: 0px;
+top: 0px;
+
+
+
+/* Rectangle 30 */
+
+position: absolute;
+width: 1920px;
+height: 54px;
+left: 0px;
+top: 0px;
+
+background: #FFFFFF;
+box-shadow: 0px 3px 30px rgba(0, 0, 0, 0.03);
+
+
+/* Group 1000004841 */
+
+position: absolute;
+left: 23.65%;
+right: 71.47%;
+top: 20.46%;
+bottom: 26.01%;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 23.13px;
+height: 5.78px;
+left: 523.39px;
+top: 32.73px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 23.13px;
+height: 24.58px;
+left: 501.71px;
+top: 15.38px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 23.13px;
+height: 24.58px;
+left: 477.13px;
+top: 15.38px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 23.13px;
+height: 21.69px;
+left: 454px;
+top: 16.82px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 16.41px;
+height: 10.94px;
+left: 527.55px;
+top: 19.9px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 5.62px;
+height: 6.29px;
+left: 536.17px;
+top: 11.05px;
+
+background: #C97A3D;
+transform: matrix(0.98, -0.2, 0.21, 0.98, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 5.25px;
+height: 5.23px;
+left: 524.13px;
+top: 16.55px;
+
+background: #C97A3D;
+transform: matrix(0.98, 0.2, -0.26, 0.97, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 5.62px;
+height: 6.28px;
+left: 528.95px;
+top: 11.05px;
+
+background: #C97A3D;
+transform: matrix(0.99, 0.12, -0.13, 0.99, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 5.47px;
+height: 5.47px;
+left: 542.39px;
+top: 16.77px;
+
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 10.16px;
+height: 9.38px;
+left: 533.8px;
+top: 19.9px;
+
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+width: 3.01px;
+height: 4.36px;
+left: 524.83px;
+top: 18.05px;
+
+background: #2F2F2F;
+transform: matrix(0.95, -0.32, 0.4, 0.92, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+width: 3.13px;
+height: 4.69px;
+left: 530.67px;
+top: 22.24px;
+
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+width: 3.91px;
+height: 3.13px;
+left: 543.96px;
+top: 16.77px;
+
+background: #2F2F2F;
+
+
+/* Frame 7 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 46px;
+
+position: absolute;
+width: 407px;
+height: 30px;
+left: 1059px;
+top: 12px;
+
+
+
+/* 꼬순박스 소개 */
+
+width: 76px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 구독 시작하기 */
+
+width: 76px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 고객센터 */
+
+width: 49px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+color: #2F2F2F;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Group 1000004728 */
+
+width: 68px;
+height: 30px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Rectangle 1 */
+
+position: absolute;
+width: 68px;
+height: 30px;
+left: calc(50% - 68px/2 + 169.5px);
+top: 0px;
+
+background: #2F2F2F;
+border-radius: 50px;
+
+
+/* Frame 35902 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+position: absolute;
+width: 34px;
+height: 16px;
+left: calc(50% - 34px/2 + 168.5px);
+top: 7px;
+
+
+
+/* Group 1000004725 */
+
+width: 34px;
+height: 16px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Group 1000004724 */
+
+position: absolute;
+width: 34px;
+height: 16px;
+left: 0px;
+top: 0px;
+
+
+
+/* 로그인 */
+
+position: absolute;
+width: 34px;
+height: 16px;
+left: 0px;
+top: 0px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 16px;
+/* 상자 높이와 동일 */
+
+color: #FFFFFF;
+
+
+
+/* Group 1000004895 */
+
+position: absolute;
+width: 332px;
+height: 219px;
+left: 992px;
+top: 192px;
+
+
+
+/* Group 1000004945 */
+
+position: absolute;
+width: 332px;
+height: 219px;
+left: 992px;
+top: 192px;
+
+
+
+/* Group 1000004841 */
+
+position: absolute;
+width: 114px;
+height: 36px;
+left: 996px;
+top: 192px;
+
+
+
+/* Vector */
+
+position: absolute;
+width: 28.11px;
+height: 6.96px;
+left: 1080.32px;
+top: 219.31px;
+
+/* Primary-Main */
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 28.11px;
+height: 29.56px;
+left: 1053.97px;
+top: 198.44px;
+
+/* Primary-Main */
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 28.11px;
+height: 29.56px;
+left: 1024.11px;
+top: 198.44px;
+
+/* Primary-Main */
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+width: 28.11px;
+height: 26.08px;
+left: 996px;
+top: 200.18px;
+
+/* Primary-Main */
+background: #C97A3D;
+
+
+/* Group 1000004846 */
+
+position: absolute;
+width: 29.1px;
+height: 25.44px;
+left: 1080.9px;
+top: 192px;
+
+
+
+/* Vector */
+
+position: absolute;
+height: 14.54px;
+left: 56.53%;
+right: 42.46%;
+top: 202.9px;
+
+/* Primary-Main */
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+height: 8.07px;
+left: 57.06%;
+right: 42.58%;
+top: 192px;
+
+/* Primary-Main */
+background: #C97A3D;
+transform: matrix(0.98, -0.21, 0.2, 0.98, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 6.7px;
+left: 56.3%;
+right: 43.37%;
+top: 199.07px;
+
+/* Primary-Main */
+background: #C97A3D;
+transform: matrix(0.98, 0.21, -0.25, 0.97, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 8.07px;
+left: 56.6%;
+right: 43.04%;
+top: 192px;
+
+/* Primary-Main */
+background: #C97A3D;
+transform: matrix(0.99, 0.13, -0.12, 0.99, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 7.27px;
+left: 57.45%;
+right: 42.19%;
+top: 199.26px;
+
+/* Primary-Main */
+background: #C97A3D;
+
+
+/* Vector */
+
+position: absolute;
+height: 12.72px;
+left: 56.9%;
+right: 42.46%;
+top: 202.9px;
+
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+height: 5.55px;
+left: 56.34%;
+right: 43.47%;
+top: 201px;
+
+background: #2F2F2F;
+transform: matrix(0.94, -0.33, 0.38, 0.92, 0, 0);
+
+
+/* Vector */
+
+position: absolute;
+height: 5.45px;
+left: 56.71%;
+right: 43.1%;
+top: 206.53px;
+
+background: #2F2F2F;
+
+
+/* Vector */
+
+position: absolute;
+height: 3.64px;
+left: 57.54%;
+right: 42.19%;
+top: 199.26px;
+
+background: #2F2F2F;
+
+
+/* 100% 국내산 휴먼그레이드 수제간식 구독 */
+
+position: absolute;
+width: 332px;
+height: 24px;
+left: calc(50% - 332px/2 + 198px);
+top: 387px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 20px;
+line-height: 24px;
+/* 상자 높이와 동일 */
+
+/* Primary-Main */
+color: #C97A3D;
+
+
+
+/* Group 1000004894 */
+
+position: absolute;
+width: 280px;
+height: 374px;
+left: 452px;
+top: 960px;
+
+
+
+/* Rectangle 971 */
+
+position: absolute;
+width: 280px;
+height: 374px;
+left: 452px;
+top: 960px;
+
+background: #F2F6E3;
+border-radius: 20px;
+
+
+/* Group 33796 */
+
+position: absolute;
+width: 181px;
+height: 77px;
+left: 502px;
+top: 1229px;
+
+
+
+/* 100% 원물 프리미엄 져키 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 526px;
+top: 1229px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* 인공 첨가물 0% */
+
+position: absolute;
+width: 89px;
+height: 17px;
+left: 526px;
+top: 1259px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 502px;
+top: 1230px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #3F6900;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 502px;
+top: 1260px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #3F6900;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 502px;
+top: 1290px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #3F6900;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Group 1000004855 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 526px;
+top: 1289px;
+
+
+
+/* 이중 안심 포장 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 526px;
+top: 1289px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* image 1933 */
+
+position: absolute;
+width: 178px;
+height: 130px;
+left: 499px;
+top: 1026px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* chip2 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 12px;
+gap: 10px;
+
+position: absolute;
+height: 24px;
+left: 29.32%;
+right: 67.66%;
+top: 980px;
+
+background: #3F6900;
+border-radius: 30px;
+
+
+/* 6096 Marjolaine Land */
+
+width: 36px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-0 */
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 베이직 패키지 BOX */
+
+position: absolute;
+width: 147px;
+height: 24px;
+left: 519px;
+top: 1183px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 24px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+color: #3F6900;
+
+
+
+/* Basic */
+
+position: absolute;
+width: 60px;
+height: 36px;
+left: calc(50% - 60px/2 - 309px);
+top: 1123.96px;
+
+font-family: 'Ms Madi';
+font-style: normal;
+font-weight: 400;
+font-size: 32px;
+line-height: 36px;
+/* 상자 높이와 동일 또는 112% */
+text-align: center;
+letter-spacing: 0.02em;
+text-transform: capitalize;
+
+color: #88B940;
+
+transform: rotate(12deg);
+
+
+/* Group 1000004893 */
+
+position: absolute;
+width: 375px;
+height: 446px;
+left: calc(50% - 375px/2 + 0.5px);
+top: 923px;
+
+
+
+/* Rectangle 971 */
+
+position: absolute;
+width: 375px;
+height: 446px;
+left: 773px;
+top: 923px;
+
+background: #EAF0F3;
+border-radius: 20px;
+
+
+/* Group 33796 */
+
+position: absolute;
+width: 181px;
+height: 77px;
+left: 870px;
+top: 1240px;
+
+
+
+/* 베이직의 모든 구성 포함 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 894px;
+top: 1240px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* 영양 강화 플러스 져키 */
+
+position: absolute;
+width: 120px;
+height: 17px;
+left: 894px;
+top: 1270px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 870px;
+top: 1241px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #4EADE8;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 870px;
+top: 1271px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #4EADE8;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 870px;
+top: 1301px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #4EADE8;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Group 1000004855 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 894px;
+top: 1300px;
+
+
+
+/* 균형 잡힌 영양 설계 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 894px;
+top: 1300px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* image 1933 */
+
+position: absolute;
+width: 208px;
+height: 151px;
+left: 856px;
+top: 1003px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* chip2 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 4px 12px;
+gap: 10px;
+
+position: absolute;
+width: 84px;
+height: 24px;
+left: calc(50% - 84px/2);
+top: 960px;
+
+background: #4EADE8;
+border-radius: 30px;
+
+
+/* 6096 Marjolaine Land */
+
+width: 60px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-0 */
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 스탠다드 패키지 BOX */
+
+position: absolute;
+width: 228px;
+height: 33px;
+left: 847px;
+top: 1182px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 800;
+font-size: 28px;
+line-height: 33px;
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+color: #4EADE8;
+
+
+
+/* standard */
+
+position: absolute;
+width: 102px;
+height: 36px;
+left: calc(50% - 102px/2 + 75.71px);
+top: 1125.26px;
+
+font-family: 'Ms Madi';
+font-style: normal;
+font-weight: 400;
+font-size: 32px;
+line-height: 36px;
+/* 상자 높이와 동일 또는 112% */
+text-align: center;
+letter-spacing: 0.02em;
+text-transform: capitalize;
+
+color: #6DC1F6;
+
+transform: rotate(12deg);
+
+
+/* Group 1000004856 */
+
+position: absolute;
+width: 280px;
+height: 374px;
+left: 1187px;
+top: 960px;
+
+
+
+/* Group 1000004972 */
+
+position: absolute;
+width: 280px;
+height: 374px;
+left: 1187px;
+top: 960px;
+
+
+
+/* Rectangle 971 */
+
+position: absolute;
+width: 280px;
+height: 374px;
+left: calc(50% - 280px/2 + 367px);
+top: 960px;
+
+background: #FBF4EE;
+border-radius: 20px;
+
+
+/* Group 33796 */
+
+position: absolute;
+width: 181px;
+height: 77px;
+left: 1236px;
+top: 1229px;
+
+
+
+/* 휴먼그레이드 프리미엄 져키 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 1260px;
+top: 1229px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* 1:1 맞춤 큐레이션 */
+
+position: absolute;
+width: 96px;
+height: 17px;
+left: 1260px;
+top: 1259px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 1236px;
+top: 1230px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #EE681A;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 1236px;
+top: 1260px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #EE681A;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Done_ring_round_fill */
+
+position: absolute;
+width: 16px;
+height: 16px;
+left: 1236px;
+top: 1290px;
+
+
+
+/* Subtract */
+
+position: absolute;
+width: 12px;
+height: 12px;
+left: 2px;
+top: 2px;
+
+background: #EE681A;
+
+
+/* Ellipse 47 */
+
+position: absolute;
+left: 12.5%;
+right: 12.5%;
+top: 12.5%;
+bottom: 12.5%;
+
+/* Line_icon */
+background: #33363F;
+border-radius: 2px;
+
+
+/* Line 1 */
+
+position: absolute;
+left: 29.17%;
+right: 29.17%;
+top: 20.83%;
+bottom: 25%;
+
+/* fill_icon */
+border: 2px solid #222222;
+transform: rotate(90deg);
+
+
+/* Group 1000004855 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 1260px;
+top: 1289px;
+
+
+
+/* 최상의 재료로 만든 패키지 */
+
+position: absolute;
+width: 157px;
+height: 17px;
+left: 1260px;
+top: 1289px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-100 */
+color: #000000;
+
+
+
+/* image 1933 */
+
+position: absolute;
+width: 178px;
+height: 130px;
+left: 1238px;
+top: 1026px;
+
+background: url(bg_removal [Background removed].png);
+
+
+/* chip2 */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 12px;
+gap: 10px;
+
+position: absolute;
+width: 82px;
+height: 24px;
+left: 1286px;
+top: 980px;
+
+background: #F07F3D;
+border-radius: 30px;
+
+
+/* 6096 Marjolaine Land */
+
+width: 58px;
+height: 17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 17px;
+/* 상자 높이와 동일 */
+
+/* Light/Light-0 */
+color: #FFFFFF;
+
+mix-blend-mode: normal;
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 프리미엄 패키지 BOX */
+
+position: absolute;
+width: 163px;
+height: 24px;
+left: 1245px;
+top: 1183px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 24px;
+/* 상자 높이와 동일 */
+letter-spacing: -0.04em;
+text-transform: capitalize;
+
+color: #EE681A;
+
+
+
+/* Premium */
+
+position: absolute;
+width: 105px;
+height: 36px;
+left: calc(50% - 105px/2 + 433.5px);
+top: 1145px;
+
+font-family: 'Ms Madi';
+font-style: normal;
+font-weight: 400;
+font-size: 32px;
+line-height: 36px;
+/* 상자 높이와 동일 또는 112% */
+text-align: center;
+letter-spacing: 0.02em;
+text-transform: capitalize;
+
+color: #FFA763;
+
+transform: rotate(15.19deg);

@@ -122,7 +122,7 @@ export function DeliveryCard() {
               <Text variant="body-13-r" className="leading-[1.3] text-[var(--color-text)]">
                 {step.label}
               </Text>
-              <Text as="span" variant="subtitle-20-b" className="text-[var(--color-primary)]">
+              <Text as="span" variant="subtitle-20-b" className="text-primary">
                 {step.count}
               </Text>
             </div>

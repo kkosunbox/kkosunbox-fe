@@ -15,6 +15,8 @@ import CouponIssuedModal from "../custom-modals/CouponIssuedModal";
 import SubscriptionCancelModal from "../custom-modals/SubscriptionCancelModal";
 import SubscriptionRestartModal from "../custom-modals/SubscriptionRestartModal";
 import MemberWithdrawModal from "../custom-modals/MemberWithdrawModal";
+import AlertModal, { type AlertModalOptions } from "./AlertModal";
+import { alertStore } from "./alertStore";
 
 export type ModalType =
   | "checklist-recommend"
@@ -27,6 +29,7 @@ export type ModalType =
 
 interface ModalContextValue {
   openModal: (type: ModalType, onConfirm?: () => void) => void;
+  openAlert: (options: AlertModalOptions) => void;
   closeModal: () => void;
 }
 
@@ -35,31 +38,50 @@ const ModalContext = createContext<ModalContextValue | null>(null);
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [active, setActive] = useState<ModalType | null>(null);
   const [activeConfirm, setActiveConfirm] = useState<(() => void) | null>(null);
+  const [alertOptions, setAlertOptions] = useState<AlertModalOptions | null>(null);
 
   const closeModal = useCallback(() => {
     setActive(null);
     setActiveConfirm(null);
+    setAlertOptions(null);
   }, []);
 
   const openModal = useCallback((type: ModalType, onConfirm?: () => void) => {
+    setAlertOptions(null);
     setActive(type);
-    // 함수를 state로 저장할 때 updater로 취급되지 않도록 래핑
     setActiveConfirm(onConfirm ? () => onConfirm : null);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = active ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [active]);
+  const openAlert = useCallback((options: AlertModalOptions) => {
+    setActive(null);
+    setActiveConfirm(null);
+    setAlertOptions(options);
+  }, []);
 
-  // onConfirm 실행 후 자동으로 모달 닫기
+  /* 외부 스토어 구독 — React 밖에서 openAlertModal() 호출 시 반영 */
+  useEffect(() => {
+    return alertStore.subscribe((options) => {
+      if (options) openAlert(options);
+      else closeModal();
+    });
+  }, [openAlert, closeModal]);
+
+  const isOpen = !!active || !!alertOptions;
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isOpen]);
+
   const handleConfirm = activeConfirm
     ? () => { activeConfirm(); closeModal(); }
     : undefined;
 
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, openAlert, closeModal }}>
       {children}
+
+      {/* 커스텀 모달 */}
       {active === "checklist-recommend" && <ChecklistRecommendModal onClose={closeModal} onConfirm={handleConfirm} />}
       {active === "plan-change"          && <PlanChangeModal onClose={closeModal} />}
       {active === "checklist-defer"      && <ChecklistDeferModal onClose={closeModal} />}
@@ -67,6 +89,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       {active === "subscription-cancel"  && <SubscriptionCancelModal onClose={closeModal} onConfirm={handleConfirm} />}
       {active === "subscription-restart" && <SubscriptionRestartModal onClose={closeModal} onConfirm={handleConfirm} />}
       {active === "member-withdraw"      && <MemberWithdrawModal onClose={closeModal} onConfirm={handleConfirm} />}
+
+      {/* 범용 알림 모달 */}
+      {alertOptions && <AlertModal {...alertOptions} onClose={closeModal} />}
     </ModalContext.Provider>
   );
 }

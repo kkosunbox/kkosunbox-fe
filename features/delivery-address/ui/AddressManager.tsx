@@ -10,14 +10,18 @@ type View = "list" | "form" | "search";
 
 interface Props {
   initialAddresses: DeliveryAddress[];
+  /** 외부에서 전달받은 선택 ID (예: order 페이지에서 현재 사용 중인 배송지) */
+  initialSelectedId?: number | null;
 }
 
-export default function AddressManager({ initialAddresses }: Props) {
+export default function AddressManager({ initialAddresses, initialSelectedId }: Props) {
   const [view, setView] = useState<View>("list");
   const [addresses, setAddresses] =
     useState<DeliveryAddress[]>(initialAddresses);
   const [selectedId, setSelectedId] = useState<number | null>(
-    initialAddresses[0]?.id ?? null,
+    initialSelectedId !== undefined && initialSelectedId !== null
+      ? initialSelectedId
+      : initialAddresses[0]?.id ?? null,
   );
   const [editingAddress, setEditingAddress] = useState<DeliveryAddress | null>(
     null,
@@ -52,6 +56,7 @@ export default function AddressManager({ initialAddresses }: Props) {
         { type: "ADDRESS_SELECTED", address: selected },
         window.location.origin,
       );
+      window.close();
     }
   }
 

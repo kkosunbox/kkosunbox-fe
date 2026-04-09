@@ -113,7 +113,7 @@ export default function ReviewsSection() {
         </Text>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-9 pt-[60px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-20 md:gap-9 pt-[60px]">
           {REVIEWS.map((review) => (
             <ReviewCard key={review.name} review={review} />
           ))}

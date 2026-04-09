@@ -78,7 +78,7 @@ function PackageCard({
       className={[
         "flex flex-col items-center rounded-[20px] px-6 transition-all duration-500 ease-in-out",
         isActive ? "pt-6 md:pt-12" : "pt-6",
-        isActive ? "h-[446px] w-[375px] pb-9" : "h-[374px] w-[280px] pb-8",
+        isActive ? "h-[446px] max-md:w-full w-[375px] pb-9" : "h-[374px] w-[280px] pb-8",
       ].join(" ")}
       style={{ background: pkg.cardBg }}
     >

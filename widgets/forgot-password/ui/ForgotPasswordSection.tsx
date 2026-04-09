@@ -7,7 +7,8 @@ import {
   verifyPasswordResetCode,
   resetPassword,
 } from "@/features/auth/api/authApi";
-import { ApiError } from "@/shared/lib/api";
+import { getErrorMessage } from "@/shared/lib/api";
+import { useModal } from "@/shared/ui";
 import registerPaw from "@/widgets/register/assets/register-pow.png";
 import forgotPasswordTitle from "../assets/forgot-password-title.png";
 
@@ -41,16 +42,6 @@ function EyeIcon({ className }: { className?: string }) {
   );
 }
 
-/* ─── 에러 메시지 ─── */
-function ErrorMsg({ msg }: { msg: string | null }) {
-  if (!msg) return null;
-  return (
-    <p className="mt-1 text-caption-12-r" style={{ color: "var(--color-accent-rust)" }}>
-      {msg}
-    </p>
-  );
-}
-
 /* ─── 필드 행 래퍼 (라벨 + 입력) ─── */
 function FieldRow({
   label,
@@ -76,8 +67,9 @@ function FieldRow({
 
 /* ═══════════════════════════════════════════════════════════════ */
 export default function ForgotPasswordSection() {
+  const { openAlert } = useModal();
+
   /* ── 상태 ── */
-  const [error, setError] = useState<string | null>(null);
   const [isPending, start] = useTransition();
 
   /* ── 이메일 ── */
@@ -119,55 +111,48 @@ export default function ForgotPasswordSection() {
     }, 1000);
   }
 
+  /** 에러를 알림 모달로 표시 */
+  function showError(msg: string) {
+    openAlert({ title: msg });
+  }
+
   /* ── 인증코드 발송 ── */
   function handleSendCode() {
-    if (!email.trim()) { setError("이메일을 입력해주세요."); return; }
-    setError(null);
+    if (!email.trim()) { showError("이메일을 입력해주세요."); return; }
     start(async () => {
       try {
         await sendPasswordResetCode({ email: email.trim() });
         startCountdown();
         setCodeSent(true);
       } catch (err) {
-        if (err instanceof ApiError)
-          setError(err.message);
-        else
-          setError("인증코드 발송 중 오류가 발생했습니다.");
+        showError(getErrorMessage(err, "인증코드 발송 중 오류가 발생했습니다."));
       }
     });
   }
 
   /* ── OTP 확인 ── */
   function handleVerifyOtp() {
-    if (!otp.trim()) { setError("인증코드를 입력해주세요."); return; }
-    setError(null);
+    if (!otp.trim()) { showError("인증코드를 입력해주세요."); return; }
     start(async () => {
       try {
         const res = await verifyPasswordResetCode({ email: email.trim(), otp: otp.trim() });
         setResetToken(res.resetToken);
       } catch (err) {
-        if (err instanceof ApiError)
-          setError("인증코드가 올바르지 않습니다.");
-        else
-          setError("인증 확인 중 오류가 발생했습니다.");
+        showError(getErrorMessage(err, "인증 확인 중 오류가 발생했습니다."));
       }
     });
   }
 
   /* ── 비밀번호 변경 ── */
   function handleResetPassword() {
-    if (newPassword.length < 8) { setError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
-    if (newPassword !== confirmPassword) { setError("비밀번호가 일치하지 않습니다."); return; }
-    setError(null);
+    if (newPassword.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
+    if (newPassword !== confirmPassword) { showError("비밀번호가 일치하지 않습니다."); return; }
     start(async () => {
       try {
         await resetPassword({ resetToken, newPassword });
         window.location.href = "/login";
       } catch (err) {
-        if (err instanceof ApiError)
-          setError(err.message);
-        else
-          setError("비밀번호 재설정에 실패했습니다.");
+        showError(getErrorMessage(err, "비밀번호 재설정에 실패했습니다."));
       }
     });
   }
@@ -336,13 +321,6 @@ export default function ForgotPasswordSection() {
             style={{ transform: "rotate(-24.12deg)" }}
           />
         </div>
-
-        {/* 에러 메시지 */}
-        {error && (
-          <div className="mt-4 text-center">
-            <ErrorMsg msg={error} />
-          </div>
-        )}
 
         {/* ─── CTA 버튼 ─── */}
         <button

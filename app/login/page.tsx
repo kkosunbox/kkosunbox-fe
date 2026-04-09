@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import logoMain2x from "@/shared/assets/logo-main@2x.png";
 import loginBannerHd from "@/shared/assets/login-banner-hd.png";
-import { useAuth } from "@/features/auth";
+import { useAuth, getOAuthUrl } from "@/features/auth";
+import type { OAuthProvider } from "@/features/auth";
 
 const LOGO_WIDTH = 156;
 const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
@@ -65,6 +66,11 @@ export default function LoginPage() {
 
   const { login } = useAuth();
   const searchParams = useSearchParams();
+
+  function handleSocialLogin(provider: OAuthProvider) {
+    const url = getOAuthUrl(provider);
+    if (url) window.location.href = url;
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -204,16 +210,19 @@ export default function LoginPage() {
             {/* 소셜 버튼 — Figma: gap=40px, mt=32px on desktop */}
             <div className="flex items-center justify-center gap-[40px] mt-4 md:mt-8">
               <button type="button" aria-label="카카오로 로그인"
+                onClick={() => handleSocialLogin("kakao")}
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "var(--color-kakao)" }}>
                 <KakaoIcon />
               </button>
               <button type="button" aria-label="네이버로 로그인"
+                onClick={() => handleSocialLogin("naver")}
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "var(--color-naver)" }}>
                 <NaverIcon />
               </button>
               <button type="button" aria-label="구글로 로그인"
+                onClick={() => handleSocialLogin("google")}
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
                 <GoogleIcon />
               </button>

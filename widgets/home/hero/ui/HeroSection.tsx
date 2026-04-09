@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Text, Button } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
 import heroItemExpanded from "../assets/hero-item-expanded.png";
@@ -45,6 +46,8 @@ export default function HeroSection() {
             100% 국내산 휴먼그레이드 수제간식 구독
           </Text>
           <Button
+            as={Link}
+            href="/subscribe"
             variant="primary"
             size="lg"
             className="max-md:h-[44px] max-md:px-6 max-md:text-[16px] max-md:leading-[24px] whitespace-nowrap"

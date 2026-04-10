@@ -32,6 +32,7 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 |---|---|---|---|
 | `text-subtitle-20-b` | 20px | 24px | 700 |
 | `text-subtitle-20-m` | 20px | 24px | 500 |
+| `text-subtitle-20-sb` | 20px | 24px | 600 |
 | `text-subtitle-18-b` | 18px | 22px | 700 |
 | `text-subtitle-18-sb` | 18px | 22px | 600 |
 | `text-subtitle-18-m` | 18px | 22px | 500 |

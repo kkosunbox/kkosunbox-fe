@@ -32,6 +32,16 @@ export default async function RootLayout({
 
   return (
     <html lang="ko">
+      <head>
+        {/* 로그인·랜딩 등 Griun PolFairness 헤드라인의 FOUT(줄바꿈 깜빡임) 완화 */}
+        <link
+          rel="preload"
+          href="/fonts/Griun_PolFairness-Rg.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
         <AuthProvider initialUser={initialUser}>
           <ModalProvider>

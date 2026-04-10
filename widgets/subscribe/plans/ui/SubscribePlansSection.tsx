@@ -7,7 +7,11 @@ import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-packa
 import { ChecklistRecommendModal } from "@/shared/ui";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
-import { comparePlansForDisplayOrder, packageThemeForPlan } from "./packageData";
+import {
+  comparePlansForDisplayOrder,
+  packageThemeForPlan,
+  SUBSCRIBE_PLAN_CARD_FEATURES,
+} from "./packageData";
 import PackageDetailView from "./PackageDetailView";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
@@ -168,18 +172,15 @@ export default function SubscribePlansSection({ plans }: Props) {
                     ) : null}
 
                     <ul className="mb-7 flex flex-col gap-[14px]">
-                      <li className="flex items-center gap-2 text-body-13-m leading-[16px] text-black">
-                        <CheckIcon color={color} />
-                        월 정기 배송
-                      </li>
-                      <li className="flex items-center gap-2 text-body-13-m leading-[16px] text-black">
-                        <CheckIcon color={color} />
-                        맞춤 간식 구성
-                      </li>
-                      <li className="flex items-center gap-2 text-body-13-m leading-[16px] text-black">
-                        <CheckIcon color={color} />
-                        구독 관리는 마이페이지에서
-                      </li>
+                      {SUBSCRIBE_PLAN_CARD_FEATURES.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
+                        >
+                          <CheckIcon color={color} />
+                          {feature}
+                        </li>
+                      ))}
                     </ul>
 
                     <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">

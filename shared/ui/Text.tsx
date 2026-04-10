@@ -13,6 +13,7 @@ export type TypographyVariant =
   // Subtitles
   | "subtitle-20-b"
   | "subtitle-20-m"
+  | "subtitle-20-sb"
   | "subtitle-18-b"
   | "subtitle-18-sb"
   | "subtitle-18-m"
@@ -53,6 +54,7 @@ const BASE: Record<TypographyVariant, string> = {
   "title-24-m":             "text-title-24-m",
   "subtitle-20-b":          "text-subtitle-20-b",
   "subtitle-20-m":          "text-subtitle-20-m",
+  "subtitle-20-sb":         "text-subtitle-20-sb",
   "subtitle-18-b":          "text-subtitle-18-b",
   "subtitle-18-sb":         "text-subtitle-18-sb",
   "subtitle-18-m":          "text-subtitle-18-m",
@@ -97,6 +99,7 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "title-24-m":             "max-md:text-title-24-m",
   "subtitle-20-b":          "max-md:text-subtitle-20-b",
   "subtitle-20-m":          "max-md:text-subtitle-20-m",
+  "subtitle-20-sb":         "max-md:text-subtitle-20-sb",
   "subtitle-18-b":          "max-md:text-subtitle-18-b",
   "subtitle-18-sb":         "max-md:text-subtitle-18-sb",
   "subtitle-18-m":          "max-md:text-subtitle-18-m",

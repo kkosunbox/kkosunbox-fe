@@ -326,6 +326,7 @@ button:disabled {
 @utility text-subtitle-24-b  { font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-subtitle-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; }
 @utility text-subtitle-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
+@utility text-subtitle-20-sb { font-size: 20px; line-height: 24px; font-weight: 600; }
 @utility text-subtitle-18-b  { font-size: 18px; line-height: 22px; font-weight: 700; }
 @utility text-subtitle-18-sb { font-size: 18px; line-height: 22px; font-weight: 600; }
 @utility text-subtitle-18-m  { font-size: 18px; line-height: 22px; font-weight: 500; }

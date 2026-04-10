@@ -77,7 +77,7 @@ function PackageCard({
     <div
       className={[
         "flex flex-col items-center rounded-[20px] px-6 transition-all duration-500 ease-in-out",
-        isActive ? "pt-6 md:pt-12" : "pt-6",
+        isActive ? "pt-6 md:pt-9" : "pt-6",
         isActive ? "h-[446px] max-md:w-full w-[375px] pb-9" : "h-[374px] w-[280px] pb-8",
       ].join(" ")}
       style={{ background: pkg.cardBg }}
@@ -120,25 +120,27 @@ function PackageCard({
 
       <h3
         className={[
-          "mb-4 text-center capitalize tracking-[-0.04em]",
-          isActive ? "text-[28px] leading-[33px] font-extrabold" : "text-[20px] leading-[24px] font-extrabold",
+          "text-center capitalize tracking-[-0.04em]",
+          isActive ? "mb-[25px] text-[28px] leading-[33px] font-extrabold" : "mb-[22px] text-[20px] leading-[24px] font-extrabold",
         ].join(" ")}
         style={{ color: pkg.accentColor }}
       >
         {pkg.name}
       </h3>
 
-      <ul className="flex w-full flex-col gap-3 max-md:pl-9 md:pl-6">
-        {pkg.items.map((item) => (
-          <li
-            key={item}
-            className="text-body-14-m flex items-center gap-2 text-black !leading-[1]"
-          >
-            <CheckIcon color={pkg.accentColor} />
-            {item}
-          </li>
-        ))}
-      </ul>
+      <div className="flex w-full justify-center">
+        <ul className="flex w-fit flex-col items-start gap-3">
+          {pkg.items.map((item) => (
+            <li
+              key={item}
+              className="text-body-14-m flex items-center gap-2 text-left text-black !leading-[1]"
+            >
+              <CheckIcon color={pkg.accentColor} />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -205,7 +207,7 @@ export default function PackagePlansSection() {
           alt="원하는 패키지로 선택 후 구독하세요!"
           className="mx-auto h-auto w-full max-w-[260px] md:max-w-[306px]"
         />
-        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7.5 md:mb-11 mt-7 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
+        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7.5 md:mb-11 mt-7 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
           설문조사 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
         </Text>
 
@@ -240,7 +242,7 @@ export default function PackagePlansSection() {
         </div>
 
         {/* 캐러셀 인디케이터 */}
-        <div className="mt-8 flex items-center justify-center gap-3">
+        <div className="mt-7.5 flex items-center justify-center gap-3">
           {PACKAGES.map((pkg, index) => (
             <button
               key={pkg.tier}
@@ -248,10 +250,11 @@ export default function PackagePlansSection() {
               aria-label={`${pkg.tier} 패키지 보기`}
               aria-pressed={activeIndex === index}
               onClick={() => handleIndicatorClick(index)}
-              className={[
-                "h-3 w-3 rounded-full transition-colors duration-300",
-                activeIndex === index ? "bg-[var(--color-accent)]" : "bg-[var(--color-text-muted)]",
-              ].join(" ")}
+              className="h-3 w-3 rounded-full transition-colors duration-300"
+              style={{
+                background:
+                  activeIndex === index ? pkg.accentColor : "var(--color-text-muted)",
+              }}
             />
           ))}
         </div>

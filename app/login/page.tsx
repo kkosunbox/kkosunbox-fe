@@ -12,6 +12,10 @@ import type { OAuthProvider } from "@/features/auth";
 const LOGO_WIDTH = 156;
 const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
 
+/** @font-face 로드 전에도 폭이 비슷하게 나오도록, FOUT 시 줄바꿈 점프 완화 */
+const LOGIN_HEADING_FONT =
+  '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+
 function EyeOffIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none">
@@ -32,37 +36,64 @@ function EyeIcon({ className }: { className?: string }) {
 
 function KakaoIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <path d="M9 1.5C4.858 1.5 1.5 4.086 1.5 7.275c0 1.957 1.296 3.676 3.281 4.696L3.952 15l3.623-2.393c.465.065.942.1 1.425.1 4.142 0 7.5-2.586 7.5-5.775S13.142 1.5 9 1.5z" fill="#000" />
+    <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="45.9999" height="45" rx="22.5" fill="#FEE500" />
+      <g clip-path="url(#clip0_469_10423)">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M23 14.1C18.0292 14.1 14 17.213 14 21.0523C14 23.44 15.5584 25.545 17.9315 26.797L16.933 30.4445C16.8448 30.7668 17.2134 31.0237 17.4965 30.8369L21.8733 27.9482C22.2427 27.9838 22.6181 28.0046 23 28.0046C27.9705 28.0046 31.9999 24.8918 31.9999 21.0523C31.9999 17.213 27.9705 14.1 23 14.1Z" fill="black" />
+      </g>
+      <defs>
+        <clipPath id="clip0_469_10423">
+          <rect width="17.9999" height="18" fill="white" transform="translate(14 13.5)" />
+        </clipPath>
+      </defs>
     </svg>
+
   );
 }
 
 function NaverIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M11.4 10.22L8.48 5.5H5.5v9h3.1V9.78L11.52 14.5H14.5V5.5H11.4v4.72z" fill="white" />
+    <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="46" height="46" rx="23" fill="#03C75A" />
+      <g clip-path="url(#clip0_469_10424)">
+        <path d="M26.5614 23.7033L19.1461 13H13V33H19.4386V22.295L26.8539 33H33V13H26.5614V23.7033Z" fill="white" />
+      </g>
+      <defs>
+        <clipPath id="clip0_469_10424">
+          <rect width="20" height="20" fill="white" transform="translate(13 13)" />
+        </clipPath>
+      </defs>
     </svg>
+
   );
 }
 
 function GoogleIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="46" height="45" rx="22.5" fill="#F8F8F8" />
+      <g clip-path="url(#clip0_469_10425)">
+        <path d="M24 20.6818V24.5545H29.3818C29.1455 25.8 28.4363 26.8546 27.3727 27.5636L30.6181 30.0818C32.509 28.3364 33.5999 25.7728 33.5999 22.7273C33.5999 22.0183 33.5363 21.3364 33.4181 20.6819L24 20.6818Z" fill="#4285F4" />
+        <path d="M18.3957 24.4034L17.6637 24.9637L15.0728 26.9818C16.7182 30.2454 20.0907 32.5 23.9997 32.5C26.6997 32.5 28.9633 31.6091 30.6179 30.0819L27.3724 27.5636C26.4815 28.1636 25.3451 28.5273 23.9997 28.5273C21.3998 28.5273 19.1907 26.7728 18.3998 24.4091L18.3957 24.4034Z" fill="#34A853" />
+        <path d="M15.0726 18.0182C14.3909 19.3636 14 20.8818 14 22.4999C14 24.1181 14.3909 25.6363 15.0726 26.9817C15.0726 26.9907 18.4 24.3999 18.4 24.3999C18.2 23.7999 18.0818 23.1636 18.0818 22.4998C18.0818 21.8361 18.2 21.1998 18.4 20.5998L15.0726 18.0182Z" fill="#FBBC05" />
+        <path d="M23.9999 16.4818C25.4727 16.4818 26.7818 16.9909 27.8272 17.9727L30.6908 15.1091C28.9545 13.491 26.7 12.5 23.9999 12.5C20.0909 12.5 16.7182 14.7455 15.0728 18.0182L18.4 20.6C19.1908 18.2363 21.4 16.4818 23.9999 16.4818Z" fill="#EA4335" />
+      </g>
+      <defs>
+        <clipPath id="clip0_469_10425">
+          <rect width="20" height="20" fill="white" transform="translate(14 12.5)" />
+        </clipPath>
+      </defs>
     </svg>
+
   );
 }
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail]               = useState("");
-  const [password, setPassword]         = useState("");
-  const [error, setError]               = useState<string | null>(null);
-  const [isPending, startTransition]    = useTransition();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const { login } = useAuth();
   const searchParams = useSearchParams();
@@ -94,37 +125,28 @@ export default function LoginPage() {
       </div>
 
       {/* ── 콘텐츠: 모바일 세로 / 데스크톱 2컬럼 (PC: 1012px 컨테이너) ── */}
-      <div className="flex flex-1 flex-col md:mx-auto md:w-full md:max-w-[var(--max-width-content)] md:flex-row">
+      <div className="flex flex-1 flex-col md:mx-auto md:w-full md:max-w-content md:flex-row">
 
         {/* 좌측 — 폼 */}
-        <div className="flex-1 flex flex-col md:items-center md:justify-center md:min-h-[calc(100vh-54px)]">
+        <div className="flex-1 flex flex-col md:justify-center md:min-h-[calc(100vh-54px)]">
           {/* Figma: 폼 너비 400px */}
           <div className="flex-1 flex flex-col md:flex-none w-full md:max-w-[400px] px-6 md:px-0 pt-[42px] md:pt-0 pb-12 md:pb-0">
 
-            {/* 데스크톱 전용 헤딩 — Figma: 79px 높이 컨테이너 / line1 20px / line2 36px */}
-            <div className="max-md:hidden text-center mb-8">
+            {/* 데스크톱 전용 헤딩 — Figma: line1 20px / line2 36px; min-height로 폰트 스왑 시 아래 폼 CLS 방지 */}
+            <div className="max-md:hidden mb-8 text-center">
               <p
-                className="text-primary"
+                className="text-primary min-h-[1.4em] text-[20px] leading-[140%] tracking-[-0.02em]"
                 style={{
-                  fontFamily: "Griun PolFairness",
-                  fontSize: "20px",
+                  fontFamily: LOGIN_HEADING_FONT,
                   fontWeight: 400,
-                  lineHeight: "140%",
-                  letterSpacing: "-0.02em",
                   textShadow: "2px 4px 8px rgba(252, 226, 206, 0.2)",
                 }}
               >
                 우리 아이를 위한 건강한 간식,
               </p>
               <p
-                className="text-[var(--color-text)]"
-                style={{
-                  fontFamily: "Griun PolFairness",
-                  fontSize: "36px",
-                  fontWeight: 700,
-                  lineHeight: "140%",
-                  letterSpacing: "-0.02em",
-                }}
+                className="text-[var(--color-text)] text-[32px] font-regular leading-[140%] tracking-[-0.02em]"
+                style={{ fontFamily: LOGIN_HEADING_FONT }}
               >
                 꼬순박스에 오신 걸 환영해요
               </p>
@@ -178,7 +200,7 @@ export default function LoginPage() {
             <div className="mt-5 text-right">
               <Link
                 href="/forgot-password"
-                className="text-[var(--color-accent)] underline max-md:text-body-14-m md:text-body-16-m"
+                className="text-[var(--color-accent)] underline text-body-14-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 비밀번호를 잃어버리셨나요?
@@ -254,7 +276,7 @@ export default function LoginPage() {
             src={loginBannerHd}
             alt="꼬순박스 배너"
             fill
-            className="object-contain object-center p-8 pl-2"
+            className="object-contain object-center"
             priority
           />
         </div>

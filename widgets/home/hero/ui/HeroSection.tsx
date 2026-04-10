@@ -25,23 +25,23 @@ export default function HeroSection() {
         </div>
 
         {/* Right — 텍스트 + CTA */}
-        <div className="order-1 md:order-2 flex flex-1 w-full flex-col items-center md:items-start md:justify-center md:h-full md:pl-7.5">
+        <div className="order-1 md:order-2 flex flex-1 w-full flex-col items-center md:items-start md:justify-center md:h-full md:pl-20">
           {/* 꼬순박스 로고 */}
           <Image
             src={logoMain}
             alt="꼬순박스 로고"
-            className="w-full max-w-[94px] md:max-w-[146px] max-h-[32px] md:max-h-[50px] mb-4 md:mb-6"
+            className="w-full max-w-[94px] md:max-w-[114px] max-h-[32px] md:max-h-[36px] mb-4 md:mb-5"
           />
           {/* Premium Package 이미지 타이틀 */}
           <Image
             src={heroPremiumPackage}
             alt="Premium Package"
-            className="w-full max-w-[287px] md:max-w-[291px] h-auto mb-4 md:mb-6"
+            className="w-full max-w-[287px] md:max-w-[274px] h-auto mb-4"
           />
           <Text
-            variant="subtitle-20-m"
+            variant="subtitle-20-sb"
             mobileVariant="body-14-m"
-            className="text-primary text-center md:text-left mb-5"
+            className="text-primary text-center md:text-left mb-5 md:mb-7"
           >
             100% 국내산 휴먼그레이드 수제간식 구독
           </Text>

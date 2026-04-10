@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { Text } from "@/shared/ui";
+import logoMain from "@/shared/assets/logo-main.svg";
 import aboutHeroCollage from "../assets/about-hero-collage.png";
-import aboutHeroTitle from "../assets/about-hero-title.png";
 import aboutFeatureHealthy from "../assets/about-feature-healty.png";
 import aboutFeatureCircle01 from "../assets/about-feature-circle-01.png";
 import aboutFeatureCircle02 from "../assets/about-feature-circle-02.png";
@@ -11,6 +11,10 @@ import aboutFeatureCircle03 from "../assets/about-feature-circle-03.png";
 import aboutCtaProduct from "../assets/about-cta-product.png";
 import aboutCtaMark from "../assets/about-cta-mark.png";
 import aboutCtaLogo from "../assets/about-cta-logo.png";
+
+/** logo-main.svg viewBox 94×29 */
+const ABOUT_HERO_LOGO_W = 158;
+const ABOUT_HERO_LOGO_H = Math.round((29 * ABOUT_HERO_LOGO_W) / 94);
 
 /* ── 피처 카드 ───────────────────────────────────────────── */
 type FeatureCardProps = {
@@ -28,7 +32,7 @@ function FeatureCard({ circleIcon, title, description }: FeatureCardProps) {
       <Image src={circleIcon} alt="" width={52} height={52} aria-hidden />
       <div className="flex flex-col items-center gap-2 text-center">
         <p className="text-subtitle-20-b text-[var(--color-text)]">{title}</p>
-        <p className="whitespace-pre-line text-body-14-r text-[var(--color-text)]">{description}</p>
+        <p className="whitespace-pre-line text-body-14-r">{description}</p>
       </div>
     </div>
   );
@@ -40,17 +44,17 @@ export default function AboutSection() {
     <>
       {/* ━━━━ Section 1: 꼬순박스 소개 ━━━━ */}
       <section className="bg-white py-14 md:py-0">
-        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:pl-8 md:pr-0">
+        <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:px-0">
 
           {/* 모바일: 콜라주보다 위 — 데스크톱은 텍스트 열 타이틀만 사용 */}
           <h1 className="mb-6 flex justify-center md:hidden">
             <Image
-              src={aboutHeroTitle}
-              alt="꼬순박스 소개"
-              width={385}
-              height={59}
-              className="h-auto w-auto max-w-[280px]"
-              sizes="280px"
+              src={logoMain}
+              alt="꼬순박스 로고"
+              width={ABOUT_HERO_LOGO_W}
+              height={ABOUT_HERO_LOGO_H}
+              className="h-auto w-[158px]"
+              sizes="158px"
               priority
             />
           </h1>
@@ -78,12 +82,12 @@ export default function AboutSection() {
             <div className="flex w-full flex-1 flex-col max-md:items-center md:min-w-[426px]">
               <h1 className="max-md:hidden mb-10 w-fit max-w-full">
                 <Image
-                  src={aboutHeroTitle}
-                  alt="꼬순박스 소개"
-                  width={385}
-                  height={59}
-                  className="h-auto w-full max-w-[385px]"
-                  sizes="385px"
+                  src={logoMain}
+                  alt="꼬순박스 로고"
+                  width={ABOUT_HERO_LOGO_W}
+                  height={ABOUT_HERO_LOGO_H}
+                  className="h-auto w-[158px]"
+                  sizes="158px"
                   priority
                 />
               </h1>
@@ -96,7 +100,7 @@ export default function AboutSection() {
                 </p>
                 <p>꼬순박스는 이런 고민에서 시작되었습니다.</p>
                 <p>
-                  사랑하는 반려견에게 안심하고 먹일 수 있는 건강한 수제간식을 정기적으로 전달하고
+                  사랑하는 반려견에게 안심하고 먹일 수 있는<br/>건강한 수제간식을 정기적으로 전달하고
                   싶었습니다.
                 </p>
               </div>
@@ -131,7 +135,7 @@ export default function AboutSection() {
             </div>
 
             {/* Right — 텍스트 */}
-            <div className="flex w-full flex-1 flex-col gap-4 max-md:items-center max-md:text-center">
+            <div className="flex w-full flex-1 flex-col gap-4 md:gap-8 max-md:items-center max-md:text-center">
               {/* 데스크톱 전용 헤딩 (모바일에서 숨김) */}
               <h2 className="max-md:hidden text-title-28-r-griun text-[var(--color-amber)]">
                 믿을 수 있는 건강한 간식!
@@ -174,15 +178,15 @@ export default function AboutSection() {
       </section>
 
       {/* ━━━━ Section 4: CTA ━━━━ */}
-      <section className="bg-[var(--color-support-faq-surface)] py-14 md:py-[72px]">
-        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-8 px-6 md:px-8">
+      <section className="bg-[var(--color-support-faq-surface)] py-14 md:pt-[44px] md:pb-[72px]">
+        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-8 px-6 md:px-0">
 
           {/* 헤딩 */}
           <Text
             as="h2"
             variant="title-28-sb"
             mobileVariant="title-24-b"
-            className="text-center text-[var(--color-text-cta)]"
+            className="text-center text-[var(--color-text-cta)] md:leading-[65px]"
           >
             건강하고 안전한 간식을 선물하세요!
           </Text>
@@ -205,14 +209,14 @@ export default function AboutSection() {
               </div>
 
               {/* 텍스트 카드 (세이지 그린) — h: 314px */}
-              <div className="relative flex flex-1 flex-col justify-end rounded-2xl bg-[var(--color-cta-sage-bg)] px-6 pb-[42px] pt-10 md:h-[314px]">
+              <div className="relative flex flex-1 flex-col justify-end rounded-2xl bg-[var(--color-cta-sage-bg)] px-6 md:px-10 pb-[42px] pt-10 md:h-[314px]">
                 <Image
                   src={aboutCtaMark}
                   alt=""
-                  width={53}
-                  height={44}
+                  width={78}
+                  height={64}
                   aria-hidden
-                  className="absolute right-8 top-[14px] rotate-[19deg]"
+                  className="absolute right-5 top-[14px]"
                 />
                 <p className="max-md:text-subtitle-20-b text-title-28-sb text-[var(--color-text-cta)]">
                   우리 아이의<br />
@@ -228,17 +232,7 @@ export default function AboutSection() {
               className="relative min-h-[320px] flex-1 overflow-hidden rounded-2xl max-md:order-1 md:min-h-[469px]"
               style={{ background: "var(--gradient-cta-product)" }}
             >
-              {/* 장식 링 — Vector 229: top 106px, height 323px, 좌우 10px 안쪽 */}
-              <div
-                className="pointer-events-none absolute"
-                style={{
-                  top: 106,
-                  height: 323,
-                  left: 10,
-                  right: 10,
-                  border: "32px solid rgba(255, 249, 243, 0.3)",
-                }}
-              />
+              
               {/* 상품 이미지 */}
               <Image
                 src={aboutCtaProduct}

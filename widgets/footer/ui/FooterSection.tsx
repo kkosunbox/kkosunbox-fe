@@ -130,7 +130,7 @@ export default function FooterSection() {
       <div className="max-md:hidden mx-auto flex max-w-content-wide flex-col px-8">
         <div className="flex items-start justify-between pt-[26px] pb-[26px]">
           <div className="flex items-start gap-8">
-            <Link href="/" className="shrink-0" aria-label="꼬순박스 홈">
+            <Link href="/" className="shrink-0 self-center" aria-label="꼬순박스 홈">
               <Image src={logoMono} alt="" width={LOGO_W} height={LOGO_H} className="h-[28px] w-[88px]" />
             </Link>
             <div className="space-y-0.5">
@@ -141,7 +141,7 @@ export default function FooterSection() {
               ))}
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3 self-center">
             {SOCIAL_LINKS.map((social) => (
               <a
                 key={social.label}

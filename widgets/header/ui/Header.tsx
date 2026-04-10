@@ -137,7 +137,7 @@ export default function Header() {
               <Image src={logoMain} alt="꼬순박스 로고" priority />
             </Link>
           </div>
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-[46px]">
             <Link href="/about" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
               꼬순박스 소개
             </Link>

@@ -85,15 +85,29 @@ function CloseButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+export type PackageDetailPrimaryButton = {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+};
+
 /* ─── Props ─── */
 interface Props {
   plan: SubscriptionPlanDto;
   allPlans: SubscriptionPlanDto[];
   onSelectPlan: (plan: SubscriptionPlanDto) => void;
   onClose: () => void;
+  /** 미지정 시 결제(구독하기) 플로우 */
+  getPrimaryButton?: (plan: SubscriptionPlanDto) => PackageDetailPrimaryButton;
 }
 
-export default function PackageDetailView({ plan, allPlans, onSelectPlan, onClose }: Props) {
+export default function PackageDetailView({
+  plan,
+  allPlans,
+  onSelectPlan,
+  onClose,
+  getPrimaryButton,
+}: Props) {
   const router = useRouter();
   const selectedTier = tierFromSubscriptionPlan(plan);
   const pkg = PACKAGES.find((p) => p.tier === selectedTier)!;
@@ -102,8 +116,15 @@ export default function PackageDetailView({ plan, allPlans, onSelectPlan, onClos
   );
   const comparePkg = COMPARE_PACKAGES[compareIndex];
 
-  function handleSubscribe() {
-    router.push(`/order?planId=${plan.id}`);
+  function defaultPrimary(p: SubscriptionPlanDto): PackageDetailPrimaryButton {
+    return {
+      label: "구독하기",
+      onClick: () => router.push(`/order?planId=${p.id}`),
+    };
+  }
+
+  function primaryFor(p: SubscriptionPlanDto): PackageDetailPrimaryButton {
+    return getPrimaryButton ? getPrimaryButton(p) : defaultPrimary(p);
   }
 
   function selectTier(tier: PackageTier) {
@@ -164,14 +185,20 @@ export default function PackageDetailView({ plan, allPlans, onSelectPlan, onClos
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleSubscribe}
-            className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-            style={{ background: pkg.colorVar }}
-          >
-            구독하기
-          </button>
+          {(() => {
+            const { label, onClick, disabled } = primaryFor(plan);
+            return (
+              <button
+                type="button"
+                onClick={onClick}
+                disabled={disabled}
+                className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                style={{ background: pkg.colorVar }}
+              >
+                {label}
+              </button>
+            );
+          })()}
         </div>
 
         {/* 하단: 비교 상세 카드 */}
@@ -331,14 +358,20 @@ export default function PackageDetailView({ plan, allPlans, onSelectPlan, onClos
               </span>
             </div>
 
-            <button
-              type="button"
-              onClick={handleSubscribe}
-              className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ background: pkg.colorVar }}
-            >
-              구독하기
-            </button>
+            {(() => {
+              const { label, onClick, disabled } = primaryFor(plan);
+              return (
+                <button
+                  type="button"
+                  onClick={onClick}
+                  disabled={disabled}
+                  className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                  style={{ background: pkg.colorVar }}
+                >
+                  {label}
+                </button>
+              );
+            })()}
           </div>
 
           {/* Right: comparison table */}

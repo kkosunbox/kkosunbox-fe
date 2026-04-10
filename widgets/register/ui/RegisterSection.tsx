@@ -36,7 +36,7 @@ function CheckboxIcon({ checked }: { checked: boolean }) {
       className="flex h-[20px] w-[20px] shrink-0 items-center justify-center rounded-[5px] border transition-colors"
       style={{
         borderColor: checked ? "var(--color-accent)" : "var(--color-icon-muted)",
-        background: checked ? "var(--color-accent)" : "white",
+        background: checked ? "var(--color-accent)" : "transparent",
       }}
     >
       {checked && (
@@ -48,20 +48,37 @@ function CheckboxIcon({ checked }: { checked: boolean }) {
   );
 }
 
-/* ─── 눈 아이콘 ─── */
-function EyeOffIcon({ className }: { className?: string }) {
+/* ─── 비밀번호 보기 토글 (20×20 제공 SVG) ─── */
+function RegisterPasswordToggleIcon({ passwordVisible }: { passwordVisible: boolean }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <line x1="1" y1="1" x2="23" y2="23" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-function EyeIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="3" stroke="var(--color-text-secondary)" strokeWidth="1.5" />
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      className="shrink-0 text-[var(--color-text-secondary)]"
+      aria-hidden="true"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8.23145 9.51953C8.18995 9.67265 8.16702 9.83375 8.16699 10C8.16717 11.0123 8.98774 11.8338 10 11.834C10.1661 11.834 10.3264 11.809 10.4795 11.7676L11.6211 12.9092C11.1408 13.1775 10.5892 13.3339 10 13.334L9.8291 13.3291C8.06784 13.24 6.66716 11.7834 6.66699 10C6.66705 9.41054 6.82133 8.85737 7.08984 8.37695L8.23145 9.51953ZM10 6.66699C11.8407 6.66717 13.3338 8.15931 13.334 10L13.3291 10.1719C13.3259 10.2346 13.3191 10.2967 13.3125 10.3584L9.63965 6.68652C9.75794 6.67381 9.87834 6.667 10 6.66699Z"
+        fill="currentColor"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M6.04883 7.33691C5.15527 8.0249 4.41223 8.81088 3.89258 9.4248C3.68283 9.67261 3.58171 9.79532 3.52148 9.89453C3.48195 9.95974 3.4834 9.97658 3.4834 10C3.4834 10.0234 3.48195 10.0403 3.52148 10.1055C3.58171 10.2047 3.68283 10.3274 3.89258 10.5752C4.49025 11.2813 5.38435 12.2141 6.46191 12.9648C7.5444 13.7189 8.75488 14.25 10 14.25C10.8128 14.25 11.61 14.0222 12.3672 13.6553L13.4785 14.7666C12.4498 15.3378 11.2714 15.7499 10 15.75C8.33258 15.75 6.82311 15.0442 5.60449 14.1953C4.38162 13.3433 3.39247 12.3062 2.74805 11.5449C2.40968 11.1452 1.9834 10.6945 1.9834 10C1.9834 9.30549 2.40968 8.85484 2.74805 8.45508C3.27911 7.8277 4.04529 7.01451 4.98242 6.27051L6.04883 7.33691ZM10 4.25C11.6674 4.25007 13.1769 4.95577 14.3955 5.80469C15.6184 6.65671 16.6076 7.6938 17.252 8.45508C17.5903 8.85481 18.0166 9.30555 18.0166 10C18.0166 10.6944 17.5903 11.1452 17.252 11.5449C16.9014 11.9591 16.4469 12.4529 15.9102 12.9561L14.8496 11.8955C15.3475 11.4318 15.7742 10.9689 16.1074 10.5752C16.3172 10.3274 16.4183 10.2047 16.4785 10.1055C16.518 10.0403 16.5166 10.0234 16.5166 10C16.5166 9.97659 16.518 9.95965 16.4785 9.89453C16.4183 9.79531 16.3172 9.67262 16.1074 9.4248C15.5098 8.71872 14.6156 7.78592 13.5381 7.03516C12.4556 6.28108 11.2451 5.75007 10 5.75C9.61227 5.75 9.22778 5.80183 8.84961 5.89551L7.65527 4.70215C8.38741 4.4243 9.1742 4.25 10 4.25Z"
+        fill="currentColor"
+      />
+      {!passwordVisible ? (
+        <path
+          d="M4.1665 1.66675L17.4998 15.0001"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      ) : null}
     </svg>
   );
 }
@@ -342,7 +359,7 @@ export default function RegisterSection() {
                     aria-label={showPw ? "비밀번호 숨기기" : "비밀번호 보기"}
                     className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
                   >
-                    {showPw ? <EyeIcon className="h-5 w-5" /> : <EyeOffIcon className="h-5 w-5" />}
+                    <RegisterPasswordToggleIcon passwordVisible={showPw} />
                   </button>
                 )}
               </div>
@@ -368,7 +385,7 @@ export default function RegisterSection() {
                     aria-label={showPwConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
                     className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
                   >
-                    {showPwConfirm ? <EyeIcon className="h-5 w-5" /> : <EyeOffIcon className="h-5 w-5" />}
+                    <RegisterPasswordToggleIcon passwordVisible={showPwConfirm} />
                   </button>
                 )}
               </div>
@@ -433,8 +450,7 @@ export default function RegisterSection() {
             src={registerPaw}
             alt=""
             aria-hidden="true"
-            className="absolute right-4 bottom-4 md:right-10 md:bottom-6 w-[60px] h-[50px] md:w-[84px] md:h-[70px] opacity-60"
-            style={{ transform: "rotate(-24.12deg)" }}
+            className="absolute right-4 bottom-4 md:bottom-[88px] md:right-[44px] w-[60px] h-[50px] md:w-[84px] md:h-[70px] opacity-60"
           />
         </div>
 

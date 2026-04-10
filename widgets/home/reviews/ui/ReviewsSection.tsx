@@ -94,7 +94,7 @@ function ReviewCard({
 export default function ReviewsSection() {
   return (
     <section
-      className="py-16 md:py-20"
+      className="py-16 md:pt-[86px] md:pb-[116px]"
       style={{ background: "var(--gradient-reviews)" }}
     >
       <div className="mx-auto max-w-content max-md:px-8 md:px-0">
@@ -107,7 +107,7 @@ export default function ReviewsSection() {
         <Text
           variant="body-16-r"
           mobileVariant="body-14-m"
-          className="mt-4 md:mt-5.5 mb-12 md:mb-16 text-center text-[var(--color-text-warm)] tracking-[-0.02em]"
+          className="mt-4 md:mt-5.5 mb-12 md:mb-[55px] text-center text-[var(--color-text-warm)] tracking-[-0.02em]"
         >
           실제 꼬순박스 패키지를 구매하신 고객님들의 생생한 리뷰입니다.
         </Text>

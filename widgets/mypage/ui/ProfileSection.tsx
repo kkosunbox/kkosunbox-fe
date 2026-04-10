@@ -170,7 +170,7 @@ export function ProfileSection({ profile }: { profile: Profile | null }) {
                 <ChevronRightIcon />
               </Link>
               <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
-              <div className="min-w-0 flex-1 md:pr-[148px]">
+              <div className="min-w-0 flex-1 md:pr-[10px]">
                 <div className="flex items-start justify-between gap-3">
                   <Text
                     as="h1"

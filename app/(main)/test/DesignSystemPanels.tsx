@@ -87,7 +87,7 @@ const TYPOGRAPHY_GROUPS: { label: string; variants: TypographyVariant[] }[] = [
   },
   {
     label: "Subtitle",
-    variants: ["subtitle-20-b", "subtitle-20-m", "subtitle-18-b", "subtitle-18-sb", "subtitle-18-m", "subtitle-16-r", "subtitle-16-sb"],
+    variants: ["subtitle-20-b", "subtitle-20-m", "subtitle-20-sb", "subtitle-18-b", "subtitle-18-sb", "subtitle-18-m", "subtitle-16-r", "subtitle-16-sb"],
   },
   {
     label: "Body",

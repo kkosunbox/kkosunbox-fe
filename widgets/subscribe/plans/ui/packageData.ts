@@ -49,6 +49,13 @@ export interface PackageData {
   hearts: number;
 }
 
+/** /subscribe·구독관리 플랜 카드 목록에 공통으로 쓰는 특징 문구 */
+export const SUBSCRIBE_PLAN_CARD_FEATURES = [
+  "월 정기 배송",
+  "맞춤 간식 구성",
+  "구독 관리는 마이페이지에서",
+] as const;
+
 export const PACKAGES: PackageData[] = [
   {
     tier: "Basic",

@@ -1,19 +1,19 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createInquiry } from "@/features/inquiry/api";
-import { ApiError } from "@/shared/lib/api/types";
+import { useAuth } from "@/features/auth/ui/AuthProvider";
+import { useModal } from "@/shared/ui/modal/ModalProvider";
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.png";
 import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.png";
 
 interface FormState {
-  name: string;
-  phone: string;
-  email: string;
-  message: string;
+  content: string;
+  contact: string;
   fileName: string;
   agreeTerms: boolean;
   agreePrivacy: boolean;
@@ -64,18 +64,23 @@ function ConsentCheckboxUnchecked() {
 
 export default function InquirySection() {
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
+  const { openAlert } = useModal();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>({
-    name: "",
-    phone: "",
-    email: "",
-    message: "",
+    content: "",
+    contact: "",
     fileName: "",
     agreeTerms: false,
     agreePrivacy: false,
   });
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace("/login?next=/inquiry");
+    }
+  }, [isLoggedIn, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -93,43 +98,31 @@ export default function InquirySection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitError(null);
-    const name = form.name.trim();
-    const phone = form.phone.trim();
-    const email = form.email.trim();
-    const message = form.message.trim();
-    if (!name || !phone || !email || !message || !form.agreeTerms || !form.agreePrivacy) return;
+    const content = form.content.trim();
+    if (!content || !form.agreeTerms || !form.agreePrivacy) return;
 
-    const titleBase = `[문의] ${name}`;
-    const title = titleBase.length > 200 ? `${titleBase.slice(0, 197)}...` : titleBase;
-    const content = `${message}\n\n---\n작성자: ${name}\n연락처: ${phone}\n이메일: ${email}`;
-    const contact = `${phone} / ${email}`.slice(0, 100);
+    const firstLine = content.split("\n")[0];
+    const title = firstLine.length > 200 ? `${firstLine.slice(0, 197)}...` : firstLine;
+    const contact = form.contact.trim().slice(0, 100) || undefined;
 
     startTransition(async () => {
       try {
-        await createInquiry({
-          title,
-          content,
-          contact,
-        });
+        await createInquiry({ title, content, contact });
         router.push("/support/history");
       } catch (err) {
-        const msg =
-          err instanceof ApiError
-            ? err.message
-            : "문의 접수에 실패했습니다. 잠시 후 다시 시도해 주세요.";
-        setSubmitError(msg);
+        openAlert({
+          title: getErrorMessage(err, "문의 접수에 실패했습니다. 잠시 후 다시 시도해 주세요."),
+        });
       }
     });
   };
 
   const isSubmittable =
-    form.name.trim() &&
-    form.phone.trim() &&
-    form.email.trim() &&
-    form.message.trim() &&
+    form.content.trim() &&
     form.agreeTerms &&
     form.agreePrivacy;
+
+  if (!isLoggedIn) return null;
 
   return (
     <div className="bg-white pb-16 pb-12">
@@ -173,57 +166,24 @@ export default function InquirySection() {
           className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] md:px-8 md:py-12"
         >
           <div className="mx-auto flex w-full max-w-[718px] flex-col gap-6">
-            {/* Row 1 */}
-            <div className="grid grid-cols-1 gap-y-6 max-md:gap-y-6 md:grid-cols-2 md:gap-x-[26px]">
-              <div className="flex min-w-0 flex-col gap-2">
-                <label htmlFor="name" className={labelClass}>
-                  이름
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="이름"
-                  value={form.name}
-                  onChange={handleChange}
-                  className={fieldClass}
-                />
-              </div>
-              <div className="flex min-w-0 flex-col gap-2">
-                <label htmlFor="phone" className={labelClass}>
-                  답변받을 연락처
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  placeholder="답변받을 연락처"
-                  value={form.phone}
-                  onChange={handleChange}
-                  className={fieldClass}
-                />
-              </div>
+            {/* 문의내용 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="content" className={labelClass}>
+                문의내용
+              </label>
+              <textarea
+                id="content"
+                name="content"
+                placeholder="문의 내용을 작성해주세요"
+                value={form.content}
+                onChange={handleChange}
+                rows={7}
+                className="min-h-[160px] w-full resize-none rounded-2xl bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0"
+              />
             </div>
 
-            {/* Row 2 */}
-            <div className="grid grid-cols-1 gap-y-6 max-md:gap-y-6 md:grid-cols-2 md:gap-x-[26px]">
-              <div className="flex min-w-0 flex-col gap-2">
-                <label htmlFor="email" className={labelClass}>
-                  이메일
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="이메일"
-                  value={form.email}
-                  onChange={handleChange}
-                  className={fieldClass}
-                />
-              </div>
+            {/* 첨부파일 + 연락처 */}
+            <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-[26px]">
               <div className="flex min-w-0 flex-col gap-2">
                 <span id="file-label" className={labelClass}>
                   첨부파일
@@ -246,26 +206,21 @@ export default function InquirySection() {
                   onChange={handleFileChange}
                   aria-label="파일 첨부"
                 />
-                <p className="text-body-12-r leading-4 text-[var(--color-text-secondary)]">
-                  첨부 파일 URL 업로드는 준비 중입니다. 접수 시 본문에 필요한 내용을 적어 주세요.
-                </p>
               </div>
-            </div>
-
-            {/* 문의내용 */}
-            <div className="flex flex-col gap-2">
-              <label htmlFor="message" className={labelClass}>
-                문의내용
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                placeholder="문의 내용을 작성해주세요"
-                value={form.message}
-                onChange={handleChange}
-                rows={5}
-                className="min-h-[124px] w-full resize-none rounded-2xl bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0"
-              />
+              <div className="flex min-w-0 flex-col gap-2">
+                <label htmlFor="contact" className={labelClass}>
+                  연락처 (선택사항)
+                </label>
+                <input
+                  id="contact"
+                  name="contact"
+                  type="text"
+                  placeholder="연락처를 작성해주세요"
+                  value={form.contact}
+                  onChange={handleChange}
+                  className={fieldClass}
+                />
+              </div>
             </div>
 
             {/* 동의 — SVG 토글(체크/미체크), 숨김 checkbox + label 연동 */}
@@ -311,7 +266,7 @@ export default function InquirySection() {
                   {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
                 </span>
                 <span className="text-body-13-m leading-4 text-[var(--color-text)]">
-                  개인정보 수집 및 활용에 동의합니다.
+                  개인정보 제공 및 활용에 동의합니다.
                 </span>
                 <Link
                   href="/privacy"
@@ -322,12 +277,6 @@ export default function InquirySection() {
                 </Link>
               </label>
             </div>
-
-            {submitError && (
-              <p className="text-center text-body-13-m" style={{ color: "var(--color-accent-rust)" }}>
-                {submitError}
-              </p>
-            )}
 
             <div className="flex justify-center pt-2">
               <button

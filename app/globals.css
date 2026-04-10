@@ -100,8 +100,10 @@
 
   /* Text */
   --color-text: #2F2F2F;           /* Dark Gray — 기본 본문, UI 텍스트 */
+  --color-text-emphasis: #262525;  /* Emphasis — CTA/오버레이 헤드라인 텍스트 */
   --color-text-secondary: #999999; /* Secondary — 보조 텍스트 */
   --color-text-tertiary: #808080;  /* Tertiary — 테이블 헤더, 비활성 UI 텍스트 */
+  --color-text-placeholder: #929292; /* Placeholder — 프로필 미입력 안내, 힌트 텍스트 */
   --color-text-label: #777777;     /* Label — 폼·정보 영역 레이블 */
   --color-text-sub: #606060;       /* Sub — 주문 영역 보조 텍스트 */
   --color-text-muted: #DDDDDD;     /* Muted — 구분선, 비활성 텍스트 */
@@ -217,8 +219,10 @@
 
   /* Text */
   --color-text: var(--color-text);
+  --color-text-emphasis: var(--color-text-emphasis);
   --color-text-secondary: var(--color-text-secondary);
   --color-text-tertiary: var(--color-text-tertiary);
+  --color-text-placeholder: var(--color-text-placeholder);
   --color-text-label: var(--color-text-label);
   --color-text-sub: var(--color-text-sub);
   --color-text-muted: var(--color-text-muted);

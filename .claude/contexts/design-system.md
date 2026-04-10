@@ -71,9 +71,12 @@
 | Token | HEX | 용도 |
 |---|---|---|
 | `--color-text` | `#2F2F2F` | Dark Gray — 기본 본문, UI 텍스트 |
+| `--color-text-emphasis` | `#262525` | CTA·오버레이 헤드라인 등 강조 텍스트 |
 | `--color-text-secondary` | `#999999` | 보조 텍스트 |
 | `--color-text-tertiary` | `#808080` | 비활성 메뉴 텍스트 (드롭다운 항목 등) |
-| `--color-text-muted` | `#DDDDDD` | 힌트, placeholder |
+| `--color-text-placeholder` | `#929292` | 프로필 미입력 안내, 힌트 텍스트 |
+| `--color-text-label` | `#777777` | 폼·정보 영역 레이블 텍스트 |
+| `--color-text-muted` | `#DDDDDD` | 구분선, 비활성 텍스트 |
 | `--color-text-warm` | `#917F71` | Warm Gray — 웜 섹션 서브텍스트 |
 | `--color-text-on-warm` | `#555555` | 웜 섹션 헤딩 |
 | `--color-text-body-warm` | `#5B5B5B` | 웜 섹션 본문 |

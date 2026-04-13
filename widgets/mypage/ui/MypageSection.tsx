@@ -4,13 +4,14 @@ import { SubscriptionCard } from "./SubscriptionCard";
 import { PaymentCard } from "./PaymentCard";
 import { DeliveryCard } from "./DeliveryCard";
 import { InquiryCard } from "./InquiryCard";
-import type { Profile } from "@/features/profile/api/types";
+import type { ChecklistQuestion, Profile } from "@/features/profile/api/types";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { InquiryDto } from "@/features/inquiry/api/types";
 
 interface MypageSectionProps {
   profile: Profile | null;
+  checklistQuestions: ChecklistQuestion[];
   subscription: UserSubscriptionDto | null;
   billingInfo: BillingInfo | null;
   inquiries: InquiryDto[];
@@ -18,13 +19,14 @@ interface MypageSectionProps {
 
 export default function MypageSection({
   profile,
+  checklistQuestions,
   subscription,
   billingInfo,
   inquiries,
 }: MypageSectionProps) {
   return (
     <div className="min-h-screen bg-[var(--color-background)] pb-12 md:pb-16">
-      <ProfileSection profile={profile} />
+      <ProfileSection profile={profile} checklistQuestions={checklistQuestions} />
 
       <section className="pt-4 md:pt-5">
         <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -139,10 +139,31 @@ interface Props {
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
-export default function PaymentManagementSection({ billingInfo, subscription, payments }: Props) {
+export default function PaymentManagementSection({ billingInfo: initialBillingInfo, subscription, payments }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
   const { openAlert } = useModal();
+
+  const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
+
+  useEffect(() => {
+    function handlePaymentMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === "PAYMENT_SELECTED" && e.data.billing) {
+        setBillingInfo(e.data.billing as BillingInfo);
+      }
+    }
+    window.addEventListener("message", handlePaymentMessage);
+    return () => window.removeEventListener("message", handlePaymentMessage);
+  }, []);
+
+  function handleOpenPayment() {
+    window.open(
+      `/payment?method=${encodeURIComponent("신용카드")}`,
+      "paymentPopup",
+      "width=480,height=700,scrollbars=yes",
+    );
+  }
 
   const totalPages = Math.ceil(payments.length / ITEMS_PER_PAGE);
   const currentPage = Math.min(page, Math.max(1, totalPages));
@@ -286,6 +307,7 @@ export default function PaymentManagementSection({ billingInfo, subscription, pa
                 <span className={VALUE_CLS}>{cardDisplay}</span>
                 <button
                   type="button"
+                  onClick={handleOpenPayment}
                   className="inline-flex w-[88px] h-[24px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] text-body-13-m text-white hover:opacity-90 transition-opacity"
                 >
                   결제등록/변경
@@ -353,6 +375,7 @@ export default function PaymentManagementSection({ billingInfo, subscription, pa
                   <span className={VALUE_CLS}>{cardDisplay}</span>
                   <button
                     type="button"
+                    onClick={handleOpenPayment}
                     className="inline-flex items-center rounded-[4px] bg-[var(--color-accent)] px-2 py-[4px] text-body-13-m text-white hover:opacity-90 transition-opacity"
                   >
                     결제등록/변경

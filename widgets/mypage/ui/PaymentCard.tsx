@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+"use client";
+
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Text } from "@/shared/ui";
 import { DashboardCard, SectionHeader } from "./dashboard-shared";
 import type { BillingInfo } from "@/features/billing/api/types";
@@ -23,7 +25,29 @@ function PaymentRow({ label, children }: { label: string; children: ReactNode })
   );
 }
 
-export function PaymentCard({ billingInfo, subscription }: PaymentCardProps) {
+export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: PaymentCardProps) {
+  const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
+
+  const handlePaymentMessage = useCallback((e: MessageEvent) => {
+    if (e.origin !== window.location.origin) return;
+    if (e.data?.type === "PAYMENT_SELECTED" && e.data.billing) {
+      setBillingInfo(e.data.billing as BillingInfo);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("message", handlePaymentMessage);
+    return () => window.removeEventListener("message", handlePaymentMessage);
+  }, [handlePaymentMessage]);
+
+  function handleOpenPayment() {
+    window.open(
+      `/payment?method=${encodeURIComponent("신용카드")}`,
+      "paymentPopup",
+      "width=480,height=700,scrollbars=yes",
+    );
+  }
+
   const hasMethod = billingInfo !== null;
   const cardLabel = hasMethod
     ? `${billingInfo.cardCompany} (****-****-****-${billingInfo.lastFourDigits})`
@@ -56,6 +80,7 @@ export function PaymentCard({ billingInfo, subscription }: PaymentCardProps) {
             </Text>
             <button
               type="button"
+              onClick={handleOpenPayment}
               className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-body-13-m text-white transition-opacity hover:opacity-90"
             >
               결제등록/변경

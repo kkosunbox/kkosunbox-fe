@@ -203,7 +203,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                     {isCancelled
                       ? "구독 취소됨"
                       : subscription
-                        ? currentTheme!.tierLabelKo
+                        ? currentTheme!.tierLabel
                         : "구독중"}
                   </span>
                   <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
@@ -314,7 +314,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                           className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                           style={{ background: color }}
                         >
-                          {theme.tierLabelKo}
+                          {theme.tierLabel}
                         </span>
                         {plan.isRecommended ? (
                           <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">

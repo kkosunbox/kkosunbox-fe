@@ -106,17 +106,17 @@ export const COMPARE_PACKAGES = COMPARE_ORDER.map(
   (t) => PACKAGES.find((p) => p.tier === t)!
 );
 
-/** 피그마·PACKAGES와 동일한 티어별 색/라벨 */
-const TIER_LABEL_KO: Record<PackageTier, string> = {
-  Basic: "베이직",
-  Standard: "스탠다드",
-  Premium: "프리미엄",
+/** 뱃지 표시용 영문 라벨 */
+const TIER_LABEL: Record<PackageTier, string> = {
+  Basic: "Basic",
+  Standard: "Standard",
+  Premium: "Premium",
 };
 
 export function packageThemeForPlan(plan: SubscriptionPlanLike): {
   colorVar: string;
   tabActiveBg: string;
-  tierLabelKo: string;
+  tierLabel: string;
   tier: PackageTier;
 } {
   const tier = tierFromSubscriptionPlan(plan);
@@ -124,7 +124,7 @@ export function packageThemeForPlan(plan: SubscriptionPlanLike): {
   return {
     colorVar: pkg.colorVar,
     tabActiveBg: pkg.tabActiveBg,
-    tierLabelKo: TIER_LABEL_KO[tier],
+    tierLabel: TIER_LABEL[tier],
     tier,
   };
 }

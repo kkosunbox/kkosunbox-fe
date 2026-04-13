@@ -66,7 +66,7 @@ export function SubscriptionCard({ subscription }: { subscription: UserSubscript
             className="inline-flex h-[24px] w-fit items-center rounded-full px-[12px] max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white"
             style={{ background: planTheme.colorVar }}
           >
-            {planTheme.tierLabelKo}
+            {planTheme.tierLabel}
           </span>
           <Text
             variant="subtitle-16-sb"

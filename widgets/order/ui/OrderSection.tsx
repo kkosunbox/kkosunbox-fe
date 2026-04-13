@@ -480,7 +480,7 @@ export default function OrderSection({
               className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
               style={{ background: orderPlanTheme.colorVar }}
             >
-              {orderPlanTheme.tierLabelKo}
+              {orderPlanTheme.tierLabel}
             </span>
             <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
               {plan.name}

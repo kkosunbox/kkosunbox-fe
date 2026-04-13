@@ -9,7 +9,7 @@ import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 const PACKAGES = [
   {
     tier: "Basic",
-    tierLabel: "basic",
+    tierLabel: "Basic",
     colorVar: "var(--color-basic)",
     cardBg: "var(--color-card-basic)",
     msMadiColor: "var(--color-basic-light)",
@@ -20,7 +20,7 @@ const PACKAGES = [
   },
   {
     tier: "Standard",
-    tierLabel: "standard",
+    tierLabel: "Standard",
     colorVar: "var(--color-plus)",
     cardBg: "var(--color-card-standard)",
     msMadiColor: "var(--color-plus-light)",

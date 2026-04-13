@@ -124,43 +124,11 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
     });
   }
 
-  function handleChangePlan(plan: SubscriptionPlanDto) {
-    if (!subscription) return;
-    if (!isCancelled && plan.id === subscription.plan.id) return;
-    if (isCancelled) {
-      handleReactivate(plan.id);
-    } else {
-      openModal("subscription-restart", () => {
-        showLoading("플랜을 변경하고 있습니다...");
-        startTransition(async () => {
-          try {
-            await changePlan(subscription.id, { newPlanId: plan.id });
-            router.refresh();
-          } catch (err) {
-            openAlert({ title: getErrorMessage(err, "플랜 변경 중 오류가 발생했습니다.") });
-          } finally {
-            hideLoading();
-          }
-        });
-      });
-    }
-  }
 
   function getDetailPrimaryButton(p: SubscriptionPlanDto) {
-    const isCurrentPlan = !isCancelled && subscription?.plan.id === p.id;
-    if (isCurrentPlan) {
-      return { label: "현재 구독중", onClick: () => {}, disabled: true as const };
-    }
-    if (!subscription) {
-      return {
-        label: "구독하기",
-        onClick: () => router.push(`/order?planId=${p.id}`),
-        disabled: isPending,
-      };
-    }
     return {
-      label: isCancelled ? "구독하기" : "플랜 변경",
-      onClick: () => handleChangePlan(p),
+      label: "구독 추가하기",
+      onClick: () => router.push(`/order?planId=${p.id}`),
       disabled: isPending,
     };
   }
@@ -248,10 +216,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      const el = document.getElementById("subscription-plans");
-                      el?.scrollIntoView({ behavior: "smooth" });
-                    }}
+                    onClick={() => router.push("/mypage/subscription/change")}
                     className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
                     style={{ background: "var(--color-accent)" }}
                   >
@@ -300,13 +265,11 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
               {sortedPlans.map((plan) => {
                 const theme = packageThemeForPlan(plan);
                 const color = theme.colorVar;
-                const isCurrentPlan = !isCancelled && subscription?.plan.id === plan.id;
 
                 return (
                   <div
                     key={plan.id}
                     className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
-                    style={isCurrentPlan ? { boxShadow: `0 0 0 2px ${color}` } : undefined}
                   >
                     <div className="mb-2.5 flex items-center justify-between gap-2">
                       <div className="flex flex-wrap items-center gap-2">
@@ -319,11 +282,6 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                         {plan.isRecommended ? (
                           <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
                             추천
-                          </span>
-                        ) : null}
-                        {isCurrentPlan ? (
-                          <span className="text-price-16-b" style={{ color }}>
-                            이용중
                           </span>
                         ) : null}
                       </div>
@@ -374,34 +332,15 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                       </span>
                     </div>
 
-                    {isCurrentPlan ? (
-                      <div
-                        className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white opacity-70"
-                        style={{ background: color }}
-                      >
-                        현재 구독중
-                      </div>
-                    ) : !subscription ? (
-                      <button
-                        type="button"
-                        onClick={() => router.push(`/order?planId=${plan.id}`)}
-                        disabled={isPending}
-                        className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
-                        style={{ background: color }}
-                      >
-                        구독하기
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleChangePlan(plan)}
-                        disabled={isPending}
-                        className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
-                        style={{ background: color }}
-                      >
-                        {isCancelled ? "구독하기" : "플랜 변경"}
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/order?planId=${plan.id}`)}
+                      disabled={isPending}
+                      className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                      style={{ background: color }}
+                    >
+                      구독 추가하기
+                    </button>
                   </div>
                 );
               })}

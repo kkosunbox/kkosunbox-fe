@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Text } from "@/shared/ui";
 import { ChevronRightIcon } from "./mypage-icons";
-import type { Profile } from "@/features/profile/api/types";
+import type { ChecklistQuestion, Profile } from "@/features/profile/api/types";
 
 function fmtDate(d: string | null | undefined): string {
   return d ? d.slice(0, 10).replace(/-/g, ".") : "-";
@@ -100,11 +100,17 @@ function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
   );
 }
 
+interface ProfileSummaryItem {
+  label: string;
+  value: string;
+  href?: string;
+}
+
 function ProfileInfoList({
   attributes,
   mobile = false,
 }: {
-  attributes: { label: string; value: string }[];
+  attributes: ProfileSummaryItem[];
   mobile?: boolean;
 }) {
   return (
@@ -115,27 +121,82 @@ function ProfileInfoList({
           : "min-w-0 flex h-[124px] flex-1 flex-col justify-between pl-7"
       }
     >
-      {attributes.map((attr) => (
+      {attributes.map((attr, index) => (
         <div
-          key={attr.label}
+          key={`${attr.label}-${index}`}
           className={mobile ? "flex items-center justify-between gap-3 py-2.5" : "flex items-center justify-between gap-3 py-0"}
         >
           <Text variant="body-13-r" className="font-medium text-[var(--color-text-secondary)]">
             {attr.label}
           </Text>
-          <div className="flex items-center gap-1.5 text-[var(--color-text-secondary)]">
-            <Text variant="body-13-r" className="text-right font-semibold text-[var(--color-text)]">
-              {attr.value}
-            </Text>
-            <PencilIcon className="h-4 w-4 shrink-0" />
-          </div>
+          {attr.href ? (
+            <Link
+              href={attr.href}
+              aria-label={`${attr.label} 수정하기`}
+              className="flex min-w-0 max-w-[180px] items-center gap-1.5 text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:max-w-[190px]"
+            >
+              <span className="min-w-0 flex-1" title={attr.value}>
+                <Text variant="body-13-r" className="block truncate text-right font-semibold text-[var(--color-text)]">
+                  {attr.value}
+                </Text>
+              </span>
+              <PencilIcon className="h-4 w-4 shrink-0" />
+            </Link>
+          ) : (
+            <div className="flex min-w-0 max-w-[180px] items-center gap-1.5 text-[var(--color-text-secondary)] md:max-w-[190px]">
+              <span className="min-w-0 flex-1" title={attr.value}>
+                <Text variant="body-13-r" className="block truncate text-right font-semibold text-[var(--color-text)]">
+                  {attr.value}
+                </Text>
+              </span>
+              <PencilIcon className="h-4 w-4 shrink-0" />
+            </div>
+          )}
         </div>
       ))}
     </div>
   );
 }
 
-export function ProfileSection({ profile }: { profile: Profile | null }) {
+function stripParentheticalSuffix(text: string): string {
+  return text.replace(/\s*\([^)]*\)/g, "").replace(/\s+/g, " ").trim();
+}
+
+function summarizeChecklistValue(profile: Profile | null, questionId: number): string {
+  const answer = profile?.checklistAnswers.find((item) => item.questionId === questionId);
+  if (!answer || answer.selectedOptions.length === 0) return "-";
+  return answer.selectedOptions
+    .map((option) => stripParentheticalSuffix(option.text) || option.text)
+    .join(", ");
+}
+
+function buildChecklistSummary(
+  profile: Profile | null,
+  checklistQuestions: ChecklistQuestion[],
+): ProfileSummaryItem[] {
+  const sourceQuestions = checklistQuestions.length
+    ? checklistQuestions.slice(0, 4)
+    : [
+        { id: 0, text: "체크리스트 항목 1", description: null, isMultiSelect: false, sortOrder: 0, options: [] },
+        { id: -1, text: "체크리스트 항목 2", description: null, isMultiSelect: false, sortOrder: 1, options: [] },
+        { id: -2, text: "체크리스트 항목 3", description: null, isMultiSelect: false, sortOrder: 2, options: [] },
+        { id: -3, text: "체크리스트 항목 4", description: null, isMultiSelect: false, sortOrder: 3, options: [] },
+      ];
+
+  return sourceQuestions.map((question) => ({
+    label: question.text,
+    value: summarizeChecklistValue(profile, question.id),
+    href: question.id > 0 ? `/checklist?editQuestionId=${question.id}&returnTo=mypage` : undefined,
+  }));
+}
+
+export function ProfileSection({
+  profile,
+  checklistQuestions,
+}: {
+  profile: Profile | null;
+  checklistQuestions: ChecklistQuestion[];
+}) {
   const hasProfile = Boolean(profile?.name);
   const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
 
@@ -144,12 +205,7 @@ export function ProfileSection({ profile }: { profile: Profile | null }) {
   const gender = fmtGender(profile?.gender);
   const weight = profile?.weight ? `${profile.weight}kg` : "-";
 
-  const attributes = [
-    { label: "견종", value: profile?.breed ?? "-" },
-    { label: "성별", value: gender },
-    { label: "체중", value: weight },
-    { label: "생년월일", value: birth },
-  ];
+  const attributes = buildChecklistSummary(profile, checklistQuestions);
 
   return (
     <section className="pt-6 md:pt-7">

@@ -355,6 +355,14 @@ button:disabled {
   font-weight: 400;
   letter-spacing: -0.04em;
 }
+/* 홈 pain-points 리스트 (Figma: 16 / 400 / 행간 210%) */
+@utility text-body-16-r-griun-lh210 {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 16px;
+  line-height: 210%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
 @utility text-body-14-r-griun {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 14px;

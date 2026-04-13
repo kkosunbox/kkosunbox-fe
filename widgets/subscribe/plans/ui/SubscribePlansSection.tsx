@@ -134,7 +134,7 @@ export default function SubscribePlansSection({ plans }: Props) {
                           className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                           style={{ background: color }}
                         >
-                          {theme.tierLabelKo}
+                          {theme.tierLabel}
                         </span>
                         {plan.isRecommended ? (
                           <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">

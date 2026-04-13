@@ -28,7 +28,7 @@ const STATS = [
 
 export default function StatsBar() {
   return (
-    <section className="bg-[var(--color-surface-dark)] max-md:py-6 md:py-6.5">
+    <section className="bg-[var(--color-surface-dark)] max-md:py-6 md:py-4">
       <div className="mx-auto flex max-w-content items-center justify-around md:justify-between px-6 md:px-0">
         {STATS.map((item) => (
           <div key={item.label} className="flex items-center gap-[5px]">

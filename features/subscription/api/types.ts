@@ -79,7 +79,7 @@ export interface CreateSubscriptionRequest {
   petProfileId: number;
   deliveryAddressId: number;
   planId: number;
-  billingDate: string; // YYYY-MM-DD, 오늘로부터 최소 1일 ~ 최대 3일 이후
+  billingDate: string; // YYYY-MM-DD, 오늘로부터 최소 3일 이후
   couponCode?: string;
 }
 

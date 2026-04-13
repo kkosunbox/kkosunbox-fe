@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
-import { Text, useModal } from "@/shared/ui";
+import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { cancelSubscription, reactivateSubscription, changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -63,6 +63,7 @@ function formatMonthlyPrice(n: number) {
 export default function SubscriptionManagementSection({ subscription, plans }: Props) {
   const router = useRouter();
   const { openModal, openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, startTransition] = useTransition();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
 
@@ -89,12 +90,15 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
   function handleCancel() {
     if (!subscription) return;
     openModal("subscription-cancel", () => {
+      showLoading("구독 해지를 처리하고 있습니다...");
       startTransition(async () => {
         try {
           await cancelSubscription(subscription.id);
           router.refresh();
         } catch (err) {
           openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
+        } finally {
+          hideLoading();
         }
       });
     });
@@ -103,6 +107,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
   function handleReactivate(planId?: number) {
     if (!subscription) return;
     openModal("subscription-restart", () => {
+      showLoading("구독을 재시작하고 있습니다...");
       startTransition(async () => {
         try {
           await reactivateSubscription(subscription.id);
@@ -112,6 +117,8 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
           router.refresh();
         } catch (err) {
           openAlert({ title: getErrorMessage(err, "구독 재시작 처리 중 오류가 발생했습니다.") });
+        } finally {
+          hideLoading();
         }
       });
     });
@@ -124,12 +131,15 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
       handleReactivate(plan.id);
     } else {
       openModal("subscription-restart", () => {
+        showLoading("플랜을 변경하고 있습니다...");
         startTransition(async () => {
           try {
             await changePlan(subscription.id, { newPlanId: plan.id });
             router.refresh();
           } catch (err) {
             openAlert({ title: getErrorMessage(err, "플랜 변경 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
           }
         });
       });
@@ -193,7 +203,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                     {isCancelled
                       ? "구독 취소됨"
                       : subscription
-                        ? currentTheme!.tierLabelKo
+                        ? currentTheme!.tierLabel
                         : "구독중"}
                   </span>
                   <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
@@ -304,7 +314,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                           className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                           style={{ background: color }}
                         >
-                          {theme.tierLabelKo}
+                          {theme.tierLabel}
                         </span>
                         {plan.isRecommended ? (
                           <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">

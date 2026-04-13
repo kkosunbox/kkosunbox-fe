@@ -44,7 +44,7 @@ export function SubscriptionCard({ subscription }: { subscription: UserSubscript
   const planTheme = packageThemeForPlan(subscription.plan);
 
   return (
-    <div className="relative rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:bg-[var(--color-background)] md:min-h-[173px] md:px-6 md:py-5">
+    <div className="relative rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:flex md:items-center md:bg-[var(--color-background)] md:min-h-[173px] md:px-6 md:py-5">
       <Link
         href="/mypage/subscription"
         className="absolute right-5 top-5 max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
@@ -66,7 +66,7 @@ export function SubscriptionCard({ subscription }: { subscription: UserSubscript
             className="inline-flex h-[24px] w-fit items-center rounded-full px-[12px] max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white"
             style={{ background: planTheme.colorVar }}
           >
-            {planTheme.tierLabelKo}
+            {planTheme.tierLabel}
           </span>
           <Text
             variant="subtitle-16-sb"

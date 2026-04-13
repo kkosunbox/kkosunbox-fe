@@ -4,14 +4,13 @@ import { useMemo, useState, useTransition, useEffect } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
-import { DatePicker, useModal } from "@/shared/ui";
+import { DatePicker, useModal, useLoadingOverlay } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { getErrorMessage } from "@/shared/lib/api";
 import orderTitleImage from "@/widgets/order/assets/order-title-please-order.png";
 import orderProductThumbnail from "@/widgets/order/assets/order-product-thumbnail.png";
 import orderDogImage from "@/widgets/order/assets/order-advertise-banner.png";
-import { registerBilling, getBillingTerms } from "@/features/billing/api/billingApi";
-import type { BillingTermsType } from "@/features/billing/api/types";
+import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import type { Profile } from "@/features/profile/api/types";
@@ -201,27 +200,22 @@ function FormRow({ label, children }: { label: string; children: React.ReactNode
   );
 }
 
-const BILLING_TERM_TYPES: BillingTermsType[] = [
-  "ElectronicFinancialTransactions",
-  "CollectPersonalInfo",
-  "SharingPersonalInformation",
-];
-
 export interface OrderSectionProps {
   plan: SubscriptionPlanDto;
   profiles: Profile[];
   initialAddresses: DeliveryAddress[];
-  hasBilling: boolean;
+  initialBilling: BillingInfo | null;
 }
 
 export default function OrderSection({
   plan,
   profiles,
   initialAddresses,
-  hasBilling: hasBillingProp,
+  initialBilling,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, startTransition] = useTransition();
 
   const [openSections, setOpenSections] = useState({
@@ -285,57 +279,48 @@ export default function OrderSection({
   const [couponError, setCouponError] = useState<string | null>(null);
 
   const today = new Date();
-  const minBillingDate = addDays(today, 1);
-  const maxBillingDate = addDays(today, 3);
+  const minBillingDate = addDays(today, 3);
   const [subscriptionDate, setSubscriptionDate] = useState<Date | null>(null);
 
   const [agreeOpen, setAgreeOpen] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
-  const [agreeBillingTerms, setAgreeBillingTerms] = useState(false);
 
-  const [billingRegistered, setBillingRegistered] = useState(hasBillingProp);
-  const [card, setCard] = useState({
-    cardNo: "",
-    expYear: "",
-    expMonth: "",
-    idNo: "",
-    cardPw: "",
-    buyerName: "",
-    buyerEmail: "",
-    buyerTel: "",
-  });
+  const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
 
-  const [billingTerms, setBillingTerms] = useState<
-    Partial<Record<BillingTermsType, { title: string; content: string }>>
-  >({});
-  const [termsOpen, setTermsOpen] = useState(false);
+  // 팝업에서 결제 확정 시 구독 생성 트리거
+  const [confirmedPayment, setConfirmedPayment] = useState(false);
 
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // /payment 팝업에서 결제수단/카드 선택 결과 수신
   useEffect(() => {
-    if (hasBillingProp) return;
-    let cancelled = false;
-    Promise.all(
-      BILLING_TERM_TYPES.map(async (t) => {
-        const res = await getBillingTerms(t);
-        return [t, res] as const;
-      }),
-    )
-      .then((pairs) => {
-        if (cancelled) return;
-        const next: Partial<Record<BillingTermsType, { title: string; content: string }>> = {};
-        for (const [t, res] of pairs) {
-          next[t] = { title: res.termsTitle, content: res.content };
+    function handlePaymentMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === "PAYMENT_SELECTED") {
+        const { method, billing: selectedBilling } = e.data as {
+          method: string;
+          billing?: BillingInfo;
+        };
+        setPaymentMethod(method);
+        if (selectedBilling) {
+          setBilling(selectedBilling);
         }
-        setBillingTerms(next);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [hasBillingProp]);
+        setConfirmedPayment(true);
+      }
+    }
+    window.addEventListener("message", handlePaymentMessage);
+    return () => window.removeEventListener("message", handlePaymentMessage);
+  }, []);
+
+  // 결제 확정 시 구독 생성 진행
+  useEffect(() => {
+    if (!confirmedPayment) return;
+    setConfirmedPayment(false);
+    proceedSubscription();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmedPayment]);
 
   const basePrice = plan.monthlyPrice;
   const couponDiscount = useMemo(() => {
@@ -383,30 +368,35 @@ export default function OrderSection({
       setSubmitError("필수 약관에 동의해 주세요.");
       return;
     }
-    if (!billingRegistered && !agreeBillingTerms) {
-      setSubmitError("전자금융거래 약관에 동의해 주세요.");
-      return;
-    }
     if (!subscriptionDate) {
       setSubmitError("구독 결제일을 선택해 주세요.");
       return;
     }
 
+    if (!selectedAddress) {
+      if (
+        !newAddr.receiverName.trim() ||
+        !digitsOnly(newAddr.phoneNumber) ||
+        !newAddr.zipCode.trim() ||
+        !newAddr.address.trim()
+      ) {
+        setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
+        return;
+      }
+    }
+
+    // 결제수단 선택 팝업 열기
+    const url = `/payment?method=${encodeURIComponent(paymentMethod)}`;
+    window.open(url, "paymentPopup", "width=480,height=700,scrollbars=yes");
+  }
+
+  function proceedSubscription() {
+    showLoading("구독을 처리하고 있습니다...");
     startTransition(async () => {
       try {
         let deliveryAddressId = selectedAddressId;
 
         if (!selectedAddress) {
-          // 저장된 배송지 없음 → 새 배송지 생성
-          if (
-            !newAddr.receiverName.trim() ||
-            !digitsOnly(newAddr.phoneNumber) ||
-            !newAddr.zipCode.trim() ||
-            !newAddr.address.trim()
-          ) {
-            setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
-            return;
-          }
           const created = await createDeliveryAddress({
             receiverName: newAddr.receiverName.trim(),
             phoneNumber: digitsOnly(newAddr.phoneNumber),
@@ -421,38 +411,16 @@ export default function OrderSection({
         }
 
         if (deliveryAddressId === null) {
+          hideLoading();
           setSubmitError("배송지를 선택하거나 입력해 주세요.");
           return;
-        }
-
-        if (!billingRegistered) {
-          const cardNo = digitsOnly(card.cardNo);
-          if (cardNo.length < 15 || card.expMonth.length !== 2 || card.expYear.length !== 2) {
-            setSubmitError("카드 번호와 유효기간을 확인해 주세요.");
-            return;
-          }
-          if (card.idNo.length < 6 || card.cardPw.length !== 2) {
-            setSubmitError("생년월일(또는 사업자번호)과 카드 비밀번호 앞 2자리를 입력해 주세요.");
-            return;
-          }
-          await registerBilling({
-            cardNo,
-            expYear: card.expYear,
-            expMonth: card.expMonth,
-            idNo: card.idNo,
-            cardPw: card.cardPw,
-            buyerName: card.buyerName.trim() || undefined,
-            buyerEmail: card.buyerEmail.trim() || undefined,
-            buyerTel: digitsOnly(card.buyerTel) || undefined,
-          });
-          setBillingRegistered(true);
         }
 
         await createSubscription({
           petProfileId: selectedProfileId,
           deliveryAddressId,
           planId: plan.id,
-          billingDate: toYmd(subscriptionDate),
+          billingDate: toYmd(subscriptionDate!),
           couponCode:
             couponInfo?.canUse && couponCodeInput.trim() ? couponCodeInput.trim() : undefined,
         });
@@ -461,6 +429,8 @@ export default function OrderSection({
         router.push("/mypage/subscription");
       } catch (err) {
         openAlert({ title: getErrorMessage(err, "결제 처리 중 오류가 발생했습니다.") });
+      } finally {
+        hideLoading();
       }
     });
   }
@@ -510,7 +480,7 @@ export default function OrderSection({
               className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
               style={{ background: orderPlanTheme.colorVar }}
             >
-              {orderPlanTheme.tierLabelKo}
+              {orderPlanTheme.tierLabel}
             </span>
             <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
               {plan.name}
@@ -678,9 +648,9 @@ export default function OrderSection({
         onToggle={() => toggleSection("payment")}
       >
         <div className="flex flex-col gap-4">
-          {/* 결제 수단 라디오 */}
+          {/* 결제 수단 라디오 — 현재 신용카드만 지원 */}
           <div className="flex items-center gap-8 flex-wrap">
-            {["신용카드", "카카오페이", "무통장입금", "계좌이체"].map((method) => (
+            {["신용카드" /* TODO: "카카오페이", "무통장입금", "계좌이체" — 추후 지원 예정 */].map((method) => (
               <RadioButton
                 key={method}
                 checked={paymentMethod === method}
@@ -690,87 +660,20 @@ export default function OrderSection({
             ))}
           </div>
 
-          {/* 빌링 등록 (카드 미등록 시) */}
-          {!billingRegistered && paymentMethod === "신용카드" && (
-            <div className="flex flex-col gap-4 border-t border-white pt-4">
-              <p className="text-body-13-m text-[var(--color-text-secondary)]">
-                신용카드 정보를 입력해 주세요. (정기 결제 빌링 등록)
-              </p>
-              <FormRow label="카드번호">
-                <input
-                  value={card.cardNo}
-                  onChange={(e) => setCard((s) => ({ ...s, cardNo: e.target.value }))}
-                  className={inputCls}
-                  placeholder="16자리"
-                  inputMode="numeric"
-                />
-              </FormRow>
-              <div className="grid grid-cols-2 gap-3 md:gap-4">
-                <FormRow label="월">
-                  <input
-                    value={card.expMonth}
-                    onChange={(e) => setCard((s) => ({ ...s, expMonth: e.target.value }))}
-                    className={inputCls}
-                    placeholder="MM"
-                    maxLength={2}
-                  />
-                </FormRow>
-                <FormRow label="년">
-                  <input
-                    value={card.expYear}
-                    onChange={(e) => setCard((s) => ({ ...s, expYear: e.target.value }))}
-                    className={inputCls}
-                    placeholder="YY"
-                    maxLength={2}
-                  />
-                </FormRow>
-              </div>
-              <FormRow label="생년월일">
-                <input
-                  value={card.idNo}
-                  onChange={(e) => setCard((s) => ({ ...s, idNo: e.target.value }))}
-                  className={inputCls}
-                  placeholder="YYMMDD 또는 사업자번호"
-                />
-              </FormRow>
-              <FormRow label="카드비밀번호">
-                <input
-                  type="password"
-                  value={card.cardPw}
-                  onChange={(e) => setCard((s) => ({ ...s, cardPw: e.target.value }))}
-                  className={inputCls}
-                  placeholder="앞 2자리"
-                  maxLength={2}
-                />
-              </FormRow>
-              <div className="flex flex-col gap-2 border-t border-white pt-3">
-                <Checkbox
-                  checked={agreeBillingTerms}
-                  onChange={() => setAgreeBillingTerms((v) => !v)}
-                  label="결제·개인정보 관련 약관에 동의합니다 (필수)"
-                />
-                <button
-                  type="button"
-                  onClick={() => setTermsOpen((o) => !o)}
-                  className="text-left text-body-13-m text-[var(--color-accent)]"
-                >
-                  {termsOpen ? "약관 접기" : "약관 내용 보기"}
-                </button>
-                {termsOpen ? (
-                  <div className="max-h-48 overflow-y-auto rounded-[8px] bg-white p-3 text-body-12-r text-[var(--color-text-secondary)]">
-                    {BILLING_TERM_TYPES.map((t) => {
-                      const block = billingTerms[t];
-                      if (!block) return null;
-                      return (
-                        <div key={t} className="mb-3">
-                          <p className="font-semibold text-[var(--color-text)]">{block.title}</p>
-                          <p className="whitespace-pre-wrap">{block.content}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : null}
-              </div>
+          {/* 등록된 카드 정보 표시 */}
+          {paymentMethod === "신용카드" && billing && (
+            <div className="flex items-center gap-3 border-t border-white pt-4">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
+                <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
+              </svg>
+              <span className="text-body-13-m text-[var(--color-text)]">
+                {billing.cardCompany} **** {billing.lastFourDigits}
+              </span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
+                <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
           )}
 
@@ -836,12 +739,11 @@ export default function OrderSection({
               onChange={setSubscriptionDate}
               placeholder="날짜 선택"
               minDate={minBillingDate}
-              maxDate={maxBillingDate}
               triggerClassName="!h-[34px] !rounded-[5px] !border-[var(--color-text-muted)] !px-3"
             />
           </div>
           <p className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
-            구독 시작일은 구매일로 부터 최대 3일 후까지 선택 가능합니다.
+            구독 시작일은 구매일로부터 최소 3일 이후여야 합니다.
           </p>
         </div>
       </SectionCard>

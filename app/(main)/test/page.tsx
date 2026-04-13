@@ -2,6 +2,7 @@ import CollapseSection from "./CollapseSection";
 import DesignSystemPanels from "./DesignSystemPanels";
 import ModalTestButtons from "./ModalTestButtons";
 import ButtonSpriteTestSection from "./ButtonSpriteTestSection";
+import LoadingOverlayTestSection from "./LoadingOverlayTestSection";
 
 const SAMPLE_TEXT = `꼬순박스 디자인 테스트
 가나다라마바사 아자차카타파하
@@ -54,6 +55,14 @@ export default function TestPage() {
         </header>
 
         <DesignSystemPanels />
+
+        <CollapseSection
+          title="Loading Overlay"
+          description="전역(Provider) 및 독립(prop) 방식 로딩 오버레이 테스트 — 3초 후 자동 해제"
+          defaultOpen={true}
+        >
+          <LoadingOverlayTestSection />
+        </CollapseSection>
 
         <CollapseSection
           title="Button Sprite Animation"

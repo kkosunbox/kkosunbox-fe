@@ -19,7 +19,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   OTP_EXPIRED: "인증코드가 만료되었습니다. 다시 요청해주세요.",
   TOO_MANY_REQUESTS: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.",
   RESEND_COOLDOWN: "재전송 대기 시간이 지나지 않았습니다.",
+  COOLDOWN_PERIOD_NOT_EXPIRED: "재전송 대기 시간이 지나지 않았습니다. 60초 후 다시 시도해주세요.",
   DAILY_LIMIT_EXCEEDED: "일일 발송 한도를 초과했습니다. 내일 다시 시도해주세요.",
+  DAILY_LIMIT_REACHED: "일일 발송 한도(5회)를 초과했습니다. 내일 다시 시도해주세요.",
 
   // 비밀번호
   INVALID_PASSWORD: "비밀번호가 올바르지 않습니다.",

@@ -11,8 +11,8 @@ import {
 import { signupAction } from "@/features/auth/lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
 import { useAuth } from "@/features/auth";
-import { getErrorMessage } from "@/shared/lib/api";
-import { useModal } from "@/shared/ui";
+import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
+import { useModal, useLoadingOverlay } from "@/shared/ui";
 import registerTitle from "../assets/register-title.png";
 import registerTitleMobi from "../assets/register-title-mobi.png";
 import registerPaw from "../assets/register-pow.png";
@@ -122,6 +122,7 @@ export default function RegisterSection() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { login: authLogin } = useAuth();
   const { openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
 
   /* ── 상태 ── */
   const [isPending, start] = useTransition();
@@ -133,6 +134,7 @@ export default function RegisterSection() {
   /* ── OTP ── */
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(0);
+  const [dailyLimitReached, setDailyLimitReached] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   /* ── 비밀번호 + 약관 ── */
@@ -186,6 +188,12 @@ export default function RegisterSection() {
         startCountdown();
         setCodeSent(true);
       } catch (err) {
+        if (isErrorCode(err, "COOLDOWN_PERIOD_NOT_EXPIRED")) {
+          startCountdown();
+        }
+        if (isErrorCode(err, "DAILY_LIMIT_REACHED")) {
+          setDailyLimitReached(true);
+        }
         showError(getErrorMessage(err, "인증코드 발송 중 오류가 발생했습니다."));
       }
     });
@@ -209,21 +217,26 @@ export default function RegisterSection() {
     if (!agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
     if (password.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
     if (password !== passwordConfirm) { showError("비밀번호가 일치하지 않습니다."); return; }
+    showLoading("회원가입을 처리하고 있습니다...");
     start(async () => {
-      const result = await signupAction(
-        emailVerifiedToken,
-        password,
-        agreements.terms,
-        agreements.privacy,
-        agreements.marketing,
-      );
-      if (result.error) { showError(result.error); return; }
+      try {
+        const result = await signupAction(
+          emailVerifiedToken,
+          password,
+          agreements.terms,
+          agreements.privacy,
+          agreements.marketing,
+        );
+        if (result.error) { showError(result.error); return; }
 
-      if (result.accessToken && result.refreshToken)
-        tokenStore.setTokens(result.accessToken, result.refreshToken);
+        if (result.accessToken && result.refreshToken)
+          tokenStore.setTokens(result.accessToken, result.refreshToken);
 
-      router.refresh();
-      router.push("/mypage/profile");
+        router.refresh();
+        router.push("/mypage/profile");
+      } finally {
+        hideLoading();
+      }
     });
   }
 
@@ -290,14 +303,16 @@ export default function RegisterSection() {
                 <button
                   type="button"
                   onClick={handleSendCode}
-                  disabled={!email.trim() || isPending || emailVerified || (codeSent && countdown > 0)}
+                  disabled={!email.trim() || isPending || emailVerified || dailyLimitReached || (codeSent && countdown > 0)}
                   className={[actionBtnCls, "bg-[var(--color-accent)]"].join(" ")}
                 >
                   {isPending && !codeSent
                     ? "발송 중..."
-                    : codeSent
-                      ? countdown > 0 ? `재전송 (${countdown}s)` : "재전송"
-                      : "인증번호 전송"}
+                    : dailyLimitReached
+                      ? "발송 제한"
+                      : codeSent
+                        ? countdown > 0 ? `재전송 (${countdown}s)` : "재전송"
+                        : "인증번호 전송"}
                 </button>
               </div>
               {codeSent && !emailVerified && (

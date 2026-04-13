@@ -8,7 +8,7 @@ import {
   resetPassword,
 } from "@/features/auth/api/authApi";
 import { getErrorMessage } from "@/shared/lib/api";
-import { useModal } from "@/shared/ui";
+import { useModal, useLoadingOverlay } from "@/shared/ui";
 import registerPaw from "@/widgets/register/assets/register-pow.png";
 import forgotPasswordTitle from "../assets/forgot-password-title.png";
 
@@ -68,6 +68,7 @@ function FieldRow({
 /* ═══════════════════════════════════════════════════════════════ */
 export default function ForgotPasswordSection() {
   const { openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
 
   /* ── 상태 ── */
   const [isPending, start] = useTransition();
@@ -147,12 +148,15 @@ export default function ForgotPasswordSection() {
   function handleResetPassword() {
     if (newPassword.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
     if (newPassword !== confirmPassword) { showError("비밀번호가 일치하지 않습니다."); return; }
+    showLoading("비밀번호를 변경하고 있습니다...");
     start(async () => {
       try {
         await resetPassword({ resetToken, newPassword });
         window.location.href = "/login";
       } catch (err) {
         showError(getErrorMessage(err, "비밀번호 재설정에 실패했습니다."));
+      } finally {
+        hideLoading();
       }
     });
   }

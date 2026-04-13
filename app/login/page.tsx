@@ -8,6 +8,7 @@ import logoMain2x from "@/shared/assets/logo-main@2x.png";
 import loginBannerHd from "@/shared/assets/login-banner-hd.png";
 import { useAuth, getOAuthUrl } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
+import { useLoadingOverlay } from "@/shared/ui";
 
 const LOGO_WIDTH = 156;
 const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
@@ -96,6 +97,7 @@ export default function LoginPage() {
   const [isPending, startTransition] = useTransition();
 
   const { login } = useAuth();
+  const { showLoading, hideLoading } = useLoadingOverlay();
   const searchParams = useSearchParams();
 
   function handleSocialLogin(provider: OAuthProvider) {
@@ -106,10 +108,15 @@ export default function LoginPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    showLoading("로그인 중입니다...");
     startTransition(async () => {
-      const next = searchParams.get("next") ?? undefined;
-      const result = await login(email, password, next);
-      if (result.error) setError(result.error);
+      try {
+        const next = searchParams.get("next") ?? undefined;
+        const result = await login(email, password, next);
+        if (result.error) setError(result.error);
+      } finally {
+        hideLoading();
+      }
     });
   }
 

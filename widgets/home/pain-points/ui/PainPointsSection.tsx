@@ -50,10 +50,7 @@ export default function PainPointsSection() {
                     />
                   </svg>
                 </div>
-                <span
-                  className="text-[var(--color-text-body-warm)] max-md:text-[14px] max-md:leading-[170%] md:text-[20px] md:leading-[170%] md:whitespace-nowrap"
-                  style={{ fontFamily: "Griun PolFairness" }}
-                >
+                <span className="text-body-16-r-griun-lh210 text-[var(--color-text-body-warm)] md:whitespace-nowrap">
                   {item}
                 </span>
               </li>

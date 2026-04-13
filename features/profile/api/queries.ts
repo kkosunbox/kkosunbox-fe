@@ -4,7 +4,7 @@
  */
 import "server-only";
 import { apiClient } from "@/shared/lib/api";
-import type { Profile } from "./types";
+import type { ChecklistQuestion, Profile } from "./types";
 
 function serverOpts(token?: string) {
   return { token, skipRefresh: true } as const;
@@ -22,4 +22,18 @@ export async function fetchProfiles(token?: string): Promise<Profile[]> {
 export async function fetchProfile(token?: string): Promise<Profile | null> {
   const profiles = await fetchProfiles(token);
   return profiles[0] ?? null;
+}
+
+/** 체크리스트 질문 목록 조회 (비로그인 허용) */
+export async function fetchChecklistQuestions(): Promise<ChecklistQuestion[]> {
+  const data = await apiClient
+    .get<{ questions: ChecklistQuestion[] }>("/v1/profiles/checklist")
+    .catch(() => ({ questions: [] as ChecklistQuestion[] }));
+
+  return [...data.questions]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((question) => ({
+      ...question,
+      options: [...question.options].sort((a, b) => a.sortOrder - b.sortOrder),
+    }));
 }

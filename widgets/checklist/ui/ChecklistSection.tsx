@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { getChecklistQuestions, getProfiles, updateProfile } from "@/features/profile/api/profileApi";
@@ -136,7 +136,10 @@ function LeaveConfirmModal({
 /* ─── Widget ─── */
 export default function ChecklistSection() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isLoggedIn } = useAuth();
+  const editQuestionIdParam = searchParams.get("editQuestionId");
+  const returnTo = searchParams.get("returnTo");
 
   const [questions, setQuestions] = useState<ChecklistQuestion[] | null>(null);
   const [questionsError, setQuestionsError] = useState<string | null>(null);
@@ -165,7 +168,12 @@ export default function ChecklistSection() {
     getChecklistQuestions()
       .then((res) => {
         if (cancelled) return;
-        const sorted = [...res.questions].sort((a, b) => a.sortOrder - b.sortOrder);
+        const sorted = [...res.questions]
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((q) => ({
+            ...q,
+            options: [...q.options].sort((a, b) => a.sortOrder - b.sortOrder),
+          }));
         setQuestions(sorted);
       })
       .catch(() => {
@@ -189,6 +197,8 @@ export default function ChecklistSection() {
     void (async () => {
       let pet = EMPTY_PET_INFO;
       let av: string | null = null;
+      let restoredAnswers: Record<number, number[]> = {};
+      let initialStep = 0;
 
       if (isLoggedIn) {
         try {
@@ -197,6 +207,14 @@ export default function ChecklistSection() {
           if (p && !cancelled) {
             pet = profileToPetInfo(p);
             av = p.profileImageUrl;
+            if (p.checklistAnswers?.length) {
+              restoredAnswers = Object.fromEntries(
+                p.checklistAnswers.map((a) => [
+                  a.questionId,
+                  a.selectedOptions.map((o) => o.id),
+                ]),
+              );
+            }
           }
         } catch {
           /* 비로그인·오류 시 빈 폼 */
@@ -205,16 +223,23 @@ export default function ChecklistSection() {
 
       if (cancelled) return;
 
+      const questionId = Number(editQuestionIdParam);
+      if (Number.isFinite(questionId)) {
+        const questionIndex = questions.findIndex((question) => question.id === questionId);
+        if (questionIndex >= 0) initialStep = questionIndex + 1;
+      }
+
       setPetInfo(pet);
+      setStep(initialStep);
       setAvatarSrc((prev) => {
         if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
         return av;
       });
-      setAnswersByQuestion({});
+      setAnswersByQuestion(restoredAnswers);
       setBaseline({
         petInfo: clonePetInfo(pet),
         avatarSrc: av,
-        answers: {},
+        answers: { ...restoredAnswers },
       });
       setInitReady(true);
     })();
@@ -222,7 +247,7 @@ export default function ChecklistSection() {
     return () => {
       cancelled = true;
     };
-  }, [questions, isLoggedIn]);
+  }, [editQuestionIdParam, questions, isLoggedIn]);
 
   const isDirty =
     questions !== null &&
@@ -399,8 +424,15 @@ export default function ChecklistSection() {
       console.error("[ChecklistSection] save or plan fetch failed", e);
     }
 
-    setRecommendedTier(tier);
     localStorage.setItem("kkosun_checklist_done", "true");
+
+    if (returnTo === "mypage") {
+      setIsAnalyzing(false);
+      router.push("/mypage");
+      return;
+    }
+
+    setRecommendedTier(tier);
     setIsAnalyzing(false);
     setStep(resultStep);
   }

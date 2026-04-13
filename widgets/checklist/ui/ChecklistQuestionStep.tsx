@@ -4,9 +4,7 @@ import { Button, Text } from "@/shared/ui";
 import type { ChecklistOption, ChecklistQuestion } from "@/features/profile/api/types";
 
 function optionLabel(o: ChecklistOption): string {
-  if (typeof o.text === "string" && o.text) return o.text;
-  if (typeof o.label === "string" && o.label) return o.label;
-  return `선택지 ${o.id}`;
+  return o.text || `선택지 ${o.id}`;
 }
 
 const CTA_CLASS =

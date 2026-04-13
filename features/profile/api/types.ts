@@ -2,18 +2,17 @@
 
 export interface ChecklistOption {
   id: number;
-  /** 표시용 라벨 (백엔드 필드명이 text | label 등일 수 있음) */
-  text?: string;
-  label?: string;
-  [key: string]: unknown;
+  text: string;       // 선택지 내용
+  slug: string;       // 추천 로직 식별자
+  sortOrder: number;  // 정렬 순서
 }
 
 export interface ChecklistQuestion {
   id: number;
-  text: string;           // 질문 내용
-  description: string | null; // 부연 설명
-  isMultiSelect: boolean; // 복수 선택 허용 여부
-  sortOrder: number;      // 정렬 순서
+  text: string;                // 질문 내용
+  description: string | null;  // 부연 설명
+  isMultiSelect: boolean;      // 복수 선택 허용 여부
+  sortOrder: number;           // 정렬 순서
   options: ChecklistOption[];
 }
 
@@ -23,10 +22,11 @@ export interface ChecklistAnswerInput {
   optionIds: number[];
 }
 
-/** 프로필에 저장된 답변 조회 형식 */
+/** 프로필에 저장된 답변 조회 형식 (GET 응답) */
 export interface ChecklistAnswer {
   questionId: number;
-  optionIds: number[];
+  questionText: string;
+  selectedOptions: ChecklistOption[];
 }
 
 // ── Profile ───────────────────────────────────────────────────────

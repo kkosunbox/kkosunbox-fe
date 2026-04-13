@@ -22,9 +22,14 @@ export default async function OrderPage({
   }
 
   const token = await getServerToken();
-  const [plans, profiles, addresses, billing] = await Promise.all([
-    fetchSubscriptionPlans(token),
-    fetchProfiles(token),
+
+  const profiles = await fetchProfiles(token);
+  if (profiles.length === 0) {
+    redirect("/mypage/profile");
+  }
+
+  const [plans, addresses, billing] = await Promise.all([
+    fetchSubscriptionPlans(token, profiles[0]!.id),
     fetchDeliveryAddresses(token),
     fetchBillingInfo(token),
   ]);
@@ -34,16 +39,12 @@ export default async function OrderPage({
     redirect("/subscribe");
   }
 
-  if (profiles.length === 0) {
-    redirect("/mypage/profile");
-  }
-
   return (
     <OrderSection
       plan={plan}
       profiles={profiles}
       initialAddresses={addresses}
-      hasBilling={billing !== null}
+      initialBilling={billing}
     />
   );
 }

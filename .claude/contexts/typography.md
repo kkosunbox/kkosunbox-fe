@@ -13,6 +13,29 @@ size   : px 단위 숫자 (42, 32, 24, 20, 18, 16, 14, 12)
 weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 ```
 
+## Font weight 매핑표 (2026-04)
+
+`font-weight: 800` 렌더링 일관성을 위해 폰트 패밀리별 제공 weight와 사용 계약을 아래처럼 고정한다.
+
+| Font family | 제공 weight | 800 사용 가능 여부 | 비고 |
+|---|---:|---|---|
+| `Pretendard` | 100-900 (`@fontsource`) | 가능 | `app/layout.tsx`에서 700/800/900 명시 로드 |
+| `Griun PolFairness` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
+| `Griun Fromsol` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
+| `Griun Yuri Daggu` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
+| `GangwonEduAll Light` | 400 only | 금지 | 폰트명은 Light/Bold라도 CSS weight는 400 |
+| `GangwonEduAll Bold` | 400 only | 금지 | 폰트명은 Light/Bold라도 CSS weight는 400 |
+| `GangwonEduPower` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
+| `Ms Madi` | 400 only | 금지 | `next/font/google` weight 400 |
+| `Give You Glory` | 400 only | 금지 | `next/font/google` weight 400 |
+
+## `font-weight: 800` 사용 계약 (필수)
+
+- `text-*-eb` 유틸리티(`text-subtitle-18-eb`, `text-price-16-eb`, `text-price-20-eb`, `text-display-20-eb`, `text-display-28-eb`, `text-display-32-eb`)는 `Pretendard` 계열에서만 사용한다.
+- 커스텀 폰트(`Griun*`, `Gangwon*`, `Ms Madi`, `Give You Glory`)와 `font-weight: 800` 조합은 금지한다.
+- 커스텀 폰트가 필요한 경우 weight는 400 기준으로 디자인하고, 강조가 필요하면 크기/색상/행간/letter-spacing으로 해결한다.
+- 브라우저 합성 굵기(faux bold) 의존을 피하기 위해 전역에서 `font-synthesis-weight: none`을 유지한다 (`app/globals.css` `body`).
+
 ## 전체 클래스 목록
 
 ### Titles

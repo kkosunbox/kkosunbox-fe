@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Ms_Madi, Give_You_Glory } from "next/font/google";
 import "@fontsource/pretendard";
+import "@fontsource/pretendard/700.css";
+import "@fontsource/pretendard/800.css";
+import "@fontsource/pretendard/900.css";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";

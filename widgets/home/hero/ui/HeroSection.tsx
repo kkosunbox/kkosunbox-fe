@@ -10,7 +10,7 @@ import heroPremiumPackage from "../assets/hero-premium-package.png";
 export default function HeroSection() {
   return (
     <section className="bg-[var(--color-hero-bg)] flex flex-col overflow-hidden">
-      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-2 md:gap-0 max-md:px-8 md:px-0 pt-10 md:pt-0 w-full">
+      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-6 md:gap-0 max-md:px-8 md:px-0 pt-10 md:pt-0 w-full">
         {/* Left — 장식 도형 + 패키지 이미지 */}
         <div className="relative order-2 md:order-1 flex flex-1 w-full items-end md:h-full">
           {/* 패키지 이미지 */}
@@ -36,12 +36,12 @@ export default function HeroSection() {
           <Image
             src={heroPremiumPackage}
             alt="Premium Package"
-            className="w-full max-w-[287px] md:max-w-[274px] h-auto mb-4"
+            className="w-full max-w-[203px] md:max-w-[274px] h-auto mb-2 md:mb-4"
           />
           <Text
             variant="subtitle-20-sb"
             mobileVariant="body-14-m"
-            className="text-primary text-center md:text-left mb-5 md:mb-7"
+            className="text-primary text-center md:text-left mb-4 md:mb-7"
           >
             100% 국내산 휴먼그레이드 수제간식 구독
           </Text>

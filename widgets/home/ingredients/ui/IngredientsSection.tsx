@@ -46,8 +46,8 @@ function PawPrintSmall({ className }: { className?: string }) {
 
 export default function IngredientsSection() {
   return (
-    <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-10 pb-10 md:pt-16 md:pb-16">
-      <div className="mx-auto flex flex-col md:flex-row max-w-content justify-between items-center gap-10 md:gap-[76px] md:px-0">
+    <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-7 pb-10 md:pt-16 md:pb-16">
+      <div className="mx-auto flex flex-col md:flex-row max-w-content justify-between items-center gap-5 md:gap-[76px] md:px-0">
         {/* Left — 이미지 + 발바닥 장식 */}
         <div className="relative flex w-full items-center justify-center md:max-w-[645px] px-6 md:px-0">
           <Image
@@ -73,11 +73,16 @@ export default function IngredientsSection() {
           <Text
             variant="subtitle-18-m"
             mobileVariant="body-14-m"
-            className="mb-8 max-w-[291px] text-[var(--color-text-body-warm)] md:leading-[28px]"
+            className="mb-8 max-w-[291px] text-[var(--color-text-body-warm)] md:leading-[28px] max-md:text-center"
           >
-            체크리스트 작성 후 우리 아이에게 적절한<br className="hidden md:block"/> 원재료가 들어간 패키지 박스를<br className="hidden md:block" /> 추천받을 수 있습니다!
+            체크리스트 작성 후 우리 아이에게 적절한<br /> 원재료가 들어간 패키지 박스를<br /> 추천받을 수 있습니다!
           </Text>
-          <Button as={Link} href="/checklist" size="lg" className="max-md:hidden">
+          <Button
+            as={Link}
+            href="/checklist"
+            size="lg"
+            className="max-md:h-10 max-md:w-[186px] max-md:text-body-16-sb max-md:leading-[30px] md:h-[52px] md:w-[192px] md:text-[18px] md:font-semibold md:leading-[30px]"
+          >
             체크리스트 작성하기
           </Button>
         </div>

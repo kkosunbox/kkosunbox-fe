@@ -97,7 +97,7 @@ export default function ReviewsSection() {
       className="py-16 md:pt-[86px] md:pb-[116px]"
       style={{ background: "var(--gradient-reviews)" }}
     >
-      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
+      <div className="mx-auto max-w-content max-md:px-6 md:px-0">
         {/* Heading */}
         <Image
           src={reviewsTitle}
@@ -109,11 +109,11 @@ export default function ReviewsSection() {
           mobileVariant="body-14-m"
           className="mt-4 md:mt-5.5 mb-12 md:mb-[55px] text-center text-[var(--color-text-warm)] tracking-[-0.02em]"
         >
-          실제 꼬순박스 패키지를 구매하신 고객님들의 생생한 리뷰입니다.
+          실제 꼬순박스 패키지를 구매하신&nbsp;<br className="md:hidden"/>고객님들의 생생한 리뷰입니다.
         </Text>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-20 md:gap-9 pt-[60px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-[88px] md:gap-9 pt-[60px]">
           {REVIEWS.map((review) => (
             <ReviewCard key={review.name} review={review} />
           ))}

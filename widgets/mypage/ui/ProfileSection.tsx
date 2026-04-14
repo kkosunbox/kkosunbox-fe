@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Text } from "@/shared/ui";
 import { ChevronRightIcon } from "./mypage-icons";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import type { ChecklistQuestion, Profile } from "@/features/profile/api/types";
 
 function fmtDate(d: string | null | undefined): string {
@@ -191,12 +194,15 @@ function buildChecklistSummary(
 }
 
 export function ProfileSection({
-  profile,
+  profile: serverProfile,
   checklistQuestions,
 }: {
   profile: Profile | null;
   checklistQuestions: ChecklistQuestion[];
 }) {
+  const { profile: clientProfile } = useProfile();
+  const profile = clientProfile ?? serverProfile;
+
   const hasProfile = Boolean(profile?.name);
   const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
 

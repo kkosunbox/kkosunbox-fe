@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProfile, updateProfile } from "@/features/profile/api/profileApi";
 import type { DogGender, Profile } from "@/features/profile/api/types";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
@@ -211,6 +212,7 @@ export default function ProfileManagementSection({
   subscription,
 }: ProfileManagementSectionProps) {
   const router = useRouter();
+  const { refreshProfile } = useProfile();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, start] = useTransition();
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -260,6 +262,7 @@ export default function ProfileManagementSection({
       } else if (profile) {
         await updateProfile(profile.id, { profileImageUrl: fileUrl });
         setProfileImageUrl(fileUrl);
+        await refreshProfile();
         router.refresh();
       }
     } catch (error) {
@@ -295,6 +298,7 @@ export default function ProfileManagementSection({
           await updateProfile(profile.id, body);
         }
 
+        await refreshProfile();
         router.push("/mypage");
         router.refresh();
       } catch (error) {

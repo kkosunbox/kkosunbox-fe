@@ -6,6 +6,7 @@ import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { getChecklistQuestions, getProfiles, updateProfile } from "@/features/profile/api/profileApi";
 import type { ChecklistAnswerInput, ChecklistQuestion, Profile } from "@/features/profile/api/types";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import ChecklistHero from "./ChecklistHero";
@@ -138,6 +139,7 @@ export default function ChecklistSection() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn } = useAuth();
+  const { refreshProfile } = useProfile();
   const editQuestionIdParam = searchParams.get("editQuestionId");
   const returnTo = searchParams.get("returnTo");
 
@@ -411,6 +413,7 @@ export default function ChecklistSection() {
         const profile = profiles[0];
         if (profile) {
           await updateProfile(profile.id, { checklistAnswers });
+          await refreshProfile();
           const planRes = await getSubscriptionPlans(profile.id);
           const rec = planRes.plans.find((p) => p.isRecommended);
           if (rec) {

@@ -269,6 +269,7 @@ body {
   background: var(--color-background);
   color: var(--color-text);
   font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-synthesis-weight: none;
 }
 
 button:not(:disabled) {
@@ -406,7 +407,10 @@ button:disabled {
 @utility text-caption-12-r  { font-size: 12px; line-height: 20px; font-weight: 400; }
 @utility text-caption-12-m  { font-size: 12px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
 
-/* Price display (tight leading, for numbers/amounts) */
+/* Price display (tight leading, for numbers/amounts)
+ * NOTE: `*-eb` utilities are Pretendard-only.
+ * Do not combine with custom 400-only families (Griun/Gangwon/Ms Madi/Give You Glory).
+ */
 @utility text-price-16-b  { font-size: 16px; line-height: 1;    font-weight: 700; letter-spacing: -0.04em; }
 @utility text-price-16-eb { font-size: 16px; line-height: 19px; font-weight: 800; letter-spacing: -0.05em; }
 @utility text-price-20-eb { font-size: 20px; line-height: 1;    font-weight: 800; letter-spacing: -0.05em; }

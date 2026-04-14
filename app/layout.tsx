@@ -4,6 +4,7 @@ import "@fontsource/pretendard";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
+import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
 import { ModalProvider, LoadingOverlayProvider } from "@/shared/ui";
 
 const msMadi = Ms_Madi({
@@ -44,11 +45,13 @@ export default async function RootLayout({
       </head>
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
         <AuthProvider initialUser={initialUser}>
-          <ModalProvider>
-            <LoadingOverlayProvider>
-              {children}
-            </LoadingOverlayProvider>
-          </ModalProvider>
+          <ProfileProvider>
+            <ModalProvider>
+              <LoadingOverlayProvider>
+                {children}
+              </LoadingOverlayProvider>
+            </ModalProvider>
+          </ProfileProvider>
         </AuthProvider>
       </body>
     </html>

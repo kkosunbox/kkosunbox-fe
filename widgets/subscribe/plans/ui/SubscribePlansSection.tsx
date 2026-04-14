@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
@@ -10,7 +10,7 @@ import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subs
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
-  SUBSCRIBE_PLAN_CARD_FEATURES,
+  PACKAGES,
 } from "./packageData";
 import PackageDetailView from "./PackageDetailView";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -57,6 +57,31 @@ export default function SubscribePlansSection({ plans }: Props) {
   const router = useRouter();
   const [isDismissed, setIsDismissed] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const savedScrollY = useRef(0);
+
+  const handleSelectPlan = useCallback((plan: SubscriptionPlanDto) => {
+    // 모바일에서만 스크롤 저장 및 상단 이동
+    if (window.innerWidth < 768) {
+      savedScrollY.current = window.scrollY;
+      setSelectedPlan(plan);
+      requestAnimationFrame(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "instant" });
+      });
+    } else {
+      setSelectedPlan(plan);
+    }
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setSelectedPlan(null);
+    // 모바일에서만 스크롤 복원
+    if (window.innerWidth < 768) {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: savedScrollY.current, behavior: "instant" });
+      });
+    }
+  }, []);
 
   const sortedPlans = useMemo(
     () => [...plans].sort(comparePlansForDisplayOrder),
@@ -87,10 +112,10 @@ export default function SubscribePlansSection({ plans }: Props) {
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="bg-white pb-16 md:pt-0 md:pb-20">
+      <section ref={sectionRef} className="bg-white pb-16 md:pt-0 md:pb-20">
         <div className="mx-auto px-6 md:px-0">
           {/* Hero image */}
-          <div className="mb-10 text-center md:mb-8">
+          <div className="mb-6 text-center md:mb-8">
             <Image
               src={SubscribePlansHeroImageMobile}
               alt="Subscribe Plans Hero"
@@ -103,14 +128,35 @@ export default function SubscribePlansSection({ plans }: Props) {
             />
           </div>
 
+          {/* 모바일 티어 탭 — 카드 선택 전/후 모두 표시 */}
+          <div className="md:hidden mb-4 flex justify-center gap-3">
+            {sortedPlans.map((p) => {
+              const theme = packageThemeForPlan(p);
+              const isActive = selectedPlan?.id === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => isActive ? handleCloseDetail() : handleSelectPlan(p)}
+                  className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+                  style={{
+                    background: isActive ? theme.colorVar : "var(--color-text-muted)",
+                  }}
+                >
+                  {theme.tierLabel}
+                </button>
+              );
+            })}
+          </div>
+
           {selectedPlan ? (
             <div className="mx-auto w-full max-w-[var(--max-width-content)]">
               <PackageDetailView
                 key={selectedPlan.id}
                 plan={selectedPlan}
                 allPlans={sortedPlans}
-                onSelectPlan={setSelectedPlan}
-                onClose={() => setSelectedPlan(null)}
+                onSelectPlan={handleSelectPlan}
+                onClose={handleCloseDetail}
               />
             </div>
           ) : sortedPlans.length === 0 ? (
@@ -146,7 +192,7 @@ export default function SubscribePlansSection({ plans }: Props) {
                       <button
                         type="button"
                         aria-label={`${plan.name} 패키지 상세 정보`}
-                        onClick={() => setSelectedPlan(plan)}
+                        onClick={() => handleSelectPlan(plan)}
                         className="flex shrink-0 items-center justify-center"
                       >
                         <InfoIcon />
@@ -172,13 +218,13 @@ export default function SubscribePlansSection({ plans }: Props) {
                     ) : null}
 
                     <ul className="mb-7 flex flex-col gap-[14px]">
-                      {SUBSCRIBE_PLAN_CARD_FEATURES.map((feature) => (
+                      {(PACKAGES.find((p) => p.tier === theme.tier)?.items ?? []).map((item) => (
                         <li
-                          key={feature}
+                          key={item}
                           className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
                         >
                           <CheckIcon color={color} />
-                          {feature}
+                          {item}
                         </li>
                       ))}
                     </ul>

@@ -137,9 +137,9 @@ export default function PackageDetailView({
       {/* ══ MOBILE LAYOUT (lg 미만) ══════════════════════════════════ */}
       <div className="lg:hidden flex flex-col gap-4">
 
-        {/* 상단: 패키지 정보 카드 */}
+        {/* 상단: 패키지 정보 카드 — 모바일 탭 선택 시 숨김 (탭은 SubscribePlansSection에서 렌더) */}
         <div
-          className="flex flex-col rounded-[20px] px-7 pb-7 pt-5"
+          className="max-md:hidden flex flex-col rounded-[20px] px-7 pb-7 pt-5"
           style={{ background: "var(--color-background)" }}
         >
           <div className="mb-2.5 flex items-center justify-between">

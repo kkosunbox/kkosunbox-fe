@@ -255,7 +255,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                 </ul>
 
                 {/* 가격 */}
-                <div className="mb-5 mt-auto flex items-center justify-between border-t border-white pt-5">
+                <div className="mb-5 md:mb-7 mt-auto flex items-center justify-between border-t border-white pt-5">
                   <span className="text-body-13-b text-[var(--color-text)]">월 요금제</span>
                   <span className="text-price-20-eb text-[var(--color-surface-dark)]">
                     {pkg.price}

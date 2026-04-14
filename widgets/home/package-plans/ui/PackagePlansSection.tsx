@@ -77,8 +77,8 @@ function PackageCard({
     <div
       className={[
         "flex flex-col items-center rounded-[20px] px-6 transition-all duration-500 ease-in-out",
-        isActive ? "pt-6 md:pt-9" : "pt-6",
-        isActive ? "h-[446px] max-md:w-full w-[375px] pb-9" : "h-[374px] w-[280px] pb-8",
+        isActive ? "max-md:pt-7 md:pt-9" : "pt-6",
+        isActive ? "max-md:h-[415px] md:h-[446px] max-md:w-full md:w-[375px] max-md:pb-[30px] md:pb-9" : "h-[374px] w-[280px] pb-8",
       ].join(" ")}
       style={{ background: pkg.cardBg }}
     >
@@ -205,14 +205,14 @@ export default function PackagePlansSection() {
         <Image
           src={packagePlansTitle02}
           alt="원하는 패키지로 선택 후 구독하세요!"
-          className="mx-auto h-auto w-full max-w-[260px] md:max-w-[306px]"
+          className="mx-auto h-auto w-full max-w-[215px] md:max-w-[306px]"
         />
-        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7.5 md:mb-11 mt-7 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
+        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 mt-4 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
           설문조사 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
         </Text>
 
         <div className="md:hidden">
-          <div className="mx-auto w-full max-w-[375px]">
+          <div className="mx-auto w-full max-w-[327px]">
             <PackageCard pkg={PACKAGES[activeIndex]} idx={activeIndex} isActive />
           </div>
         </div>

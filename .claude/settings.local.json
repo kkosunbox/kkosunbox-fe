@@ -43,7 +43,9 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\)\")",
       "Bash(pnpm add:*)",
       "Bash(npx next:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(curl:*)"
     ]
   }
 }

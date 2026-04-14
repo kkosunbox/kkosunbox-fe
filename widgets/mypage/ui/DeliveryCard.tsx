@@ -111,15 +111,15 @@ export function DeliveryCard() {
   return (
     <DashboardCard>
       <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" />
-      <div className="grid grid-cols-4 gap-2.5 pt-1">
+      <div className="grid grid-cols-4 gap-1 md:gap-10 pt-1 max-md:-mx-3">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];
           return (
-            <div key={step.label} className="flex flex-col items-center gap-2 text-center">
-              <div className="text-[var(--color-text-secondary)]">
+            <div key={step.label} className="flex flex-col items-center text-center">
+              <div className="text-[var(--color-text-secondary)] mb-4">
                 <Icon />
               </div>
-              <Text variant="body-13-r" className="leading-[1.3] text-[var(--color-text)]">
+              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-md:mb-3 md:mb-2.5">
                 {step.label}
               </Text>
               <Text as="span" variant="subtitle-20-b" className="text-primary">

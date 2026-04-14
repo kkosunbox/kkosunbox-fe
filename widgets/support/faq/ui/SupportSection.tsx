@@ -177,8 +177,8 @@ export default function SupportSection() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-10 max-md:py-8 md:py-[50px]">
-      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-6 px-4 max-md:px-4 md:px-8">
+    <div className="min-h-screen bg-white max-md:py-6 md:py-10">
+      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-8">
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
         {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image
@@ -201,7 +201,7 @@ export default function SupportSection() {
 
         {/* ── CTA 배너 (Figma 118px, gradient, pill 버튼) ── */}
         <section
-          className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] mt-4 px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
+          className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
           style={{ background: "var(--gradient-support-banner)" }}
           aria-label="1:1 문의 안내"
         >
@@ -211,24 +211,36 @@ export default function SupportSection() {
               alt="꼬순박스에 궁금한 점이 있으신가요?"
               width={FaqQuestion.width}
               height={FaqQuestion.height}
-              sizes="(max-width: 767px) 100vw, 320px"
-              className="h-auto max-md:w-full md:w-[320px]"
+              sizes="(max-width: 767px) 220px, 320px"
+              className="h-auto max-md:w-[220px] md:w-[320px]"
             />
             <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
-              1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다.
+              1:1 문의를 남겨주시면 담당자가 확인 후
+              <br className="md:hidden" />
+              {" "}빠르게 답변해 드립니다.
             </p>
           </div>
           <Link
             href="/inquiry"
-            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
+            className="inline-flex h-10 md:h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
           >
             문의하기
           </Link>
         </section>
 
+        {/* ── 모바일 전용: 내 문의내역 (두 섹션 사이) ── */}
+        <div className="flex justify-center md:hidden">
+          <Link
+            href="/support/history"
+            className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
+          >
+            내 문의내역
+          </Link>
+        </div>
+
         {/* ── FAQ 패널 (#FFF7EF) ── */}
         <section
-          className="rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] md:pb-7 md:pt-6"
+          className="rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] md:pb-7 md:pt-6"
           aria-label="자주 묻는 질문"
         >
           {/* 검색 + 내 문의내역 */}
@@ -245,7 +257,7 @@ export default function SupportSection() {
                 className="min-w-0 flex-1 border-0 bg-transparent p-0 text-body-14-m leading-[17px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
               />
             </label>
-            <div className="flex justify-center md:justify-end">
+            <div className="max-md:hidden flex justify-end">
               <Link
                 href="/support/history"
                 className="text-right text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"

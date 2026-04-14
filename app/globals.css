@@ -298,9 +298,18 @@ button:disabled {
 @utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
 @utility text-title-28-b  { font-size: 28px; line-height: 150%; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-title-28-sb { font-size: 28px; line-height: 150%; font-weight: 600; letter-spacing: -0.04em; }
+@utility text-title-20-b  { font-size: 20px; line-height: 30px; font-weight: 700; letter-spacing: -0.04em; }
+@utility text-title-20-sb { font-size: 20px; line-height: 30px; font-weight: 600; letter-spacing: -0.04em; }
 @utility text-title-28-r-griun {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 28px;
+  line-height: 120%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-title-20-r-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 20px;
   line-height: 120%;
   font-weight: 400;
   letter-spacing: -0.04em;
@@ -359,6 +368,13 @@ button:disabled {
 @utility text-body-16-r-griun-lh210 {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 16px;
+  line-height: 210%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-body-12-r-griun-lh210 {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 12px;
   line-height: 210%;
   font-weight: 400;
   letter-spacing: -0.04em;

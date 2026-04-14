@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import checklistDoneTitle from "../assets/checklist-done-title.png";
+import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.png";
+import checklistDoneTitlePawsMobile from "../assets/checklist-done-title-paws-mobile.png";
 import doubleTwinkle from "@/widgets/subscribe/recommend/assets/double-twinkle.png";
 import stamp from "@/widgets/subscribe/recommend/assets/stamp.png";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
@@ -23,6 +25,13 @@ const TIER_LABEL: Record<RecommendedTier, string> = {
   standard: "스탠다드",
   premium: "프리미엄",
 };
+
+/** 추천 티어부터 Premium까지의 패키지 목록 (모바일 뱃지용) */
+const TIER_ORDER: RecommendedTier[] = ["basic", "standard", "premium"];
+function getMobileBadgeTiers(recommendedTier: RecommendedTier) {
+  const idx = TIER_ORDER.indexOf(recommendedTier);
+  return TIER_ORDER.slice(idx).map((id) => PACKAGES.find((p) => p.id === id)!);
+}
 
 /* ── Icons ─── */
 
@@ -89,6 +98,34 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
 
   const petName = petInfo.name.trim() || "우리 아이";
   const recommended = PACKAGES.find((p) => p.id === recommendedTier)!;
+  const mobileBadgeTiers = getMobileBadgeTiers(recommendedTier);
+
+  /** 모바일 추천 문구: 추천 범위에 따라 달라짐 */
+  const mobileDescription = (() => {
+    if (recommendedTier === "premium") {
+      return (
+        <>
+          <strong className="font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+          <strong className="font-bold">프리미엄 패키지</strong>입니다.
+        </>
+      );
+    }
+    if (recommendedTier === "standard") {
+      return (
+        <>
+          <strong className="font-bold">{petName}</strong>에게 가장 추천드리는 구성은{" "}
+          <strong className="font-bold">프리미엄, 스탠다드 패키지</strong>입니다.
+        </>
+      );
+    }
+    // basic
+    return (
+      <>
+        <strong className="font-bold">{petName}</strong>에게 꼭 필요한 프리미엄, 스탠다드, 베이직의{" "}
+        <strong className="font-bold">모든 구성을 추천</strong>드립니다.
+      </>
+    );
+  })();
 
   /* 상세 뷰 */
   if (selectedTier) {
@@ -128,55 +165,113 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
             <Image
               src={checklistDoneTitle}
               alt="체크리스트 분석 완료!"
-              className="mx-auto h-auto max-md:w-[min(100%,280px)] md:w-auto md:max-w-[198px]"
+              className="mx-auto h-auto max-md:w-[min(100%,280px)] max-md:max-w-[150px] md:w-auto md:max-w-[198px]"
               priority
             />
           </h1>
         </div>
 
         {/* 추천 배너 */}
-        <div
-          className="mb-6 flex items-center gap-5 overflow-hidden rounded-[20px] px-6 py-5 md:mb-8 md:gap-6 md:h-[126px] md:px-8 md:py-0"
-          style={{ background: "var(--gradient-checklist-result)" }}
-        >
-          {/* 반려견 아바타 */}
-          <div
-            className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] md:h-[78px] md:w-[78px]"
-            style={{ background: "var(--color-secondary)" }}
-          >
-            {avatarSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
-            ) : (
-              <span className="max-md:text-emoji-32 md:text-emoji-38">🐶</span>
-            )}
+        <div className="relative mb-6 md:mb-8">
+          {/* 모바일: 아바타가 박스 위로 돌출 */}
+          <div className="relative z-10 -mb-[32px] flex justify-center md:hidden">
+            <div
+              className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)]"
+              style={{ background: "var(--color-secondary)" }}
+            >
+              {avatarSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-emoji-32">🐶</span>
+              )}
+            </div>
           </div>
 
-          {/* 추천 내용 */}
-          <div className="flex flex-col gap-2">
-            <span
-              className="w-fit rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
-              style={{ background: recommended.colorVar }}
+          <div
+            className="relative flex overflow-hidden rounded-[20px] max-md:flex-col max-md:items-center max-md:px-5 max-md:pb-5 max-md:pt-[44px] max-md:text-center md:h-[126px] md:flex-row md:items-center md:gap-6 md:px-8"
+            style={{ background: "var(--gradient-checklist-result)" }}
+          >
+            {/* 데스크톱: 아바타 인라인 */}
+            <div
+              className="flex h-[78px] w-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] max-md:hidden"
+              style={{ background: "var(--color-secondary)" }}
             >
-              {petName}
-            </span>
-            <p
-              className="max-md:text-body-13-r md:text-body-16-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)]"
-              style={{
-                fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-              }}
-            >
-              체크리스트 분석 완료!{" "}
-              <strong className="font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
-              <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>입니다.
-            </p>
+              {avatarSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
+              ) : (
+                <span className="text-emoji-38">🐶</span>
+              )}
+            </div>
+
+            {/* 추천 내용 */}
+            <div className="flex flex-col gap-2 max-md:items-center">
+              {/* 모바일: 추천 범위 뱃지들 */}
+              <div className="flex items-center gap-1.5 md:hidden">
+                {mobileBadgeTiers.map((pkg) => (
+                  <span
+                    key={pkg.id}
+                    className="flex h-[24px] items-center rounded-full px-3 text-body-13-sb leading-[1] text-white"
+                    style={{ background: pkg.colorVar }}
+                  >
+                    {pkg.tier}
+                  </span>
+                ))}
+              </div>
+
+              {/* 데스크톱: 단일 뱃지 */}
+              <span
+                className="w-fit rounded-full px-4 py-1 text-body-14-sb leading-[1] text-white max-md:hidden"
+                style={{ background: recommended.colorVar }}
+              >
+                {recommended.tier}
+              </span>
+
+              {/* 모바일 문구 */}
+              <p
+                className="text-body-13-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] md:hidden"
+                style={{
+                  fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+                }}
+              >
+                체크리스트 분석 완료! {mobileDescription}
+              </p>
+
+              {/* 데스크톱 문구 */}
+              <p
+                className="text-body-16-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] max-md:hidden"
+                style={{
+                  fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+                }}
+              >
+                체크리스트 분석 완료!{" "}
+                <strong className="font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+                <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>입니다.
+              </p>
+            </div>
+
+            {/* 발자국 장식 — 데스크톱 */}
+            <Image
+              src={checklistDoneTitlePaws}
+              alt=""
+              aria-hidden
+              className="pointer-events-none absolute right-6 top-1/2 h-[80px] w-auto -translate-y-1/2 max-md:hidden"
+            />
+            {/* 발자국 장식 — 모바일 (우하단 배경) */}
+            <Image
+              src={checklistDoneTitlePawsMobile}
+              alt=""
+              aria-hidden
+              className="pointer-events-none absolute bottom-7 right-5 h-[60px] w-auto opacity-40 md:hidden"
+            />
           </div>
         </div>
 
         {/* 패키지 카드 3종 */}
         <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
           {PACKAGES.map((pkg) => {
-            const isRecommended = pkg.id === recommendedTier;
+            const isRecommended = TIER_ORDER.indexOf(pkg.id as RecommendedTier) >= TIER_ORDER.indexOf(recommendedTier);
             return (
               <div
                 key={pkg.tier}
@@ -186,7 +281,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                 {/* 상단: 칩 + ⓘ 버튼 */}
                 <div className="mb-5 flex items-center justify-between">
                   <span
-                    className="rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
+                    className="flex h-[24px] items-center rounded-full px-3 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
                     style={{ background: pkg.colorVar }}
                   >
                     {pkg.tier}
@@ -213,7 +308,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                     <Image
                       src={stamp}
                       alt="BEST CHOICE 추천 스탬프"
-                      className="absolute -right-5 -top-8 h-[72px] w-[72px] object-contain md:h-[140px] md:w-[140px]"
+                      className="absolute -top-6 right-2 h-[120px] w-[120px] object-contain md:-right-5 md:-top-8 md:h-[140px] md:w-[140px]"
                     />
                   )}
                 </div>
@@ -247,7 +342,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                 </ul>
 
                 {/* 가격 */}
-                <div className="mb-5 mt-auto flex items-center justify-between border-t border-white pt-5">
+                <div className="mb-5 md:mb-7 mt-auto flex items-center justify-between border-t border-white pt-5">
                   <span className="text-body-13-b text-[var(--color-text)]">월 요금제</span>
                   <span
                     className="text-price-20-eb"

@@ -241,7 +241,7 @@ export function ProfileSection({
                 </div>
                 {hasProfile ? (
                   <>
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="mt-1 text-[var(--color-text-secondary)] md:mt-[11px]">
+                    <Text variant="body-16-m" mobileVariant="body-13-r" className="mt-3 text-[var(--color-text-secondary)] md:mt-[11px]">
                       {birth} &nbsp;|&nbsp; {gender} &nbsp;|&nbsp; {weight}
                     </Text>
                   </>
@@ -259,8 +259,6 @@ export function ProfileSection({
             </div>
 
             <div className="max-md:hidden mx-[20px] h-[149px] w-px self-center bg-[var(--color-text-muted)]" />
-            <div className="md:hidden h-px bg-[var(--color-divider-warm)]" />
-
             <div className="max-md:hidden flex min-w-0 flex-1 items-center md:w-[318px] md:flex-none md:self-center">
               {hasChecklist ? (
                 <div className="flex h-[151px] w-full items-center">

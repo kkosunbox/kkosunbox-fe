@@ -20,7 +20,7 @@ function ProgressBar({ current, total }: { current: number; total: number }) {
         <div
           key={n}
           className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
-          style={{ background: n <= current ? "var(--color-accent)" : "var(--color-beige)" }}
+          style={{ background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)" }}
         />
       ))}
     </div>
@@ -79,7 +79,7 @@ export default function ChecklistQuestionStep({
 
   return (
     <div className="flex flex-col">
-      <div className="mb-4 flex items-center gap-3 md:hidden">
+      <div className="mb-4 flex items-center md:hidden -ml-2">
         <button
           type="button"
           onClick={onBack}
@@ -107,7 +107,7 @@ export default function ChecklistQuestionStep({
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 max-md:text-subtitle-16-b md:text-subtitle-18-b text-[var(--color-text)]"
+          className="flex items-center gap-1.5 md:gap-3 max-md:text-subtitle-16-b md:text-subtitle-18-b text-[var(--color-text)]"
           aria-label="이전 단계로"
         >
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" aria-hidden="true">

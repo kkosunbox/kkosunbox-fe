@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Text } from "@/shared/ui";
 import checklistHeroPcPattern from "../assets/checklist-hero-pc-pattern.png";
 import checklistHeroTitle from "../assets/checklist-hero-title.png";
 import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.png";
@@ -52,14 +53,17 @@ export default function ChecklistHero() {
             priority
           />
         </h1>
-        <p
-          className="max-w-[345px] px-2 text-body-16-r leading-5 tracking-[-0.02em] text-[var(--color-text)] max-md:mt-2 md:mt-3"
+        <Text
+          as="p"
+          variant="body-16-r"
+          mobileVariant="body-14-r"
+          className="max-w-[345px] px-2 leading-5 tracking-[-0.02em] text-[var(--color-text)] max-md:mt-2 md:mt-3"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}
         >
           강아지의 특징과 선호하는 간식을 작성해주세요!
-        </p>
+        </Text>
       </div>
     </section>
   );

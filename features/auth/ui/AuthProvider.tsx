@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { loginAction, logoutAction } from "../lib/actions";
+import { loginAction, logoutAction, syncAuthCookieAction } from "../lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
 import type { AuthContextValue, AuthUser } from "../model/types";
 
@@ -47,6 +47,9 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
       .then(({ getUser }) => getUser())
       .then((apiUser) => {
         if (!user) setUser({ id: apiUser.id, email: apiUser.email });
+        // 클라이언트 refresh로 복구된 accessToken을 SSR 쿠키에도 동기화
+        const newAccess = tokenStore.getAccess();
+        if (newAccess) syncAuthCookieAction(newAccess).catch(() => {});
       })
       .catch(() => tokenStore.clear());
   // eslint-disable-next-line react-hooks/exhaustive-deps

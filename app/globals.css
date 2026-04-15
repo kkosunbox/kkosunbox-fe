@@ -440,6 +440,17 @@ button:disabled {
 @utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 600; }
 @utility text-btn-12-m   { font-size: 12px; line-height: 16px; font-weight: 500; }
 
+/* ─── Floating animation ─────────────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+
 /* ─── Paw particle burst animation ───────────────────────────────────────── */
 @keyframes paw-particle-fly {
   0% {

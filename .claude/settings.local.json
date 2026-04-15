@@ -45,7 +45,11 @@
       "Bash(npx next:*)",
       "Bash(git commit:*)",
       "Bash(pnpm dev:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(echo \"EXIT_CODE=$?\")",
+      "Bash(npx eslint:*)",
+      "Bash(echo \"TSC=$?\")",
+      "Bash(echo \"LINT=$?\")"
     ]
   }
 }

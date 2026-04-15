@@ -121,11 +121,13 @@ export default function SubscribePlansSection({ plans }: Props) {
               alt="Subscribe Plans Hero"
               className="max-md:block md:hidden w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
             />
-            <Image
-              src={SubscribePlansHeroImage}
-              alt="Subscribe Plans Hero"
-              className="max-md:hidden w-full h-auto"
-            />
+            <div className="hidden h-[210px] overflow-hidden md:flex md:items-center md:justify-center">
+              <Image
+                src={SubscribePlansHeroImage}
+                alt="Subscribe Plans Hero"
+                className="h-[210px] w-auto min-w-[1920px] max-w-none shrink-0"
+              />
+            </div>
           </div>
 
           {/* 모바일 티어 탭 — 카드 선택 전/후 모두 표시 */}

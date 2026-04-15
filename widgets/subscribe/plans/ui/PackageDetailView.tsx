@@ -363,8 +363,6 @@ export default function PackageDetailView({
                 ))}
               </div>
 
-              <div className="mx-6 h-px bg-[var(--color-text-muted)]" />
-
               {/* Comparison table */}
               <div className="flex-1 overflow-x-auto">
                 <div className="min-w-[360px] px-6">
@@ -385,7 +383,7 @@ export default function PackageDetailView({
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-3 divide-x divide-[var(--color-text-muted)] border-t border-b border-[var(--color-text-muted)]">
+                  <div className="grid grid-cols-3 border-t border-b border-[var(--color-text-muted)]">
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center px-2 py-3">
                         <p
@@ -398,7 +396,7 @@ export default function PackageDetailView({
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-3 divide-x divide-[var(--color-text-muted)] border-b border-[var(--color-text-muted)]">
+                  <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex flex-col items-center justify-center gap-0.5 px-2 py-3">
                         {p.contents.map((c) => (
@@ -414,7 +412,7 @@ export default function PackageDetailView({
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-3 divide-x divide-[var(--color-text-muted)] border-b border-[var(--color-text-muted)]">
+                  <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center px-2 py-3">
                         <p className="text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
@@ -424,7 +422,7 @@ export default function PackageDetailView({
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-3 divide-x divide-[var(--color-text-muted)] border-b border-[var(--color-text-muted)]">
+                  <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center px-2 py-3">
                         <p className="whitespace-pre-line text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
@@ -434,7 +432,7 @@ export default function PackageDetailView({
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-3 divide-x divide-[var(--color-text-muted)] py-3">
+                  <div className="grid grid-cols-3 py-3">
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center gap-1">
                         {Array.from({ length: p.hearts }).map((_, i) => (

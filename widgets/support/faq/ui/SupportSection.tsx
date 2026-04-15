@@ -222,7 +222,7 @@ export default function SupportSection() {
           </div>
           <Link
             href="/inquiry"
-            className="inline-flex h-10 md:h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
+            className="mx-auto inline-flex h-[40px] w-full max-w-[410px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white"
           >
             문의하기
           </Link>
@@ -272,7 +272,7 @@ export default function SupportSection() {
               {currentItems.map((item) => (
                 <li
                   key={item.question}
-                  className="flex min-h-[208px] flex-col gap-3 rounded-[20px] bg-white p-4 md:p-4"
+                  className="flex flex-col gap-3 rounded-[20px] bg-white p-4 md:min-h-[208px] md:p-4"
                 >
                   <PawCircleIcon />
                   <div className="flex flex-col gap-2">

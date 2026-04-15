@@ -71,7 +71,7 @@ export default function AboutSection() {
                     alt="꼬순박스 소개 — 반려견 사진과 브랜드 로고가 담긴 콜라주"
                     width={aboutHeroCollageMobile.width}
                     height={aboutHeroCollageMobile.height}
-                    className="h-auto w-full object-contain object-top md:hidden"
+                    className="h-auto w-full object-contain object-top md:hidden max-w-[390px] mx-auto"
                     sizes="(max-width: 767px) 100vw"
                     priority
                   />

@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { InquiryDto, InquiryStatus } from "@/features/inquiry/api";
 import { getInquiries } from "@/features/inquiry/api";
 import { ApiError } from "@/shared/lib/api/types";
+import { Text } from "@/shared/ui";
 import FaqQuestion from "../../faq/assets/faq-question.png";
 import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
@@ -129,15 +130,22 @@ export default function InquiryHistorySection() {
               width={FaqQuestion.width}
               height={FaqQuestion.height}
               sizes="(max-width: 767px) 100vw, 280px"
-              className="h-auto max-md:w-full md:w-[280px]"
+              className="h-auto max-md:w-full max-md:max-w-[222px] md:w-[280px]"
             />
-            <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
-              1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다.
-            </p>
+            <Text
+              as="p"
+              variant="body-14-m"
+              mobileVariant="body-13-r"
+              className="leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left"
+            >
+              1:1 문의를 남겨주시면 담당자가 확인 후
+              <br className="md:hidden" />
+              빠르게 답변해 드립니다.
+            </Text>
           </div>
           <Link
             href="/inquiry"
-            className="inline-flex h-12 w-full shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-center text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:max-w-none md:w-[200px]"
+            className="mx-auto inline-flex h-[40px] w-full max-w-[410px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white"
           >
             문의하기
           </Link>

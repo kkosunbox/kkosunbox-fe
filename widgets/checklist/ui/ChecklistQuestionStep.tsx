@@ -10,19 +10,45 @@ function optionLabel(o: ChecklistOption): string {
 const CTA_CLASS =
   "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
-function ProgressBar({ current, total }: { current: number; total: number }) {
+function ProgressBar({
+  current,
+  total,
+  maxVisited,
+  onStepClick,
+}: {
+  current: number;
+  total: number;
+  maxVisited: number;
+  onStepClick?: (step: number) => void;
+}) {
   return (
     <div
       className="flex gap-1 max-md:min-w-0 max-md:flex-1 md:flex-none md:gap-2"
       aria-label={`${current} / ${total} 단계`}
     >
-      {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
-        <div
-          key={n}
-          className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
-          style={{ background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)" }}
-        />
-      ))}
+      {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
+        const visited = n <= maxVisited;
+        const clickable = visited && n !== current && onStepClick != null;
+        return clickable ? (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onStepClick(n)}
+            className="h-[5px] rounded-full transition-colors duration-300 hover:opacity-70 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
+            style={{
+              background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)",
+              cursor: "pointer",
+            }}
+            aria-label={`${n}단계로 이동`}
+          />
+        ) : (
+          <div
+            key={n}
+            className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
+            style={{ background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)" }}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -63,6 +89,8 @@ interface Props {
   onBack: () => void;
   onNext: () => void;
   isLastQuestion: boolean;
+  maxVisitedStep: number;
+  onStepClick?: (step: number) => void;
 }
 
 export default function ChecklistQuestionStep({
@@ -74,6 +102,8 @@ export default function ChecklistQuestionStep({
   onBack,
   onNext,
   isLastQuestion,
+  maxVisitedStep,
+  onStepClick,
 }: Props) {
   const nextLabel = isLastQuestion ? "결과보기" : "다음";
 
@@ -96,7 +126,7 @@ export default function ChecklistQuestionStep({
             />
           </svg>
         </button>
-        <ProgressBar current={stepIndex} total={totalSteps} />
+        <ProgressBar current={stepIndex} total={totalSteps} maxVisited={maxVisitedStep} onStepClick={onStepClick} />
       </div>
 
       <Text as="h2" variant="subtitle-18-b" className="mb-2 text-[var(--color-text)] md:hidden">
@@ -121,7 +151,7 @@ export default function ChecklistQuestionStep({
           </svg>
           {question.text}
         </button>
-        <ProgressBar current={stepIndex} total={totalSteps} />
+        <ProgressBar current={stepIndex} total={totalSteps} maxVisited={maxVisitedStep} onStepClick={onStepClick} />
       </div>
 
       <div className="mb-8 max-md:mt-0">

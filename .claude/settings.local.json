@@ -49,7 +49,8 @@
       "Bash(echo \"EXIT_CODE=$?\")",
       "Bash(npx eslint:*)",
       "Bash(echo \"TSC=$?\")",
-      "Bash(echo \"LINT=$?\")"
+      "Bash(echo \"LINT=$?\")",
+      "Bash(pnpm exec:*)"
     ]
   }
 }

@@ -461,7 +461,7 @@ export default function ProfileManagementSection({
                       }}
                       placeholder="생년월일 선택"
                       formatDisplay={formatBirthDateDisplayDots}
-                      triggerClassName="!h-8 !w-[220px] !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m"
+                      triggerClassName="!h-8 !w-[220px] !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
                     />
                   </div>
 
@@ -689,7 +689,7 @@ export default function ProfileManagementSection({
                 }}
                 placeholder="생년월일 선택"
                 formatDisplay={formatBirthDateDisplayDots}
-                triggerClassName="!h-8 !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m"
+                triggerClassName="!h-8 !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
               />
             </FieldShell>
             <FieldShell id="m-weight" label="몸무게" mobile>

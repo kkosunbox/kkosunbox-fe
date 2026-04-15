@@ -41,7 +41,6 @@ export interface PackageData {
   tabActiveBg: string;
   name: string;
   items: readonly string[];
-  price: string;
   quote: string;
   contents: readonly string[];
   special: string;
@@ -64,7 +63,6 @@ export const PACKAGES: PackageData[] = [
     tabActiveBg: "rgba(63, 105, 0, 0.2)",
     name: "베이직 패키지 BOX",
     items: ["100% 원물 프리미엄 져키", "인공 첨가물 0%", "이중 안심 포장"],
-    price: "15,000원",
     quote: "가볍게 시작하는\n우리아이 간식 루틴",
     contents: ["요거트볼 1종 + 츄르 1종 +", "미역칩(꼬꼬 or 꿀꿀) + 우유껌"],
     special: "휴먼그레이드 제철 식재료",
@@ -78,7 +76,6 @@ export const PACKAGES: PackageData[] = [
     tabActiveBg: "rgba(62, 158, 217, 0.2)",
     name: "스탠다드 패키지 BOX",
     items: ["베이직의 모든 구성 포함", "영양 강화 플러스 져키", "균형 잡힌 영양 설계"],
-    price: "20,000원",
     quote: "건강까지 챙기는\n균형 잡힌 간식 구성",
     contents: ["요거트볼 1종 +", "미역칩(꼬꼬 or 꿀꿀) +", "소고기껌 + 우유껌 + 단호박타르트"],
     special: "휴먼그레이드 + 슈퍼푸드 추가",
@@ -92,7 +89,6 @@ export const PACKAGES: PackageData[] = [
     tabActiveBg: "rgba(238, 104, 26, 0.2)",
     name: "프리미엄 패키지 BOX",
     items: ["휴먼그레이드 프리미엄 져키", "1:1 맞춤 큐레이션", "최상의 재료로 만든 패키지"],
-    price: "25,000원",
     quote: "수제 화식까지 포함된\n특별한 식사형 박스",
     contents: ["요거트볼 2종 + 화식 2종 +", "미역칩(꼬꼬 or 꿀꿀) + 소고기껌"],
     special: "휴먼그레이드 + 최상급 단백질원",

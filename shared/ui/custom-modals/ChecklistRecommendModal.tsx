@@ -29,7 +29,8 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
           width={210}
           height={210}
           className="absolute top-0 left-1/2 -translate-x-1/2 z-10
-                     max-md:w-[160px] max-md:h-[160px] md:w-[210px] md:h-[210px]"
+                     max-md:w-[160px] max-md:h-[160px] md:w-[210px] md:h-[210px]
+                     animate-float"
         />
 
         {/* Card */}

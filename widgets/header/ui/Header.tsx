@@ -78,10 +78,11 @@ function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "
   );
 }
 
-function ProfileDropdown({ user, profileImageUrl, onClose }: { user: { email: string } | null; profileImageUrl: string | null; onClose: () => void }) {
+function ProfileDropdown({ user, petName, profileImageUrl, onClose }: { user: { email: string } | null; petName: string | null; profileImageUrl: string | null; onClose: () => void }) {
   const { logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [showPetName, setShowPetName] = useState(false);
 
   const isPaymentActive = pathname.startsWith("/mypage/subscription");
   const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive;
@@ -90,8 +91,8 @@ function ProfileDropdown({ user, profileImageUrl, onClose }: { user: { email: st
     [
       "w-full h-[52px] px-[30px] flex items-center text-left tracking-[-0.02em] transition-colors",
       active
-        ? "text-body-14-sb text-primary bg-[var(--color-card-premium)]"
-        : "text-body-14-m text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-warm)]",
+        ? "text-body-14-b text-[var(--color-primary)] bg-[var(--color-card-premium)]"
+        : "text-body-14-m text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-warm)] hover:text-[var(--color-primary)]",
     ].join(" ");
 
   const handleLogout = async () => {
@@ -99,15 +100,19 @@ function ProfileDropdown({ user, profileImageUrl, onClose }: { user: { email: st
     await logout();
   };
 
+  const displayName = showPetName ? (petName ?? "사용자") : (user?.email ?? "사용자");
+
   return (
     <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[280px] rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden py-1">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         {/* 프로필 헤더 */}
         <div className="flex h-[73px] items-center px-[30px]">
           <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
           <div className="flex items-center gap-1 ml-4 min-w-0">
-            <span className="text-body-16-sb text-[var(--color-text)] whitespace-nowrap">{user?.email ?? "사용자"}</span>
-            <SwitchHorizontalIcon />
+            <span className="text-body-16-sb text-[var(--color-text)] truncate">{displayName}</span>
+            <button onClick={() => setShowPetName((v) => !v)} aria-label="이름 전환" className="shrink-0">
+              <SwitchHorizontalIcon />
+            </button>
           </div>
         </div>
 
@@ -191,7 +196,7 @@ export default function Header() {
                   <ProfileThumbnail imageUrl={profileImageUrl} size="sm" />
                 </button>
                 {isProfileOpen && (
-                  <ProfileDropdown user={user} profileImageUrl={profileImageUrl} onClose={() => setIsProfileOpen(false)} />
+                  <ProfileDropdown user={user} petName={profile?.name ?? null} profileImageUrl={profileImageUrl} onClose={() => setIsProfileOpen(false)} />
                 )}
               </div>
             ) : (

@@ -17,6 +17,10 @@ import {
 import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
 import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
 
+function formatMonthlyPrice(n: number) {
+  return n.toLocaleString("ko-KR") + "원";
+}
+
 export type RecommendedTier = "basic" | "standard" | "premium";
 
 const TIER_LABEL: Record<RecommendedTier, string> = {
@@ -182,105 +186,111 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
         </div>
 
         {/* Package cards */}
-        <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
-          {PACKAGES.map((pkg) => {
-            const isRecommended = pkg.id === recommendedTier;
-            return (
-              <div
-                key={pkg.tier}
-                className="flex flex-col rounded-[20px] px-7 pb-7 pt-5"
-                style={{ background: "var(--color-support-faq-surface)" }}
-              >
-                {/* 상단: 칩 + ⓘ 버튼 */}
-                <div className="mb-5 flex items-center justify-between">
-                  <span
-                    className="rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
-                    style={{ background: pkg.colorVar }}
-                  >
-                    {pkg.tier}
-                  </span>
-                  {/* 우상단 ⓘ 버튼 → 상세 뷰 */}
+        {plansLoading ? (
+          <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+            플랜 정보를 불러오는 중…
+          </p>
+        ) : (
+          <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
+            {PACKAGES.map((pkg) => {
+              const isRecommended = pkg.id === recommendedTier;
+              const matchedPlan = sortedPlans.find(
+                (p) => tierFromSubscriptionPlan(p) === pkg.tier,
+              );
+              return (
+                <div
+                  key={pkg.tier}
+                  className="flex flex-col rounded-[20px] px-7 pb-7 pt-5"
+                  style={{ background: "var(--color-support-faq-surface)" }}
+                >
+                  {/* 상단: 칩 + ⓘ 버튼 */}
+                  <div className="mb-5 flex items-center justify-between">
+                    <span
+                      className="rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
+                      style={{ background: pkg.colorVar }}
+                    >
+                      {pkg.tier}
+                    </span>
+                    {/* 우상단 ⓘ 버튼 → 상세 뷰 */}
+                    <button
+                      type="button"
+                      aria-label={`${pkg.tier} 패키지 상세 정보`}
+                      onClick={() => setSelectedTier(pkg.tier)}
+                      className="flex items-center justify-center"
+                    >
+                      <InfoIcon />
+                    </button>
+                  </div>
+
+                  {/* 상품 이미지 */}
+                  <div className="relative mb-6 flex justify-center">
+                    <Image
+                      src={mockTempPackage}
+                      alt={`${pkg.name} 이미지`}
+                      className="h-[140px] w-auto object-contain md:h-[151px]"
+                    />
+                    {isRecommended && (
+                      <Image
+                        src={stamp}
+                        alt="BEST CHOICE 추천 스탬프"
+                        className="absolute right-0 top-0 md:-right-3 md:-top-7 h-[72px] w-[72px] object-contain md:h-[140px] md:w-[140px]"
+                      />
+                    )}
+                  </div>
+
+                  {/* 패키지명 */}
+                  <div className="relative mb-4">
+                    {isRecommended && (
+                      <Image
+                        src={doubleTwinkle}
+                        alt=""
+                        aria-hidden
+                        className="absolute -left-2 -top-5 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
+                      />
+                    )}
+                    <h2 className="text-display-20-eb text-[var(--color-text)]">
+                      {pkg.name}
+                    </h2>
+                  </div>
+
+                  {/* 특징 목록 */}
+                  <ul className="mb-6 flex flex-col gap-3">
+                    {pkg.items.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-center gap-2 text-body-13-m leading-[1] text-[var(--color-text)]"
+                      >
+                        <CheckIcon color={pkg.colorVar} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* 가격 */}
+                  <div className="mb-5 md:mb-7 mt-auto flex items-center justify-between border-t border-white pt-5">
+                    <span className="text-body-13-b text-[var(--color-text)]">월 요금제</span>
+                    <span className="text-price-20-eb text-[var(--color-surface-dark)]">
+                      {matchedPlan ? formatMonthlyPrice(matchedPlan.monthlyPrice) : "–"}
+                    </span>
+                  </div>
+
+                  {/* 구독하기 → 결제 페이지 */}
                   <button
                     type="button"
-                    aria-label={`${pkg.tier} 패키지 상세 정보`}
-                    onClick={() => setSelectedTier(pkg.tier)}
-                    className="flex items-center justify-center"
+                    disabled={!matchedPlan}
+                    onClick={() => {
+                      if (matchedPlan) router.push(`/order?planId=${matchedPlan.id}`);
+                    }}
+                    className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                    style={{ background: pkg.colorVar }}
                   >
-                    <InfoIcon />
+                    구독하기
                   </button>
                 </div>
-
-                {/* 상품 이미지 */}
-                <div className="relative mb-6 flex justify-center">
-                  <Image
-                    src={mockTempPackage}
-                    alt={`${pkg.name} 이미지`}
-                    className="h-[140px] w-auto object-contain md:h-[151px]"
-                  />
-                  {isRecommended && (
-                    <Image
-                      src={stamp}
-                      alt="BEST CHOICE 추천 스탬프"
-                      className="absolute right-0 top-0 md:-right-3 md:-top-7 h-[72px] w-[72px] object-contain md:h-[140px] md:w-[140px]"
-                    />
-                  )}
-                </div>
-
-                {/* 패키지명 */}
-                <div className="relative mb-4">
-                  {isRecommended && (
-                    <Image
-                      src={doubleTwinkle}
-                      alt=""
-                      aria-hidden
-                      className="absolute -left-2 -top-5 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
-                    />
-                  )}
-                  <h2 className="text-display-20-eb text-[var(--color-text)]">
-                    {pkg.name}
-                  </h2>
-                </div>
-
-                {/* 특징 목록 */}
-                <ul className="mb-6 flex flex-col gap-3">
-                  {pkg.items.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-center gap-2 text-body-13-m leading-[1] text-[var(--color-text)]"
-                    >
-                      <CheckIcon color={pkg.colorVar} />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* 가격 */}
-                <div className="mb-5 md:mb-7 mt-auto flex items-center justify-between border-t border-white pt-5">
-                  <span className="text-body-13-b text-[var(--color-text)]">월 요금제</span>
-                  <span className="text-price-20-eb text-[var(--color-surface-dark)]">
-                    {pkg.price}
-                  </span>
-                </div>
-
-                {/* 구독하기 → 결제 페이지 */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const match = sortedPlans.find(
-                      (p) => tierFromSubscriptionPlan(p) === pkg.tier,
-                    );
-                    if (match) router.push(`/order?planId=${match.id}`);
-                    else router.push("/subscribe");
-                  }}
-                  className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: pkg.colorVar }}
-                >
-                  구독하기
-                </button>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
       </div>
     </section>

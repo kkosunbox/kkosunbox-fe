@@ -257,9 +257,8 @@ export default function PackageDetailView({
                 aria-label={`${p.name} 비교 보기`}
                 className="h-2 rounded-full transition-all"
                 style={{
-                  width: i === compareIndex ? "16px" : "8px",
-                  background:
-                    i === compareIndex ? "var(--color-accent-orange)" : "var(--color-text-muted)",
+                  width: "8px",
+                  background: i === compareIndex ? p.colorVar : "var(--color-text-muted)",
                 }}
               />
             ))}

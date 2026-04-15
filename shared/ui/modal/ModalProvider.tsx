@@ -15,6 +15,7 @@ import CouponIssuedModal from "../custom-modals/CouponIssuedModal";
 import SubscriptionCancelModal from "../custom-modals/SubscriptionCancelModal";
 import SubscriptionRestartModal from "../custom-modals/SubscriptionRestartModal";
 import MemberWithdrawModal from "../custom-modals/MemberWithdrawModal";
+import ProfileSwitchModal from "../custom-modals/ProfileSwitchModal";
 import AlertModal, { type AlertModalOptions } from "./AlertModal";
 import { alertStore } from "./alertStore";
 
@@ -25,7 +26,8 @@ export type ModalType =
   | "coupon-issued"
   | "subscription-cancel"
   | "subscription-restart"
-  | "member-withdraw";
+  | "member-withdraw"
+  | "profile-switch";
 
 interface ModalContextValue {
   openModal: (type: ModalType, onConfirm?: () => void) => void;
@@ -89,6 +91,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       {active === "subscription-cancel"  && <SubscriptionCancelModal onClose={closeModal} onConfirm={handleConfirm} />}
       {active === "subscription-restart" && <SubscriptionRestartModal onClose={closeModal} onConfirm={handleConfirm} />}
       {active === "member-withdraw"      && <MemberWithdrawModal onClose={closeModal} onConfirm={handleConfirm} />}
+      {active === "profile-switch"       && <ProfileSwitchModal onClose={closeModal} />}
 
       {/* 범용 알림 모달 */}
       {alertOptions && <AlertModal {...alertOptions} onClose={closeModal} />}

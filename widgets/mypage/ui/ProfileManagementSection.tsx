@@ -41,6 +41,7 @@ interface ProfileManagementSectionProps {
   profile: Profile | null;
   userEmail: string;
   subscription: UserSubscriptionDto | null;
+  isNewProfile?: boolean;
 }
 
 function BackIcon() {
@@ -207,18 +208,21 @@ function GenderButtons({
 }
 
 export default function ProfileManagementSection({
-  profile,
+  profile: serverProfile,
   userEmail,
   subscription,
+  isNewProfile = false,
 }: ProfileManagementSectionProps) {
   const router = useRouter();
-  const { refreshProfile } = useProfile();
+  const { profile: activeProfile, refreshProfile, setActiveProfileId } = useProfile();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, start] = useTransition();
   const [saveError, setSaveError] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const profile = isNewProfile ? null : (activeProfile ?? serverProfile);
   const isCreating = profile === null;
 
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(profile?.profileImageUrl ?? null);
@@ -231,8 +235,13 @@ export default function ProfileManagementSection({
   const subscriptionPlanTheme = subscription ? packageThemeForPlan(subscription.plan) : null;
 
   useEffect(() => {
+    if (isNewProfile) return;
     setProfileImageUrl(profile?.profileImageUrl ?? null);
-  }, [profile?.id, profile?.profileImageUrl]);
+    setGender(profile?.gender ?? null);
+    setPetName(profile?.name ?? "");
+    setBirthDate(birthDateInputValue(profile?.birthDate));
+    setWeight(profile?.weight !== null && profile?.weight !== undefined ? String(profile.weight) : "");
+  }, [profile?.id, profile?.profileImageUrl, profile?.gender, profile?.name, profile?.birthDate, profile?.weight, isNewProfile]);
 
   function handleOpenWithdraw() {
     router.push("/mypage/withdraw");
@@ -293,12 +302,14 @@ export default function ProfileManagementSection({
         };
 
         if (isCreating) {
-          await createProfile(body);
+          const newProfile = await createProfile(body);
+          await refreshProfile();
+          setActiveProfileId(newProfile.id);
         } else {
           await updateProfile(profile.id, body);
+          await refreshProfile();
         }
 
-        await refreshProfile();
         router.push("/mypage");
         router.refresh();
       } catch (error) {

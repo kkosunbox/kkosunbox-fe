@@ -5,3 +5,4 @@ export { default as CouponIssuedModal } from "./CouponIssuedModal";
 export { default as SubscriptionCancelModal } from "./SubscriptionCancelModal";
 export { default as SubscriptionRestartModal } from "./SubscriptionRestartModal";
 export { default as MemberWithdrawModal } from "./MemberWithdrawModal";
+export { default as ProfileSwitchModal } from "./ProfileSwitchModal";

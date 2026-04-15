@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import logoMain from "@/shared/assets/logo-main.svg";
-import { Button } from "@/shared/ui";
+import { Button, useModal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 
@@ -78,11 +78,11 @@ function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "
   );
 }
 
-function ProfileDropdown({ user, petName, profileImageUrl, onClose }: { user: { email: string } | null; petName: string | null; profileImageUrl: string | null; onClose: () => void }) {
+function ProfileDropdown({ petName, profileImageUrl, onClose }: { petName: string | null; profileImageUrl: string | null; onClose: () => void }) {
   const { logout } = useAuth();
+  const { openModal } = useModal();
   const router = useRouter();
   const pathname = usePathname();
-  const [showPetName, setShowPetName] = useState(false);
 
   const isPaymentActive = pathname.startsWith("/mypage/subscription");
   const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive;
@@ -100,7 +100,10 @@ function ProfileDropdown({ user, petName, profileImageUrl, onClose }: { user: { 
     await logout();
   };
 
-  const displayName = showPetName ? (petName ?? "사용자") : (user?.email ?? "사용자");
+  const handleSwitchProfile = () => {
+    onClose();
+    openModal("profile-switch");
+  };
 
   return (
     <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[280px] rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden py-1">
@@ -109,8 +112,8 @@ function ProfileDropdown({ user, petName, profileImageUrl, onClose }: { user: { 
         <div className="flex h-[73px] items-center px-[30px]">
           <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
           <div className="flex items-center gap-1 ml-4 min-w-0">
-            <span className="text-body-16-sb text-[var(--color-text)] truncate">{displayName}</span>
-            <button onClick={() => setShowPetName((v) => !v)} aria-label="이름 전환" className="shrink-0">
+            <span className="text-body-16-sb text-[var(--color-text)] truncate">{petName ?? "사용자"}</span>
+            <button onClick={handleSwitchProfile} aria-label="프로필 변경" className="shrink-0">
               <SwitchHorizontalIcon />
             </button>
           </div>
@@ -131,8 +134,9 @@ function ProfileDropdown({ user, petName, profileImageUrl, onClose }: { user: { 
 }
 
 export default function Header() {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn } = useAuth();
   const { profile } = useProfile();
+  const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -196,7 +200,7 @@ export default function Header() {
                   <ProfileThumbnail imageUrl={profileImageUrl} size="sm" />
                 </button>
                 {isProfileOpen && (
-                  <ProfileDropdown user={user} petName={profile?.name ?? null} profileImageUrl={profileImageUrl} onClose={() => setIsProfileOpen(false)} />
+                  <ProfileDropdown petName={profile?.name ?? null} profileImageUrl={profileImageUrl} onClose={() => setIsProfileOpen(false)} />
                 )}
               </div>
             ) : (
@@ -219,16 +223,30 @@ export default function Header() {
       >
         {/* Top section — user / login */}
         <div className="flex items-center justify-between bg-[var(--color-surface-warm)] px-6 py-5">
-          <Link
-            href={isLoggedIn ? "/mypage" : "/login"}
-            onClick={closeMenu}
-            className="flex items-center gap-3"
-          >
-            <ProfileThumbnail imageUrl={isLoggedIn ? profileImageUrl : null} size="md" />
-            <span className="text-body-16-m text-[var(--color-text)]">
-              {isLoggedIn ? "마이페이지" : "로그인 하기"}
-            </span>
-          </Link>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-3">
+              <Link href="/mypage" onClick={closeMenu}>
+                <ProfileThumbnail imageUrl={profileImageUrl} size="md" />
+              </Link>
+              <div className="flex items-center gap-1 min-w-0">
+                <Link href="/mypage" onClick={closeMenu} className="text-body-16-m text-[var(--color-text)] truncate">
+                  {profile?.name ?? "사용자"}
+                </Link>
+                <button
+                  onClick={() => { closeMenu(); openModal("profile-switch"); }}
+                  aria-label="프로필 변경"
+                  className="shrink-0"
+                >
+                  <SwitchHorizontalIcon />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Link href="/login" onClick={closeMenu} className="flex items-center gap-3">
+              <ProfileThumbnail imageUrl={null} size="md" />
+              <span className="text-body-16-m text-[var(--color-text)]">로그인 하기</span>
+            </Link>
+          )}
           <button
             onClick={closeMenu}
             aria-label="메뉴 닫기"

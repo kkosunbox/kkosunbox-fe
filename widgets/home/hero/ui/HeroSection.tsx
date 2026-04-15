@@ -10,9 +10,9 @@ import heroPremiumPackage from "../assets/hero-premium-package.png";
 export default function HeroSection() {
   return (
     <section className="bg-[var(--color-hero-bg)] flex flex-col overflow-hidden">
-      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-6 md:gap-0 max-md:px-8 md:px-0 pt-10 md:pt-0 w-full">
+      <div className="mx-auto flex flex-col md:flex-row md:h-[537px] max-w-content items-center gap-6 md:gap-0 pt-10 md:pt-0 w-full">
         {/* Left — 장식 도형 + 패키지 이미지 */}
-        <div className="relative order-2 md:order-1 flex flex-1 w-full items-end md:h-full">
+        <div className="relative order-2 md:order-1 flex flex-1 w-full items-end max-md:justify-center md:h-full">
           {/* 패키지 이미지 */}
           <div className="relative z-10 w-full max-w-[280px] md:max-w-[410px]">
             <Image

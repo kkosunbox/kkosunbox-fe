@@ -122,7 +122,7 @@ export default function ChecklistPetForm({
             formatDisplay={formatBirthDateDisplay}
             minDate={birthMinDate}
             maxDate={birthMaxDate}
-            triggerClassName="!h-[52px] !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0"
+            triggerClassName="!h-[52px] !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0 [&_span]:!text-body-14-r [&_span]:!font-normal [&_span]:!tracking-normal"
           />
         </div>
 

@@ -30,7 +30,7 @@ export default function PainPointsSection() {
           />
           {/* 모바일 전용 구분선 */}
           <div className="md:hidden mb-3 w-full max-w-[294px] border-t border-[var(--color-divider-warm)]" />
-          <ul className="flex flex-col gap-2 md:gap-0 w-full">
+          <ul className="mx-auto flex w-fit max-w-full flex-col items-start gap-2 text-left md:mx-0 md:w-full md:gap-0">
             {PAIN_POINTS.map((item) => (
               <li key={item} className="flex items-start gap-2 md:gap-3">
                 <div className="md:mt-1 shrink-0">

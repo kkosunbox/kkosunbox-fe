@@ -148,6 +148,7 @@ export default function ChecklistSection() {
 
   const [step, setStep] = useState(0);
   const stepRef = useRef(0);
+  const [maxVisitedStep, setMaxVisitedStep] = useState(0);
   const [initReady, setInitReady] = useState(false);
   const [baseline, setBaseline] = useState<ChecklistBaseline | null>(null);
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
@@ -225,6 +226,7 @@ export default function ChecklistSection() {
 
       setPetInfo(pet);
       setStep(initialStep);
+      setMaxVisitedStep(initialStep);
       setAvatarSrc((prev) => {
         if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
         return av;
@@ -377,15 +379,24 @@ export default function ChecklistSection() {
     if (!questions?.length) return;
     if (step === 0) {
       setStep(1);
+      setMaxVisitedStep((prev) => Math.max(prev, 1));
       return;
     }
     if (step < questions.length) {
-      setStep((s) => s + 1);
+      const next = step + 1;
+      setStep(next);
+      setMaxVisitedStep((prev) => Math.max(prev, next));
     }
   }
 
   function handleBack() {
     if (step > 0) setStep((s) => s - 1);
+  }
+
+  function handleStepClick(targetStep: number) {
+    if (targetStep >= 1 && targetStep <= maxVisitedStep && targetStep !== step) {
+      setStep(targetStep);
+    }
   }
 
   async function handleSubmit() {
@@ -530,6 +541,8 @@ export default function ChecklistSection() {
                       onBack={handleBack}
                       onNext={step === lastQuestionStep ? () => void handleSubmit() : handleNext}
                       isLastQuestion={step === lastQuestionStep}
+                      maxVisitedStep={maxVisitedStep}
+                      onStepClick={handleStepClick}
                     />
                   ) : null}
                 </>

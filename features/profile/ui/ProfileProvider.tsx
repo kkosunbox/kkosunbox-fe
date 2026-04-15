@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { useAuth } from "@/features/auth";
 import { getProfiles } from "@/features/profile/api/profileApi";
 import type { Profile } from "@/features/profile/api/types";
+import { tokenStore } from "@/shared/lib/api/token";
 
 interface ProfileContextValue {
   /** 현재 활성 프로필 (기존 호환) */
@@ -21,15 +22,18 @@ const ProfileContext = createContext<ProfileContextValue | null>(null);
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<number | null>(() => tokenStore.getActiveProfileId());
 
   const refreshProfile = useCallback(async () => {
     try {
       const { profiles: list } = await getProfiles();
       setProfiles(list);
       setActiveId((prev) => {
-        if (prev !== null && list.some((p) => p.id === prev)) return prev;
-        return list[0]?.id ?? null;
+        const stored = prev ?? tokenStore.getActiveProfileId();
+        if (stored !== null && list.some((p) => p.id === stored)) return stored;
+        const fallback = list[0]?.id ?? null;
+        if (fallback !== null) tokenStore.setActiveProfileId(fallback);
+        return fallback;
       });
     } catch {
       setProfiles([]);
@@ -39,10 +43,16 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoggedIn) {
-      refreshProfile();
+      const timerId = window.setTimeout(() => {
+        void refreshProfile();
+      }, 0);
+      return () => window.clearTimeout(timerId);
     } else {
-      setProfiles([]);
-      setActiveId(null);
+      const timerId = window.setTimeout(() => {
+        setProfiles([]);
+        setActiveId(null);
+      }, 0);
+      return () => window.clearTimeout(timerId);
     }
   }, [isLoggedIn, refreshProfile]);
 
@@ -50,6 +60,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
 
   const setActiveProfileId = useCallback((id: number) => {
     setActiveId(id);
+    tokenStore.setActiveProfileId(id);
   }, []);
 
   return (

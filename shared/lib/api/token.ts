@@ -7,6 +7,7 @@
  */
 
 const REFRESH_TOKEN_KEY = "ggosoon:refresh_token";
+const ACTIVE_PROFILE_KEY = "ggosoon:active_profile_id";
 
 let _accessToken: string | null = null;
 
@@ -37,9 +38,30 @@ export const tokenStore = {
     if (isClient()) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   },
 
-  /** 로그아웃 시 두 토큰 모두 초기화 */
+  /** 로그아웃 시 두 토큰 + 세션 데이터 모두 초기화 */
   clear: () => {
     _accessToken = null;
-    if (isClient()) localStorage.removeItem(REFRESH_TOKEN_KEY);
+    if (isClient()) {
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(ACTIVE_PROFILE_KEY);
+    }
+  },
+
+  getActiveProfileId: (): number | null => {
+    if (!isClient()) return null;
+    const raw = localStorage.getItem(ACTIVE_PROFILE_KEY);
+    if (!raw) return null;
+    const id = Number(raw);
+    return Number.isFinite(id) ? id : null;
+  },
+
+  setActiveProfileId: (id: number) => {
+    if (!isClient()) return;
+    localStorage.setItem(ACTIVE_PROFILE_KEY, String(id));
+  },
+
+  clearActiveProfileId: () => {
+    if (!isClient()) return;
+    localStorage.removeItem(ACTIVE_PROFILE_KEY);
   },
 };

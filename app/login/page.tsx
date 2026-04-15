@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import logoMain2x from "@/shared/assets/logo-main@2x.png";
 import loginBannerHd from "@/shared/assets/login-banner-hd.png";
+import loginMobileDeco from "@/shared/assets/login-mobile-upper-deco.png";
 import { useAuth, getOAuthUrl } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
 import { useLoadingOverlay } from "@/shared/ui";
@@ -39,8 +40,8 @@ function KakaoIcon() {
   return (
     <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="45.9999" height="45" rx="22.5" fill="#FEE500" />
-      <g clip-path="url(#clip0_469_10423)">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M23 14.1C18.0292 14.1 14 17.213 14 21.0523C14 23.44 15.5584 25.545 17.9315 26.797L16.933 30.4445C16.8448 30.7668 17.2134 31.0237 17.4965 30.8369L21.8733 27.9482C22.2427 27.9838 22.6181 28.0046 23 28.0046C27.9705 28.0046 31.9999 24.8918 31.9999 21.0523C31.9999 17.213 27.9705 14.1 23 14.1Z" fill="black" />
+      <g clipPath="url(#clip0_469_10423)">
+        <path fillRule="evenodd" clipRule="evenodd" d="M23 14.1C18.0292 14.1 14 17.213 14 21.0523C14 23.44 15.5584 25.545 17.9315 26.797L16.933 30.4445C16.8448 30.7668 17.2134 31.0237 17.4965 30.8369L21.8733 27.9482C22.2427 27.9838 22.6181 28.0046 23 28.0046C27.9705 28.0046 31.9999 24.8918 31.9999 21.0523C31.9999 17.213 27.9705 14.1 23 14.1Z" fill="black" />
       </g>
       <defs>
         <clipPath id="clip0_469_10423">
@@ -48,7 +49,6 @@ function KakaoIcon() {
         </clipPath>
       </defs>
     </svg>
-
   );
 }
 
@@ -56,7 +56,7 @@ function NaverIcon() {
   return (
     <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="46" height="46" rx="23" fill="#03C75A" />
-      <g clip-path="url(#clip0_469_10424)">
+      <g clipPath="url(#clip0_469_10424)">
         <path d="M26.5614 23.7033L19.1461 13H13V33H19.4386V22.295L26.8539 33H33V13H26.5614V23.7033Z" fill="white" />
       </g>
       <defs>
@@ -65,7 +65,6 @@ function NaverIcon() {
         </clipPath>
       </defs>
     </svg>
-
   );
 }
 
@@ -73,7 +72,7 @@ function GoogleIcon() {
   return (
     <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="46" height="45" rx="22.5" fill="#F8F8F8" />
-      <g clip-path="url(#clip0_469_10425)">
+      <g clipPath="url(#clip0_469_10425)">
         <path d="M24 20.6818V24.5545H29.3818C29.1455 25.8 28.4363 26.8546 27.3727 27.5636L30.6181 30.0818C32.509 28.3364 33.5999 25.7728 33.5999 22.7273C33.5999 22.0183 33.5363 21.3364 33.4181 20.6819L24 20.6818Z" fill="#4285F4" />
         <path d="M18.3957 24.4034L17.6637 24.9637L15.0728 26.9818C16.7182 30.2454 20.0907 32.5 23.9997 32.5C26.6997 32.5 28.9633 31.6091 30.6179 30.0819L27.3724 27.5636C26.4815 28.1636 25.3451 28.5273 23.9997 28.5273C21.3998 28.5273 19.1907 26.7728 18.3998 24.4091L18.3957 24.4034Z" fill="#34A853" />
         <path d="M15.0726 18.0182C14.3909 19.3636 14 20.8818 14 22.4999C14 24.1181 14.3909 25.6363 15.0726 26.9817C15.0726 26.9907 18.4 24.3999 18.4 24.3999C18.2 23.7999 18.0818 23.1636 18.0818 22.4998C18.0818 21.8361 18.2 21.1998 18.4 20.5998L15.0726 18.0182Z" fill="#FBBC05" />
@@ -85,7 +84,6 @@ function GoogleIcon() {
         </clipPath>
       </defs>
     </svg>
-
   );
 }
 
@@ -123,23 +121,45 @@ export default function LoginPage() {
   return (
     <form onSubmit={handleSubmit} className="min-h-screen bg-white flex flex-col md:pt-[54px]">
 
-      {/* ── 모바일 전용: 웜 상단 섹션 ── */}
-      <div
-        className="max-md:flex md:hidden items-center justify-center shrink-0"
-        style={{ background: "var(--color-secondary)", borderRadius: "0 0 60px 60px", height: "242px" }}
-      >
-        <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto" priority />
+      {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}
+      <div className="md:hidden absolute inset-0 overflow-hidden pointer-events-none">
+        {/* 그라데이션 둥근 배경 — 뷰포트 전체를 감싸도록 배치 */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2"
+          style={{
+            top: 0,
+            width: "max(423px, calc(100% + 48px))",
+            bottom: -40,
+            background: "var(--gradient-login-bg)",
+            borderRadius: 24,
+          }}
+        />
+        {/* 데코 이미지 (꼬랑지) — 상단 장식, 콘텐츠 위에 떠 있음 */}
+        <div className="absolute left-1/2 -translate-x-1/2" style={{ top: "2%", width: 423, height: 250 }}>
+          <Image
+            src={loginMobileDeco}
+            alt=""
+            fill
+            className=""
+            aria-hidden="true"
+          />
+        </div>
       </div>
 
-      {/* ── 콘텐츠: 모바일 세로 / 데스크톱 2컬럼 (PC: 1012px 컨테이너) ── */}
-      <div className="flex flex-1 flex-col md:mx-auto md:w-full md:max-w-content md:flex-row">
+      {/* ── 콘텐츠: 모바일 세로 중앙 / 데스크톱 2컬럼 ── */}
+      <div className="flex flex-1 flex-col max-md:items-center max-md:justify-center md:mx-auto md:w-full md:max-w-content md:flex-row relative">
 
         {/* 좌측 — 폼 */}
-        <div className="flex-1 flex flex-col md:justify-center md:min-h-[calc(100vh-54px)]">
-          {/* Figma: 폼 너비 400px */}
-          <div className="flex-1 flex flex-col md:flex-none w-full md:max-w-[400px] px-6 md:px-0 pt-[42px] md:pt-0 pb-12 md:pb-0">
+        <div className="flex-1 flex flex-col w-full px-6 max-md:justify-center md:justify-center md:min-h-[calc(100vh-54px)]">
+          {/* 모바일: 고정 간격 블록, 세로 중앙 정렬 / 데스크톱: 기존 레이아웃 유지 */}
+          <div className="w-full md:max-w-[400px] px-0">
 
-            {/* 데스크톱 전용 헤딩 — Figma: line1 20px / line2 36px; min-height로 폰트 스왑 시 아래 폼 CLS 방지 */}
+            {/* 모바일 전용: 로고 영역 */}
+            <div className="max-md:flex md:hidden items-center justify-center pb-[100px]">
+              <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto relative" priority />
+            </div>
+
+            {/* 데스크톱 전용 헤딩 */}
             <div className="max-md:hidden mb-8 text-center">
               <p
                 className="text-primary min-h-[1.4em] text-[20px] leading-[140%] tracking-[-0.02em]"
@@ -166,23 +186,22 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-semibold placeholder:font-semibold placeholder:text-[var(--color-text)]
-                h-[52px] px-8 text-body-16-sb
-                md:h-[54px] md:px-6 md:tracking-[0.2px]"
+              className="w-full rounded-full outline-none text-[var(--color-text)] font-semibold placeholder:font-semibold placeholder:text-[var(--color-text)]
+                max-md:h-[48px] max-md:px-8 max-md:text-[14px] max-md:bg-white
+                md:h-[54px] md:px-6 md:tracking-[0.2px] md:bg-[var(--color-surface-light)] md:text-body-16-sb"
             />
 
             {/* 비밀번호 입력 */}
-            <div className="relative mt-6">
-              {/* 비밀번호 입력 — Figma: h=54px, px=24px, 16px/500, placeholder #999 */}
+            <div className="relative max-md:mt-[24px] md:mt-6">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-full bg-[var(--color-surface-light)] outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
-                  h-[52px] px-8 pr-12 text-body-16-m
-                  md:h-[54px] md:px-6 md:pr-16"
+                className="w-full rounded-full outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
+                  max-md:h-[48px] max-md:px-8 max-md:pr-12 max-md:text-[14px] max-md:bg-white
+                  md:h-[54px] md:px-6 md:pr-16 md:bg-[var(--color-surface-light)] md:text-body-16-m"
               />
               <button
                 type="button"
@@ -204,31 +223,28 @@ export default function LoginPage() {
             )}
 
             {/* 비밀번호 찾기 */}
-            <div className="mt-5 text-right">
+            <div className="max-md:mt-[24px] md:mt-5 text-right">
               <Link
                 href="/forgot-password"
-                className="text-[var(--color-accent)] underline text-body-14-m"
+                className="text-[var(--color-accent)] underline max-md:text-[13px] md:text-body-14-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 비밀번호를 잃어버리셨나요?
               </Link>
             </div>
 
-            {/* 모바일 전용 스페이서 (버튼을 하단으로 밀기) */}
-            <div className="flex-1 min-h-[40px] md:hidden" />
-
             {/* 로그인 버튼 */}
             <button
               type="submit"
               disabled={isPending}
               className="w-full rounded-full bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
-                h-[58px] max-md:text-subtitle-18-sb max-md:tracking-[-0.04em]
+                max-md:h-[48px] max-md:text-[14px] max-md:font-semibold max-md:tracking-[-0.04em] max-md:mt-[90px]
                 md:h-[54px] md:text-subtitle-16-sb md:tracking-[0.2px] md:mt-[68px]"
             >
               {isPending ? "로그인 중..." : "로그인"}
             </button>
 
-            {/* 간편로그인 — Figma: 14px/500 (모바일·데스크톱 동일), mt=24px on desktop */}
+            {/* 간편로그인 */}
             <p
               className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-[18px] md:mt-6"
               style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
@@ -236,8 +252,8 @@ export default function LoginPage() {
               - 간편로그인 -
             </p>
 
-            {/* 소셜 버튼 — Figma: gap=40px, mt=32px on desktop */}
-            <div className="flex items-center justify-center gap-[40px] mt-4 md:mt-8">
+            {/* 소셜 버튼 */}
+            <div className="flex items-center justify-center gap-[40px] mt-7 md:mt-8">
               <button type="button" aria-label="카카오로 로그인"
                 onClick={() => handleSocialLogin("kakao")}
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
@@ -257,7 +273,7 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* 회원가입 — 모바일: 14px gap-2, 데스크톱: 16px gap-1 */}
+            {/* 회원가입 */}
             <div className="flex items-center justify-center gap-2 md:gap-1 mt-4 md:mt-8">
               <span
                 className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m"
@@ -277,7 +293,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* 우측 — 데스크톱 전용 배너 — Figma: 548px fixed width */}
+        {/* 우측 — 데스크톱 전용 배너 */}
         <div className="max-md:hidden md:w-[548px] md:shrink-0 relative min-h-[calc(100vh-54px)]">
           <Image
             src={loginBannerHd}

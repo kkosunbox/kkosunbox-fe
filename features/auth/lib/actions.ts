@@ -150,6 +150,12 @@ export async function socialLoginAction(
   }
 }
 
+/** 클라이언트 세션 복구(refresh) 후 SSR 쿠키도 동기화 */
+export async function syncAuthCookieAction(accessToken: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(COOKIE_NAME, accessToken, COOKIE_OPTS);
+}
+
 export async function logoutAction(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);

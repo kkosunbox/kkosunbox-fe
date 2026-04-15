@@ -159,6 +159,7 @@
   --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
   --gradient-checklist-result: linear-gradient(101.78deg, #FFF4EA 41.37%, #FFBF9A 118.84%); /* 체크리스트 결과 배너 (Figma) */
   --gradient-reviews: linear-gradient(180deg, #FFF9F3 0%, #E3EEFF 100%); /* 리뷰 섹션 배경 (크림 위 → 블루 아래) */
+  --gradient-login-bg: linear-gradient(180.15deg, #FFF4EA 42.65%, #CDE1FF 120.01%); /* 로그인 모바일 배경 (피치 → 스카이블루) */
 }
 
 @theme inline {

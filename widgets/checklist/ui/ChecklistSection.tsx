@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
-import { getChecklistQuestions, getProfiles, updateProfile } from "@/features/profile/api/profileApi";
+import { getChecklistQuestions, updateProfile } from "@/features/profile/api/profileApi";
 import type { ChecklistAnswerInput, ChecklistQuestion, Profile } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
@@ -139,7 +139,7 @@ export default function ChecklistSection() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn } = useAuth();
-  const { refreshProfile } = useProfile();
+  const { profile: activeProfile, refreshProfile } = useProfile();
   const editQuestionIdParam = searchParams.get("editQuestionId");
   const returnTo = searchParams.get("returnTo");
 
@@ -202,24 +202,16 @@ export default function ChecklistSection() {
       let restoredAnswers: Record<number, number[]> = {};
       let initialStep = 0;
 
-      if (isLoggedIn) {
-        try {
-          const { profiles } = await getProfiles();
-          const p = profiles[0];
-          if (p && !cancelled) {
-            pet = profileToPetInfo(p);
-            av = p.profileImageUrl;
-            if (p.checklistAnswers?.length) {
-              restoredAnswers = Object.fromEntries(
-                p.checklistAnswers.map((a) => [
-                  a.questionId,
-                  a.selectedOptions.map((o) => o.id),
-                ]),
-              );
-            }
-          }
-        } catch {
-          /* 비로그인·오류 시 빈 폼 */
+      if (isLoggedIn && activeProfile) {
+        pet = profileToPetInfo(activeProfile);
+        av = activeProfile.profileImageUrl;
+        if (activeProfile.checklistAnswers?.length) {
+          restoredAnswers = Object.fromEntries(
+            activeProfile.checklistAnswers.map((a) => [
+              a.questionId,
+              a.selectedOptions.map((o) => o.id),
+            ]),
+          );
         }
       }
 
@@ -249,7 +241,7 @@ export default function ChecklistSection() {
     return () => {
       cancelled = true;
     };
-  }, [editQuestionIdParam, questions, isLoggedIn]);
+  }, [editQuestionIdParam, questions, isLoggedIn, activeProfile]);
 
   const isDirty =
     questions !== null &&
@@ -408,19 +400,15 @@ export default function ChecklistSection() {
 
     let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
     try {
-      if (isLoggedIn) {
-        const { profiles } = await getProfiles();
-        const profile = profiles[0];
-        if (profile) {
-          await updateProfile(profile.id, { checklistAnswers });
-          await refreshProfile();
-          const planRes = await getSubscriptionPlans(profile.id);
-          const rec = planRes.plans.find((p) => p.isRecommended);
-          if (rec) {
-            const pt = tierFromSubscriptionPlan(rec);
-            tier =
-              pt === "Premium" ? "premium" : pt === "Standard" ? "standard" : "basic";
-          }
+      if (isLoggedIn && activeProfile) {
+        await updateProfile(activeProfile.id, { checklistAnswers });
+        await refreshProfile();
+        const planRes = await getSubscriptionPlans(activeProfile.id);
+        const rec = planRes.plans.find((p) => p.isRecommended);
+        if (rec) {
+          const pt = tierFromSubscriptionPlan(rec);
+          tier =
+            pt === "Premium" ? "premium" : pt === "Standard" ? "standard" : "basic";
         }
       }
     } catch (e) {

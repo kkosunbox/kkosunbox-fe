@@ -78,7 +78,7 @@ function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "
   );
 }
 
-function ProfileDropdown({ petName, profileImageUrl, onClose }: { petName: string | null; profileImageUrl: string | null; onClose: () => void }) {
+function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName: string | null; email: string | null; profileImageUrl: string | null; onClose: () => void }) {
   const { logout } = useAuth();
   const { openModal } = useModal();
   const router = useRouter();
@@ -109,13 +109,20 @@ function ProfileDropdown({ petName, profileImageUrl, onClose }: { petName: strin
     <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[280px] rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden py-1">
       <div className="flex flex-col">
         {/* 프로필 헤더 */}
-        <div className="flex h-[73px] items-center px-[30px]">
+        <div className="flex items-center px-[30px] py-4">
           <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
-          <div className="flex items-center gap-1 ml-4 min-w-0">
-            <span className="text-body-16-sb text-[var(--color-text)] truncate">{petName ?? "사용자"}</span>
-            <button onClick={handleSwitchProfile} aria-label="프로필 변경" className="shrink-0">
-              <SwitchHorizontalIcon />
-            </button>
+          <div className="ml-4 min-w-0 flex-1">
+            <div className="flex items-center gap-1 min-w-0">
+              <span className="text-body-16-sb text-[var(--color-text)] truncate">{petName ?? "사용자"}</span>
+              <button onClick={handleSwitchProfile} aria-label="프로필 변경" className="shrink-0">
+                <SwitchHorizontalIcon />
+              </button>
+            </div>
+            {email && (
+              <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)] truncate">
+                {email}
+              </p>
+            )}
           </div>
         </div>
 
@@ -134,7 +141,7 @@ function ProfileDropdown({ petName, profileImageUrl, onClose }: { petName: strin
 }
 
 export default function Header() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const { profile } = useProfile();
   const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -200,7 +207,12 @@ export default function Header() {
                   <ProfileThumbnail imageUrl={profileImageUrl} size="sm" />
                 </button>
                 {isProfileOpen && (
-                  <ProfileDropdown petName={profile?.name ?? null} profileImageUrl={profileImageUrl} onClose={() => setIsProfileOpen(false)} />
+                  <ProfileDropdown
+                    petName={profile?.name ?? null}
+                    email={user?.email ?? null}
+                    profileImageUrl={profileImageUrl}
+                    onClose={() => setIsProfileOpen(false)}
+                  />
                 )}
               </div>
             ) : (

@@ -1,10 +1,13 @@
 import Image from "next/image";
 import { Text } from "@/shared/ui";
 import checklistHeroPcPattern from "../assets/checklist-hero-pc-pattern.png";
+import checklistHeroMobilePaw from "../assets/checklist-hero-mobile-paw.png";
 import checklistHeroTitle from "../assets/checklist-hero-title.png";
 import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.png";
 
 const MOBILE_PADDING_TOP_PX = 20;
+const DESKTOP_FORM_OVERLAP_PX = 50;
+const DESKTOP_CONTENT_OFFSET_PX = DESKTOP_FORM_OVERLAP_PX / 2;
 
 export default function ChecklistHero() {
   return (
@@ -14,6 +17,7 @@ export default function ChecklistHero() {
         {
           background: "var(--gradient-checklist-hero)",
           "--checklist-hero-mobile-pt": `${MOBILE_PADDING_TOP_PX}px`,
+          "--checklist-hero-desktop-offset": `${DESKTOP_CONTENT_OFFSET_PX}px`,
         } as React.CSSProperties
       }
       aria-label="체크리스트 페이지 소개"
@@ -27,12 +31,12 @@ export default function ChecklistHero() {
           alt=""
           width={checklistHeroPcPattern.width}
           height={checklistHeroPcPattern.height}
-          className="h-auto w-full max-w-[940px] object-contain"
+          className="h-auto w-full max-w-[940px] object-contain max-md:hidden"
           sizes="(max-width: 940px) 100vw, 940px"
           priority
         />
       </div>
-      <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:pt-0">
+      <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:-translate-y-[var(--checklist-hero-desktop-offset)] md:pt-0">
         <h1 className="m-0 flex w-full max-w-[940px] flex-col items-center justify-center px-1">
           <Image
             src={checklistHeroTitleMobile}
@@ -53,17 +57,28 @@ export default function ChecklistHero() {
             priority
           />
         </h1>
-        <Text
-          as="p"
-          variant="body-16-r"
-          mobileVariant="body-14-r"
-          className="max-w-[345px] px-2 leading-5 tracking-[-0.02em] text-[var(--color-text)] max-md:mt-2 md:mt-3"
-          style={{
-            fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-          }}
-        >
-          강아지의 특징과 선호하는 간식을 작성해주세요!
-        </Text>
+        <div className="relative w-full max-w-[345px] px-2 max-md:mt-2 md:mt-3">
+          <Text
+            as="p"
+            variant="body-16-r"
+            mobileVariant="body-14-r"
+            className="leading-5 tracking-[-0.02em] text-[var(--color-text)]"
+            style={{
+              fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+            }}
+          >
+            강아지의 특징과 선호하는 간식을 작성해주세요!
+          </Text>
+          <Image
+            src={checklistHeroMobilePaw}
+            alt=""
+            width={checklistHeroMobilePaw.width}
+            height={checklistHeroMobilePaw.height}
+            className="pointer-events-none absolute right-0 top-1/2 h-[35px] w-[39px] -translate-y-1/2 object-contain md:hidden"
+            sizes="39px"
+            priority
+          />
+        </div>
       </div>
     </section>
   );

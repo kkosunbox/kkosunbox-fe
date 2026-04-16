@@ -150,7 +150,7 @@ export default function AboutSection() {
           <div className="flex flex-col items-center gap-0 md:flex-row md:gap-16">
 
             {/* Left — 간식 이미지 */}
-            <ScrollReveal variant="slide-left" duration={800} className="flex w-full flex-1 justify-center">
+            <ScrollReveal variant="scale-in" duration={800} className="flex w-full flex-1 justify-center">
               <Image
                 src={aboutFeatureHealthy}
                 alt="건강한 수제 간식"

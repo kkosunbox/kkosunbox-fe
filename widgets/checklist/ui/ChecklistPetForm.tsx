@@ -12,7 +12,7 @@ function formatBirthDateDisplay(date: Date): string {
 }
 
 const CTA_CLASS =
-  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
+  "!h-12 !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
 function PetAvatar({
   src,
@@ -103,7 +103,7 @@ export default function ChecklistPetForm({
             placeholder="이름"
             value={petInfo.name}
             onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
-            className="h-[52px] rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+            className="h-10 rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function ChecklistPetForm({
             formatDisplay={formatBirthDateDisplay}
             minDate={birthMinDate}
             maxDate={birthMaxDate}
-            triggerClassName="!h-[52px] !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0 [&_span]:!text-body-14-r [&_span]:!font-normal [&_span]:!tracking-normal"
+            triggerClassName="!h-10 !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0 [&_span]:!text-body-14-r [&_span]:!font-normal [&_span]:!tracking-normal"
           />
         </div>
 
@@ -133,7 +133,7 @@ export default function ChecklistPetForm({
               type="number"
               value={petInfo.weight}
               onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
-              className="h-[52px] w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-body-14-r text-[var(--color-text)] outline-none"
+              className="h-10 w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-body-14-r text-[var(--color-text)] outline-none"
             />
             <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-body-13-r text-[var(--color-text-secondary)]">
               kg

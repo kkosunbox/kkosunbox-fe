@@ -42,7 +42,6 @@ export default async function OrderPage({
   return (
     <OrderSection
       plan={plan}
-      profiles={profiles}
       initialAddresses={addresses}
       initialBilling={billing}
     />

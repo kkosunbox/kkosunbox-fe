@@ -13,7 +13,7 @@ import orderDogImage from "@/widgets/order/assets/order-advertise-banner.png";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
-import type { Profile } from "@/features/profile/api/types";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import {
   createSubscription,
   getCouponInfo,
@@ -202,25 +202,23 @@ function FormRow({ label, children }: { label: string; children: React.ReactNode
 
 export interface OrderSectionProps {
   plan: SubscriptionPlanDto;
-  profiles: Profile[];
   initialAddresses: DeliveryAddress[];
   initialBilling: BillingInfo | null;
 }
 
 export default function OrderSection({
   plan,
-  profiles,
   initialAddresses,
   initialBilling,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
+  const { profile } = useProfile();
   const [isPending, startTransition] = useTransition();
 
   const [openSections, setOpenSections] = useState({
     product: true,
-    pet: true,
     customer: true,
     payment: true,
     date: true,
@@ -228,7 +226,6 @@ export default function OrderSection({
   });
 
   const [addresses, setAddresses] = useState<DeliveryAddress[]>(initialAddresses);
-  const [selectedProfileId, setSelectedProfileId] = useState<number>(profiles[0]!.id);
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
     initialAddresses[0]?.id ?? null,
   );
@@ -417,7 +414,7 @@ export default function OrderSection({
         }
 
         await createSubscription({
-          petProfileId: selectedProfileId,
+          petProfileId: profile!.id,
           deliveryAddressId,
           planId: plan.id,
           billingDate: toYmd(subscriptionDate!),
@@ -491,21 +488,6 @@ export default function OrderSection({
           </div>
         </div>
       </SectionCard>
-
-      {profiles.length > 1 ? (
-        <SectionCard title="반려동물 프로필" open={openSections.pet} onToggle={() => toggleSection("pet")}>
-          <div className="flex flex-col gap-3">
-            {profiles.map((p) => (
-              <RadioButton
-                key={p.id}
-                checked={selectedProfileId === p.id}
-                onChange={() => setSelectedProfileId(p.id)}
-                label={p.name?.trim() || `프로필 #${p.id}`}
-              />
-            ))}
-          </div>
-        </SectionCard>
-      ) : null}
 
       <SectionCard
         title="주문고객 / 배송지 정보"

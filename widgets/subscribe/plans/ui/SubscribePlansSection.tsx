@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from "re
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
-import { ChecklistRecommendModal } from "@/shared/ui";
+import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
 import {
@@ -115,20 +115,22 @@ export default function SubscribePlansSection({ plans }: Props) {
       <section ref={sectionRef} className="bg-white pb-16 md:pt-0 md:pb-20">
         <div className="mx-auto px-6 md:px-0">
           {/* Hero image */}
-          <div className="mb-6 text-center md:mb-8">
-            <Image
-              src={SubscribePlansHeroImageMobile}
-              alt="Subscribe Plans Hero"
-              className="max-md:block md:hidden w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
-            />
-            <div className="hidden h-[210px] overflow-hidden md:flex md:items-center md:justify-center">
+          <ScrollReveal variant="fade-in" duration={600}>
+            <div className="mb-6 text-center md:mb-8">
               <Image
-                src={SubscribePlansHeroImage}
+                src={SubscribePlansHeroImageMobile}
                 alt="Subscribe Plans Hero"
-                className="h-[210px] w-auto min-w-[1920px] max-w-none shrink-0"
+                className="max-md:block md:hidden w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
               />
+              <div className="hidden h-[210px] overflow-hidden md:flex md:items-center md:justify-center">
+                <Image
+                  src={SubscribePlansHeroImage}
+                  alt="Subscribe Plans Hero"
+                  className="h-[210px] w-auto min-w-[1920px] max-w-none shrink-0"
+                />
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
 
           {/* 모바일 티어 탭 — 카드 선택 전/후 모두 표시 */}
           <div className="md:hidden mb-4 flex justify-center gap-3">
@@ -168,12 +170,12 @@ export default function SubscribePlansSection({ plans }: Props) {
           ) : (
             /* Package cards */
             <div className="mx-auto max-w-content flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
-              {sortedPlans.map((plan) => {
+              {sortedPlans.map((plan, i) => {
                 const theme = packageThemeForPlan(plan);
                 const color = theme.colorVar;
                 return (
+                  <ScrollReveal key={plan.id} variant="fade-up" delay={100 + i * 120} duration={600}>
                   <div
-                    key={plan.id}
                     className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
                   >
                     <div className="mb-2.5 flex items-center justify-between gap-2">
@@ -248,6 +250,7 @@ export default function SubscribePlansSection({ plans }: Props) {
                       구독하기
                     </button>
                   </div>
+                  </ScrollReveal>
                 );
               })}
             </div>

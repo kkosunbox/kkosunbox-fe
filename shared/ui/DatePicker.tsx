@@ -245,7 +245,7 @@ export default function DatePicker({
       >
         <span
           className={[
-            "text-[14px] leading-[1.4]",
+            "min-w-0 flex-1 truncate whitespace-nowrap pr-2 text-[14px] leading-[1.4]",
             value
               ? "font-semibold text-[var(--color-text)] tracking-[0.2px]"
               : "font-medium text-[var(--color-text-secondary)]",

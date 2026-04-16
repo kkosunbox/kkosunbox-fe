@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { ScrollReveal } from "@/shared/ui";
 import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.png";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
 import doubleTwinkle from "../assets/double-twinkle.png";
@@ -60,6 +61,33 @@ function InfoIcon() {
       <path d="M11 10V15" stroke="var(--color-icon-muted)" strokeWidth="1.5" strokeLinecap="round" />
       <circle cx="11" cy="7.5" r="1" fill="var(--color-icon-muted)" />
     </svg>
+  );
+}
+
+function PawSpinner() {
+  return (
+    <div className="relative" style={{ width: 56, height: 56 }}>
+      <style>{`
+        @keyframes paw-spin {
+          0%   { opacity: 0.25; }
+          25%  { opacity: 1;    }
+          50%  { opacity: 0.25; }
+          100% { opacity: 0.25; }
+        }
+        .paw-toe-1 { animation: paw-spin 1.2s ease-in-out 0s infinite; }
+        .paw-toe-2 { animation: paw-spin 1.2s ease-in-out 0.15s infinite; }
+        .paw-toe-3 { animation: paw-spin 1.2s ease-in-out 0.3s infinite; }
+        .paw-toe-4 { animation: paw-spin 1.2s ease-in-out 0.45s infinite; }
+        .paw-pad   { animation: paw-spin 1.2s ease-in-out 0.6s infinite; }
+      `}</style>
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
+        <ellipse className="paw-pad" cx="12" cy="15.5" rx="5" ry="4" fill="var(--color-primary)" />
+        <ellipse className="paw-toe-1" cx="6.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
+        <ellipse className="paw-toe-2" cx="10" cy="8.5" rx="2" ry="2.5" fill="var(--color-primary)" />
+        <ellipse className="paw-toe-3" cx="14" cy="8.5" rx="2" ry="2.5" fill="var(--color-primary)" />
+        <ellipse className="paw-toe-4" cx="17.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
+      </svg>
+    </div>
   );
 }
 
@@ -142,64 +170,71 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
       <div className="mx-auto max-w-content max-md:px-6 md:px-0">
 
         {/* Hero */}
-        <div className="mb-10 flex justify-center md:mb-8">
-          <h1 className="m-0">
-            <Image
-              src={checklistDoneTitle}
-              alt="체크리스트 분석 완료!"
-              className="mx-auto h-auto max-md:w-[min(100%,320px)] md:max-w-[198px] md:w-auto"
-              priority
-            />
-          </h1>
-        </div>
+        <ScrollReveal variant="scale-in" duration={600}>
+          <div className="mb-10 flex justify-center md:mb-8">
+            <h1 className="m-0">
+              <Image
+                src={checklistDoneTitle}
+                alt="체크리스트 분석 완료!"
+                className="mx-auto h-auto max-md:w-[min(100%,320px)] md:max-w-[198px] md:w-auto"
+                priority
+              />
+            </h1>
+          </div>
+        </ScrollReveal>
 
         {/* Recommendation banner */}
-        <div
-          className="mb-8 overflow-hidden rounded-[20px] md:mb-10 md:h-[126px]"
-          style={{ background: "var(--gradient-checklist-result)" }}
-        >
-          <div className="relative flex items-center gap-5 px-6 py-5 md:h-full md:gap-6 md:px-8">
-            <PetAvatarPlaceholder />
-            <div className="flex flex-col gap-2">
-              <span
-                className="w-fit rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
-                style={{ background: recommended.colorVar }}
-              >
-                {TIER_DISPLAY[recommendedTier]}
-              </span>
-              <p
-                className="max-w-[537px] max-md:text-body-13-r md:text-body-16-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)]"
-                style={{
-                  fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-                }}
-              >
-                체크리스트 분석 완료!{" "}
-                <strong className="font-bold" style={{ color: "var(--color-text)" }}>
-                  {petNameDisplay}
-                </strong>
-                에게 꼭 필요한 영양만 꽉 채운{" "}
-                <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>
-                입니다.
-              </p>
+        <ScrollReveal variant="fade-up" delay={200}>
+          <div
+            className="mb-8 overflow-hidden rounded-[20px] md:mb-10 md:h-[126px]"
+            style={{ background: "var(--gradient-checklist-result)" }}
+          >
+            <div className="relative flex items-center gap-5 px-6 py-5 md:h-full md:gap-6 md:px-8">
+              <PetAvatarPlaceholder />
+              <div className="flex flex-col gap-2">
+                <span
+                  className="w-fit rounded-full px-3 py-1 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
+                  style={{ background: recommended.colorVar }}
+                >
+                  {TIER_DISPLAY[recommendedTier]}
+                </span>
+                <p
+                  className="max-w-[537px] max-md:text-body-13-r md:text-body-16-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)]"
+                  style={{
+                    fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
+                  }}
+                >
+                  체크리스트 분석 완료!{" "}
+                  <strong className="font-bold" style={{ color: "var(--color-text)" }}>
+                    {petNameDisplay}
+                  </strong>
+                  에게 꼭 필요한 영양만 꽉 채운{" "}
+                  <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>
+                  입니다.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Package cards */}
         {plansLoading ? (
-          <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
-            플랜 정보를 불러오는 중…
-          </p>
+          <div className="flex min-h-[500px] flex-col items-center justify-center gap-4">
+            <PawSpinner />
+            <p className="text-center text-body-14-sb text-[var(--color-text-secondary)]">
+              플랜 정보를 불러오는 중…
+            </p>
+          </div>
         ) : (
           <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
-            {PACKAGES.map((pkg) => {
+            {PACKAGES.map((pkg, i) => {
               const isRecommended = pkg.id === recommendedTier;
               const matchedPlan = sortedPlans.find(
                 (p) => tierFromSubscriptionPlan(p) === pkg.tier,
               );
               return (
+                <ScrollReveal key={pkg.tier} variant="fade-up" delay={400 + i * 150}>
                 <div
-                  key={pkg.tier}
                   className="flex flex-col rounded-[20px] px-7 pb-7 pt-5"
                   style={{ background: "var(--color-support-faq-surface)" }}
                 >
@@ -287,6 +322,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                     구독하기
                   </button>
                 </div>
+                </ScrollReveal>
               );
             })}
           </div>

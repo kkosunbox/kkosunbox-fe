@@ -95,88 +95,90 @@ export default function ChecklistPetForm({
         onButtonClick={() => fileInputRef.current?.click()}
       />
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-caption-12-r text-[var(--color-text-secondary)]">강아지 이름</label>
-          <input
-            type="text"
-            placeholder="이름"
-            value={petInfo.name}
-            onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
-            className="h-10 rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="checklist-pet-birth"
-            className="text-caption-12-r text-[var(--color-text-secondary)]"
-          >
-            생년월일
-          </label>
-          <DatePicker
-            id="checklist-pet-birth"
-            value={petInfo.birthDate}
-            onChange={(date) => setPetInfo((p) => ({ ...p, birthDate: date }))}
-            placeholder="생년월일 선택"
-            formatDisplay={formatBirthDateDisplay}
-            minDate={birthMinDate}
-            maxDate={birthMaxDate}
-            triggerClassName="!h-10 !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0 [&_span]:!text-body-14-r [&_span]:!font-normal [&_span]:!tracking-normal"
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-caption-12-r text-[var(--color-text-secondary)]">몸무게</label>
-          <div className="relative">
+      <div className="mx-auto w-full max-w-[720px]">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-caption-12-r text-[var(--color-text-secondary)]">강아지 이름</label>
             <input
-              type="number"
-              value={petInfo.weight}
-              onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
-              className="h-10 w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-body-14-r text-[var(--color-text)] outline-none"
+              type="text"
+              placeholder="이름"
+              value={petInfo.name}
+              onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
+              className="h-10 rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
             />
-            <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-body-13-r text-[var(--color-text-secondary)]">
-              kg
-            </span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="checklist-pet-birth"
+              className="text-caption-12-r text-[var(--color-text-secondary)]"
+            >
+              생년월일
+            </label>
+            <DatePicker
+              id="checklist-pet-birth"
+              value={petInfo.birthDate}
+              onChange={(date) => setPetInfo((p) => ({ ...p, birthDate: date }))}
+              placeholder="생년월일 선택"
+              formatDisplay={formatBirthDateDisplay}
+              minDate={birthMinDate}
+              maxDate={birthMaxDate}
+              triggerClassName="!h-10 !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0 [&_span]:!text-body-14-r [&_span]:!font-normal [&_span]:!tracking-normal"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-caption-12-r text-[var(--color-text-secondary)]">몸무게</label>
+            <div className="relative">
+              <input
+                type="number"
+                value={petInfo.weight}
+                onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
+                className="h-10 w-full rounded-full bg-[var(--color-surface-light)] px-5 pr-12 text-body-14-r text-[var(--color-text)] outline-none"
+              />
+              <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-body-13-r text-[var(--color-text-secondary)]">
+                kg
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-caption-12-r text-[var(--color-text-secondary)]">성별</label>
+            <div className="flex gap-2.5">
+              {(["male", "female"] as const).map((g) => {
+                const selected = petInfo.gender === g;
+                return (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setPetInfo((p) => ({ ...p, gender: g }))}
+                    className={[
+                      "flex min-w-0 flex-1 items-center justify-center px-2.5 text-body-14-sb leading-[17px] transition-colors max-md:h-11 max-md:rounded-full md:h-10 md:rounded-[10px]",
+                      selected
+                        ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
+                        : "bg-[var(--color-surface-light)] text-[var(--color-text)]",
+                    ].join(" ")}
+                  >
+                    {g === "male" ? "남" : "여"}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-caption-12-r text-[var(--color-text-secondary)]">성별</label>
-          <div className="flex gap-2.5">
-            {(["male", "female"] as const).map((g) => {
-              const selected = petInfo.gender === g;
-              return (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => setPetInfo((p) => ({ ...p, gender: g }))}
-                  className={[
-                    "flex min-w-0 flex-1 items-center justify-center px-2.5 text-body-14-sb leading-[17px] transition-colors max-md:h-11 max-md:rounded-full md:h-10 md:rounded-[10px]",
-                    selected
-                      ? "bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
-                      : "bg-[var(--color-surface-light)] text-[var(--color-text)]",
-                  ].join(" ")}
-                >
-                  {g === "male" ? "남" : "여"}
-                </button>
-              );
-            })}
-          </div>
+        {/* PC CTA (모바일은 카드 바깥에서 렌더) */}
+        <div className="mt-8 w-full max-md:hidden md:mx-auto md:max-w-[380px]">
+          <Button
+            type="button"
+            onClick={onNext}
+            variant="primary"
+            size="lg"
+            className={CTA_CLASS}
+          >
+            체크리스트 작성하기
+          </Button>
         </div>
-      </div>
-
-      {/* PC CTA (모바일은 카드 바깥에서 렌더) */}
-      <div className="mt-8 w-full max-md:hidden md:mx-auto md:max-w-[380px]">
-        <Button
-          type="button"
-          onClick={onNext}
-          variant="primary"
-          size="lg"
-          className={CTA_CLASS}
-        >
-          체크리스트 작성하기
-        </Button>
       </div>
     </div>
   );

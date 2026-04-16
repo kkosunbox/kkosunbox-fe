@@ -6,6 +6,8 @@ import checklistHeroTitle from "../assets/checklist-hero-title.png";
 import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.png";
 
 const MOBILE_PADDING_TOP_PX = 20;
+const DESKTOP_FORM_OVERLAP_PX = 50;
+const DESKTOP_CONTENT_OFFSET_PX = DESKTOP_FORM_OVERLAP_PX / 2;
 
 export default function ChecklistHero() {
   return (
@@ -15,6 +17,7 @@ export default function ChecklistHero() {
         {
           background: "var(--gradient-checklist-hero)",
           "--checklist-hero-mobile-pt": `${MOBILE_PADDING_TOP_PX}px`,
+          "--checklist-hero-desktop-offset": `${DESKTOP_CONTENT_OFFSET_PX}px`,
         } as React.CSSProperties
       }
       aria-label="체크리스트 페이지 소개"
@@ -33,7 +36,7 @@ export default function ChecklistHero() {
           priority
         />
       </div>
-      <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:pt-0">
+      <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:-translate-y-[var(--checklist-hero-desktop-offset)] md:pt-0">
         <h1 className="m-0 flex w-full max-w-[940px] flex-col items-center justify-center px-1">
           <Image
             src={checklistHeroTitleMobile}

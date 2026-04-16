@@ -24,6 +24,10 @@ export interface DatePickerProps {
 ───────────────────────────── */
 
 const DAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"] as const;
+const MONTH_LABELS = [
+  "1월", "2월", "3월", "4월", "5월", "6월",
+  "7월", "8월", "9월", "10월", "11월", "12월",
+] as const;
 
 function formatDate(date: Date): string {
   const y = date.getFullYear();
@@ -71,35 +75,50 @@ function CalendarTriggerIcon({ active }: { active: boolean }) {
   );
 }
 
-function ChevronIcon({ dir }: { dir: "left" | "right" }) {
+/** 월 이동 화살표 (< >) — 헤더 우측 버튼 안에 사용 */
+function ChevronSmallIcon({ dir }: { dir: "left" | "right" }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
       {dir === "left" ? (
-        <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M12.5 5L7.5 10L12.5 15"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       ) : (
-        <path d="M5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M7.5 5L12.5 10L7.5 15"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       )}
     </svg>
   );
 }
 
-function DoubleChevronIcon({ dir }: { dir: "left" | "right" }) {
+/** 연·월 선택 드롭다운 화살표 */
+function ChevronDownIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      {dir === "left" ? (
-        <>
-          <path d="M8 10.5L4.5 7 8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M11 10.5L7.5 7 11 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        </>
-      ) : (
-        <>
-          <path d="M6 3.5L9.5 7 6 10.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 3.5L6.5 7 3 10.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-        </>
-      )}
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M6 8L10 12L14 8"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
+
+/* ─────────────────────────────
+   View modes
+───────────────────────────── */
+type CalendarView = "days" | "months" | "years";
 
 /* ─────────────────────────────
    DatePicker
@@ -133,8 +152,9 @@ export default function DatePicker({
   const [viewMonth, setViewMonth] = useState(
     () => value?.getMonth() ?? today.getMonth()
   );
+  const [calendarView, setCalendarView] = useState<CalendarView>("days");
 
-  /* 외부에서 value가 바뀌면 달력이 보이는 연·월을 맞춤 (effect 대신 렌더 중 동기화 — cascading effect 경고 회피) */
+  /* 외부에서 value가 바뀌면 달력이 보이는 연·월을 맞춤 */
   const valueEpoch = value?.getTime() ?? null;
   const [syncedValueEpoch, setSyncedValueEpoch] = useState<number | null>(() => valueEpoch);
   if (valueEpoch !== syncedValueEpoch) {
@@ -154,6 +174,7 @@ export default function DatePicker({
     const onPointerDown = (e: PointerEvent) => {
       if (!containerRef.current?.contains(e.target as Node)) {
         setIsOpen(false);
+        setCalendarView("days");
       }
     };
     document.addEventListener("pointerdown", onPointerDown);
@@ -164,14 +185,15 @@ export default function DatePicker({
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        setCalendarView("days");
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen]);
 
-  const prevYear  = useCallback(() => setViewYear((y) => y - 1), []);
-  const nextYear  = useCallback(() => setViewYear((y) => y + 1), []);
   const prevMonth = useCallback(() => {
     setViewMonth((m) => {
       if (m === 0) { setViewYear((y) => y - 1); return 11; }
@@ -187,12 +209,28 @@ export default function DatePicker({
 
   /* 달력 셀 생성 */
   const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
-  const daysInMonth    = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const cells: (number | null)[] = [
-    ...Array<null>(firstDayOfWeek).fill(null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-  while (cells.length % 7 !== 0) cells.push(null);
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+  /* 이전 달 날짜 채우기 */
+  const prevMonthDays = new Date(viewYear, viewMonth, 0).getDate();
+  const prevMonthCells: { day: number; currentMonth: false }[] = [];
+  for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+    prevMonthCells.push({ day: prevMonthDays - i, currentMonth: false });
+  }
+
+  /* 현재 달 날짜 */
+  const currentCells: { day: number; currentMonth: true }[] = Array.from(
+    { length: daysInMonth },
+    (_, i) => ({ day: i + 1, currentMonth: true })
+  );
+
+  const allCells = [...prevMonthCells, ...currentCells];
+  /* 다음 달 날짜 채우기 */
+  let nextDay = 1;
+  while (allCells.length % 7 !== 0 || allCells.length < 35) {
+    allCells.push({ day: nextDay++, currentMonth: false });
+    if (allCells.length >= 42) break;
+  }
 
   const isDisabledDay = (day: number) => {
     const d = startOfDay(new Date(viewYear, viewMonth, day));
@@ -205,9 +243,30 @@ export default function DatePicker({
     if (isDisabledDay(day)) return;
     onChange(new Date(viewYear, viewMonth, day));
     setIsOpen(false);
+    setCalendarView("days");
   };
 
-  /* ── trigger 기본 스타일 (프로젝트 form input 규격) */
+  const handleMonthSelect = (month: number) => {
+    setViewMonth(month);
+    setCalendarView("days");
+  };
+
+  const handleYearSelect = (year: number) => {
+    setViewYear(year);
+    setCalendarView("months");
+  };
+
+  const handleHeaderClick = () => {
+    if (calendarView === "days") setCalendarView("months");
+    else if (calendarView === "months") setCalendarView("years");
+    else setCalendarView("days");
+  };
+
+  /* 연도 선택용 범위 (현재 viewYear 기준 ±6년) */
+  const yearStart = viewYear - 6;
+  const years = Array.from({ length: 12 }, (_, i) => yearStart + i);
+
+  /* ── trigger 기본 스타일 */
   const triggerBase = [
     "flex h-[44px] w-full items-center justify-between",
     "rounded-lg border border-[var(--color-divider-warm)] bg-white px-4",
@@ -237,6 +296,7 @@ export default function DatePicker({
             }
           }
           setIsOpen((v) => !v);
+          setCalendarView("days");
         }}
         aria-expanded={isOpen}
         aria-haspopup="true"
@@ -264,135 +324,276 @@ export default function DatePicker({
           className={[
             "absolute left-0 z-50",
             openUp ? "bottom-[calc(100%+6px)]" : "top-[calc(100%+6px)]",
-            "w-72 overflow-hidden rounded-2xl border border-[var(--color-divider-warm)] bg-white",
-            "shadow-[0_8px_32px_rgba(201,122,61,0.12)]",
           ].join(" ")}
+          style={{
+            width: 256,
+            background: "#FFFFFF",
+            boxShadow: "0px 18px 28px rgba(9, 30, 66, 0.1)",
+            borderRadius: 14,
+          }}
         >
-          {/* ── Header: 따뜻한 베이지 배경 ── */}
-          <div className="flex items-center justify-between bg-[var(--color-secondary)] px-3 py-2.5">
-            {/* 이전 연도 / 이전 월 */}
-            <div className="flex items-center gap-0.5">
-              <NavBtn onClick={prevYear} label="이전 연도" secondary>
-                <DoubleChevronIcon dir="left" />
-              </NavBtn>
-              <NavBtn onClick={prevMonth} label="이전 달">
-                <ChevronIcon dir="left" />
-              </NavBtn>
-            </div>
-
-            <span
-              className="select-none text-[15px] font-semibold tracking-[-0.02em]"
-              style={{ color: "var(--color-brown-dark)" }}
+          {/* ── Header ── */}
+          <div
+            className="flex items-center justify-between"
+            style={{ padding: "16px 16px 0 16px", height: 24 + 16 }}
+          >
+            {/* 연·월 클릭 영역 */}
+            <button
+              type="button"
+              onClick={handleHeaderClick}
+              className="flex items-center gap-1 rounded-md px-2 py-[2px] transition-colors hover:bg-[var(--color-secondary)]"
             >
-              {viewYear}년 {viewMonth + 1}월
-            </span>
+              <span
+                style={{
+                  fontFamily: "Pretendard, sans-serif",
+                  fontWeight: 500,
+                  fontSize: 14,
+                  lineHeight: "150%",
+                  color: "#252525",
+                }}
+              >
+                {calendarView === "years"
+                  ? `${years[0]} – ${years[years.length - 1]}`
+                  : calendarView === "months"
+                  ? `${viewYear}`
+                  : `${String(viewMonth + 1).padStart(2, "0")}월 ${viewYear}`}
+              </span>
+              <ChevronDownIcon />
+            </button>
 
-            {/* 다음 월 / 다음 연도 */}
-            <div className="flex items-center gap-0.5">
-              <NavBtn onClick={nextMonth} label="다음 달">
-                <ChevronIcon dir="right" />
-              </NavBtn>
-              <NavBtn onClick={nextYear} label="다음 연도" secondary>
-                <DoubleChevronIcon dir="right" />
-              </NavBtn>
+            {/* 이전/다음 버튼 */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (calendarView === "years") setViewYear((y) => y - 12);
+                  else if (calendarView === "months") setViewYear((y) => y - 1);
+                  else prevMonth();
+                }}
+                aria-label="이전"
+                style={{
+                  width: 24,
+                  height: 24,
+                  border: "1px solid #E2E2E2",
+                  borderRadius: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "transparent",
+                  cursor: "pointer",
+                  color: "#B0B0B0",
+                }}
+              >
+                <ChevronSmallIcon dir="left" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (calendarView === "years") setViewYear((y) => y + 12);
+                  else if (calendarView === "months") setViewYear((y) => y + 1);
+                  else nextMonth();
+                }}
+                aria-label="다음"
+                style={{
+                  width: 24,
+                  height: 24,
+                  border: "1px solid #E2E2E2",
+                  borderRadius: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "transparent",
+                  cursor: "pointer",
+                  color: "#B0B0B0",
+                }}
+              >
+                <ChevronSmallIcon dir="right" />
+              </button>
             </div>
           </div>
 
           {/* ── Body ── */}
-          <div className="p-3">
-            {/* 요일 헤더 */}
-            <div className="mb-1 grid grid-cols-7 text-center">
-              {DAY_LABELS.map((d, i) => (
-                <div
-                  key={d}
-                  className={[
-                    "py-1 text-[11px] font-semibold",
-                    i === 0
-                      ? "text-[var(--color-accent-orange)]"
-                      : i === 6
-                      ? "text-[var(--color-accent)]"
-                      : "text-[var(--color-text-secondary)]",
-                  ].join(" ")}
-                >
-                  {d}
+          <div style={{ padding: "12px 16px 16px" }}>
+            {calendarView === "days" && (
+              <>
+                {/* 요일 헤더 */}
+                <div className="grid grid-cols-7" style={{ marginBottom: 0 }}>
+                  {DAY_LABELS.map((d) => (
+                    <div
+                      key={d}
+                      style={{
+                        width: 32,
+                        height: 32,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "Pretendard, sans-serif",
+                        fontWeight: 500,
+                        fontSize: 12,
+                        lineHeight: "150%",
+                        color: "#808080",
+                      }}
+                    >
+                      {d}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* 날짜 그리드 */}
-            <div className="grid grid-cols-7 gap-y-0.5">
-              {cells.map((day, idx) => {
-                if (day === null) {
-                  return <div key={`_${idx}`} className="h-9" aria-hidden="true" />;
-                }
+                {/* 날짜 그리드 */}
+                <div className="grid grid-cols-7">
+                  {allCells.map((cell, idx) => {
+                    if (!cell.currentMonth) {
+                      return (
+                        <div
+                          key={`blank-${idx}`}
+                          style={{ width: 32, height: 32 }}
+                          aria-hidden="true"
+                        />
+                      );
+                    }
 
-                const d        = new Date(viewYear, viewMonth, day);
-                const isToday  = isSameDay(d, today);
-                const isSel    = value != null && isSameDay(d, value);
-                const disabled = isDisabledDay(day);
-                const dow      = d.getDay(); // 0=일, 6=토
+                    const { day } = cell;
+                    const d = new Date(viewYear, viewMonth, day);
+                    const isToday = isSameDay(d, today);
+                    const isSel = value != null && isSameDay(d, value);
+                    const dayDisabled = isDisabledDay(day);
 
-                const base = "mx-auto flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-medium transition-colors ";
+                    /* 선택된 날 → #F6E9DD 배경, #252525 텍스트 */
+                    let bgColor = "transparent";
+                    let textColor = "#2F2F2F";
 
-                const colorCls = isSel
-                  ? "bg-[var(--color-primary)] text-white font-semibold shadow-sm"
-                  : isToday
-                  ? "ring-[1.5px] ring-inset ring-[var(--color-primary)] text-primary font-semibold hover:bg-[var(--color-secondary)]"
-                  : disabled
-                  ? "cursor-not-allowed text-[var(--color-text-muted)]"
-                  : dow === 0
-                  ? "cursor-pointer text-[var(--color-accent-orange)] hover:bg-[var(--color-secondary)]"
-                  : dow === 6
-                  ? "cursor-pointer text-[var(--color-accent)] hover:bg-[var(--color-secondary)]"
-                  : "cursor-pointer text-[var(--color-text)] hover:bg-[var(--color-secondary)]";
+                    if (isSel) {
+                      bgColor = "#F6E9DD";
+                      textColor = "#252525";
+                    } else if (dayDisabled) {
+                      textColor = "#DDDDDD";
+                    }
 
-                return (
-                  <button
-                    key={day}
-                    type="button"
-                    onClick={() => handleDayClick(day)}
-                    disabled={disabled}
-                    aria-label={`${viewYear}년 ${viewMonth + 1}월 ${day}일`}
-                    aria-pressed={isSel}
-                    className={base + colorCls}
-                  >
-                    {day}
-                  </button>
-                );
-              })}
-            </div>
+                    return (
+                      <button
+                        key={day}
+                        type="button"
+                        onClick={() => handleDayClick(day)}
+                        disabled={dayDisabled}
+                        aria-label={`${viewYear}년 ${viewMonth + 1}월 ${day}일`}
+                        aria-pressed={isSel}
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 9999,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          position: "relative",
+                          border: "none",
+                          background: "transparent",
+                          padding: 0,
+                          cursor: dayDisabled ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        {/* inner background circle (with 2px inset) */}
+                        <span
+                          style={{
+                            position: "absolute",
+                            inset: 2,
+                            borderRadius: 9999,
+                            background: bgColor,
+                            transition: "background 150ms",
+                          }}
+                        />
+                        <span
+                          style={{
+                            position: "relative",
+                            fontFamily: "Pretendard, sans-serif",
+                            fontWeight: isToday && !isSel ? 700 : 500,
+                            fontSize: 14,
+                            lineHeight: "150%",
+                            color: textColor,
+                          }}
+                        >
+                          {day}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {calendarView === "months" && (
+              <div className="grid grid-cols-3 gap-2" style={{ paddingTop: 8 }}>
+                {MONTH_LABELS.map((label, i) => {
+                  const isCurrent = i === viewMonth && viewYear === today.getFullYear();
+                  const isSelected = i === viewMonth;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => handleMonthSelect(i)}
+                      style={{
+                        height: 36,
+                        borderRadius: 8,
+                        border: "none",
+                        background: isSelected ? "#F6E9DD" : "transparent",
+                        fontFamily: "Pretendard, sans-serif",
+                        fontWeight: isCurrent ? 700 : 500,
+                        fontSize: 14,
+                        color: "#252525",
+                        cursor: "pointer",
+                        transition: "background 150ms",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) e.currentTarget.style.background = "#F9F1EA";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) e.currentTarget.style.background = "transparent";
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {calendarView === "years" && (
+              <div className="grid grid-cols-3 gap-2" style={{ paddingTop: 8 }}>
+                {years.map((year) => {
+                  const isCurrent = year === today.getFullYear();
+                  const isSelected = year === viewYear;
+                  return (
+                    <button
+                      key={year}
+                      type="button"
+                      onClick={() => handleYearSelect(year)}
+                      style={{
+                        height: 36,
+                        borderRadius: 8,
+                        border: "none",
+                        background: isSelected ? "#F6E9DD" : "transparent",
+                        fontFamily: "Pretendard, sans-serif",
+                        fontWeight: isCurrent ? 700 : 500,
+                        fontSize: 14,
+                        color: "#252525",
+                        cursor: "pointer",
+                        transition: "background 150ms",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) e.currentTarget.style.background = "#F9F1EA";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) e.currentTarget.style.background = "transparent";
+                      }}
+                    >
+                      {year}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
     </div>
-  );
-}
-
-/* ── 헤더 네비게이션 버튼 ── */
-function NavBtn({
-  children,
-  onClick,
-  label,
-  secondary = false,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  label: string;
-  secondary?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className={[
-        "flex h-7 w-7 items-center justify-center rounded-full transition-colors",
-        secondary
-          ? "text-[var(--color-text-secondary)] hover:bg-[var(--color-beige)]"
-          : "text-primary hover:bg-[var(--color-beige)]",
-      ].join(" ")}
-    >
-      {children}
-    </button>
   );
 }

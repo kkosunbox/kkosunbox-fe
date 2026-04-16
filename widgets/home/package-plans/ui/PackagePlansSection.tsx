@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Text } from "@/shared/ui";
+import { Text, ScrollReveal } from "@/shared/ui";
 import mockTempPackage from "../assets/mock-temp-package.png";
 import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 
@@ -202,23 +202,28 @@ export default function PackagePlansSection() {
   return (
     <section className="bg-white py-12 md:pt-[68px] md:pb-12">
       <div className="mx-auto max-w-content max-md:px-8 md:px-0">
-        <Image
-          src={packagePlansTitle02}
-          alt="원하는 패키지로 선택 후 구독하세요!"
-          className="mx-auto h-auto w-full max-w-[215px] md:max-w-[306px]"
-        />
-        <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 mt-4 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
-          설문조사 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
-        </Text>
+        <ScrollReveal variant="fade-up">
+          <Image
+            src={packagePlansTitle02}
+            alt="원하는 패키지로 선택 후 구독하세요!"
+            className="mx-auto h-auto w-full max-w-[215px] md:max-w-[306px]"
+          />
+        </ScrollReveal>
+        <ScrollReveal variant="fade-up" delay={150}>
+          <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 mt-4 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
+            설문조사 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
+          </Text>
+        </ScrollReveal>
 
-        <div className="md:hidden">
+        <ScrollReveal variant="scale-in" delay={300} className="md:hidden">
           <div className="mx-auto w-full max-w-[327px]">
             <PackageCard pkg={PACKAGES[activeIndex]} idx={activeIndex} isActive />
           </div>
-        </div>
+        </ScrollReveal>
 
+        <ScrollReveal variant="scale-in" delay={300} as="div" className="relative mx-auto max-md:hidden h-[446px] w-full max-w-[1012px]">
         <div
-          className="relative mx-auto hidden h-[446px] w-full max-w-[1012px] md:block"
+          className="h-full w-full"
           onMouseEnter={() => setIsAutoPlayPaused(true)}
           onMouseLeave={() => setIsAutoPlayPaused(false)}
         >
@@ -240,6 +245,7 @@ export default function PackagePlansSection() {
             );
           })}
         </div>
+        </ScrollReveal>
 
         {/* 캐러셀 인디케이터 */}
         <div className="mt-7.5 flex items-center justify-center gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition, useEffect } from "react";
+import { useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
@@ -109,6 +109,52 @@ function PawPrint({ size = 80 }: { size?: number }) {
   );
 }
 
+function CollapsiblePanel({
+  open,
+  id,
+  children,
+  className = "",
+  innerClassName = "",
+}: {
+  open: boolean;
+  id?: string;
+  children: ReactNode;
+  className?: string;
+  innerClassName?: string;
+}) {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(media.matches);
+
+    updatePreference();
+    media.addEventListener("change", updatePreference);
+    return () => media.removeEventListener("change", updatePreference);
+  }, []);
+
+  return (
+    <div
+      id={id}
+      aria-hidden={!open}
+      inert={!open}
+      className={className}
+      style={{
+        display: "grid",
+        gridTemplateRows: open ? "1fr" : "0fr",
+        opacity: open ? 1 : 0,
+        transition: prefersReducedMotion
+          ? "none"
+          : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease",
+      }}
+    >
+      <div className={["min-h-0 overflow-hidden", innerClassName].filter(Boolean).join(" ")}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function SectionCard({
   title,
   open,
@@ -118,19 +164,25 @@ function SectionCard({
   title: string;
   open: boolean;
   onToggle: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
+  const contentId = useId();
+
   return (
     <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-7">
       <button
         type="button"
         onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={contentId}
         className="w-full flex items-center justify-between py-7 text-left"
       >
         <span className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
         <ChevronIcon open={open} />
       </button>
-      {open && <div className="pb-7">{children}</div>}
+      <CollapsiblePanel id={contentId} open={open} innerClassName="pb-7">
+        {children}
+      </CollapsiblePanel>
     </div>
   );
 }
@@ -142,7 +194,7 @@ function Checkbox({
 }: {
   checked: boolean;
   onChange: () => void;
-  label: React.ReactNode;
+  label: ReactNode;
 }) {
   return (
     <label className="inline-flex items-center gap-2 cursor-pointer select-none">
@@ -189,7 +241,7 @@ function RadioButton({
   );
 }
 
-function FormRow({ label, children }: { label: string; children: React.ReactNode }) {
+function FormRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex items-center gap-0">
       <span className="w-[70px] shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)]">
@@ -714,8 +766,8 @@ export default function OrderSection({
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
-          <div className="w-[152px] shrink-0">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 min-w-0">
+          <div className="w-full max-w-[260px] sm:w-[200px] shrink-0">
             <DatePicker
               value={subscriptionDate}
               onChange={setSubscriptionDate}
@@ -734,20 +786,12 @@ export default function OrderSection({
 
   const rightColumn = (
     <div className="flex flex-col gap-4">
-      <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-7">
-        <button
-          type="button"
-          onClick={() => toggleSection("summary")}
-          className="w-full flex items-center justify-between py-7 text-left"
-        >
-          <span className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">
-            결제정보
-          </span>
-          <ChevronIcon open={openSections.summary} />
-        </button>
-
-        {openSections.summary && (
-          <div className="pb-7 flex flex-col gap-8">
+      <SectionCard
+        title="결제정보"
+        open={openSections.summary}
+        onToggle={() => toggleSection("summary")}
+      >
+        <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <span className="text-body-13-m text-[var(--color-text)]">주문상품금액</span>
@@ -776,6 +820,8 @@ export default function OrderSection({
                 <button
                   type="button"
                   onClick={() => setAgreeOpen((p) => !p)}
+                  aria-expanded={agreeOpen}
+                  aria-controls="order-agreements-panel"
                   className="transition-transform duration-200"
                   style={{ transform: agreeOpen ? "matrix(1,0,0,-1,0,0)" : "none" }}
                 >
@@ -790,8 +836,12 @@ export default function OrderSection({
                   </svg>
                 </button>
               </div>
-              {agreeOpen && (
-                <div className="mt-3 flex flex-col gap-2.5 pl-1 border-t border-white pt-3">
+              <CollapsiblePanel
+                id="order-agreements-panel"
+                open={agreeOpen}
+                className="mt-3"
+                innerClassName="flex flex-col gap-2.5 border-t border-white pt-3 pl-1"
+              >
                   <Checkbox
                     checked={agreeTerms}
                     onChange={() => setAgreeTerms((p) => !p)}
@@ -807,8 +857,7 @@ export default function OrderSection({
                     onChange={() => setAgreeAge((p) => !p)}
                     label="만 14세 이상 확인 (필수)"
                   />
-                </div>
-              )}
+              </CollapsiblePanel>
             </div>
 
             {submitError ? (
@@ -825,9 +874,8 @@ export default function OrderSection({
             >
               {isPending ? "처리 중…" : "결제하기"}
             </button>
-          </div>
-        )}
-      </div>
+        </div>
+      </SectionCard>
 
       <div
         className="rounded-[20px] flex justify-center items-center gap-0 overflow-hidden"

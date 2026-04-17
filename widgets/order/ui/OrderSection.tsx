@@ -521,7 +521,7 @@ export default function OrderSection({
               alt={plan.name}
               width={160}
               height={117}
-              className="object-contain"
+              className="object-contain md:-translate-y-2"
             />
           </div>
           <div className="flex flex-col gap-3">

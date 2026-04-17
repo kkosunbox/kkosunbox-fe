@@ -153,7 +153,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
             <div className="flex flex-col gap-4 rounded-[20px] bg-white max-md:p-5 md:flex-row md:items-center md:justify-between md:px-10 md:py-6">
               <div className="flex items-center max-md:gap-4 md:gap-10">
                 {/* Package image */}
-                <div className="relative max-md:h-[72px] max-md:w-[100px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-xl">
+                <div className="relative max-md:h-[72px] max-md:w-[100px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-xl bg-[var(--color-background)]">
                   <Image
                     src={mockTempPackage}
                     alt="패키지 이미지"

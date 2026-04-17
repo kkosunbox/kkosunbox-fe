@@ -32,7 +32,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
           </Text>
         </div>
       ) : (
-        <div>
+        <div className="flex-1">
           {pageItems.map((inq, index) => (
             <div
               key={inq.id}
@@ -68,7 +68,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
       )}
 
       <nav
-        className="mt-4 flex items-center justify-center gap-1 text-[var(--color-text-secondary)]"
+        className="mt-auto flex items-center justify-center gap-1 pt-4 text-[var(--color-text-secondary)]"
         aria-label="문의 페이지 탐색"
       >
         <button

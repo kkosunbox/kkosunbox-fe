@@ -362,7 +362,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
             <div className="mb-4 rounded-2xl bg-[var(--color-surface-light)] px-8 py-6">
               {planName && (
                 <p className="mb-4 text-subtitle-16-b text-[var(--color-text)]">
-                  {planName} 패키지 구독중
+                  {planName} 구독중
                 </p>
               )}
               <div className="flex items-center gap-0 mb-4">

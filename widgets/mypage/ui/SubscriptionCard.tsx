@@ -53,7 +53,7 @@ export function SubscriptionCard({ subscription }: { subscription: UserSubscript
       </Link>
 
       <div className="flex items-center gap-4">
-        <div className="relative max-md:h-[67px] max-md:w-[91px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-[12px] bg-white">
+        <div className="relative max-md:h-[67px] max-md:w-[91px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-background)]">
           <Image
             src={mockTempPackage}
             alt="꼬순박스 패키지"

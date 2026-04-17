@@ -177,7 +177,7 @@ function SectionCard({
         aria-controls={contentId}
         className="w-full flex items-center justify-between py-7 text-left"
       >
-        <span className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
+        <span className="max-md:text-subtitle-16-b md:text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
         <ChevronIcon open={open} />
       </button>
       <CollapsiblePanel id={contentId} open={open} innerClassName="pb-7">
@@ -514,17 +514,17 @@ export default function OrderSection({
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
-        <div className="rounded-[20px] bg-white px-7 py-7 flex items-center gap-6">
-          <div className="w-[120px] h-[120px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl overflow-hidden">
+        <div className="rounded-[20px] bg-white px-7 max-md:pt-3 max-md:pb-7 md:py-7 max-md:flex max-md:flex-col max-md:items-center max-md:gap-5 md:flex md:items-center md:gap-6">
+          <div className="max-md:w-[180px] max-md:h-[132px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl overflow-hidden">
             <Image
               src={orderProductThumbnail}
               alt={plan.name}
-              width={160}
-              height={117}
-              className="object-contain"
+              width={180}
+              height={132}
+              className="object-contain md:-translate-y-2"
             />
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 max-md:w-full max-md:px-2">
             <span
               className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
               style={{ background: orderPlanTheme.colorVar }}
@@ -534,7 +534,7 @@ export default function OrderSection({
             <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
               {plan.name}
             </span>
-            <span className="text-price-16-eb text-[var(--color-surface-dark)]">
+            <span className="max-md:text-price-14-eb md:text-price-16-eb text-[var(--color-surface-dark)]">
               월 요금제 {formatPrice(plan.monthlyPrice)}
             </span>
           </div>
@@ -955,7 +955,7 @@ export default function OrderSection({
               <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
                 총 할인금액&nbsp;&nbsp;
                 <span className={couponDiscount > 0 ? "text-[var(--color-primary)]" : ""}>
-                  -{formatPrice(couponDiscount)}
+                  {formatPrice(couponDiscount)}
                 </span>
               </span>
               <span className="text-subtitle-16-sb text-[var(--color-text)]">-</span>

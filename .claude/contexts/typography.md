@@ -31,7 +31,7 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 
 ## `font-weight: 800` 사용 계약 (필수)
 
-- `text-*-eb` 유틸리티(`text-subtitle-18-eb`, `text-price-16-eb`, `text-price-20-eb`, `text-display-20-eb`, `text-display-28-eb`, `text-display-32-eb`)는 `Pretendard` 계열에서만 사용한다.
+- `text-*-eb` 유틸리티(`text-subtitle-18-eb`, `text-price-14-eb`, `text-price-16-eb`, `text-price-20-eb`, `text-display-20-eb`, `text-display-28-eb`, `text-display-32-eb`)는 `Pretendard` 계열에서만 사용한다.
 - 커스텀 폰트(`Griun*`, `Gangwon*`, `Ms Madi`, `Give You Glory`)와 `font-weight: 800` 조합은 금지한다.
 - 커스텀 폰트가 필요한 경우 weight는 400 기준으로 디자인하고, 강조가 필요하면 크기/색상/행간/letter-spacing으로 해결한다.
 - 브라우저 합성 굵기(faux bold) 의존을 피하기 위해 전역에서 `font-synthesis-weight: none`을 유지한다 (`app/globals.css` `body`).
@@ -97,6 +97,15 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 | `text-btn-14-m` | 14px | 18px | 500 |
 | `text-link-14-sb` | 14px | 18px | 600 |
 | `text-btn-12-m` | 12px | 16px | 500 |
+
+### Price
+
+| Class | font-size | line-height | font-weight | letter-spacing |
+|---|---|---|---|---|
+| `text-price-14-eb` | 14px | 17px | 800 | -0.05em |
+| `text-price-16-b` | 16px | 1 | 700 | -0.04em |
+| `text-price-16-eb` | 16px | 19px | 800 | -0.05em |
+| `text-price-20-eb` | 20px | 1 | 800 | -0.05em |
 
 ## 사용 예
 

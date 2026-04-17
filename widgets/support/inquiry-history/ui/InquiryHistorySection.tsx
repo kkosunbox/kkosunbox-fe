@@ -53,11 +53,67 @@ function ChevronRightIcon() {
   );
 }
 
+/* ── 문의 상세 모달 ─────────────────────────────────────── */
+function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClose: () => void }) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div className="relative z-10 flex w-full max-w-[480px] flex-col gap-4 rounded-[20px] bg-white p-6 shadow-lg">
+        <div className="flex items-start justify-between">
+          <PawCircleIcon />
+          <button
+            onClick={onClose}
+            aria-label="닫기"
+            className="flex h-6 w-6 items-center justify-center hover:opacity-70 transition-opacity"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
+          <span className="rounded-full bg-[var(--color-accent-soft)] px-2 py-0.5 text-body-12-m text-[var(--color-accent)]">
+            {STATUS_LABEL[item.status]}
+          </span>
+        </div>
+        <p className="text-body-12-r text-[var(--color-text-secondary)]">
+          {new Date(item.createdAt).toLocaleString("ko-KR", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
+        </p>
+        <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
+          {formatInquiryBody(item)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function InquiryHistorySection() {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<InquiryDto[]>([]);
   const [loadState, setLoadState] = useState<"loading" | "ok" | "error" | "unauthorized">("loading");
   const [loadMessage, setLoadMessage] = useState<string | null>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<InquiryDto | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -194,7 +250,8 @@ export default function InquiryHistorySection() {
               {currentItems.map((item) => (
                 <li
                   key={item.id}
-                  className="flex flex-col gap-3 rounded-[20px] bg-white p-4 md:p-4"
+                  onClick={() => setSelectedInquiry(item)}
+                  className="flex cursor-pointer flex-col gap-3 rounded-[20px] bg-white p-4 transition-shadow hover:shadow-md md:p-4"
                 >
                   <PawCircleIcon />
                   <div className="flex flex-col gap-2">
@@ -276,6 +333,10 @@ export default function InquiryHistorySection() {
           )}
         </section>
       </div>
+
+      {selectedInquiry && (
+        <InquiryDetailModal item={selectedInquiry} onClose={() => setSelectedInquiry(null)} />
+      )}
     </div>
   );
 }

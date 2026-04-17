@@ -412,6 +412,7 @@ button:disabled {
  * NOTE: `*-eb` utilities are Pretendard-only.
  * Do not combine with custom 400-only families (Griun/Gangwon/Ms Madi/Give You Glory).
  */
+@utility text-price-14-eb { font-size: 14px; line-height: 17px; font-weight: 800; letter-spacing: -0.05em; }
 @utility text-price-16-b  { font-size: 16px; line-height: 1;    font-weight: 700; letter-spacing: -0.04em; }
 @utility text-price-16-eb { font-size: 16px; line-height: 19px; font-weight: 800; letter-spacing: -0.05em; }
 @utility text-price-20-eb { font-size: 20px; line-height: 1;    font-weight: 800; letter-spacing: -0.05em; }

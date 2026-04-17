@@ -17,10 +17,16 @@ const COMPANY_REGISTRATION_MOBILE = [
   "통신판매업신고번호 : 2021-서울강북-0945",
 ] as const;
 
-const COMPANY_INFO_LINES = [
-  "대표이사 : 정진웅 | 대표번호 : 1533-4005 | 이메일 : support@talkgate.im",
-  "주소 : 서울특별시 강북구 삼양로173길 223(우이동)",
+/** PC: 한 줄 / 모바일: 대표·번호 / 이메일 두 줄 */
+const COMPANY_CONTACT_DESKTOP =
+  "대표이사 : 정진웅 | 대표번호 : 1533-4005 | 이메일 : support@talkgate.im";
+const COMPANY_CONTACT_MOBILE = [
+  "대표이사 : 정진웅 | 대표번호 : 1533-4005",
+  "이메일 : support@talkgate.im",
 ] as const;
+
+const COMPANY_ADDRESS_LINE =
+  "주소 : 서울특별시 강북구 삼양로173길 223(우이동)";
 
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */
 const SOCIAL_LINKS = [
@@ -36,22 +42,6 @@ const SOCIAL_LINKS = [
         </g>
         <defs>
           <clipPath id="clip0_550_3308">
-            <rect width="26" height="26" fill="white" transform="translate(7 7)" />
-          </clipPath>
-        </defs>
-      </svg>
-    ),
-  },
-  {
-    href: "#",
-    label: "Facebook",
-    icon: (
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g clipPath="url(#clip0_550_3316)">
-          <path d="M33 20.0792C33 12.855 27.1805 7 20 7C12.8195 7 7 12.855 7 20.0792C7 26.6086 11.7531 32.0191 17.9688 33V23.8599H14.668V20.0792H17.9688V17.1977C17.9688 13.9202 19.9086 12.1091 22.8793 12.1091C24.3012 12.1091 25.7891 12.3645 25.7891 12.3645V15.5832H24.1488C22.534 15.5832 22.0312 16.5923 22.0312 17.6268V20.0792H25.6367L25.0604 23.8599H22.0312V33C28.2469 32.0191 33 26.6086 33 20.0792Z" fill="var(--color-footer-text)" />
-        </g>
-        <defs>
-          <clipPath id="clip0_550_3316">
             <rect width="26" height="26" fill="white" transform="translate(7 7)" />
           </clipPath>
         </defs>
@@ -96,11 +86,14 @@ export default function FooterSection() {
               {line}
             </p>
           ))}
-          {COMPANY_INFO_LINES.map((line) => (
+          {COMPANY_CONTACT_MOBILE.map((line) => (
             <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
               {line}
             </p>
           ))}
+          <p className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
+            {COMPANY_ADDRESS_LINE}
+          </p>
         </div>
         <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5">
           <p className="text-center text-caption-12-m text-[var(--color-footer-text)]">
@@ -149,11 +142,12 @@ export default function FooterSection() {
               <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
                 {COMPANY_REGISTRATION_DESKTOP}
               </p>
-              {COMPANY_INFO_LINES.map((line) => (
-                <p key={line} className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
-                  {line}
-                </p>
-              ))}
+              <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
+                {COMPANY_CONTACT_DESKTOP}
+              </p>
+              <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
+                {COMPANY_ADDRESS_LINE}
+              </p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3 self-center">

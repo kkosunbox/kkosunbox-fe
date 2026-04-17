@@ -766,8 +766,8 @@ export default function OrderSection({
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
-          <div className="w-[152px] shrink-0">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 min-w-0">
+          <div className="w-full max-w-[260px] sm:w-[200px] shrink-0">
             <DatePicker
               value={subscriptionDate}
               onChange={setSubscriptionDate}

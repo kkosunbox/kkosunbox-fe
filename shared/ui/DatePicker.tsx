@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 
 export interface DatePickerProps {
   value: Date | null;
@@ -145,7 +146,7 @@ export default function DatePicker({
     : null;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [openUp, setOpenUp] = useState(false);
+  const [popupRect, setPopupRect] = useState({ top: 0, left: 0 });
   const [viewYear, setViewYear] = useState(
     () => value?.getFullYear() ?? today.getFullYear()
   );
@@ -167,19 +168,77 @@ export default function DatePicker({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  const POPUP_WIDTH = 256;
+  const POPUP_GAP = 6;
+  const POPUP_EST_HEIGHT = 360;
+
+  const updatePopupPosition = useCallback(() => {
+    const btn = triggerRef.current;
+    if (!btn) return;
+
+    const r = btn.getBoundingClientRect();
+    const vv = window.visualViewport;
+    const vw = vv?.width ?? window.innerWidth;
+    const vh = vv?.height ?? window.innerHeight;
+
+    const spaceBelow = vh - r.bottom;
+    const spaceAbove = r.top;
+    const openUpward = spaceBelow < POPUP_EST_HEIGHT && spaceAbove > spaceBelow;
+
+    let top: number;
+    if (openUpward) {
+      const h = popupRef.current?.offsetHeight ?? POPUP_EST_HEIGHT;
+      top = r.top - h - POPUP_GAP;
+    } else {
+      top = r.bottom + POPUP_GAP;
+    }
+
+    let left = r.left;
+    const maxLeft = vw - POPUP_WIDTH - 8;
+    const minLeft = 8;
+    if (left > maxLeft) left = maxLeft;
+    if (left < minLeft) left = minLeft;
+
+    const popupH = popupRef.current?.offsetHeight ?? POPUP_EST_HEIGHT;
+    top = Math.min(top, vh - popupH - 8);
+    top = Math.max(8, top);
+
+    setPopupRect({ top, left });
+  }, []);
 
   /* 바깥 클릭 시 닫기 */
   useEffect(() => {
     if (!isOpen) return;
     const onPointerDown = (e: PointerEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) {
-        setIsOpen(false);
-        setCalendarView("days");
-      }
+      const t = e.target as Node;
+      if (containerRef.current?.contains(t) || popupRef.current?.contains(t)) return;
+      setIsOpen(false);
+      setCalendarView("days");
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [isOpen]);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    updatePopupPosition();
+    const raf = requestAnimationFrame(() => updatePopupPosition());
+    const onReposition = () => updatePopupPosition();
+    window.addEventListener("resize", onReposition);
+    window.visualViewport?.addEventListener("resize", onReposition);
+    window.visualViewport?.addEventListener("scroll", onReposition);
+    document.addEventListener("scroll", onReposition, true);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onReposition);
+      window.visualViewport?.removeEventListener("resize", onReposition);
+      window.visualViewport?.removeEventListener("scroll", onReposition);
+      document.removeEventListener("scroll", onReposition, true);
+    };
+  }, [isOpen, updatePopupPosition, calendarView, viewYear, viewMonth]);
+
 
   /* Escape 키로 닫기 */
   useEffect(() => {
@@ -288,13 +347,6 @@ export default function DatePicker({
         disabled={disabled}
         onClick={() => {
           if (disabled) return;
-          if (!isOpen) {
-            const btn = triggerRef.current;
-            if (btn) {
-              const { bottom } = btn.getBoundingClientRect();
-              setOpenUp(window.innerHeight - bottom < 340);
-            }
-          }
           setIsOpen((v) => !v);
           setCalendarView("days");
         }}
@@ -316,22 +368,24 @@ export default function DatePicker({
         <CalendarTriggerIcon active={isOpen || !!value} />
       </button>
 
-      {/* ── Calendar popup ── */}
-      {isOpen && (
-        <div
-          role="dialog"
-          aria-label="날짜 선택 달력"
-          className={[
-            "absolute left-0 z-50",
-            openUp ? "bottom-[calc(100%+6px)]" : "top-[calc(100%+6px)]",
-          ].join(" ")}
-          style={{
-            width: 256,
-            background: "#FFFFFF",
-            boxShadow: "0px 18px 28px rgba(9, 30, 66, 0.1)",
-            borderRadius: 14,
-          }}
-        >
+      {isOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={popupRef}
+            role="dialog"
+            aria-label="날짜 선택 달력"
+            className="z-[1000]"
+            style={{
+              position: "fixed",
+              top: popupRect.top,
+              left: popupRect.left,
+              width: POPUP_WIDTH,
+              background: "#FFFFFF",
+              boxShadow: "0px 18px 28px rgba(9, 30, 66, 0.1)",
+              borderRadius: 14,
+            }}
+          >
           {/* ── Header ── */}
           <div
             className="flex items-center justify-between"
@@ -592,8 +646,9 @@ export default function DatePicker({
               </div>
             )}
           </div>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </div>
   );
 }

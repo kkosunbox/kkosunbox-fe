@@ -66,6 +66,29 @@ function PencilIcon() {
   );
 }
 
+function DefaultPetIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M37.2785 37.1373C34.5293 36.2292 29.4393 36.2693 26.7858 37.1139C24.1808 37.9418 22.587 40.5692 22.9069 43.7334C23.054 45.3339 23.6124 46.7856 24.4207 48.0884C25.7689 50.4181 27.567 52.1842 29.7678 53.3181L29.7649 64C25.1334 63.8512 19.5793 63.0969 15.4461 60.4477C11.3073 58.0495 8.72806 53.579 8.15965 48.1904C7.5941 42.8236 8.1825 37.5086 9.75634 32.3876L13.9066 18.8726C16.4144 10.7011 19.6935 2.31382 27.7441 0.484171C30.5833 -0.16139 33.4182 -0.16139 36.2574 0.484171C44.2637 2.30546 47.557 10.6175 50.0563 18.7505L54.2451 32.3859C55.8332 37.5537 56.4188 42.9223 55.8218 48.3376C55.2334 53.666 52.647 58.0712 48.5567 60.4477C44.4265 63.0969 38.8666 63.8512 34.2379 64L34.2351 53.3198C36.4345 52.1842 38.234 50.4181 39.5821 48.0901C40.419 46.7388 40.9903 45.2336 41.1089 43.5645C41.3502 40.5223 39.8349 37.9819 37.2799 37.139L37.2785 37.1373ZM24.3736 29.4809C26.2131 29.6197 27.5141 27.882 27.4856 25.9654C27.457 24.0823 26.1517 22.4985 24.4464 22.5804C22.844 22.6573 21.6844 24.1843 21.6501 25.947C21.6158 27.7098 22.6884 29.3521 24.3736 29.4792V29.4809ZM39.1951 29.5043C41.0589 29.6598 42.3871 27.9055 42.3514 25.9454C42.3157 23.9853 40.9917 22.455 39.2651 22.5537C37.667 22.6456 36.5044 24.186 36.4702 25.9403C36.4359 27.6947 37.5084 29.3621 39.1951 29.5026V29.5043Z"
+        fill="white"
+      />
+      <path
+        d="M5.91505 29.3653C3.36291 29.5175 0.745087 28.1294 0.106697 25.1508C-0.498845 22.321 1.61198 17.7519 2.94161 15.3687C5.23524 11.2562 10.9036 2.34373 15.7665 3.22176C12.6403 8.00159 11.2307 12.1024 9.50831 17.6967L5.91505 29.367V29.3653Z"
+        fill="white"
+      />
+      <path
+        d="M63.9001 25.0837C63.2645 28.1743 60.6053 29.519 58.0803 29.3601L54.4528 17.5694C52.7604 12.0688 51.3536 8.00139 48.2402 3.22992C53.0603 2.33182 58.7287 11.1824 61.058 15.3685C62.3319 17.658 64.4842 22.2455 63.9015 25.0837H63.9001Z"
+        fill="white"
+      />
+      <path
+        d="M36.5476 42.4958C37.5173 43.5829 33.4227 49.7157 31.1891 48.3326C29.4939 47.2823 28.09 45.6701 27.4044 43.5645C27.3216 43.3086 27.3016 42.7818 27.4002 42.5911C28.0086 41.417 35.5835 41.417 36.5476 42.4974V42.4958Z"
+        fill="white"
+      />
+    </svg>
+  );
+}
+
 function PetAvatar({
   size = 124,
   editSize = 40,
@@ -81,6 +104,8 @@ function PetAvatar({
   disabled?: boolean;
   uploading?: boolean;
 }) {
+  const iconSize = size <= 64 ? "w-[60%] h-[60%]" : "w-[60%] h-[60%]";
+
   return (
     <div className="relative shrink-0">
       <div
@@ -102,21 +127,9 @@ function PetAvatar({
             height={size}
           />
         ) : (
-          <svg viewBox="0 0 86 86" className="h-full w-full" aria-hidden="true">
-            <circle cx="43" cy="43" r="43" style={{ fill: "var(--color-cta-logo-bg)" }} />
-            <path
-              d="M27 32C27 24 33 18 40 18C46 18 51 22 54 27C56 22 61 18 68 18C75 18 80 24 80 32C80 42 73 48 66 52L61 41L54 38L47 41L34 52C31 46 27 40 27 32Z"
-              style={{ fill: "var(--color-brown)" }}
-              opacity="0.95"
-            />
-            <ellipse cx="43" cy="48" rx="22" ry="24" style={{ fill: "var(--color-surface-warm)" }} />
-            <ellipse cx="35" cy="44" rx="6" ry="8" style={{ fill: "var(--color-brown)" }} />
-            <circle cx="37" cy="43" r="2.3" style={{ fill: "var(--color-text)" }} />
-            <circle cx="54" cy="43" r="2.3" style={{ fill: "var(--color-text)" }} />
-            <ellipse cx="46" cy="52" rx="6" ry="5" style={{ fill: "var(--color-text)" }} />
-            <path d="M43 52v4" stroke="var(--color-text)" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M39 58c2.2 1.8 8.8 1.8 11 0" stroke="var(--color-text)" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
+          <div className="flex h-full w-full items-center justify-center bg-[var(--color-text-secondary)]">
+            <DefaultPetIcon className={iconSize} />
+          </div>
         )}
       </div>
       <button
@@ -197,7 +210,7 @@ function GenderButtons({
       "flex h-8 flex-1 items-center justify-center rounded-[4px] text-body-13-m transition-colors",
       gender === value
         ? "bg-[var(--color-accent-soft)] font-semibold text-[var(--color-accent)]"
-        : "bg-[var(--color-ui-disabled)] text-[var(--color-text)]",
+        : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
     ].join(" ");
 
   return (
@@ -494,7 +507,7 @@ export default function ProfileManagementSection({
                           "inline-flex h-8 w-[106px] items-center justify-center rounded-[4px] text-body-13-m transition-colors",
                           gender === "male"
                             ? "bg-[var(--color-accent-soft)] font-semibold text-[var(--color-accent)]"
-                            : "bg-[var(--color-ui-disabled)] text-[var(--color-text)]",
+                            : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
                         ].join(" ")}
                       >
                         남
@@ -506,7 +519,7 @@ export default function ProfileManagementSection({
                           "inline-flex h-8 w-[106px] items-center justify-center rounded-[4px] text-body-13-m transition-colors",
                           gender === "female"
                             ? "bg-[var(--color-accent-soft)] font-semibold text-[var(--color-accent)]"
-                            : "bg-[var(--color-ui-disabled)] text-[var(--color-text)]",
+                            : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
                         ].join(" ")}
                       >
                         여
@@ -535,7 +548,7 @@ export default function ProfileManagementSection({
                 <button
                   type="button"
                   onClick={handleOpenWithdraw}
-                  className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-divider-warm)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+                  className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
                 >
                   회원 탈퇴
                 </button>

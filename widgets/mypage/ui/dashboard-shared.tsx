@@ -12,7 +12,7 @@ export function DashboardCard({
   return (
     <div
       className={[
-        "rounded-[20px] max-md:bg-white max-md:px-7 max-md:py-6 md:bg-[var(--color-surface-light)] md:min-h-[173px] md:px-8 md:py-6",
+        "flex flex-col rounded-[20px] max-md:bg-white max-md:px-7 max-md:py-6 md:bg-[var(--color-surface-light)] md:min-h-[173px] md:px-8 md:py-6",
         className,
       ]
         .filter(Boolean)

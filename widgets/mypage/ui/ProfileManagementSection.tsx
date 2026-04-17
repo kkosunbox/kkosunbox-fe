@@ -84,7 +84,12 @@ function PetAvatar({
   return (
     <div className="relative shrink-0">
       <div
-        className="overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)]"
+        role="button"
+        tabIndex={0}
+        aria-label="프로필 사진 변경"
+        onClick={() => { if (!disabled && !uploading) onEditClick(); }}
+        onKeyDown={(e) => { if (!disabled && !uploading && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onEditClick(); } }}
+        className="cursor-pointer overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)]"
         style={{ width: size, height: size }}
       >
         {imageUrl ? (
@@ -356,7 +361,7 @@ export default function ProfileManagementSection({
                       {subscriptionPlanTheme?.tier}
                     </span>
                     <p className="mt-2 w-full text-center text-subtitle-16-sb tracking-tightest text-[var(--color-text)]">
-                      {subscription.plan.name} 패키지 구독중
+                      {subscription.plan.name} 구독중
                     </p>
                     <p className="mt-1 w-full text-center text-body-16-m text-[var(--color-text-secondary)]">
                       {subscription.nextBillingDate.replace(/-/g, ".")} ~

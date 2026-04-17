@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { socialLoginAction, getCallbackUrl } from "@/features/auth";
 import { tokenStore } from "@/shared/lib/api/token";
+import { LoadingOverlay } from "@/shared/ui";
 import type { OAuthProvider } from "@/features/auth";
 
 const VALID_PROVIDERS = new Set<OAuthProvider>(["google", "naver", "kakao"]);
@@ -82,14 +83,5 @@ export default function OAuthCallbackPage() {
     );
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
-      <p
-        className="text-body-16-m"
-        style={{ color: "var(--color-text-secondary)" }}
-      >
-        로그인 처리 중...
-      </p>
-    </div>
-  );
+  return <LoadingOverlay visible message="로그인 처리 중입니다..." />;
 }

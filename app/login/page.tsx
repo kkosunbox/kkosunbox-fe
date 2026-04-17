@@ -186,9 +186,9 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-full outline-none text-[var(--color-text)] font-semibold placeholder:font-semibold placeholder:text-[var(--color-text)]
+              className="w-full rounded-full outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
                 max-md:h-[48px] max-md:px-8 max-md:text-[14px] max-md:bg-white
-                md:h-[54px] md:px-6 md:tracking-[0.2px] md:bg-[var(--color-surface-light)] md:text-body-16-sb"
+                md:h-[54px] md:px-6 md:tracking-[0.2px] md:bg-[var(--color-surface-light)] md:text-body-16-m"
             />
 
             {/* 비밀번호 입력 */}

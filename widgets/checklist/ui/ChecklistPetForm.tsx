@@ -24,9 +24,13 @@ function PetAvatar({
   return (
     <div className="relative mx-auto mb-6 w-fit">
       <div
-        className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-full"
+        role="button"
+        tabIndex={0}
+        aria-label="프로필 사진 변경"
+        onClick={onButtonClick}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onButtonClick(); } }}
+        className="flex h-[88px] w-[88px] cursor-pointer items-center justify-center overflow-hidden rounded-full"
         style={{ background: "var(--color-secondary)" }}
-        aria-hidden="true"
       >
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element

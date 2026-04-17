@@ -186,7 +186,7 @@ export default function ForgotPasswordSection() {
 
         {/* ─── 폼 카드 ─── */}
         <div
-          className="relative overflow-hidden rounded-[20px] px-5 py-6 md:mx-auto md:w-full md:max-w-[874px] md:min-h-[524px] md:py-11"
+          className="relative overflow-hidden rounded-[20px] px-5 py-6 md:mx-auto md:w-full md:max-w-[874px] md:py-11 md:pb-20"
           style={{ background: "var(--color-surface-warm)" }}
         >
           <div className="flex flex-col gap-4 md:mx-auto md:w-[414px]">

@@ -8,9 +8,7 @@ export default function ForgotPasswordLayout({
 }) {
   return (
     <>
-      <div className="max-md:hidden">
-        <Header />
-      </div>
+      <Header />
       {children}
       <div className="max-md:hidden">
         <FooterSection />

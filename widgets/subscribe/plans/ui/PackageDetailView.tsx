@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import {
   PACKAGES,
   COMPARE_PACKAGES,
@@ -75,6 +75,102 @@ export type PackageDetailPrimaryButton = {
   disabled?: boolean;
 };
 
+/** 모바일 비교 카드 — `key={plan.id}`로 플랜 변경 시 compare 인덱스 자동 초기화 */
+function MobileCompareWarmPanel({
+  plan,
+  onClose,
+}: {
+  plan: SubscriptionPlanDto;
+  onClose: () => void;
+}) {
+  const tier = tierFromSubscriptionPlan(plan);
+  const [compareIndex, setCompareIndex] = useState(() =>
+    COMPARE_PACKAGES.findIndex((p) => p.tier === tier)
+  );
+  const comparePkg = COMPARE_PACKAGES[compareIndex];
+
+  return (
+    <div
+      className="relative rounded-[20px] px-5 pb-6 pt-5"
+      style={{ background: "var(--color-surface-warm)" }}
+    >
+      <div className="absolute right-5 top-5">
+        <CloseButton onClick={onClose} />
+      </div>
+
+      <p className="mb-3 text-center text-subtitle-16-sb leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+        {comparePkg.name}
+      </p>
+
+      <div className="mb-4 flex justify-center">
+        <span
+          className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+          style={{ background: comparePkg.colorVar }}
+        >
+          {comparePkg.tier}
+        </span>
+      </div>
+
+      <div className="overflow-hidden rounded-[20px] bg-white">
+        <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
+          <p
+            className="text-center text-body-13-r text-[var(--color-text)]"
+            style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
+          >
+            &ldquo;{comparePkg.quote}&rdquo;
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center gap-0.5 border-b border-[var(--color-text-muted)] px-5 py-4">
+          {comparePkg.contents.map((c) => (
+            <p
+              key={c}
+              className="text-center text-body-13-b leading-[20px]"
+              style={{ color: comparePkg.colorVar }}
+            >
+              {c}
+            </p>
+          ))}
+        </div>
+
+        <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
+          <p className="text-center text-body-13-r leading-[18px] text-[var(--color-text)]">
+            {comparePkg.special}
+          </p>
+        </div>
+
+        <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
+          <p className="whitespace-pre-line text-center text-body-13-r leading-[18px] text-[var(--color-text)]">
+            {comparePkg.customization}
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-1 px-5 py-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <HeartIcon key={i} filled={i < comparePkg.hearts} />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4 flex justify-center gap-2">
+        {COMPARE_PACKAGES.map((p, i) => (
+          <button
+            key={p.tier}
+            type="button"
+            onClick={() => setCompareIndex(i)}
+            aria-label={`${p.name} 비교 보기`}
+            className="h-2 rounded-full transition-all"
+            style={{
+              width: "8px",
+              background: i === compareIndex ? p.colorVar : "var(--color-text-muted)",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Props ─── */
 interface Props {
   plan: SubscriptionPlanDto;
@@ -95,10 +191,35 @@ export default function PackageDetailView({
   const router = useRouter();
   const selectedTier = tierFromSubscriptionPlan(plan);
   const pkg = PACKAGES.find((p) => p.tier === selectedTier)!;
-  const [compareIndex, setCompareIndex] = useState(
-    COMPARE_PACKAGES.findIndex((p) => p.tier === selectedTier)
-  );
-  const comparePkg = COMPARE_PACKAGES[compareIndex];
+
+  /** 데스크톱 오른쪽 비교 표 reveal (폭은 고정, clip-path만 전개) */
+  const [desktopTableRevealed, setDesktopTableRevealed] = useState(false);
+  const [desktopTableMotion, setDesktopTableMotion] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+    let raf1 = 0;
+    let raf2 = 0;
+
+    queueMicrotask(() => {
+      if (cancelled || typeof window === "undefined") return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setDesktopTableMotion(false);
+        setDesktopTableRevealed(true);
+        return;
+      }
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          if (!cancelled) setDesktopTableRevealed(true);
+        });
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, []);
 
   function defaultPrimary(p: SubscriptionPlanDto): PackageDetailPrimaryButton {
     return {
@@ -162,7 +283,7 @@ export default function PackageDetailView({
             ))}
           </ul>
 
-          <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
+          <div className="mt-auto mb-7 flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
             <span className="text-body-14-b text-black">월 요금제</span>
             <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
               {formatMonthlyPrice(plan.monthlyPrice)}
@@ -186,84 +307,7 @@ export default function PackageDetailView({
         </div>
 
         {/* 하단: 비교 상세 카드 */}
-        <div
-          className="relative rounded-[20px] px-5 pb-6 pt-5"
-          style={{ background: "var(--color-surface-warm)" }}
-        >
-          <div className="absolute right-5 top-5">
-            <CloseButton onClick={onClose} />
-          </div>
-
-          <p className="mb-3 text-center text-subtitle-16-sb leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
-            {comparePkg.name}
-          </p>
-
-          <div className="mb-4 flex justify-center">
-            <span
-              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-              style={{ background: comparePkg.colorVar }}
-            >
-              {comparePkg.tier}
-            </span>
-          </div>
-
-          <div className="overflow-hidden rounded-[20px] bg-white">
-            <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
-              <p
-                className="text-center text-body-13-r text-[var(--color-text)]"
-                style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
-              >
-                &ldquo;{comparePkg.quote}&rdquo;
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center gap-0.5 border-b border-[var(--color-text-muted)] px-5 py-4">
-              {comparePkg.contents.map((c) => (
-                <p
-                  key={c}
-                  className="text-center text-body-13-b leading-[20px]"
-                  style={{ color: comparePkg.colorVar }}
-                >
-                  {c}
-                </p>
-              ))}
-            </div>
-
-            <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
-              <p className="text-center text-body-13-r leading-[18px] text-[var(--color-text)]">
-                {comparePkg.special}
-              </p>
-            </div>
-
-            <div className="border-b border-[var(--color-text-muted)] px-5 py-4">
-              <p className="whitespace-pre-line text-center text-body-13-r leading-[18px] text-[var(--color-text)]">
-                {comparePkg.customization}
-              </p>
-            </div>
-
-            <div className="flex justify-center gap-1 px-5 py-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <HeartIcon key={i} filled={i < comparePkg.hearts} />
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-4 flex justify-center gap-2">
-            {COMPARE_PACKAGES.map((p, i) => (
-              <button
-                key={p.tier}
-                type="button"
-                onClick={() => setCompareIndex(i)}
-                aria-label={`${p.name} 비교 보기`}
-                className="h-2 rounded-full transition-all"
-                style={{
-                  width: "8px",
-                  background: i === compareIndex ? p.colorVar : "var(--color-text-muted)",
-                }}
-              />
-            ))}
-          </div>
-        </div>
+        <MobileCompareWarmPanel key={plan.id} plan={plan} onClose={onClose} />
       </div>
 
       {/* ══ DESKTOP LAYOUT (lg 이상) ══════════════════════════════════ */}
@@ -275,10 +319,15 @@ export default function PackageDetailView({
           <CloseButton onClick={onClose} />
         </div>
 
-        <div className="flex lg:flex-row lg:items-stretch lg:min-h-[570px]">
+        <div
+          className="grid min-h-[570px] items-stretch [grid-template-rows:minmax(0,auto)]"
+          style={{
+            gridTemplateColumns: "327px 1fr",
+          }}
+        >
 
           {/* Left panel */}
-          <div className="flex w-full flex-col px-7 pb-7 pt-5 lg:w-[327px] lg:shrink-0">
+          <div className="flex min-h-0 min-w-0 flex-col px-7 pb-7 pt-5">
             <div className="mb-2.5">
               <span
                 className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
@@ -315,7 +364,7 @@ export default function PackageDetailView({
               ))}
             </ul>
 
-            <div className="mt-auto mb-7 flex items-center justify-between border-t border-white pt-3">
+            <div className="mt-auto mb-7 flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
               <span className="text-body-14-b text-black">월 요금제</span>
               <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
                 {formatMonthlyPrice(plan.monthlyPrice)}
@@ -338,9 +387,22 @@ export default function PackageDetailView({
             })()}
           </div>
 
-          {/* Right: comparison table */}
-          <div className="flex flex-1 flex-col pb-8 pl-0 pr-7 pt-[61px]">
-            <div className="flex flex-1 flex-col overflow-hidden rounded-[20px] bg-white">
+          {/* Right: comparison table — 데스크톱에서만 clip-path reveal, 모바일은 별도 레이아웃 유지 */}
+          <div
+            className="flex min-h-0 min-w-0 max-h-[min(90vh,880px)] flex-col overflow-hidden pb-8 pl-0 pr-7 pt-[61px]"
+            style={{
+              clipPath: desktopTableRevealed
+                ? "inset(0 0 0 0)"
+                : "inset(0 100% 0 0)",
+              opacity: desktopTableRevealed ? 1 : 0.98,
+              transform: desktopTableRevealed ? "translateX(0)" : "translateX(8px)",
+              transition: desktopTableMotion
+                ? "clip-path 520ms cubic-bezier(0.22, 1, 0.36, 1), transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out"
+                : "none",
+              willChange: desktopTableMotion ? "clip-path, transform, opacity" : "auto",
+            }}
+          >
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white">
 
               {/* Tabs */}
               <div className="flex gap-0.5 px-6 pt-8 md:pt-12">
@@ -363,8 +425,8 @@ export default function PackageDetailView({
               </div>
 
               {/* Comparison table */}
-              <div className="flex-1 overflow-x-auto">
-                <div className="min-w-[360px] px-6">
+              <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto">
+                <div className="min-h-0 min-w-[360px] px-6">
 
                   <div className="grid grid-cols-3">
                     {COMPARE_PACKAGES.map((p) => (

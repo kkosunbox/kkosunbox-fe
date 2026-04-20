@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { cancelSubscription, reactivateSubscription, changePlan } from "@/features/subscription/api/subscriptionApi";

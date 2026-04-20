@@ -4,13 +4,13 @@ import { useEffect, useRef, useState, useTransition, type InputHTMLAttributes, t
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createProfile, updateProfile } from "@/features/profile/api/profileApi";
-import type { DogGender, Profile } from "@/features/profile/api/types";
+import { MAX_PROFILE_COUNT, type DogGender, type Profile } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import { DatePicker, useLoadingOverlay } from "@/shared/ui";
+import { DatePicker, useLoadingOverlay, useModal } from "@/shared/ui";
 
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
@@ -232,9 +232,11 @@ export default function ProfileManagementSection({
   isNewProfile = false,
 }: ProfileManagementSectionProps) {
   const router = useRouter();
-  const { profile: activeProfile, refreshProfile, setActiveProfileId } = useProfile();
+  const { profile: activeProfile, profiles, refreshProfile, setActiveProfileId } = useProfile();
   const { showLoading, hideLoading } = useLoadingOverlay();
+  const { openAlert } = useModal();
   const [isPending, start] = useTransition();
+  const hasAlertedLimit = useRef(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -260,6 +262,15 @@ export default function ProfileManagementSection({
     setBirthDate(birthDateInputValue(profile?.birthDate));
     setWeight(profile?.weight !== null && profile?.weight !== undefined ? String(profile.weight) : "");
   }, [profile?.id, profile?.profileImageUrl, profile?.gender, profile?.name, profile?.birthDate, profile?.weight, isNewProfile]);
+
+  useEffect(() => {
+    if (!isNewProfile) return;
+    if (profiles.length < MAX_PROFILE_COUNT) return;
+    if (hasAlertedLimit.current) return;
+    hasAlertedLimit.current = true;
+    openAlert({ title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
+    router.replace("/mypage");
+  }, [isNewProfile, profiles.length, openAlert, router]);
 
   function handleOpenWithdraw() {
     router.push("/mypage/withdraw");
@@ -301,6 +312,10 @@ export default function ProfileManagementSection({
 
   function handleSave() {
     setSaveError(null);
+    if (isCreating && profiles.length >= MAX_PROFILE_COUNT) {
+      openAlert({ title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
+      return;
+    }
     const trimmedWeight = weight.trim();
     const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : NaN;
     if (trimmedWeight && Number.isNaN(parsedWeight)) {

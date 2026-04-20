@@ -1,3 +1,6 @@
+/** 유저가 등록할 수 있는 최대 프로필 개수 */
+export const MAX_PROFILE_COUNT = 3;
+
 // ── 체크리스트 ────────────────────────────────────────────────────
 
 export interface ChecklistOption {

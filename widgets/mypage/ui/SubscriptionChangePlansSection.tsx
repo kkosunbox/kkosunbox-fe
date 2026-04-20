@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import heroTitleImage from "@/widgets/mypage/assets/subscription-change-plans-selection.png";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";

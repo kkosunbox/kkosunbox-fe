@@ -50,7 +50,8 @@
       "Bash(npx eslint:*)",
       "Bash(echo \"TSC=$?\")",
       "Bash(echo \"LINT=$?\")",
-      "Bash(pnpm exec:*)"
+      "Bash(pnpm exec:*)",
+      "Bash(git stash *)"
     ]
   }
 }

@@ -8,7 +8,7 @@ import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.png";
 import checklistDoneTitlePawsMobile from "../assets/checklist-done-title-paws-mobile.png";
 import doubleTwinkle from "@/widgets/subscribe/recommend/assets/double-twinkle.png";
 import stamp from "@/widgets/subscribe/recommend/assets/stamp.png";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import {
   PACKAGES,

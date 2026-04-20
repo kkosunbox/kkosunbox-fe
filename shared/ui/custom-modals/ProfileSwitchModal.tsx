@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import type { Profile } from "@/features/profile/api/types";
+import { MAX_PROFILE_COUNT, type Profile } from "@/features/profile/api/types";
 
 interface Props {
   onClose: () => void;
@@ -80,6 +80,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   const [selectedId, setSelectedId] = useState<number>(profile?.id ?? profiles[0]?.id ?? 0);
 
   const isChanged = selectedId !== profile?.id;
+  const canAddProfile = profiles.length < MAX_PROFILE_COUNT;
 
   const handleConfirm = () => {
     if (isChanged) {
@@ -89,6 +90,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   };
 
   const handleAddProfile = () => {
+    if (!canAddProfile) return;
     onClose();
     router.push("/mypage/profile?new=true");
   };
@@ -134,7 +136,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
                   onSelect={() => setSelectedId(pet.id)}
                 />
               ))}
-              <AddProfileItem onClick={handleAddProfile} />
+              {canAddProfile && <AddProfileItem onClick={handleAddProfile} />}
             </div>
 
             {/* Guide text */}

@@ -7,6 +7,8 @@ export {
   deleteProfile,
 } from "./profileApi";
 
+export { MAX_PROFILE_COUNT } from "./types";
+
 export type {
   Profile,
   DogGender,

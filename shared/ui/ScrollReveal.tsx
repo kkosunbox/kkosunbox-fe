@@ -17,6 +17,8 @@ interface ScrollRevealProps {
   threshold?: number;
   className?: string;
   as?: "div" | "section" | "span" | "article" | "aside" | "li";
+  /** true면 인터섹션 관찰 없이 즉시 표시 (재방문 시 애니메이션 스킵용) */
+  immediate?: boolean;
 }
 
 const HIDDEN_TRANSFORMS: Record<RevealVariant, string> = {
@@ -35,11 +37,13 @@ export default function ScrollReveal({
   threshold = 0.15,
   className = "",
   as: Tag = "div",
+  immediate = false,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(immediate);
 
   useEffect(() => {
+    if (immediate) return;
     const el = ref.current;
     if (!el) return;
 
@@ -63,7 +67,11 @@ export default function ScrollReveal({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, immediate]);
+
+  if (immediate) {
+    return <Tag className={className}>{children}</Tag>;
+  }
 
   const hiddenTransform = HIDDEN_TRANSFORMS[variant];
 

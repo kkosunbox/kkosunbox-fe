@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.png";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import doubleTwinkle from "../assets/double-twinkle.png";
 import stamp from "../assets/stamp.png";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";

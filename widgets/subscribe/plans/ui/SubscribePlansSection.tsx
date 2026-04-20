@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
@@ -57,10 +57,12 @@ export default function SubscribePlansSection({ plans }: Props) {
   const router = useRouter();
   const [isDismissed, setIsDismissed] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
+  const [hasOpenedDetail, setHasOpenedDetail] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const savedScrollY = useRef(0);
 
   const handleSelectPlan = useCallback((plan: SubscriptionPlanDto) => {
+    setHasOpenedDetail(true);
     // 모바일에서만 스크롤 저장 및 상단 이동
     if (window.innerWidth < 768) {
       savedScrollY.current = window.scrollY;
@@ -156,7 +158,6 @@ export default function SubscribePlansSection({ plans }: Props) {
           {selectedPlan ? (
             <div className="mx-auto w-full max-w-[var(--max-width-content)]">
               <PackageDetailView
-                key={selectedPlan.id}
                 plan={selectedPlan}
                 allPlans={sortedPlans}
                 onSelectPlan={handleSelectPlan}
@@ -174,7 +175,13 @@ export default function SubscribePlansSection({ plans }: Props) {
                 const theme = packageThemeForPlan(plan);
                 const color = theme.colorVar;
                 return (
-                  <ScrollReveal key={plan.id} variant="fade-up" delay={100 + i * 120} duration={600}>
+                  <ScrollReveal
+                    key={plan.id}
+                    variant="fade-up"
+                    delay={100 + i * 120}
+                    duration={600}
+                    immediate={hasOpenedDetail}
+                  >
                   <div
                     className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
                   >
@@ -233,21 +240,21 @@ export default function SubscribePlansSection({ plans }: Props) {
                       ))}
                     </ul>
 
-                    <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">
+                    <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
                       <span className="text-body-14-b text-black">월 요금제</span>
                       <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
                         {formatMonthlyPrice(plan.monthlyPrice)}
                       </span>
                     </div>
 
-                    {/* 구독하기 → 결제 페이지 */}
+                    {/* 제품 상세보기 → 상세 페이지 */}
                     <button
                       type="button"
-                      onClick={() => router.push(`/order?planId=${plan.id}`)}
+                      onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
                       className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
                       style={{ background: color }}
                     >
-                      구독하기
+                      제품 상세보기
                     </button>
                   </div>
                   </ScrollReveal>

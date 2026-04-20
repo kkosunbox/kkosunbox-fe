@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Text, ScrollReveal } from "@/shared/ui";
-import mockTempPackage from "../assets/mock-temp-package.png";
+import mockTempPackage from "../assets/mock-temp-package-4x.png";
 import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 
 const PACKAGES = [

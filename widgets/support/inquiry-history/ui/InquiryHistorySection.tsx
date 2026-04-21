@@ -3,27 +3,42 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { InquiryDto, InquiryStatus } from "@/features/inquiry/api";
+import type { InquiryDto } from "@/features/inquiry/api";
 import { getInquiries } from "@/features/inquiry/api";
-// import { formatInquiryDate } from "@/features/inquiry/lib";
 import { ApiError } from "@/shared/lib/api/types";
 import FaqQuestion from "../../faq/assets/faq-question.png";
 import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 const ITEMS_PER_PAGE = 4;
 
-const STATUS_LABEL: Record<InquiryStatus, string> = {
-  pending: "접수",
-  in_progress: "처리 중",
-  resolved: "완료",
-};
+const WAITING_MESSAGE = "문의해주셔서 감사합니다.\n빠르게 확인 후 1~2일 이내에\n답변드릴 예정입니다.";
 
-function formatInquiryBody(row: InquiryDto): string {
-  const lines: string[] = [row.content];
-  if (row.isAnswered && row.answer?.trim()) {
-    lines.push("", "답변:", row.answer.trim());
-  }
-  return lines.join("\n");
+function isResolved(row: InquiryDto): boolean {
+  return row.status === "resolved" && row.isAnswered && Boolean(row.answer?.trim());
+}
+
+function InquiryStatusBadge({ row }: { row: InquiryDto }) {
+  const done = isResolved(row);
+  return (
+    <span
+      className={
+        done
+          ? "inline-flex items-center rounded-full bg-[var(--color-status-success-bg)] px-3 py-1 text-caption-12-m leading-[14px] text-[var(--color-status-success)]"
+          : "inline-flex items-center rounded-full bg-[var(--color-status-waiting-bg)] px-3 py-1 text-caption-12-m leading-[14px] text-[var(--color-status-waiting)]"
+      }
+      style={{ opacity: 0.8 }}
+    >
+      {done ? "완료" : "대기"}
+    </span>
+  );
+}
+
+function CardCloseIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
 }
 
 function ChevronLeftIcon() {
@@ -91,16 +106,17 @@ function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClose: () =
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-          <span className="rounded-full bg-[var(--color-accent-soft)] px-2 py-0.5 text-body-12-m text-[var(--color-accent)]">
-            {STATUS_LABEL[item.status]}
-          </span>
+          <InquiryStatusBadge row={item} />
         </div>
-        {/* <p className="text-body-12-r text-[var(--color-text-secondary)]">
-          {formatInquiryDate(item.createdAt)}
-        </p> */}
-        <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
-          {formatInquiryBody(item)}
-        </p>
+        {isResolved(item) ? (
+          <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
+            {item.answer!.trim()}
+          </p>
+        ) : (
+          <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text-secondary)] text-center">
+            {WAITING_MESSAGE}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -245,29 +261,44 @@ export default function InquiryHistorySection() {
 
           {loadState === "ok" && currentItems.length > 0 ? (
             <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
-              {currentItems.map((item) => (
-                <li
-                  key={item.id}
-                  onClick={() => setSelectedInquiry(item)}
-                  className="flex cursor-pointer flex-col gap-3 rounded-[20px] bg-white p-4 transition-shadow hover:shadow-md md:p-4"
-                >
-                  <PawCircleIcon />
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-                      <span className="rounded-full bg-[var(--color-accent-soft)] px-2 py-0.5 text-body-12-m text-[var(--color-accent)]">
-                        {STATUS_LABEL[item.status]}
-                      </span>
+              {currentItems.map((item) => {
+                const resolved = isResolved(item);
+                return (
+                  <li
+                    key={item.id}
+                    onClick={() => setSelectedInquiry(item)}
+                    className="relative flex cursor-pointer flex-col gap-3 rounded-[20px] bg-white p-4 transition-shadow hover:shadow-md md:p-4"
+                  >
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.alert("준비중인 기능입니다.");
+                      }}
+                      aria-label="문의 삭제"
+                      className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center hover:opacity-70 transition-opacity"
+                    >
+                      <CardCloseIcon />
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <PawCircleIcon />
+                      <InquiryStatusBadge row={item} />
                     </div>
-                    {/* <p className="text-body-12-r text-[var(--color-text-secondary)]">
-                      {formatInquiryDate(item.createdAt)}
-                    </p> */}
-                    <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
-                      {formatInquiryBody(item)}
-                    </p>
-                  </div>
-                </li>
-              ))}
+                    <div className="flex flex-col gap-2">
+                      <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
+                      {resolved ? (
+                        <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
+                          {item.answer!.trim()}
+                        </p>
+                      ) : (
+                        <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text-secondary)] text-center py-4">
+                          {WAITING_MESSAGE}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           ) : null}
 

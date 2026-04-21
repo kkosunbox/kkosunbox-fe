@@ -44,6 +44,7 @@ export interface Profile {
   birthDate: string | null;  // YYYY-MM-DD
   weight: number | null;     // kg
   profileImageUrl: string | null;
+  specialNotes: string | null;
   createdAt: string;
   updatedAt: string;
   checklistAnswers: ChecklistAnswer[];
@@ -59,6 +60,7 @@ export interface CreateProfileRequest {
   birthDate?: string;
   weight?: number;
   profileImageUrl?: string;
+  specialNotes?: string;
   checklistAnswers?: ChecklistAnswerInput[];
 }
 
@@ -73,5 +75,6 @@ export interface UpdateProfileRequest {
   birthDate?: string | null;
   weight?: number | null;
   profileImageUrl?: string | null;
+  specialNotes?: string | null;
   checklistAnswers?: ChecklistAnswerInput[];
 }

@@ -10,6 +10,8 @@ import { getErrorMessage } from "@/shared/lib/api";
 import orderTitleImage from "@/widgets/order/assets/order-title-please-order.png";
 import orderProductThumbnail from "@/widgets/order/assets/order-product-thumbnail.png";
 import orderDogImage from "@/widgets/order/assets/order-advertise-banner.png";
+import heroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.png";
+import heroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.png";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -93,18 +95,6 @@ function CheckIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-  );
-}
-
-function PawPrint({ size = 80 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <ellipse cx="12" cy="15.5" rx="5" ry="4" fill="var(--color-primary)" />
-      <ellipse cx="6.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-      <ellipse cx="10" cy="8.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-      <ellipse cx="14" cy="8.5" rx="2" ry="2.5" fill="var(--color-primary)" />
-      <ellipse cx="17.5" cy="10.5" rx="2" ry="2.5" fill="var(--color-primary)" />
     </svg>
   );
 }
@@ -914,16 +904,28 @@ export default function OrderSection({
         strategy="afterInteractive"
       />
       <div
-        className="py-10 md:py-14 relative overflow-hidden"
-        style={{ background: "var(--color-surface-warm)" }}
+        className="relative overflow-hidden py-10 md:h-[160px] md:py-0 flex items-center justify-center"
+        style={{ background: "var(--gradient-checklist-hero)" }}
       >
-        <div className="max-md:hidden absolute left-12 top-1/2 -translate-y-1/2 opacity-[0.07]">
-          <PawPrint size={100} />
-        </div>
-        <div className="max-md:hidden absolute right-12 top-1/2 -translate-y-1/2 opacity-[0.07]">
-          <PawPrint size={100} />
-        </div>
-        <div className="text-center px-4 flex flex-col items-center gap-2">
+        <Image
+          src={heroLeftPaw}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[25%] top-1/2 h-auto w-[74px] -translate-y-1/2 max-md:hidden"
+        />
+        <Image
+          src={heroRightPaw}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[69%] top-[60%] h-auto w-[60px] -translate-y-1/2 max-md:hidden"
+        />
+        <Image
+          src={heroRightPaw}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[72%] top-[36%] h-auto w-[38px] -translate-y-1/2 max-md:hidden"
+        />
+        <div className="relative z-10 text-center px-4 flex flex-col items-center gap-4">
           <Image
             src={orderTitleImage}
             alt="주문을 완료해주세요!"
@@ -932,7 +934,10 @@ export default function OrderSection({
             className="max-md:w-[200px] md:w-[268px] h-auto object-contain"
             priority
           />
-          <p className="max-md:text-body-14-m md:text-body-16-m text-[var(--color-text-on-warm)]">
+          <p
+            className="max-md:text-[14px] md:text-[16px] leading-5 tracking-[-0.02em] text-[var(--color-text)]"
+            style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
+          >
             입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요.
           </p>
         </div>

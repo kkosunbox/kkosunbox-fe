@@ -195,6 +195,7 @@ export default function PackageDetailView({
   /** 데스크톱 오른쪽 비교 표 reveal (폭은 고정, clip-path만 전개) */
   const [desktopTableRevealed, setDesktopTableRevealed] = useState(false);
   const [desktopTableMotion, setDesktopTableMotion] = useState(true);
+  const [hoveredTier, setHoveredTier] = useState<PackageTier | null>(null);
   useEffect(() => {
     let cancelled = false;
     let raf1 = 0;
@@ -406,22 +407,29 @@ export default function PackageDetailView({
 
               {/* Tabs */}
               <div className="flex gap-0.5 px-6 pt-8 md:pt-12">
-                {COMPARE_PACKAGES.map((p) => (
-                  <button
-                    key={p.tier}
-                    type="button"
-                    onClick={() => selectTier(p.tier)}
-                    className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-body-13-sb"
-                    style={{
-                      borderRadius: "20px 20px 0 0",
-                      background: selectedTier === p.tier ? p.tabActiveBg : "var(--color-ui-inactive-bg)",
-                      color: selectedTier === p.tier ? "var(--color-text)" : "var(--color-text-secondary)",
-                      fontSize: selectedTier === p.tier ? "14px" : "13px",
-                    }}
-                  >
-                    {p.name}
-                  </button>
-                ))}
+                {COMPARE_PACKAGES.map((p) => {
+                  const isActive = selectedTier === p.tier;
+                  const isHoverActive = !isActive && hoveredTier === p.tier;
+                  const showActiveStyle = isActive || isHoverActive;
+                  return (
+                    <button
+                      key={p.tier}
+                      type="button"
+                      onClick={() => selectTier(p.tier)}
+                      onMouseEnter={() => setHoveredTier(p.tier)}
+                      onMouseLeave={() => setHoveredTier(null)}
+                      className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-body-13-sb"
+                      style={{
+                        borderRadius: "20px 20px 0 0",
+                        background: showActiveStyle ? p.tabActiveBg : "var(--color-ui-inactive-bg)",
+                        color: showActiveStyle ? "var(--color-text)" : "var(--color-text-secondary)",
+                        fontSize: isActive ? "14px" : "13px",
+                      }}
+                    >
+                      {p.name}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Comparison table */}

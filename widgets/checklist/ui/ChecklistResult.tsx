@@ -284,10 +284,16 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
               const matchedPlan = sortedPlans.find(
                 (p) => tierFromSubscriptionPlan(p) === pkg.tier,
               );
+              const isExactRecommended = pkg.id === recommendedTier;
+              const mobileOrderClass = isExactRecommended
+                ? " max-md:[order:-2]"
+                : isRecommended
+                  ? " max-md:[order:-1]"
+                  : "";
               return (
                 <div
                   key={pkg.tier}
-                  className="flex flex-col rounded-[20px] px-6 pb-7 pt-5"
+                  className={`flex flex-col rounded-[20px] px-6 pb-7 pt-5${mobileOrderClass}`}
                   style={{ background: "var(--color-support-faq-surface)" }}
                 >
                   {/* 상단: 칩 + ⓘ 버튼 */}

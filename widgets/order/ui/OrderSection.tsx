@@ -4,7 +4,7 @@ import { useEffect, useId, useMemo, useState, useTransition, type ReactNode } fr
 import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
-import { DatePicker, useModal, useLoadingOverlay } from "@/shared/ui";
+import { useModal, useLoadingOverlay } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { getErrorMessage } from "@/shared/lib/api";
 import orderTitleImage from "@/widgets/order/assets/order-title-please-order.png";
@@ -319,7 +319,7 @@ export default function OrderSection({
 
   const today = new Date();
   const minBillingDate = addDays(today, 3);
-  const [subscriptionDate, setSubscriptionDate] = useState<Date | null>(null);
+  const [subscriptionDate] = useState<Date>(minBillingDate);
 
   const [agreeOpen, setAgreeOpen] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -407,10 +407,6 @@ export default function OrderSection({
       setSubmitError("필수 약관에 동의해 주세요.");
       return;
     }
-    if (!subscriptionDate) {
-      setSubmitError("구독 결제일을 선택해 주세요.");
-      return;
-    }
 
     if (!selectedAddress) {
       if (
@@ -459,7 +455,7 @@ export default function OrderSection({
           petProfileId: profile!.id,
           deliveryAddressId,
           planId: plan.id,
-          billingDate: toYmd(subscriptionDate!),
+          billingDate: toYmd(subscriptionDate),
           couponCode:
             couponInfo?.canUse && couponCodeInput.trim() ? couponCodeInput.trim() : undefined,
         });
@@ -752,23 +748,17 @@ export default function OrderSection({
       </SectionCard>
 
       <SectionCard
-        title="구독 날짜 선택"
+        title="배송방법"
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
-        <div className="flex flex-col md:flex-row md:items-center gap-3 min-w-0">
-          <div className="w-full max-w-[260px] sm:w-[200px] shrink-0">
-            <DatePicker
-              value={subscriptionDate}
-              onChange={setSubscriptionDate}
-              placeholder="날짜 선택"
-              minDate={minBillingDate}
-              triggerClassName="!h-[34px] !rounded-[5px] !border-[var(--color-text-muted)] !px-3"
-            />
-          </div>
-          <p className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
-            구독 시작일은 구매일로부터 최소 3일 이후여야 합니다.
-          </p>
+        <div className="flex items-center gap-6 flex-wrap">
+          <span className="text-body-14-sb leading-[17px] text-[var(--color-text)]">
+            우체국택배
+          </span>
+          <span className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
+            월~목 배송 / 오전 11시 이후 주문 시 익일 발송
+          </span>
         </div>
       </SectionCard>
     </div>

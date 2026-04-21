@@ -278,7 +278,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   우체국택배
                 </p>
                 <p className="mt-2 text-[13px] font-normal leading-[140%] text-[var(--color-text-secondary)]">
-                  2시 이전 주문 당일출고, 토요일도 배송가능
+                  월~목 배송 / 오전 11시 이후 주문 시 익일 발송
                 </p>
               </div>
             </div>
@@ -630,16 +630,16 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <div className="space-y-6 md:space-y-8">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품구성</span>
-                    <span className="justify-self-start max-w-[220px] text-left text-body-14-b leading-[17px]" style={{ color: selectedTheme.colorVar }}>
+                    <span className="justify-self-start max-w-[240px] text-left text-body-14-b leading-[17px]" style={{ color: selectedTheme.colorVar }}>
                       {selectedPackage.contents.join(" ")}
                     </span>
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">배송방법</span>
-                    <div className="justify-self-start max-w-[220px] text-left">
+                    <div className="justify-self-start max-w-[240px] text-left">
                       <p className="text-body-13-m leading-[140%] text-[var(--color-text)]">우체국택배</p>
                       <p className="text-body-13-r leading-[140%] text-[var(--color-text-secondary)] mt-2">
-                        2시 이전 주문 당일출고, 토요일도 배송가능
+                        월~목 배송 / 오전 11시 이후 주문 시 익일 발송
                       </p>
                     </div>
                   </div>

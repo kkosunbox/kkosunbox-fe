@@ -64,7 +64,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
         <PaymentRow label="결제수단">
           <Text
             variant="body-13-r"
-            className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-muted)]"}`}
+            className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
           >
             {hasMethod ? "신용카드 결제" : "미등록"}
           </Text>
@@ -74,7 +74,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
           <div className="flex flex-wrap md:items-center gap-2">
             <Text
               variant="body-13-r"
-              className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-muted)]"}`}
+              className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
             >
               {cardLabel}
             </Text>
@@ -91,7 +91,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
         <PaymentRow label="다음 결제일">
           <Text
             variant="body-13-r"
-            className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-muted)]"}`}
+            className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
           >
             {hasMethod ? nextDate : "-"}
           </Text>

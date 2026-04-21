@@ -27,7 +27,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
 
       {inquiries.length === 0 ? (
         <div className="flex flex-1 items-center justify-center py-6">
-          <Text variant="body-13-r" className="text-[var(--color-text-muted)]">
+          <Text variant="body-13-r" className="text-[var(--color-text-secondary)]">
             문의 내역이 없습니다.
           </Text>
         </div>

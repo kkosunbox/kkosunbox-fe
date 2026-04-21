@@ -4,13 +4,29 @@ import { useState } from "react";
 import { Text } from "@/shared/ui";
 import { DashboardCard, SectionHeader } from "./dashboard-shared";
 import { ChevronLeftIcon, ChevronRightIcon } from "./mypage-icons";
-import type { InquiryDto, InquiryStatus } from "@/features/inquiry/api/types";
+import type { InquiryDto } from "@/features/inquiry/api/types";
 // import { formatInquiryDate } from "@/features/inquiry/lib";
 
 const PAGE_SIZE = 3;
 
-function statusLabel(status: InquiryStatus): string {
-  return status === "resolved" ? "답변완료" : "처리중";
+function isResolved(inq: InquiryDto): boolean {
+  return inq.status === "resolved" && inq.isAnswered && Boolean(inq.answer?.trim());
+}
+
+function InquiryStatusBadge({ inquiry }: { inquiry: InquiryDto }) {
+  const done = isResolved(inquiry);
+  return (
+    <span
+      className={
+        done
+          ? "inline-flex items-center justify-center rounded-full bg-[var(--color-status-success-bg)] px-3 py-1 text-caption-12-m leading-[14px] text-[var(--color-status-success)]"
+          : "inline-flex items-center justify-center rounded-full bg-[var(--color-status-waiting-bg)] px-3 py-1 text-caption-12-m leading-[14px] text-[var(--color-status-waiting)]"
+      }
+      style={{ opacity: 0.8 }}
+    >
+      {done ? "완료" : "대기"}
+    </span>
+  );
 }
 
 export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
@@ -20,7 +36,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
 
   return (
     <DashboardCard>
-      <SectionHeader title="문의관리" href="/support" linkLabel="문의관리" />
+      <SectionHeader title="문의관리" href="/support" linkLabel="문의관리" spacing="tight" />
 
       {inquiries.length === 0 ? (
         <div className="flex flex-1 items-center justify-center py-6">
@@ -34,32 +50,16 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             <div
               key={inq.id}
               className={[
-                // 날짜 복원 시: "grid grid-cols-[minmax(0,1fr)_56px_52px] ... md:grid-cols-[minmax(0,1fr)_62px_58px]"
-                "grid grid-cols-[minmax(0,1fr)_52px] items-center gap-x-3 py-1.5 md:grid-cols-[minmax(0,1fr)_58px]",
+                "flex items-center gap-x-3 py-1.5",
                 index < pageItems.length - 1 ? "border-b border-[var(--color-divider-warm)]" : "",
               ]
                 .filter(Boolean)
                 .join(" ")}
             >
-              <Text variant="body-13-r" className="truncate text-[var(--color-text)]">
+              <Text variant="body-13-r" className="flex-1 truncate text-[var(--color-text)]">
                 {inq.title}
               </Text>
-              {/* <Text variant="caption-12-r" className="text-right text-[var(--color-text-secondary)]">
-                {formatInquiryDate(inq.createdAt)}
-              </Text> */}
-              <Text
-                variant="caption-12-r"
-                className={[
-                  "text-right",
-                  inq.status !== "resolved"
-                    ? "text-[var(--color-accent-orange)]"
-                    : "text-[var(--color-text-secondary)]",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {statusLabel(inq.status)}
-              </Text>
+              <InquiryStatusBadge inquiry={inq} />
             </div>
           ))}
         </div>

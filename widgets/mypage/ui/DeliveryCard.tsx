@@ -110,7 +110,7 @@ function openAddressPopup() {
 export function DeliveryCard() {
   return (
     <DashboardCard>
-      <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" />
+      <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" spacing="tight" />
       <div className="grid grid-cols-4 gap-1 md:gap-10 pt-1 max-md:-mx-3">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import checklistDoneTitle from "../assets/checklist-done-title.png";
 import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.png";
 import checklistDoneTitlePawsMobile from "../assets/checklist-done-title-paws-mobile.png";
@@ -30,9 +29,9 @@ const TIER_LABEL: Record<RecommendedTier, string> = {
   premium: "프리미엄",
 };
 
-/** 추천 티어부터 Premium까지의 패키지 목록 (모바일 뱃지용) */
+/** 추천 티어부터 Premium까지의 패키지 목록 (뱃지용) */
 const TIER_ORDER: RecommendedTier[] = ["basic", "standard", "premium"];
-function getMobileBadgeTiers(recommendedTier: RecommendedTier) {
+function getRecommendedBadgeTiers(recommendedTier: RecommendedTier) {
   const idx = TIER_ORDER.indexOf(recommendedTier);
   return TIER_ORDER.slice(idx).map((id) => PACKAGES.find((p) => p.id === id)!);
 }
@@ -73,7 +72,6 @@ interface Props {
 }
 
 export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }: Props) {
-  const router = useRouter();
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
@@ -101,8 +99,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
   }, []);
 
   const petName = petInfo.name.trim() || "우리 아이";
-  const recommended = PACKAGES.find((p) => p.id === recommendedTier)!;
-  const mobileBadgeTiers = getMobileBadgeTiers(recommendedTier);
+  const recommendedBadgeTiers = getRecommendedBadgeTiers(recommendedTier);
 
   /** 모바일 추천 문구: 추천 범위에 따라 달라짐 */
   const mobileDescription = (() => {
@@ -131,33 +128,9 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
     );
   })();
 
-  /* 상세 뷰 */
-  if (selectedTier) {
-    const detailPlan = sortedPlans.find((p) => tierFromSubscriptionPlan(p) === selectedTier);
-    return (
-      <section className="min-h-[calc(100vh-54px)] bg-white py-10 md:py-14">
-        <div className="mx-auto w-full max-w-[1013px] px-4 md:px-8">
-          {plansLoading ? (
-            <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">플랜 정보를 불러오는 중…</p>
-          ) : detailPlan ? (
-            <PackageDetailView
-              key={detailPlan.id}
-              plan={detailPlan}
-              allPlans={sortedPlans}
-              onSelectPlan={(p) => {
-                setSelectedTier(tierFromSubscriptionPlan(p));
-              }}
-              onClose={() => setSelectedTier(null)}
-            />
-          ) : (
-            <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
-              플랜 정보를 불러오지 못했습니다. 구독 페이지에서 다시 확인해 주세요.
-            </p>
-          )}
-        </div>
-      </section>
-    );
-  }
+  const detailPlan = selectedTier
+    ? sortedPlans.find((p) => tierFromSubscriptionPlan(p) === selectedTier)
+    : null;
 
   return (
     <section className="min-h-[calc(100vh-54px)] bg-white py-10 md:py-14">
@@ -213,7 +186,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
             <div className="flex flex-col gap-2 max-md:items-center">
               {/* 모바일: 추천 범위 뱃지들 */}
               <div className="flex items-center gap-1.5 md:hidden">
-                {mobileBadgeTiers.map((pkg) => (
+                {recommendedBadgeTiers.map((pkg) => (
                   <span
                     key={pkg.id}
                     className="flex h-[24px] items-center rounded-full px-3 text-body-13-sb leading-[1] text-white"
@@ -224,13 +197,18 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                 ))}
               </div>
 
-              {/* 데스크톱: 단일 뱃지 */}
-              <span
-                className="w-fit rounded-full px-4 py-1 text-body-14-sb leading-[1] text-white max-md:hidden"
-                style={{ background: recommended.colorVar }}
-              >
-                {recommended.tier}
-              </span>
+              {/* 데스크톱: 추천 범위 뱃지들 */}
+              <div className="flex items-center gap-2 max-md:hidden">
+                {recommendedBadgeTiers.map((pkg) => (
+                  <span
+                    key={pkg.id}
+                    className="flex h-[26px] items-center rounded-full px-4 text-body-14-sb leading-[1] text-white"
+                    style={{ background: pkg.colorVar }}
+                  >
+                    {pkg.tier}
+                  </span>
+                ))}
+              </div>
 
               {/* 모바일 문구 */}
               <p
@@ -272,11 +250,27 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
           </div>
         </div>
 
-        {/* 패키지 카드 3종 */}
+        {/* 상세 뷰 또는 패키지 카드 3종 */}
         {plansLoading ? (
           <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
             플랜 정보를 불러오는 중…
           </p>
+        ) : selectedTier ? (
+          detailPlan ? (
+            <PackageDetailView
+              key={detailPlan.id}
+              plan={detailPlan}
+              allPlans={sortedPlans}
+              onSelectPlan={(p) => {
+                setSelectedTier(tierFromSubscriptionPlan(p));
+              }}
+              onClose={() => setSelectedTier(null)}
+            />
+          ) : (
+            <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+              플랜 정보를 불러오지 못했습니다. 구독 페이지에서 다시 확인해 주세요.
+            </p>
+          )
         ) : (
           <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
             {PACKAGES.map((pkg) => {
@@ -284,10 +278,16 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
               const matchedPlan = sortedPlans.find(
                 (p) => tierFromSubscriptionPlan(p) === pkg.tier,
               );
+              const isExactRecommended = pkg.id === recommendedTier;
+              const mobileOrderClass = isExactRecommended
+                ? " max-md:[order:-2]"
+                : isRecommended
+                  ? " max-md:[order:-1]"
+                  : "";
               return (
                 <div
                   key={pkg.tier}
-                  className="flex flex-col rounded-[20px] px-6 pb-7 pt-5"
+                  className={`flex flex-col rounded-[20px] px-6 pb-7 pt-5${mobileOrderClass}`}
                   style={{ background: "var(--color-support-faq-surface)" }}
                 >
                   {/* 상단: 칩 + ⓘ 버튼 */}
@@ -364,17 +364,14 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                     </span>
                   </div>
 
-                  {/* 구독하기 → 결제 페이지 */}
+                  {/* 제품 상세보기 → 상세 뷰 */}
                   <button
                     type="button"
-                    disabled={!matchedPlan}
-                    onClick={() => {
-                      if (matchedPlan) router.push(`/order?planId=${matchedPlan.id}`);
-                    }}
-                    className="flex h-[48px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                    onClick={() => setSelectedTier(pkg.tier)}
+                    className="flex h-[48px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                     style={{ background: pkg.colorVar }}
                   >
-                    구독하기
+                    제품 상세보기
                   </button>
                 </div>
               );

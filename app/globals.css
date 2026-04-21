@@ -118,6 +118,10 @@
   --color-status-pending: #4D82F3;    /* 예정 뱃지 텍스트 */
   --color-status-done-bg: #E2E2E2;    /* 완료 뱃지 배경 */
   --color-status-done: #595959;       /* 완료 뱃지 텍스트 */
+  --color-status-success-bg: #D6FAE8; /* 문의 완료 뱃지 배경 (Primary-10) */
+  --color-status-success: #00B55B;    /* 문의 완료 뱃지 텍스트 (Primary-80) */
+  --color-status-waiting-bg: #FFF5D5; /* 문의 대기 뱃지 배경 (Warning-10) */
+  --color-status-waiting: #976400;    /* 문의 대기 뱃지 텍스트 (Warning-60) */
 
   /* Placeholder */
   --color-photo-bg-yellow: #F5D88A;   /* About — 강아지 사진 플레이스홀더 배경 (노랑) */
@@ -238,6 +242,10 @@
   --color-status-pending: var(--color-status-pending);
   --color-status-done-bg: var(--color-status-done-bg);
   --color-status-done: var(--color-status-done);
+  --color-status-success-bg: var(--color-status-success-bg);
+  --color-status-success: var(--color-status-success);
+  --color-status-waiting-bg: var(--color-status-waiting-bg);
+  --color-status-waiting: var(--color-status-waiting);
 
   /* Placeholder */
   --color-photo-bg-yellow: var(--color-photo-bg-yellow);

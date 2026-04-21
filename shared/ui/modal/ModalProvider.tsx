@@ -75,6 +75,16 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
+  /* ESC로 닫기 — 모든 커스텀/알림 모달 공통 */
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isOpen, closeModal]);
+
   const handleConfirm = activeConfirm
     ? () => { activeConfirm(); closeModal(); }
     : undefined;

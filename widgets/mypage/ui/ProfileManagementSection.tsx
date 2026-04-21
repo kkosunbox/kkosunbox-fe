@@ -235,7 +235,7 @@ export default function ProfileManagementSection({
   const router = useRouter();
   const { profile: activeProfile, profiles, refreshProfile, setActiveProfileId } = useProfile();
   const { showLoading, hideLoading } = useLoadingOverlay();
-  const { openAlert } = useModal();
+  const { openAlert, openModal } = useModal();
   const [isPending, start] = useTransition();
   const hasAlertedLimit = useRef(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -276,7 +276,7 @@ export default function ProfileManagementSection({
   }, [isNewProfile, profiles.length, openAlert, router]);
 
   function handleOpenWithdraw() {
-    router.push("/mypage/withdraw");
+    openModal("member-withdraw", () => router.push("/mypage/withdraw"));
   }
 
   async function handleProfileImageSelected(file: File) {

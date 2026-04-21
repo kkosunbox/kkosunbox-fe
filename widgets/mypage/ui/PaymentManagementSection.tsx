@@ -22,6 +22,8 @@ const ITEMS_PER_PAGE = 5;
 /* ── 공통 스타일 ─────────────────────────────────────────── */
 const LABEL_CLS = "text-body-13-m text-[var(--color-text-label)] w-[80px] shrink-0";
 const VALUE_CLS = "text-body-13-sb text-[var(--color-text)]";
+const UNREGISTERED_CLS =
+  "text-[13px] leading-[13px] font-medium tracking-[0] text-[var(--color-text-label)] [font-family:Pretendard,sans-serif]";
 
 /* ── 아이콘 ──────────────────────────────────────────────── */
 function BackIcon() {
@@ -184,6 +186,8 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
   const cardDisplay = billingInfo
     ? `${billingInfo.cardCompany} (****-****-****-${billingInfo.lastFourDigits})`
     : "등록된 결제수단 없음";
+  const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
+  const simplePaymentDisplay = billingInfo ? cardDisplay : "미등록";
 
   /* 다음 결제일 */
   const nextDateDisplay = subscription
@@ -298,13 +302,13 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
 
             <div className="flex items-center gap-3 py-2.5">
               <span className={LABEL_CLS}>결제수단</span>
-              <span className={VALUE_CLS}>신용카드 결제</span>
+              <span className={billingInfo ? VALUE_CLS : UNREGISTERED_CLS}>{methodDisplay}</span>
             </div>
 
             <div className="flex items-start gap-3 py-2.5">
               <span className={LABEL_CLS}>간편 결제</span>
               <div className="flex flex-col gap-2">
-                <span className={VALUE_CLS}>{cardDisplay}</span>
+                <span className={billingInfo ? VALUE_CLS : UNREGISTERED_CLS}>{simplePaymentDisplay}</span>
                 <button
                   type="button"
                   onClick={handleOpenPayment}
@@ -367,12 +371,14 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
               )}
               <div className="flex items-center gap-0 mb-4">
                 <span className={LABEL_CLS}>결제수단</span>
-                <span className={VALUE_CLS}>신용카드 결제</span>
+                <span className={billingInfo ? VALUE_CLS : UNREGISTERED_CLS}>{methodDisplay}</span>
               </div>
               <div className="flex items-center gap-0 mb-4">
                 <span className={LABEL_CLS}>간편 결제</span>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={VALUE_CLS}>{cardDisplay}</span>
+                  <span className={billingInfo ? VALUE_CLS : UNREGISTERED_CLS}>
+                    {simplePaymentDisplay}
+                  </span>
                   <button
                     type="button"
                     onClick={handleOpenPayment}

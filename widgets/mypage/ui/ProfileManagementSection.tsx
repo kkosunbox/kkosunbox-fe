@@ -15,7 +15,8 @@ import { DatePicker, useLoadingOverlay, useModal } from "@/shared/ui";
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
 const MASKED_PASSWORD = "********";
-const FEATURE_VALUE = "푸드퍼즐 간식을 좋아해요.";
+const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
+const SPECIAL_NOTES_MAX_LENGTH = 200;
 
 function birthDateInputValue(profileBirth: string | null | undefined): string {
   if (!profileBirth?.trim()) return "";
@@ -52,16 +53,16 @@ function BackIcon() {
   );
 }
 
-function PencilIcon() {
+function PencilIcon({ style }: { style?: React.CSSProperties }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+    <svg style={style} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path
-        d="M9.5 2.5L11.5 4.5M2 12l1.5-.5 8.5-8.5L9.5 1.5 1.5 10l.5 2z"
-        stroke="currentColor"
-        strokeWidth="1.2"
+        d="M21.5205 6.42383C21.945 6.46921 22.2837 6.66391 22.5527 6.86914C22.837 7.08606 23.1418 7.39377 23.4551 7.70703L24.626 8.87891L24.6475 8.89941L24.6562 8.91016C24.9589 9.21268 25.254 9.50624 25.4639 9.78125C25.6984 10.0886 25.9189 10.4864 25.9189 11C25.9189 11.5136 25.6984 11.9114 25.4639 12.2188C25.2469 12.5031 24.9393 12.8078 24.626 13.1211L14.4326 23.3154C14.2755 23.4725 14.0713 23.6886 13.8076 23.8379C13.5439 23.9872 13.2536 24.0506 13.0381 24.1045L9.05078 25.1016C8.90291 25.1385 8.6815 25.1968 8.4873 25.2158C8.28067 25.236 7.82868 25.2425 7.45996 24.874C7.09145 24.5055 7.09798 24.0536 7.11816 23.8467C7.13717 23.6523 7.19545 23.4301 7.23242 23.2822L8.22852 19.2949C8.2824 19.0794 8.34678 18.7891 8.49609 18.5254L8.61816 18.3389C8.74905 18.1631 8.8998 18.0191 9.01758 17.9014L19.2119 7.70703C19.5253 7.39369 19.8299 7.08607 20.1143 6.86914C20.4216 6.63466 20.8195 6.41416 21.333 6.41406L21.5205 6.42383Z"
+        stroke="#999999"
+        strokeWidth="2"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
+      <path d="M18 9.00065L22 6.33398L26 10.334L23.3333 14.334L18 9.00065Z" fill="#999999" />
     </svg>
   );
 }
@@ -147,7 +148,7 @@ function PetAvatar({
             aria-hidden
           />
         ) : (
-          <PencilIcon />
+          <PencilIcon style={{ width: editSize * 0.8, height: editSize * 0.8 }} />
         )}
       </button>
     </div>
@@ -252,6 +253,7 @@ export default function ProfileManagementSection({
   const [weight, setWeight] = useState(
     profile?.weight !== null && profile?.weight !== undefined ? String(profile.weight) : "",
   );
+  const [specialNotes, setSpecialNotes] = useState(profile?.specialNotes ?? "");
   const subscriptionPlanTheme = subscription ? packageThemeForPlan(subscription.plan) : null;
 
   useEffect(() => {
@@ -261,7 +263,8 @@ export default function ProfileManagementSection({
     setPetName(profile?.name ?? "");
     setBirthDate(birthDateInputValue(profile?.birthDate));
     setWeight(profile?.weight !== null && profile?.weight !== undefined ? String(profile.weight) : "");
-  }, [profile?.id, profile?.profileImageUrl, profile?.gender, profile?.name, profile?.birthDate, profile?.weight, isNewProfile]);
+    setSpecialNotes(profile?.specialNotes ?? "");
+  }, [profile?.id, profile?.profileImageUrl, profile?.gender, profile?.name, profile?.birthDate, profile?.weight, profile?.specialNotes, isNewProfile]);
 
   useEffect(() => {
     if (!isNewProfile) return;
@@ -323,6 +326,8 @@ export default function ProfileManagementSection({
       return;
     }
 
+    const trimmedNotes = specialNotes.trim();
+
     showLoading("프로필을 저장하고 있습니다...");
     start(async () => {
       try {
@@ -335,11 +340,17 @@ export default function ProfileManagementSection({
         };
 
         if (isCreating) {
-          const newProfile = await createProfile(body);
+          const newProfile = await createProfile({
+            ...body,
+            ...(trimmedNotes ? { specialNotes: trimmedNotes } : {}),
+          });
           await refreshProfile();
           setActiveProfileId(newProfile.id);
         } else {
-          await updateProfile(profile.id, body);
+          await updateProfile(profile.id, {
+            ...body,
+            specialNotes: trimmedNotes || null,
+          });
           await refreshProfile();
         }
 
@@ -549,8 +560,10 @@ export default function ProfileManagementSection({
                     <BaseInput
                       id="d-feature"
                       type="text"
-                      value={FEATURE_VALUE}
-                      readOnly
+                      value={specialNotes}
+                      onChange={(event) => setSpecialNotes(event.target.value)}
+                      placeholder={SPECIAL_NOTES_PLACEHOLDER}
+                      maxLength={SPECIAL_NOTES_MAX_LENGTH}
                       className="h-8 !w-[544px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
                     />
                   </div>
@@ -740,7 +753,15 @@ export default function ProfileManagementSection({
               <GenderButtons gender={gender} onChange={setGender} />
             </FieldShell>
             <FieldShell id="m-feature" label="특징" mobile>
-              <BaseInput id="m-feature" type="text" value={FEATURE_VALUE} readOnly className="!h-8 !border-0" />
+              <BaseInput
+                id="m-feature"
+                type="text"
+                value={specialNotes}
+                onChange={(event) => setSpecialNotes(event.target.value)}
+                placeholder={SPECIAL_NOTES_PLACEHOLDER}
+                maxLength={SPECIAL_NOTES_MAX_LENGTH}
+                className="!h-8 !border-0"
+              />
             </FieldShell>
           </div>
         </div>

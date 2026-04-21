@@ -14,9 +14,8 @@ function SubscriptionEmpty() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 py-4 text-center">
       <Text
-        variant="body-16-m"
-        mobileVariant="body-14-m"
-        className="text-[var(--color-text-secondary)]"
+        variant="body-14-m"
+        className="leading-5 tracking-[-0.04em] text-[var(--color-text-emphasis)]"
       >
         아직 구독 전이시군요!
         <br />
@@ -24,7 +23,7 @@ function SubscriptionEmpty() {
       </Text>
       <Link
         href="/subscribe"
-        className="inline-flex h-[44px] w-full max-w-[260px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-16-sb text-white transition-opacity hover:opacity-90"
+        className="inline-flex h-12 w-full max-w-[271px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
       >
         구독하러 가기
       </Link>
@@ -35,7 +34,7 @@ function SubscriptionEmpty() {
 export function SubscriptionCard({ subscription }: { subscription: UserSubscriptionDto | null }) {
   if (!subscription) {
     return (
-      <div className="flex rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:bg-[var(--color-background)] md:min-h-[173px] md:px-6 md:py-5">
+      <div className="flex rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:bg-[var(--color-surface-light)] md:min-h-[173px] md:px-6 md:py-5">
         <SubscriptionEmpty />
       </div>
     );

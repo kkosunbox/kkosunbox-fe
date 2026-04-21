@@ -66,7 +66,7 @@ function CloseIcon({ className }: { className?: string }) {
 
 function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
   return (
-    <div className="relative shrink-0">
+    <div className="relative shrink-0 md:pl-7">
       <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] md:h-[124px] md:w-[124px]">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
@@ -323,6 +323,7 @@ export function ProfileSection({
   const birth = fmtDate(profile?.birthDate);
   const gender = fmtGender(profile?.gender);
   const weight = profile?.weight ? `${profile.weight}kg` : "-";
+  const specialNotes = profile?.specialNotes?.trim() ?? "";
 
   const attributes = buildChecklistSummary(profile, checklistQuestions);
 
@@ -398,7 +399,7 @@ export function ProfileSection({
             <div className="relative flex min-w-0 flex-1 items-start gap-5 md:min-h-0 md:items-center md:gap-8 md:self-stretch">
               <Link
                 href="/mypage/profile"
-                className="max-md:hidden absolute top-3 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+                className="max-md:hidden absolute top-2 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
               >
                 <span>정보변경</span>
                 <ChevronRightIcon />
@@ -410,7 +411,7 @@ export function ProfileSection({
                     as="h1"
                     variant="title-24-b"
                     mobileVariant="subtitle-18-b"
-                    className="min-w-0 text-[var(--color-text)]"
+                    className="min-w-0 leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
                   >
                     {displayName}
                   </Text>
@@ -424,15 +425,57 @@ export function ProfileSection({
                 </div>
                 {hasProfile ? (
                   <>
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="mt-3 text-[var(--color-text-secondary)] md:mt-[11px]">
-                      {birth} &nbsp;|&nbsp; {gender} &nbsp;|&nbsp; {weight}
+                    <div className="mt-3 flex items-center gap-3 text-[var(--color-text-secondary)] md:mt-[10px]">
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%] tracking-[-0.02em]">
+                        {birth}
+                      </Text>
+                      <span
+                        className="h-[8px] w-px bg-[var(--color-text-muted)]"
+                        aria-hidden
+                      />
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                        {gender}
+                      </Text>
+                      <span
+                        className="h-[8px] w-px bg-[var(--color-text-muted)]"
+                        aria-hidden
+                      />
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                        {weight}
+                      </Text>
+                    </div>
+                    <Text
+                      variant="body-16-m"
+                      mobileVariant="body-13-r"
+                      className={[
+                        "mt-1 line-clamp-2 leading-[140%] md:mt-1",
+                        specialNotes ? "text-[var(--color-text-label)]" : "text-[var(--color-text-placeholder)]",
+                      ].join(" ")}
+                    >
+                      {specialNotes || "특징을 입력해주세요."}
                     </Text>
                   </>
                 ) : (
                   <>
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="mt-1 text-[var(--color-text-placeholder)] md:mt-[11px]">
-                      생년월일 &nbsp;|&nbsp; 성별 &nbsp;|&nbsp; 몸무게
-                    </Text>
+                    <div className="mt-2.5 flex items-center gap-3 text-[var(--color-text-placeholder)] md:mt-[10px]">
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                        생년월일
+                      </Text>
+                      <span
+                        className="h-[8px] w-px bg-[var(--color-text-muted)]"
+                        aria-hidden
+                      />
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                        성별
+                      </Text>
+                      <span
+                        className="h-[8px] w-px bg-[var(--color-text-muted)]"
+                        aria-hidden
+                      />
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                        몸무게
+                      </Text>
+                    </div>
                     <Text variant="body-16-m" mobileVariant="body-13-r" className="mt-2 text-[var(--color-text-label)]">
                       정보를 입력해주세요.
                     </Text>

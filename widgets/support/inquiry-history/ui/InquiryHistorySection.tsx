@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { InquiryDto, InquiryStatus } from "@/features/inquiry/api";
 import { getInquiries } from "@/features/inquiry/api";
+// import { formatInquiryDate } from "@/features/inquiry/lib";
 import { ApiError } from "@/shared/lib/api/types";
 import FaqQuestion from "../../faq/assets/faq-question.png";
 import PawCircleIcon from "../../shared/ui/PawCircleIcon";
@@ -94,12 +95,9 @@ function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClose: () =
             {STATUS_LABEL[item.status]}
           </span>
         </div>
-        <p className="text-body-12-r text-[var(--color-text-secondary)]">
-          {new Date(item.createdAt).toLocaleString("ko-KR", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </p>
+        {/* <p className="text-body-12-r text-[var(--color-text-secondary)]">
+          {formatInquiryDate(item.createdAt)}
+        </p> */}
         <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
           {formatInquiryBody(item)}
         </p>
@@ -261,12 +259,9 @@ export default function InquiryHistorySection() {
                         {STATUS_LABEL[item.status]}
                       </span>
                     </div>
-                    <p className="text-body-12-r text-[var(--color-text-secondary)]">
-                      {new Date(item.createdAt).toLocaleString("ko-KR", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
-                    </p>
+                    {/* <p className="text-body-12-r text-[var(--color-text-secondary)]">
+                      {formatInquiryDate(item.createdAt)}
+                    </p> */}
                     <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
                       {formatInquiryBody(item)}
                     </p>

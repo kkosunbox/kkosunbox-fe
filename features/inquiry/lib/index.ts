@@ -1,0 +1,1 @@
+export { formatInquiryDate } from "./formatInquiryDate";

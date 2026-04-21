@@ -30,15 +30,6 @@ export default function AlertModal({
     primaryRef.current?.focus();
   }, []);
 
-  /* ESC로 닫기 */
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
   function handlePrimary() {
     onPrimary?.();
     onClose();

@@ -28,17 +28,24 @@ export function SectionHeader({
   href,
   linkLabel,
   onLinkClick,
+  spacing = "default",
 }: {
   title: string;
   href?: string;
   linkLabel?: string;
   onLinkClick?: () => void;
+  spacing?: "default" | "tight";
 }) {
   const linkCls =
     "max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
 
   return (
-    <div className="mb-6 flex items-center justify-between gap-3">
+    <div
+      className={[
+        "flex items-center justify-between gap-3",
+        spacing === "tight" ? "mb-4" : "mb-6",
+      ].join(" ")}
+    >
       <Text
         as="h3"
         variant="subtitle-16-sb"

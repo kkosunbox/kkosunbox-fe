@@ -221,7 +221,7 @@ export default function AboutSection() {
               mobileVariant="title-20-sb"
               className="text-center text-[var(--color-text-cta)] md:leading-[65px]"
             >
-              건강하고 안전한 간식을
+              건강하고 안전한 간식을&nbsp;
               <br className="md:hidden" />
               선물하세요!
             </Text>
@@ -267,35 +267,22 @@ export default function AboutSection() {
 
             </div>
 
-            {/* Right: 상품 이미지 카드 — 모바일에서 최상단 (order-1) */}
-            <ScrollReveal variant="scale-in" delay={200} className="max-md:order-1 md:flex-1">
+            {/* Right: 상품 이미지 카드 — 모바일에서 최상단 (order-1); 모바일은 콘텐츠 폭 전체 + 원본 비율(586:469)로 높이 산출 */}
+            <ScrollReveal variant="scale-in" delay={200} className="w-full max-md:order-1 md:flex-1">
               <div
-                className="relative overflow-hidden rounded-[20px] max-md:h-[259px] md:min-h-[469px] md:rounded-2xl"
+                className="relative w-full overflow-hidden rounded-[20px] max-md:aspect-[586/469] md:h-full md:min-h-[469px] md:aspect-auto md:rounded-2xl"
                 style={{ background: "var(--gradient-cta-product)" }}
               >
-                {/* 모바일 장식 보더 프레임 */}
-                <div
-                  className="absolute left-0 right-0 mx-auto md:hidden"
-                  style={{
-                    top: "59px",
-                    width: "calc(100% - 12px)",
-                    height: "178px",
-                    border: "24px solid rgba(255, 249, 243, 0.3)",
-                    borderRadius: "12px",
-                  }}
-                />
-
                 {/* 상품 이미지 */}
                 <Image
                   src={aboutCtaProduct}
                   alt="꼬순박스 상품"
                   fill
-                  className="object-contain max-md:object-[center_12px] md:object-top"
-                  sizes="(max-width: 767px) 165px, 585px"
+                  className="object-contain md:object-top"
+                  sizes="(max-width: 767px) calc(100vw - 48px), 585px"
                 />
               </div>
             </ScrollReveal>
-
           </div>
         </div>
       </section>

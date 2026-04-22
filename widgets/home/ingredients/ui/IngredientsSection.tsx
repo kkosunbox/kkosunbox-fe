@@ -6,44 +6,6 @@ import ingredientsDetailHappy from "../assets/ingredients-detail-happy.png";
 import ingredientsDetailFlavor from "../assets/ingredients-detail-flavor.png";
 import Image from "next/image";
 
-function PawPrint({ className }: { className?: string }) {
-  return (
-    <svg
-      width="70"
-      height="58"
-      viewBox="0 0 70 58"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <ellipse cx="35" cy="40" rx="24" ry="16" fill="rgba(255,255,255,0.8)" />
-      <circle cx="18" cy="20" r="8" fill="rgba(255,255,255,0.8)" />
-      <circle cx="33" cy="12" r="8" fill="rgba(255,255,255,0.8)" />
-      <circle cx="48" cy="14" r="8" fill="rgba(255,255,255,0.8)" />
-      <circle cx="58" cy="24" r="7" fill="rgba(255,255,255,0.8)" />
-    </svg>
-  );
-}
-
-function PawPrintSmall({ className }: { className?: string }) {
-  return (
-    <svg
-      width="48"
-      height="40"
-      viewBox="0 0 48 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <ellipse cx="24" cy="28" rx="16" ry="11" fill="rgba(255,255,255,0.5)" />
-      <circle cx="13" cy="14" r="5.5" fill="rgba(255,255,255,0.5)" />
-      <circle cx="23" cy="8" r="5.5" fill="rgba(255,255,255,0.5)" />
-      <circle cx="33" cy="10" r="5.5" fill="rgba(255,255,255,0.5)" />
-      <circle cx="40" cy="17" r="5" fill="rgba(255,255,255,0.5)" />
-    </svg>
-  );
-}
-
 export default function IngredientsSection() {
   return (
     <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-7 pb-10 md:pt-16 md:pb-16">

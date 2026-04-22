@@ -47,6 +47,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   // 결제 이력
   PAYMENT_NOT_FOUND: "결제 내역을 찾을 수 없습니다.",
   CONTENT_NOT_FOUND: "요청한 정보를 찾을 수 없습니다.",
+
+  // 파일 업로드
+  INVALID_FILE_FORMAT: "지원하지 않는 파일 형식입니다.",
 };
 
 const DEFAULT_FALLBACK = "오류가 발생했습니다. 잠시 후 다시 시도해주세요.";

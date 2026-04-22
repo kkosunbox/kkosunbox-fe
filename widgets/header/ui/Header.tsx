@@ -88,7 +88,7 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
   const router = useRouter();
   const pathname = usePathname();
 
-  const isPaymentActive = pathname.startsWith("/mypage/subscription");
+  const isPaymentActive = pathname.startsWith("/mypage/payment");
   const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive;
 
   const menuItemClass = (active: boolean) =>
@@ -133,7 +133,7 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
         <button onClick={() => { onClose(); router.push("/mypage"); }} className={menuItemClass(isMypageActive)}>
           마이페이지
         </button>
-        <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isPaymentActive)}>
+        <button onClick={() => { onClose(); router.push("/mypage/payment"); }} className={menuItemClass(isPaymentActive)}>
           결제관리
         </button>
         <button onClick={handleLogout} className={menuItemClass(false)}>
@@ -206,7 +206,7 @@ export default function Header() {
                   onClick={() => setIsProfileOpen((v) => !v)}
                   aria-label="프로필 메뉴"
                   aria-expanded={isProfileOpen}
-                  className="hover:opacity-80 transition-opacity"
+                  className="flex items-center justify-center hover:opacity-80 transition-opacity"
                 >
                   <ProfileThumbnail imageUrl={profileImageUrl} size="sm" />
                 </button>

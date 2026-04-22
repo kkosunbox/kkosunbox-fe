@@ -13,8 +13,42 @@ const ITEMS_PER_PAGE = 4;
 
 const WAITING_MESSAGE = "문의해주셔서 감사합니다.\n빠르게 확인 후 1~2일 이내에\n답변드릴 예정입니다.";
 
+const IMAGE_URL_REGEX = /\.(jpe?g|png|webp|gif)(\?|$)/i;
+
 function isResolved(row: InquiryDto): boolean {
   return row.status === "resolved" && row.isAnswered && Boolean(row.answer?.trim());
+}
+
+function getImageAttachments(row: InquiryDto): string[] {
+  return row.attachmentUrls?.filter((url) => IMAGE_URL_REGEX.test(url)) ?? [];
+}
+
+function AttachmentThumbnails({
+  urls,
+  size,
+}: {
+  urls: string[];
+  size: "sm" | "md";
+}) {
+  if (urls.length === 0) return null;
+  const box =
+    size === "sm"
+      ? "h-11 w-11 rounded-[4px]"
+      : "h-20 w-20 rounded-[6px]";
+  return (
+    <div className="flex flex-row items-center gap-3">
+      {urls.map((url, idx) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={`${url}-${idx}`}
+          src={url}
+          alt={`첨부 이미지 ${idx + 1}`}
+          className={`${box} shrink-0 border border-[var(--color-text-muted)] object-cover`}
+          loading="lazy"
+        />
+      ))}
+    </div>
+  );
 }
 
 function InquiryStatusBadge({ row }: { row: InquiryDto }) {
@@ -108,6 +142,7 @@ function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClose: () =
           <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
           <InquiryStatusBadge row={item} />
         </div>
+        <AttachmentThumbnails urls={getImageAttachments(item)} size="md" />
         {isResolved(item) ? (
           <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
             {item.answer!.trim()}
@@ -286,6 +321,7 @@ export default function InquiryHistorySection() {
                     </div>
                     <div className="flex flex-col gap-2">
                       <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
+                      <AttachmentThumbnails urls={getImageAttachments(item)} size="sm" />
                       {resolved ? (
                         <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
                           {item.answer!.trim()}

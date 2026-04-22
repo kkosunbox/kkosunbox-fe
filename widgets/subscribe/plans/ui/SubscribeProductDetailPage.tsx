@@ -726,7 +726,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                       className={
                         isActive
                           ? "text-body-20-sb text-[var(--color-text)]"
-                          : "text-body-20-sb text-[var(--color-text-secondary)]"
+                          : "text-body-20-m text-[var(--color-text-secondary)]"
                       }
                     >
                       {tab.label}

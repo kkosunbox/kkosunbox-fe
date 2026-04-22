@@ -8,13 +8,17 @@ import { createInquiry } from "@/features/inquiry/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.png";
 import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.png";
+
+const MAX_ATTACHMENT_BYTES = 200 * 1024 * 1024; // 200MB
+const ACCEPT_ATTACHMENT =
+  "image/jpeg,image/png,image/webp,image/gif,application/pdf";
 
 interface FormState {
   content: string;
   contact: string;
-  fileName: string;
   agreeTerms: boolean;
   agreePrivacy: boolean;
 }
@@ -71,10 +75,10 @@ export default function InquirySection() {
   const [form, setForm] = useState<FormState>({
     content: "",
     contact: "",
-    fileName: "",
     agreeTerms: false,
     agreePrivacy: false,
   });
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -93,7 +97,23 @@ export default function InquirySection() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setForm((prev) => ({ ...prev, fileName: file ? file.name : "" }));
+    e.target.value = "";
+    if (!file) return;
+
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      openAlert({ title: "첨부파일은 200MB 이하만 업로드할 수 있습니다." });
+      return;
+    }
+    if (file.type && !ACCEPT_ATTACHMENT.split(",").includes(file.type)) {
+      openAlert({ title: "이미지(JPG, PNG, WebP, GIF) 또는 PDF 파일만 첨부할 수 있습니다." });
+      return;
+    }
+
+    setAttachedFile(file);
+  };
+
+  const handleRemoveFile = () => {
+    setAttachedFile(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -107,7 +127,17 @@ export default function InquirySection() {
 
     startTransition(async () => {
       try {
-        await createInquiry({ title, content, contact });
+        let attachmentUrl: string | undefined;
+        if (attachedFile) {
+          const { uploadUrl, fileUrl } = await getAttachmentPresignedUrl({
+            fileName: attachedFile.name,
+            fileType: attachedFile.type || "application/octet-stream",
+          });
+          await uploadToS3(uploadUrl, attachedFile, attachedFile.type || "application/octet-stream");
+          attachmentUrl = fileUrl;
+        }
+
+        await createInquiry({ title, content, contact, attachmentUrl });
         router.push("/support/history");
       } catch (err) {
         openAlert({
@@ -188,20 +218,35 @@ export default function InquirySection() {
                 <span id="file-label" className={labelClass}>
                   첨부파일
                 </span>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`${fieldClass} flex items-center gap-1 text-left`}
-                  aria-labelledby="file-label"
-                >
-                  <PaperclipIcon />
-                  <span className="truncate text-[var(--color-text-secondary)]">
-                    {form.fileName || "200MB 이하 파일"}
-                  </span>
-                </button>
+                <div className={`${fieldClass} flex items-center gap-1`}>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex min-w-0 flex-1 items-center gap-1 text-left"
+                    aria-labelledby="file-label"
+                    disabled={isPending}
+                  >
+                    <PaperclipIcon />
+                    <span className={`truncate ${attachedFile ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}>
+                      {attachedFile?.name || "200MB 이하 파일"}
+                    </span>
+                  </button>
+                  {attachedFile && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveFile}
+                      disabled={isPending}
+                      aria-label="첨부파일 삭제"
+                      className="ml-1 shrink-0 text-body-13-m text-[var(--color-text-secondary)] hover:text-[var(--color-text)] disabled:opacity-50"
+                    >
+                      삭제
+                    </button>
+                  )}
+                </div>
                 <input
                   ref={fileInputRef}
                   type="file"
+                  accept={ACCEPT_ATTACHMENT}
                   className="sr-only"
                   onChange={handleFileChange}
                   aria-label="파일 첨부"
@@ -284,7 +329,7 @@ export default function InquirySection() {
                 disabled={!isSubmittable || isPending}
                 className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-subtitle-18-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
               >
-                {isPending ? "접수 중…" : "제출하기"}
+                {isPending ? (attachedFile ? "업로드 중…" : "접수 중…") : "제출하기"}
               </button>
             </div>
           </div>

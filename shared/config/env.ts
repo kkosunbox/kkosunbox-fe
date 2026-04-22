@@ -13,6 +13,10 @@ if (!_apiUrl) throw new Error("환경변수 NEXT_PUBLIC_API_URL 가 설정되지
 export const env = {
   apiUrl: _apiUrl.replace(/\/$/, ""),
 
+  // asset 모듈의 attachment presigned-url 발급에 사용되는 x-project-id 헤더 값.
+  // 백엔드 팀에서 값이 내려오면 .env.local 의 NEXT_PUBLIC_PROJECT_ID 에 설정.
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID ?? "",
+
   oauth: {
     google: { clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "" },
     naver:  { clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID  ?? "" },

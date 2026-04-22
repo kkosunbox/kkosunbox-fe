@@ -11,17 +11,17 @@ export interface InquiryDto {
   createdAt: string;     // date-time
   answer?: string;       // 관리자 답변
   answeredAt?: string;   // date-time
-  attachmentUrl?: string;
+  attachmentUrls?: string[];
   contact?: string;
 }
 
 // ── 요청 ──────────────────────────────────────────────────────────
 
 export interface CreateInquiryRequest {
-  title: string;          // 최대 200자
-  content: string;
-  attachmentUrl?: string; // asset 모듈에서 발급받은 fileUrl
-  contact?: string;       // 최대 100자
+  title: string;            // 최대 50자
+  content: string;          // 최대 200자
+  attachmentUrls?: string[]; // asset 모듈에서 발급받은 fileUrl 배열 (최대 2개)
+  contact?: string;         // 최대 100자
 }
 
 // ── 응답 ──────────────────────────────────────────────────────────

@@ -138,8 +138,8 @@ function CollapsiblePanel({
           : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease",
       }}
     >
-      <div className={["min-h-0 overflow-hidden", innerClassName].filter(Boolean).join(" ")}>
-        {children}
+      <div className="min-h-0 overflow-hidden">
+        {innerClassName ? <div className={innerClassName}>{children}</div> : children}
       </div>
     </div>
   );

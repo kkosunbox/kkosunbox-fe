@@ -362,6 +362,7 @@ button:disabled {
 
 /* Body */
 @utility text-body-20-sb { font-size: 20px; line-height: 24px; font-weight: 600; }
+@utility text-body-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
 @utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 600; }
 @utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }

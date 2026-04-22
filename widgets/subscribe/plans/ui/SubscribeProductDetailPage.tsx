@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
@@ -156,6 +156,19 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const [activeSort, setActiveSort] = useState<(typeof SORT_OPTIONS)[number]>("최신순");
+  const mobileTabsRef = useRef<HTMLDivElement | null>(null);
+  const desktopTabsRef = useRef<HTMLDivElement | null>(null);
+
+  function handleReviewCountClick() {
+    setActiveTab("review");
+    requestAnimationFrame(() => {
+      const target =
+        mobileTabsRef.current?.offsetParent !== null
+          ? mobileTabsRef.current
+          : desktopTabsRef.current;
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 
   const sortedPlans = useMemo(() => [...plans].sort(comparePlansForDisplayOrder), [plans]);
   const selectedTheme = packageThemeForPlan(selectedPlan);
@@ -236,9 +249,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div className="mt-3 flex items-center justify-between">
             <span className="text-[24px] leading-none text-[var(--color-star)]">★★★★☆</span>
-            <span className="text-[14px] font-normal leading-[21px] tracking-[-0.02em] text-[var(--color-text-secondary)] underline">
+            <button
+              type="button"
+              onClick={handleReviewCountClick}
+              className="text-[14px] font-normal leading-[21px] tracking-[-0.02em] text-[var(--color-text-secondary)] underline decoration-[var(--color-text-secondary)]"
+            >
               12개 리뷰
-            </span>
+            </button>
           </div>
 
           <div className="mt-4 flex items-center gap-3">
@@ -318,7 +335,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             </button>
           </div>
 
-          <div className="mt-4 border-b border-[var(--color-text-muted)] pb-3">
+          <div
+            ref={mobileTabsRef}
+            className="mt-4 scroll-mt-4 border-b border-[var(--color-text-muted)] pb-3"
+          >
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center text-center">
               {TABS.map((tab, idx) => {
                 const isActive = activeTab === tab.key;
@@ -613,7 +633,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               </h2>
               <div className="mb-4 flex items-center gap-2">
                 <span className="text-[24px] leading-none text-[var(--color-star)]">★★★★☆</span>
-                <span className="text-body-13-r text-[var(--color-text-secondary)]">12개 리뷰</span>
+                <button
+                  type="button"
+                  onClick={handleReviewCountClick}
+                  className="text-body-13-r text-[var(--color-text-secondary)] underline decoration-[var(--color-text-secondary)]"
+                >
+                  12개 리뷰
+                </button>
               </div>
               <div className="mb-5 flex items-center gap-2">
                 <span className="text-body-20-sb tracking-[-0.05em] text-[var(--color-surface-dark)]">
@@ -685,7 +711,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             </div>
           </div>
 
-          <div className="md:mt-[54px] border-b border-[var(--color-text-muted)] pb-4">
+          <div
+            ref={desktopTabsRef}
+            className="md:mt-[54px] scroll-mt-4 border-b border-[var(--color-text-muted)] pb-4"
+          >
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center text-center">
               {TABS.map((tab, idx) => {
                 const isActive = activeTab === tab.key;

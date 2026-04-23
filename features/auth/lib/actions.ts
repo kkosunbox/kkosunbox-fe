@@ -1,9 +1,11 @@
 "use server";
 
+import dns from "node:dns/promises";
 import { cookies } from "next/headers";
 import { COOKIE_NAME } from "./constants";
 import { login as loginApi, signup as signupApi } from "../api/authApi";
 import { ApiError, getErrorMessage } from "@/shared/lib/api";
+import { env } from "@/shared/config/env";
 import type { AuthUser } from "../model/types";
 
 const COOKIE_OPTS = {
@@ -23,6 +25,13 @@ export async function loginAction(
   refreshToken?: string;
   error?: string;
 }> {
+  console.log("[loginAction] env.apiUrl=", JSON.stringify(env.apiUrl));
+  try {
+    const lookup = await dns.lookup("api-dev.kkosunbox.com").catch((e) => ({ error: e.message }));
+    console.log("[loginAction] dns.lookup(api-dev.kkosunbox.com)=", JSON.stringify(lookup));
+  } catch (e) {
+    console.log("[loginAction] dns.lookup threw=", e);
+  }
   try {
     const data = await loginApi({ email, password });
 

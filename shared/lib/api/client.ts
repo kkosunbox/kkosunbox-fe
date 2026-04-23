@@ -63,7 +63,9 @@ async function request<T>(
       ...fetchOptions.headers,
     };
 
-    return fetch(`${env.apiUrl}${path}`, {
+    const url = `${env.apiUrl}${path}`;
+    console.log(`[api] ${method} URL=`, JSON.stringify(url));
+    return fetch(url, {
       ...fetchOptions,
       method,
       headers,

@@ -433,6 +433,12 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6">
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-subtitle-16-b-tight capitalize text-[var(--color-surface-dark)]">총 합계</span>
+              <span className="text-[20px] font-bold leading-6 tracking-[-0.05em] capitalize text-[var(--color-surface-dark)]">
+                {formatWon(salePrice)}
+              </span>
+            </div>
             <button
               type="button"
               onClick={() => router.push(`/order?planId=${selectedPlan.id}`)}
@@ -445,7 +451,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div
             ref={mobileTabsRef}
-            className="mt-4 scroll-mt-4 border-b border-[var(--color-text-muted)] pb-3"
+            className="mt-6 scroll-mt-4 border-b border-[var(--color-text-muted)] pb-3"
           >
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center text-center">
               {TABS.map((tab, idx) => {

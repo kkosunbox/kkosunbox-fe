@@ -59,6 +59,7 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 | `text-subtitle-18-b` | 18px | 22px | 700 |
 | `text-subtitle-18-sb` | 18px | 22px | 600 |
 | `text-subtitle-18-m` | 18px | 22px | 500 |
+| `text-subtitle-16-b-tight` | 16px | 19px | 700 | (letter-spacing: -0.05em) |
 | `text-subtitle-16-r` | 16px | 22px | 400 |
 | `text-subtitle-16-sb` | 16px | 20px | 600 |
 
@@ -105,6 +106,7 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 | `text-price-14-eb` | 14px | 17px | 800 | -0.05em |
 | `text-price-16-b` | 16px | 1 | 700 | -0.04em |
 | `text-price-16-eb` | 16px | 19px | 800 | -0.05em |
+| `text-price-20-b` | 20px | 24px | 700 | -0.05em |
 | `text-price-20-eb` | 20px | 1 | 800 | -0.05em |
 
 ## 사용 예

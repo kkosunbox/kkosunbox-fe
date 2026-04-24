@@ -357,6 +357,7 @@ button:disabled {
 @utility text-subtitle-17-b  { font-size: 17px; line-height: 1.4;  font-weight: 700; letter-spacing: -0.02em; }
 @utility text-subtitle-17-sb { font-size: 17px; line-height: 1.2;  font-weight: 600; }
 @utility text-subtitle-16-b  { font-size: 16px; line-height: 22px; font-weight: 700; }
+@utility text-subtitle-16-b-tight { font-size: 16px; line-height: 19px; font-weight: 700; letter-spacing: -0.05em; }
 @utility text-subtitle-16-r  { font-size: 16px; line-height: 22px; font-weight: 400; }
 @utility text-subtitle-16-sb { font-size: 16px; line-height: 20px; font-weight: 600; }
 
@@ -424,6 +425,7 @@ button:disabled {
 @utility text-price-14-eb { font-size: 14px; line-height: 17px; font-weight: 800; letter-spacing: -0.05em; }
 @utility text-price-16-b  { font-size: 16px; line-height: 1;    font-weight: 700; letter-spacing: -0.04em; }
 @utility text-price-16-eb { font-size: 16px; line-height: 19px; font-weight: 800; letter-spacing: -0.05em; }
+@utility text-price-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; letter-spacing: -0.05em; }
 @utility text-price-20-eb { font-size: 20px; line-height: 1;    font-weight: 800; letter-spacing: -0.05em; }
 
 /* Display (hero/section headings, large extrabold) */

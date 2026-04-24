@@ -1,10 +1,10 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import { Text, ScrollReveal } from "@/shared/ui";
-import reviewsTitle from "../assets/reviews-title.png";
-import reviewsProfile01 from "../assets/reviews-profile-01.png";
-import reviewsProfile02 from "../assets/reviews-profile-02.png";
-import reviewsProfile03 from "../assets/reviews-profile-03.png";
+import reviewsTitle from "../assets/reviews-title.webp";
+import reviewsProfile01 from "../assets/reviews-profile-01.webp";
+import reviewsProfile02 from "../assets/reviews-profile-02.webp";
+import reviewsProfile03 from "../assets/reviews-profile-03.webp";
 
 const REVIEWS: {
   name: string;

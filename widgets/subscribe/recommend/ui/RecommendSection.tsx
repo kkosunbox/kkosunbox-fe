@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
-import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.png";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
-import doubleTwinkle from "../assets/double-twinkle.png";
-import stamp from "../assets/stamp.png";
+import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.webp";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import doubleTwinkle from "../assets/double-twinkle.webp";
+import stamp from "../assets/stamp.webp";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {

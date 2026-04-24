@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import checklistDoneTitle from "../assets/checklist-done-title.png";
-import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.png";
-import checklistDoneTitlePawsMobile from "../assets/checklist-done-title-paws-mobile.png";
-import doubleTwinkle from "@/widgets/subscribe/recommend/assets/double-twinkle.png";
-import stamp from "@/widgets/subscribe/recommend/assets/stamp.png";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
+import checklistDoneTitle from "../assets/checklist-done-title.webp";
+import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.webp";
+import checklistDoneTitlePawsMobile from "../assets/checklist-done-title-paws-mobile.webp";
+import doubleTwinkle from "@/widgets/subscribe/recommend/assets/double-twinkle.webp";
+import stamp from "@/widgets/subscribe/recommend/assets/stamp.webp";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import {
   PACKAGES,

@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Text, Button, ScrollReveal } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
-import heroItemExpanded from "../assets/hero-item-expanded.png";
-import heroPremiumPackage from "../assets/hero-premium-package.png";
+import heroItemExpanded from "../assets/hero-item-expanded.webp";
+import heroPremiumPackage from "../assets/hero-premium-package.webp";
 
 export default function HeroSection() {
   return (

@@ -3,15 +3,15 @@
 import Image from "next/image";
 import { Text, ScrollReveal } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
-import aboutHeroCollage from "../assets/about-hero-collage.png";
-import aboutHeroCollageMobile from "../assets/about-hero-collage-mobile.png";
-import aboutFeatureHealthy from "../assets/about-feature-healty.png";
-import aboutFeatureCircle01 from "../assets/about-feature-circle-01.png";
-import aboutFeatureCircle02 from "../assets/about-feature-circle-02.png";
-import aboutFeatureCircle03 from "../assets/about-feature-circle-03.png";
-import aboutCtaProduct from "../assets/about-cta-product.png";
-import aboutCtaMark from "../assets/about-cta-mark.png";
-import aboutCtaLogo from "../assets/about-cta-logo.png";
+import aboutHeroCollage from "../assets/about-hero-collage.webp";
+import aboutHeroCollageMobile from "../assets/about-hero-collage-mobile.webp";
+import aboutFeatureHealthy from "../assets/about-feature-healty.webp";
+import aboutFeatureCircle01 from "../assets/about-feature-circle-01.webp";
+import aboutFeatureCircle02 from "../assets/about-feature-circle-02.webp";
+import aboutFeatureCircle03 from "../assets/about-feature-circle-03.webp";
+import aboutCtaProduct from "../assets/about-cta-product.webp";
+import aboutCtaMark from "../assets/about-cta-mark.webp";
+import aboutCtaLogo from "../assets/about-cta-logo.webp";
 
 /** logo-main.svg viewBox 94×29 */
 const ABOUT_HERO_LOGO_W = 158;

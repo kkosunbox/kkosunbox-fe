@@ -1,5 +1,5 @@
 import Image from "next/image";
-import termsTitle from "../assets/terms-title.png";
+import termsTitle from "../assets/terms-title.webp";
 
 const TERMS_SECTIONS = [
   {

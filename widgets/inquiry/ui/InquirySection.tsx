@@ -9,8 +9,8 @@ import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.png";
-import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.png";
+import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.webp";
+import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.webp";
 
 const MAX_TITLE_LENGTH = 50;
 const MAX_CONTENT_LENGTH = 200;

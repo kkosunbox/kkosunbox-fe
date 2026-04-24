@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { Text } from "@/shared/ui";
-import logoMain2x from "@/shared/assets/logo-main@2x.png";
-import howItWorksAsset01 from "../assets/how-it-works-asset-01.png";
-import howItWorksAsset02 from "../assets/how-it-works-asset-02.png";
-import howItWorksAsset03 from "../assets/how-it-works-asset-03.png";
-import howItWorksAsset04 from "../assets/how-it-works-asset-04.png";
+import logoMain2x from "@/shared/assets/logo-main@2x.webp";
+import howItWorksAsset01 from "../assets/how-it-works-asset-01.webp";
+import howItWorksAsset02 from "../assets/how-it-works-asset-02.webp";
+import howItWorksAsset03 from "../assets/how-it-works-asset-03.webp";
+import howItWorksAsset04 from "../assets/how-it-works-asset-04.webp";
 
 const STEPS = [
   {

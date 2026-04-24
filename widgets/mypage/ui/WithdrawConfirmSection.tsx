@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import titleImg from "../assets/withdraw-confirm-title.png";
-import pawsImg from "../assets/widthraw-confirm-paws.png";
+import titleImg from "../assets/withdraw-confirm-title.webp";
+import pawsImg from "../assets/widthraw-confirm-paws.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";

@@ -31,7 +31,7 @@ export default function CursorPaw() {
 
   return (
     <img
-      src="/images/cursor-paw.png"
+      src="/images/cursor-paw.webp"
       alt=""
       aria-hidden="true"
       // max-md:hidden — 터치 디바이스(모바일/태블릿)에서 숨김

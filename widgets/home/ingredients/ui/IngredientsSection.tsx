@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Button, Text, ScrollReveal } from "@/shared/ui";
-import ingredientsDetailHappy from "../assets/ingredients-detail-happy.png";
-import ingredientsDetailFlavor from "../assets/ingredients-detail-flavor.png";
+import ingredientsDetailHappy from "../assets/ingredients-detail-happy.webp";
+import ingredientsDetailFlavor from "../assets/ingredients-detail-flavor.webp";
 import Image from "next/image";
 
 export default function IngredientsSection() {

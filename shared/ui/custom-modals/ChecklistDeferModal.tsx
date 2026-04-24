@@ -23,7 +23,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
       >
         {/* Upper image — mobile 160px / desktop 210px */}
         <Image
-          src="/images/modal/custom-modal-03-upper.png"
+          src="/images/modal/custom-modal-03-upper.webp"
           alt="폴더 아이콘"
           width={210}
           height={210}
@@ -54,7 +54,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
 
           {/* Title image */}
           <Image
-            src="/images/modal/custom-modal-03-contents.png"
+            src="/images/modal/custom-modal-03-contents.webp"
             alt="지금 작성하지 않아도 괜찮아요!"
             width={240}
             height={116}

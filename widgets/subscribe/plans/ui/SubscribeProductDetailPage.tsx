@@ -5,25 +5,34 @@ import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
-import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.png";
-import subscribeItemHeroTitle from "@/widgets/subscribe/plans/assets/subscribe-item-hero-title.png";
-import subscribeItemHeroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.png";
-import subscribeItemHeroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.png";
-import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.png";
-import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.png";
-import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.png";
-import subscribeItem01C from "@/widgets/subscribe/plans/assets/subscribe-item-01-C.png";
-import subscribeItem01D from "@/widgets/subscribe/plans/assets/subscribe-item-01-D.png";
-import subscribeItem02A from "@/widgets/subscribe/plans/assets/subscribe-item-02-A.png";
-import subscribeItem02B from "@/widgets/subscribe/plans/assets/subscribe-item-02-B.png";
-import subscribeItem02BB from "@/widgets/subscribe/plans/assets/subscribe-item-02-BB.png";
-import subscribeItem02C from "@/widgets/subscribe/plans/assets/subscribe-item-02-C.png";
-import subscribeItem02D from "@/widgets/subscribe/plans/assets/subscribe-item-02-D.png";
-import subscribeItem03A from "@/widgets/subscribe/plans/assets/subscribe-item-03-A.png";
-import subscribeItem03B from "@/widgets/subscribe/plans/assets/subscribe-item-03-B.png";
-import subscribeItem03BB from "@/widgets/subscribe/plans/assets/subscribe-item-03-BB.png";
-import subscribeItem03C from "@/widgets/subscribe/plans/assets/subscribe-item-03-C.png";
-import subscribeItem03D from "@/widgets/subscribe/plans/assets/subscribe-item-03-D.png";
+import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.webp";
+import subscribeItemHeroTitle from "@/widgets/subscribe/plans/assets/subscribe-item-hero-title.webp";
+import subscribeItemHeroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
+import subscribeItemHeroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.webp";
+import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.webp";
+import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.webp";
+import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.webp";
+import subscribeItem01C from "@/widgets/subscribe/plans/assets/subscribe-item-01-C.webp";
+import subscribeItem01D from "@/widgets/subscribe/plans/assets/subscribe-item-01-D.webp";
+import subscribeItem02A from "@/widgets/subscribe/plans/assets/subscribe-item-02-A.webp";
+import subscribeItem02B from "@/widgets/subscribe/plans/assets/subscribe-item-02-B.webp";
+import subscribeItem02BB from "@/widgets/subscribe/plans/assets/subscribe-item-02-BB.webp";
+import subscribeItem02C from "@/widgets/subscribe/plans/assets/subscribe-item-02-C.webp";
+import subscribeItem02D from "@/widgets/subscribe/plans/assets/subscribe-item-02-D.webp";
+import subscribeItem03A from "@/widgets/subscribe/plans/assets/subscribe-item-03-A.webp";
+import subscribeItem03B from "@/widgets/subscribe/plans/assets/subscribe-item-03-B.webp";
+import subscribeItem03BB from "@/widgets/subscribe/plans/assets/subscribe-item-03-BB.webp";
+import subscribeItem03C from "@/widgets/subscribe/plans/assets/subscribe-item-03-C.webp";
+import subscribeItem03D from "@/widgets/subscribe/plans/assets/subscribe-item-03-D.webp";
+import subscribeItem01Detail1 from "@/widgets/subscribe/plans/assets/subscribe-item-01-detail-1.webp";
+import subscribeItem01Detail2 from "@/widgets/subscribe/plans/assets/subscribe-item-01-detail-2.webp";
+import subscribeItem01Detail3 from "@/widgets/subscribe/plans/assets/subscribe-item-01-detail-3.webp";
+import subscribeItem02Detail1 from "@/widgets/subscribe/plans/assets/subscribe-item-02-detail-1.webp";
+import subscribeItem02Detail2 from "@/widgets/subscribe/plans/assets/subscribe-item-02-detail-2.webp";
+import subscribeItem02Detail3 from "@/widgets/subscribe/plans/assets/subscribe-item-02-detail-3.webp";
+import subscribeItem03Detail1 from "@/widgets/subscribe/plans/assets/subscribe-item-03-detail-1.webp";
+import subscribeItem03Detail2 from "@/widgets/subscribe/plans/assets/subscribe-item-03-detail-2.webp";
+import subscribeItem03Detail3 from "@/widgets/subscribe/plans/assets/subscribe-item-03-detail-3.webp";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
@@ -53,6 +62,15 @@ const DETAIL_ASSET_IMAGES: Record<
   Premium: [subscribeItem01A, subscribeItem01B, subscribeItem01BB, subscribeItem01C, subscribeItem01D],
   Standard: [subscribeItem02A, subscribeItem02B, subscribeItem02BB, subscribeItem02C, subscribeItem02D],
   Basic: [subscribeItem03A, subscribeItem03B, subscribeItem03BB, subscribeItem03C, subscribeItem03D],
+};
+
+const DETAIL_PREVIEW_IMAGES: Record<
+  PackageTier,
+  readonly [StaticImageData, StaticImageData, StaticImageData]
+> = {
+  Premium: [subscribeItem01Detail1, subscribeItem01Detail2, subscribeItem01Detail3],
+  Standard: [subscribeItem02Detail1, subscribeItem02Detail2, subscribeItem02Detail3],
+  Basic: [subscribeItem03Detail1, subscribeItem03Detail2, subscribeItem03Detail3],
 };
 
 type TabKey = "info" | "review" | "delivery" | "support";
@@ -131,21 +149,62 @@ const MOCK_REVIEWS: MockReview[] = [
   },
 ];
 
-function Stars({ rating, size = 20 }: { rating: number; size?: number }) {
+function FullStarIcon({ size }: { size: number }) {
   return (
-    <span
-      className="inline-flex items-center tracking-[2px] text-[var(--color-star)]"
-      style={{ fontSize: size, lineHeight: 1 }}
-      aria-label={`별점 ${rating}점`}
-    >
-      {"★".repeat(Math.round(rating))}
-      {"★".repeat(5 - Math.round(rating))
-        .split("")
-        .map((_, i) => (
-          <span key={i} className="text-[var(--color-text-muted)]">
-            ★
-          </span>
-        ))}
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
+        fill="#FDD264"
+      />
+    </svg>
+  );
+}
+
+function HalfStarIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
+        fill="#FDD264"
+      />
+      <path
+        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
+        fill="#FDD264"
+      />
+      <path
+        d="M14.81 8.63L12 2V17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63Z"
+        fill="#DDDDDD"
+      />
+    </svg>
+  );
+}
+
+function EmptyStarIcon({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
+        fill="#DDDDDD"
+      />
+    </svg>
+  );
+}
+
+function Stars({ rating, size = 20 }: { rating: number; size?: number }) {
+  const normalized = Math.max(0, Math.min(5, Math.round(rating * 2) / 2));
+  const fullCount = Math.floor(normalized);
+  const hasHalf = normalized - fullCount >= 0.5;
+  const emptyCount = 5 - fullCount - (hasHalf ? 1 : 0);
+
+  return (
+    <span className="inline-flex items-center gap-0.5" aria-label={`별점 ${normalized}점`}>
+      {Array.from({ length: fullCount }).map((_, idx) => (
+        <FullStarIcon key={`full-${idx}`} size={size} />
+      ))}
+      {hasHalf ? <HalfStarIcon key="half" size={size} /> : null}
+      {Array.from({ length: emptyCount }).map((_, idx) => (
+        <EmptyStarIcon key={`empty-${idx}`} size={size} />
+      ))}
     </span>
   );
 }
@@ -156,6 +215,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const [activeSort, setActiveSort] = useState<(typeof SORT_OPTIONS)[number]>("최신순");
+  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
@@ -175,6 +235,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const selectedTier = tierFromSubscriptionPlan(selectedPlan);
   const selectedPackage = PACKAGES.find((pkg) => pkg.tier === selectedTier) ?? PACKAGES[0];
   const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
+  const carouselImages = useMemo<StaticImageData[]>(
+    () => [mockTempPackage, ...DETAIL_PREVIEW_IMAGES[selectedTier]],
+    [selectedTier],
+  );
+  const activePreviewImage = carouselImages[selectedPreviewIndex] ?? carouselImages[0]!;
   const previewImages = useMemo(() => Array.from({ length: 8 }, () => mockTempPackage), []);
 
   const basePrice = selectedPlan.monthlyPrice;
@@ -183,7 +248,20 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
     setQuantity(1);
+    setSelectedPreviewIndex(0);
     router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
+  }
+
+  function handlePrevPreview() {
+    setSelectedPreviewIndex((prev) =>
+      prev === 0 ? carouselImages.length - 1 : prev - 1,
+    );
+  }
+
+  function handleNextPreview() {
+    setSelectedPreviewIndex((prev) =>
+      prev === carouselImages.length - 1 ? 0 : prev + 1,
+    );
   }
 
   const activeTierLabel = selectedTheme.tierLabel;
@@ -218,20 +296,46 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             })}
           </div>
 
-          <div className="rounded-[20px] bg-[var(--color-surface-warm)] p-4 max-md:min-h-[327px]">
+          <div className="relative h-[327px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
+            <Image
+              key={`mobile-${selectedTier}-${selectedPreviewIndex}`}
+              src={activePreviewImage}
+              alt={`${selectedPlan.name} 대표 이미지`}
+              fill
+              sizes="(max-width: 768px) 100vw, 508px"
+              className={
+                selectedPreviewIndex === 0
+                  ? "object-contain p-8"
+                  : "object-cover"
+              }
+              priority
+            />
             <span
-              className="inline-flex rounded-full px-3 py-1 text-body-14-sb text-white"
+              className="absolute left-4 top-4 z-10 inline-flex rounded-full px-3 py-1 text-body-14-sb text-white"
               style={{ background: selectedTheme.colorVar }}
             >
               {activeTierLabel}
             </span>
-            <div className="mt-4 flex min-h-[200px] items-center justify-center">
-              <Image
-                src={mockTempPackage}
-                alt={`${selectedPlan.name} 대표 이미지`}
-                className="h-[172px] w-auto object-contain"
-              />
-            </div>
+            <button
+              type="button"
+              onClick={handlePrevPreview}
+              aria-label="이전 이미지"
+              className="absolute left-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={handleNextPreview}
+              aria-label="다음 이미지"
+              className="absolute right-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
           </div>
 
           <h2 className="mt-[30px] text-[24px] font-semibold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
@@ -248,7 +352,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-[24px] leading-none text-[var(--color-star)]">★★★★☆</span>
+            <Stars rating={4.5} size={24} />
             <button
               type="button"
               onClick={handleReviewCountClick}
@@ -259,22 +363,26 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           <div className="mt-4 flex items-center gap-3">
-            {previewImages.slice(0, 3).map((imgSrc, idx) => (
-              <div
-                key={idx}
-                className="h-16 w-16 shrink-0 overflow-hidden rounded-[4px] bg-[var(--color-surface-warm)]"
-              >
-                <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
-              </div>
-            ))}
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[4px]">
-              <Image src={previewImages[3]!} alt="" className="h-full w-full object-cover" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
-                더보기
-                <br />
-                +{Math.max(0, previewImages.length - 4)}
-              </div>
-            </div>
+            {carouselImages.map((imgSrc, idx) => {
+              const isActive = selectedPreviewIndex === idx;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedPreviewIndex(idx)}
+                  aria-label={`미리보기 이미지 ${idx + 1}`}
+                  aria-pressed={isActive}
+                  className="h-16 w-16 shrink-0 overflow-hidden rounded-[4px] bg-[var(--color-surface-warm)]"
+                  style={
+                    isActive
+                      ? { outline: `2px solid ${selectedTheme.colorVar}`, outlineOffset: "-2px" }
+                      : undefined
+                  }
+                >
+                  <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
+                </button>
+              );
+            })}
           </div>
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6">
@@ -592,38 +700,68 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div className="grid gap-8 xl:mx-auto xl:w-[1013px] xl:grid-cols-[508px_438px] xl:justify-between xl:gap-0">
             <div className="mx-auto min-w-0 w-full max-w-[508px] xl:mx-0">
-              <div className="relative overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)] p-8">
+              <div className="relative h-[508px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
+                <Image
+                  key={`desktop-${selectedTier}-${selectedPreviewIndex}`}
+                  src={activePreviewImage}
+                  alt={`${selectedPlan.name} 대표 이미지`}
+                  fill
+                  sizes="508px"
+                  className={
+                    selectedPreviewIndex === 0
+                      ? "object-contain p-10"
+                      : "object-cover"
+                  }
+                  priority
+                />
                 <span
-                  className="absolute left-6 top-6 rounded-full px-3 py-1 text-body-14-sb text-white"
+                  className="absolute left-6 top-6 z-10 rounded-full px-3 py-1 text-body-14-sb text-white"
                   style={{ background: selectedTheme.colorVar }}
                 >
                   {selectedTheme.tierLabel}
                 </span>
-                <div className="flex min-h-[440px] items-center justify-center">
-                  <Image
-                    src={mockTempPackage}
-                    alt={`${selectedPlan.name} 대표 이미지`}
-                    className="h-[280px] w-auto max-w-full object-contain"
-                  />
-                </div>
+                <button
+                  type="button"
+                  onClick={handlePrevPreview}
+                  aria-label="이전 이미지"
+                  className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextPreview}
+                  aria-label="다음 이미지"
+                  className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
               </div>
               <div className="mt-5 flex w-full items-center gap-3">
-                {previewImages.slice(0, 4).map((imgSrc, idx) => (
-                  <div
-                    key={idx}
-                    className="h-20 w-20 shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)]"
-                  >
-                    <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ))}
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[8px]">
-                  <Image src={previewImages[4]!} alt="" className="h-full w-full object-cover" />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
-                    더보기
-                    <br />
-                    +{Math.max(0, previewImages.length - 5)}
-                  </div>
-                </div>
+                {carouselImages.map((imgSrc, idx) => {
+                  const isActive = selectedPreviewIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedPreviewIndex(idx)}
+                      aria-label={`미리보기 이미지 ${idx + 1}`}
+                      aria-pressed={isActive}
+                      className="h-20 w-20 shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90"
+                      style={
+                        isActive
+                          ? { outline: `2px solid ${selectedTheme.colorVar}`, outlineOffset: "-2px" }
+                          : undefined
+                      }
+                    >
+                      <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -632,7 +770,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 {selectedPlan.name}
               </h2>
               <div className="mb-4 flex items-center gap-2">
-                <span className="text-[24px] leading-none text-[var(--color-star)]">★★★★☆</span>
+                <Stars rating={4.5} size={24} />
                 <button
                   type="button"
                   onClick={handleReviewCountClick}

@@ -9,8 +9,8 @@ import {
 } from "@/features/auth/api/authApi";
 import { getErrorMessage } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import registerPaw from "@/widgets/register/assets/register-pow.png";
-import forgotPasswordTitle from "../assets/forgot-password-title.png";
+import registerPaw from "@/widgets/register/assets/register-pow.webp";
+import forgotPasswordTitle from "../assets/forgot-password-title.webp";
 
 /* ─── 상수 ─── */
 const RESEND_COOLDOWN = 60;

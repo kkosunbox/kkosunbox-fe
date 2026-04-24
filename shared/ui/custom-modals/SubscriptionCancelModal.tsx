@@ -24,7 +24,7 @@ export default function SubscriptionCancelModal({ onClose, onConfirm }: Props) {
       >
         {/* Upper image — mobile 160px / desktop 210px */}
         <Image
-          src="/images/modal/custom-modal-05-upper.png"
+          src="/images/modal/custom-modal-05-upper.webp"
           alt="경고 아이콘"
           width={210}
           height={210}
@@ -55,7 +55,7 @@ export default function SubscriptionCancelModal({ onClose, onConfirm }: Props) {
 
           {/* Title image */}
           <Image
-            src="/images/modal/custom-modal-05-contents.png"
+            src="/images/modal/custom-modal-05-contents.webp"
             alt="정말로 구독 취소를 하시겠습니까?"
             width={206}
             height={129}

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";

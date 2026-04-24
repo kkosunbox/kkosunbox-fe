@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import dogImage from "../assets/home-benefits-right-dog.png";
-import benefitsTitle from "../assets/home-benefits-title.png";
-import benefitsContents01 from "../assets/home-benefits-contents-01.png";
-import benefitsContents02 from "../assets/home-benefits-contents-02.png";
-import mobilebottom from "../assets/home-benefits-mobi-bottom.png";
+import dogImage from "../assets/home-benefits-right-dog.webp";
+import benefitsTitle from "../assets/home-benefits-title.webp";
+import benefitsContents01 from "../assets/home-benefits-contents-01.webp";
+import benefitsContents02 from "../assets/home-benefits-contents-02.webp";
+import mobilebottom from "../assets/home-benefits-mobi-bottom.webp";
 
 const TAGS = ["#프리미엄", "#수제간식", "#국내산", "#구독"];
 

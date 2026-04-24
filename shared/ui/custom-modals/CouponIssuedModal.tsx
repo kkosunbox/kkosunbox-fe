@@ -23,7 +23,7 @@ export default function CouponIssuedModal({ onClose }: Props) {
       >
         {/* Upper image — mobile 160px / desktop 210px */}
         <Image
-          src="/images/modal/custom-modal-04-upper.png"
+          src="/images/modal/custom-modal-04-upper.webp"
           alt="선물 상자"
           width={210}
           height={210}
@@ -54,7 +54,7 @@ export default function CouponIssuedModal({ onClose }: Props) {
 
           {/* Title image */}
           <Image
-            src="/images/modal/custom-modal-04-contents.png"
+            src="/images/modal/custom-modal-04-contents.webp"
             alt="꼬순박스 할인쿠폰이 발급되었습니다!"
             width={227}
             height={129}

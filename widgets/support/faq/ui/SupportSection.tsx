@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ScrollReveal } from "@/shared/ui";
-import FaqTitle from "../assets/faq-title.png";
-import FaqQuestion from "../assets/faq-question.png";
+import FaqTitle from "../assets/faq-title.webp";
+import FaqQuestion from "../assets/faq-question.webp";
 import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 /* ── FAQ 데이터 ──────────────────────────────────────────── */

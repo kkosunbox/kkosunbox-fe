@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { InquiryDto } from "@/features/inquiry/api";
 import { getInquiries } from "@/features/inquiry/api";
 import { ApiError } from "@/shared/lib/api/types";
-import FaqQuestion from "../../faq/assets/faq-question.png";
+import FaqQuestion from "../../faq/assets/faq-question.webp";
 import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 const ITEMS_PER_PAGE = 4;

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import privacyTitle from "../assets/privacy-title.png";
+import privacyTitle from "../assets/privacy-title.webp";
 
 const PRIVACY_SECTIONS = [
   {

@@ -23,7 +23,7 @@ export default function PlanChangeModal({ onClose }: Props) {
       >
         {/* Upper image — mobile 160px / desktop 210px */}
         <Image
-          src="/images/modal/custom-modal-02-upper.png"
+          src="/images/modal/custom-modal-02-upper.webp"
           alt="경고 아이콘"
           width={210}
           height={210}
@@ -54,7 +54,7 @@ export default function PlanChangeModal({ onClose }: Props) {
 
           {/* Title image */}
           <Image
-            src="/images/modal/custom-modal-02-contents.png"
+            src="/images/modal/custom-modal-02-contents.webp"
             alt="구독 변경"
             width={206}
             height={129}

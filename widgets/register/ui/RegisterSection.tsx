@@ -13,9 +13,9 @@ import { tokenStore } from "@/shared/lib/api/token";
 import { useAuth } from "@/features/auth";
 import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import registerTitle from "../assets/register-title.png";
-import registerTitleMobi from "../assets/register-title-mobi.png";
-import registerPaw from "../assets/register-pow.png";
+import registerTitle from "../assets/register-title.webp";
+import registerTitleMobi from "../assets/register-title-mobi.webp";
+import registerPaw from "../assets/register-pow.webp";
 
 /* ─── 상수 ─── */
 const RESEND_COOLDOWN = 60;

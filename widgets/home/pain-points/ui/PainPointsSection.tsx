@@ -2,8 +2,8 @@
 
 import { ScrollReveal } from "@/shared/ui";
 import Image from "next/image";
-import painPointDogs from "../assets/pain-point-dogs.png";
-import painPointQuestion from "../assets/pain-point-question.png";
+import painPointDogs from "../assets/pain-point-dogs.webp";
+import painPointQuestion from "../assets/pain-point-question.webp";
 
 const PAIN_POINTS = [
   "시중 간식 성분이 걱정돼서 아무거나 먹이기 불안해요",

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
 import { Text } from "@/shared/ui";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";

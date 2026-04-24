@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
+import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
 import {
   PACKAGES,
   COMPARE_PACKAGES,

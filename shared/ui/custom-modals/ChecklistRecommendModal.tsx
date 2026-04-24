@@ -24,7 +24,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
       >
         {/* Upper image — mobile 160px / desktop 210px, 돌출: mobile 59px / desktop 80px */}
         <Image
-          src="/images/modal/custom-modal-01-upper.png"
+          src="/images/modal/custom-modal-01-upper.webp"
           alt="폴더 아이콘"
           width={210}
           height={210}
@@ -56,7 +56,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
 
           {/* Title image */}
           <Image
-            src="/images/modal/custom-modal-01-contents.png"
+            src="/images/modal/custom-modal-01-contents.webp"
             alt="체크리스트로 맞춤 추천을 받으시겠어요?"
             width={205}
             height={129}

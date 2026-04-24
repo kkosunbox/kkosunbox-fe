@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.png";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
-import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
-import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
+import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
+import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,

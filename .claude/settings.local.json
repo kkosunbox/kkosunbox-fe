@@ -51,7 +51,14 @@
       "Bash(echo \"TSC=$?\")",
       "Bash(echo \"LINT=$?\")",
       "Bash(pnpm exec:*)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(cwebp -version)",
+      "Bash(magick -version)",
+      "Bash(npx --no-install sharp-cli --version)",
+      "Bash(node -e \"const s = require\\('sharp'\\); console.log\\('sharp version:', s.versions.sharp\\);\")",
+      "Bash(NODE_PATH=\"node_modules/.pnpm/sharp@0.34.5/node_modules\" node -e \"const s = require\\('sharp'\\); console.log\\('sharp version:', s.versions.sharp\\);\")",
+      "Bash(NODE_PATH=\"node_modules/.pnpm/sharp@0.34.5/node_modules\" node convert-to-webp.mjs)",
+      "Bash(node convert-to-webp.mjs)"
     ]
   }
 }

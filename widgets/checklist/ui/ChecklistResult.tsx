@@ -13,9 +13,11 @@ import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionAp
 import {
   PACKAGES,
   comparePlansForDisplayOrder,
+  packageThemeForPlan,
   tierFromSubscriptionPlan,
 } from "@/widgets/subscribe/plans/ui/packageData";
 import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
+import MobileTierDetailPanel from "@/widgets/subscribe/plans/ui/MobileTierDetailPanel";
 import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
@@ -65,6 +67,106 @@ function InfoIcon() {
   );
 }
 
+/* ── Result Plan Card ─── */
+
+interface ResultPlanCardProps {
+  plan: SubscriptionPlanDto;
+  isRecommended: boolean;
+  onInfoClick: () => void;
+}
+
+function ResultPlanCard({ plan, isRecommended, onInfoClick }: ResultPlanCardProps) {
+  const router = useRouter();
+  const theme = packageThemeForPlan(plan);
+  const pkg = PACKAGES.find((p) => p.tier === theme.tier);
+
+  return (
+    <div className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5">
+      <div className="mb-2.5 flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+            style={{ background: theme.colorVar }}
+          >
+            {theme.tierLabel}
+          </span>
+        </div>
+        <button
+          type="button"
+          aria-label={`${plan.name} 패키지 상세 정보`}
+          onClick={onInfoClick}
+          className="flex shrink-0 items-center justify-center"
+        >
+          <InfoIcon />
+        </button>
+      </div>
+
+      <div className="relative mb-[56px] flex justify-center">
+        <Image
+          src={mockTempPackage}
+          alt={`${plan.name} 이미지`}
+          className="h-[150px] w-auto object-contain"
+        />
+        {isRecommended && (
+          <Image
+            src={stamp}
+            alt="BEST CHOICE 추천 스탬프"
+            className="pointer-events-none absolute -top-6 right-2 h-[120px] w-[120px] object-contain md:-right-5 md:-top-8 md:h-[140px] md:w-[140px]"
+          />
+        )}
+      </div>
+
+      <div className="relative mb-7.5">
+        {isRecommended && (
+          <Image
+            src={doubleTwinkle}
+            alt=""
+            aria-hidden
+            className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
+          />
+        )}
+        <h2 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
+          {plan.name}
+        </h2>
+      </div>
+
+      {plan.description ? (
+        <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
+          {plan.description}
+        </p>
+      ) : null}
+
+      <ul className="mb-7 flex flex-col gap-[14px]">
+        {(pkg?.items ?? []).map((item) => (
+          <li
+            key={item}
+            className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
+          >
+            <CheckIcon color={theme.colorVar} />
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
+        <span className="text-body-14-b text-black">월 요금제</span>
+        <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
+          {formatMonthlyPrice(plan.monthlyPrice)}
+        </span>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
+        className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+        style={{ background: theme.colorVar }}
+      >
+        제품 상세보기
+      </button>
+    </div>
+  );
+}
+
 /* ── Props ─── */
 interface Props {
   petInfo: PetInfo;
@@ -73,8 +175,8 @@ interface Props {
 }
 
 export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }: Props) {
-  const router = useRouter();
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
+  const [expandedPlanIds, setExpandedPlanIds] = useState<Set<number>>(new Set());
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
 
@@ -252,139 +354,92 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
           </div>
         </div>
 
-        {/* 상세 뷰 또는 패키지 카드 3종 */}
+        {/* 패키지 카드 */}
         {plansLoading ? (
           <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
             플랜 정보를 불러오는 중…
           </p>
-        ) : selectedTier ? (
-          detailPlan ? (
-            <PackageDetailView
-              key={detailPlan.id}
-              plan={detailPlan}
-              allPlans={sortedPlans}
-              onSelectPlan={(p) => {
-                setSelectedTier(tierFromSubscriptionPlan(p));
-              }}
-              onClose={() => setSelectedTier(null)}
-            />
-          ) : (
-            <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
-              플랜 정보를 불러오지 못했습니다. 구독 페이지에서 다시 확인해 주세요.
-            </p>
-          )
+        ) : sortedPlans.length === 0 ? (
+          <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+            표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
+          </p>
         ) : (
-          <div className="flex flex-col gap-5 md:grid md:grid-cols-3 md:gap-4">
-            {PACKAGES.map((pkg) => {
-              const isRecommended = TIER_ORDER.indexOf(pkg.id as RecommendedTier) >= TIER_ORDER.indexOf(recommendedTier);
-              const matchedPlan = sortedPlans.find(
-                (p) => tierFromSubscriptionPlan(p) === pkg.tier,
-              );
-              const isExactRecommended = pkg.id === recommendedTier;
-              const mobileOrderClass = isExactRecommended
-                ? " max-md:[order:-2]"
-                : isRecommended
-                  ? " max-md:[order:-1]"
-                  : "";
-              return (
-                <div
-                  key={pkg.tier}
-                  className={`flex flex-col rounded-[20px] px-6 pb-7 pt-5${mobileOrderClass}`}
-                  style={{ background: "var(--color-support-faq-surface)" }}
-                >
-                  {/* 상단: 칩 + ⓘ 버튼 */}
-                  <div className="mb-5 flex items-center justify-between">
-                    <span
-                      className="flex h-[24px] items-center rounded-full px-3 max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white md:px-4"
-                      style={{ background: pkg.colorVar }}
-                    >
-                      {pkg.tier}
-                    </span>
-                    {/* 우상단 ⓘ 버튼 → 상세 뷰 */}
-                    <button
-                      type="button"
-                      aria-label={`${pkg.tier} 패키지 상세 정보`}
-                      onClick={() => setSelectedTier(pkg.tier)}
-                      className="flex items-center justify-center"
-                    >
-                      <InfoIcon />
-                    </button>
-                  </div>
-
-                  {/* 상품 이미지 */}
-                  <div className="relative mb-6 flex justify-center">
-                    <Image
-                      src={mockTempPackage}
-                      alt={`${pkg.name} 이미지`}
-                      className="h-[140px] w-auto object-contain md:h-[151px]"
-                    />
-                    {isRecommended && (
-                      <Image
-                        src={stamp}
-                        alt="BEST CHOICE 추천 스탬프"
-                        className="absolute -top-6 right-2 h-[120px] w-[120px] object-contain md:-right-5 md:-top-8 md:h-[140px] md:w-[140px]"
+          <>
+            {/* ══ Desktop (md+): i 버튼 → PackageDetailView 전체 교체 ══ */}
+            <div className="max-md:hidden">
+              {selectedTier ? (
+                detailPlan ? (
+                  <PackageDetailView
+                    key={detailPlan.id}
+                    plan={detailPlan}
+                    allPlans={sortedPlans}
+                    onSelectPlan={(p) => setSelectedTier(tierFromSubscriptionPlan(p))}
+                    onClose={() => setSelectedTier(null)}
+                  />
+                ) : (
+                  <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+                    플랜 정보를 불러오지 못했습니다. 구독 페이지에서 다시 확인해 주세요.
+                  </p>
+                )
+              ) : (
+                <div className="grid grid-cols-3 gap-4">
+                  {sortedPlans.map((plan) => {
+                    const theme = packageThemeForPlan(plan);
+                    const pkgId = theme.tier.toLowerCase() as RecommendedTier;
+                    const isRecommended = TIER_ORDER.indexOf(pkgId) >= TIER_ORDER.indexOf(recommendedTier);
+                    return (
+                      <ResultPlanCard
+                        key={plan.id}
+                        plan={plan}
+                        isRecommended={isRecommended}
+                        onInfoClick={() => setSelectedTier(theme.tier)}
                       />
-                    )}
-                  </div>
-
-                  {/* 패키지명 */}
-                  <div className="relative mb-4">
-                    {isRecommended && (
-                      <Image
-                        src={doubleTwinkle}
-                        alt=""
-                        aria-hidden
-                        className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
-                      />
-                    )}
-                    <h2 className="text-display-20-eb text-[var(--color-text)]">
-                      {pkg.name}
-                    </h2>
-                  </div>
-
-                  {/* 특징 목록 */}
-                  <ul className="mb-6 flex flex-col gap-3">
-                    {pkg.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-center gap-2 text-body-13-m leading-[1] text-[var(--color-text)]"
-                      >
-                        <CheckIcon color={pkg.colorVar} />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* 가격 */}
-                  <div className="mb-5 md:mb-7 mt-auto flex items-center justify-between border-t border-white pt-5">
-                    <span className="text-body-13-b text-[var(--color-text)]">월 요금제</span>
-                    <span
-                      className="text-price-20-eb"
-                      style={{ color: "var(--color-surface-dark)" }}
-                    >
-                      {matchedPlan ? formatMonthlyPrice(matchedPlan.monthlyPrice) : "–"}
-                    </span>
-                  </div>
-
-                  {/* 제품 상세보기 → 구독/결제 페이지 */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      router.push(
-                        matchedPlan
-                          ? `/subscribe/detail?planId=${matchedPlan.id}`
-                          : "/subscribe",
-                      )
-                    }
-                    className="flex h-[48px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
-                    style={{ background: pkg.colorVar }}
-                  >
-                    제품 상세보기
-                  </button>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
+              )}
+            </div>
+
+            {/* ══ Mobile (<md): i 버튼 → MobileTierDetailPanel 인라인 토글 ══ */}
+            <div className="flex flex-col gap-4 md:hidden">
+              {sortedPlans.map((plan) => {
+                const theme = packageThemeForPlan(plan);
+                const pkgId = theme.tier.toLowerCase() as RecommendedTier;
+                const isRecommended = TIER_ORDER.indexOf(pkgId) >= TIER_ORDER.indexOf(recommendedTier);
+                const isExactRecommended = pkgId === recommendedTier;
+                const isExpanded = expandedPlanIds.has(plan.id);
+                const orderClass = isExactRecommended ? " [order:-2]" : isRecommended ? " [order:-1]" : "";
+                return (
+                  <div key={plan.id} className={`flex flex-col${orderClass}`}>
+                    {isExpanded ? (
+                      <MobileTierDetailPanel
+                        plan={plan}
+                        onClose={() =>
+                          setExpandedPlanIds((prev) => {
+                            const next = new Set(prev);
+                            next.delete(plan.id);
+                            return next;
+                          })
+                        }
+                      />
+                    ) : (
+                      <ResultPlanCard
+                        plan={plan}
+                        isRecommended={isRecommended}
+                        onInfoClick={() =>
+                          setExpandedPlanIds((prev) => {
+                            const next = new Set(prev);
+                            next.add(plan.id);
+                            return next;
+                          })
+                        }
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </section>

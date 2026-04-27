@@ -50,6 +50,9 @@ const ERROR_MESSAGES: Record<string, string> = {
 
   // 파일 업로드
   INVALID_FILE_FORMAT: "지원하지 않는 파일 형식입니다.",
+
+  // 배송지
+  DELIVERY_ADDRESS_IN_USE: "구독 중인 플랜에 사용 중인 배송지는 삭제할 수 없습니다.",
 };
 
 const DEFAULT_FALLBACK = "오류가 발생했습니다. 잠시 후 다시 시도해주세요.";

@@ -347,7 +347,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
 
       {/* ━━━━━━━━ 데스크톱 레이아웃 ━━━━━━━━ */}
       <div className="max-md:hidden py-10">
-        <div className="mx-auto max-w-content px-8">
+        <div className="mx-auto max-w-content px-8 md:px-0">
           <div className="rounded-2xl bg-white px-8 py-8">
             <div className="mb-6 flex items-center gap-2">
               <Link

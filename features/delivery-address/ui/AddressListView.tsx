@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useModal } from "@/shared/ui";
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import type { DeliveryAddress } from "../api/types";
 import { deleteDeliveryAddress } from "../api/deliveryAddressApi";
 
@@ -24,6 +26,7 @@ export default function AddressListView({
   onClose,
 }: Props) {
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const { openAlert } = useModal();
 
   async function handleDelete(id: number) {
     if (!confirm("이 배송지를 삭제하시겠습니까?")) return;
@@ -31,8 +34,10 @@ export default function AddressListView({
     try {
       await deleteDeliveryAddress(id);
       onDeleted(id);
-    } catch {
-      alert("삭제에 실패했습니다. 다시 시도해주세요.");
+    } catch (err) {
+      openAlert({
+        title: getErrorMessage(err, "삭제에 실패했습니다. 다시 시도해주세요."),
+      });
     } finally {
       setDeletingId(null);
     }

@@ -296,7 +296,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             })}
           </div>
 
-          <div className="relative h-[327px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
+          <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
             <Image
               key={`mobile-${selectedTier}-${selectedPreviewIndex}`}
               src={activePreviewImage}
@@ -385,7 +385,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             })}
           </div>
 
-          <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6">
+          <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6 px-1.5">
             <div className="grid grid-cols-[72px_minmax(0,1fr)] items-start gap-x-4">
               <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">제품구성</span>
               <span
@@ -796,7 +796,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   {formatWon(discountedPrice(basePrice))}
                 </span>
               </div>
-              <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7">
+              <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
                 <div className="space-y-6 md:space-y-8">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품구성</span>

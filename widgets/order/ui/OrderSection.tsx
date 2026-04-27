@@ -935,7 +935,7 @@ export default function OrderSection({
 
       <div className="bg-white">
         <div
-          className="mx-auto px-4 md:px-6 py-6 md:py-8"
+          className="mx-auto px-4 md:px-0 py-6 md:py-8"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
           <div className="max-md:hidden mb-4">

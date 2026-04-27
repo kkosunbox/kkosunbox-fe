@@ -206,7 +206,7 @@ export default function InquirySection() {
       </section>
 
       {/* 카드 — Figma 1013×632, shadow, 카드가 히어로와 살짝 겹침 */}
-      <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-0">
         <form
           onSubmit={handleSubmit}
           className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] md:px-8 md:py-12"

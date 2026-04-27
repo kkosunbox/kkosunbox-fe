@@ -252,7 +252,7 @@ export default function SupportSection() {
 
   return (
     <div className="min-h-screen bg-white max-md:py-6 md:py-10">
-      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-8">
+      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
         {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image

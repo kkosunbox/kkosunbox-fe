@@ -128,7 +128,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
   function getDetailPrimaryButton(p: SubscriptionPlanDto) {
     return {
       label: "구독 추가하기",
-      onClick: () => router.push(`/order?planId=${p.id}`),
+      onClick: () => router.push(`/subscribe/detail?planId=${p.id}`),
       disabled: isPending,
     };
   }
@@ -334,7 +334,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
 
                     <button
                       type="button"
-                      onClick={() => router.push(`/order?planId=${plan.id}`)}
+                      onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
                       disabled={isPending}
                       className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                       style={{ background: color }}

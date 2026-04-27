@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import checklistDoneTitle from "../assets/checklist-done-title.webp";
 import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.webp";
@@ -72,6 +73,7 @@ interface Props {
 }
 
 export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }: Props) {
+  const router = useRouter();
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
@@ -134,7 +136,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
 
   return (
     <section className="min-h-[calc(100vh-54px)] bg-white py-10 md:py-14">
-      <div className="mx-auto w-full max-w-[1013px] px-4 md:px-8">
+      <div className="mx-auto w-full max-w-[1013px] px-4 md:px-0">
 
         {/* 완료 타이틀 */}
         <div className="mb-8 flex justify-center md:mb-10">
@@ -364,10 +366,16 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                     </span>
                   </div>
 
-                  {/* 제품 상세보기 → 상세 뷰 */}
+                  {/* 제품 상세보기 → 구독/결제 페이지 */}
                   <button
                     type="button"
-                    onClick={() => setSelectedTier(pkg.tier)}
+                    onClick={() =>
+                      router.push(
+                        matchedPlan
+                          ? `/subscribe/detail?planId=${matchedPlan.id}`
+                          : "/subscribe",
+                      )
+                    }
                     className="flex h-[48px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                     style={{ background: pkg.colorVar }}
                   >

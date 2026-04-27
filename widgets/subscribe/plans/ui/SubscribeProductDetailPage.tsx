@@ -51,9 +51,10 @@ function formatWon(value: number) {
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
-function discountedPrice(value: number) {
-  return Math.floor(value * 0.9);
-}
+// 추후 쿠폰/할인 필드 추가 시 활성화
+// function discountedPrice(value: number) {
+//   return Math.floor(value * 0.9);
+// }
 
 const DETAIL_ASSET_IMAGES: Record<
   PackageTier,
@@ -243,7 +244,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const previewImages = useMemo(() => Array.from({ length: 8 }, () => mockTempPackage), []);
 
   const basePrice = selectedPlan.monthlyPrice;
-  const salePrice = discountedPrice(basePrice) * quantity;
+  const salePrice = basePrice * quantity;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
@@ -789,11 +790,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <span className="text-body-20-sb tracking-[-0.05em] text-[var(--color-surface-dark)]">
                   월 요금제
                 </span>
-                <span className="text-[16px] font-semibold leading-8 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
-                  {formatWon(basePrice)}
-                </span>
                 <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
-                  {formatWon(discountedPrice(basePrice))}
+                  {formatWon(basePrice)}
                 </span>
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">

@@ -309,12 +309,12 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                     </span>
                   </div>
 
-                  {/* 구독하기 → 결제 페이지 */}
+                  {/* 구독하기 → 상세 페이지 */}
                   <button
                     type="button"
                     disabled={!matchedPlan}
                     onClick={() => {
-                      if (matchedPlan) router.push(`/order?planId=${matchedPlan.id}`);
+                      if (matchedPlan) router.push(`/subscribe/detail?planId=${matchedPlan.id}`);
                     }}
                     className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                     style={{ background: pkg.colorVar }}

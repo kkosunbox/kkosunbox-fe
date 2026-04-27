@@ -132,7 +132,7 @@ export default function AboutSection() {
 
       {/* ━━━━ Section 2: 믿을 수 있는 건강한 간식 + 피처 카드 ━━━━ */}
       <section className="bg-[var(--color-secondary)] py-10 md:py-[72px]">
-        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-0 md:gap-12 px-6 md:px-8">
+        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-0 md:gap-12 px-6 md:px-0">
 
           {/* 모바일 전용: 헤딩 최상단 (데스크톱에서 숨김) */}
           <ScrollReveal variant="fade-up">

@@ -22,9 +22,26 @@ const giveYouGlory = Give_You_Glory({
   variable: "--font-give-you-glory",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
   description: "강아지에게 맞춤 수제간식을 정기적으로 제공하는 프리미엄 패키지 구독 서비스",
+  openGraph: {
+    siteName: "꼬순박스",
+    type: "website",
+    locale: "ko_KR",
+    title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
+    description: "강아지에게 맞춤 수제간식을 정기적으로 제공하는 프리미엄 패키지 구독 서비스",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "꼬순박스" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
+    description: "강아지에게 맞춤 수제간식을 정기적으로 제공하는 프리미엄 패키지 구독 서비스",
+    images: ["/og-image.png"],
+  },
 };
 
 export default async function RootLayout({

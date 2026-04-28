@@ -3,10 +3,9 @@
 import { useEffect, useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ScrollReveal } from "@/shared/ui";
+import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
 import FaqTitle from "../assets/faq-title.webp";
 import FaqQuestion from "../assets/faq-question.webp";
-import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 /* ── FAQ 데이터 ──────────────────────────────────────────── */
 interface FaqItem {
@@ -203,7 +202,7 @@ function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void 
       aria-modal="true"
     >
       <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 flex w-full max-w-[480px] flex-col gap-4 rounded-[20px] bg-white p-6 shadow-lg">
+      <div className="relative z-10 flex max-h-[80vh] w-full max-w-[480px] flex-col gap-4 overflow-y-auto rounded-[20px] bg-white p-6 shadow-lg">
         <div className="flex items-start justify-between">
           <PawCircleIcon />
           <button
@@ -217,7 +216,7 @@ function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void 
           </button>
         </div>
         <p className="text-body-14-sb text-[var(--color-text)]">{item.question}</p>
-        <p className="text-body-14-m leading-[160%] text-[var(--color-text)]">{item.fullAnswer}</p>
+        <p className="min-h-[160px] text-body-14-m leading-[160%] text-[var(--color-text)]">{item.fullAnswer}</p>
       </div>
     </div>
   );

@@ -6,35 +6,20 @@ import Link from "next/link";
 import type { InquiryDto } from "@/features/inquiry/api";
 import { getInquiries } from "@/features/inquiry/api";
 import { ApiError } from "@/shared/lib/api/types";
+import { PawCircleIcon } from "@/shared/ui";
+import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import FaqQuestion from "../../faq/assets/faq-question.webp";
-import PawCircleIcon from "../../shared/ui/PawCircleIcon";
 
 const ITEMS_PER_PAGE = 4;
 
-const WAITING_MESSAGE = "문의해주셔서 감사합니다.\n빠르게 확인 후 1~2일 이내에\n답변드릴 예정입니다.";
-
 const IMAGE_URL_REGEX = /\.(jpe?g|png|webp|gif)(\?|$)/i;
-
-function isResolved(row: InquiryDto): boolean {
-  return row.status === "resolved" && row.isAnswered && Boolean(row.answer?.trim());
-}
 
 function getImageAttachments(row: InquiryDto): string[] {
   return row.attachmentUrls?.filter((url) => IMAGE_URL_REGEX.test(url)) ?? [];
 }
 
-function AttachmentThumbnails({
-  urls,
-  size,
-}: {
-  urls: string[];
-  size: "sm" | "md";
-}) {
+function AttachmentThumbnails({ urls }: { urls: string[] }) {
   if (urls.length === 0) return null;
-  const box =
-    size === "sm"
-      ? "h-11 w-11 rounded-[4px]"
-      : "h-20 w-20 rounded-[6px]";
   return (
     <div className="flex flex-row items-center gap-3">
       {urls.map((url, idx) => (
@@ -43,27 +28,11 @@ function AttachmentThumbnails({
           key={`${url}-${idx}`}
           src={url}
           alt={`첨부 이미지 ${idx + 1}`}
-          className={`${box} shrink-0 border border-[var(--color-text-muted)] object-cover`}
+          className="h-11 w-11 shrink-0 rounded-[4px] border border-[var(--color-text-muted)] object-cover"
           loading="lazy"
         />
       ))}
     </div>
-  );
-}
-
-function InquiryStatusBadge({ row }: { row: InquiryDto }) {
-  const done = isResolved(row);
-  return (
-    <span
-      className={
-        done
-          ? "inline-flex items-center rounded-full bg-[var(--color-status-success-bg)] px-3 py-1 text-caption-12-m leading-[14px] text-[var(--color-status-success)]"
-          : "inline-flex items-center rounded-full bg-[var(--color-status-waiting-bg)] px-3 py-1 text-caption-12-m leading-[14px] text-[var(--color-status-waiting)]"
-      }
-      style={{ opacity: 0.8 }}
-    >
-      {done ? "완료" : "대기"}
-    </span>
   );
 }
 
@@ -100,60 +69,6 @@ function ChevronRightIcon() {
         strokeLinejoin="round"
       />
     </svg>
-  );
-}
-
-/* ── 문의 상세 모달 ─────────────────────────────────────── */
-function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClose: () => void }) {
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 flex w-full max-w-[480px] flex-col gap-4 rounded-[20px] bg-white p-6 shadow-lg">
-        <div className="flex items-start justify-between">
-          <PawCircleIcon />
-          <button
-            onClick={onClose}
-            aria-label="닫기"
-            className="flex h-6 w-6 items-center justify-center hover:opacity-70 transition-opacity"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-          <InquiryStatusBadge row={item} />
-        </div>
-        <AttachmentThumbnails urls={getImageAttachments(item)} size="md" />
-        {isResolved(item) ? (
-          <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
-            {item.answer!.trim()}
-          </p>
-        ) : (
-          <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text-secondary)] text-center">
-            {WAITING_MESSAGE}
-          </p>
-        )}
-      </div>
-    </div>
   );
 }
 
@@ -203,25 +118,6 @@ export default function InquiryHistorySection() {
   return (
     <div className="min-h-screen bg-white max-md:py-6 md:py-10">
       <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
-        {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
-          <Image
-            src={FaqTitle}
-            width={172}
-            height={25}
-            alt="꼬순박스 고객센터"
-            className="h-[25px] w-auto"
-            priority
-          />
-          <p
-            className="max-w-[415px] text-body-16-r leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
-            style={{
-              fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-            }}
-          >
-            궁금하거나 요청하실 사항이 있으시면 상세히 안내해 드리겠습니다.
-          </p>
-        </header> */}
-
         <section
           className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
           style={{ background: "var(--gradient-support-banner)" }}
@@ -317,11 +213,11 @@ export default function InquiryHistorySection() {
                     </button>
                     <div className="flex items-center gap-2">
                       <PawCircleIcon />
-                      <InquiryStatusBadge row={item} />
+                      <InquiryStatusBadge inquiry={item} />
                     </div>
                     <div className="flex flex-col gap-2">
                       <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-                      <AttachmentThumbnails urls={getImageAttachments(item)} size="sm" />
+                      <AttachmentThumbnails urls={getImageAttachments(item)} />
                       {resolved ? (
                         <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
                           {item.answer!.trim()}

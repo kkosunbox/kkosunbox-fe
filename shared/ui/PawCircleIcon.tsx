@@ -1,4 +1,3 @@
-/** FAQ·문의내역 카드 공통 발바닥 아이콘 */
 export default function PawCircleIcon() {
   return (
     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-secondary)]">

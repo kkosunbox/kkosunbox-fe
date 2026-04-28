@@ -12,3 +12,4 @@ export { default as CursorPaw } from "./CursorPaw";
 export { default as LoadingOverlay, LoadingOverlayProvider, useLoadingOverlay } from "./LoadingOverlay";
 export { default as ScrollReveal } from "./ScrollReveal";
 export { default as PawCircleIcon } from "./PawCircleIcon";
+export { default as DefaultPetIcon } from "./DefaultPetIcon";

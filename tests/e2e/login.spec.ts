@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { TEST_CREDENTIALS } from "../helpers/mockApiServer";
+import { TEST_CREDENTIALS, TRIGGER_SERVER_ERROR_EMAIL } from "../helpers/mockApiServer";
 
 test.describe("로그인 플로우", () => {
   // ── 성공 케이스 ──────────────────────────────────────────────────
@@ -72,5 +72,97 @@ test.describe("로그인 플로우", () => {
     // 다시 클릭 → 비밀번호 숨김
     await page.getByRole("button", { name: "비밀번호 숨기기" }).click();
     await expect(passwordInput).toHaveAttribute("type", "password");
+  });
+
+  // ── 빈 필드 제출 ────────────────────────────────────────────────
+
+  test("이메일/비밀번호 빈 채로 제출 → 에러 메시지 표시 (클라이언트 검증 없음)", async ({ page }) => {
+    await page.goto("/login");
+
+    // 아무것도 입력하지 않고 제출 — required 속성 없어서 API까지 도달함
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+
+    await expect(
+      page.getByText("아이디 또는 비밀번호가 올바르지 않습니다.")
+    ).toBeVisible({ timeout: 10_000 });
+
+    await expect(page).toHaveURL("/login");
+  });
+
+  // ── 서버 오류(5xx) ───────────────────────────────────────────────
+
+  test("서버 오류(5xx) → 폴백 에러 메시지 표시, 로그인 페이지 유지", async ({ page }) => {
+    await page.goto("/login");
+
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TRIGGER_SERVER_ERROR_EMAIL);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill("anypassword");
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+
+    // 500 → loginAction의 getErrorMessage fallback (INTERNAL_SERVER_ERROR는 맵에 없음)
+    await expect(
+      page.getByText("로그인 중 오류가 발생했습니다.")
+    ).toBeVisible({ timeout: 10_000 });
+
+    await expect(page).toHaveURL("/login");
+  });
+
+  // ── ?next= 리다이렉트 ────────────────────────────────────────────
+
+  test("?next= 파라미터 — 로그인 성공 시 지정 경로로 리다이렉트", async ({ page }) => {
+    await page.goto("/login?next=/subscribe");
+
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+
+    // "/"가 아닌 "/subscribe"로 이동해야 함
+    await page.waitForURL("/subscribe", { timeout: 15_000 });
+  });
+
+  // ── 세션 유지 ───────────────────────────────────────────────────
+
+  test("로그인 후 새로고침 — 쿠키 기반 인증 상태 유지", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+    await page.waitForURL("/", { timeout: 15_000 });
+
+    // 새로고침 후 SSR이 쿠키로 세션을 복구해야 함
+    await page.reload();
+
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+
+  // ── 버튼 비활성화 ────────────────────────────────────────────────
+
+  test("로그인 요청 중 버튼 비활성화 (이중 제출 방지)", async ({ page }) => {
+    // Server Action은 브라우저 → Next.js로 POST 요청으로 전달된다.
+    // 응답 지연을 걸어 isPending 상태를 안정적으로 관찰한다.
+    await page.route(
+      (url) => url.pathname === "/login",
+      async (route) => {
+        if (route.request().method() === "POST") {
+          await new Promise<void>((r) => setTimeout(r, 500));
+        }
+        await route.continue();
+      },
+    );
+
+    await page.goto("/login");
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+
+    // isPending 동안 텍스트가 "로그인 중..."으로 바뀌고 disabled 상태여야 함
+    await expect(
+      page.getByRole("button", { name: "로그인 중...", exact: true })
+    ).toBeDisabled();
+
+    // 지연 해제 후 정상 완료 확인
+    await page.waitForURL("/", { timeout: 15_000 });
   });
 });

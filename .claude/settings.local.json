@@ -63,7 +63,19 @@
       "Bash(awk '{printf \"%10d  %s\\\\n\", $5, $NF}')",
       "Bash(awk '{sum+=$5} END {printf \"Total: %.2f MB\\\\n\", sum/1024/1024}')",
       "Bash(node verify-refs.mjs)",
-      "Bash(awk '{print $1}')"
+      "Bash(awk '{print $1}')",
+      "Bash(pnpm test *)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3001\")",
+      "PowerShell(netstat *)",
+      "Bash(NEXT_PUBLIC_API_URL=http://localhost:3099 PORT=3001 pnpm start)",
+      "Bash(node tests/helpers/mockApiServer.js)",
+      "Bash(node -e ' *)",
+      "Bash(npx tsx -e ' *)",
+      "Bash(ls -la middleware*)",
+      "Bash(ls -la src/middleware*)",
+      "Bash(find . -maxdepth 2 -name \"middleware*\" -not -path \"*/node_modules/*\" -not -path \"*/.next/*\")",
+      "Bash(npx playwright *)"
     ]
   }
 }

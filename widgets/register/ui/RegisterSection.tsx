@@ -13,6 +13,7 @@ import { tokenStore } from "@/shared/lib/api/token";
 import { useAuth } from "@/features/auth";
 import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
+import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import registerTitle from "../assets/register-title.webp";
 import registerTitleMobi from "../assets/register-title-mobi.webp";
 import registerPaw from "../assets/register-pow.webp";
@@ -145,6 +146,7 @@ export default function RegisterSection() {
   const [showPwConfirm, setShowPwConfirm] = useState(false);
   const [agreements, setAgreements] = useState({ terms: false, privacy: false, marketing: false });
   const [agreementsOpen, setAgreementsOpen] = useState(true);
+  const [termsModal, setTermsModal] = useState<"terms" | "privacy" | "marketing" | null>(null);
 
   /* ── 파생 상태 ── */
   const emailVerified = !!emailVerifiedToken;
@@ -252,6 +254,14 @@ export default function RegisterSection() {
 
   /* ── 렌더 ── */
   return (
+    <>
+    {termsModal && (
+      <TermsViewModal
+        type={termsModal}
+        onClose={() => setTermsModal(null)}
+        onConfirm={() => setAgreements((prev) => ({ ...prev, [termsModal]: true }))}
+      />
+    )}
     <div className="min-h-screen bg-white pt-[54px]">
       <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 md:py-12">
 
@@ -450,9 +460,13 @@ export default function RegisterSection() {
                         {label}{" "}
                         <span className="text-[var(--color-text-secondary)]">({required ? "필수" : "선택"})</span>
                       </span>
-                      <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline cursor-pointer">
+                      <button
+                        type="button"
+                        onClick={() => setTermsModal(key)}
+                        className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline hover:opacity-70 transition-opacity"
+                      >
                         보기
-                      </span>
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -492,5 +506,6 @@ export default function RegisterSection() {
 
       </div>
     </div>
+    </>
   );
 }

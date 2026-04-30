@@ -85,7 +85,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "support", label: "고객센터" },
 ];
 
-const SORT_OPTIONS = ["최신순", "평점순", "평점 높은순", "평점 낮은순"] as const;
+const SORT_OPTIONS = ["최신순", "평점 높은순", "평점 낮은순"] as const;
 
 const TIER_COLOR_VAR: Record<PackageTier, string> = {
   Premium: "var(--color-premium)",

@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
-import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
+import { ChecklistRecommendModal, ScrollReveal, useModal } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
 import {
@@ -147,6 +148,8 @@ interface Props {
 
 export default function SubscribePlansSection({ plans }: Props) {
   const router = useRouter();
+  const { isLoggedIn, user } = useAuth();
+  const { openAlert } = useModal();
   const [isDismissed, setIsDismissed] = useState(false);
   /** 데스크톱 전용: 그리드 ↔ 단일 상세 뷰 전환 */
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
@@ -283,7 +286,10 @@ export default function SubscribePlansSection({ plans }: Props) {
       window.addEventListener("storage", onStoreChange);
       return () => window.removeEventListener("storage", onStoreChange);
     },
-    () => localStorage.getItem("kkosun_checklist_done") === "true",
+    () => {
+      if (!user) return false;
+      return localStorage.getItem(`kkosun_checklist_done_${user.id}`) === "true";
+    },
     () => true,
   );
   const showModal = !isChecklistDone && !isDismissed;
@@ -294,6 +300,16 @@ export default function SubscribePlansSection({ plans }: Props) {
 
   function handleConfirm() {
     setIsDismissed(true);
+    if (!isLoggedIn) {
+      openAlert({
+        title: "로그인이 필요해요",
+        description: "체크리스트 작성은 로그인 후 이용할 수 있어요.",
+        primaryLabel: "로그인 하러 가기",
+        onPrimary: () => router.push("/login?next=/checklist"),
+        secondaryLabel: "취소",
+      });
+      return;
+    }
     router.push("/checklist");
   }
 

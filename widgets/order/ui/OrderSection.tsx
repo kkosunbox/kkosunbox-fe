@@ -30,21 +30,33 @@ function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-function addDays(d: Date, n: number): Date {
-  const x = new Date(d);
-  x.setDate(x.getDate() + n);
-  return x;
-}
-
-function toYmd(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
 function digitsOnly(s: string) {
   return s.replace(/\D/g, "");
+}
+
+function formatPhoneNumber(digits: string): string {
+  if (digits.startsWith("02")) {
+    const d = digits.slice(0, 10);
+    if (d.length <= 2) return d;
+    if (d.length <= 5) return `${d.slice(0, 2)}-${d.slice(2)}`;
+    if (d.length <= 9) return `${d.slice(0, 2)}-${d.slice(2, 5)}-${d.slice(5)}`;
+    return `${d.slice(0, 2)}-${d.slice(2, 6)}-${d.slice(6, 10)}`;
+  }
+  if (digits.startsWith("010")) {
+    const d = digits.slice(0, 11);
+    if (d.length <= 3) return d;
+    if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
+    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
+  }
+  const d = digits.slice(0, 10);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}-${d.slice(3)}`;
+  return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+}
+
+function isValidKoreanPhone(digits: string): boolean {
+  // 02(서울) | 010/011/016~019(모바일) | 031~033/041~044/051~055/061~064/070(지역·VoIP)
+  return /^(02\d{7,8}|01[016789]\d{7,8}|0(3[1-3]|4[1-4]|5[1-5]|6[1-4]|70)\d{7,8})$/.test(digits);
 }
 
 function ChevronIcon({ open }: { open: boolean }) {
@@ -301,9 +313,7 @@ export default function OrderSection({
 
   const [newAddr, setNewAddr] = useState({
     receiverName: "",
-    email: "",
     phoneNumber: "",
-    tel: "",
     zipCode: "",
     address: "",
     addressDetail: "",
@@ -317,14 +327,12 @@ export default function OrderSection({
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
 
-  const today = new Date();
-  const minBillingDate = addDays(today, 3);
-  const [subscriptionDate] = useState<Date>(minBillingDate);
-
-  const [agreeOpen, setAgreeOpen] = useState(false);
+  const [agreeOpen, setAgreeOpen] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
+
+  const [quantity, setQuantity] = useState(1);
 
   const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
 
@@ -332,6 +340,7 @@ export default function OrderSection({
   const [confirmedPayment, setConfirmedPayment] = useState(false);
 
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   // /payment 팝업에서 결제수단/카드 선택 결과 수신
   useEffect(() => {
@@ -361,11 +370,13 @@ export default function OrderSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmedPayment]);
 
-  const basePrice = plan.monthlyPrice;
+  const unitPrice = plan.monthlyPrice;
+  const basePrice = unitPrice * quantity;
   const couponDiscount = useMemo(() => {
     if (!couponInfo?.canUse || !couponInfo.discountRate) return 0;
-    return Math.floor((basePrice * couponInfo.discountRate) / 100);
-  }, [basePrice, couponInfo]);
+    // 쿠폰은 단가 1개에만 적용
+    return Math.floor((unitPrice * couponInfo.discountRate) / 100);
+  }, [unitPrice, couponInfo]);
 
   const total = Math.max(0, basePrice - couponDiscount);
 
@@ -409,13 +420,18 @@ export default function OrderSection({
     }
 
     if (!selectedAddress) {
+      const rawPhone = digitsOnly(newAddr.phoneNumber);
       if (
         !newAddr.receiverName.trim() ||
-        !digitsOnly(newAddr.phoneNumber) ||
+        !rawPhone ||
         !newAddr.zipCode.trim() ||
         !newAddr.address.trim()
       ) {
         setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
+        return;
+      }
+      if (!isValidKoreanPhone(rawPhone)) {
+        setPhoneError("올바른 전화번호 형식이 아닙니다.");
         return;
       }
     }
@@ -455,7 +471,7 @@ export default function OrderSection({
           petProfileId: profile!.id,
           deliveryAddressId,
           planId: plan.id,
-          billingDate: toYmd(subscriptionDate),
+          quantity,
           couponCode:
             couponInfo?.canUse && couponCodeInput.trim() ? couponCodeInput.trim() : undefined,
         });
@@ -521,8 +537,29 @@ export default function OrderSection({
               {plan.name}
             </span>
             <span className="max-md:text-price-14-eb md:text-price-16-eb text-[var(--color-surface-dark)]">
-              월 요금제 {formatPrice(plan.monthlyPrice)}
+              월 요금제 {formatPrice(unitPrice)}
             </span>
+            <div className="flex items-center gap-3 mt-1">
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={quantity <= 1}
+                className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+              >
+                −
+              </button>
+              <span className="text-body-14-sb text-[var(--color-text)] min-w-[20px] text-center">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                disabled={quantity >= 99}
+                className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+              >
+                +
+              </button>
+            </div>
           </div>
         </div>
       </SectionCard>
@@ -567,24 +604,41 @@ export default function OrderSection({
         ) : (
           /* ── 새 배송지 입력 폼 ── */
           <div className="flex flex-col gap-4">
-            {/* 받는분 / 이메일 */}
+            {/* 받는분 / 휴대폰 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormRow label="받는분">
                 <input
                   value={newAddr.receiverName}
                   onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
-                  className={inputCls}
+                  className={`${inputCls} max-w-[220px]`}
                   placeholder="이름"
                 />
               </FormRow>
-              <FormRow label="이메일">
-                <input
-                  value={newAddr.email}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, email: e.target.value }))}
-                  className={inputCls}
-                  placeholder="이메일"
-                  type="email"
-                />
+              <FormRow label="휴대폰">
+                <div className="flex flex-col gap-1">
+                  <input
+                    value={newAddr.phoneNumber}
+                    onChange={(e) => {
+                      setPhoneError(null);
+                      setNewAddr((s) => ({
+                        ...s,
+                        phoneNumber: formatPhoneNumber(digitsOnly(e.target.value)),
+                      }));
+                    }}
+                    onBlur={() => {
+                      const raw = digitsOnly(newAddr.phoneNumber);
+                      if (raw && !isValidKoreanPhone(raw)) {
+                        setPhoneError("올바른 전화번호 형식이 아닙니다.");
+                      }
+                    }}
+                    className={`${inputCls} max-w-[220px]`}
+                    placeholder="010-0000-0000"
+                    inputMode="numeric"
+                  />
+                  {phoneError && (
+                    <p className="text-body-13-m text-red-600 pl-1" role="alert">{phoneError}</p>
+                  )}
+                </div>
               </FormRow>
             </div>
             {/* 우편번호 + 주소찾기 */}
@@ -593,7 +647,7 @@ export default function OrderSection({
                 <input
                   value={newAddr.zipCode}
                   readOnly
-                  className={`${inputCls} flex-1 min-w-0 cursor-default bg-[var(--color-surface-light)]`}
+                  className={`${inputCls} max-w-[220px] cursor-default bg-[var(--color-surface-light)]`}
                 />
                 <button
                   type="button"
@@ -625,38 +679,19 @@ export default function OrderSection({
                 />
               )}
             </FormRow>
-            {/* 휴대폰 / 전화번호 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormRow label="휴대폰">
-                <input
-                  value={newAddr.phoneNumber}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, phoneNumber: e.target.value }))}
-                  className={inputCls}
-                  placeholder="-를 제외한 숫자만 입력해주세요"
-                />
-              </FormRow>
-              <FormRow label="전화번호">
-                <input
-                  value={newAddr.tel}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, tel: e.target.value }))}
-                  className={inputCls}
-                  placeholder="-를 제외한 숫자만 입력해주세요"
-                />
-              </FormRow>
-            </div>
             {/* 배송메모 + 배송지 정보 저장 */}
-            <div className="flex items-center gap-4">
-              <div className="flex-1 min-w-0">
-                <FormRow label="배송메모">
-                  <input
-                    value={newAddr.memo}
-                    onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
-                    className={inputCls}
-                    placeholder="배송 시 요청사항을 입력해주세요"
-                  />
-                </FormRow>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormRow label="배송메모">
+                <input
+                  value={newAddr.memo}
+                  onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
+                  className={`${inputCls} max-w-[220px]`}
+                  placeholder="배송 시 요청사항을 입력해주세요"
+                />
+              </FormRow>
+              <div className="flex items-center">
+                <Checkbox checked={saveInfo} onChange={() => setSaveInfo((v) => !v)} label="배송지 정보 저장" />
               </div>
-              <Checkbox checked={saveInfo} onChange={() => setSaveInfo((v) => !v)} label="배송지 정보 저장" />
             </div>
           </div>
         )}
@@ -774,7 +809,9 @@ export default function OrderSection({
         <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
-                <span className="text-body-13-m text-[var(--color-text)]">주문상품금액</span>
+                <span className="text-body-13-m text-[var(--color-text)]">
+                  주문상품금액{quantity > 1 ? ` ×${quantity}` : ""}
+                </span>
                 <span className="text-body-13-m text-[var(--color-text)]">{formatPrice(basePrice)}</span>
               </div>
               <div className="flex justify-between items-center">
@@ -933,9 +970,9 @@ export default function OrderSection({
         </div>
       </div>
 
-      <div className="bg-white">
+      <div className="bg-white md:overflow-x-auto">
         <div
-          className="mx-auto px-4 md:px-0 py-6 md:py-8"
+          className="mx-auto px-4 md:px-0 py-6 md:py-8 md:min-w-[900px]"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
           <div className="max-md:hidden mb-4">

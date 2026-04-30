@@ -27,6 +27,7 @@ export interface UserSubscriptionDto {
   petProfileId: number;
   deliveryAddressId: number;
   plan: SubscriptionPlanDto;
+  quantity: number;
   status: SubscriptionStatus;
   nextBillingDate: string; // YYYY-MM-DD
   isActive: boolean;
@@ -79,7 +80,8 @@ export interface CreateSubscriptionRequest {
   petProfileId: number;
   deliveryAddressId: number;
   planId: number;
-  billingDate: string; // YYYY-MM-DD, 오늘로부터 최소 3일 이후
+  quantity?: number; // 1~99, 기본값 1. 쿠폰 할인은 단가 1개에만 적용
+  // billingDate?: string; // YYYY-MM-DD — 백엔드에서 더 이상 요구하지 않아 미사용
   couponCode?: string;
 }
 

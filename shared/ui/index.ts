@@ -4,6 +4,7 @@ export type { TypographyVariant } from "./Text";
 export { default as Button } from "./Button";
 export { default as DatePicker } from "./DatePicker";
 export type { DatePickerProps } from "./DatePicker";
+export { default as DogBreedSearchModal } from "./DogBreedSearchModal";
 export { ModalProvider, useModal, openAlertModal } from "./modal";
 export type { ModalType, AlertModalOptions } from "./modal";
 export { ChecklistRecommendModal, PlanChangeModal, ChecklistDeferModal, CouponIssuedModal } from "./custom-modals";

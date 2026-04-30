@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { TEST_CREDENTIALS, TRIGGER_SERVER_ERROR_EMAIL } from "../helpers/mockApiServer";
+import {
+  TEST_CREDENTIALS,
+  TRIGGER_SERVER_ERROR_EMAIL,
+  MOCK_ACCESS_TOKEN,
+  MOCK_REFRESH_TOKEN,
+} from "../helpers/mockApiServer";
 
 test.describe("로그인 플로우", () => {
   // ── 성공 케이스 ──────────────────────────────────────────────────
@@ -134,6 +139,67 @@ test.describe("로그인 플로우", () => {
     await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible({
       timeout: 10_000,
     });
+  });
+
+  // ── 이미 로그인된 사용자의 /login 접근 (프로덕션 버그 재현) ──────
+
+  test("SSR 쿠키로 로그인 상태인 사용자가 /login 접근 → / 로 리다이렉트", async ({ page }) => {
+    // auth-token 쿠키를 직접 주입해 SSR이 로그인 상태를 인식하도록 설정
+    await page.context().addCookies([
+      {
+        name: "auth-token",
+        value: MOCK_ACCESS_TOKEN,
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+      },
+    ]);
+
+    await page.goto("/login");
+
+    // 로그인 상태를 감지해 / 로 리다이렉트 되어야 함
+    await page.waitForURL("/", { timeout: 10_000 });
+
+    // 헤더에 프로필 버튼이 보여야 함 (로그인 버튼 없음)
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "로그인" })).not.toBeVisible();
+  });
+
+  test("로그인 성공 후 /login 재접근 → / 로 리다이렉트 (무한루프 버그 재현)", async ({ page }) => {
+    // 1. 정상 로그인
+    await page.goto("/login");
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+    await page.waitForURL("/", { timeout: 15_000 });
+
+    // 2. 로그인된 상태에서 헤더의 "로그인" 버튼이 사라짐을 확인
+    await expect(page.getByRole("link", { name: "로그인" })).not.toBeVisible();
+
+    // 3. /login 페이지 재접근 (버그 시나리오: 헤더의 로그인 버튼이 잘못 표시되어 클릭하는 경우)
+    await page.goto("/login");
+
+    // 4. 로그인 폼이 보이지 않고 / 로 리다이렉트 되어야 함 (무한루프 방지)
+    await page.waitForURL("/", { timeout: 10_000 });
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible();
+  });
+
+  test("localStorage refreshToken만 있는 경우 /login 접근 → 세션 복구 후 / 로 리다이렉트", async ({ page }) => {
+    // localStorage에 refreshToken 주입 (SSR 쿠키는 없음 — 만료된 것처럼 시뮬레이션)
+    await page.goto("/");
+    await page.evaluate(
+      ([key, token]) => localStorage.setItem(key, token),
+      ["ggosoon:refresh_token", MOCK_REFRESH_TOKEN],
+    );
+
+    // /login 으로 이동
+    await page.goto("/login");
+
+    // 클라이언트 세션 복구(refreshToken → accessToken)가 완료되면 / 로 리다이렉트
+    await page.waitForURL("/", { timeout: 15_000 });
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible();
   });
 
   // ── 버튼 비활성화 ────────────────────────────────────────────────

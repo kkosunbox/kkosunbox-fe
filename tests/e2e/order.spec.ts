@@ -30,7 +30,7 @@ test.describe("주문 페이지 (/order)", () => {
 
   // ── 프로필 리다이렉트 ─────────────────────────────────────────────
 
-  test("프로필 없는 유저 진입 → /mypage/profile 리다이렉트", async ({ page }) => {
+  test("프로필 없는 유저 진입 → /mypage/dog-profile 리다이렉트", async ({ page }) => {
     // NO_PROFILE 유저로 로그인: 미들웨어는 통과하지만 profiles가 빈 배열 → SSR redirect
     await page.goto("/login");
     await page.getByPlaceholder("이메일을 입력하세요").fill(NO_PROFILE_CREDENTIALS.email);
@@ -38,7 +38,7 @@ test.describe("주문 페이지 (/order)", () => {
     await page.getByRole("button", { name: "로그인", exact: true }).click();
     await page.waitForURL("/", { timeout: 15_000 });
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
-    await page.waitForURL("/mypage/profile", { timeout: 10_000 });
+    await page.waitForURL("/mypage/dog-profile", { timeout: 10_000 });
   });
 
   // ── 약관 동의 ────────────────────────────────────────────────────

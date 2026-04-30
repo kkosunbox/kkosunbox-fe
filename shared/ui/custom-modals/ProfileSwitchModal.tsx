@@ -83,7 +83,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   const handleAddProfile = () => {
     if (!canAddProfile) return;
     onClose();
-    router.push("/mypage/profile?new=true");
+    router.push("/mypage/dog-profile?new=true");
   };
 
   return (

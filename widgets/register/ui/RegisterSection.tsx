@@ -235,7 +235,7 @@ export default function RegisterSection() {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
 
         router.refresh();
-        router.push("/mypage/profile");
+        router.push("/mypage/dog-profile");
       } finally {
         hideLoading();
       }
@@ -460,13 +460,15 @@ export default function RegisterSection() {
                         {label}{" "}
                         <span className="text-[var(--color-text-secondary)]">({required ? "필수" : "선택"})</span>
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => setTermsModal(key)}
-                        className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline hover:opacity-70 transition-opacity"
-                      >
-                        보기
-                      </button>
+                      {key !== "marketing" && (
+                        <button
+                          type="button"
+                          onClick={() => setTermsModal(key)}
+                          className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline hover:opacity-70 transition-opacity"
+                        >
+                          보기
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>

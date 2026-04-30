@@ -27,10 +27,10 @@ export default async function OrderPage({
     redirect(`/login?next=${encodeURIComponent(`/order?planId=${planId}`)}`);
   }
 
-  // 여기서 profiles === [] 이면 인증된 유저가 프로필을 아직 만들지 않은 경우
+  // 여기서 profiles === [] 이면 인증된 유저가 애견 프로필을 아직 만들지 않은 경우
   const profiles = await fetchProfiles(token);
   if (profiles.length === 0) {
-    redirect("/mypage/profile");
+    redirect("/mypage/dog-profile");
   }
 
   const [plans, addresses, billing] = await Promise.all([

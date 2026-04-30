@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
-import { useModal } from "@/shared/ui";
+import { useRouter } from "next/navigation";
+import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import { getPaymentReceipt } from "@/features/subscription/api/subscriptionApi";
+import { getPaymentReceipt, cancelSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 
@@ -144,7 +145,9 @@ interface Props {
 export default function PaymentManagementSection({ billingInfo: initialBillingInfo, subscription, payments }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
-  const { openAlert } = useModal();
+  const { openAlert, openModal } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
+  const router = useRouter();
 
   const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
 
@@ -196,6 +199,23 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
 
   /* 구독 플랜명 */
   const planName = subscription?.plan.name ?? null;
+
+  function handleCancelSubscription() {
+    if (!subscription) return;
+    openModal("subscription-cancel", () => {
+      showLoading("구독 해지를 처리하고 있습니다...");
+      startTransition(async () => {
+        try {
+          await cancelSubscription(subscription.id);
+          router.refresh();
+        } catch (err) {
+          openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
+        } finally {
+          hideLoading();
+        }
+      });
+    });
+  }
 
   function handleReceiptDownload(paymentId: number) {
     startTransition(async () => {
@@ -321,7 +341,18 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
 
             <div className="flex items-center gap-3 py-2.5">
               <span className={LABEL_CLS}>다음 결제일</span>
-              <span className={VALUE_CLS}>{nextDateDisplay}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={VALUE_CLS}>{nextDateDisplay}</span>
+                {subscription?.isActive && (
+                  <button
+                    type="button"
+                    onClick={handleCancelSubscription}
+                    className="text-body-13-m text-[var(--color-accent)] underline hover:opacity-80 transition-opacity"
+                  >
+                    구독 취소
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -390,7 +421,18 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
               </div>
               <div className="flex items-center gap-0">
                 <span className={LABEL_CLS}>다음 결제일</span>
-                <span className={VALUE_CLS}>{nextDateDisplay}</span>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className={VALUE_CLS}>{nextDateDisplay}</span>
+                  {subscription?.isActive && (
+                    <button
+                      type="button"
+                      onClick={handleCancelSubscription}
+                      className="text-body-13-m text-[var(--color-accent)] underline hover:opacity-80 transition-opacity"
+                    >
+                      구독 취소
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

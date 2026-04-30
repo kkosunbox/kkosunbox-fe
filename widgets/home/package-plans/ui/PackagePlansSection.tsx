@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { Text, ScrollReveal } from "@/shared/ui";
-import mockTempPackage from "../assets/mock-temp-package-4x.webp";
 import packagePlansTitle02 from "../assets/home-package-plans-title-02.webp";
+import packageImageBasic from "../assets/package-image-basic.png";
+import packageImageStandard from "../assets/package-image-standard.png";
+import packageImagePremium from "../assets/package-image-premium.png";
 
 const PACKAGES = [
   {
@@ -14,9 +16,10 @@ const PACKAGES = [
     cardBg: "var(--color-card-basic)",
     msMadiColor: "var(--color-basic-light)",
     accentColor: "var(--color-basic)",
-    rotate: 10,
+    rotate: 12,
     name: "베이직 패키지 BOX",
-    items: ["100% 위생 프리미엄 져키", "인공 첨가물 0%", "이유 안심 포장"],
+    image: packageImageBasic as StaticImageData,
+    items: ["100% 원물 프리미엄 져키", "인공 첨가물 0%", "이중 안심 포장"],
   },
   {
     tier: "Standard",
@@ -25,8 +28,9 @@ const PACKAGES = [
     cardBg: "var(--color-card-standard)",
     msMadiColor: "var(--color-plus-light)",
     accentColor: "var(--color-plus)",
-    rotate: 12,
+    rotate: 19,
     name: "스탠다드 패키지 BOX",
+    image: packageImageStandard as StaticImageData,
     items: ["베이직의 모든 구성 포함", "영양 강화 플러스 져키", "균형 잡힌 영양 설계"],
   },
   {
@@ -38,6 +42,7 @@ const PACKAGES = [
     accentColor: "var(--color-accent-orange)",
     rotate: 15,
     name: "프리미엄 패키지 BOX",
+    image: packageImagePremium as StaticImageData,
     items: ["휴먼그레이드 프리미엄 져키", "1:1 맞춤 큐레이션", "최상의 재료로 만든 패키지"],
   },
 ];
@@ -70,87 +75,92 @@ function CheckIcon({ color }: { color: string }) {
 
 function PackageCard({
   pkg,
-  idx,
   isActive,
 }: {
   pkg: (typeof PACKAGES)[number];
-  idx: number;
   isActive: boolean;
 }) {
   return (
     <div
       className={[
-        "flex flex-col items-center rounded-[20px] px-6 transition-[height,width,padding,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-        isActive ? "max-md:pt-7 md:pt-9" : "pt-6",
+        "flex flex-col rounded-[20px] overflow-hidden transition-[height,width,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
         isActive
-          ? "max-md:h-[415px] md:h-[446px] max-md:w-full md:w-[375px] max-md:pb-[30px] md:pb-9"
-          : "h-[374px] w-[280px] pb-8",
+          ? "max-md:h-[490px] md:h-[522px] max-md:w-full md:w-[375px]"
+          : "h-[419px] w-[280px]",
       ].join(" ")}
       style={{
         background: pkg.cardBg,
         transform: isActive ? "scale(1)" : "scale(0.985)",
       }}
     >
-      <span
-        className="text-body-14-sb rounded-full px-3 py-1 text-white !leading-[1]"
-        style={{ background: pkg.colorVar }}
-      >
-        {pkg.tier}
-      </span>
-
+      {/* 이미지 영역 */}
       <div
         className={[
-          "relative mb-5.5 flex w-full items-center justify-center transition-[height] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          isActive ? "h-[171px]" : "h-[152px]",
+          "relative w-full shrink-0 overflow-hidden transition-[height] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+          isActive ? "max-md:h-[303px] md:h-[348px]" : "h-[260px]",
         ].join(" ")}
       >
         <Image
-          src={mockTempPackage}
+          src={pkg.image}
           alt={`${pkg.name} 이미지`}
-          className={[
-            "w-auto object-contain transition-[height,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-            isActive ? "h-[151px]" : "h-[130px]",
-          ].join(" ")}
+          fill
+          className="object-cover object-center"
+          sizes="(max-width: 768px) 327px, 380px"
         />
+        {/* 티어 뱃지 */}
+        <span
+          className="absolute top-4 left-1/2 -translate-x-1/2 text-body-14-sb rounded-full px-3 py-1 text-white !leading-[1] whitespace-nowrap"
+          style={{ background: pkg.colorVar }}
+        >
+          {pkg.tier}
+        </span>
+      </div>
+
+      {/* 텍스트 영역 */}
+      <div className="relative flex flex-1 flex-col items-center px-6 pt-5 pb-7 overflow-hidden">
+        {/* Ms Madi 워터마크 */}
         <span
           className={[
-            "absolute text-emoji-40 leading-[36px] tracking-[0.02em] capitalize",
-            idx === 0 ? "-bottom-1.5 right-5" : "-bottom-4.5 right-0",
+            "pointer-events-none absolute bottom-5 right-4 leading-[36px] tracking-[0.02em] capitalize opacity-50",
+            isActive ? "text-[36px]" : "text-[32px]",
           ].join(" ")}
           style={{
             fontFamily: "var(--font-ms-madi)",
-            color: pkg.msMadiColor,
+            color: pkg.accentColor,
             transform: `rotate(${pkg.rotate}deg)`,
           }}
         >
           {pkg.tierLabel}
         </span>
-      </div>
 
-      <h3
-        className={[
-          "text-center capitalize tracking-[-0.04em] transition-[font-size,line-height,margin-bottom] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          isActive
-            ? "mb-[25px] text-[28px] leading-[33px] font-extrabold"
-            : "mb-[22px] text-[20px] leading-[24px] font-extrabold",
-        ].join(" ")}
-        style={{ color: pkg.accentColor }}
-      >
-        {pkg.name}
-      </h3>
+        <h3
+          className={[
+            "text-center capitalize tracking-[-0.04em] transition-[font-size,line-height,margin-bottom] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+            isActive
+              ? "mb-4 text-[24px] leading-[29px] font-extrabold"
+              : "mb-3 text-[20px] leading-[24px] font-extrabold",
+          ].join(" ")}
+          style={{ color: pkg.accentColor }}
+        >
+          {pkg.name}
+        </h3>
 
-      <div className="flex w-full justify-center">
-        <ul className="flex w-fit flex-col items-start gap-3">
-          {pkg.items.map((item) => (
-            <li
-              key={item}
-              className="text-body-14-m flex items-center gap-2 text-left text-black !leading-[1]"
-            >
-              <CheckIcon color={pkg.accentColor} />
-              {item}
-            </li>
-          ))}
-        </ul>
+        <div className="flex w-full justify-center">
+          <ul className="flex w-fit flex-col items-start gap-[13px]">
+            {pkg.items.map((item) => (
+              <li
+                key={item}
+                className={[
+                  "flex items-center gap-2 text-left text-black !leading-[1]",
+                  isActive ? "text-body-16-m" : "text-body-14-m",
+                ].join(" ")}
+              >
+                <CheckIcon color={pkg.accentColor} />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
@@ -242,17 +252,19 @@ export default function PackagePlansSection() {
           </Text>
         </ScrollReveal>
 
+        {/* 모바일 - 단일 카드 */}
         <ScrollReveal variant="scale-in" delay={300} className="md:hidden">
           <div className="mx-auto w-full max-w-[327px]">
-            <PackageCard pkg={PACKAGES[activeIndex]} idx={activeIndex} isActive />
+            <PackageCard pkg={PACKAGES[activeIndex]} isActive />
           </div>
         </ScrollReveal>
 
+        {/* 데스크톱 - 3카드 캐러셀 */}
         <ScrollReveal
           variant="scale-in"
           delay={300}
           as="div"
-          className="relative mx-auto h-[446px] w-full max-w-[1012px] max-md:hidden"
+          className="relative mx-auto h-[522px] w-full max-w-[1012px] max-md:hidden"
         >
           <div
             className="h-full w-full"
@@ -270,12 +282,12 @@ export default function PackagePlansSection() {
                   className="absolute left-1/2 top-0 will-change-transform transition-[transform] duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
                   style={{
                     transform: `translate3d(calc(-50% + ${offset * SIDE_OFFSET}px), ${
-                      isCentered ? 0 : 36
+                      isCentered ? 0 : 64
                     }px, 0)`,
                     zIndex: isCentered ? 20 : 10 - Math.abs(offset),
                   }}
                 >
-                  <PackageCard pkg={pkg} idx={index} isActive={isVisuallyActive} />
+                  <PackageCard pkg={pkg} isActive={isVisuallyActive} />
                 </div>
               );
             })}

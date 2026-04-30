@@ -118,11 +118,10 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
-// D. 프로필 관리 (/mypage/profile)
+// D. 애견 프로필 관리 (/mypage/dog-profile)
 //
 // SSR 구성:
 //   fetchProfile(token)            → GET /v1/profiles    → MOCK_PROFILE (name:"쿠키", weight:3.5, gender:"female")
-//   fetchUser(token)               → GET /v1/auth/user   → MOCK_USER (email:"test@example.com")
 //   fetchActiveSubscription(token) → GET /v1/subscriptions → MOCK_SUBSCRIPTION
 //
 // 레이아웃 주의: ProfileManagementSection은 모바일/데스크톱 DOM을 동시에 렌더링한다.
@@ -132,34 +131,45 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
 // 버튼·에러: .last()로 데스크톱 요소 선택 (모바일 DOM이 앞, 데스크톱이 뒤)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test.describe("프로필 관리 (/mypage/profile)", () => {
+test.describe("애견 프로필 관리 (/mypage/dog-profile)", () => {
   test("기존 프로필 → 페이지 렌더링 및 필드 사전 채움", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/profile");
+    await loginAndGoTo(page, "/mypage/dog-profile");
 
     await expect(page.getByRole("heading", { name: "프로필 관리" }).last()).toBeVisible({
       timeout: 10_000,
     });
 
-    // 이메일: readOnly (MOCK_USER.email)
-    await expect(page.locator("#d-email")).toHaveValue("test@example.com");
-
-    // 이름·몸무게: MOCK_PROFILE 값으로 사전 채움
+    // 이름·품종·몸무게: MOCK_PROFILE 값으로 사전 채움
     await expect(page.locator("#d-name")).toHaveValue("쿠키");
-    await expect(page.locator("#d-weight")).toHaveValue("3.5");
+    await expect(page.locator("#d-breed")).toHaveValue("포메라니안");
+    await expect(page.locator("#d-weight")).toHaveValue("3.5kg");
   });
 
-  test("몸무게 숫자 아닌 값 입력 → 인라인 에러", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/profile");
+  test("몸무게 입력 → 숫자만 유지하고 포커스 해제 시 kg 표시", async ({ page }) => {
+    await loginAndGoTo(page, "/mypage/dog-profile");
 
     await page.locator("#d-weight").clear();
-    await page.locator("#d-weight").fill("abc");
-    await page.getByRole("button", { name: "확인" }).last().click();
+    await page.locator("#d-weight").fill("abc12.3kg");
+    await expect(page.locator("#d-weight")).toHaveValue("12.3");
 
-    await expect(page.getByText("몸무게는 숫자로 입력해 주세요.").last()).toBeVisible();
+    await page.locator("#d-name").focus();
+    await expect(page.locator("#d-weight")).toHaveValue("12.3kg");
+  });
+
+  test("강아지 품종 검색 모달 → 세부 품종 선택 시 input 반영", async ({ page }) => {
+    await loginAndGoTo(page, "/mypage/dog-profile?new=true");
+
+    await page.getByRole("button", { name: "검색" }).last().click();
+    await expect(page.getByRole("dialog", { name: "강아지 품종 검색" })).toBeVisible();
+
+    await page.getByPlaceholder("예) 포메라니안, Pomeranian").fill("비숑");
+    await page.getByRole("button", { name: /비숑 프리제/ }).click();
+
+    await expect(page.locator("#d-breed")).toHaveValue("비숑 프리제");
   });
 
   test("새 프로필 등록 모드 (?new=true) → '프로필 등록' 제목 + 빈 폼", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/profile?new=true");
+    await loginAndGoTo(page, "/mypage/dog-profile?new=true");
 
     await expect(page.getByRole("heading", { name: "프로필 등록" }).last()).toBeVisible({
       timeout: 10_000,
@@ -167,6 +177,7 @@ test.describe("프로필 관리 (/mypage/profile)", () => {
 
     // isNewProfile=true → 폼 초기값 비어있음
     await expect(page.locator("#d-name")).toHaveValue("");
+    await expect(page.locator("#d-breed")).toHaveValue("");
   });
 });
 

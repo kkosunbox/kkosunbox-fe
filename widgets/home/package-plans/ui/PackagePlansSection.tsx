@@ -42,6 +42,10 @@ const PACKAGES = [
   },
 ];
 
+const SIDE_OFFSET = 348;
+const AUTO_ROTATE_MS = 10000;
+const ACTIVE_VISUAL_DELAY_MS = 140;
+
 function CheckIcon({ color }: { color: string }) {
   return (
     <svg
@@ -76,11 +80,16 @@ function PackageCard({
   return (
     <div
       className={[
-        "flex flex-col items-center rounded-[20px] px-6 transition-all duration-500 ease-in-out",
+        "flex flex-col items-center rounded-[20px] px-6 transition-[height,width,padding,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
         isActive ? "max-md:pt-7 md:pt-9" : "pt-6",
-        isActive ? "max-md:h-[415px] md:h-[446px] max-md:w-full md:w-[375px] max-md:pb-[30px] md:pb-9" : "h-[374px] w-[280px] pb-8",
+        isActive
+          ? "max-md:h-[415px] md:h-[446px] max-md:w-full md:w-[375px] max-md:pb-[30px] md:pb-9"
+          : "h-[374px] w-[280px] pb-8",
       ].join(" ")}
-      style={{ background: pkg.cardBg }}
+      style={{
+        background: pkg.cardBg,
+        transform: isActive ? "scale(1)" : "scale(0.985)",
+      }}
     >
       <span
         className="text-body-14-sb rounded-full px-3 py-1 text-white !leading-[1]"
@@ -91,7 +100,7 @@ function PackageCard({
 
       <div
         className={[
-          "relative mb-5.5 flex w-full items-center justify-center",
+          "relative mb-5.5 flex w-full items-center justify-center transition-[height] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
           isActive ? "h-[171px]" : "h-[152px]",
         ].join(" ")}
       >
@@ -99,7 +108,7 @@ function PackageCard({
           src={mockTempPackage}
           alt={`${pkg.name} 이미지`}
           className={[
-            "w-auto object-contain transition-all duration-500 ease-in-out",
+            "w-auto object-contain transition-[height,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
             isActive ? "h-[151px]" : "h-[130px]",
           ].join(" ")}
         />
@@ -120,8 +129,10 @@ function PackageCard({
 
       <h3
         className={[
-          "text-center capitalize tracking-[-0.04em]",
-          isActive ? "mb-[25px] text-[28px] leading-[33px] font-extrabold" : "mb-[22px] text-[20px] leading-[24px] font-extrabold",
+          "text-center capitalize tracking-[-0.04em] transition-[font-size,line-height,margin-bottom] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+          isActive
+            ? "mb-[25px] text-[28px] leading-[33px] font-extrabold"
+            : "mb-[22px] text-[20px] leading-[24px] font-extrabold",
         ].join(" ")}
         style={{ color: pkg.accentColor }}
       >
@@ -147,11 +158,11 @@ function PackageCard({
 
 export default function PackagePlansSection() {
   const [activeIndex, setActiveIndex] = useState(1);
+  const [visualActiveIndex, setVisualActiveIndex] = useState(1);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const total = PACKAGES.length;
-  const sideOffset = 348;
-  const autoRotateMs = 10000;
   const autoRotateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeVisualTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getRelativeOffset = (index: number) => {
     const raw = (index - activeIndex + total) % total;
@@ -165,6 +176,13 @@ export default function PackagePlansSection() {
     }
   }, []);
 
+  const clearActiveVisualTimer = useCallback(() => {
+    if (activeVisualTimerRef.current) {
+      clearTimeout(activeVisualTimerRef.current);
+      activeVisualTimerRef.current = null;
+    }
+  }, []);
+
   const goToNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % total);
   }, [total]);
@@ -173,7 +191,7 @@ export default function PackagePlansSection() {
     clearAutoRotateTimer();
     autoRotateTimerRef.current = setTimeout(() => {
       goToNext();
-    }, autoRotateMs);
+    }, AUTO_ROTATE_MS);
   }, [clearAutoRotateTimer, goToNext]);
 
   const handleIndicatorClick = (index: number) => {
@@ -189,6 +207,15 @@ export default function PackagePlansSection() {
     scheduleAutoRotate();
     return clearAutoRotateTimer;
   }, [activeIndex, isAutoPlayPaused, scheduleAutoRotate, clearAutoRotateTimer]);
+
+  useEffect(() => {
+    clearActiveVisualTimer();
+    activeVisualTimerRef.current = setTimeout(() => {
+      setVisualActiveIndex(activeIndex);
+    }, ACTIVE_VISUAL_DELAY_MS);
+
+    return clearActiveVisualTimer;
+  }, [activeIndex, clearActiveVisualTimer]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -221,30 +248,38 @@ export default function PackagePlansSection() {
           </div>
         </ScrollReveal>
 
-        <ScrollReveal variant="scale-in" delay={300} as="div" className="relative mx-auto max-md:hidden h-[446px] w-full max-w-[1012px]">
-        <div
-          className="h-full w-full"
-          onMouseEnter={() => setIsAutoPlayPaused(true)}
-          onMouseLeave={() => setIsAutoPlayPaused(false)}
+        <ScrollReveal
+          variant="scale-in"
+          delay={300}
+          as="div"
+          className="relative mx-auto h-[446px] w-full max-w-[1012px] max-md:hidden"
         >
-          {PACKAGES.map((pkg, index) => {
-            const offset = getRelativeOffset(index);
-            const isActive = offset === 0;
-            return (
-            <div
-              key={pkg.tier}
-              className="absolute left-1/2 top-0 -translate-x-1/2 transition-all duration-500 ease-in-out"
-              style={{
-                left: `calc(50% + ${offset * sideOffset}px)`,
-                top: isActive ? 0 : 36,
-                zIndex: isActive ? 20 : 10 - Math.abs(offset),
-              }}
-            >
-              <PackageCard pkg={pkg} idx={index} isActive={isActive} />
-            </div>
-            );
-          })}
-        </div>
+          <div
+            className="h-full w-full"
+            onMouseEnter={() => setIsAutoPlayPaused(true)}
+            onMouseLeave={() => setIsAutoPlayPaused(false)}
+          >
+            {PACKAGES.map((pkg, index) => {
+              const offset = getRelativeOffset(index);
+              const isCentered = offset === 0;
+              const isVisuallyActive = visualActiveIndex === index;
+
+              return (
+                <div
+                  key={pkg.tier}
+                  className="absolute left-1/2 top-0 will-change-transform transition-[transform] duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                  style={{
+                    transform: `translate3d(calc(-50% + ${offset * SIDE_OFFSET}px), ${
+                      isCentered ? 0 : 36
+                    }px, 0)`,
+                    zIndex: isCentered ? 20 : 10 - Math.abs(offset),
+                  }}
+                >
+                  <PackageCard pkg={pkg} idx={index} isActive={isVisuallyActive} />
+                </div>
+              );
+            })}
+          </div>
         </ScrollReveal>
 
         {/* 캐러셀 인디케이터 */}

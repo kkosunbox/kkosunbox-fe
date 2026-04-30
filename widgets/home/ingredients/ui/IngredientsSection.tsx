@@ -1,12 +1,31 @@
 "use client";
 
-import Link from "next/link";
-import { Button, Text, ScrollReveal } from "@/shared/ui";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button, Text, ScrollReveal, useModal } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
 import ingredientsDetailHappy from "../assets/ingredients-detail-happy.webp";
 import ingredientsDetailFlavor from "../assets/ingredients-detail-flavor.webp";
-import Image from "next/image";
 
 export default function IngredientsSection() {
+  const { isLoggedIn } = useAuth();
+  const { openAlert } = useModal();
+  const router = useRouter();
+
+  function handleChecklistClick() {
+    if (isLoggedIn) {
+      router.push("/checklist");
+      return;
+    }
+    openAlert({
+      title: "로그인이 필요해요",
+      description: "체크리스트 작성은 로그인 후 이용할 수 있어요.",
+      primaryLabel: "로그인 하러 가기",
+      onPrimary: () => router.push("/login?next=/checklist"),
+      secondaryLabel: "취소",
+    });
+  }
+
   return (
     <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-7 pb-10 md:pt-16 md:pb-16">
       <div className="mx-auto flex flex-col md:flex-row max-w-content justify-between items-center gap-5 md:gap-[76px] md:px-0">
@@ -47,8 +66,7 @@ export default function IngredientsSection() {
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={650}>
             <Button
-              as={Link}
-              href="/checklist"
+              onClick={handleChecklistClick}
               size="lg"
               className="max-md:h-10 max-md:w-[186px] max-md:text-body-16-sb max-md:leading-[30px] md:h-[52px] md:w-[192px] md:text-[18px] md:font-semibold md:leading-[30px]"
             >

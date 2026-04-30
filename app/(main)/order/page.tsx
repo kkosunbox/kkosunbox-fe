@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerToken } from "@/features/auth/lib/session";
+import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
 import { fetchProfiles } from "@/features/profile/api/queries";
@@ -21,11 +21,16 @@ export default async function OrderPage({
     redirect("/subscribe");
   }
 
-  const token = await getServerToken();
+  // 쿠키 조작·만료 등 어떤 상태에서도 실제 인증을 검증한 뒤 분기
+  const [token, authUser] = await Promise.all([getServerToken(), getAuthUser()]);
+  if (!authUser) {
+    redirect(`/login?next=${encodeURIComponent(`/order?planId=${planId}`)}`);
+  }
 
+  // 여기서 profiles === [] 이면 인증된 유저가 애견 프로필을 아직 만들지 않은 경우
   const profiles = await fetchProfiles(token);
   if (profiles.length === 0) {
-    redirect("/mypage/profile");
+    redirect("/mypage/dog-profile");
   }
 
   const [plans, addresses, billing] = await Promise.all([

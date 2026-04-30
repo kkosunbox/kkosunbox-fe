@@ -67,7 +67,7 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
   const pathname = usePathname();
 
   const isPaymentActive = pathname.startsWith("/mypage/payment");
-  const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive;
+  const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive && !pathname.startsWith("/mypage/withdraw");
 
   const menuItemClass = (active: boolean) =>
     [
@@ -110,6 +110,9 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
 
         <button onClick={() => { onClose(); router.push("/mypage"); }} className={menuItemClass(isMypageActive)}>
           마이페이지
+        </button>
+        <button onClick={() => { onClose(); openModal("account-info"); }} className={menuItemClass(false)}>
+          계정정보
         </button>
         <button onClick={() => { onClose(); router.push("/mypage/payment"); }} className={menuItemClass(isPaymentActive)}>
           결제관리

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition, type InputHTMLAttributes, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createProfile, updateProfile } from "@/features/profile/api/profileApi";
+import { createProfile, deleteProfile, updateProfile } from "@/features/profile/api/profileApi";
 import { MAX_PROFILE_COUNT, type DogGender, type Profile } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
@@ -11,11 +11,10 @@ import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import { DatePicker, DefaultPetIcon, useLoadingOverlay, useModal } from "@/shared/ui";
+import { DatePicker, DefaultPetIcon, DogBreedSearchModal, useLoadingOverlay, useModal } from "@/shared/ui";
 
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
-const MASKED_PASSWORD = "********";
 const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
 const SPECIAL_NOTES_MAX_LENGTH = 200;
 
@@ -39,9 +38,21 @@ function birthDateToValue(birth: string): Date | null {
   return new Date(y, m - 1, d);
 }
 
+function sanitizeWeightInput(value: string): string {
+  const numeric = value.replace(/[^\d.]/g, "");
+  const [integer = "", ...fractions] = numeric.split(".");
+  if (fractions.length === 0) return integer;
+  return `${integer}.${fractions.join("")}`;
+}
+
+function formatWeightInput(value: string, isFocused: boolean): string {
+  if (isFocused) return value;
+  const parsed = Number(value);
+  return value && Number.isFinite(parsed) && parsed > 0 ? `${value}kg` : value;
+}
+
 interface ProfileManagementSectionProps {
   profile: Profile | null;
-  userEmail: string;
   subscription: UserSubscriptionDto | null;
   isNewProfile?: boolean;
 }
@@ -206,19 +217,20 @@ function GenderButtons({
 
 export default function ProfileManagementSection({
   profile: serverProfile,
-  userEmail,
   subscription,
   isNewProfile = false,
 }: ProfileManagementSectionProps) {
   const router = useRouter();
   const { profile: activeProfile, profiles, refreshProfile, setActiveProfileId } = useProfile();
   const { showLoading, hideLoading } = useLoadingOverlay();
-  const { openAlert, openModal } = useModal();
+  const { openAlert } = useModal();
   const [isPending, start] = useTransition();
   const hasAlertedLimit = useRef(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isBreedModalOpen, setIsBreedModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const profile = isNewProfile ? null : (activeProfile ?? serverProfile);
@@ -227,10 +239,12 @@ export default function ProfileManagementSection({
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(profile?.profileImageUrl ?? null);
   const [gender, setGender] = useState<DogGender | null>(profile?.gender ?? null);
   const [petName, setPetName] = useState(profile?.name ?? "");
+  const [breed, setBreed] = useState(profile?.breed ?? "");
   const [birthDate, setBirthDate] = useState(birthDateInputValue(profile?.birthDate));
   const [weight, setWeight] = useState(
     profile?.weight !== null && profile?.weight !== undefined ? String(profile.weight) : "",
   );
+  const [isWeightFocused, setIsWeightFocused] = useState(false);
   const [specialNotes, setSpecialNotes] = useState(profile?.specialNotes ?? "");
   const subscriptionPlanTheme = subscription ? packageThemeForPlan(subscription.plan) : null;
 
@@ -239,10 +253,11 @@ export default function ProfileManagementSection({
     setProfileImageUrl(profile?.profileImageUrl ?? null);
     setGender(profile?.gender ?? null);
     setPetName(profile?.name ?? "");
+    setBreed(profile?.breed ?? "");
     setBirthDate(birthDateInputValue(profile?.birthDate));
     setWeight(profile?.weight !== null && profile?.weight !== undefined ? String(profile.weight) : "");
     setSpecialNotes(profile?.specialNotes ?? "");
-  }, [profile?.id, profile?.profileImageUrl, profile?.gender, profile?.name, profile?.birthDate, profile?.weight, profile?.specialNotes, isNewProfile]);
+  }, [profile?.id, profile?.profileImageUrl, profile?.gender, profile?.name, profile?.breed, profile?.birthDate, profile?.weight, profile?.specialNotes, isNewProfile]);
 
   useEffect(() => {
     if (!isNewProfile) return;
@@ -253,8 +268,42 @@ export default function ProfileManagementSection({
     router.replace("/mypage");
   }, [isNewProfile, profiles.length, openAlert, router]);
 
-  function handleOpenWithdraw() {
-    openModal("member-withdraw", () => router.push("/mypage/withdraw"));
+  function handleDeleteProfile() {
+    if (!profile || isCreating) return;
+
+    openAlert({
+      title: "애견 프로필을 삭제할까요?",
+      description: "삭제한 프로필 정보는 복구할 수 없습니다.",
+      primaryLabel: "삭제하기",
+      secondaryLabel: "취소",
+      onPrimary: () => {
+        void handleConfirmDeleteProfile();
+      },
+    });
+  }
+
+  async function handleConfirmDeleteProfile() {
+    if (!profile || isCreating) return;
+
+    setIsDeleting(true);
+    showLoading("프로필을 삭제하고 있습니다...");
+
+    let errorMessage: string | null = null;
+    try {
+      await deleteProfile(profile.id);
+      await refreshProfile();
+      router.push("/mypage");
+      router.refresh();
+    } catch (error) {
+      errorMessage = getErrorMessage(error, "프로필 삭제에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      hideLoading();
+      setIsDeleting(false);
+    }
+
+    if (errorMessage) {
+      openAlert({ title: errorMessage });
+    }
   }
 
   async function handleProfileImageSelected(file: File) {
@@ -311,6 +360,7 @@ export default function ProfileManagementSection({
       try {
         const body = {
           name: petName.trim() || undefined,
+          breed: breed.trim() || undefined,
           birthDate: birthDate.trim() || undefined,
           weight: trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : undefined,
           ...(gender !== null ? { gender } : {}),
@@ -327,6 +377,7 @@ export default function ProfileManagementSection({
         } else {
           await updateProfile(profile.id, {
             ...body,
+            breed: breed.trim() || null,
             specialNotes: trimmedNotes || null,
           });
           await refreshProfile();
@@ -343,8 +394,8 @@ export default function ProfileManagementSection({
   }
 
   const desktopLayout = (
-    <div className="max-md:hidden min-h-screen bg-[var(--color-background)] px-6 pb-16 pt-[84px]">
-      <div className="mx-auto w-full max-w-[1014px]">
+    <div className="max-md:hidden min-h-screen bg-[var(--color-background)] overflow-x-auto px-6 pb-16 pt-[84px]">
+      <div className="mx-auto w-full max-w-[1014px] min-w-[924px]">
         <div className="rounded-[20px] bg-white px-[28px] pb-[34px] pt-[24px] shadow-[0_8px_30px_rgba(185,148,116,0.08)]">
           <div className="mb-4 flex items-center gap-1 text-[var(--color-text)]">
             <Link
@@ -416,45 +467,7 @@ export default function ProfileManagementSection({
               <section className="rounded-[20px] bg-[var(--color-background)] px-7 pb-[52px] pt-7">
                 <h2 className="text-subtitle-18-b tracking-tightest text-[var(--color-text)]">프로필 정보</h2>
 
-                <div className="mt-6 flex w-[389px] flex-col gap-4">
-                  <div className="flex items-center">
-                    <label htmlFor="d-email" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      이메일
-                    </label>
-                    <BaseInput
-                      id="d-email"
-                      type="email"
-                      value={userEmail}
-                      readOnly
-                      className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
-                    />
-                  </div>
-
-                  <div className="flex items-center">
-                    <label htmlFor="d-password" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      비밀번호
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <BaseInput
-                        id="d-password"
-                        value={MASKED_PASSWORD}
-                        readOnly
-                        aria-label="비밀번호"
-                        className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
-                      />
-                      <Link
-                        href="/mypage/password"
-                        className="inline-flex h-8 w-[87px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] text-body-13-m text-white transition-opacity hover:opacity-90"
-                      >
-                        비밀번호 변경
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 h-px w-full bg-white" />
-
-                <div className="mt-5 grid grid-cols-[290px_290px] gap-x-[34px] gap-y-4">
+                <div className="mt-6 grid grid-cols-[290px_290px] gap-x-[34px] gap-y-4">
                   <div className="flex items-center">
                     <label htmlFor="d-name" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
                       강아지 이름
@@ -464,6 +477,44 @@ export default function ProfileManagementSection({
                       type="text"
                       value={petName}
                       onChange={(event) => setPetName(event.target.value)}
+                      className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
+                    />
+                  </div>
+
+                  <div className="flex items-center">
+                    <label htmlFor="d-breed" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                      강아지 품종
+                    </label>
+                    <BaseInput
+                      id="d-breed"
+                      type="text"
+                      value={breed}
+                      readOnly
+                      onClick={() => setIsBreedModalOpen(true)}
+                      placeholder="품종 선택"
+                      className="h-8 !w-[151px] cursor-pointer border-0 bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-placeholder)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsBreedModalOpen(true)}
+                      className="ml-2 inline-flex h-8 w-[61px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] text-body-13-m text-white transition-opacity hover:opacity-90"
+                    >
+                      검색
+                    </button>
+                  </div>
+
+                  <div className="flex items-center">
+                    <label htmlFor="d-weight" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                      몸무게
+                    </label>
+                    <BaseInput
+                      id="d-weight"
+                      type="text"
+                      inputMode="decimal"
+                      value={formatWeightInput(weight, isWeightFocused)}
+                      onFocus={() => setIsWeightFocused(true)}
+                      onBlur={() => setIsWeightFocused(false)}
+                      onChange={(event) => setWeight(sanitizeWeightInput(event.target.value))}
                       className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
                     />
                   </div>
@@ -484,20 +535,6 @@ export default function ProfileManagementSection({
                       placeholder="생년월일 선택"
                       formatDisplay={formatBirthDateDisplayDots}
                       triggerClassName="!h-8 !w-[220px] !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
-                    />
-                  </div>
-
-                  <div className="flex items-center">
-                    <label htmlFor="d-weight" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      몸무게
-                    </label>
-                    <BaseInput
-                      id="d-weight"
-                      type="text"
-                      inputMode="decimal"
-                      value={weight}
-                      onChange={(event) => setWeight(event.target.value)}
-                      className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
                     />
                   </div>
 
@@ -551,17 +588,20 @@ export default function ProfileManagementSection({
               </section>
 
               <div className="mt-[28px] flex justify-end gap-[17px]">
-                <button
-                  type="button"
-                  onClick={handleOpenWithdraw}
-                  className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
-                >
-                  회원 탈퇴
-                </button>
+                {!isCreating && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteProfile}
+                    disabled={isPending || isUploadingImage || isDeleting}
+                    className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+                  >
+                    {isDeleting ? "삭제 중..." : "프로필 삭제"}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={isPending || isUploadingImage}
+                  disabled={isPending || isUploadingImage || isDeleting}
                   className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
                   {isPending ? "저장 중..." : "확인"}
@@ -656,41 +696,8 @@ export default function ProfileManagementSection({
         <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-6 py-6">
           <h2 className="text-subtitle-16-b tracking-tightest text-[var(--color-text)]">프로필 정보</h2>
 
-          {/* Account fields */}
-          <div className="mt-5 flex flex-col gap-4">
-            <FieldShell id="m-email" label="이메일" mobile>
-              <BaseInput
-                id="m-email"
-                type="email"
-                value={userEmail}
-                readOnly
-                className="!h-8 !border-0"
-              />
-            </FieldShell>
-            <FieldShell id="m-password" label="비밀번호" mobile>
-              <div className="flex items-center gap-3">
-                <BaseInput
-                  id="m-password"
-                  value={MASKED_PASSWORD}
-                  readOnly
-                  aria-label="비밀번호"
-                  className="!h-8 !border-0 flex-1"
-                />
-                <Link
-                  href="/mypage/password"
-                  className="inline-flex h-8 shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] px-2 text-body-13-m text-white transition-opacity hover:opacity-90"
-                >
-                  변경
-                </Link>
-              </div>
-            </FieldShell>
-          </div>
-
-          {/* Divider */}
-          <div className="my-4 h-px w-full bg-white" />
-
           {/* Dog fields */}
-          <div className="flex flex-col gap-4">
+          <div className="mt-5 flex flex-col gap-4">
             <FieldShell id="m-name" label="강아지 이름" mobile>
               <BaseInput
                 id="m-name"
@@ -698,6 +705,39 @@ export default function ProfileManagementSection({
                 value={petName}
                 onChange={(event) => setPetName(event.target.value)}
                 placeholder="이름을 입력해주세요"
+                className="!h-8 !border-0"
+              />
+            </FieldShell>
+            <FieldShell id="m-breed" label="강아지 품종" mobile>
+              <div className="flex items-center gap-2">
+                <BaseInput
+                  id="m-breed"
+                  type="text"
+                  value={breed}
+                  readOnly
+                  onClick={() => setIsBreedModalOpen(true)}
+                  placeholder="품종 선택"
+                  className="!h-8 !border-0 flex-1 cursor-pointer placeholder:text-[var(--color-text-placeholder)]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsBreedModalOpen(true)}
+                  className="inline-flex h-8 shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white transition-opacity hover:opacity-90"
+                >
+                  검색
+                </button>
+              </div>
+            </FieldShell>
+            <FieldShell id="m-weight" label="몸무게" mobile>
+              <BaseInput
+                id="m-weight"
+                type="text"
+                inputMode="decimal"
+                value={formatWeightInput(weight, isWeightFocused)}
+                onFocus={() => setIsWeightFocused(true)}
+                onBlur={() => setIsWeightFocused(false)}
+                onChange={(event) => setWeight(sanitizeWeightInput(event.target.value))}
+                placeholder="예) 8"
                 className="!h-8 !border-0"
               />
             </FieldShell>
@@ -714,17 +754,6 @@ export default function ProfileManagementSection({
                 placeholder="생년월일 선택"
                 formatDisplay={formatBirthDateDisplayDots}
                 triggerClassName="!h-8 !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
-              />
-            </FieldShell>
-            <FieldShell id="m-weight" label="몸무게" mobile>
-              <BaseInput
-                id="m-weight"
-                type="text"
-                inputMode="decimal"
-                value={weight}
-                onChange={(event) => setWeight(event.target.value)}
-                placeholder="예) 8"
-                className="!h-8 !border-0"
               />
             </FieldShell>
             <FieldShell label="성별" mobile>
@@ -749,17 +778,20 @@ export default function ProfileManagementSection({
 
       {/* Bottom buttons */}
       <div className="mt-6 flex gap-3 px-6 pb-10">
-        <button
-          type="button"
-          onClick={handleOpenWithdraw}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
-        >
-          회원 탈퇴
-        </button>
+        {!isCreating && (
+          <button
+            type="button"
+            onClick={handleDeleteProfile}
+            disabled={isPending || isUploadingImage || isDeleting}
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+          >
+            {isDeleting ? "삭제 중..." : "프로필 삭제"}
+          </button>
+        )}
         <button
           type="button"
           onClick={handleSave}
-          disabled={isPending || isUploadingImage}
+          disabled={isPending || isUploadingImage || isDeleting}
           className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {isPending ? "저장 중..." : "확인"}
@@ -782,6 +814,16 @@ export default function ProfileManagementSection({
           if (file) void handleProfileImageSelected(file);
         }}
       />
+      {isBreedModalOpen && (
+        <DogBreedSearchModal
+          selectedBreed={breed}
+          onSelect={(selectedBreed) => {
+            setBreed(selectedBreed);
+            setIsBreedModalOpen(false);
+          }}
+          onClose={() => setIsBreedModalOpen(false)}
+        />
+      )}
       {mobileLayout}
       {desktopLayout}
     </>

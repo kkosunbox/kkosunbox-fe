@@ -223,7 +223,7 @@ function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void 
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
-export default function SupportSection() {
+export default function SupportSection({ showBanner = true }: { showBanner?: boolean }) {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [selectedFaq, setSelectedFaq] = useState<FaqItem | null>(null);
@@ -273,45 +273,49 @@ export default function SupportSection() {
         </header> */}
 
         {/* ── CTA 배너 (Figma 118px, gradient, pill 버튼) ── */}
-        <ScrollReveal variant="fade-up">
-          <section
-            className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
-            style={{ background: "var(--gradient-support-banner)" }}
-            aria-label="1:1 문의 안내"
-          >
-            <div className="flex w-full flex-col gap-[11px] max-md:items-center max-md:text-center md:max-w-[330px] md:items-start md:text-left">
-              <Image
-                src={FaqQuestion}
-                alt="꼬순박스에 궁금한 점이 있으신가요?"
-                width={FaqQuestion.width}
-                height={FaqQuestion.height}
-                sizes="(max-width: 767px) 220px, 320px"
-                className="h-auto max-md:w-[220px] md:w-[320px]"
-              />
-              <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
-                1:1 문의를 남겨주시면 담당자가 확인 후
-                <br className="md:hidden" />
-                {" "}빠르게 답변해 드립니다.
-              </p>
-            </div>
-            <Link
-              href="/inquiry"
-              className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:mx-auto max-md:w-full max-md:max-w-[410px] md:w-[200px]"
-            >
-              문의하기
-            </Link>
-          </section>
-        </ScrollReveal>
+        {showBanner && (
+          <>
+            <ScrollReveal variant="fade-up">
+              <section
+                className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
+                style={{ background: "var(--gradient-support-banner)" }}
+                aria-label="1:1 문의 안내"
+              >
+                <div className="flex w-full flex-col gap-[11px] max-md:items-center max-md:text-center md:max-w-[330px] md:items-start md:text-left">
+                  <Image
+                    src={FaqQuestion}
+                    alt="꼬순박스에 궁금한 점이 있으신가요?"
+                    width={FaqQuestion.width}
+                    height={FaqQuestion.height}
+                    sizes="(max-width: 767px) 220px, 320px"
+                    className="h-auto max-md:w-[220px] md:w-[320px]"
+                  />
+                  <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
+                    1:1 문의를 남겨주시면 담당자가 확인 후
+                    <br className="md:hidden" />
+                    {" "}빠르게 답변해 드립니다.
+                  </p>
+                </div>
+                <Link
+                  href="/inquiry"
+                  className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:mx-auto max-md:w-full max-md:max-w-[410px] md:w-[200px]"
+                >
+                  문의하기
+                </Link>
+              </section>
+            </ScrollReveal>
 
-        {/* ── 모바일 전용: 내 문의내역 (두 섹션 사이) ── */}
-        <ScrollReveal variant="fade-in" delay={200} className="flex justify-center md:hidden">
-          <Link
-            href="/support/history"
-            className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
-          >
-            내 문의내역
-          </Link>
-        </ScrollReveal>
+            {/* ── 모바일 전용: 내 문의내역 (두 섹션 사이) ── */}
+            <ScrollReveal variant="fade-in" delay={200} className="flex justify-center md:hidden">
+              <Link
+                href="/support/history"
+                className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
+              >
+                내 문의내역
+              </Link>
+            </ScrollReveal>
+          </>
+        )}
 
         {/* ── FAQ 패널 (#FFF7EF) ── */}
         <ScrollReveal variant="fade-up" delay={150}>

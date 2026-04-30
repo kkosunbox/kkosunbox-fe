@@ -88,7 +88,7 @@ function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
         )}
       </div>
       <Link
-        href="/mypage/profile"
+        href="/mypage/dog-profile"
         aria-label="프로필 사진 변경"
         className="absolute bottom-0 right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-secondary)] transition-opacity hover:opacity-90 md:h-[40px] md:w-[40px]"
       >
@@ -377,7 +377,7 @@ export function ProfileSection({
           <div className="flex flex-col gap-4 md:h-full md:flex-row md:items-stretch md:gap-0">
             <div className="relative flex min-w-0 flex-1 items-start gap-5 md:min-h-0 md:items-center md:gap-8 md:self-stretch">
               <Link
-                href="/mypage/profile"
+                href="/mypage/dog-profile"
                 className="max-md:hidden absolute top-2 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
               >
                 <span>정보변경</span>
@@ -395,7 +395,7 @@ export function ProfileSection({
                     {displayName}
                   </Text>
                   <Link
-                    href="/mypage/profile"
+                    href="/mypage/dog-profile"
                     className="inline-flex shrink-0 items-center gap-0.5 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:hidden"
                   >
                     <span>정보변경</span>

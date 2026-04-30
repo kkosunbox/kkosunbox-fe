@@ -210,7 +210,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
     if (recommendedTier === "premium") {
       return (
         <>
-          <strong className="font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+          <strong className="text-body-16-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
           <strong className="font-bold">프리미엄 패키지</strong>입니다.
         </>
       );
@@ -218,7 +218,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
     if (recommendedTier === "standard") {
       return (
         <>
-          <strong className="font-bold">{petName}</strong>에게 가장 추천드리는 구성은{" "}
+          <strong className="text-body-16-m font-bold">{petName}</strong>에게 가장 추천드리는 구성은{" "}
           <strong className="font-bold">프리미엄, 스탠다드 패키지</strong>입니다.
         </>
       );
@@ -226,7 +226,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
     // basic
     return (
       <>
-        <strong className="font-bold">{petName}</strong>에게 꼭 필요한 프리미엄, 스탠다드, 베이직의{" "}
+        <strong className="text-body-16-m font-bold">{petName}</strong>에게 꼭 필요한 프리미엄, 스탠다드, 베이직의{" "}
         <strong className="font-bold">모든 구성을 추천</strong>드립니다.
       </>
     );
@@ -332,7 +332,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                 }}
               >
                 체크리스트 분석 완료!{" "}
-                <strong className="font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+                <strong className="text-subtitle-18-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
                 <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>입니다.
               </p>
             </div>

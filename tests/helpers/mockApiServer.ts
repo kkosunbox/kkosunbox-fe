@@ -6,7 +6,7 @@ export const TEST_CREDENTIALS = {
   password: "Test1234!",
 };
 
-// 프로필이 없는 인증 유저 — 주문 페이지 "프로필 없음 → /mypage/profile" 리다이렉트 테스트용
+// 프로필이 없는 인증 유저 — 주문 페이지 "프로필 없음 → /mypage/dog-profile" 리다이렉트 테스트용
 export const NO_PROFILE_CREDENTIALS = {
   email: "noprofile@example.com",
   password: "Test1234!",
@@ -15,8 +15,8 @@ export const NO_PROFILE_CREDENTIALS = {
 // 서버 오류(5xx) 시나리오를 트리거하는 이메일
 export const TRIGGER_SERVER_ERROR_EMAIL = "server-error@example.com";
 
-const MOCK_ACCESS_TOKEN = "mock-access-token-for-testing";
-const MOCK_REFRESH_TOKEN = "mock-refresh-token-for-testing";
+export const MOCK_ACCESS_TOKEN = "mock-access-token-for-testing";
+export const MOCK_REFRESH_TOKEN = "mock-refresh-token-for-testing";
 
 const MOCK_NO_PROFILE_ACCESS_TOKEN = "mock-no-profile-access-token-for-testing";
 const MOCK_NO_PROFILE_REFRESH_TOKEN = "mock-no-profile-refresh-token-for-testing";
@@ -201,14 +201,21 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
-    // POST /v1/auth/refresh — return 401 to avoid retry loops
+    // POST /v1/auth/refresh
+    // MOCK_REFRESH_TOKEN → 새 토큰 발급 (세션 복구 시나리오)
+    // 그 외 → 401 (retry loop 방지)
     if (method === "POST" && url === "/v1/auth/refresh") {
-      err(res, 401, "UNAUTHORIZED");
+      const body = await readBody(req) as Record<string, string>;
+      if (body.refreshToken === MOCK_REFRESH_TOKEN) {
+        ok(res, { accessToken: MOCK_ACCESS_TOKEN, refreshToken: MOCK_REFRESH_TOKEN });
+      } else {
+        err(res, 401, "UNAUTHORIZED");
+      }
       return;
     }
 
     // GET /v1/profiles — SSR(fetchProfiles) + 클라이언트(ProfileProvider) 양쪽에서 호출
-    // 인증 토큰이 없으면 빈 배열 → order 페이지 SSR에서 /mypage/profile 리다이렉트 트리거
+    // 인증 토큰이 없으면 빈 배열 → order 페이지 SSR에서 /mypage/dog-profile 리다이렉트 트리거
     if (method === "GET" && url === "/v1/profiles") {
       const auth = req.headers.authorization ?? "";
       if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {

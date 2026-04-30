@@ -138,7 +138,7 @@ function LeaveConfirmModal({
 export default function ChecklistSection() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const { profile: activeProfile, refreshProfile } = useProfile();
   const editQuestionIdParam = searchParams.get("editQuestionId");
   const returnTo = searchParams.get("returnTo");
@@ -426,7 +426,7 @@ export default function ChecklistSection() {
       console.error("[ChecklistSection] save or plan fetch failed", e);
     }
 
-    localStorage.setItem("kkosun_checklist_done", "true");
+    localStorage.setItem(`kkosun_checklist_done_${user?.id ?? ""}`, "true");
 
     if (returnTo === "mypage") {
       setIsAnalyzing(false);

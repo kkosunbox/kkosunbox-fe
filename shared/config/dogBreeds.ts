@@ -1,0 +1,172 @@
+export interface DogBreedItem {
+  name: string;
+  englishName: string;
+  aliases?: string[];
+}
+
+export interface DogBreedGroup {
+  id: number;
+  name: string;
+  englishName: string;
+  breeds: DogBreedItem[];
+}
+
+// FCI 10-group structure with Korean breed names based on KKF's public breed list.
+export const DOG_BREED_GROUPS: DogBreedGroup[] = [
+  {
+    id: 1,
+    name: "쉽독, 캐틀독",
+    englishName: "Sheepdogs and Cattledogs",
+    breeds: [
+      { name: "오스트레일리언 캐틀 독", englishName: "Australian Cattle Dog" },
+      { name: "부비에 데 플랑드르", englishName: "Bouvier des Flandres" },
+      { name: "벨지안 셰퍼드 독", englishName: "Belgian Shepherd Dog" },
+      { name: "올드 잉글리쉬 쉽독", englishName: "Old English Sheepdog" },
+      { name: "저먼 셰퍼드 독", englishName: "German Shepherd Dog", aliases: ["독일 셰퍼드"] },
+      { name: "웰시 코기 카디건", englishName: "Welsh Corgi Cardigan", aliases: ["카디건 웰시 코기"] },
+      { name: "웰시 코기 펨브로크", englishName: "Welsh Corgi Pembroke", aliases: ["펨브로크 웰시 코기"] },
+      { name: "보더 콜리", englishName: "Border Collie" },
+      { name: "셔틀랜드 쉽독", englishName: "Shetland Sheepdog", aliases: ["셀티"] },
+    ],
+  },
+  {
+    id: 2,
+    name: "핀셔, 슈나우저, 몰로세르",
+    englishName: "Pinscher and Schnauzer - Molossoid",
+    breeds: [
+      { name: "버니즈 마운틴 독", englishName: "Bernese Mountain Dog" },
+      { name: "프레사 까나리오", englishName: "Presa Canario", aliases: ["도고 까나리오"] },
+      { name: "피레니언 마운틴 독", englishName: "Pyrenean Mountain Dog", aliases: ["그레이트 피레니즈"] },
+      { name: "케인 코르소 이탈리아노", englishName: "Cane Corso Italiano", aliases: ["케인 코르소"] },
+      { name: "센트럴 아시아 셰퍼드독", englishName: "Central Asia Shepherd Dog" },
+      { name: "코카시안 셰퍼드독", englishName: "Caucasian Shepherd Dog" },
+      { name: "도베르만", englishName: "Doberman Pinscher" },
+      { name: "미니어처 슈나우저", englishName: "Miniature Schnauzer" },
+      { name: "로트와일러", englishName: "Rottweiler" },
+      { name: "복서", englishName: "Boxer" },
+    ],
+  },
+  {
+    id: 3,
+    name: "테리어",
+    englishName: "Terriers",
+    breeds: [
+      { name: "아메리칸 스태포드셔 테리어", englishName: "American Staffordshire Terrier" },
+      { name: "댄디 딘몬트 테리어", englishName: "Dandie Dinmont Terrier" },
+      { name: "저먼 헌팅 테리어", englishName: "German Hunting Terrier" },
+      { name: "아이리쉬 소프트 코티드 휘튼 테리어", englishName: "Irish Soft Coated Wheaten Terrier" },
+      { name: "잭 러셀 테리어", englishName: "Jack Russell Terrier" },
+      { name: "케리 블루 테리어", englishName: "Kerry Blue Terrier" },
+      { name: "미니어처 불 테리어", englishName: "Miniature Bull Terrier" },
+      { name: "파슨 러셀 테리어", englishName: "Parson Russell Terrier" },
+      { name: "스무스 폭스 테리어", englishName: "Smooth Fox Terrier" },
+      { name: "와이어 폭스 테리어", englishName: "Wire Fox Terrier" },
+      { name: "웨스트 하일랜드 화이트 테리어", englishName: "West Highland White Terrier", aliases: ["웨스티"] },
+      { name: "요크셔 테리어", englishName: "Yorkshire Terrier" },
+    ],
+  },
+  {
+    id: 4,
+    name: "닥스훈트",
+    englishName: "Dachshunds",
+    breeds: [
+      { name: "닥스훈트", englishName: "Dachshund" },
+      { name: "미니어처 닥스훈트", englishName: "Miniature Dachshund" },
+    ],
+  },
+  {
+    id: 5,
+    name: "스피츠, 프리미티브 타입",
+    englishName: "Spitz and primitive types",
+    breeds: [
+      { name: "코리아 진도 독", englishName: "Korea Jindo Dog", aliases: ["진돗개", "진도개"] },
+      { name: "저먼 스피츠 (키스혼드)", englishName: "German Spitz (Keeshond)" },
+      { name: "노르위전 엘크하운드 (블랙)", englishName: "Norwegian Elkhound Black" },
+      { name: "노르위전 엘크하운드 (그레이)", englishName: "Norwegian Elkhound Grey" },
+      { name: "포메라니안", englishName: "Pomeranian", aliases: ["포메라니언", "저먼 스피츠 토이"] },
+      { name: "타이 리지백 독", englishName: "Thai Ridgeback Dog" },
+      { name: "이스트 시베리안 라이카", englishName: "East Siberian Laika" },
+      { name: "웨스트 시베리안 라이카", englishName: "West Siberian Laika" },
+      { name: "저먼 스피츠 (미디엄 스피츠)", englishName: "German Spitz (Medium Spitz)" },
+      { name: "저먼 스피츠 (미니어처 스피츠)", englishName: "German Spitz (Miniature Spitz)" },
+      { name: "저먼 스피츠 (자이언트 스피츠)", englishName: "German Spitz (Giant Spitz)" },
+      { name: "시바 이누", englishName: "Shiba Inu", aliases: ["시바견"] },
+      { name: "사모예드", englishName: "Samoyed" },
+      { name: "시베리안 허스키", englishName: "Siberian Husky" },
+    ],
+  },
+  {
+    id: 6,
+    name: "센트하운드, 관련 견종",
+    englishName: "Scent hounds and related breeds",
+    breeds: [
+      { name: "블랙 앤 탄 쿤 하운드", englishName: "Black and Tan Coonhound" },
+      { name: "쁘띠 바셋 그리폰 벤딘", englishName: "Petit Basset Griffon Vendeen" },
+      { name: "비글", englishName: "Beagle" },
+      { name: "바셋 하운드", englishName: "Basset Hound" },
+    ],
+  },
+  {
+    id: 7,
+    name: "포인팅 독",
+    englishName: "Pointing Dogs",
+    breeds: [
+      { name: "저먼 숏 헤어드 포인팅 독", englishName: "German Short-Haired Pointing Dog" },
+      { name: "저먼 와이어 헤어드 포인팅 독", englishName: "German Wire-Haired Pointing Dog" },
+      { name: "아이리쉬 레드 앤 화이트 세터", englishName: "Irish Red and White Setter" },
+      { name: "아이리쉬 레드 세터", englishName: "Irish Red Setter" },
+      { name: "비즐라", englishName: "Vizsla" },
+    ],
+  },
+  {
+    id: 8,
+    name: "리트리버, 플러싱 독, 워터 독",
+    englishName: "Retrievers - Flushing Dogs - Water Dogs",
+    breeds: [
+      { name: "아메리칸 코커 스파니엘", englishName: "American Cocker Spaniel" },
+      { name: "잉글리쉬 코커 스파니엘", englishName: "English Cocker Spaniel" },
+      { name: "플랫 코티드 리트리버", englishName: "Flat-Coated Retriever" },
+      { name: "아이리쉬 워터 스파니엘", englishName: "Irish Water Spaniel" },
+      { name: "노바 스코샤 덕 톨링 리트리버", englishName: "Nova Scotia Duck Tolling Retriever" },
+      { name: "포르투기즈 워터 독", englishName: "Portuguese Water Dog" },
+      { name: "잉글리쉬 스프링거 스파니엘", englishName: "English Springer Spaniel" },
+      { name: "골든 리트리버", englishName: "Golden Retriever" },
+      { name: "래브라도 리트리버", englishName: "Labrador Retriever" },
+    ],
+  },
+  {
+    id: 9,
+    name: "반려견 및 토이독",
+    englishName: "Companion and Toy Dogs",
+    breeds: [
+      { name: "차이니즈 크레스티드 독", englishName: "Chinese Crested Dog" },
+      { name: "캐벌리어 킹 찰스 스파니엘", englishName: "Cavalier King Charles Spaniel" },
+      { name: "킹 찰스 스파니엘", englishName: "King Charles Spaniel" },
+      { name: "꼬똥 드 툴레아", englishName: "Coton de Tulear" },
+      { name: "리틀 라이언 독", englishName: "Little Lion Dog", aliases: ["로첸"] },
+      { name: "말티즈", englishName: "Maltese" },
+      { name: "비숑 프리제", englishName: "Bichon Frise" },
+      { name: "치와와", englishName: "Chihuahua" },
+      { name: "프렌치 불독", englishName: "French Bulldog" },
+      { name: "퍼그", englishName: "Pug" },
+      { name: "푸들", englishName: "Poodle" },
+      { name: "시추", englishName: "Shih Tzu" },
+    ],
+  },
+  {
+    id: 10,
+    name: "사이트 하운드",
+    englishName: "Sighthounds",
+    breeds: [
+      { name: "이탈리언 사이트하운드", englishName: "Italian Sighthound", aliases: ["이탈리언 그레이하운드"] },
+      { name: "아프간 하운드", englishName: "Afghan Hound" },
+      { name: "보르조이", englishName: "Borzoi" },
+      { name: "그레이하운드", englishName: "Greyhound" },
+      { name: "휘핏", englishName: "Whippet" },
+    ],
+  },
+];
+
+export const DOG_BREEDS = DOG_BREED_GROUPS.flatMap((group) =>
+  group.breeds.map((breed) => ({ ...breed, groupId: group.id, groupName: group.name })),
+);

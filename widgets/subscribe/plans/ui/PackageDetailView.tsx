@@ -224,8 +224,8 @@ export default function PackageDetailView({
 
   function defaultPrimary(p: SubscriptionPlanDto): PackageDetailPrimaryButton {
     return {
-      label: "구독하기",
-      onClick: () => router.push(`/order?planId=${p.id}`),
+      label: "제품 상세보기",
+      onClick: () => router.push(`/subscribe/detail?planId=${p.id}`),
     };
   }
 

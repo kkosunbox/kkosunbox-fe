@@ -22,7 +22,7 @@ export function getSubscriptionPlans(profileId?: number) {
   );
 }
 
-/** 구독 시작 (빌링키 등록 필요, 첫 결제는 billingDate에 자동 청구) */
+/** 구독 시작 (빌링키 등록 필요, 구독 생성 즉시 결제 진행) */
 export function createSubscription(body: CreateSubscriptionRequest) {
   return apiClient.post<CreateSubscriptionResponse>("/v1/subscriptions", body);
 }

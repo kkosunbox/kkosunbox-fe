@@ -66,11 +66,11 @@ export default async function RootLayout({
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
         <AuthProvider initialUser={initialUser}>
           <ProfileProvider>
-            <ModalProvider>
-              <LoadingOverlayProvider>
+            <LoadingOverlayProvider>
+              <ModalProvider>
                 {children}
-              </LoadingOverlayProvider>
-            </ModalProvider>
+              </ModalProvider>
+            </LoadingOverlayProvider>
           </ProfileProvider>
         </AuthProvider>
       </body>

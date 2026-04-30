@@ -2,8 +2,10 @@
 
 import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
+import { SupportSection } from "@/widgets/support/faq";
 import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
 import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.webp";
 import subscribeItemHeroTitle from "@/widgets/subscribe/plans/assets/subscribe-item-hero-title.webp";
@@ -641,12 +643,29 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
         )}
 
-        {(activeTab === "delivery" || activeTab === "support") && (
+        {activeTab === "delivery" && (
           <div className="px-6 py-16 text-center">
             <p className="text-[14px] text-[var(--color-text-secondary)]">
               준비 중인 컨텐츠입니다.
             </p>
           </div>
+        )}
+
+        {activeTab === "support" && (
+          <>
+            <div className="px-6 pt-6">
+              <Link
+                href="/support"
+                className="inline-flex items-center gap-1 text-body-16-sb text-[var(--color-text-emphasis)]"
+              >
+                고객센터
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+            <SupportSection showBanner={false} />
+          </>
         )}
       </div>
 
@@ -1047,12 +1066,29 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             </div>
           )}
 
-          {(activeTab === "delivery" || activeTab === "support") && (
+          {activeTab === "delivery" && (
             <div className="py-20 text-center">
               <p className="text-body-16-r text-[var(--color-text-secondary)]">
                 준비 중인 컨텐츠입니다.
               </p>
             </div>
+          )}
+
+          {activeTab === "support" && (
+            <>
+              <div className="pt-10 pb-2">
+                <Link
+                  href="/support"
+                  className="inline-flex items-center gap-1 text-body-20-sb text-[var(--color-text-emphasis)]"
+                >
+                  고객센터
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              </div>
+              <SupportSection showBanner={false} />
+            </>
           )}
         </div>
       </div>

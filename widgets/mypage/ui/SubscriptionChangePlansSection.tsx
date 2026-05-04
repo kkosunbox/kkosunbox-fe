@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import heroTitleImage from "@/widgets/mypage/assets/subscription-change-plans-selection.webp";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -209,7 +209,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
 
                   <div className="mb-[56px] flex justify-center">
                     <Image
-                      src={mockTempPackage}
+                      src={TIER_THUMBNAILS[theme.tier]}
                       alt={`${plan.name} 이미지`}
                       className="h-[150px] w-auto object-contain"
                     />

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.webp";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import doubleTwinkle from "../assets/double-twinkle.webp";
 import stamp from "../assets/stamp.webp";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
@@ -260,7 +260,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                   {/* 상품 이미지 */}
                   <div className="relative mb-6 flex justify-center">
                     <Image
-                      src={mockTempPackage}
+                      src={TIER_THUMBNAILS[pkg.tier]}
                       alt={`${pkg.name} 이미지`}
                       className="h-[140px] w-auto object-contain md:h-[151px]"
                     />

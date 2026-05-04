@@ -8,7 +8,7 @@ import checklistDoneTitlePaws from "../assets/checklist-done-title-paws.webp";
 import checklistDoneTitlePawsMobile from "../assets/checklist-done-title-paws-mobile.webp";
 import doubleTwinkle from "@/widgets/subscribe/recommend/assets/double-twinkle.webp";
 import stamp from "@/widgets/subscribe/recommend/assets/stamp.webp";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import {
   PACKAGES,
@@ -103,7 +103,7 @@ function ResultPlanCard({ plan, isRecommended, onInfoClick }: ResultPlanCardProp
 
       <div className="relative mb-[56px] flex justify-center">
         <Image
-          src={mockTempPackage}
+          src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
           className="h-[150px] w-auto object-contain"
         />

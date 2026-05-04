@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import { TIER_THUMBNAILS } from "./packageThumbnails";
 import {
   PACKAGES,
   COMPARE_PACKAGES,
@@ -259,7 +259,7 @@ export default function PackageDetailView({
 
           <div className="mb-[56px] flex justify-center">
             <Image
-              src={mockTempPackage}
+              src={TIER_THUMBNAILS[selectedTier]}
               alt={`${pkg.name} 이미지`}
               className="h-[150px] w-auto object-contain"
             />
@@ -340,7 +340,7 @@ export default function PackageDetailView({
 
             <div className="mb-[56px] flex justify-center">
               <Image
-                src={mockTempPackage}
+                src={TIER_THUMBNAILS[selectedTier]}
                 alt={`${pkg.name} 이미지`}
                 className="h-[150px] w-auto object-contain"
               />

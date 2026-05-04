@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { SupportSection } from "@/widgets/support/faq";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import packageThumbnail from "@/widgets/subscribe/plans/assets/package-thumbnail.png";
 import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.webp";
 import subscribeItemHeroTitle from "@/widgets/subscribe/plans/assets/subscribe-item-hero-title.webp";
 import subscribeItemHeroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
@@ -26,15 +26,6 @@ import subscribeItem03B from "@/widgets/subscribe/plans/assets/subscribe-item-03
 import subscribeItem03BB from "@/widgets/subscribe/plans/assets/subscribe-item-03-BB.webp";
 import subscribeItem03C from "@/widgets/subscribe/plans/assets/subscribe-item-03-C.webp";
 import subscribeItem03D from "@/widgets/subscribe/plans/assets/subscribe-item-03-D.webp";
-import subscribeItem01Detail1 from "@/widgets/subscribe/plans/assets/subscribe-item-01-detail-1.webp";
-import subscribeItem01Detail2 from "@/widgets/subscribe/plans/assets/subscribe-item-01-detail-2.webp";
-import subscribeItem01Detail3 from "@/widgets/subscribe/plans/assets/subscribe-item-01-detail-3.webp";
-import subscribeItem02Detail1 from "@/widgets/subscribe/plans/assets/subscribe-item-02-detail-1.webp";
-import subscribeItem02Detail2 from "@/widgets/subscribe/plans/assets/subscribe-item-02-detail-2.webp";
-import subscribeItem02Detail3 from "@/widgets/subscribe/plans/assets/subscribe-item-02-detail-3.webp";
-import subscribeItem03Detail1 from "@/widgets/subscribe/plans/assets/subscribe-item-03-detail-1.webp";
-import subscribeItem03Detail2 from "@/widgets/subscribe/plans/assets/subscribe-item-03-detail-2.webp";
-import subscribeItem03Detail3 from "@/widgets/subscribe/plans/assets/subscribe-item-03-detail-3.webp";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
@@ -65,15 +56,6 @@ const DETAIL_ASSET_IMAGES: Record<
   Premium: [subscribeItem01A, subscribeItem01B, subscribeItem01BB, subscribeItem01C, subscribeItem01D],
   Standard: [subscribeItem02A, subscribeItem02B, subscribeItem02BB, subscribeItem02C, subscribeItem02D],
   Basic: [subscribeItem03A, subscribeItem03B, subscribeItem03BB, subscribeItem03C, subscribeItem03D],
-};
-
-const DETAIL_PREVIEW_IMAGES: Record<
-  PackageTier,
-  readonly [StaticImageData, StaticImageData, StaticImageData]
-> = {
-  Premium: [subscribeItem01Detail1, subscribeItem01Detail2, subscribeItem01Detail3],
-  Standard: [subscribeItem02Detail1, subscribeItem02Detail2, subscribeItem02Detail3],
-  Basic: [subscribeItem03Detail1, subscribeItem03Detail2, subscribeItem03Detail3],
 };
 
 type TabKey = "info" | "review" | "delivery" | "support";
@@ -218,7 +200,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const [activeSort, setActiveSort] = useState<(typeof SORT_OPTIONS)[number]>("최신순");
-  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(0);
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
@@ -238,12 +219,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const selectedTier = tierFromSubscriptionPlan(selectedPlan);
   const selectedPackage = PACKAGES.find((pkg) => pkg.tier === selectedTier) ?? PACKAGES[0];
   const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
-  const carouselImages = useMemo<StaticImageData[]>(
-    () => [mockTempPackage, ...DETAIL_PREVIEW_IMAGES[selectedTier]],
-    [selectedTier],
-  );
-  const activePreviewImage = carouselImages[selectedPreviewIndex] ?? carouselImages[0]!;
-  const previewImages = useMemo(() => Array.from({ length: 8 }, () => mockTempPackage), []);
+  const previewImages = useMemo(() => Array.from({ length: 8 }, () => packageThumbnail), []);
 
   const basePrice = selectedPlan.monthlyPrice;
   const salePrice = basePrice * quantity;
@@ -251,20 +227,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
     setQuantity(1);
-    setSelectedPreviewIndex(0);
     router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
-  }
-
-  function handlePrevPreview() {
-    setSelectedPreviewIndex((prev) =>
-      prev === 0 ? carouselImages.length - 1 : prev - 1,
-    );
-  }
-
-  function handleNextPreview() {
-    setSelectedPreviewIndex((prev) =>
-      prev === carouselImages.length - 1 ? 0 : prev + 1,
-    );
   }
 
   const activeTierLabel = selectedTheme.tierLabel;
@@ -301,16 +264,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
             <Image
-              key={`mobile-${selectedTier}-${selectedPreviewIndex}`}
-              src={activePreviewImage}
+              src={packageThumbnail}
               alt={`${selectedPlan.name} 대표 이미지`}
               fill
               sizes="(max-width: 768px) 100vw, 508px"
-              className={
-                selectedPreviewIndex === 0
-                  ? "object-contain p-8"
-                  : "object-cover"
-              }
+              className="object-cover"
               priority
             />
             <span
@@ -319,26 +277,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             >
               {activeTierLabel}
             </span>
-            <button
-              type="button"
-              onClick={handlePrevPreview}
-              aria-label="이전 이미지"
-              className="absolute left-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={handleNextPreview}
-              aria-label="다음 이미지"
-              className="absolute right-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
           </div>
 
           <h2 className="mt-[30px] text-[24px] font-semibold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
@@ -363,29 +301,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             >
               12개 리뷰
             </button>
-          </div>
-
-          <div className="mt-4 flex items-center gap-3">
-            {carouselImages.map((imgSrc, idx) => {
-              const isActive = selectedPreviewIndex === idx;
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelectedPreviewIndex(idx)}
-                  aria-label={`미리보기 이미지 ${idx + 1}`}
-                  aria-pressed={isActive}
-                  className="h-16 w-16 shrink-0 overflow-hidden rounded-[4px] bg-[var(--color-surface-warm)]"
-                  style={
-                    isActive
-                      ? { outline: `2px solid ${selectedTheme.colorVar}`, outlineOffset: "-2px" }
-                      : undefined
-                  }
-                >
-                  <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
-                </button>
-              );
-            })}
           </div>
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6 px-1.5">
@@ -728,16 +643,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <div className="mx-auto min-w-0 w-full max-w-[508px] xl:mx-0">
               <div className="relative h-[508px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
                 <Image
-                  key={`desktop-${selectedTier}-${selectedPreviewIndex}`}
-                  src={activePreviewImage}
+                  src={packageThumbnail}
                   alt={`${selectedPlan.name} 대표 이미지`}
                   fill
                   sizes="508px"
-                  className={
-                    selectedPreviewIndex === 0
-                      ? "object-contain p-10"
-                      : "object-cover"
-                  }
+                  className="object-cover"
                   priority
                 />
                 <span
@@ -746,48 +656,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 >
                   {selectedTheme.tierLabel}
                 </span>
-                <button
-                  type="button"
-                  onClick={handlePrevPreview}
-                  aria-label="이전 이미지"
-                  className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-                >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextPreview}
-                  aria-label="다음 이미지"
-                  className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-                >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
-              <div className="mt-5 flex w-full items-center gap-3">
-                {carouselImages.map((imgSrc, idx) => {
-                  const isActive = selectedPreviewIndex === idx;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setSelectedPreviewIndex(idx)}
-                      aria-label={`미리보기 이미지 ${idx + 1}`}
-                      aria-pressed={isActive}
-                      className="h-20 w-20 shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90"
-                      style={
-                        isActive
-                          ? { outline: `2px solid ${selectedTheme.colorVar}`, outlineOffset: "-2px" }
-                          : undefined
-                      }
-                    >
-                      <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
-                    </button>
-                  );
-                })}
               </div>
             </div>
 

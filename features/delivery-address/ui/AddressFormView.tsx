@@ -33,15 +33,18 @@ export default function AddressFormView({
   const [receiverName, setReceiverName] = useState(
     editingAddress?.receiverName ?? "",
   );
-  const [email, setEmail] = useState("");
   const [addressDetail, setAddressDetail] = useState(
     editingAddress?.addressDetail ?? "",
   );
   const [phoneNumber, setPhoneNumber] = useState(
     editingAddress?.phoneNumber ?? "",
   );
-  const [tel, setTel] = useState("");
   const [memo, setMemo] = useState(editingAddress?.memo ?? "");
+
+  /* 사용 보류 필드 — API/타입에 없음. 필요 시 폼에 다시 연결.
+  const [email, setEmail] = useState("");
+  const [tel, setTel] = useState("");
+  */
   const [saveInfo, setSaveInfo] = useState(true);
 
   const [saving, setSaving] = useState(false);
@@ -112,7 +115,7 @@ export default function AddressFormView({
         </button>
       </div>
 
-      {/* Form fields */}
+      {/* Form fields — 순서·노출: 신규 배송지 모바일 UI 기준 (받는분 → 휴대폰 → 우편번호/찾기 → 기본주소 → 상세 → 배송메모) */}
       <div className="flex flex-col gap-5">
         {/* 받는분 */}
         <div className="flex items-center gap-3">
@@ -129,17 +132,17 @@ export default function AddressFormView({
           />
         </div>
 
-        {/* 이메일 */}
+        {/* 휴대폰 */}
         <div className="flex items-center gap-3">
-          <label htmlFor="addr-email" className={LABEL_CLS}>
-            이메일
+          <label htmlFor="addr-phone" className={LABEL_CLS}>
+            휴대폰
           </label>
           <input
-            id="addr-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="이메일"
+            id="addr-phone"
+            type="tel"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="-를 제외한 숫자만 입력해주세요"
             className={INPUT_CLS}
           />
         </div>
@@ -165,47 +168,50 @@ export default function AddressFormView({
           </div>
         </div>
 
-        {/* 도로명 주소 (검색 결과) */}
+        {/* 도로명/지번 주소 (검색 결과) — 시안처럼 라벨 없이 표시, 정렬용 빈 칸 */}
         {pendingAddress ? (
           <div className="flex items-center gap-3">
-            <label className={LABEL_CLS}>주소</label>
+            <span className={LABEL_CLS} aria-hidden />
             <input
               type="text"
               value={pendingAddress}
               readOnly
+              aria-label="검색된 주소"
               className={`${INPUT_CLS} cursor-default bg-[var(--color-surface-light)]`}
             />
           </div>
         ) : null}
 
-        {/* 상세 주소 */}
+        {/* 상세 주소 — 시안과 동일하게 보이는 라벨 없음 */}
         <div className="flex items-center gap-3">
-          <label className={LABEL_CLS}>상세주소</label>
+          <span className={LABEL_CLS} aria-hidden />
           <input
             type="text"
             value={addressDetail}
             onChange={(e) => setAddressDetail(e.target.value)}
             placeholder="상세 주소를 입력해주세요"
+            aria-label="상세 주소"
             className={INPUT_CLS}
           />
         </div>
 
-        {/* 휴대폰 */}
+        {/* 사용 보류: 이메일
         <div className="flex items-center gap-3">
-          <label htmlFor="addr-phone" className={LABEL_CLS}>
-            휴대폰
+          <label htmlFor="addr-email" className={LABEL_CLS}>
+            이메일
           </label>
           <input
-            id="addr-phone"
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder="-를 제외한 숫자만 입력해주세요"
+            id="addr-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="이메일"
             className={INPUT_CLS}
           />
         </div>
+        */}
 
-        {/* 전화번호 */}
+        {/* 사용 보류: 전화번호(유선)
         <div className="flex items-center gap-3">
           <label htmlFor="addr-tel" className={LABEL_CLS}>
             전화번호
@@ -219,6 +225,7 @@ export default function AddressFormView({
             className={INPUT_CLS}
           />
         </div>
+        */}
 
         {/* 배송메모 */}
         <div className="flex items-center gap-3">
@@ -235,9 +242,10 @@ export default function AddressFormView({
           />
         </div>
 
-        {/* 배송지 정보 저장 체크박스 */}
-        <div className="flex justify-center pt-2">
-          <label className="flex cursor-pointer items-center gap-2">
+        {/* 배송지 정보 저장 — 라벨 열은 빈 칸, 체크 영역은 입력과 동일 왼쪽 라인 */}
+        <div className="flex items-center gap-3 pt-2">
+          <span className={LABEL_CLS} aria-hidden />
+          <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2">
             <span
               className={[
                 "flex h-5 w-5 items-center justify-center rounded",

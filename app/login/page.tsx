@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -98,10 +98,14 @@ export default function LoginPage() {
   const { showLoading, hideLoading } = useLoadingOverlay();
   const router = useRouter();
   const searchParams = useSearchParams();
+  // 폼 제출로 로그인이 진행 중이면 true. login() 콜백이 직접 navigate하므로
+  // isLoggedIn useEffect의 redirect가 그것을 덮어쓰지 않도록 막는다.
+  const formLoginInProgressRef = useRef(false);
 
   // 이미 로그인된 상태(SSR 초기값 또는 클라이언트 세션 복구 완료)면 홈으로 이동
   useEffect(() => {
-    if (isLoggedIn) router.replace("/");
+    if (!isLoggedIn || formLoginInProgressRef.current) return;
+    router.replace("/");
   }, [isLoggedIn, router]);
 
   function handleSocialLogin(provider: OAuthProvider) {
@@ -113,11 +117,15 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     showLoading("로그인 중입니다...");
+    formLoginInProgressRef.current = true;
     startTransition(async () => {
       try {
         const next = searchParams.get("next") ?? undefined;
         const result = await login(email, password, next);
-        if (result.error) setError(result.error);
+        if (result.error) {
+          formLoginInProgressRef.current = false;
+          setError(result.error);
+        }
       } finally {
         hideLoading();
       }

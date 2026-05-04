@@ -64,7 +64,7 @@ test.describe("비밀번호 변경 (/mypage/password)", () => {
 //   fetchInquiries   → GET /v1/inquiries  (.catch() → [])
 //   fetchChecklistQuestions → GET /v1/profiles/checklist (.catch() → [])
 //
-// 미인증: middleware가 /login 으로 리다이렉트 (auth-token 쿠키 없음)
+// 미인증: middleware가 /login 으로 리다이렉트 (ggosoon-auth 쿠키 없음)
 // 구독 없는 유저: MOCK_NO_PROFILE_ACCESS_TOKEN → /v1/subscriptions = [] → null → "아직 구독 전이시군요!"
 // ─────────────────────────────────────────────────────────────────────────────
 

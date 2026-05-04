@@ -5,6 +5,7 @@ import {
   MOCK_ACCESS_TOKEN,
   MOCK_REFRESH_TOKEN,
 } from "../helpers/mockApiServer";
+import { loginAndGoTo } from "../helpers/auth";
 
 test.describe("로그인 플로우", () => {
   // ── 성공 케이스 ──────────────────────────────────────────────────
@@ -144,10 +145,10 @@ test.describe("로그인 플로우", () => {
   // ── 이미 로그인된 사용자의 /login 접근 (프로덕션 버그 재현) ──────
 
   test("SSR 쿠키로 로그인 상태인 사용자가 /login 접근 → / 로 리다이렉트", async ({ page }) => {
-    // auth-token 쿠키를 직접 주입해 SSR이 로그인 상태를 인식하도록 설정
+    // ggosoon-auth 쿠키를 직접 주입해 SSR이 로그인 상태를 인식하도록 설정
     await page.context().addCookies([
       {
-        name: "auth-token",
+        name: "ggosoon-auth",
         value: MOCK_ACCESS_TOKEN,
         domain: "localhost",
         path: "/",
@@ -230,5 +231,132 @@ test.describe("로그인 플로우", () => {
 
     // 지연 해제 후 정상 완료 확인
     await page.waitForURL("/", { timeout: 15_000 });
+  });
+
+  // ── 세션 만료 처리 ───────────────────────────────────────────────
+
+  test("만료된 쿠키 + 만료된 refreshToken → 비로그인 상태, 홈에 그대로 유지", async ({ page }) => {
+    // 만료된 accessToken 쿠키와 유효하지 않은 refreshToken을 주입해
+    // 3~4일 방치 후 재접속 시나리오를 시뮬레이션한다.
+    await page.goto("/");
+    await page.context().addCookies([{
+      name: "ggosoon-auth",
+      value: "stale-access-token",
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    }]);
+    await page.evaluate(() => {
+      localStorage.setItem("ggosoon:refresh_token", "stale-refresh-token");
+    });
+
+    // 만료된 세션으로 홈 재방문 — SSR은 null 반환, 클라이언트 복구도 실패
+    await page.goto("/");
+
+    // 복구 실패 후 비로그인 상태로 표시되어야 함
+    await expect(page.getByRole("link", { name: "로그인" })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).not.toBeVisible();
+
+    // 비로그인 홈 방문이므로 /login으로 강제 이동하면 안 됨
+    await expect(page).toHaveURL("/");
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 로그아웃 플로우
+// ───────────────────────────────────────────────────���─────────────────────────
+
+test.describe("로그아웃 플로우", () => {
+  test("헤더 프로필 드롭다운 로그아웃 → /login 리다이렉트 + 비로그인 헤더", async ({ page }) => {
+    // 1. 로그인
+    await page.goto("/login");
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+    await page.waitForURL("/", { timeout: 15_000 });
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible();
+
+    // 2. 프로필 드롭다운 열기
+    await page.getByRole("button", { name: "프로필 메뉴" }).click();
+    await expect(page.getByRole("button", { name: "로그아웃" })).toBeVisible();
+
+    // 3. 로그아웃 클릭
+    await page.getByRole("button", { name: "로그아웃" }).click();
+
+    // 4. /login 으로 리다이렉트, 비로그인 헤더 상태
+    await page.waitForURL("/login", { timeout: 10_000 });
+    await expect(page.getByRole("link", { name: "로그인" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).not.toBeVisible();
+  });
+
+  test("로그아웃 후 보호된 경로(/mypage) 직접 접근 → /login 리다이렉트", async ({ page }) => {
+    // 1. 로그인
+    await page.goto("/login");
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+    await page.waitForURL("/", { timeout: 15_000 });
+
+    // 2. 로그아웃
+    await page.getByRole("button", { name: "프로필 메뉴" }).click();
+    await page.getByRole("button", { name: "로그아웃" }).click();
+    await page.waitForURL("/login", { timeout: 10_000 });
+
+    // 3. 보호된 경로로 직접 접근 → proxy가 /login 으로 리다이렉트해야 함
+    await page.goto("/mypage");
+    await page.waitForURL(/\/login/, { timeout: 10_000 });
+  });
+
+  test("로그아웃 후 localStorage refreshToken 및 쿠키 정리", async ({ page }) => {
+    // 1. 로그인 후 localStorage에 토큰이 저장되었는지 확인
+    await page.goto("/login");
+    await page.getByPlaceholder("이메일을 입력하세요").fill(TEST_CREDENTIALS.email);
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill(TEST_CREDENTIALS.password);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+    await page.waitForURL("/", { timeout: 15_000 });
+
+    const refreshTokenAfterLogin = await page.evaluate(() =>
+      localStorage.getItem("ggosoon:refresh_token")
+    );
+    expect(refreshTokenAfterLogin).toBeTruthy();
+
+    const cookiesAfterLogin = await page.context().cookies();
+    expect(cookiesAfterLogin.some((c) => c.name === "ggosoon-auth")).toBe(true);
+
+    // 2. 로그아웃
+    await page.getByRole("button", { name: "프로필 메뉴" }).click();
+    await page.getByRole("button", { name: "로그아웃" }).click();
+    await page.waitForURL("/login", { timeout: 10_000 });
+
+    // 3. localStorage refreshToken 정리 확인
+    const refreshTokenAfterLogout = await page.evaluate(() =>
+      localStorage.getItem("ggosoon:refresh_token")
+    );
+    expect(refreshTokenAfterLogout).toBeNull();
+
+    // 4. ggosoon-auth 쿠키 정리 확인
+    const cookiesAfterLogout = await page.context().cookies();
+    expect(cookiesAfterLogout.some((c) => c.name === "ggosoon-auth")).toBe(false);
+  });
+
+  test("로그인 상태에서 API 401 UNAUTHORIZED → 자동 로그아웃 + /login 리다이렉트", async ({ page }) => {
+    // 1. 로그인 후 로그인 상태 확인
+    await loginAndGoTo(page, "/");
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible({ timeout: 10_000 });
+
+    // 2. ggosoon:unauthorized 이벤트 수동 발행 — 서버 API 401 UNAUTHORIZED 응답 시뮬레이션
+    //    AuthProvider의 이벤트 핸들러가 user !== null 조건을 확인하고 logout()을 호출한다.
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent("ggosoon:unauthorized"));
+    });
+
+    // 3. /login 으로 자동 리다이렉트
+    await page.waitForURL("/login", { timeout: 10_000 });
+
+    // 4. 비로그인 상태로 전환 확인
+    await expect(page.getByRole("link", { name: "로그인" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).not.toBeVisible();
   });
 });

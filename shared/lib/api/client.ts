@@ -94,6 +94,17 @@ async function request<T>(
     if (process.env.NODE_ENV === "development") {
       console.warn(`[api] ${method} ${path} ${res.status}`, errorBody ?? res.statusText);
     }
+    // 401 UNAUTHORIZED: 액세스 토큰 + 리프레시 토큰 모두 만료/무효 → 강제 로그아웃 신호.
+    // skipRefresh(리프레시 요청 자체) 또는 token(SSR 직접 주입) 케이스는 제외한다.
+    if (
+      res.status === 401 &&
+      errorBody?.code === "UNAUTHORIZED" &&
+      !skipRefresh &&
+      !token &&
+      typeof window !== "undefined"
+    ) {
+      window.dispatchEvent(new CustomEvent("ggosoon:unauthorized"));
+    }
     throw new ApiError(
       res.status,
       errorBody?.code ?? "UNKNOWN_ERROR",

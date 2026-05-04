@@ -5,12 +5,14 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
 import { loginAction, logoutAction, syncAuthCookieAction } from "../lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
 import type { AuthContextValue, AuthUser } from "../model/types";
+
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -22,7 +24,13 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
   const router = useRouter();
+  const logoutInProgress = useRef(false);
+  // user state의 최신값을 이벤트 핸들러에서 읽기 위한 ref.
+  // 클로저 안에 user를 캡처하면 stale 참조가 된다.
+  const userRef = useRef(user);
+  useEffect(() => { userRef.current = user; }, [user]);
 
   // 서버가 내려준 initialUser가 바뀌면 클라이언트 상태에 반영
   // (예: 회원가입 완료 후 router.push → SSR이 유저를 인식해 initialUser가 갱신되는 경우)
@@ -43,6 +51,8 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     // accessToken이 이미 메모리에 있으면 복구 불필요
     if (tokenStore.getAccess()) return;
 
+    setIsAuthLoading(true);
+
     import("../api/authApi")
       .then(({ getUser }) => getUser())
       .then((apiUser) => {
@@ -51,7 +61,13 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
         const newAccess = tokenStore.getAccess();
         if (newAccess) syncAuthCookieAction(newAccess).catch(() => {});
       })
-      .catch(() => tokenStore.clear());
+      .catch(async () => {
+        // refreshToken도 만료된 경우: localStorage를 비우고 만료된 ggosoon-auth 쿠키도 제거.
+        // 쿠키를 남기면 이후 SSR이 매번 실패해 영구적으로 비로그인 상태로 보임.
+        tokenStore.clear();
+        await logoutAction().catch(() => {});
+      })
+      .finally(() => setIsAuthLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -79,8 +95,22 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     router.push("/login");
   }, [router]);
 
+  // API 레이어에서 401 UNAUTHORIZED 이벤트를 받으면 강제 로그아웃.
+  // user === null인 경우는 초기 세션 복구 실패이므로 .catch 블록이 처리 — 여기선 건너뜀.
+  // 동시 다발 이벤트로 인한 중복 실행 방지를 위해 ref 플래그 사용.
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      if (!userRef.current) return;
+      if (logoutInProgress.current) return;
+      logoutInProgress.current = true;
+      logout().finally(() => { logoutInProgress.current = false; });
+    };
+    window.addEventListener("ggosoon:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("ggosoon:unauthorized", handleUnauthorized);
+  }, [logout]);
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: user !== null, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn: user !== null, isAuthLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

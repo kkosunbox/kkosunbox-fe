@@ -11,7 +11,7 @@ import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import { DatePicker, DefaultPetIcon, DogBreedSearchModal, useLoadingOverlay, useModal } from "@/shared/ui";
+import { BreedCombobox, DatePicker, DefaultPetIcon, useLoadingOverlay, useModal } from "@/shared/ui";
 
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
@@ -230,7 +230,6 @@ export default function ProfileManagementSection({
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isBreedModalOpen, setIsBreedModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const profile = isNewProfile ? null : (activeProfile ?? serverProfile);
@@ -485,22 +484,14 @@ export default function ProfileManagementSection({
                     <label htmlFor="d-breed" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
                       강아지 품종
                     </label>
-                    <BaseInput
+                    <BreedCombobox
                       id="d-breed"
-                      type="text"
                       value={breed}
-                      readOnly
-                      onClick={() => setIsBreedModalOpen(true)}
+                      onChange={setBreed}
                       placeholder="품종 선택"
-                      className="h-8 !w-[151px] cursor-pointer border-0 bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-placeholder)]"
+                      className="!w-[220px]"
+                      inputClassName="h-8 border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setIsBreedModalOpen(true)}
-                      className="ml-2 inline-flex h-8 w-[61px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] text-body-13-m text-white transition-opacity hover:opacity-90"
-                    >
-                      검색
-                    </button>
                   </div>
 
                   <div className="flex items-center">
@@ -709,24 +700,14 @@ export default function ProfileManagementSection({
               />
             </FieldShell>
             <FieldShell id="m-breed" label="강아지 품종" mobile>
-              <div className="flex items-center gap-2">
-                <BaseInput
-                  id="m-breed"
-                  type="text"
-                  value={breed}
-                  readOnly
-                  onClick={() => setIsBreedModalOpen(true)}
-                  placeholder="품종 선택"
-                  className="!h-8 !border-0 flex-1 cursor-pointer placeholder:text-[var(--color-text-placeholder)]"
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsBreedModalOpen(true)}
-                  className="inline-flex h-8 shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white transition-opacity hover:opacity-90"
-                >
-                  검색
-                </button>
-              </div>
+              <BreedCombobox
+                id="m-breed"
+                value={breed}
+                onChange={setBreed}
+                placeholder="품종 선택"
+                className="min-w-0 w-full"
+                inputClassName="!h-8 !border-0"
+              />
             </FieldShell>
             <FieldShell id="m-weight" label="몸무게" mobile>
               <BaseInput
@@ -814,16 +795,6 @@ export default function ProfileManagementSection({
           if (file) void handleProfileImageSelected(file);
         }}
       />
-      {isBreedModalOpen && (
-        <DogBreedSearchModal
-          selectedBreed={breed}
-          onSelect={(selectedBreed) => {
-            setBreed(selectedBreed);
-            setIsBreedModalOpen(false);
-          }}
-          onClose={() => setIsBreedModalOpen(false)}
-        />
-      )}
       {mobileLayout}
       {desktopLayout}
     </>

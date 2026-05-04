@@ -1,8 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import { Button, DatePicker } from "@/shared/ui";
+import { BreedCombobox, Button, DatePicker } from "@/shared/ui";
 import type { PetInfo } from "./types";
+
+const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
+const SPECIAL_NOTES_MAX_LENGTH = 200;
 
 function formatBirthDateDisplay(date: Date): string {
   const y = date.getFullYear();
@@ -13,6 +16,15 @@ function formatBirthDateDisplay(date: Date): string {
 
 const CTA_CLASS =
   "!h-12 !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
+
+function BreedSearchGlyph() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" stroke="var(--color-text-secondary)" strokeWidth="2" />
+      <path d="m20 20-3.65-3.65" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 function PetAvatar({
   src,
@@ -113,6 +125,25 @@ export default function ChecklistPetForm({
           </div>
 
           <div className="flex flex-col gap-1.5">
+            <label htmlFor="checklist-pet-breed" className="text-caption-12-r text-[var(--color-text-secondary)]">
+              강아지 품종
+            </label>
+            <div className="relative w-full">
+              <BreedCombobox
+                id="checklist-pet-breed"
+                value={petInfo.breed}
+                onChange={(breed) => setPetInfo((p) => ({ ...p, breed }))}
+                placeholder="ex) 웰시코기"
+                className="w-full"
+                inputClassName="!h-10 !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 !pr-11 !text-body-14-r !font-normal !tracking-normal placeholder:text-[var(--color-text-secondary)] focus:!border-0 focus:!ring-0"
+              />
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+                <BreedSearchGlyph />
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <label
               htmlFor="checklist-pet-birth"
               className="text-caption-12-r text-[var(--color-text-secondary)]"
@@ -168,6 +199,21 @@ export default function ChecklistPetForm({
                 );
               })}
             </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="checklist-pet-special" className="text-caption-12-r text-[var(--color-text-secondary)]">
+              특징
+            </label>
+            <input
+              id="checklist-pet-special"
+              type="text"
+              placeholder={SPECIAL_NOTES_PLACEHOLDER}
+              value={petInfo.specialNotes}
+              maxLength={SPECIAL_NOTES_MAX_LENGTH}
+              onChange={(e) => setPetInfo((p) => ({ ...p, specialNotes: e.target.value }))}
+              className="h-10 rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+            />
           </div>
         </div>
 

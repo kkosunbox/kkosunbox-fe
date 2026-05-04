@@ -36,9 +36,19 @@ function parseProfileBirthDate(iso: string | null | undefined): Date | null {
   return new Date(y, mo, d);
 }
 
+function petBirthToIso(date: Date | null): string | null {
+  if (!date) return null;
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function profileToPetInfo(p: Profile): PetInfo {
   return {
     name: p.name?.trim() ?? "",
+    breed: p.breed?.trim() ?? "",
+    specialNotes: p.specialNotes?.trim() ?? "",
     birthDate: parseProfileBirthDate(p.birthDate),
     weight: p.weight != null && !Number.isNaN(Number(p.weight)) ? String(p.weight) : "",
     gender: p.gender ?? null,
@@ -48,6 +58,8 @@ function profileToPetInfo(p: Profile): PetInfo {
 function clonePetInfo(p: PetInfo): PetInfo {
   return {
     name: p.name,
+    breed: p.breed,
+    specialNotes: p.specialNotes,
     birthDate: p.birthDate ? new Date(p.birthDate.getTime()) : null,
     weight: p.weight,
     gender: p.gender,
@@ -55,7 +67,7 @@ function clonePetInfo(p: PetInfo): PetInfo {
 }
 
 function petInfoEqual(a: PetInfo, b: PetInfo): boolean {
-  if (a.name !== b.name || a.weight !== b.weight || a.gender !== b.gender) return false;
+  if (a.name !== b.name || a.breed !== b.breed || a.specialNotes !== b.specialNotes || a.weight !== b.weight || a.gender !== b.gender) return false;
   const at = a.birthDate?.getTime() ?? null;
   const bt = b.birthDate?.getTime() ?? null;
   return at === bt;
@@ -79,6 +91,8 @@ interface ChecklistBaseline {
 
 const EMPTY_PET_INFO: PetInfo = {
   name: "",
+  breed: "",
+  specialNotes: "",
   birthDate: null,
   weight: "",
   gender: null,
@@ -161,6 +175,8 @@ export default function ChecklistSection() {
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const [petInfo, setPetInfo] = useState<PetInfo>({
     name: "",
+    breed: "",
+    specialNotes: "",
     birthDate: null,
     weight: "",
     gender: null,
@@ -437,7 +453,17 @@ export default function ChecklistSection() {
     let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
     try {
       if (isLoggedIn && activeProfile) {
-        await updateProfile(activeProfile.id, { checklistAnswers });
+        const trimmedWeight = petInfo.weight.trim();
+        const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : Number.NaN;
+        await updateProfile(activeProfile.id, {
+          checklistAnswers,
+          name: petInfo.name.trim() || null,
+          breed: petInfo.breed.trim() || null,
+          specialNotes: petInfo.specialNotes.trim() || null,
+          gender: petInfo.gender,
+          birthDate: petBirthToIso(petInfo.birthDate),
+          weight: trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : null,
+        });
         await refreshProfile();
         const planRes = await getSubscriptionPlans(activeProfile.id);
         const rec = planRes.plans.find((p) => p.isRecommended);

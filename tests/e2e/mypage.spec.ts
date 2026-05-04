@@ -127,7 +127,7 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
 // 레이아웃 주의: ProfileManagementSection은 모바일/데스크톱 DOM을 동시에 렌더링한다.
 //   - 모바일 레이아웃(md:hidden): Desktop Chrome에서 display:none → 비상호작용
 //   - 데스크톱 레이아웃(max-md:hidden): Desktop Chrome에서 표시
-// 입력 필드: 데스크톱 #d-name / #d-weight, 모바일 #m-name / #m-weight
+// 입력 필드: 데스크톱 #d-name / #d-breed / #d-weight, 모바일 #m-name / #m-breed / #m-weight
 // 버튼·에러: .last()로 데스크톱 요소 선택 (모바일 DOM이 앞, 데스크톱이 뒤)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -156,16 +156,22 @@ test.describe("애견 프로필 관리 (/mypage/dog-profile)", () => {
     await expect(page.locator("#d-weight")).toHaveValue("12.3kg");
   });
 
-  test("강아지 품종 검색 모달 → 세부 품종 선택 시 input 반영", async ({ page }) => {
+  test("강아지 품종 select → 검색 결과 선택 시 input 반영", async ({ page }) => {
     await loginAndGoTo(page, "/mypage/dog-profile?new=true");
 
-    await page.getByRole("button", { name: "검색" }).last().click();
-    await expect(page.getByRole("dialog", { name: "강아지 품종 검색" })).toBeVisible();
-
-    await page.getByPlaceholder("예) 포메라니안, Pomeranian").fill("비숑");
-    await page.getByRole("button", { name: /비숑 프리제/ }).click();
+    await page.locator("#d-breed").fill("비숑");
+    await page.getByRole("option", { name: /비숑 프리제/ }).click();
 
     await expect(page.locator("#d-breed")).toHaveValue("비숑 프리제");
+  });
+
+  test("강아지 품종 select → 직접 입력만 한 값은 선택값으로 저장하지 않음", async ({ page }) => {
+    await loginAndGoTo(page, "/mypage/dog-profile?new=true");
+
+    await page.locator("#d-breed").fill("없는 품종");
+    await page.locator("#d-name").focus();
+
+    await expect(page.locator("#d-breed")).toHaveValue("");
   });
 
   test("새 프로필 등록 모드 (?new=true) → '프로필 등록' 제목 + 빈 폼", async ({ page }) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { StaticImageData } from "next/image";
@@ -34,6 +34,8 @@ import {
   type PackageTier,
 } from "./packageData";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { getReviews } from "@/features/review/api";
+import type { ReviewResponse } from "@/features/review/api";
 
 interface Props {
   initialPlan: SubscriptionPlanDto;
@@ -69,70 +71,30 @@ const TABS: Array<{ key: TabKey; label: string }> = [
 
 const SORT_OPTIONS = ["최신순", "평점 높은순", "평점 낮은순"] as const;
 
-const TIER_COLOR_VAR: Record<PackageTier, string> = {
-  Premium: "var(--color-premium)",
-  Standard: "var(--color-plus)",
-  Basic: "var(--color-basic)",
-};
 
-interface MockReview {
-  id: number;
-  tier: PackageTier;
-  nickname: string;
-  email: string;
-  date: string;
-  rating: number;
-  text: string;
-  photo: StaticImageData;
-  avatarColor: string;
+const REVIEWS_PER_PAGE = 10;
+
+const AVATAR_COLORS = ["#E8B89B", "#C9DBB5", "#F7D4A7", "#B5C9DB", "#DBB5C9", "#A5C4A5"];
+
+function getAvatarColor(seed: string | number | null): string {
+  if (seed === null) return AVATAR_COLORS[0];
+  const n = typeof seed === "number" ? seed : seed.charCodeAt(0);
+  return AVATAR_COLORS[Math.abs(n) % AVATAR_COLORS.length];
 }
 
-const MOCK_REVIEWS: MockReview[] = [
-  {
-    id: 1,
-    tier: "Premium",
-    nickname: "코기",
-    email: "12****@naver.com",
-    date: "2026.03.28",
-    rating: 5,
-    text: "강아지가 입맛이 까다로운 편이라 걱정했는데 꼬순박스 받고 나서 반응이 완전 달라졌어요! 박스 열자마자 냄새 맡고 난리더니 하나 주니까 순식간에 먹어버리네요ㅋㅋ 구성도 다양해서 질리지 않고 급여할 수 있는 게 너무 좋아요. 다음 박스도 기대됩니다!",
-    photo: subscribeItem01A,
-    avatarColor: "#E8B89B",
-  },
-  {
-    id: 2,
-    tier: "Basic",
-    nickname: "뭉치",
-    email: "12****@naver.com",
-    date: "2026.03.28",
-    rating: 5,
-    text: "요즘 간식 뭐 줄지 고민이었는데 꼬순박스 덕분에 걱정 끝이에요. 성분도 믿을 수 있고 종류가 다양해서 골라 먹이는 재미가 있네요. 특히 프리미엄 간식이 있어서 믿고 구독할 수 있었어요. 꾸준히 구독할 생각이에요!",
-    photo: subscribeItem02B,
-    avatarColor: "#C9DBB5",
-  },
-  {
-    id: 3,
-    tier: "Premium",
-    nickname: "구름이",
-    email: "12****@naver.com",
-    date: "2026.03.28",
-    rating: 5,
-    text: "강아지가 입맛이 까다로운 편이라 걱정했는데 꼬순박스 받고 나서 반응이 완전 달라졌어요! 박스 열자마자 냄새 맡고 난리더니 하나 주니까 순식간에 먹어버리네요ㅋㅋ 구성도 다양해서 질리지 않고 급여할 수 있는 게 너무 좋아요. 다음 박스도 기대됩니다!",
-    photo: subscribeItem03C,
-    avatarColor: "#F7D4A7",
-  },
-  {
-    id: 4,
-    tier: "Standard",
-    nickname: "에릭",
-    email: "12****@naver.com",
-    date: "2026.03.28",
-    rating: 5,
-    text: "택배 오자마자 자기 줄 알고 옆에서 계속 기다리는 모습 보고 웃겼어요ㅋㅋ 포장도 깔끔하고 간식 퀄리티가 확실히 일반 간식이랑 다르네요. 먹고 나서도 탈 없이 잘 맞아서 안심하고 먹이고 있어요.",
-    photo: subscribeItem02D,
-    avatarColor: "#3F3F3F",
-  },
-];
+function maskEmail(email: string | null): string {
+  if (!email) return "";
+  const atIdx = email.indexOf("@");
+  if (atIdx < 0) return email;
+  const local = email.slice(0, atIdx);
+  const domain = email.slice(atIdx);
+  if (local.length <= 2) return `${local[0]}**${domain}`;
+  return `${local.slice(0, 2)}****${domain}`;
+}
+
+function formatReviewDate(isoDate: string): string {
+  return isoDate.slice(0, 10).replace(/-/g, ".");
+}
 
 function FullStarIcon({ size }: { size: number }) {
   return (
@@ -203,6 +165,35 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
+  const [reviews, setReviews] = useState<ReviewResponse[]>([]);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
+  const [reviewsAverage, setReviewsAverage] = useState(0);
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
+  const fetchReviews = useCallback(
+    async (planId: number, page: number) => {
+      setReviewsLoading(true);
+      try {
+        const data = await getReviews(planId, page, REVIEWS_PER_PAGE);
+        setReviews(data.items);
+        setReviewsTotal(data.total);
+        setReviewsAverage(data.averageRating);
+      } catch {
+        setReviews([]);
+        setReviewsTotal(0);
+        setReviewsAverage(0);
+      } finally {
+        setReviewsLoading(false);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    fetchReviews(selectedPlan.id, reviewsPage);
+  }, [selectedPlan.id, reviewsPage, fetchReviews]);
+
   function handleReviewCountClick() {
     setActiveTab("review");
     requestAnimationFrame(() => {
@@ -215,11 +206,25 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   }
 
   const sortedPlans = useMemo(() => [...plans].sort(comparePlansForDisplayOrder), [plans]);
+
+  const sortedReviews = useMemo(() => {
+    const sorted = [...reviews];
+    if (activeSort === "평점 높은순") sorted.sort((a, b) => b.rating - a.rating);
+    else if (activeSort === "평점 낮은순") sorted.sort((a, b) => a.rating - b.rating);
+    else sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return sorted;
+  }, [reviews, activeSort]);
+
+  const reviewImages = useMemo(
+    () => reviews.flatMap((r) => r.imageUrls ?? []),
+    [reviews],
+  );
+
+  const totalPages = Math.max(1, Math.ceil(reviewsTotal / REVIEWS_PER_PAGE));
   const selectedTheme = packageThemeForPlan(selectedPlan);
   const selectedTier = tierFromSubscriptionPlan(selectedPlan);
   const selectedPackage = PACKAGES.find((pkg) => pkg.tier === selectedTier) ?? PACKAGES[0];
   const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
-  const previewImages = useMemo(() => Array.from({ length: 8 }, () => packageThumbnail), []);
 
   const basePrice = selectedPlan.monthlyPrice;
   const salePrice = basePrice * quantity;
@@ -227,6 +232,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
     setQuantity(1);
+    setReviewsPage(1);
     router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
   }
 
@@ -293,13 +299,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           <div className="mt-3 flex items-center justify-between">
-            <Stars rating={4.5} size={24} />
+            <Stars rating={reviewsAverage} size={24} />
             <button
               type="button"
               onClick={handleReviewCountClick}
               className="text-[14px] font-normal leading-[21px] tracking-[-0.02em] text-[var(--color-text-secondary)] underline decoration-[var(--color-text-secondary)]"
             >
-              12개 리뷰
+              {reviewsTotal}개 리뷰
             </button>
           </div>
 
@@ -433,113 +439,150 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   />
                 </svg>
               </button>
-              <button
-                type="button"
-                className="flex items-center gap-1 text-[13px] font-medium text-[var(--color-text)]"
-              >
-                {activeSort}
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <path
-                    d="M3.5 5.25L7 8.75L10.5 5.25"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
+              <div className="flex items-center gap-2 text-[13px] font-medium text-[var(--color-text)]">
+                {SORT_OPTIONS.map((opt, idx) => (
+                  <Fragment key={opt}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSort(opt)}
+                      className={
+                        activeSort === opt
+                          ? "font-semibold text-[var(--color-text-emphasis)]"
+                          : "text-[var(--color-text-secondary)]"
+                      }
+                    >
+                      {opt}
+                    </button>
+                    {idx < SORT_OPTIONS.length - 1 && (
+                      <span className="text-[var(--color-text-muted)]">|</span>
+                    )}
+                  </Fragment>
+                ))}
+              </div>
             </div>
 
-            <div className="mb-6 flex items-center gap-3 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {previewImages.slice(0, 3).map((imgSrc, idx) => (
-                <div
-                  key={idx}
-                  className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] bg-[var(--color-surface-warm)]"
-                >
-                  <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
-                </div>
-              ))}
-              {previewImages.length > 3 && (
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[6px]">
-                  <Image
-                    src={previewImages[3]!}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
-                    더보기
-                    <br />
-                    +{previewImages.length - 3}
+            {reviewImages.length > 0 && (
+              <div className="mb-6 flex items-center gap-3 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {reviewImages.slice(0, 3).map((url, idx) => (
+                  <div
+                    key={idx}
+                    className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] bg-[var(--color-surface-warm)]"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt="" className="h-full w-full object-cover" />
                   </div>
-                </div>
-              )}
-            </div>
+                ))}
+                {reviewImages.length > 3 && (
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[6px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={reviewImages[3]} alt="" className="h-full w-full object-cover" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
+                      더보기
+                      <br />
+                      +{reviewImages.length - 3}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
-            <ul className="space-y-6">
-              {MOCK_REVIEWS.map((review) => (
-                <li
-                  key={review.id}
-                  className="border-b border-[var(--color-text-muted)] pb-6 last:border-b-0"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="h-[54px] w-[54px] shrink-0 rounded-full border border-[var(--color-text-muted)]"
-                      style={{ background: review.avatarColor }}
-                      aria-hidden="true"
-                    />
-                    <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
-                          style={{ background: TIER_COLOR_VAR[review.tier] }}
-                        >
-                          {review.tier}
-                        </span>
-                        <Stars rating={review.rating} size={24} />
+            {reviewsLoading ? (
+              <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
+                리뷰를 불러오는 중...
+              </p>
+            ) : sortedReviews.length === 0 ? (
+              <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
+                아직 작성된 리뷰가 없습니다.
+              </p>
+            ) : (
+              <ul className="space-y-6">
+                {sortedReviews.map((review) => (
+                  <li
+                    key={review.id}
+                    className="border-b border-[var(--color-text-muted)] pb-6 last:border-b-0"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
+                        aria-hidden="true"
+                      >
+                        {review.snapshotPetProfileImageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={review.snapshotPetProfileImageUrl}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="h-full w-full"
+                            style={{ background: getAvatarColor(review.userId ?? review.id) }}
+                          />
+                        )}
                       </div>
-                      <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
-                        <span className="font-semibold text-[var(--color-text)]">
-                          {review.nickname}
-                        </span>
-                        <span className="font-medium text-[var(--color-text-secondary)]">
-                          {review.email}
-                        </span>
-                        <span className="font-medium text-[var(--color-text-secondary)]">
-                          {review.date}
-                        </span>
+                      <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
+                            style={{ background: selectedTheme.colorVar }}
+                          >
+                            {selectedTheme.tierLabel}
+                          </span>
+                          <Stars rating={review.rating} size={24} />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
+                          <span className="font-semibold text-[var(--color-text)]">
+                            {review.snapshotPetName ?? "익명"}
+                          </span>
+                          {review.snapshotUserEmail && (
+                            <span className="font-medium text-[var(--color-text-secondary)]">
+                              {maskEmail(review.snapshotUserEmail)}
+                            </span>
+                          )}
+                          <span className="font-medium text-[var(--color-text-secondary)]">
+                            {formatReviewDate(review.createdAt)}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <p className="mt-[9px] pl-[66px] text-[14px] font-medium leading-[20px] tracking-[-0.04em] text-[var(--color-text)]">
-                    {review.text}
-                  </p>
-                  <div className="mt-4 pl-[66px]">
-                    <div className="h-[100px] w-[100px] overflow-hidden rounded-[12px] border border-[var(--color-text-muted)]">
-                      <Image
-                        src={review.photo}
-                        alt={`${review.nickname} 리뷰 사진`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <p className="mt-[9px] pl-[66px] text-[14px] font-medium leading-[20px] tracking-[-0.04em] text-[var(--color-text)]">
+                      {review.content}
+                    </p>
+                    {review.imageUrls && review.imageUrls.length > 0 && (
+                      <div className="mt-4 flex gap-2 pl-[66px]">
+                        {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
+                          <div
+                            key={imgIdx}
+                            className="h-[100px] w-[100px] overflow-hidden rounded-[12px] border border-[var(--color-text-muted)]"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={url} alt={`리뷰 사진 ${imgIdx + 1}`} className="h-full w-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
 
             <nav className="mt-8 flex items-center justify-center gap-2" aria-label="리뷰 페이지네이션">
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)]"
+                onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
+                disabled={reviewsPage === 1}
+                className="flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)] disabled:opacity-30"
                 aria-label="이전 페이지"
               >
                 ‹
               </button>
-              {[1, 2, 3, 4, 5].map((page) => (
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
                   type="button"
+                  onClick={() => setReviewsPage(page)}
                   className={
-                    page === 1
+                    page === reviewsPage
                       ? "flex h-8 w-8 items-center justify-center text-[14px] font-semibold text-[var(--color-text)]"
                       : "flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)]"
                   }
@@ -549,7 +592,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               ))}
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)]"
+                onClick={() => setReviewsPage((p) => Math.min(totalPages, p + 1))}
+                disabled={reviewsPage === totalPages}
+                className="flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)] disabled:opacity-30"
                 aria-label="다음 페이지"
               >
                 ›
@@ -664,13 +709,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 {selectedPlan.name}
               </h2>
               <div className="mb-4 flex items-center gap-2">
-                <Stars rating={4.5} size={24} />
+                <Stars rating={reviewsAverage} size={24} />
                 <button
                   type="button"
                   onClick={handleReviewCountClick}
                   className="text-body-13-r text-[var(--color-text-secondary)] underline decoration-[var(--color-text-secondary)]"
                 >
-                  12개 리뷰
+                  {reviewsTotal}개 리뷰
                 </button>
               </div>
               <div className="mb-5 flex items-center gap-2">
@@ -825,79 +870,110 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 </div>
               </div>
 
-              <div className="mb-10 flex items-center gap-4">
-                {previewImages.slice(0, 4).map((imgSrc, idx) => (
-                  <div
-                    key={idx}
-                    className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)]"
-                  >
-                    <Image src={imgSrc} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ))}
-                {previewImages.length > 4 && (
-                  <div className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px]">
-                    <Image
-                      src={previewImages[4]!}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-subtitle-16-sb text-white">
-                      더보기
-                      <br />
-                      +{previewImages.length - 4}
+              {reviewImages.length > 0 && (
+                <div className="mb-10 flex items-center gap-4">
+                  {reviewImages.slice(0, 4).map((url, idx) => (
+                    <div
+                      key={idx}
+                      className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)]"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt="" className="h-full w-full object-cover" />
                     </div>
-                  </div>
-                )}
-              </div>
-
-              <ul>
-                {MOCK_REVIEWS.map((review) => (
-                  <li
-                    key={review.id}
-                    className="flex items-start gap-6 border-b border-[var(--color-text-muted)] py-6 last:border-b-0"
-                  >
-                    <div className="flex flex-1 items-start gap-4">
-                      <div
-                        className="h-12 w-12 shrink-0 rounded-full"
-                        style={{ background: review.avatarColor }}
-                        aria-hidden="true"
-                      />
-                      <div className="flex-1">
-                        <div className="mb-2 flex items-center gap-3">
-                          <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
-                            style={{ background: TIER_COLOR_VAR[review.tier] }}
-                          >
-                            {review.tier}
-                          </span>
-                          <Stars rating={review.rating} size={20} />
-                        </div>
-                        <div className="mb-3 flex items-center gap-3 text-[13px] leading-[16px]">
-                          <span className="font-semibold text-[var(--color-text)]">
-                            {review.nickname}
-                          </span>
-                          <span className="text-[var(--color-text-secondary)]">
-                            {review.email}
-                          </span>
-                          <span className="text-[var(--color-text-secondary)]">
-                            {review.date}
-                          </span>
-                        </div>
-                        <p className="text-[14px] font-normal leading-[22px] text-[var(--color-text)]">
-                          {review.text}
-                        </p>
+                  ))}
+                  {reviewImages.length > 4 && (
+                    <div className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={reviewImages[4]} alt="" className="h-full w-full object-cover" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-subtitle-16-sb text-white">
+                        더보기
+                        <br />
+                        +{reviewImages.length - 4}
                       </div>
                     </div>
-                    <div className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px]">
-                      <Image
-                        src={review.photo}
-                        alt={`${review.nickname} 리뷰 사진`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                  )}
+                </div>
+              )}
+
+              {reviewsLoading ? (
+                <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
+                  리뷰를 불러오는 중...
+                </p>
+              ) : sortedReviews.length === 0 ? (
+                <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
+                  아직 작성된 리뷰가 없습니다.
+                </p>
+              ) : (
+                <ul>
+                  {sortedReviews.map((review) => (
+                    <li
+                      key={review.id}
+                      className="flex items-start gap-6 border-b border-[var(--color-text-muted)] py-6 last:border-b-0"
+                    >
+                      <div className="flex flex-1 items-start gap-4">
+                        <div
+                          className="h-12 w-12 shrink-0 overflow-hidden rounded-full"
+                          aria-hidden="true"
+                        >
+                          {review.snapshotPetProfileImageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={review.snapshotPetProfileImageUrl}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className="h-full w-full"
+                              style={{ background: getAvatarColor(review.userId ?? review.id) }}
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="mb-2 flex items-center gap-3">
+                            <span
+                              className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
+                              style={{ background: selectedTheme.colorVar }}
+                            >
+                              {selectedTheme.tierLabel}
+                            </span>
+                            <Stars rating={review.rating} size={20} />
+                          </div>
+                          <div className="mb-3 flex items-center gap-3 text-[13px] leading-[16px]">
+                            <span className="font-semibold text-[var(--color-text)]">
+                              {review.snapshotPetName ?? "익명"}
+                            </span>
+                            {review.snapshotUserEmail && (
+                              <span className="text-[var(--color-text-secondary)]">
+                                {maskEmail(review.snapshotUserEmail)}
+                              </span>
+                            )}
+                            <span className="text-[var(--color-text-secondary)]">
+                              {formatReviewDate(review.createdAt)}
+                            </span>
+                          </div>
+                          <p className="text-[14px] font-normal leading-[22px] text-[var(--color-text)]">
+                            {review.content}
+                          </p>
+                          {review.imageUrls && review.imageUrls.length > 0 && (
+                            <div className="mt-3 flex gap-2">
+                              {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
+                                <div
+                                  key={imgIdx}
+                                  className="h-[100px] w-[100px] overflow-hidden rounded-[8px] border border-[var(--color-text-muted)]"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src={url} alt={`리뷰 사진 ${imgIdx + 1}`} className="h-full w-full object-cover" />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
               <nav
                 className="mt-10 flex items-center justify-center gap-3"
@@ -905,17 +981,20 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               >
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center text-[16px] text-[var(--color-text-secondary)]"
+                  onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
+                  disabled={reviewsPage === 1}
+                  className="flex h-9 w-9 items-center justify-center text-[16px] text-[var(--color-text-secondary)] disabled:opacity-30"
                   aria-label="이전 페이지"
                 >
                   ‹
                 </button>
-                {[1, 2, 3, 4, 5].map((page) => (
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
                   <button
                     key={page}
                     type="button"
+                    onClick={() => setReviewsPage(page)}
                     className={
-                      page === 1
+                      page === reviewsPage
                         ? "flex h-9 w-9 items-center justify-center text-[15px] font-semibold text-[var(--color-text)]"
                         : "flex h-9 w-9 items-center justify-center text-[15px] text-[var(--color-text-secondary)]"
                     }
@@ -925,7 +1004,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 ))}
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center text-[16px] text-[var(--color-text-secondary)]"
+                  onClick={() => setReviewsPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={reviewsPage === totalPages}
+                  className="flex h-9 w-9 items-center justify-center text-[16px] text-[var(--color-text-secondary)] disabled:opacity-30"
                   aria-label="다음 페이지"
                 >
                   ›

@@ -53,6 +53,13 @@ const ERROR_MESSAGES: Record<string, string> = {
 
   // 배송지
   DELIVERY_ADDRESS_IN_USE: "구독 중인 플랜에 사용 중인 배송지는 삭제할 수 없습니다.",
+
+  // 리뷰
+  REVIEW_NOT_ELIGIBLE: "배송 완료된 구독 이력이 있는 경우에만 리뷰를 작성할 수 있습니다.",
+  REVIEW_ALREADY_EXISTS: "이미 해당 플랜에 리뷰를 작성하셨습니다.",
+  REVIEW_NOT_FOUND: "리뷰를 찾을 수 없습니다.",
+  REVIEW_NOT_OWNER: "본인이 작성한 리뷰만 수정·삭제할 수 있습니다.",
+  REVIEW_EDIT_EXPIRED: "리뷰는 작성 후 24시간 이내에만 수정할 수 있습니다.",
 };
 
 const DEFAULT_FALLBACK = "오류가 발생했습니다. 잠시 후 다시 시도해주세요.";

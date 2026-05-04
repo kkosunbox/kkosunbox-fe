@@ -8,7 +8,7 @@ import { useModal, useLoadingOverlay } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { getErrorMessage } from "@/shared/lib/api";
 import orderTitleImage from "@/widgets/order/assets/order-title-please-order.webp";
-import orderProductThumbnail from "@/widgets/order/assets/order-product-thumbnail.webp";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import orderDogImage from "@/widgets/order/assets/order-advertise-banner.webp";
 import heroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
 import heroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.webp";
@@ -519,7 +519,7 @@ export default function OrderSection({
         <div className="rounded-[20px] bg-white px-7 max-md:pt-3 max-md:pb-7 md:py-7 max-md:flex max-md:flex-col max-md:items-center max-md:gap-5 md:flex md:items-center md:gap-6">
           <div className="max-md:w-[180px] max-md:h-[132px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl overflow-hidden">
             <Image
-              src={orderProductThumbnail}
+              src={TIER_THUMBNAILS[orderPlanTheme.tier]}
               alt={plan.name}
               width={180}
               height={132}

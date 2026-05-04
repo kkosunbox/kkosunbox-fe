@@ -126,7 +126,7 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
 }
 
 export default function Header() {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, isAuthLoading } = useAuth();
   const { profile } = useProfile();
   const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -181,7 +181,9 @@ export default function Header() {
             <Link href="/support" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
               고객센터
             </Link>
-            {isLoggedIn ? (
+            {isAuthLoading ? (
+              <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
+            ) : isLoggedIn ? (
               <div ref={profileRef} className="relative">
                 <button
                   onClick={() => setIsProfileOpen((v) => !v)}
@@ -220,7 +222,12 @@ export default function Header() {
       >
         {/* Top section — user / login */}
         <div className="flex items-center justify-between bg-[var(--color-surface-warm)] px-6 py-5">
-          {isLoggedIn ? (
+          {isAuthLoading ? (
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-[var(--color-secondary)] animate-pulse" />
+              <div className="h-4 w-24 rounded bg-[var(--color-secondary)] animate-pulse" />
+            </div>
+          ) : isLoggedIn ? (
             <div className="flex items-center gap-3">
               <Link href="/mypage" onClick={closeMenu}>
                 <ProfileThumbnail imageUrl={profileImageUrl} size="md" />

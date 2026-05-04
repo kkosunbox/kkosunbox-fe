@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { Text } from "@/shared/ui";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
@@ -54,7 +54,7 @@ export function SubscriptionCard({ subscription }: { subscription: UserSubscript
       <div className="flex items-center gap-4">
         <div className="relative max-md:h-[67px] max-md:w-[91px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-background)]">
           <Image
-            src={mockTempPackage}
+            src={TIER_THUMBNAILS[planTheme.tier]}
             alt="꼬순박스 패키지"
             fill
             className="object-cover"
@@ -67,13 +67,18 @@ export function SubscriptionCard({ subscription }: { subscription: UserSubscript
           >
             {planTheme.tierLabel}
           </span>
-          <Text
-            variant="subtitle-16-sb"
-            mobileVariant="body-14-sb"
-            className="tracking-[-0.04em] text-[var(--color-text)]"
-          >
-            {subscription.plan.name} 구독중
-          </Text>
+          <div className="flex items-center gap-2">
+            <Text
+              variant="subtitle-16-sb"
+              mobileVariant="body-14-sb"
+              className="tracking-[-0.04em] text-[var(--color-text)]"
+            >
+              {subscription.plan.name} 구독중
+            </Text>
+            <span style={{ fontSize: "16px", fontWeight: 700, color: planTheme.colorVar }}>
+              {subscription.quantity}BOX
+            </span>
+          </div>
           <Text
             variant="body-16-m"
             mobileVariant="body-14-m"

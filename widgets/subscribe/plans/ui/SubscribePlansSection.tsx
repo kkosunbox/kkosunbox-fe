@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
 import { ChecklistRecommendModal, ScrollReveal, useModal } from "@/shared/ui";
+import { TIER_THUMBNAILS } from "./packageThumbnails";
 import { useAuth } from "@/features/auth";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
@@ -93,7 +93,7 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
 
       <div className="mb-[56px] flex justify-center">
         <Image
-          src={mockTempPackage}
+          src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
           className="h-[150px] w-auto object-contain"
         />

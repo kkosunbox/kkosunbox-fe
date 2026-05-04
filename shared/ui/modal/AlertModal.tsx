@@ -50,16 +50,16 @@ export default function AlertModal({
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
 
-      {/* Card */}
-      <div className="relative z-10 w-full max-w-[320px] md:max-w-[388px] rounded-[20px] bg-white px-6 pt-8 pb-6 flex flex-col items-center">
+      {/* Card — 피그마 확인 모달(라운드 40, 넉넉한 여백) */}
+      <div className="relative z-10 w-full max-w-[320px] md:max-w-[388px] rounded-[40px] bg-white px-8 pt-10 pb-8 flex flex-col items-center">
         {/* Title */}
         <h2 className="max-md:text-subtitle-16-sb md:text-subtitle-18-sb text-[var(--color-text)] text-center">
           {title}
         </h2>
 
-        {/* Description */}
+        {/* Description — 제목 대비 +12px 추가 간격 (기존 12px → 24px) */}
         {description && (
-          <p className="mt-3 max-md:text-body-13-r md:text-body-14-r text-[var(--color-text-secondary)] text-center whitespace-pre-line">
+          <p className="mt-6 max-md:text-body-13-r md:text-body-14-r text-[var(--color-text-secondary)] text-center whitespace-pre-line">
             {description}
           </p>
         )}
@@ -80,7 +80,7 @@ export default function AlertModal({
           <button
             type="button"
             onClick={handleSecondary}
-            className="mt-4 max-md:text-body-13-m md:text-body-14-m text-[var(--color-text-tertiary)] underline hover:opacity-70 transition-opacity"
+            className="mt-4 max-md:text-body-13-m md:text-body-14-m text-[var(--color-text-secondary)] underline hover:opacity-70 transition-opacity"
           >
             {secondaryLabel}
           </button>

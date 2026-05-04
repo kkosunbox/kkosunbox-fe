@@ -273,9 +273,9 @@ export default function ProfileManagementSection({
 
     openAlert({
       title: "애견 프로필을 삭제할까요?",
-      description: "삭제한 프로필 정보는 복구할 수 없습니다.",
+      description: "애견 프로필을 삭제하시겠습니까?\n작성된 내용은 복구되지 않습니다.",
       primaryLabel: "삭제하기",
-      secondaryLabel: "취소",
+      secondaryLabel: "취소하기",
       onPrimary: () => {
         void handleConfirmDeleteProfile();
       },

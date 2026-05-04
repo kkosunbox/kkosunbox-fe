@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import mockTempPackage from "@/widgets/home/package-plans/assets/mock-temp-package-4x.webp";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { cancelSubscription, reactivateSubscription, changePlan } from "@/features/subscription/api/subscriptionApi";
@@ -155,7 +155,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                 {/* Package image */}
                 <div className="relative max-md:h-[72px] max-md:w-[100px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-xl bg-[var(--color-background)]">
                   <Image
-                    src={mockTempPackage}
+                    src={currentTheme ? TIER_THUMBNAILS[currentTheme.tier] : TIER_THUMBNAILS["Basic"]}
                     alt="패키지 이미지"
                     fill
                     className="object-cover object-center"
@@ -174,11 +174,18 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
                         ? currentTheme!.tierLabel
                         : "구독중"}
                   </span>
-                  <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
-                    {isCancelled
-                      ? (subscription?.plan.name ?? "패키지")
-                      : `${subscription?.plan.name ?? ""} 구독중`}
-                  </Text>
+                  <div className="flex items-center gap-2">
+                    <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
+                      {isCancelled
+                        ? (subscription?.plan.name ?? "패키지")
+                        : `${subscription?.plan.name ?? ""} 구독중`}
+                    </Text>
+                    {!isCancelled && subscription && (
+                      <span style={{ fontSize: "16px", fontWeight: 700, color: currentColor }}>
+                        {subscription.quantity}BOX
+                      </span>
+                    )}
+                  </div>
                   {!isCancelled && subscription && (
                     <>
                       <Text variant="body-16-m" className="text-[var(--color-text-label)]">
@@ -297,7 +304,7 @@ export default function SubscriptionManagementSection({ subscription, plans }: P
 
                     <div className="mb-[56px] flex justify-center">
                       <Image
-                        src={mockTempPackage}
+                        src={TIER_THUMBNAILS[theme.tier]}
                         alt={`${plan.name} 이미지`}
                         className="h-[150px] w-auto object-contain"
                       />

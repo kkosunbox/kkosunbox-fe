@@ -45,7 +45,7 @@ test.describe("체크리스트 — 버튼 클릭 가드 (비로그인 → 로그
 
   test("홈 체크리스트 버튼: 로그인 상태 → 모달 없이 /checklist 이동", async ({ page }) => {
     await page.context().addCookies([{
-      name: "auth-token",
+      name: "ggosoon-auth",
       value: MOCK_ACCESS_TOKEN,
       domain: "localhost",
       path: "/",
@@ -102,7 +102,7 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
   test("SSR 쿠키로 로그인된 사용자는 /checklist 직접 접근 가능", async ({ page }) => {
     await page.context().addCookies([
       {
-        name: "auth-token",
+        name: "ggosoon-auth",
         value: MOCK_ACCESS_TOKEN,
         domain: "localhost",
         path: "/",

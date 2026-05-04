@@ -134,6 +134,13 @@ function LeaveConfirmModal({
   );
 }
 
+// 선택 시 같은 질문의 다른 옵션을 모두 해제하는 배타적 선택지 slug 목록.
+// 반대로 다른 옵션을 선택하면 이 slug를 가진 선택지가 자동 해제된다.
+// (예: "알러지 없음", "선호 없음" 등 "해당 없음" 계열)
+const EXCLUSIVE_OPTION_SLUGS = new Set<string>([
+  "no_allergy",
+]);
+
 /* ─── Widget ─── */
 export default function ChecklistSection() {
   const router = useRouter();
@@ -360,18 +367,36 @@ export default function ChecklistSection() {
     pendingNavigateRef.current = null;
   }
 
-  function toggleOptionForQuestion(questionId: number, optionId: number, multi: boolean) {
+  function toggleOptionForQuestion(question: ChecklistQuestion, optionId: number) {
+    const { id: questionId, isMultiSelect, options } = question;
     setAnswersByQuestion((prev) => {
       const cur = prev[questionId] ?? [];
-      if (multi) {
-        return {
-          ...prev,
-          [questionId]: cur.includes(optionId)
-            ? cur.filter((x) => x !== optionId)
-            : [...cur, optionId],
-        };
+
+      if (!isMultiSelect) {
+        return { ...prev, [questionId]: [optionId] };
       }
-      return { ...prev, [questionId]: [optionId] };
+
+      // 이미 선택된 경우 해제
+      if (cur.includes(optionId)) {
+        return { ...prev, [questionId]: cur.filter((x) => x !== optionId) };
+      }
+
+      const clickedOption = options.find((o) => o.id === optionId);
+      const isClickedExclusive = !!clickedOption && EXCLUSIVE_OPTION_SLUGS.has(clickedOption.slug);
+
+      // 배타적 선택지 클릭 → 다른 모든 선택 해제 후 단독 선택
+      if (isClickedExclusive) {
+        return { ...prev, [questionId]: [optionId] };
+      }
+
+      // 일반 선택지 클릭 → 배타적 선택지가 있다면 제거 후 추가
+      const exclusiveIds = new Set(
+        options.filter((o) => EXCLUSIVE_OPTION_SLUGS.has(o.slug)).map((o) => o.id),
+      );
+      return {
+        ...prev,
+        [questionId]: [...cur.filter((id) => !exclusiveIds.has(id)), optionId],
+      };
     });
   }
 
@@ -532,11 +557,7 @@ export default function ChecklistSection() {
                       totalSteps={qLen}
                       selectedOptionIds={answersByQuestion[questions[step - 1].id] ?? []}
                       onToggleOption={(optionId) =>
-                        toggleOptionForQuestion(
-                          questions[step - 1].id,
-                          optionId,
-                          questions[step - 1].isMultiSelect,
-                        )
+                        toggleOptionForQuestion(questions[step - 1], optionId)
                       }
                       onBack={handleBack}
                       onNext={step === lastQuestionStep ? () => void handleSubmit() : handleNext}

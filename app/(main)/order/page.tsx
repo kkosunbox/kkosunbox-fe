@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
-import { fetchProfiles } from "@/features/profile/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { OrderSection } from "@/widgets/order";
 
@@ -13,13 +12,20 @@ export const metadata = {
 export default async function OrderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ planId?: string }>;
+  searchParams: Promise<{ planId?: string; quantity?: string }>;
 }) {
-  const { planId: planIdStr } = await searchParams;
+  const { planId: planIdStr, quantity: quantityStr } = await searchParams;
   const planId = planIdStr ? Number(planIdStr) : NaN;
   if (!Number.isFinite(planId) || planId <= 0) {
     redirect("/subscribe");
   }
+
+  // 1~99 범위 외 또는 정수 아님 → 기본값 1로 폴백
+  const parsedQuantity = quantityStr ? Number(quantityStr) : 1;
+  const initialQuantity =
+    Number.isInteger(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= 99
+      ? parsedQuantity
+      : 1;
 
   // 쿠키 조작·만료 등 어떤 상태에서도 실제 인증을 검증한 뒤 분기
   const [token, authUser] = await Promise.all([getServerToken(), getAuthUser()]);
@@ -27,14 +33,8 @@ export default async function OrderPage({
     redirect(`/login?next=${encodeURIComponent(`/order?planId=${planId}`)}`);
   }
 
-  // 여기서 profiles === [] 이면 인증된 유저가 애견 프로필을 아직 만들지 않은 경우
-  const profiles = await fetchProfiles(token);
-  if (profiles.length === 0) {
-    redirect("/mypage/dog-profile");
-  }
-
   const [plans, addresses, billing] = await Promise.all([
-    fetchSubscriptionPlans(token, profiles[0]!.id),
+    fetchSubscriptionPlans(token),
     fetchDeliveryAddresses(token),
     fetchBillingInfo(token),
   ]);
@@ -49,6 +49,7 @@ export default async function OrderPage({
       plan={plan}
       initialAddresses={addresses}
       initialBilling={billing}
+      initialQuantity={initialQuantity}
     />
   );
 }

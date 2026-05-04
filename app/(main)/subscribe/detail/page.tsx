@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
-import { fetchProfile } from "@/features/profile/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { SubscribeProductDetailPage } from "@/widgets/subscribe/plans";
 
@@ -25,8 +24,7 @@ export async function generateMetadata({
 
   try {
     const token = await getServerToken();
-    const profile = await fetchProfile(token);
-    const plans = await fetchSubscriptionPlans(token, profile?.id);
+    const plans = await fetchSubscriptionPlans(token);
     const plan = plans.find((p) => p.id === planId) ?? plans[0];
 
     if (!plan) {
@@ -77,8 +75,7 @@ export default async function SubscribeDetailPage({
   }
 
   const token = await getServerToken();
-  const profile = await fetchProfile(token);
-  const plans = await fetchSubscriptionPlans(token, profile?.id);
+  const plans = await fetchSubscriptionPlans(token);
 
   if (plans.length === 0) {
     redirect("/subscribe");

@@ -4,8 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
-import { getChecklistQuestions, updateProfile } from "@/features/profile/api/profileApi";
-import type { ChecklistAnswerInput, ChecklistQuestion, Profile } from "@/features/profile/api/types";
+import {
+  createProfile,
+  getChecklistQuestions,
+  updateProfile,
+} from "@/features/profile/api/profileApi";
+import type {
+  ChecklistAnswerInput,
+  ChecklistQuestion,
+  CreateProfileRequest,
+  Profile,
+} from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
@@ -16,7 +25,7 @@ import ChecklistResult from "./ChecklistResult";
 import type { PetInfo, RecommendedTier } from "./types";
 
 const CTA_CLASS =
-  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
+  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80 disabled:!cursor-not-allowed disabled:!opacity-50 disabled:hover:!opacity-50";
 
 function fallbackRecommend(answers: ChecklistAnswerInput[]): RecommendedTier {
   const n = answers.reduce((s, a) => s + a.optionIds.length, 0);
@@ -160,7 +169,7 @@ export default function ChecklistSection() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn, user } = useAuth();
-  const { profile: activeProfile, refreshProfile } = useProfile();
+  const { profile: activeProfile, refreshProfile, setActiveProfileId } = useProfile();
   const editQuestionIdParam = searchParams.get("editQuestionId");
   const returnTo = searchParams.get("returnTo");
 
@@ -419,6 +428,7 @@ export default function ChecklistSection() {
   function handleNext() {
     if (!questions?.length) return;
     if (step === 0) {
+      if (!petInfo.name.trim()) return;
       setStep(1);
       setMaxVisitedStep((prev) => Math.max(prev, 1));
       return;
@@ -442,6 +452,8 @@ export default function ChecklistSection() {
 
   async function handleSubmit() {
     if (!questions?.length) return;
+    const trimmedName = petInfo.name.trim();
+    if (!trimmedName) return;
     isConfirmedLeaveRef.current = true;
     setIsAnalyzing(true);
 
@@ -450,22 +462,46 @@ export default function ChecklistSection() {
       optionIds: answersByQuestion[q.id] ?? [],
     }));
 
+    const trimmedBreed = petInfo.breed.trim();
+    const trimmedNotes = petInfo.specialNotes.trim();
+    const trimmedWeight = petInfo.weight.trim();
+    const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : Number.NaN;
+    const weightValue =
+      trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : null;
+    const birthIso = petBirthToIso(petInfo.birthDate);
+
     let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
+    let savedProfileId: number | null = null;
     try {
       if (isLoggedIn && activeProfile) {
-        const trimmedWeight = petInfo.weight.trim();
-        const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : Number.NaN;
         await updateProfile(activeProfile.id, {
           checklistAnswers,
-          name: petInfo.name.trim() || null,
-          breed: petInfo.breed.trim() || null,
-          specialNotes: petInfo.specialNotes.trim() || null,
+          name: trimmedName,
+          breed: trimmedBreed || null,
+          specialNotes: trimmedNotes || null,
           gender: petInfo.gender,
-          birthDate: petBirthToIso(petInfo.birthDate),
-          weight: trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : null,
+          birthDate: birthIso,
+          weight: weightValue,
         });
+        savedProfileId = activeProfile.id;
+      } else if (isLoggedIn) {
+        const body: CreateProfileRequest = {
+          name: trimmedName,
+          checklistAnswers,
+          ...(trimmedBreed ? { breed: trimmedBreed } : {}),
+          ...(trimmedNotes ? { specialNotes: trimmedNotes } : {}),
+          ...(petInfo.gender ? { gender: petInfo.gender } : {}),
+          ...(birthIso ? { birthDate: birthIso } : {}),
+          ...(weightValue !== null ? { weight: weightValue } : {}),
+        };
+        const newProfile = await createProfile(body);
+        savedProfileId = newProfile.id;
+        setActiveProfileId(newProfile.id);
+      }
+
+      if (savedProfileId !== null) {
         await refreshProfile();
-        const planRes = await getSubscriptionPlans(activeProfile.id);
+        const planRes = await getSubscriptionPlans(savedProfileId);
         const rec = planRes.plans.find((p) => p.isRecommended);
         if (rec) {
           const pt = tierFromSubscriptionPlan(rec);
@@ -534,8 +570,11 @@ export default function ChecklistSection() {
   const lastQuestionStep = qLen;
   const ctaLabel =
     step === 0 ? "체크리스트 작성하기" : step === lastQuestionStep ? "결과보기" : "다음";
+  const isStep0NameValid = petInfo.name.trim().length > 0;
+  const isMobileCtaDisabled = step === 0 && !isStep0NameValid;
 
   function handleMobileCta() {
+    if (step === 0 && !isStep0NameValid) return;
     if (step === lastQuestionStep) void handleSubmit();
     else handleNext();
   }
@@ -602,6 +641,7 @@ export default function ChecklistSection() {
               <Button
                 type="button"
                 onClick={handleMobileCta}
+                disabled={isMobileCtaDisabled}
                 variant="primary"
                 size="lg"
                 className={CTA_CLASS}

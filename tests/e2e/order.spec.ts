@@ -28,17 +28,21 @@ test.describe("주문 페이지 (/order)", () => {
     await page.waitForURL("/subscribe", { timeout: 10_000 });
   });
 
-  // ── 프로필 리다이렉트 ─────────────────────────────────────────────
+  // ── 프로필 없는 유저도 정상 진입 ────────────────────────────────────
+  // 정책 변경: 애견 프로필은 선택 사항이므로 프로필 0개여도 주문 페이지 정상 렌더
 
-  test("프로필 없는 유저 진입 → /mypage/dog-profile 리다이렉트", async ({ page }) => {
-    // NO_PROFILE 유저로 로그인: 미들웨어는 통과하지만 profiles가 빈 배열 → SSR redirect
+  test("프로필 없는 유저 진입 → 가드 없이 주문 페이지 렌더", async ({ page }) => {
     await page.goto("/login");
     await page.getByPlaceholder("이메일을 입력하세요").fill(NO_PROFILE_CREDENTIALS.email);
     await page.getByPlaceholder("비밀번호를 입력하세요").fill(NO_PROFILE_CREDENTIALS.password);
     await page.getByRole("button", { name: "로그인", exact: true }).click();
     await page.waitForURL("/", { timeout: 15_000 });
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
-    await page.waitForURL("/mypage/dog-profile", { timeout: 10_000 });
+    // 가드 모달 없이 결제하기 버튼이 보여야 한다
+    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByRole("dialog")).toHaveCount(0);
   });
 
   // ── 약관 동의 ────────────────────────────────────────────────────
@@ -64,8 +68,7 @@ test.describe("주문 페이지 (/order)", () => {
     await page.locator("label", { hasText: "모두 동의합니다." }).first().getByRole("button").click();
     await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeEnabled();
 
-    // 개별 약관 패널 열기 (inert 해제)
-    await page.locator('button[aria-controls="order-agreements-panel"]').first().click();
+    // 동의 상세 패널은 기본 열림(agreeOpen) — 토글을 누르면 닫혀 이후 단계가 실패함
 
     // 이용약관만 해제
     await page.locator("label", { hasText: "이용약관 동의 (필수)" }).first().getByRole("button").click();

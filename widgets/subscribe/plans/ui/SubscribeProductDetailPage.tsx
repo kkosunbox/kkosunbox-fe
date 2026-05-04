@@ -365,7 +365,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             </div>
             <button
               type="button"
-              onClick={() => router.push(`/order?planId=${selectedPlan.id}`)}
+              onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
               className="flex h-12 w-full items-center justify-center rounded-[30px] text-subtitle-16-sb text-white"
               style={{ background: "var(--color-accent)" }}
             >
@@ -775,7 +775,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 </div>
                 <button
                   type="button"
-                  onClick={() => router.push(`/order?planId=${selectedPlan.id}`)}
+                  onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
                   className="flex h-[48px] w-full items-center justify-center md:mt-8 rounded-[30px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                   style={{ background: selectedTheme.colorVar }}
                 >

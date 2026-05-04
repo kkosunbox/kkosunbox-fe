@@ -1,18 +1,16 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
-import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
-import { getErrorMessage } from "@/shared/lib/api";
-import { cancelSubscription, reactivateSubscription, changePlan } from "@/features/subscription/api/subscriptionApi";
+import { Text } from "@/shared/ui";
+import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
-import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
-  SUBSCRIBE_PLAN_CARD_FEATURES,
 } from "@/widgets/subscribe/plans/ui/packageData";
 
 /* ─────────────────────────────
@@ -26,21 +24,11 @@ function ChevronLeftIcon() {
   );
 }
 
-function CheckIcon({ color }: { color: string }) {
+function PlusIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0" aria-hidden="true">
-      <circle cx="9" cy="9" r="8" style={{ fill: color }} />
-      <path d="M6 9L8 11L12 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
-function InfoIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 22 22" className="shrink-0" aria-hidden="true">
-      <circle cx="11" cy="11" r="10" stroke="var(--color-icon-muted)" strokeWidth="1.5" fill="none" />
-      <path d="M11 10V15" stroke="var(--color-icon-muted)" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="11" cy="7.5" r="1" fill="var(--color-icon-muted)" />
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <circle cx="18" cy="18" r="17" stroke="var(--color-icon-gray)" strokeWidth="1.5" fill="none" />
+      <path d="M18 11V25M11 18H25" stroke="var(--color-icon-gray)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -49,312 +37,328 @@ function InfoIcon() {
    Props
 ───────────────────────────── */
 interface Props {
-  subscription: UserSubscriptionDto | null;
+  subscriptions: UserSubscriptionDto[];
   plans: SubscriptionPlanDto[];
+  billingInfo: BillingInfo | null;
+}
+
+/* ─────────────────────────────
+   Helpers
+───────────────────────────── */
+function formatPrice(n: number) {
+  return n.toLocaleString("ko-KR") + "원";
+}
+
+function formatDate(dateStr: string): string {
+  return dateStr.replace(/-/g, ".");
+}
+
+function billingDayLabel(dateStr: string): string {
+  const day = parseInt(dateStr.slice(8, 10), 10);
+  return `매달 ${day}일`;
+}
+
+/* 가장 가까운 다음 결제일 (오름차순 정렬 첫 항목) */
+function earliestNextBillingDate(subs: UserSubscriptionDto[]): string | null {
+  const dates = subs.map((s) => s.nextBillingDate).filter(Boolean);
+  if (dates.length === 0) return null;
+  return [...dates].sort()[0];
+}
+
+/* ─────────────────────────────
+   Subscriptions Summary Card (좌측)
+───────────────────────────── */
+function SubscriptionsSummaryCard({
+  activeSubscriptions,
+}: {
+  activeSubscriptions: UserSubscriptionDto[];
+}) {
+  const count = activeSubscriptions.length;
+  const nextDate = earliestNextBillingDate(activeSubscriptions);
+  const totalAmount = activeSubscriptions.reduce(
+    (sum, s) => sum + s.plan.monthlyPrice * (s.quantity || 1),
+    0,
+  );
+
+  return (
+    <div className="flex max-md:flex-col rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6 md:gap-4">
+      <div className="flex flex-1 flex-col">
+        <Text as="h3" variant="subtitle-16-b" className="mb-4 text-[var(--color-text)]">
+          {count > 0 ? `총 ${count}개의 구독 이용중` : "이용중인 구독이 없습니다"}
+        </Text>
+
+        <div className="flex flex-col gap-2.5">
+          <div className="flex items-center gap-3">
+            <span className="w-[100px] shrink-0 text-body-14-m text-[var(--color-text-label)]">
+              다음 결제일
+            </span>
+            <span className="text-body-14-sb text-[var(--color-text)]">
+              {nextDate ? formatDate(nextDate) : "-"}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="w-[100px] shrink-0 text-body-14-m text-[var(--color-text-label)]">
+              예상 결제 금액
+            </span>
+            <span className="text-body-14-sb text-[var(--color-text)]">
+              {totalAmount > 0 ? formatPrice(totalAmount) : "-"}
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="mt-4 self-start text-body-14-m text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
+        >
+          이번 달 쉬어가기
+        </button>
+      </div>
+
+      {activeSubscriptions.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 max-md:mt-4 max-md:justify-start md:self-center md:justify-end">
+          {activeSubscriptions.map((s) => {
+            const theme = packageThemeForPlan(s.plan);
+            return (
+              <span
+                key={s.id}
+                className="inline-flex items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+                style={{ background: theme.colorVar }}
+              >
+                {theme.tierLabel}
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────
+   Payment Info Card (우측)
+───────────────────────────── */
+function PaymentInfoCard({
+  billingInfo: initialBillingInfo,
+  nextBillingDate,
+}: {
+  billingInfo: BillingInfo | null;
+  nextBillingDate: string | null;
+}) {
+  const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
+
+  useEffect(() => {
+    function handlePaymentMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === "PAYMENT_SELECTED" && e.data.billing) {
+        setBillingInfo(e.data.billing as BillingInfo);
+      }
+    }
+    window.addEventListener("message", handlePaymentMessage);
+    return () => window.removeEventListener("message", handlePaymentMessage);
+  }, []);
+
+  function handleOpenPayment() {
+    window.open(
+      `/payment?method=${encodeURIComponent("신용카드")}`,
+      "paymentPopup",
+      "width=480,height=700,scrollbars=yes",
+    );
+  }
+
+  const cardDisplay = billingInfo
+    ? `${billingInfo.cardCompany} (${billingInfo.lastFourDigits} - **** - **** - ****)`
+    : "미등록";
+  const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
+  const nextDateDisplay = nextBillingDate ? `${formatDate(nextBillingDate)} (카드결제)` : "-";
+
+  const labelCls = "w-[80px] shrink-0 text-body-14-m text-[var(--color-text-label)]";
+  const valueCls = "text-body-14-sb text-[var(--color-text)]";
+
+  return (
+    <div className="flex flex-col rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
+      <Text as="h3" variant="subtitle-16-b" className="mb-5 text-[var(--color-text)]">
+        결제관리
+      </Text>
+
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-3">
+          <span className={labelCls}>결제수단</span>
+          <span className={valueCls}>{methodDisplay}</span>
+        </div>
+
+        <div className="flex items-start gap-3">
+          <span className={labelCls}>간편 결제</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={valueCls}>{cardDisplay}</span>
+            <button
+              type="button"
+              onClick={handleOpenPayment}
+              className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-body-13-m text-white transition-opacity hover:opacity-90"
+            >
+              결제등록/변경
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className={labelCls}>다음 결제일</span>
+          <span className={valueCls}>{nextDateDisplay}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────
+   Plan Card (구독 전체보기)
+───────────────────────────── */
+function PlanRow({
+  plan,
+  subscription,
+}: {
+  plan: SubscriptionPlanDto;
+  subscription: UserSubscriptionDto | null;
+}) {
+  const theme = packageThemeForPlan(plan);
+  const isActive = subscription !== null;
+  const badgeColor = isActive ? theme.colorVar : "var(--color-text-tertiary)";
+
+  return (
+    <div className="flex items-stretch overflow-hidden rounded-[20px] bg-white">
+      <div className="relative h-[140px] w-[140px] shrink-0 bg-[var(--color-background)] md:h-[155px] md:w-[155px]">
+        <Image
+          src={TIER_THUMBNAILS[theme.tier]}
+          alt={`${plan.name} 이미지`}
+          fill
+          className={`object-cover object-center ${isActive ? "" : "grayscale opacity-70"}`}
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col p-5">
+        <div className="mb-3 flex items-start justify-between gap-2">
+          <span
+            className="inline-flex items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+            style={{ background: badgeColor }}
+          >
+            {theme.tierLabel}
+          </span>
+          <Link
+            href={`/subscribe/detail?planId=${plan.id}`}
+            className="text-body-13-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
+          >
+            자세히보기
+          </Link>
+        </div>
+
+        <Text variant="subtitle-16-sb" className="mb-1.5 text-[var(--color-text)]">
+          {isActive ? `${plan.name} 구독중` : plan.name}
+        </Text>
+
+        <Text variant="body-14-m" className="text-[var(--color-text-label)]">
+          {isActive && subscription ? `${formatDate(subscription.nextBillingDate)} ~` : "-"}
+        </Text>
+        <Text variant="body-14-m" className="text-[var(--color-text-label)]">
+          {isActive && subscription
+            ? `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`
+            : "구독 종료"}
+        </Text>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────
+   Add Subscription Card (구독 추가하기)
+───────────────────────────── */
+function AddSubscriptionCard() {
+  return (
+    <Link
+      href="/mypage/subscription/change"
+      className="flex h-full min-h-[140px] flex-col items-center justify-center gap-4 rounded-[20px] bg-white py-10 transition-opacity hover:opacity-80 md:min-h-[155px]"
+    >
+      <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
+        구독 추가하기
+      </Text>
+      <PlusIcon />
+    </Link>
+  );
 }
 
 /* ─────────────────────────────
    Main Section
 ───────────────────────────── */
-function formatMonthlyPrice(n: number) {
-  return n.toLocaleString("ko-KR") + "원";
-}
-
-export default function SubscriptionManagementSection({ subscription, plans }: Props) {
+export default function SubscriptionManagementSection({ subscriptions, plans, billingInfo }: Props) {
   const router = useRouter();
-  const { openModal, openAlert } = useModal();
-  const { showLoading, hideLoading } = useLoadingOverlay();
-  const [isPending, startTransition] = useTransition();
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
 
   const sortedPlans = useMemo(
     () => [...plans].sort(comparePlansForDisplayOrder),
     [plans],
   );
 
-  const isCancelled = !subscription?.isActive || subscription?.status === "cancelled";
-  const currentTheme = subscription ? packageThemeForPlan(subscription.plan) : null;
-  const currentColor = currentTheme?.colorVar ?? "var(--color-basic)";
+  const activeSubscriptions = useMemo(
+    () => subscriptions.filter((s) => s.isActive),
+    [subscriptions],
+  );
 
-  /* 결제일 포맷: YYYY-MM-DD → 매달 D일 */
-  function formatBillingDay(dateStr: string): string {
-    const day = new Date(dateStr).getDate();
-    return `매달 ${day}일`;
-  }
+  const subscriptionByPlanId = useMemo(() => {
+    const map = new Map<number, UserSubscriptionDto>();
+    activeSubscriptions.forEach((s) => map.set(s.plan.id, s));
+    return map;
+  }, [activeSubscriptions]);
 
-  /* 구독 시작일 포맷: cancelledAt or nextBillingDate로 역산하기 어려우므로 nextBillingDate 앞달 표시 */
-  function formatNextBilling(dateStr: string): string {
-    return dateStr.replace(/-/g, ".");
-  }
-
-  function handleCancel() {
-    if (!subscription) return;
-    openModal("subscription-cancel", () => {
-      showLoading("구독 해지를 처리하고 있습니다...");
-      startTransition(async () => {
-        try {
-          await cancelSubscription(subscription.id);
-          router.refresh();
-        } catch (err) {
-          openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
-        } finally {
-          hideLoading();
-        }
-      });
-    });
-  }
-
-  function handleReactivate(planId?: number) {
-    if (!subscription) return;
-    openModal("subscription-restart", () => {
-      showLoading("구독을 재시작하고 있습니다...");
-      startTransition(async () => {
-        try {
-          await reactivateSubscription(subscription.id);
-          if (planId !== undefined && planId !== subscription.plan.id) {
-            await changePlan(subscription.id, { newPlanId: planId });
-          }
-          router.refresh();
-        } catch (err) {
-          openAlert({ title: getErrorMessage(err, "구독 재시작 처리 중 오류가 발생했습니다.") });
-        } finally {
-          hideLoading();
-        }
-      });
-    });
-  }
-
-
-  function getDetailPrimaryButton(p: SubscriptionPlanDto) {
-    return {
-      label: "구독 추가하기",
-      onClick: () => router.push(`/subscribe/detail?planId=${p.id}`),
-      disabled: isPending,
-    };
-  }
+  const earliestBillingDate = earliestNextBillingDate(activeSubscriptions);
 
   return (
-    <>
-      <div className="min-h-screen bg-white" aria-busy={isPending}>
-        {/* Upper band */}
-        <div style={{ background: "var(--color-surface-peach)" }}>
-          <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-8 pt-6 md:pt-10">
-            {/* Back button */}
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
-            >
-              <ChevronLeftIcon />
-              구독관리
-            </button>
+    <div className="min-h-screen bg-white">
+      {/* Upper band */}
+      <div style={{ background: "linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%)" }}>
+        <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-8 pt-6 md:pt-10">
+          {/* Back + title */}
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
+          >
+            <ChevronLeftIcon />
+            구독관리
+          </button>
 
-            {/* Current subscription card */}
-            <div className="flex flex-col gap-4 rounded-[20px] bg-white max-md:p-5 md:flex-row md:items-center md:justify-between md:px-10 md:py-6">
-              <div className="flex items-center max-md:gap-4 md:gap-10">
-                {/* Package image */}
-                <div className="relative max-md:h-[72px] max-md:w-[100px] md:h-[98px] md:w-[134px] shrink-0 overflow-hidden rounded-xl bg-[var(--color-background)]">
-                  <Image
-                    src={currentTheme ? TIER_THUMBNAILS[currentTheme.tier] : TIER_THUMBNAILS["Basic"]}
-                    alt="패키지 이미지"
-                    fill
-                    className="object-cover object-center"
-                  />
-                </div>
-
-                {/* Info column */}
-                <div className="flex flex-col gap-2">
-                  <span
-                    className="inline-flex w-fit items-center rounded-full px-3 py-1 text-body-14-sb text-white"
-                    style={{ background: currentColor }}
-                  >
-                    {isCancelled
-                      ? "구독 취소됨"
-                      : subscription
-                        ? currentTheme!.tierLabel
-                        : "구독중"}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
-                      {isCancelled
-                        ? (subscription?.plan.name ?? "패키지")
-                        : `${subscription?.plan.name ?? ""} 구독중`}
-                    </Text>
-                    {!isCancelled && subscription && (
-                      <span style={{ fontSize: "16px", fontWeight: 700, color: currentColor }}>
-                        {subscription.quantity}BOX
-                      </span>
-                    )}
-                  </div>
-                  {!isCancelled && subscription && (
-                    <>
-                      <Text variant="body-16-m" className="text-[var(--color-text-label)]">
-                        결제일 : {formatBillingDay(subscription.nextBillingDate)}
-                      </Text>
-                      <Text variant="body-16-m" className="text-[var(--color-text-label)]">
-                        다음 결제일 : {formatNextBilling(subscription.nextBillingDate)}
-                      </Text>
-                    </>
-                  )}
-                  {isCancelled && (
-                    <Text variant="body-16-m" className="text-[var(--color-text-label)]">
-                      구독이 취소되었습니다.
-                    </Text>
-                  )}
-                  {!subscription && (
-                    <Text variant="body-16-m" className="text-[var(--color-text-label)]">
-                      현재 활성 구독이 없습니다.
-                    </Text>
-                  )}
-                </div>
-              </div>
-
-              {/* Action buttons */}
-              {subscription && !isCancelled && (
-                <div className="flex gap-2 md:shrink-0">
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    disabled={isPending}
-                    className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60 md:flex-none"
-                    style={{ background: "var(--color-text-muted)" }}
-                  >
-                    구독 취소
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => router.push("/mypage/subscription/change")}
-                    className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 md:flex-none"
-                    style={{ background: "var(--color-accent)" }}
-                  >
-                    구독 변경
-                  </button>
-                </div>
-              )}
-              {subscription && isCancelled && (
-                <button
-                  type="button"
-                  onClick={() => handleReactivate()}
-                  disabled={isPending}
-                  className="flex h-[36px] flex-1 items-center justify-center rounded-full px-5 text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60 md:flex-none"
-                  style={{ background: "var(--color-accent)" }}
-                >
-                  구독 재시작
-                </button>
-              )}
-            </div>
+          {/* Two summary cards */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+            <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
+            <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
           </div>
         </div>
+      </div>
 
-        {/* Plans section — /subscribe 플랜 카드와 동일한 패키지 문구·레이아웃 */}
-        <div id="subscription-plans" className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
+      {/* Plans list — 구독 전체보기 */}
+      <div className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
+        <div
+          className="rounded-[24px] max-md:p-5 md:px-8 md:py-8"
+          style={{ background: "var(--color-surface-peach)" }}
+        >
           <Text as="h2" variant="subtitle-18-b" className="mb-6 text-[var(--color-text)]">
-            구독 추가하기
+            구독 전체보기
           </Text>
 
-          {selectedPlan ? (
-            <div className="w-full">
-              <PackageDetailView
-                key={selectedPlan.id}
-                plan={selectedPlan}
-                allPlans={sortedPlans}
-                onSelectPlan={setSelectedPlan}
-                onClose={() => setSelectedPlan(null)}
-                getPrimaryButton={getDetailPrimaryButton}
-              />
-            </div>
-          ) : sortedPlans.length === 0 ? (
+          {sortedPlans.length === 0 ? (
             <p className="text-body-14-m text-[var(--color-text-label)]">
               플랜 정보를 불러올 수 없습니다.
             </p>
           ) : (
-            <div className="flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
-              {sortedPlans.map((plan) => {
-                const theme = packageThemeForPlan(plan);
-                const color = theme.colorVar;
-
-                return (
-                  <div
-                    key={plan.id}
-                    className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5"
-                  >
-                    <div className="mb-2.5 flex items-center justify-between gap-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span
-                          className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-                          style={{ background: color }}
-                        >
-                          {theme.tierLabel}
-                        </span>
-                        {plan.isRecommended ? (
-                          <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
-                            추천
-                          </span>
-                        ) : null}
-                      </div>
-                      <button
-                        type="button"
-                        aria-label={`${plan.name} 패키지 상세 정보`}
-                        onClick={() => setSelectedPlan(plan)}
-                        className="flex shrink-0 items-center justify-center"
-                      >
-                        <InfoIcon />
-                      </button>
-                    </div>
-
-                    <div className="mb-[56px] flex justify-center">
-                      <Image
-                        src={TIER_THUMBNAILS[theme.tier]}
-                        alt={`${plan.name} 이미지`}
-                        className="h-[150px] w-auto object-contain"
-                      />
-                    </div>
-
-                    <h3 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-                      {plan.name}
-                    </h3>
-
-                    {plan.description ? (
-                      <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
-                        {plan.description}
-                      </p>
-                    ) : null}
-
-                    <ul className="mb-7 flex flex-col gap-[14px]">
-                      {SUBSCRIBE_PLAN_CARD_FEATURES.map((feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
-                        >
-                          <CheckIcon color={color} />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mb-7 mt-auto flex items-center justify-between border-t border-white pt-3">
-                      <span className="text-body-14-b text-black">월 요금제</span>
-                      <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-                        {formatMonthlyPrice(plan.monthlyPrice)}
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-                      disabled={isPending}
-                      className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
-                      style={{ background: color }}
-                    >
-                      구독 추가하기
-                    </button>
-                  </div>
-                );
-              })}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+              {sortedPlans.map((plan) => (
+                <PlanRow
+                  key={plan.id}
+                  plan={plan}
+                  subscription={subscriptionByPlanId.get(plan.id) ?? null}
+                />
+              ))}
+              <AddSubscriptionCard />
             </div>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

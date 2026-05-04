@@ -70,6 +70,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<number>(profile?.id ?? profiles[0]?.id ?? 0);
 
+  const isEmpty = profiles.length === 0;
   const isChanged = selectedId !== profile?.id;
   const canAddProfile = profiles.length < MAX_PROFILE_COUNT;
 
@@ -132,22 +133,31 @@ export default function ProfileSwitchModal({ onClose }: Props) {
 
             {/* Guide text */}
             <p className="text-[14px] font-normal leading-[17px] tracking-[-0.04em] text-[rgba(34,34,38,0.82)] text-center">
-              관리할 프로필을 선택해 주세요.
+              {isEmpty ? "아직 등록된 프로필이 없어요." : "관리할 프로필을 선택해 주세요."}
             </p>
           </div>
 
-          {/* Confirm button */}
-          <button
-            onClick={handleConfirm}
-            disabled={!isChanged}
-            className={`w-full h-[48px] rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-colors ${
-              isChanged
-                ? "bg-[var(--color-primary)] hover:opacity-90"
-                : "bg-[var(--color-border)]"
-            }`}
-          >
-            확인
-          </button>
+          {/* Confirm / Add button */}
+          {isEmpty ? (
+            <button
+              onClick={handleAddProfile}
+              className="w-full h-[48px] rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white bg-[var(--color-primary)] hover:opacity-90 transition-colors"
+            >
+              프로필 등록하기
+            </button>
+          ) : (
+            <button
+              onClick={handleConfirm}
+              disabled={!isChanged}
+              className={`w-full h-[48px] rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-colors ${
+                isChanged
+                  ? "bg-[var(--color-primary)] hover:opacity-90"
+                  : "bg-[var(--color-border)]"
+              }`}
+            >
+              확인
+            </button>
+          )}
         </div>
       </div>
     </div>

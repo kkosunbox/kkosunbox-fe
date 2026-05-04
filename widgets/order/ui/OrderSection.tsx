@@ -258,12 +258,14 @@ export interface OrderSectionProps {
   plan: SubscriptionPlanDto;
   initialAddresses: DeliveryAddress[];
   initialBilling: BillingInfo | null;
+  initialQuantity?: number;
 }
 
 export default function OrderSection({
   plan,
   initialAddresses,
   initialBilling,
+  initialQuantity = 1,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -332,7 +334,7 @@ export default function OrderSection({
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
 
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
 
   const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
 
@@ -468,7 +470,7 @@ export default function OrderSection({
         }
 
         await createSubscription({
-          petProfileId: profile!.id,
+          petProfileId: profile?.id,
           deliveryAddressId,
           planId: plan.id,
           quantity,

@@ -126,9 +126,11 @@ function ReviewCard({ review }: { review: DisplayReview }) {
           <span className="text-center text-[18px] font-bold leading-[21px] text-[var(--color-review-text)]">
             {review.name}
           </span>
-          <span className="text-center text-[14px] font-medium leading-[17px] text-[var(--color-text-label)]">
-            {review.subscription}
-          </span>
+          <div className="flex flex-col items-center gap-1 text-center text-[14px] font-medium leading-[17px] text-[var(--color-text-label)]">
+            {review.subscription.split(/\s*·\s*/).map((part, idx) => (
+              <span key={idx}>{part}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

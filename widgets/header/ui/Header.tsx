@@ -42,6 +42,15 @@ function SwitchHorizontalIcon() {
   );
 }
 
+function PlusCircleIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" stroke="var(--color-border)" strokeWidth="1.5" />
+      <path d="M12 8V16M8 12H16" stroke="var(--color-border)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "sm" | "md" | "lg" }) {
   const sizeClass = { sm: "h-8 w-8", md: "h-12 w-12", lg: "h-[54px] w-[54px]" }[size];
   const iconClass = { sm: "h-5 w-5", md: "h-7 w-7", lg: "h-8 w-8" }[size];
@@ -60,7 +69,7 @@ function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "
   );
 }
 
-function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName: string | null; email: string | null; profileImageUrl: string | null; onClose: () => void }) {
+function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose }: { hasProfile: boolean; petName: string | null; email: string | null; profileImageUrl: string | null; onClose: () => void }) {
   const { logout } = useAuth();
   const { openModal } = useModal();
   const router = useRouter();
@@ -87,6 +96,11 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
     openModal("profile-switch");
   };
 
+  const handleAddProfile = () => {
+    onClose();
+    router.push("/mypage/dog-profile?new=true");
+  };
+
   return (
     <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[280px] rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden py-1">
       <div className="flex flex-col">
@@ -95,10 +109,22 @@ function ProfileDropdown({ petName, email, profileImageUrl, onClose }: { petName
           <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
           <div className="ml-4 min-w-0 flex-1">
             <div className="flex items-center gap-1 min-w-0">
-              <span className="text-body-16-sb text-[var(--color-text)] truncate">{getProfileDisplayName(petName)}</span>
-              <button onClick={handleSwitchProfile} aria-label="프로필 변경" className="shrink-0">
-                <SwitchHorizontalIcon />
-              </button>
+              {hasProfile ? (
+                <>
+                  <span className="text-body-16-sb text-[var(--color-text)] truncate">{getProfileDisplayName(petName)}</span>
+                  <button onClick={handleSwitchProfile} aria-label="프로필 변경" className="shrink-0">
+                    <SwitchHorizontalIcon />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleAddProfile}
+                  className="flex items-center gap-1 text-body-16-sb text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors min-w-0"
+                >
+                  <span className="truncate">프로필 등록하기</span>
+                  <PlusCircleIcon />
+                </button>
+              )}
             </div>
             {email && (
               <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)] truncate">
@@ -129,10 +155,12 @@ export default function Header() {
   const { isLoggedIn, user, isAuthLoading } = useAuth();
   const { profile } = useProfile();
   const { openModal } = useModal();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
+  const hasProfile = !!profile;
 
   useEffect(() => {
     if (!isProfileOpen) return;
@@ -195,6 +223,7 @@ export default function Header() {
                 </button>
                 {isProfileOpen && (
                   <ProfileDropdown
+                    hasProfile={hasProfile}
                     petName={profile?.name ?? null}
                     email={user?.email ?? null}
                     profileImageUrl={profileImageUrl}
@@ -234,16 +263,28 @@ export default function Header() {
               </Link>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1 min-w-0">
-                  <Link href="/mypage" onClick={closeMenu} className="text-body-16-m text-[var(--color-text)] truncate">
-                    {getProfileDisplayName(profile?.name)}
-                  </Link>
-                  <button
-                    onClick={() => { closeMenu(); openModal("profile-switch"); }}
-                    aria-label="프로필 변경"
-                    className="shrink-0"
-                  >
-                    <SwitchHorizontalIcon />
-                  </button>
+                  {hasProfile ? (
+                    <>
+                      <Link href="/mypage" onClick={closeMenu} className="text-body-16-m text-[var(--color-text)] truncate">
+                        {getProfileDisplayName(profile?.name)}
+                      </Link>
+                      <button
+                        onClick={() => { closeMenu(); openModal("profile-switch"); }}
+                        aria-label="프로필 변경"
+                        className="shrink-0"
+                      >
+                        <SwitchHorizontalIcon />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => { closeMenu(); router.push("/mypage/dog-profile?new=true"); }}
+                      className="flex items-center gap-1 text-body-16-m text-[var(--color-text-secondary)] min-w-0"
+                    >
+                      <span className="truncate">프로필 등록하기</span>
+                      <PlusCircleIcon />
+                    </button>
+                  )}
                 </div>
                 {user?.email && (
                   <p className="mt-0.5 text-body-13-r text-[var(--color-text-secondary)] truncate">

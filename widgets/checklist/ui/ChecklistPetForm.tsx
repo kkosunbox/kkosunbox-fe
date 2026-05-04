@@ -15,7 +15,7 @@ function formatBirthDateDisplay(date: Date): string {
 }
 
 const CTA_CLASS =
-  "!h-12 !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
+  "!h-12 !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80 disabled:!cursor-not-allowed disabled:!opacity-50 disabled:hover:!opacity-50";
 
 function BreedSearchGlyph() {
   return (
@@ -89,6 +89,7 @@ export default function ChecklistPetForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const birthMaxDate = new Date();
   const birthMinDate = new Date(birthMaxDate.getFullYear() - 40, 0, 1);
+  const isNameValid = petInfo.name.trim().length > 0;
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -114,7 +115,9 @@ export default function ChecklistPetForm({
       <div className="mx-auto w-full max-w-[720px]">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-caption-12-r text-[var(--color-text-secondary)]">강아지 이름</label>
+            <label className="text-caption-12-r text-[var(--color-text-secondary)]">
+              강아지 이름 <span className="text-[var(--color-accent)]">*</span>
+            </label>
             <input
               type="text"
               placeholder="이름"
@@ -222,6 +225,7 @@ export default function ChecklistPetForm({
           <Button
             type="button"
             onClick={onNext}
+            disabled={!isNameValid}
             variant="primary"
             size="lg"
             className={CTA_CLASS}

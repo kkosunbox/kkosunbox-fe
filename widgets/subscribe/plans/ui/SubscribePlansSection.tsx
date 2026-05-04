@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ChecklistRecommendModal, ScrollReveal, useModal } from "@/shared/ui";
+import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import { TIER_THUMBNAILS } from "./packageThumbnails";
 import { useAuth } from "@/features/auth";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
@@ -66,76 +66,79 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
   const pkg = PACKAGES.find((p) => p.tier === theme.tier);
 
   return (
-    <div className="flex h-full flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5">
-      <div className="mb-2.5 flex items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-            style={{ background: color }}
-          >
-            {theme.tierLabel}
-          </span>
-          {plan.isRecommended ? (
-            <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
-              추천
-            </span>
-          ) : null}
-        </div>
-        <button
-          type="button"
-          aria-label={`${plan.name} 패키지 상세 정보`}
-          onClick={onInfoClick}
-          className="flex shrink-0 items-center justify-center"
-        >
-          <InfoIcon />
-        </button>
-      </div>
-
-      <div className="mb-[56px] flex justify-center">
+    <div className="flex h-full flex-col overflow-hidden rounded-[20px] bg-[var(--color-background)]">
+      {/* Image — fills card top edge-to-edge, 327:252 ratio, badge/info overlaid */}
+      <div className="relative aspect-[327/252] w-full">
         <Image
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
-          className="h-[150px] w-auto object-contain"
+          fill
+          className="object-cover"
         />
-      </div>
-
-      <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-        {plan.name}
-      </h2>
-
-      {plan.description ? (
-        <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
-          {plan.description}
-        </p>
-      ) : null}
-
-      <ul className="mb-7 flex flex-col gap-[14px]">
-        {(pkg?.items ?? []).map((item) => (
-          <li
-            key={item}
-            className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 px-7 pt-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+              style={{ background: color }}
+            >
+              {theme.tierLabel}
+            </span>
+            {plan.isRecommended ? (
+              <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
+                추천
+              </span>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            aria-label={`${plan.name} 패키지 상세 정보`}
+            onClick={onInfoClick}
+            className="flex shrink-0 items-center justify-center"
           >
-            <CheckIcon color={color} />
-            {item}
-          </li>
-        ))}
-      </ul>
-
-      <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
-        <span className="text-body-14-b text-black">월 요금제</span>
-        <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-          {formatMonthlyPrice(plan.monthlyPrice)}
-        </span>
+            <InfoIcon />
+          </button>
+        </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onPrimaryClick}
-        className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-        style={{ background: color }}
-      >
-        제품 상세보기
-      </button>
+      <div className="flex flex-1 flex-col px-7 pb-7 pt-5">
+        <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
+          {plan.name}
+        </h2>
+
+        {plan.description ? (
+          <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
+            {plan.description}
+          </p>
+        ) : null}
+
+        <ul className="mb-7 flex flex-col gap-[14px]">
+          {(pkg?.items ?? []).map((item) => (
+            <li
+              key={item}
+              className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
+            >
+              <CheckIcon color={color} />
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
+          <span className="text-body-14-b text-black">월 요금제</span>
+          <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
+            {formatMonthlyPrice(plan.monthlyPrice)}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={onPrimaryClick}
+          className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+          style={{ background: color }}
+        >
+          제품 상세보기
+        </button>
+      </div>
     </div>
   );
 }
@@ -149,7 +152,6 @@ interface Props {
 export default function SubscribePlansSection({ plans }: Props) {
   const router = useRouter();
   const { isLoggedIn, user } = useAuth();
-  const { openAlert } = useModal();
   const [isDismissed, setIsDismissed] = useState(false);
   /** 데스크톱 전용: 그리드 ↔ 단일 상세 뷰 전환 */
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
@@ -292,7 +294,7 @@ export default function SubscribePlansSection({ plans }: Props) {
     },
     () => true,
   );
-  const showModal = !isChecklistDone && !isDismissed;
+  const showModal = isLoggedIn && !isChecklistDone && !isDismissed;
 
   function handleClose() {
     setIsDismissed(true);
@@ -300,16 +302,6 @@ export default function SubscribePlansSection({ plans }: Props) {
 
   function handleConfirm() {
     setIsDismissed(true);
-    if (!isLoggedIn) {
-      openAlert({
-        title: "로그인이 필요해요",
-        description: "체크리스트 작성은 로그인 후 이용할 수 있어요.",
-        primaryLabel: "로그인 하러 가기",
-        onPrimary: () => router.push("/login?next=/checklist"),
-        secondaryLabel: "취소",
-      });
-      return;
-    }
     router.push("/checklist");
   }
 

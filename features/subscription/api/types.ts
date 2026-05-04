@@ -77,7 +77,7 @@ export interface CouponInfo {
 // ── 요청 ──────────────────────────────────────────────────────────
 
 export interface CreateSubscriptionRequest {
-  petProfileId: number;
+  petProfileId?: number;
   deliveryAddressId: number;
   planId: number;
   quantity?: number; // 1~99, 기본값 1. 쿠폰 할인은 단가 1개에만 적용

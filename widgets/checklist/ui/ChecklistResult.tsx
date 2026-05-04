@@ -81,88 +81,90 @@ function ResultPlanCard({ plan, isRecommended, onInfoClick }: ResultPlanCardProp
   const pkg = PACKAGES.find((p) => p.tier === theme.tier);
 
   return (
-    <div className="flex flex-col rounded-[20px] bg-[var(--color-background)] px-7 pb-7 pt-5">
-      <div className="mb-2.5 flex items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-            style={{ background: theme.colorVar }}
-          >
-            {theme.tierLabel}
-          </span>
-        </div>
-        <button
-          type="button"
-          aria-label={`${plan.name} 패키지 상세 정보`}
-          onClick={onInfoClick}
-          className="flex shrink-0 items-center justify-center"
-        >
-          <InfoIcon />
-        </button>
-      </div>
-
-      <div className="relative mb-[56px] flex justify-center">
+    <div className="flex flex-col overflow-hidden rounded-[20px] bg-[var(--color-background)]">
+      <div className="relative aspect-[327/252] w-full">
         <Image
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
-          className="h-[150px] w-auto object-contain"
+          fill
+          className="object-cover"
         />
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 px-7 pt-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+              style={{ background: theme.colorVar }}
+            >
+              {theme.tierLabel}
+            </span>
+          </div>
+          <button
+            type="button"
+            aria-label={`${plan.name} 패키지 상세 정보`}
+            onClick={onInfoClick}
+            className="flex shrink-0 items-center justify-center"
+          >
+            <InfoIcon />
+          </button>
+        </div>
         {isRecommended && (
           <Image
             src={stamp}
             alt="BEST CHOICE 추천 스탬프"
-            className="pointer-events-none absolute -top-6 right-2 h-[120px] w-[120px] object-contain md:-right-5 md:-top-8 md:h-[140px] md:w-[140px]"
+            className="pointer-events-none absolute right-3 top-12 h-[120px] w-[120px] object-contain md:right-4 md:top-14 md:h-[140px] md:w-[140px]"
           />
         )}
       </div>
 
-      <div className="relative mb-7.5">
-        {isRecommended && (
-          <Image
-            src={doubleTwinkle}
-            alt=""
-            aria-hidden
-            className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
-          />
-        )}
-        <h2 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-          {plan.name}
-        </h2>
+      <div className="flex flex-1 flex-col px-7 pb-7 pt-5">
+        <div className="relative mb-7.5">
+          {isRecommended && (
+            <Image
+              src={doubleTwinkle}
+              alt=""
+              aria-hidden
+              className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
+            />
+          )}
+          <h2 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
+            {plan.name}
+          </h2>
+        </div>
+
+        {plan.description ? (
+          <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
+            {plan.description}
+          </p>
+        ) : null}
+
+        <ul className="mb-7 flex flex-col gap-[14px]">
+          {(pkg?.items ?? []).map((item) => (
+            <li
+              key={item}
+              className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
+            >
+              <CheckIcon color={theme.colorVar} />
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
+          <span className="text-body-14-b text-black">월 요금제</span>
+          <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
+            {formatMonthlyPrice(plan.monthlyPrice)}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
+          className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+          style={{ background: theme.colorVar }}
+        >
+          제품 상세보기
+        </button>
       </div>
-
-      {plan.description ? (
-        <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
-          {plan.description}
-        </p>
-      ) : null}
-
-      <ul className="mb-7 flex flex-col gap-[14px]">
-        {(pkg?.items ?? []).map((item) => (
-          <li
-            key={item}
-            className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
-          >
-            <CheckIcon color={theme.colorVar} />
-            {item}
-          </li>
-        ))}
-      </ul>
-
-      <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
-        <span className="text-body-14-b text-black">월 요금제</span>
-        <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-          {formatMonthlyPrice(plan.monthlyPrice)}
-        </span>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-        className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-        style={{ background: theme.colorVar }}
-      >
-        제품 상세보기
-      </button>
     </div>
   );
 }

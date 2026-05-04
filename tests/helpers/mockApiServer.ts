@@ -6,7 +6,7 @@ export const TEST_CREDENTIALS = {
   password: "Test1234!",
 };
 
-// 프로필이 없는 인증 유저 — 주문 페이지 "프로필 없음 → /mypage/dog-profile" 리다이렉트 테스트용
+// 프로필이 없는 인증 유저 — 프로필이 선택 사항임을 검증하는 E2E용
 export const NO_PROFILE_CREDENTIALS = {
   email: "noprofile@example.com",
   password: "Test1234!",
@@ -208,6 +208,11 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       const body = await readBody(req) as Record<string, string>;
       if (body.refreshToken === MOCK_REFRESH_TOKEN) {
         ok(res, { accessToken: MOCK_ACCESS_TOKEN, refreshToken: MOCK_REFRESH_TOKEN });
+      } else if (body.refreshToken === MOCK_NO_PROFILE_REFRESH_TOKEN) {
+        ok(res, {
+          accessToken: MOCK_NO_PROFILE_ACCESS_TOKEN,
+          refreshToken: MOCK_NO_PROFILE_REFRESH_TOKEN,
+        });
       } else {
         err(res, 401, "UNAUTHORIZED");
       }
@@ -215,7 +220,7 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
 
     // GET /v1/profiles — SSR(fetchProfiles) + 클라이언트(ProfileProvider) 양쪽에서 호출
-    // 인증 토큰이 없으면 빈 배열 → order 페이지 SSR에서 /mypage/dog-profile 리다이렉트 트리거
+    // NO_PROFILE 토큰이면 빈 배열 — 프로필 없이도 주문/구독이 가능해야 함
     if (method === "GET" && url === "/v1/profiles") {
       const auth = req.headers.authorization ?? "";
       if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {
@@ -278,10 +283,14 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
 
     // GET /v1/subscriptions/plans — subscribe 페이지 플랜 목록
-    // 인증 토큰이 없으면 401 → fetchSubscriptionPlans의 .catch()가 빈 배열로 폴백
+    // 인증된 토큰(일반·NO_PROFILE 모두)이면 동일한 플랜 목록 반환,
+    // 그 외에는 401 → fetchSubscriptionPlans의 .catch()가 빈 배열로 폴백
     if (method === "GET" && url.startsWith("/v1/subscriptions/plans")) {
       const auth = req.headers.authorization ?? "";
-      if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {
+      if (
+        auth === `Bearer ${MOCK_ACCESS_TOKEN}` ||
+        auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}`
+      ) {
         ok(res, { plans: MOCK_PLANS });
       } else {
         err(res, 401, "UNAUTHORIZED");

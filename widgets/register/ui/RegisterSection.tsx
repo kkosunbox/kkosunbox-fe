@@ -87,7 +87,7 @@ function RegisterPasswordToggleIcon({ passwordVisible }: { passwordVisible: bool
 /* ─── 약관 목록 ─── */
 const AGREEMENTS = [
   { key: "terms"     as const, label: "서비스 이용약관 동의",    required: true  },
-  { key: "privacy"   as const, label: "개인정보처리방침 및 동의", required: false },
+  { key: "privacy"   as const, label: "개인정보처리방침 및 동의", required: true  },
   { key: "marketing" as const, label: "마케팅 정보 수신 동의",   required: false },
 ] as const;
 
@@ -155,6 +155,7 @@ export default function RegisterSection() {
     password.length >= 8 &&
     password === passwordConfirm &&
     agreements.terms &&
+    agreements.privacy &&
     !isPending;
 
   /** 에러를 알림 모달로 표시 */
@@ -217,6 +218,7 @@ export default function RegisterSection() {
   /* ── 회원가입 ── */
   function handleSignup() {
     if (!agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
+    if (!agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
     if (password.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
     if (password !== passwordConfirm) { showError("비밀번호가 일치하지 않습니다."); return; }
     showLoading("회원가입을 처리하고 있습니다...");
@@ -235,7 +237,7 @@ export default function RegisterSection() {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
 
         router.refresh();
-        router.push("/mypage/dog-profile");
+        router.push("/");
       } finally {
         hideLoading();
       }

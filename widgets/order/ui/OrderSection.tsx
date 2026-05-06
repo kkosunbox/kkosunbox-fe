@@ -321,7 +321,6 @@ export default function OrderSection({
     addressDetail: "",
     memo: "",
   });
-  const [saveInfo, setSaveInfo] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState<string>("신용카드");
   const [couponEnabled, setCouponEnabled] = useState(false);
 
@@ -687,20 +686,15 @@ export default function OrderSection({
                 />
               )}
             </FormRow>
-            {/* 배송메모 + 배송지 정보 저장 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormRow label="배송메모">
-                <input
-                  value={newAddr.memo}
-                  onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
-                  className={`${inputCls} max-w-[220px]`}
-                  placeholder="배송 시 요청사항을 입력해주세요"
-                />
-              </FormRow>
-              <div className="flex items-center">
-                <Checkbox checked={saveInfo} onChange={() => setSaveInfo((v) => !v)} label="배송지 정보 저장" />
-              </div>
-            </div>
+            {/* 배송메모 */}
+            <FormRow label="배송메모">
+              <input
+                value={newAddr.memo}
+                onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
+                className={`${inputCls} max-w-[220px]`}
+                placeholder="배송 시 요청사항을 입력해주세요"
+              />
+            </FormRow>
           </div>
         )}
       </SectionCard>

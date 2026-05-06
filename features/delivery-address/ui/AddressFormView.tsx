@@ -19,6 +19,22 @@ interface Props {
 const LABEL_CLS = "w-[72px] shrink-0 text-body-14-sb text-[var(--color-text)]";
 const INPUT_CLS =
   "h-10 flex-1 min-w-0 rounded-md border border-[var(--color-text-muted)] bg-white px-3 text-body-14-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-accent)]";
+const PHONE_NUMBER_PATTERN = /^01[0-9]\d{7,8}$/;
+
+function toPhoneDigits(value: string) {
+  return value.replace(/\D/g, "").slice(0, 11);
+}
+
+function formatPhoneNumber(value: string) {
+  const digits = toPhoneDigits(value);
+
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)} - ${digits.slice(3)}`;
+  if (digits.length <= 10) {
+    return `${digits.slice(0, 3)} - ${digits.slice(3, 6)} - ${digits.slice(6)}`;
+  }
+  return `${digits.slice(0, 3)} - ${digits.slice(3, 7)} - ${digits.slice(7)}`;
+}
 
 export default function AddressFormView({
   editingAddress,
@@ -37,7 +53,7 @@ export default function AddressFormView({
     editingAddress?.addressDetail ?? "",
   );
   const [phoneNumber, setPhoneNumber] = useState(
-    editingAddress?.phoneNumber ?? "",
+    formatPhoneNumber(editingAddress?.phoneNumber ?? ""),
   );
   const [memo, setMemo] = useState(editingAddress?.memo ?? "");
 
@@ -45,13 +61,12 @@ export default function AddressFormView({
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
   */
-  const [saveInfo, setSaveInfo] = useState(true);
-
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit() {
     setError(null);
+    const phoneDigits = toPhoneDigits(phoneNumber);
 
     if (!receiverName.trim()) {
       setError("받는분을 입력해주세요.");
@@ -61,8 +76,12 @@ export default function AddressFormView({
       setError("주소를 검색해주세요.");
       return;
     }
-    if (!phoneNumber.trim()) {
+    if (!phoneDigits) {
       setError("휴대폰 번호를 입력해주세요.");
+      return;
+    }
+    if (!PHONE_NUMBER_PATTERN.test(phoneDigits)) {
+      setError("휴대폰 번호를 정확히 입력해주세요. (숫자 10~11자리)");
       return;
     }
 
@@ -70,7 +89,7 @@ export default function AddressFormView({
     try {
       const body = {
         receiverName: receiverName.trim(),
-        phoneNumber: phoneNumber.trim(),
+        phoneNumber: phoneDigits,
         zipCode: pendingZipCode,
         address: pendingAddress,
         addressDetail: addressDetail.trim() || undefined,
@@ -141,7 +160,9 @@ export default function AddressFormView({
             id="addr-phone"
             type="tel"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+            inputMode="numeric"
+            maxLength={17}
             placeholder="-를 제외한 숫자만 입력해주세요"
             className={INPUT_CLS}
           />
@@ -242,41 +263,6 @@ export default function AddressFormView({
           />
         </div>
 
-        {/* 배송지 정보 저장 — 라벨 열은 빈 칸, 체크 영역은 입력과 동일 왼쪽 라인 */}
-        <div className="flex items-center gap-3 pt-2">
-          <span className={LABEL_CLS} aria-hidden />
-          <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2">
-            <span
-              className={[
-                "flex h-5 w-5 items-center justify-center rounded",
-                saveInfo
-                  ? "bg-[var(--color-accent)] text-white"
-                  : "border border-[var(--color-text-muted)] bg-white",
-              ].join(" ")}
-            >
-              {saveInfo && (
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path
-                    d="M2 6l3 3 5-5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              )}
-            </span>
-            <input
-              type="checkbox"
-              checked={saveInfo}
-              onChange={(e) => setSaveInfo(e.target.checked)}
-              className="sr-only"
-            />
-            <span className="text-body-14-m text-[var(--color-text)]">
-              배송지 정보 저장
-            </span>
-          </label>
-        </div>
       </div>
 
       {/* Error */}

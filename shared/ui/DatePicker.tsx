@@ -223,6 +223,8 @@ export default function DatePicker({
 
   useLayoutEffect(() => {
     if (!isOpen) return;
+    /* 첫 페인트 전에 좌표 확정 — 생략 시 popupRect(0,0)으로 한 프레임 노출됨 */
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- useLayoutEffect + 측정 직후 동기 좌표 반영(깜빡임 방지)
     updatePopupPosition();
     const raf = requestAnimationFrame(() => updatePopupPosition());
     const onReposition = () => updatePopupPosition();

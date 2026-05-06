@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
-import FaqTitle from "../assets/faq-title.webp";
 import FaqQuestion from "../assets/faq-question.webp";
 
 /* ── FAQ 데이터 ──────────────────────────────────────────── */

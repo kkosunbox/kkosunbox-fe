@@ -156,6 +156,97 @@ function Stars({ rating, size = 20 }: { rating: number; size?: number }) {
   );
 }
 
+type ReviewLightboxState = { urls: string[]; index: number };
+
+function ReviewImageLightbox({
+  urls,
+  index,
+  onClose,
+  onNavigate,
+}: {
+  urls: string[];
+  index: number;
+  onClose: () => void;
+  onNavigate: (next: number) => void;
+}) {
+  const onCloseRef = useRef(onClose);
+  const onNavigateRef = useRef(onNavigate);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+    onNavigateRef.current = onNavigate;
+  }, [onClose, onNavigate]);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onCloseRef.current();
+      if (e.key === "ArrowLeft") onNavigateRef.current(Math.max(0, index - 1));
+      if (e.key === "ArrowRight") onNavigateRef.current(Math.min(urls.length - 1, index + 1));
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [index, urls.length]);
+
+  const url = urls[index];
+  if (!url) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="리뷰 사진"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        aria-label="닫기"
+        className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-[24px] font-light leading-none text-white hover:bg-black/70 md:right-6 md:top-6"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
+      >
+        ×
+      </button>
+      {urls.length > 1 ? (
+        <span className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-body-13-m text-white">
+          {index + 1} / {urls.length}
+        </span>
+      ) : null}
+      <div
+        className="relative flex max-h-[90vh] max-w-full items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {urls.length > 1 ? (
+          <button
+            type="button"
+            aria-label="이전 사진"
+            className="absolute left-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-left-1 md:-left-14"
+            disabled={index <= 0}
+            onClick={() => onNavigate(index - 1)}
+          >
+            ‹
+          </button>
+        ) : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={url} alt={`리뷰 사진 ${index + 1}`} className="max-h-[85vh] max-w-full object-contain" />
+        {urls.length > 1 ? (
+          <button
+            type="button"
+            aria-label="다음 사진"
+            className="absolute right-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-right-1 md:-right-14"
+            disabled={index >= urls.length - 1}
+            onClick={() => onNavigate(index + 1)}
+          >
+            ›
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function SubscribeProductDetailPage({ initialPlan, plans }: Props) {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
@@ -170,6 +261,16 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const [reviewsAverage, setReviewsAverage] = useState(0);
   const [reviewsPage, setReviewsPage] = useState(1);
   const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewLightbox, setReviewLightbox] = useState<ReviewLightboxState | null>(null);
+
+  useEffect(() => {
+    if (!reviewLightbox) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [reviewLightbox]);
 
   const fetchReviews = useCallback(
     async (planId: number, page: number) => {
@@ -240,6 +341,16 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
   return (
     <section className="bg-white md:pb-16">
+      {reviewLightbox ? (
+        <ReviewImageLightbox
+          urls={reviewLightbox.urls}
+          index={reviewLightbox.index}
+          onClose={() => setReviewLightbox(null)}
+          onNavigate={(next) =>
+            setReviewLightbox((s) => (s ? { ...s, index: next } : null))
+          }
+        />
+      ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden">
         <Image
@@ -464,24 +575,31 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             {reviewImages.length > 0 && (
               <div className="mb-6 flex items-center gap-3 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {reviewImages.slice(0, 3).map((url, idx) => (
-                  <div
+                  <button
                     key={idx}
-                    className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] bg-[var(--color-surface-warm)]"
+                    type="button"
+                    onClick={() => setReviewLightbox({ urls: [...reviewImages], index: idx })}
+                    className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90 active:opacity-80"
+                    aria-label={`리뷰 사진 ${idx + 1} 크게 보기`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt="" className="h-full w-full object-cover" />
-                  </div>
+                    <img src={url} alt="" className="pointer-events-none h-full w-full object-cover" />
+                  </button>
                 ))}
                 {reviewImages.length > 3 && (
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[6px]">
+                  <button
+                    type="button"
+                    onClick={() => setReviewLightbox({ urls: [...reviewImages], index: 3 })}
+                    className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[6px] transition-opacity hover:opacity-90 active:opacity-80"
+                    aria-label={`리뷰 사진 더보기, ${reviewImages.length - 3}장 추가`}
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={reviewImages[3]} alt="" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
                       더보기
-                      <br />
-                      +{reviewImages.length - 3}
+                      <br />+{reviewImages.length - 3}
                     </div>
-                  </div>
+                  </button>
                 )}
               </div>
             )}
@@ -551,13 +669,25 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                     {review.imageUrls && review.imageUrls.length > 0 && (
                       <div className="mt-4 flex gap-2 pl-[66px]">
                         {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
-                          <div
+                          <button
                             key={imgIdx}
-                            className="h-[100px] w-[100px] overflow-hidden rounded-[12px] border border-[var(--color-text-muted)]"
+                            type="button"
+                            onClick={() =>
+                              setReviewLightbox({
+                                urls: review.imageUrls ? [...review.imageUrls] : [],
+                                index: imgIdx,
+                              })
+                            }
+                            className="h-[100px] w-[100px] overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] transition-opacity hover:opacity-90 active:opacity-80"
+                            aria-label={`리뷰 사진 ${imgIdx + 1} 크게 보기`}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={url} alt={`리뷰 사진 ${imgIdx + 1}`} className="h-full w-full object-cover" />
-                          </div>
+                            <img
+                              src={url}
+                              alt={`리뷰 사진 ${imgIdx + 1}`}
+                              className="pointer-events-none h-full w-full object-cover"
+                            />
+                          </button>
                         ))}
                       </div>
                     )}
@@ -873,24 +1003,31 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               {reviewImages.length > 0 && (
                 <div className="mb-10 flex items-center gap-4">
                   {reviewImages.slice(0, 4).map((url, idx) => (
-                    <div
+                    <button
                       key={idx}
-                      className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)]"
+                      type="button"
+                      onClick={() => setReviewLightbox({ urls: [...reviewImages], index: idx })}
+                      className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90 active:opacity-80"
+                      aria-label={`리뷰 사진 ${idx + 1} 크게 보기`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt="" className="h-full w-full object-cover" />
-                    </div>
+                      <img src={url} alt="" className="pointer-events-none h-full w-full object-cover" />
+                    </button>
                   ))}
                   {reviewImages.length > 4 && (
-                    <div className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px]">
+                    <button
+                      type="button"
+                      onClick={() => setReviewLightbox({ urls: [...reviewImages], index: 4 })}
+                      className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] transition-opacity hover:opacity-90 active:opacity-80"
+                      aria-label={`리뷰 사진 더보기, ${reviewImages.length - 4}장 추가`}
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={reviewImages[4]} alt="" className="h-full w-full object-cover" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-center text-subtitle-16-sb text-white">
+                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-center text-subtitle-16-sb text-white">
                         더보기
-                        <br />
-                        +{reviewImages.length - 4}
+                        <br />+{reviewImages.length - 4}
                       </div>
-                    </div>
+                    </button>
                   )}
                 </div>
               )}
@@ -958,13 +1095,25 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                           {review.imageUrls && review.imageUrls.length > 0 && (
                             <div className="mt-3 flex gap-2">
                               {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
-                                <div
+                                <button
                                   key={imgIdx}
-                                  className="h-[100px] w-[100px] overflow-hidden rounded-[8px] border border-[var(--color-text-muted)]"
+                                  type="button"
+                                  onClick={() =>
+                                    setReviewLightbox({
+                                      urls: review.imageUrls ? [...review.imageUrls] : [],
+                                      index: imgIdx,
+                                    })
+                                  }
+                                  className="h-[100px] w-[100px] overflow-hidden rounded-[8px] border border-[var(--color-text-muted)] transition-opacity hover:opacity-90 active:opacity-80"
+                                  aria-label={`리뷰 사진 ${imgIdx + 1} 크게 보기`}
                                 >
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img src={url} alt={`리뷰 사진 ${imgIdx + 1}`} className="h-full w-full object-cover" />
-                                </div>
+                                  <img
+                                    src={url}
+                                    alt={`리뷰 사진 ${imgIdx + 1}`}
+                                    className="pointer-events-none h-full w-full object-cover"
+                                  />
+                                </button>
                               ))}
                             </div>
                           )}

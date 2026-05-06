@@ -78,7 +78,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
   );
 
   function handlePurchase(plan: SubscriptionPlanDto) {
-    router.push(`/subscribe/detail?planId=${plan.id}`);
+    router.push(`/order?planId=${plan.id}&quantity=1`);
   }
 
   function getDetailPrimaryButton(p: SubscriptionPlanDto) {

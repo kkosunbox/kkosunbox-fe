@@ -664,12 +664,18 @@ export default function OrderSection({
             <FormRow label="">
               {newAddr.address ? (
                 <div className="flex flex-col gap-2">
-                  <p className="text-body-13-m text-[var(--color-text)]">{newAddr.address}</p>
+                  <input
+                    readOnly
+                    value={newAddr.address}
+                    className={`${inputCls} cursor-default bg-[var(--color-surface-light)]`}
+                    aria-label="검색된 기본 주소"
+                  />
                   <input
                     value={newAddr.addressDetail}
                     onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
                     className={inputCls}
                     placeholder="상세 주소를 입력해주세요"
+                    aria-label="상세 주소"
                   />
                 </div>
               ) : (

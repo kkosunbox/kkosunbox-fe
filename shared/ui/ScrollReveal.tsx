@@ -51,6 +51,8 @@ export default function ScrollReveal({
       "(prefers-reduced-motion: reduce)"
     ).matches;
     if (prefersReduced) {
+      /* reduced-motion: 애니메이션 없이 즉시 표시(지연 시 1프레임 숨김 상태 노출 가능) */
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 접근성 설정 직후 동기 표시
       setVisible(true);
       return;
     }

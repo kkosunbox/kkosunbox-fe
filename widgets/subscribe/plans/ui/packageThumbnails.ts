@@ -9,3 +9,7 @@ export const TIER_THUMBNAILS: Record<PackageTier, StaticImageData> = {
   Standard: boxMockupStandard,
   Premium: boxMockupPremium,
 };
+
+/** Real mockups: extra headroom above the box — bias `object-position` for a tighter crop. */
+export const TIER_THUMBNAIL_IMAGE_CLASS =
+  "object-cover object-[center_58%]" as const;

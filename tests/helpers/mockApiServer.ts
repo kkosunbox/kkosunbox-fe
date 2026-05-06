@@ -66,6 +66,7 @@ export const MOCK_SUBSCRIPTION = {
   status: "active" as const,
   nextBillingDate: "2026-05-01",
   isActive: true,
+  isPaused: false,
 };
 
 export const MOCK_PLANS = [

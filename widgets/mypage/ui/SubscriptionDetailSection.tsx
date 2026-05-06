@@ -6,7 +6,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import { cancelSubscription, getPaymentReceipt } from "@/features/subscription/api/subscriptionApi";
+import {
+  cancelPayment,
+  cancelSubscription,
+  getPaymentReceipt,
+  pauseSubscription,
+  resumeSubscription,
+} from "@/features/subscription/api/subscriptionApi";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
@@ -72,10 +78,11 @@ function deriveStartDate(payments: SubscriptionPaymentDto[], fallback: string): 
   return completed[0] ?? fallback;
 }
 
-type DisplayStatus = "예정" | "완료" | "실패";
+type DisplayStatus = "예정" | "완료" | "실패" | "환불";
 function toDisplayStatus(status: SubscriptionPaymentDto["status"]): DisplayStatus {
   if (status === "pending") return "예정";
   if (status === "completed") return "완료";
+  if (status === "refunded" || status === "partially_refunded") return "환불";
   return "실패";
 }
 
@@ -96,6 +103,13 @@ function StatusBadge({ status }: { status: DisplayStatus }) {
     return (
       <span className="inline-flex items-center justify-center rounded-full px-3 py-1 text-btn-12-m bg-red-50 text-red-500 opacity-80">
         실패
+      </span>
+    );
+  }
+  if (status === "환불") {
+    return (
+      <span className="inline-flex items-center justify-center rounded-full px-3 py-1 text-btn-12-m bg-[var(--color-text-muted)] text-[var(--color-text-secondary)] opacity-80">
+        환불
       </span>
     );
   }
@@ -203,6 +217,73 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     });
   }
 
+  function handleTogglePause() {
+    const isPaused = subscription.isPaused;
+    openAlert({
+      title: isPaused
+        ? "구독 쉬어가기를 해제할까요?"
+        : "이번 달 결제를 쉬어가시겠어요?",
+      description: isPaused
+        ? "다음 결제일에 정상적으로 결제됩니다."
+        : "이번 결제일은 결제 없이 건너뛰며,\n다음 결제일로 자동 갱신됩니다.",
+      primaryLabel: isPaused ? "쉬어가기 해제" : "쉬어가기",
+      secondaryLabel: "다음에 할게요",
+      onPrimary: () => {
+        showLoading(
+          isPaused
+            ? "쉬어가기를 해제하고 있습니다..."
+            : "쉬어가기를 적용하고 있습니다...",
+        );
+        startTransition(async () => {
+          try {
+            if (isPaused) {
+              await resumeSubscription(subscription.id);
+            } else {
+              await pauseSubscription(subscription.id);
+            }
+            router.refresh();
+          } catch (err) {
+            openAlert({
+              title: getErrorMessage(
+                err,
+                isPaused
+                  ? "쉬어가기 해제 처리 중 오류가 발생했습니다."
+                  : "쉬어가기 처리 중 오류가 발생했습니다.",
+              ),
+            });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    });
+  }
+
+  function handleCancelPayment(paymentId: number) {
+    openAlert({
+      title: "이 결제 건을 취소하시겠어요?",
+      description:
+        "결제 완료 후 배송 전 상태에서만 취소할 수 있으며,\n취소 시 결제 금액이 환불됩니다.",
+      primaryLabel: "결제 취소",
+      secondaryLabel: "다음에 할게요",
+      onPrimary: () => {
+        showLoading("결제를 취소하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await cancelPayment(paymentId);
+            router.refresh();
+          } catch (err) {
+            openAlert({
+              title: getErrorMessage(err, "결제 취소 처리 중 오류가 발생했습니다."),
+            });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    });
+  }
+
   function handleReceiptDownload(paymentId: number) {
     startTransition(async () => {
       try {
@@ -225,6 +306,8 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     const dateStr = formatDate(record.approvedAt ?? record.createdAt);
     const pkgName = record.planName ?? subscription.plan.name;
 
+    const canCancelPayment = record.status === "completed";
+
     if (!desktop) {
       return (
         <li className="border-b border-[var(--color-text-muted)] last:border-b-0">
@@ -239,6 +322,15 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                 >
                   플랜 변경하기
                 </Link>
+              )}
+              {canCancelPayment && (
+                <button
+                  type="button"
+                  onClick={() => handleCancelPayment(record.id)}
+                  className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                >
+                  결제 취소
+                </button>
               )}
               <button
                 type="button"
@@ -271,6 +363,15 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               >
                 플랜 변경하기
               </Link>
+            )}
+            {canCancelPayment && (
+              <button
+                type="button"
+                onClick={() => handleCancelPayment(record.id)}
+                className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+              >
+                결제 취소
+              </button>
             )}
           </div>
           <span className="text-body-14-m text-[var(--color-text)]">{formatPrice(record.amount)}</span>
@@ -334,11 +435,17 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                 <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                   결제일 : {billingDayLabel(subscription.nextBillingDate)}
                 </Text>
+                {subscription.isPaused && (
+                  <span className="inline-flex items-center rounded-full px-2 py-0.5 text-btn-12-m bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending)]">
+                    쉬어가는 중
+                  </span>
+                )}
                 <button
                   type="button"
-                  className="max-md:hidden text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                  onClick={handleTogglePause}
+                  className="max-md:text-body-13-m md:text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
                 >
-                  구독 쉬어가기
+                  {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
                 </button>
               </div>
             </div>

@@ -88,7 +88,9 @@
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/box-mock-up-real-ver-standard.png\" \"C:/2026/ggosoonbox/widgets/subscribe/plans/assets/box-mockup-standard.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/box-mock-up-real-ver-premium.png\" \"C:/2026/ggosoonbox/widgets/subscribe/plans/assets/box-mockup-premium.png\")",
       "Bash(findstr /C:\"Ready in\" \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\6c9def25-452b-420e-86ee-8c3cbae8bd37\\\\tasks\\\\boej7pxnb.output\")",
-      "Bash(findstr /I \"location\")"
+      "Bash(findstr /I \"location\")",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -Last 60)",
+      "PowerShell(npx tsc --noEmit > C:\\\\2026\\\\ggosoonbox\\\\tsc-out.txt 2>&1; Get-Content C:\\\\2026\\\\ggosoonbox\\\\tsc-out.txt -Tail 80)"
     ]
   }
 }

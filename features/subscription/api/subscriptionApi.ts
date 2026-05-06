@@ -1,5 +1,6 @@
 import { apiClient } from "@/shared/lib/api";
 import type {
+  CancelPaymentRequest,
   ChangePlanRequest,
   ChangePlanResponse,
   ChangeDeliveryAddressRequest,
@@ -7,6 +8,7 @@ import type {
   CreateSubscriptionResponse,
   GetCouponInfoRequest,
   CouponInfo,
+  PauseSubscriptionResponse,
   PaymentHistoryResponse,
   PaymentReceiptResponse,
   SubscriptionListResponse,
@@ -44,9 +46,34 @@ export function reactivateSubscription(subscriptionId: number) {
   );
 }
 
+/** 구독 쉬어가기 (이번 달 결제 건너뛰기) — Active/PaymentFailed 상태에서 사용 가능 */
+export function pauseSubscription(subscriptionId: number) {
+  return apiClient.post<PauseSubscriptionResponse>(
+    `/v1/subscriptions/${subscriptionId}/pause`,
+  );
+}
+
+/** 구독 쉬어가기 해제 (다음 결제일 정상 결제) */
+export function resumeSubscription(subscriptionId: number) {
+  return apiClient.post<PauseSubscriptionResponse>(
+    `/v1/subscriptions/${subscriptionId}/resume`,
+  );
+}
+
 /** 결제 이력 조회 */
 export function getPaymentHistory() {
   return apiClient.get<PaymentHistoryResponse>("/v1/subscriptions/payments");
+}
+
+/** 결제 취소 (환불) — 결제 완료 + 배송 전 상태 결제 건만 가능 */
+export function cancelPayment(
+  paymentId: number,
+  body: CancelPaymentRequest = {},
+) {
+  return apiClient.post<void>(
+    `/v1/subscriptions/payments/${paymentId}/cancel`,
+    body,
+  );
 }
 
 /** 플랜 변경 (변경 사항은 다음 결제일에 반영) */

@@ -10,11 +10,12 @@ import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 
 /* ── 결제 상태 변환 ────────────────────────────────────────── */
-type DisplayStatus = "예정" | "완료" | "실패";
+type DisplayStatus = "예정" | "완료" | "실패" | "환불";
 
 function toDisplayStatus(status: SubscriptionPaymentDto["status"]): DisplayStatus {
   if (status === "pending") return "예정";
   if (status === "completed") return "완료";
+  if (status === "refunded" || status === "partially_refunded") return "환불";
   return "실패";
 }
 
@@ -74,6 +75,13 @@ function StatusBadge({ status }: { status: DisplayStatus }) {
     return (
       <span className="inline-flex items-center rounded-full px-3 py-0.5 text-btn-12-m bg-red-50 text-red-500">
         실패
+      </span>
+    );
+  }
+  if (status === "환불") {
+    return (
+      <span className="inline-flex items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-text-muted)] text-[var(--color-text-secondary)]">
+        환불
       </span>
     );
   }

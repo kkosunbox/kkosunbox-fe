@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProfile } from "@/features/profile/api/queries";
 import { fetchActiveSubscription, fetchSubscriptionPlans } from "@/features/subscription/api/queries";
@@ -14,10 +13,6 @@ export default async function SubscriptionChangePage() {
     fetchActiveSubscription(token),
     fetchSubscriptionPlans(token, profile?.id),
   ]);
-
-  if (!subscription || !subscription.isActive) {
-    redirect("/mypage/subscription");
-  }
 
   return (
     <SubscriptionChangePlansSection

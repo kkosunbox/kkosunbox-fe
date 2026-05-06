@@ -306,7 +306,9 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     const dateStr = formatDate(record.approvedAt ?? record.createdAt);
     const pkgName = record.planName ?? subscription.plan.name;
 
-    const canCancelPayment = record.status === "completed";
+    const canCancelPayment =
+      record.status === "completed" &&
+      record.deliveryStatus !== "DeliveryCompleted";
 
     if (!desktop) {
       return (

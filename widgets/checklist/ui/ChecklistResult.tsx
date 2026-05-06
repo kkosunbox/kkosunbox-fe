@@ -174,9 +174,15 @@ interface Props {
   petInfo: PetInfo;
   avatarSrc: string | null;
   recommendedTier: RecommendedTier;
+  profileId?: number | null;
 }
 
-export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }: Props) {
+export default function ChecklistResult({
+  petInfo,
+  avatarSrc,
+  recommendedTier,
+  profileId,
+}: Props) {
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
   const [expandedPlanIds, setExpandedPlanIds] = useState<Set<number>>(new Set());
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
@@ -189,7 +195,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
 
   useEffect(() => {
     let cancelled = false;
-    getSubscriptionPlans()
+    getSubscriptionPlans(profileId ?? undefined)
       .then((res) => {
         if (!cancelled) setApiPlans(res.plans);
       })
@@ -202,14 +208,22 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [profileId]);
 
+  const apiRecommendedPlan = sortedPlans.find((plan) => plan.isRecommended);
+  const apiRecommendedTier = apiRecommendedPlan
+    ? (packageThemeForPlan(apiRecommendedPlan).tier.toLowerCase() as RecommendedTier)
+    : null;
+  const effectiveRecommendedTier = apiRecommendedTier ?? recommendedTier;
+  const hasApiRecommendation = apiRecommendedTier !== null;
   const petName = petInfo.name.trim() || "우리 아이";
-  const recommendedBadgeTiers = getRecommendedBadgeTiers(recommendedTier);
+  const recommendedBadgeTiers = hasApiRecommendation
+    ? getRecommendedBadgeTiers(effectiveRecommendedTier)
+    : [];
 
   /** 모바일 추천 문구: 추천 범위에 따라 달라짐 */
   const mobileDescription = (() => {
-    if (recommendedTier === "premium") {
+    if (effectiveRecommendedTier === "premium") {
       return (
         <>
           <strong className="text-body-16-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
@@ -217,7 +231,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
         </>
       );
     }
-    if (recommendedTier === "standard") {
+    if (effectiveRecommendedTier === "standard") {
       return (
         <>
           <strong className="text-body-16-m font-bold">{petName}</strong>에게 가장 추천드리는 구성은{" "}
@@ -290,31 +304,35 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
 
             {/* 추천 내용 */}
             <div className="flex flex-col gap-2 max-md:items-center">
-              {/* 모바일: 추천 범위 뱃지들 */}
-              <div className="flex items-center gap-1.5 md:hidden">
-                {recommendedBadgeTiers.map((pkg) => (
-                  <span
-                    key={pkg.id}
-                    className="flex h-[24px] items-center rounded-full px-3 text-body-13-sb leading-[1] text-white"
-                    style={{ background: pkg.colorVar }}
-                  >
-                    {pkg.tier}
-                  </span>
-                ))}
-              </div>
+              {/* 모바일: 추천 범위 뱃지들 (추천 결과가 있을 때만 표시) */}
+              {hasApiRecommendation ? (
+                <div className="flex items-center gap-1.5 md:hidden">
+                  {recommendedBadgeTiers.map((pkg) => (
+                    <span
+                      key={pkg.id}
+                      className="flex h-[24px] items-center rounded-full px-3 text-body-13-sb leading-[1] text-white"
+                      style={{ background: pkg.colorVar }}
+                    >
+                      {pkg.tier}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
 
-              {/* 데스크톱: 추천 범위 뱃지들 */}
-              <div className="flex items-center gap-2 max-md:hidden">
-                {recommendedBadgeTiers.map((pkg) => (
-                  <span
-                    key={pkg.id}
-                    className="flex h-[26px] items-center rounded-full px-4 text-body-14-sb leading-[1] text-white"
-                    style={{ background: pkg.colorVar }}
-                  >
-                    {pkg.tier}
-                  </span>
-                ))}
-              </div>
+              {/* 데스크톱: 추천 범위 뱃지들 (추천 결과가 있을 때만 표시) */}
+              {hasApiRecommendation ? (
+                <div className="flex items-center gap-2 max-md:hidden">
+                  {recommendedBadgeTiers.map((pkg) => (
+                    <span
+                      key={pkg.id}
+                      className="flex h-[26px] items-center rounded-full px-4 text-body-14-sb leading-[1] text-white"
+                      style={{ background: pkg.colorVar }}
+                    >
+                      {pkg.tier}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
 
               {/* 모바일 문구 */}
               <p
@@ -323,7 +341,9 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                   fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
                 }}
               >
-                체크리스트 분석 완료! {mobileDescription}
+                {hasApiRecommendation
+                  ? <>체크리스트 분석 완료! {mobileDescription}</>
+                  : "알맞는 추천 결과를 준비하지 못했어요. 다음 상품들을 확인해보세요."}
               </p>
 
               {/* 데스크톱 문구 */}
@@ -333,9 +353,15 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                   fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
                 }}
               >
-                체크리스트 분석 완료!{" "}
-                <strong className="text-subtitle-18-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
-                <strong className="font-bold">{TIER_LABEL[recommendedTier]} 패키지</strong>입니다.
+                {hasApiRecommendation ? (
+                  <>
+                    체크리스트 분석 완료!{" "}
+                    <strong className="text-subtitle-18-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+                    <strong className="font-bold">{TIER_LABEL[effectiveRecommendedTier]} 패키지</strong>입니다.
+                  </>
+                ) : (
+                  "알맞는 추천 결과를 준비하지 못했어요. 다음 상품들을 확인해보세요."
+                )}
               </p>
             </div>
 
@@ -388,12 +414,14 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                   {sortedPlans.map((plan) => {
                     const theme = packageThemeForPlan(plan);
                     const pkgId = theme.tier.toLowerCase() as RecommendedTier;
-                    const isRecommended = TIER_ORDER.indexOf(pkgId) >= TIER_ORDER.indexOf(recommendedTier);
+                    const isRecommended = apiRecommendedTier
+                      ? pkgId === apiRecommendedTier
+                      : TIER_ORDER.indexOf(pkgId) >= TIER_ORDER.indexOf(recommendedTier);
                     return (
                       <ResultPlanCard
                         key={plan.id}
                         plan={plan}
-                        isRecommended={isRecommended}
+                        isRecommended={hasApiRecommendation && isRecommended}
                         onInfoClick={() => setSelectedTier(theme.tier)}
                       />
                     );
@@ -407,10 +435,18 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
               {sortedPlans.map((plan) => {
                 const theme = packageThemeForPlan(plan);
                 const pkgId = theme.tier.toLowerCase() as RecommendedTier;
-                const isRecommended = TIER_ORDER.indexOf(pkgId) >= TIER_ORDER.indexOf(recommendedTier);
-                const isExactRecommended = pkgId === recommendedTier;
+                const isRecommended = apiRecommendedTier
+                  ? pkgId === apiRecommendedTier
+                  : TIER_ORDER.indexOf(pkgId) >= TIER_ORDER.indexOf(recommendedTier);
+                const isExactRecommended = pkgId === effectiveRecommendedTier;
                 const isExpanded = expandedPlanIds.has(plan.id);
-                const orderClass = isExactRecommended ? " [order:-2]" : isRecommended ? " [order:-1]" : "";
+                const orderClass = hasApiRecommendation
+                  ? isExactRecommended
+                    ? " [order:-2]"
+                    : isRecommended
+                      ? " [order:-1]"
+                      : ""
+                  : "";
                 return (
                   <div key={plan.id} className={`flex flex-col${orderClass}`}>
                     {isExpanded ? (
@@ -427,7 +463,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, recommendedTier }:
                     ) : (
                       <ResultPlanCard
                         plan={plan}
-                        isRecommended={isRecommended}
+                        isRecommended={hasApiRecommendation && isRecommended}
                         onInfoClick={() =>
                           setExpandedPlanIds((prev) => {
                             const next = new Set(prev);

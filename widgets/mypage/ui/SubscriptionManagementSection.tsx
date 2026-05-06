@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import pawsImg from "../assets/subscription-management-paws.png";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";
@@ -12,6 +13,8 @@ import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
 } from "@/widgets/subscribe/plans/ui/packageData";
+
+type SubscriptionFilter = "all" | "active" | "ended";
 
 /* ─────────────────────────────
    Icons
@@ -81,19 +84,26 @@ function SubscriptionsSummaryCard({
   );
 
   return (
-    <div className="rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
+    <div className="relative overflow-hidden rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
       {activeSubscriptions.length > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           {activeSubscriptions.map((s) => {
             const theme = packageThemeForPlan(s.plan);
             return (
-              <span
-                key={s.id}
-                className="inline-flex h-6 items-center rounded-full px-3 text-body-14-sb leading-[17px] text-white"
-                style={{ background: theme.colorVar }}
-              >
-                {theme.tierLabel}
-              </span>
+              <div key={s.id} className="inline-flex items-center gap-2">
+                <span
+                  className="inline-flex h-6 items-center rounded-full px-3 text-body-14-sb leading-[17px] text-white"
+                  style={{ background: theme.colorVar }}
+                >
+                  {theme.tierLabel}
+                </span>
+                <span
+                  className="text-body-14-sb leading-[17px]"
+                  style={{ color: theme.colorVar }}
+                >
+                  {s.quantity || 1}BOX
+                </span>
+              </div>
             );
           })}
         </div>
@@ -107,6 +117,13 @@ function SubscriptionsSummaryCard({
         <p>다음 결제일 : {nextDate ? formatDate(nextDate) : "-"}</p>
         <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
       </div>
+
+      <img
+        src={pawsImg.src}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-3 right-4 h-[72px] w-auto select-none opacity-90 md:bottom-4 md:right-6 md:h-[88px]"
+      />
     </div>
   );
 }
@@ -187,17 +204,15 @@ function PaymentInfoCard({
 }
 
 /* ─────────────────────────────
-   Plan Card (구독 전체보기)
+   Subscription Card (구독 전체보기)
 ───────────────────────────── */
-function PlanRow({
-  plan,
+function SubscriptionRow({
   subscription,
 }: {
-  plan: SubscriptionPlanDto;
-  subscription: UserSubscriptionDto | null;
+  subscription: UserSubscriptionDto;
 }) {
+  const { plan, isActive } = subscription;
   const theme = packageThemeForPlan(plan);
-  const isActive = subscription !== null;
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-tertiary)";
 
   return (
@@ -207,7 +222,7 @@ function PlanRow({
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
           fill
-          className={`object-cover object-center ${isActive ? "" : "grayscale opacity-70"}`}
+          className="object-cover object-center"
         />
       </div>
 
@@ -221,7 +236,7 @@ function PlanRow({
           </span>
           <Link
             href={
-              isActive && subscription
+              isActive
                 ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
                 : `/subscribe/detail?planId=${plan.id}`
             }
@@ -236,14 +251,57 @@ function PlanRow({
         </Text>
 
         <Text variant="body-14-m" className="text-[var(--color-text-label)]">
-          {isActive && subscription ? `${formatDate(subscription.nextBillingDate)} ~` : "-"}
+          {isActive ? `${formatDate(subscription.nextBillingDate)} ~` : "-"}
         </Text>
         <Text variant="body-14-m" className="text-[var(--color-text-label)]">
-          {isActive && subscription
+          {isActive
             ? `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`
-            : "구독 종료"}
+            : "구독종료"}
         </Text>
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────
+   Filter (전체 / 구독중 / 구독종료)
+───────────────────────────── */
+function SubscriptionFilterTabs({
+  value,
+  onChange,
+}: {
+  value: SubscriptionFilter;
+  onChange: (next: SubscriptionFilter) => void;
+}) {
+  const items: { key: SubscriptionFilter; label: string }[] = [
+    { key: "all", label: "전체" },
+    { key: "active", label: "구독중" },
+    { key: "ended", label: "구독종료" },
+  ];
+
+  return (
+    <div className="flex items-center text-body-14-m">
+      {items.map((item, idx) => {
+        const selected = value === item.key;
+        return (
+          <div key={item.key} className="flex items-center">
+            <button
+              type="button"
+              onClick={() => onChange(item.key)}
+              className={`px-2 transition-colors ${
+                selected
+                  ? "text-body-14-sb text-[var(--color-text)]"
+                  : "text-[var(--color-text-label)] hover:text-[var(--color-text)]"
+              }`}
+            >
+              {item.label}
+            </button>
+            {idx < items.length - 1 && (
+              <span className="text-[var(--color-text-muted)]">|</span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -270,24 +328,29 @@ function AddSubscriptionCard() {
 ───────────────────────────── */
 export default function SubscriptionManagementSection({ subscriptions, plans, billingInfo }: Props) {
   const router = useRouter();
-
-  const sortedPlans = useMemo(
-    () => [...plans].sort(comparePlansForDisplayOrder),
-    [plans],
-  );
+  const [filter, setFilter] = useState<SubscriptionFilter>("active");
 
   const activeSubscriptions = useMemo(
     () => subscriptions.filter((s) => s.isActive),
     [subscriptions],
   );
 
-  const subscriptionByPlanId = useMemo(() => {
-    const map = new Map<number, UserSubscriptionDto>();
-    activeSubscriptions.forEach((s) => map.set(s.plan.id, s));
-    return map;
-  }, [activeSubscriptions]);
+  const sortedSubscriptions = useMemo(() => {
+    return [...subscriptions].sort((a, b) => {
+      if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+      return comparePlansForDisplayOrder(a.plan, b.plan);
+    });
+  }, [subscriptions]);
 
+  const filteredSubscriptions = useMemo(() => {
+    if (filter === "active") return sortedSubscriptions.filter((s) => s.isActive);
+    if (filter === "ended") return sortedSubscriptions.filter((s) => !s.isActive);
+    return sortedSubscriptions;
+  }, [sortedSubscriptions, filter]);
+
+  const showAddCard = filter !== "ended";
   const earliestBillingDate = earliestNextBillingDate(activeSubscriptions);
+  const hasPlans = plans.length > 0;
 
   return (
     <div className="min-h-screen bg-white">
@@ -312,30 +375,35 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
         </div>
       </div>
 
-      {/* Plans list — 구독 전체보기 */}
+      {/* Subscription list — 구독 전체보기 */}
       <div className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
         <div
           className="rounded-[24px] max-md:p-5 md:px-8 md:py-8"
           style={{ background: "var(--color-surface-peach)" }}
         >
-          <Text as="h2" variant="subtitle-18-b" className="mb-6 text-[var(--color-text)]">
-            구독 전체보기
-          </Text>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
+              구독 전체보기
+            </Text>
+            <SubscriptionFilterTabs value={filter} onChange={setFilter} />
+          </div>
 
-          {sortedPlans.length === 0 ? (
+          {!hasPlans ? (
             <p className="text-body-14-m text-[var(--color-text-label)]">
               플랜 정보를 불러올 수 없습니다.
             </p>
+          ) : filteredSubscriptions.length === 0 && !showAddCard ? (
+            <p className="text-body-14-m text-[var(--color-text-label)]">
+              {filter === "ended"
+                ? "구독종료된 항목이 없습니다."
+                : "구독 내역이 없습니다."}
+            </p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
-              {sortedPlans.map((plan) => (
-                <PlanRow
-                  key={plan.id}
-                  plan={plan}
-                  subscription={subscriptionByPlanId.get(plan.id) ?? null}
-                />
+              {filteredSubscriptions.map((subscription) => (
+                <SubscriptionRow key={subscription.id} subscription={subscription} />
               ))}
-              <AddSubscriptionCard />
+              {showAddCard && <AddSubscriptionCard />}
             </div>
           )}
         </div>

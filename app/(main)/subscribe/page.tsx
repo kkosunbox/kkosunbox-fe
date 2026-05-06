@@ -27,5 +27,5 @@ export default async function SubscribePage() {
   const profile = await fetchProfile(token);
   const plans = await fetchSubscriptionPlans(token, profile?.id);
 
-  return <SubscribePlansSection plans={plans} />;
+  return <SubscribePlansSection plans={plans} initialProfile={profile} />;
 }

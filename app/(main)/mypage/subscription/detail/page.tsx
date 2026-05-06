@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
 import {
-  fetchPaymentHistory,
+  fetchSubscriptionPaymentHistory,
   fetchSubscriptions,
 } from "@/features/subscription/api/queries";
 import { SubscriptionDetailSection } from "@/widgets/mypage";
@@ -15,11 +15,7 @@ interface PageProps {
 export default async function SubscriptionDetailPage({ searchParams }: PageProps) {
   const { subscriptionId } = await searchParams;
   const token = await getServerToken();
-
-  const [subscriptions, payments] = await Promise.all([
-    fetchSubscriptions(token),
-    fetchPaymentHistory(token),
-  ]);
+  const subscriptions = await fetchSubscriptions(token);
 
   const targetId = subscriptionId ? Number(subscriptionId) : null;
   const subscription = targetId
@@ -30,8 +26,9 @@ export default async function SubscriptionDetailPage({ searchParams }: PageProps
     redirect("/mypage/subscription");
   }
 
-  const subscriptionPayments = payments.filter(
-    (p) => p.subscriptionId === subscription.id,
+  const subscriptionPayments = await fetchSubscriptionPaymentHistory(
+    subscription.id,
+    token,
   );
 
   return (

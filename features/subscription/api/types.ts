@@ -48,6 +48,7 @@ export type PaymentStatus =
   | "partially_refunded";
 
 export type PaymentType = "initial" | "renewal" | "upgrade";
+export type DeliveryStatus = "PendingDelivery" | "DeliveryCompleted";
 
 export interface SubscriptionPaymentDto {
   id: number;
@@ -57,11 +58,15 @@ export interface SubscriptionPaymentDto {
   baseAmount: number;   // 기본 금액 (부가세 제외)
   taxAmount: number;    // 부가세 금액 (10%)
   createdAt: string;    // date-time
-  approvedAt?: string;  // date-time
+  approvedAt?: string | null;   // date-time
+  cancelledAt?: string | null;  // date-time
+  deliveredAt?: string | null;  // date-time
+  deliveryStatus?: DeliveryStatus;
   failureReason?: string;
   method?: string;
   paymentType?: PaymentType;
-  planName?: string;    // 플랜 이름 스냅샷
+  planName?: string;            // 플랜 이름 스냅샷
+  trackingNumber?: string | null;
 }
 
 // ── Coupon ────────────────────────────────────────────────────────

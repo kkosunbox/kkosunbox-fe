@@ -65,6 +65,13 @@ export function getPaymentHistory() {
   return apiClient.get<PaymentHistoryResponse>("/v1/subscriptions/payments");
 }
 
+/** 구독 단위 결제 이력 조회 */
+export function getSubscriptionPaymentHistory(subscriptionId: number) {
+  return apiClient.get<PaymentHistoryResponse>(
+    `/v1/subscriptions/${subscriptionId}/payments`,
+  );
+}
+
 /** 결제 취소 (환불) — 결제 완료 + 배송 전 상태 결제 건만 가능 */
 export function cancelPayment(
   paymentId: number,

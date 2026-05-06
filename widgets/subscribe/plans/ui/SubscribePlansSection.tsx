@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import { useAuth } from "@/features/auth";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { hasChecklistAnswers, hasProfileRecord } from "@/features/profile/lib/profileStatus";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
 import {
@@ -16,6 +18,7 @@ import {
 import PackageDetailView from "./PackageDetailView";
 import MobileTierDetailPanel from "./MobileTierDetailPanel";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import type { Profile } from "@/features/profile/api/types";
 
 /** 모바일 sticky 탭 + 고정 헤더의 합산 높이 — scroll offset / scroll-spy rootMargin 에 공통 사용 */
 const MOBILE_SCROLL_OFFSET = 120;
@@ -147,11 +150,13 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
 
 interface Props {
   plans: SubscriptionPlanDto[];
+  initialProfile: Profile | null;
 }
 
-export default function SubscribePlansSection({ plans }: Props) {
+export default function SubscribePlansSection({ plans, initialProfile }: Props) {
   const router = useRouter();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn } = useAuth();
+  const { profile: clientProfile } = useProfile();
   const [isDismissed, setIsDismissed] = useState(false);
   /** 데스크톱 전용: 그리드 ↔ 단일 상세 뷰 전환 */
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
@@ -282,19 +287,10 @@ export default function SubscribePlansSection({ plans }: Props) {
     return () => observer.disconnect();
   }, [sortedPlans]);
 
-  const isChecklistDone = useSyncExternalStore(
-    (onStoreChange) => {
-      if (typeof window === "undefined") return () => {};
-      window.addEventListener("storage", onStoreChange);
-      return () => window.removeEventListener("storage", onStoreChange);
-    },
-    () => {
-      if (!user) return false;
-      return localStorage.getItem(`kkosun_checklist_done_${user.id}`) === "true";
-    },
-    () => true,
-  );
-  const showModal = isLoggedIn && !isChecklistDone && !isDismissed;
+  const profile = clientProfile ?? initialProfile;
+  const hasProfile = hasProfileRecord(profile);
+  const isChecklistDone = hasChecklistAnswers(profile);
+  const showModal = isLoggedIn && hasProfile && !isChecklistDone && !isDismissed;
 
   function handleClose() {
     setIsDismissed(true);

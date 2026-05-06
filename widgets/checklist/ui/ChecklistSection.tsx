@@ -193,6 +193,7 @@ export default function ChecklistSection() {
   const [answersByQuestion, setAnswersByQuestion] = useState<Record<number, number[]>>({});
   const [recommendedTier, setRecommendedTier] = useState<RecommendedTier | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [recommendedProfileId, setRecommendedProfileId] = useState<number | null>(null);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const pendingNavigateRef = useRef<(() => void) | null>(null);
 
@@ -472,6 +473,7 @@ export default function ChecklistSection() {
 
     let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
     let savedProfileId: number | null = null;
+    let checklistSaved = false;
     try {
       if (isLoggedIn && activeProfile) {
         await updateProfile(activeProfile.id, {
@@ -484,6 +486,7 @@ export default function ChecklistSection() {
           weight: weightValue,
         });
         savedProfileId = activeProfile.id;
+        checklistSaved = true;
       } else if (isLoggedIn) {
         const body: CreateProfileRequest = {
           name: trimmedName,
@@ -497,6 +500,7 @@ export default function ChecklistSection() {
         const newProfile = await createProfile(body);
         savedProfileId = newProfile.id;
         setActiveProfileId(newProfile.id);
+        checklistSaved = true;
       }
 
       if (savedProfileId !== null) {
@@ -513,7 +517,9 @@ export default function ChecklistSection() {
       console.error("[ChecklistSection] save or plan fetch failed", e);
     }
 
-    localStorage.setItem(`kkosun_checklist_done_${user?.id ?? ""}`, "true");
+    if (checklistSaved && user?.id) {
+      localStorage.setItem(`kkosun_checklist_done_${user.id}`, "true");
+    }
 
     if (returnTo === "mypage") {
       setIsAnalyzing(false);
@@ -522,6 +528,7 @@ export default function ChecklistSection() {
     }
 
     setRecommendedTier(tier);
+    setRecommendedProfileId(savedProfileId);
     setIsAnalyzing(false);
     setStep(resultStep);
   }
@@ -562,6 +569,7 @@ export default function ChecklistSection() {
         petInfo={petInfo}
         avatarSrc={avatarSrc}
         recommendedTier={recommendedTier}
+        profileId={recommendedProfileId}
       />
     );
   }

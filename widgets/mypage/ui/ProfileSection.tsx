@@ -8,6 +8,7 @@ import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { updateProfile } from "@/features/profile/api/profileApi";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import { hasChecklistAnswers, hasProfileRecord } from "@/features/profile/lib/profileStatus";
 import type {
   ChecklistAnswerInput,
   ChecklistOption,
@@ -295,8 +296,8 @@ export function ProfileSection({
   const { openAlert } = useModal();
   const profile = clientProfile ?? serverProfile;
 
-  const hasProfile = Boolean(profile?.name);
-  const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
+  const hasProfile = hasProfileRecord(profile);
+  const hasChecklist = hasChecklistAnswers(profile);
 
   const displayName = getProfileDisplayName(profile?.name);
   const birth = fmtDate(profile?.birthDate);

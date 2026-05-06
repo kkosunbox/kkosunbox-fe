@@ -14,3 +14,8 @@ export function getInquiries() {
 export function createInquiry(body: CreateInquiryRequest) {
   return apiClient.post<CreateInquiryResponse>("/v1/inquiries", body);
 }
+
+/** 1:1 문의 삭제 */
+export function deleteInquiry(inquiryId: number) {
+  return apiClient.delete<void>(`/v1/inquiries/${inquiryId}`);
+}

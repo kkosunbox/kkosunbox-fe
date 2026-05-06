@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
-import { TIER_THUMBNAILS } from "./packageThumbnails";
+import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import { useAuth } from "@/features/auth";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
@@ -73,7 +73,7 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
           fill
-          className="object-cover"
+          className={TIER_THUMBNAIL_IMAGE_CLASS}
         />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 px-7 pt-5">
           <div className="flex flex-wrap items-center gap-2">

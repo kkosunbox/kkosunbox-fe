@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { TIER_THUMBNAILS } from "./packageThumbnails";
+import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import {
   PACKAGES,
   COMPARE_PACKAGES,
@@ -245,91 +245,18 @@ export default function PackageDetailView({
 
         {/* 상단: 패키지 정보 카드 — 모바일 탭 선택 시 숨김 (탭은 SubscribePlansSection에서 렌더) */}
         <div
-          className="max-md:hidden flex flex-col rounded-[20px] px-7 pb-7 pt-5"
+          className="max-md:hidden flex flex-col overflow-hidden rounded-[20px] pb-7"
           style={{ background: "var(--color-background)" }}
         >
-          <div className="mb-2.5 flex items-center justify-between">
-            <span
-              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-              style={{ background: pkg.colorVar }}
-            >
-              {pkg.tier}
-            </span>
-          </div>
-
-          <div className="mb-[56px] flex justify-center">
+          <div className="relative aspect-[327/252] w-full shrink-0">
             <Image
               src={TIER_THUMBNAILS[selectedTier]}
               alt={`${pkg.name} 이미지`}
-              className="h-[150px] w-auto object-contain"
+              fill
+              className={TIER_THUMBNAIL_IMAGE_CLASS}
+              sizes="(max-width: 1023px) 100vw, 327px"
             />
-          </div>
-
-          <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-            {plan.name || pkg.name}
-          </h2>
-          {plan.description ? (
-            <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">{plan.description}</p>
-          ) : null}
-
-          <ul className="mb-7 flex flex-col gap-[14px]">
-            {pkg.items.map((item) => (
-              <li
-                key={item}
-                className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
-              >
-                <CheckIcon color={pkg.colorVar} />
-                {item}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-auto mb-7 flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
-            <span className="text-body-14-b text-black">월 요금제</span>
-            <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-              {formatMonthlyPrice(plan.monthlyPrice)}
-            </span>
-          </div>
-
-          {(() => {
-            const { label, onClick, disabled } = primaryFor(plan);
-            return (
-              <button
-                type="button"
-                onClick={onClick}
-                disabled={disabled}
-                className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
-                style={{ background: pkg.colorVar }}
-              >
-                {label}
-              </button>
-            );
-          })()}
-        </div>
-
-        {/* 하단: 비교 상세 카드 */}
-        <MobileCompareWarmPanel key={plan.id} plan={plan} onClose={onClose} />
-      </div>
-
-      {/* ══ DESKTOP LAYOUT (lg 이상) ══════════════════════════════════ */}
-      <div
-        className="max-lg:hidden relative overflow-hidden rounded-[20px]"
-        style={{ background: "var(--color-surface-warm)" }}
-      >
-        <div className="absolute right-6 top-5 z-10">
-          <CloseButton onClick={onClose} />
-        </div>
-
-        <div
-          className="grid min-h-[570px] items-stretch [grid-template-rows:minmax(0,auto)]"
-          style={{
-            gridTemplateColumns: "327px 1fr",
-          }}
-        >
-
-          {/* Left panel */}
-          <div className="flex min-h-0 min-w-0 flex-col px-7 pb-7 pt-5">
-            <div className="mb-2.5">
+            <div className="absolute inset-x-0 top-0 flex items-start px-7 pt-5">
               <span
                 className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                 style={{ background: pkg.colorVar }}
@@ -337,15 +264,9 @@ export default function PackageDetailView({
                 {pkg.tier}
               </span>
             </div>
+          </div>
 
-            <div className="mb-[56px] flex justify-center">
-              <Image
-                src={TIER_THUMBNAILS[selectedTier]}
-                alt={`${pkg.name} 이미지`}
-                className="h-[150px] w-auto object-contain"
-              />
-            </div>
-
+          <div className="flex flex-col px-7 pt-5">
             <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
               {plan.name || pkg.name}
             </h2>
@@ -386,6 +307,91 @@ export default function PackageDetailView({
                 </button>
               );
             })()}
+          </div>
+        </div>
+
+        {/* 하단: 비교 상세 카드 */}
+        <MobileCompareWarmPanel key={plan.id} plan={plan} onClose={onClose} />
+      </div>
+
+      {/* ══ DESKTOP LAYOUT (lg 이상) ══════════════════════════════════ */}
+      <div
+        className="max-lg:hidden relative overflow-hidden rounded-[20px]"
+        style={{ background: "var(--color-surface-warm)" }}
+      >
+        <div className="absolute right-6 top-5 z-10">
+          <CloseButton onClick={onClose} />
+        </div>
+
+        <div
+          className="grid min-h-[570px] items-stretch [grid-template-rows:minmax(0,auto)]"
+          style={{
+            gridTemplateColumns: "327px 1fr",
+          }}
+        >
+
+          {/* Left panel */}
+          <div className="flex min-h-0 min-w-0 flex-col pb-7">
+            <div className="relative aspect-[327/252] w-full shrink-0 overflow-hidden">
+              <Image
+                src={TIER_THUMBNAILS[selectedTier]}
+                alt={`${pkg.name} 이미지`}
+                fill
+                className={TIER_THUMBNAIL_IMAGE_CLASS}
+                sizes="327px"
+              />
+              <div className="absolute left-7 top-5 z-10">
+                <span
+                  className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+                  style={{ background: pkg.colorVar }}
+                >
+                  {pkg.tier}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex min-h-0 flex-1 flex-col px-7 pt-5">
+              <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
+                {plan.name || pkg.name}
+              </h2>
+              {plan.description ? (
+                <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">{plan.description}</p>
+              ) : null}
+
+              <ul className="mb-7 flex flex-col gap-[14px]">
+                {pkg.items.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
+                  >
+                    <CheckIcon color={pkg.colorVar} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-auto mb-7 flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
+                <span className="text-body-14-b text-black">월 요금제</span>
+                <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
+                  {formatMonthlyPrice(plan.monthlyPrice)}
+                </span>
+              </div>
+
+              {(() => {
+                const { label, onClick, disabled } = primaryFor(plan);
+                return (
+                  <button
+                    type="button"
+                    onClick={onClick}
+                    disabled={disabled}
+                    className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                    style={{ background: pkg.colorVar }}
+                  >
+                    {label}
+                  </button>
+                );
+              })()}
+            </div>
           </div>
 
           {/* Right: comparison table — 데스크톱에서만 clip-path reveal, 모바일은 별도 레이아웃 유지 */}

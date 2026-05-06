@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { registerBilling, updateBilling } from "../api/billingApi";
 import type { BillingInfo } from "../api/types";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -26,6 +26,7 @@ interface Props {
 }
 
 export default function CardInputView({ existingBilling, onConfirm, onBack, onClose }: Props) {
+  const expYearInputRef = useRef<HTMLInputElement>(null);
   const [cardNo, setCardNo] = useState("");
   const [expMonth, setExpMonth] = useState("");
   const [expYear, setExpYear] = useState("");
@@ -138,20 +139,29 @@ export default function CardInputView({ existingBilling, onConfirm, onBack, onCl
           <div className="flex flex-1 gap-2 items-center">
             <input
               value={expMonth}
-              onChange={(e) => setExpMonth(digitsOnly(e.target.value).slice(0, 2))}
+              onChange={(e) => {
+                const next = digitsOnly(e.target.value).slice(0, 2);
+                setExpMonth(next);
+                if (next.length === 2) {
+                  queueMicrotask(() => expYearInputRef.current?.focus());
+                }
+              }}
               className={inputCls}
-              placeholder="월/년도 (MM/YY)"
+              placeholder="MM"
               inputMode="numeric"
               maxLength={2}
+              aria-label="유효기간 월"
             />
             <span className="text-body-13-m text-[var(--color-text-secondary)]">/</span>
             <input
+              ref={expYearInputRef}
               value={expYear}
               onChange={(e) => setExpYear(digitsOnly(e.target.value).slice(0, 2))}
               className={inputCls}
               placeholder="YY"
               inputMode="numeric"
               maxLength={2}
+              aria-label="유효기간 연도"
             />
           </div>
         </div>

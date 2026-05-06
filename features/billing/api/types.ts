@@ -37,7 +37,7 @@ interface CardInfo {
   buyerTel?: string; // - 없이 숫자만
 }
 
-export interface RegisterBillingRequest extends CardInfo {}
+export type RegisterBillingRequest = CardInfo;
 
 export interface UpdateBillingRequest extends CardInfo {
   billingInfoId: number;

@@ -243,7 +243,11 @@ function PlanRow({
             {theme.tierLabel}
           </span>
           <Link
-            href={`/subscribe/detail?planId=${plan.id}`}
+            href={
+              isActive && subscription
+                ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
+                : `/subscribe/detail?planId=${plan.id}`
+            }
             className="text-body-13-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
           >
             자세히보기

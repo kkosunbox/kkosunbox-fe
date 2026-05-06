@@ -51,3 +51,17 @@ export async function fetchPaymentHistory(token?: string): Promise<SubscriptionP
     .catch(() => ({ payments: [] as SubscriptionPaymentDto[] }));
   return data.payments;
 }
+
+/** 구독 단위 결제 내역 */
+export async function fetchSubscriptionPaymentHistory(
+  subscriptionId: number,
+  token?: string,
+): Promise<SubscriptionPaymentDto[]> {
+  const data = await apiClient
+    .get<{ payments: SubscriptionPaymentDto[] }>(
+      `/v1/subscriptions/${subscriptionId}/payments`,
+      serverOpts(token),
+    )
+    .catch(() => ({ payments: [] as SubscriptionPaymentDto[] }));
+  return data.payments;
+}

@@ -58,7 +58,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
 
   return (
     <DashboardCard>
-      <SectionHeader title="결제관리" href="/mypage/payment" linkLabel="결제관리" />
+      <SectionHeader title="결제관리" linkLabel="결제관리" />
 
       <div className="flex flex-col gap-4">
         <PaymentRow label="결제수단">

@@ -1,4 +1,4 @@
-export { getInquiries, createInquiry } from "./inquiryApi";
+export { getInquiries, createInquiry, deleteInquiry } from "./inquiryApi";
 
 export type {
   InquiryDto,

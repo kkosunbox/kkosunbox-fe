@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { InquiryDto } from "@/features/inquiry/api";
-import { getInquiries } from "@/features/inquiry/api";
+import { deleteInquiry, getInquiries } from "@/features/inquiry/api";
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { ApiError } from "@/shared/lib/api/types";
-import { PawCircleIcon } from "@/shared/ui";
+import { PawCircleIcon, useModal } from "@/shared/ui";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import FaqQuestion from "../../faq/assets/faq-question.webp";
 
@@ -75,9 +76,11 @@ function ChevronRightIcon() {
 export default function InquiryHistorySection() {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<InquiryDto[]>([]);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [loadState, setLoadState] = useState<"loading" | "ok" | "error" | "unauthorized">("loading");
   const [loadMessage, setLoadMessage] = useState<string | null>(null);
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryDto | null>(null);
+  const { openAlert } = useModal();
 
   useEffect(() => {
     let cancelled = false;
@@ -114,6 +117,30 @@ export default function InquiryHistorySection() {
     () => rows.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
     [rows, currentPage],
   );
+
+  const handleDeleteInquiry = (inquiry: InquiryDto) => {
+    if (deletingId !== null) return;
+    openAlert({
+      title: "문의를 삭제하시겠습니까?",
+      description: "삭제한 문의는 복구할 수 없습니다.",
+      primaryLabel: "삭제하기",
+      secondaryLabel: "취소",
+      onPrimary: async () => {
+        setDeletingId(inquiry.id);
+        try {
+          await deleteInquiry(inquiry.id);
+          setRows((prev) => prev.filter((row) => row.id !== inquiry.id));
+          setSelectedInquiry((prev) => (prev?.id === inquiry.id ? null : prev));
+        } catch (err) {
+          openAlert({
+            title: getErrorMessage(err, "문의 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요."),
+          });
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white max-md:py-6 md:py-10">
@@ -204,10 +231,11 @@ export default function InquiryHistorySection() {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.alert("준비중인 기능입니다.");
+                        handleDeleteInquiry(item);
                       }}
                       aria-label="문의 삭제"
-                      className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center hover:opacity-70 transition-opacity"
+                      disabled={deletingId === item.id}
+                      className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <CardCloseIcon />
                     </button>

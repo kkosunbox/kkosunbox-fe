@@ -9,6 +9,7 @@ import { Button, DefaultPetIcon, useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { hasProfileRecord } from "@/features/profile/lib/profileStatus";
 
 const NAV_ITEMS = [
   { href: "/", label: "홈" },
@@ -160,7 +161,7 @@ export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
-  const hasProfile = !!profile;
+  const hasProfile = hasProfileRecord(profile);
 
   useEffect(() => {
     if (!isProfileOpen) return;

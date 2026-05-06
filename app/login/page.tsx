@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import logoMain2x from "@/shared/assets/logo-main@2x.webp";
-import loginBannerHd from "@/shared/assets/login-banner-hd.webp";
+import loginBannerHd from "@/shared/assets/login-banner-hd.png";
 import loginMobileDeco from "@/shared/assets/login-mobile-upper-deco.webp";
 import { useAuth, getOAuthUrl } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";

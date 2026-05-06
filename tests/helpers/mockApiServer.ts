@@ -277,6 +277,12 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
+    // DELETE /v1/inquiries/:id — 문의 삭제
+    if (method === "DELETE" && /^\/v1\/inquiries\/\d+$/.test(url)) {
+      ok(res, {});
+      return;
+    }
+
     // GET /v1/profiles/checklist — 체크리스트 질문 (비로그인 허용, 없으면 .catch()가 [] 폴백)
     if (method === "GET" && url === "/v1/profiles/checklist") {
       ok(res, { questions: [] });

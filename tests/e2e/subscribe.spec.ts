@@ -2,19 +2,25 @@ import { test, expect } from "@playwright/test";
 import { MOCK_PLANS } from "../helpers/mockApiServer";
 import { loginAndGoTo } from "../helpers/auth";
 
+async function dismissChecklistRecommendModalIfVisible(page: import("@playwright/test").Page) {
+  const laterButton = page.getByRole("button", { name: "다음에 하기" });
+  if (await laterButton.isVisible()) {
+    await laterButton.click();
+  }
+}
+
 test.describe("구독 플랜 목록 (/subscribe)", () => {
-  test.beforeEach(async ({ page }) => {
-    // ChecklistRecommendModal은 localStorage에 완료 플래그가 없으면 오버레이로 뜬다.
-    // 모달이 플랜 카드 클릭을 막지 않도록 페이지 스크립트 실행 전에 미리 설정한다.
-    await page.addInitScript(() => {
-      localStorage.setItem("kkosun_checklist_done", "true");
+  // ── 정상 렌더링 ──────────────────────────────────────────────────
+  test("프로필은 있지만 체크리스트 미완료면 추천 모달 노출", async ({ page }) => {
+    await loginAndGoTo(page, "/subscribe");
+    await expect(page.getByRole("button", { name: "체크리스트 작성하기" })).toBeVisible({
+      timeout: 10_000,
     });
   });
 
-  // ── 정상 렌더링 ──────────────────────────────────────────────────
-
   test("플랜 카드 3개 렌더링 및 월 요금 표시", async ({ page }) => {
     await loginAndGoTo(page, "/subscribe");
+    await dismissChecklistRecommendModalIfVisible(page);
 
     // 데스크톱/모바일 레이아웃이 DOM에 동시 존재하므로 .first()로 strict mode 위반 방지
     for (const plan of MOCK_PLANS) {
@@ -29,6 +35,7 @@ test.describe("구독 플랜 목록 (/subscribe)", () => {
 
   test("isRecommended 플랜에만 '추천' 배지 표시", async ({ page }) => {
     await loginAndGoTo(page, "/subscribe");
+    await dismissChecklistRecommendModalIfVisible(page);
 
     // MOCK_PLANS 중 isRecommended=true는 스탠다드(id=2) 하나뿐
     // 데스크톱/모바일 레이아웃이 동시에 DOM에 존재하므로 1개 플랜 → 총 2개
@@ -53,6 +60,7 @@ test.describe("구독 플랜 목록 (/subscribe)", () => {
 
   test("'제품 상세보기' 클릭 → /subscribe/detail?planId= 이동", async ({ page }) => {
     await loginAndGoTo(page, "/subscribe");
+    await dismissChecklistRecommendModalIfVisible(page);
 
     // sortOrder 순 첫 번째 카드(베이직, id=1)의 버튼 클릭
     await page.getByRole("button", { name: "제품 상세보기" }).first().click();

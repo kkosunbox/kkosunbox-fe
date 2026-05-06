@@ -96,6 +96,40 @@ function formatReviewDate(isoDate: string): string {
   return isoDate.slice(0, 10).replace(/-/g, ".");
 }
 
+const DELIVERY_INFO_SECTIONS = [
+  {
+    title: "기본 배송 정보",
+    items: [
+      "배송 방법: 택배",
+      "배송 지역: 전국 (일부 도서산간 지역 제외)",
+      "배송 비용: 3,000원 (2만원 이상 구매 시 무료배송)",
+      "배송 기간: 결제 완료 후 1~3일 이내 출고 (주말/공휴일 제외)",
+    ],
+  },
+  {
+    title: "교환/반품 배송 관련",
+    items: [
+      "단순 변심에 의한 교환/반품 시 왕복 배송비는 고객 부담입니다. (무료배송: 5,000원 / 배송비지불: 2,500원)",
+      "상품 불량 및 오배송의 경우 배송비는 판매자가 부담합니다.",
+      "상품 수령 후 7일 이내 교환/반품 신청 가능합니다.",
+    ],
+  },
+  {
+    title: "도서산간 추가 비용",
+    items: [
+      "제주 및 도서산간 지역은 추가 배송비가 발생할 수 있습니다. (제주: 3,000원 / 도서산간: 3,000원 추가)",
+      "추가 배송비는 주문 후 별도 안내드립니다.",
+    ],
+  },
+  {
+    title: "배송 조회",
+    items: [
+      "상품 출고 후 송장번호가 문자/알림톡으로 발송됩니다.",
+      "배송 현황은 택배사 홈페이지에서 확인 가능합니다.",
+    ],
+  },
+] as const;
+
 function FullStarIcon({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -734,10 +768,30 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
         )}
 
         {activeTab === "delivery" && (
-          <div className="px-6 py-16 text-center">
-            <p className="text-[14px] text-[var(--color-text-secondary)]">
-              준비 중인 컨텐츠입니다.
-            </p>
+          <div className="px-6 py-10">
+            <h3 className="text-[20px] font-semibold leading-6 tracking-[-0.04em] text-[var(--color-text-emphasis)]">
+              배송정보
+            </h3>
+            <div className="mt-6 space-y-8 pl-2">
+              {DELIVERY_INFO_SECTIONS.map((section) => (
+                <section key={section.title}>
+                  <h4 className="text-[16px] font-semibold leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]">
+                    {section.title}
+                  </h4>
+                  <ul className="mt-3 space-y-2">
+                    {section.items.map((item) => (
+                      <li
+                        key={item}
+                        className="relative pl-4 text-[14px] font-medium leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
+                      >
+                        <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
           </div>
         )}
 
@@ -1165,10 +1219,26 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           )}
 
           {activeTab === "delivery" && (
-            <div className="py-20 text-center">
-              <p className="text-body-16-r text-[var(--color-text-secondary)]">
-                준비 중인 컨텐츠입니다.
-              </p>
+            <div className="mx-auto max-w-[815px] py-20">
+              <h3 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">배송정보</h3>
+              <div className="mt-8 space-y-10 pl-2">
+                {DELIVERY_INFO_SECTIONS.map((section) => (
+                  <section key={section.title}>
+                    <h4 className="text-body-16-sb tracking-[-0.04em] text-[var(--color-text-secondary)]">{section.title}</h4>
+                    <ul className="mt-3 space-y-2.5">
+                      {section.items.map((item) => (
+                        <li
+                          key={item}
+                          className="relative pl-4 text-body-14-m leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
+                        >
+                          <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ))}
+              </div>
             </div>
           )}
 

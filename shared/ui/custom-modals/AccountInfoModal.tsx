@@ -181,26 +181,19 @@ export default function AccountInfoModal({ onClose }: Props) {
           </div>
 
           {/* 콘텐츠 박스 */}
-          <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6">
+          <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6 md:min-h-[246px]">
             <div className="flex flex-col gap-4">
               {/* 이메일 행 */}
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <span className="w-[91px] shrink-0 text-body-13-m text-[var(--color-text)]">이메일</span>
-                <div className="flex h-8 flex-1 items-start rounded-[4px] bg-white px-3 pt-2">
+                <div className="flex h-8 flex-1 items-center rounded-[4px] bg-white px-3">
                   <span className="truncate text-body-13-m text-[var(--color-text)]">{user?.email ?? ""}</span>
                 </div>
               </div>
 
               {/* 비밀번호 행 */}
-              <div className="flex items-start">
+              <div className="flex items-center">
                 <span className="w-[91px] shrink-0 text-body-13-m text-[var(--color-text)]">비밀번호</span>
-                <div className="flex h-8 flex-1 items-start rounded-[4px] bg-white px-3 pt-2">
-                  <span className="text-body-13-m text-[var(--color-text)]">••••••••</span>
-                </div>
-              </div>
-
-              {/* 비밀번호 변경 버튼 행 — 피그마: left:91px, w:87px, h:32px, rounded:4px */}
-              <div className="pl-[91px]">
                 <button
                   type="button"
                   onClick={() => setView("password-change")}
@@ -209,6 +202,7 @@ export default function AccountInfoModal({ onClose }: Props) {
                   비밀번호 변경
                 </button>
               </div>
+
             </div>
           </div>
 

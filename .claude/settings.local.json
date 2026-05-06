@@ -86,7 +86,9 @@
       "Bash(echo \"exit=$?\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/box-mock-up-real-ver-basic.png\" \"C:/2026/ggosoonbox/widgets/subscribe/plans/assets/box-mockup-basic.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/box-mock-up-real-ver-standard.png\" \"C:/2026/ggosoonbox/widgets/subscribe/plans/assets/box-mockup-standard.png\")",
-      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/box-mock-up-real-ver-premium.png\" \"C:/2026/ggosoonbox/widgets/subscribe/plans/assets/box-mockup-premium.png\")"
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/box-mock-up-real-ver-premium.png\" \"C:/2026/ggosoonbox/widgets/subscribe/plans/assets/box-mockup-premium.png\")",
+      "Bash(findstr /C:\"Ready in\" \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\6c9def25-452b-420e-86ee-8c3cbae8bd37\\\\tasks\\\\boej7pxnb.output\")",
+      "Bash(findstr /I \"location\")"
     ]
   }
 }

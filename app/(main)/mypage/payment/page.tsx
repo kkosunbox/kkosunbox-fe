@@ -31,6 +31,7 @@ const DEV_SUBSCRIPTION: UserSubscriptionDto = {
   status: "active",
   nextBillingDate: "2026-04-21",
   isActive: true,
+  isPaused: false,
 };
 
 const DEV_PAYMENTS: SubscriptionPaymentDto[] = [

@@ -39,6 +39,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   SUBSCRIPTION_PLAN_NOT_FOUND: "구독 플랜을 찾을 수 없습니다.",
   SUBSCRIPTION_EXPIRED: "만료된 구독입니다.",
   SUBSCRIPTION_INACTIVE: "비활성 상태의 구독입니다.",
+  ALREADY_CANCELLED: "이미 취소된 구독입니다.",
+  SUBSCRIPTION_ALREADY_PAUSED: "이미 쉬어가기가 적용된 구독입니다.",
+  SUBSCRIPTION_NOT_PAUSED: "쉬어가기 상태가 아닌 구독입니다.",
 
   // 쿠폰
   INVALID_COUPON: "유효하지 않은 쿠폰입니다.",
@@ -47,6 +50,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   // 결제 이력
   PAYMENT_NOT_FOUND: "결제 내역을 찾을 수 없습니다.",
   CONTENT_NOT_FOUND: "요청한 정보를 찾을 수 없습니다.",
+  PAYMENT_CANCELLATION_NOT_ALLOWED: "결제 취소가 불가능한 결제 건입니다.\n결제 완료 후 배송 전 상태에서만 취소할 수 있습니다.",
+  PAYMENT_ALREADY_CANCELLED: "이미 취소된 결제 건입니다.",
 
   // 파일 업로드
   INVALID_FILE_FORMAT: "지원하지 않는 파일 형식입니다.",

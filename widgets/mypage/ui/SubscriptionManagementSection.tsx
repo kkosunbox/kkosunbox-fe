@@ -81,47 +81,15 @@ function SubscriptionsSummaryCard({
   );
 
   return (
-    <div className="flex max-md:flex-col rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6 md:gap-4">
-      <div className="flex flex-1 flex-col">
-        <Text as="h3" variant="subtitle-16-b" className="mb-4 text-[var(--color-text)]">
-          {count > 0 ? `총 ${count}개의 구독 이용중` : "이용중인 구독이 없습니다"}
-        </Text>
-
-        <div className="flex flex-col gap-2.5">
-          <div className="flex items-center gap-3">
-            <span className="w-[100px] shrink-0 text-body-14-m text-[var(--color-text-label)]">
-              다음 결제일
-            </span>
-            <span className="text-body-14-sb text-[var(--color-text)]">
-              {nextDate ? formatDate(nextDate) : "-"}
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="w-[100px] shrink-0 text-body-14-m text-[var(--color-text-label)]">
-              예상 결제 금액
-            </span>
-            <span className="text-body-14-sb text-[var(--color-text)]">
-              {totalAmount > 0 ? formatPrice(totalAmount) : "-"}
-            </span>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="mt-4 self-start text-body-14-m text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
-        >
-          이번 달 쉬어가기
-        </button>
-      </div>
-
+    <div className="rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
       {activeSubscriptions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 max-md:mt-4 max-md:justify-start md:self-center md:justify-end">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
           {activeSubscriptions.map((s) => {
             const theme = packageThemeForPlan(s.plan);
             return (
               <span
                 key={s.id}
-                className="inline-flex items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+                className="inline-flex h-6 items-center rounded-full px-3 text-body-14-sb leading-[17px] text-white"
                 style={{ background: theme.colorVar }}
               >
                 {theme.tierLabel}
@@ -130,6 +98,15 @@ function SubscriptionsSummaryCard({
           })}
         </div>
       )}
+
+      <Text as="h3" variant="subtitle-16-b" className="mb-3 text-[var(--color-text)]">
+        {count > 0 ? `총 ${count}개의 구독 이용중` : "이용중인 구독이 없습니다"}
+      </Text>
+
+      <div className="flex flex-col gap-1.5 text-body-16-m text-[var(--color-text-label)]">
+        <p>다음 결제일 : {nextDate ? formatDate(nextDate) : "-"}</p>
+        <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
+      </div>
     </div>
   );
 }

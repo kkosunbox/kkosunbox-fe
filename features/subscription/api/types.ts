@@ -31,6 +31,8 @@ export interface UserSubscriptionDto {
   status: SubscriptionStatus;
   nextBillingDate: string; // YYYY-MM-DD
   isActive: boolean;
+  /** true면 이번 결제일에 결제 건너뜀 (쉬어가기 활성화) */
+  isPaused: boolean;
   pendingPlanId?: number;
   cancelledAt?: string;   // date-time
   terminatedAt?: string;  // date-time
@@ -97,6 +99,11 @@ export interface GetCouponInfoRequest {
   code: string; // 최대 30자, 대소문자 구분 안함
 }
 
+export interface CancelPaymentRequest {
+  /** 구독도 함께 취소할지 여부 (기본 false) */
+  cancelSubscription?: boolean;
+}
+
 // ── 응답 ──────────────────────────────────────────────────────────
 
 export interface SubscriptionPlanListResponse {
@@ -112,6 +119,10 @@ export interface CreateSubscriptionResponse {
 }
 
 export interface ChangePlanResponse {
+  subscription: UserSubscriptionDto;
+}
+
+export interface PauseSubscriptionResponse {
   subscription: UserSubscriptionDto;
 }
 

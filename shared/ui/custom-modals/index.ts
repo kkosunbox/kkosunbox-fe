@@ -11,3 +11,4 @@ export { default as SubscriptionCancelWithDeliveryModal } from "./SubscriptionCa
 export { default as PaymentCancelModal } from "./PaymentCancelModal";
 export { default as SubscriptionPauseModal } from "./SubscriptionPauseModal";
 export { default as SubscriptionChangeConfirmModal } from "./SubscriptionChangeConfirmModal";
+export { default as DeliveryReviewModal } from "./DeliveryReviewModal";

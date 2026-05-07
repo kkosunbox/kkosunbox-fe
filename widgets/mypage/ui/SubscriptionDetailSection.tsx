@@ -201,45 +201,34 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   );
 
   function handleCancel() {
-    const pendingPayment = payments.find(
+    const hasCancellablePayment = payments.some(
       (p) => p.status === "completed" && p.deliveryStatus !== "DeliveryCompleted",
     );
 
-    openModal(
-      "subscription-cancel-with-delivery",
-      () => {
-        showLoading("구독 해지를 처리하고 있습니다...");
-        startTransition(async () => {
-          try {
-            await cancelSubscription(subscription.id);
-            router.push("/mypage/subscription");
-            router.refresh();
-          } catch (err) {
-            openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
-          } finally {
-            hideLoading();
-          }
-        });
-      },
-      () => {
-        showLoading("구독 해지를 처리하고 있습니다...");
-        startTransition(async () => {
-          try {
-            if (pendingPayment) {
-              await cancelPayment(pendingPayment.id, { cancelSubscription: true });
-            } else {
-              await cancelSubscription(subscription.id);
-            }
-            router.push("/mypage/subscription");
-            router.refresh();
-          } catch (err) {
-            openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
-          } finally {
-            hideLoading();
-          }
-        });
-      },
-    );
+    const doCancel = (cancelEligiblePayments: boolean) => {
+      showLoading("구독 해지를 처리하고 있습니다...");
+      startTransition(async () => {
+        try {
+          await cancelSubscription(subscription.id, cancelEligiblePayments || undefined);
+          router.push("/mypage/subscription");
+          router.refresh();
+        } catch (err) {
+          openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
+        } finally {
+          hideLoading();
+        }
+      });
+    };
+
+    if (hasCancellablePayment) {
+      openModal(
+        "subscription-cancel-with-delivery",
+        () => doCancel(false),
+        () => doCancel(true),
+      );
+    } else {
+      openModal("subscription-cancel", () => doCancel(false));
+    }
   }
 
   function handleTogglePause() {

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import pawsImg from "../assets/subscription-management-paws.png";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { Text } from "@/shared/ui";
@@ -328,7 +328,31 @@ function AddSubscriptionCard() {
 ───────────────────────────── */
 export default function SubscriptionManagementSection({ subscriptions, plans, billingInfo }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [filter, setFilter] = useState<SubscriptionFilter>("active");
+
+  useEffect(() => {
+    if (!searchParams.get("welcome")) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("welcome");
+    window.history.replaceState({}, "", url);
+
+    import("canvas-confetti").then(({ default: confetti }) => {
+      const shared = {
+        particleCount: 45,
+        spread: 55,
+        startVelocity: 42,
+        ticks: 180,
+        gravity: 1.3,
+        scalar: 0.85,
+      } as const;
+      confetti({ ...shared, origin: { x: 0.1, y: 0.9 }, angle: 65 });
+      confetti({ ...shared, origin: { x: 0.9, y: 0.9 }, angle: 115 });
+    });
+  // searchParams는 의도적으로 마운트 시 1회만 실행
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const activeSubscriptions = useMemo(
     () => subscriptions.filter((s) => s.isActive),

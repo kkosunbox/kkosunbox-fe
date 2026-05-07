@@ -90,7 +90,12 @@
       "Bash(findstr /C:\"Ready in\" \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\6c9def25-452b-420e-86ee-8c3cbae8bd37\\\\tasks\\\\boej7pxnb.output\")",
       "Bash(findstr /I \"location\")",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -Last 60)",
-      "PowerShell(npx tsc --noEmit > C:\\\\2026\\\\ggosoonbox\\\\tsc-out.txt 2>&1; Get-Content C:\\\\2026\\\\ggosoonbox\\\\tsc-out.txt -Tail 80)"
+      "PowerShell(npx tsc --noEmit > C:\\\\2026\\\\ggosoonbox\\\\tsc-out.txt 2>&1; Get-Content C:\\\\2026\\\\ggosoonbox\\\\tsc-out.txt -Tail 80)",
+      "Bash(Copy-Item \"C:\\\\2026\\\\ggosoonbox\\\\.claude\\\\assets\\\\designs\\\\custom-modal\\\\asset\\\\custom-modal-12-upper.png\" \"C:\\\\2026\\\\ggosoonbox\\\\public\\\\images\\\\modal\\\\custom-modal-12-upper.png\")",
+      "Bash(Copy-Item \"C:\\\\2026\\\\ggosoonbox\\\\.claude\\\\assets\\\\designs\\\\custom-modal\\\\asset\\\\custom-modal-12-contents.png\" \"C:\\\\2026\\\\ggosoonbox\\\\public\\\\images\\\\modal\\\\custom-modal-12-contents.png\")",
+      "Bash(Write-Output \"Copied\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-12-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-12-upper.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-12-contents.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-12-contents.png\")"
     ]
   }
 }

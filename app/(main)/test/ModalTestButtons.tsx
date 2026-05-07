@@ -2,6 +2,21 @@
 
 import { useModal, type ModalType } from "@/shared/ui";
 
+function fireTestConfetti() {
+  import("canvas-confetti").then(({ default: confetti }) => {
+    const shared = {
+      particleCount: 45,
+      spread: 55,
+      startVelocity: 42,
+      ticks: 180,
+      gravity: 1.3,
+      scalar: 0.85,
+    } as const;
+    confetti({ ...shared, origin: { x: 0.1, y: 0.9 }, angle: 65 });
+    confetti({ ...shared, origin: { x: 0.9, y: 0.9 }, angle: 115 });
+  });
+}
+
 const MODAL_ITEMS: { type: ModalType; label: string; description: string; color: string }[] = [
   {
     type: "checklist-recommend",
@@ -158,6 +173,20 @@ export default function ModalTestButtons() {
             <span className="text-xs font-semibold opacity-70">{PAUSE_ITEM.label}</span>
             <span className="text-sm font-medium leading-tight">{PAUSE_ITEM.description}</span>
             <span className="text-xs opacity-60">① {PAUSE_ITEM.primaryLabel}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 구매 성공 팡파레 */}
+      <div>
+        <p className="mb-2 text-xs font-semibold text-zinc-400">기타 · 이펙트</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <button
+            onClick={fireTestConfetti}
+            className="flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 bg-[#C8E6C9] text-[var(--color-text)]"
+          >
+            <span className="text-xs font-semibold opacity-70">Confetti</span>
+            <span className="text-sm font-medium leading-tight">구매 성공 팡파레</span>
           </button>
         </div>
       </div>

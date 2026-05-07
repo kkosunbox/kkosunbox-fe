@@ -10,6 +10,7 @@ import { ApiError } from "@/shared/lib/api/types";
 import { PawCircleIcon, useModal } from "@/shared/ui";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import FaqQuestion from "../../faq/assets/faq-question.webp";
+import InquiryPaw from "../assets/inquiry-paw.png";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -174,7 +175,7 @@ export default function InquiryHistorySection() {
         </section>
 
         <section
-          className="rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] md:pb-7 md:pt-8"
+          className="min-h-[592px] rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] md:pb-7 md:pt-8"
           aria-label="내 문의내역"
         >
           <div className="mb-6 max-md:mb-6 md:mb-8">
@@ -263,13 +264,25 @@ export default function InquiryHistorySection() {
           ) : null}
 
           {loadState === "ok" && rows.length === 0 ? (
-            <div className="flex flex-col items-center py-16">
-              <p className="text-body-16-r text-[var(--color-text-secondary)]">문의 내역이 없습니다.</p>
+            <div className="flex flex-col items-center py-16 gap-3">
+              <Image
+                src={InquiryPaw}
+                alt=""
+                width={78}
+                height={60}
+                className="mb-1"
+              />
+              <p className="text-subtitle-16-sb tracking-[-0.02em] text-[var(--color-text)]">
+                문의하신 내역이 없어요.
+              </p>
+              <p className="text-body-14-m tracking-[-0.04em] text-[var(--color-text-secondary)] text-center">
+                꼬순박스 이용 중 궁금하거나 불편한 점이 생기면 언제든 문의해주세요!
+              </p>
               <Link
-                href="/inquiry"
-                className="mt-4 text-body-14-m text-[var(--color-accent)] underline underline-offset-2"
+                href="/support"
+                className="text-body-14-m text-[var(--color-accent)] underline underline-offset-2"
               >
-                문의하기
+                돌아가기
               </Link>
             </div>
           ) : null}

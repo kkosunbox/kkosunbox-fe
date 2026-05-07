@@ -34,9 +34,10 @@ export function getSubscriptions() {
   return apiClient.get<SubscriptionListResponse>("/v1/subscriptions");
 }
 
-/** 구독 취소 (즉시 취소) */
-export function cancelSubscription(subscriptionId: number) {
-  return apiClient.delete<void>(`/v1/subscriptions/${subscriptionId}`);
+/** 구독 취소 (즉시 취소). cancelEligiblePayments=true 시 결제완료+배송전 건도 함께 환불 */
+export function cancelSubscription(subscriptionId: number, cancelEligiblePayments?: boolean) {
+  const query = cancelEligiblePayments ? "?cancelEligiblePayments=true" : "";
+  return apiClient.delete<void>(`/v1/subscriptions/${subscriptionId}${query}`);
 }
 
 /** 구독 재활성화 (취소한 구독 복구) */

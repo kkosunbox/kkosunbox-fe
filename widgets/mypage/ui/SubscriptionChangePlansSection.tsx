@@ -205,11 +205,6 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
                         >
                           {theme.tierLabel}
                         </span>
-                        {plan.isRecommended ? (
-                          <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
-                            추천
-                          </span>
-                        ) : null}
                         {isCurrentPlan ? (
                           <span className="text-price-16-b" style={{ color }}>
                             이용중

@@ -86,11 +86,6 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
             >
               {theme.tierLabel}
             </span>
-            {plan.isRecommended ? (
-              <span className="rounded-full bg-[var(--color-accent-orange)] px-3 py-1 text-body-12-sb text-white">
-                추천
-              </span>
-            ) : null}
           </div>
           <button
             type="button"

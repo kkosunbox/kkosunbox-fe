@@ -47,21 +47,108 @@ const MODAL_ITEMS: { type: ModalType; label: string; description: string; color:
   },
 ];
 
+type DualActionItem = {
+  type: ModalType;
+  label: string;
+  description: string;
+  color: string;
+  primaryLabel: string;
+  secondaryLabel: string;
+};
+
+const DUAL_ACTION_ITEMS: DualActionItem[] = [
+  {
+    type: "subscription-cancel-with-delivery",
+    label: "Modal 08",
+    description: "구독 취소 (배송 건 있음)",
+    color: "bg-[#FCA14E] text-white",
+    primaryLabel: "이번 건만 받고 해지하기",
+    secondaryLabel: "전체 취소하기",
+  },
+  {
+    type: "payment-cancel",
+    label: "Modal 09",
+    description: "결제 취소 확인",
+    color: "bg-[#FCA14E] text-white",
+    primaryLabel: "이번 결제만 취소하기",
+    secondaryLabel: "결제 취소 및 구독 해지",
+  },
+];
+
+const PAUSE_ITEM = {
+  type: "subscription-pause" as ModalType,
+  label: "Modal 10",
+  description: "구독 쉬어가기",
+  color: "bg-[#ABBEF3] text-[var(--color-text)]",
+  primaryLabel: "이번 달만 쉬어가기",
+};
+
 export default function ModalTestButtons() {
   const { openModal } = useModal();
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {MODAL_ITEMS.map(({ type, label, description, color }) => (
-        <button
-          key={type}
-          onClick={() => openModal(type)}
-          className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
-        >
-          <span className="text-xs font-semibold opacity-70">{label}</span>
-          <span className="text-sm font-medium leading-tight">{description}</span>
-        </button>
-      ))}
+    <div className="flex flex-col gap-6">
+      {/* 01–07: 단일 액션 */}
+      <div>
+        <p className="mb-2 text-xs font-semibold text-zinc-400">01 – 07 · 단일 액션</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {MODAL_ITEMS.map(({ type, label, description, color }) => (
+            <button
+              key={type}
+              onClick={() => openModal(type)}
+              className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
+            >
+              <span className="text-xs font-semibold opacity-70">{label}</span>
+              <span className="text-sm font-medium leading-tight">{description}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 08–09: 이중 액션 (onConfirm / onConfirm2 구분) */}
+      <div>
+        <p className="mb-2 text-xs font-semibold text-zinc-400">08 – 09 · 이중 액션 (콘솔 로그로 확인)</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {DUAL_ACTION_ITEMS.map(({ type, label, description, color, primaryLabel, secondaryLabel }) => (
+            <button
+              key={type}
+              onClick={() =>
+                openModal(
+                  type,
+                  () => console.log(`[${label}] 1차 확인: ${primaryLabel}`),
+                  () => console.log(`[${label}] 2차 확인: ${secondaryLabel}`),
+                )
+              }
+              className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
+            >
+              <span className="text-xs font-semibold opacity-70">{label}</span>
+              <span className="text-sm font-medium leading-tight">{description}</span>
+              <span className="text-xs opacity-60">① {primaryLabel}</span>
+              <span className="text-xs opacity-60">② {secondaryLabel}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 10: 단일 확인 + 취소 */}
+      <div>
+        <p className="mb-2 text-xs font-semibold text-zinc-400">10 · 쉬어가기 확인</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <button
+            onClick={() =>
+              openModal(
+                PAUSE_ITEM.type,
+                () => console.log(`[Modal 10] 확인: ${PAUSE_ITEM.primaryLabel}`),
+              )
+            }
+            className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${PAUSE_ITEM.color}`}
+          >
+            <span className="text-xs font-semibold opacity-70">{PAUSE_ITEM.label}</span>
+            <span className="text-sm font-medium leading-tight">{PAUSE_ITEM.description}</span>
+            <span className="text-xs opacity-60">① {PAUSE_ITEM.primaryLabel}</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

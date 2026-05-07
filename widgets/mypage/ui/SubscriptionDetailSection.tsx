@@ -201,87 +201,117 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   );
 
   function handleCancel() {
-    openModal("subscription-cancel", () => {
-      showLoading("구독 해지를 처리하고 있습니다...");
-      startTransition(async () => {
-        try {
-          await cancelSubscription(subscription.id);
-          router.push("/mypage/subscription");
-          router.refresh();
-        } catch (err) {
-          openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
-        } finally {
-          hideLoading();
-        }
-      });
-    });
-  }
+    const pendingPayment = payments.find(
+      (p) => p.status === "completed" && p.deliveryStatus !== "DeliveryCompleted",
+    );
 
-  function handleTogglePause() {
-    const isPaused = subscription.isPaused;
-    openAlert({
-      title: isPaused
-        ? "구독 쉬어가기를 해제할까요?"
-        : "이번 달 결제를 쉬어가시겠어요?",
-      description: isPaused
-        ? "다음 결제일에 정상적으로 결제됩니다."
-        : "이번 결제일은 결제 없이 건너뛰며,\n다음 결제일로 자동 갱신됩니다.",
-      primaryLabel: isPaused ? "쉬어가기 해제" : "쉬어가기",
-      secondaryLabel: "다음에 할게요",
-      onPrimary: () => {
-        showLoading(
-          isPaused
-            ? "쉬어가기를 해제하고 있습니다..."
-            : "쉬어가기를 적용하고 있습니다...",
-        );
+    openModal(
+      "subscription-cancel-with-delivery",
+      () => {
+        showLoading("구독 해지를 처리하고 있습니다...");
         startTransition(async () => {
           try {
-            if (isPaused) {
-              await resumeSubscription(subscription.id);
-            } else {
-              await pauseSubscription(subscription.id);
-            }
+            await cancelSubscription(subscription.id);
+            router.push("/mypage/subscription");
             router.refresh();
           } catch (err) {
-            openAlert({
-              title: getErrorMessage(
-                err,
-                isPaused
-                  ? "쉬어가기 해제 처리 중 오류가 발생했습니다."
-                  : "쉬어가기 처리 중 오류가 발생했습니다.",
-              ),
-            });
+            openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
           } finally {
             hideLoading();
           }
         });
       },
-    });
+      () => {
+        showLoading("구독 해지를 처리하고 있습니다...");
+        startTransition(async () => {
+          try {
+            if (pendingPayment) {
+              await cancelPayment(pendingPayment.id, { cancelSubscription: true });
+            } else {
+              await cancelSubscription(subscription.id);
+            }
+            router.push("/mypage/subscription");
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "구독 해지 처리 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    );
+  }
+
+  function handleTogglePause() {
+    const isPaused = subscription.isPaused;
+    if (isPaused) {
+      openAlert({
+        title: "구독 쉬어가기를 해제할까요?",
+        description: "다음 결제일에 정상적으로 결제됩니다.",
+        primaryLabel: "쉬어가기 해제",
+        secondaryLabel: "다음에 할게요",
+        onPrimary: () => {
+          showLoading("쉬어가기를 해제하고 있습니다...");
+          startTransition(async () => {
+            try {
+              await resumeSubscription(subscription.id);
+              router.refresh();
+            } catch (err) {
+              openAlert({ title: getErrorMessage(err, "쉬어가기 해제 처리 중 오류가 발생했습니다.") });
+            } finally {
+              hideLoading();
+            }
+          });
+        },
+      });
+    } else {
+      openModal("subscription-pause", () => {
+        showLoading("쉬어가기를 적용하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await pauseSubscription(subscription.id);
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "쉬어가기 처리 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      });
+    }
   }
 
   function handleCancelPayment(paymentId: number) {
-    openAlert({
-      title: "이 결제 건을 취소하시겠어요?",
-      description:
-        "결제 완료 후 배송 전 상태에서만 취소할 수 있으며,\n취소 시 결제 금액이 환불됩니다.",
-      primaryLabel: "결제 취소",
-      secondaryLabel: "다음에 할게요",
-      onPrimary: () => {
+    openModal(
+      "payment-cancel",
+      () => {
         showLoading("결제를 취소하고 있습니다...");
         startTransition(async () => {
           try {
             await cancelPayment(paymentId);
             router.refresh();
           } catch (err) {
-            openAlert({
-              title: getErrorMessage(err, "결제 취소 처리 중 오류가 발생했습니다."),
-            });
+            openAlert({ title: getErrorMessage(err, "결제 취소 처리 중 오류가 발생했습니다.") });
           } finally {
             hideLoading();
           }
         });
       },
-    });
+      () => {
+        showLoading("결제 취소 및 구독 해지를 처리하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await cancelPayment(paymentId, { cancelSubscription: true });
+            router.push("/mypage/subscription");
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "처리 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    );
   }
 
   function handleReceiptDownload(paymentId: number) {

@@ -76,8 +76,8 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
   const router = useRouter();
   const pathname = usePathname();
 
-  const isPaymentActive = pathname.startsWith("/mypage/payment");
-  const isMypageActive = pathname.startsWith("/mypage") && !isPaymentActive && !pathname.startsWith("/mypage/withdraw");
+  const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
+  const isMypageActive = pathname.startsWith("/mypage") && !isSubscriptionActive && !pathname.startsWith("/mypage/withdraw");
 
   const menuItemClass = (active: boolean) =>
     [
@@ -141,8 +141,8 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
         <button onClick={() => { onClose(); openModal("account-info"); }} className={menuItemClass(false)}>
           계정정보
         </button>
-        <button onClick={() => { onClose(); router.push("/mypage/payment"); }} className={menuItemClass(isPaymentActive)}>
-          결제관리
+        <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isSubscriptionActive)}>
+          구독관리
         </button>
         <button onClick={handleLogout} className={menuItemClass(false)}>
           로그아웃

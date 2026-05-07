@@ -45,6 +45,12 @@ const MODAL_ITEMS: { type: ModalType; label: string; description: string; color:
     description: "회원 탈퇴 확인",
     color: "bg-[#F07050] text-white",
   },
+  {
+    type: "subscription-change-confirm",
+    label: "Modal 11",
+    description: "구독 변경 확인",
+    color: "bg-[#FCA14E] text-white",
+  },
 ];
 
 type DualActionItem = {

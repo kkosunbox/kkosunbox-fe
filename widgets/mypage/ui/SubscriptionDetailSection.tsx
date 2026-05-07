@@ -314,6 +314,12 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     );
   }
 
+  function handleChangeSubscription() {
+    openModal("subscription-change-confirm", () => {
+      router.push("/mypage/subscription/change");
+    });
+  }
+
   function handleReceiptDownload(paymentId: number) {
     startTransition(async () => {
       try {
@@ -491,12 +497,13 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               >
                 구독 취소
               </button>
-              <Link
-                href="/mypage/subscription/change"
+              <button
+                type="button"
+                onClick={handleChangeSubscription}
                 className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 변경
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -510,12 +517,13 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
           >
             구독 취소
           </button>
-          <Link
-            href="/mypage/subscription/change"
+          <button
+            type="button"
+            onClick={handleChangeSubscription}
             className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
           >
             구독 변경
-          </Link>
+          </button>
         </div>
 
         {/* Payment history card — Figma Group 1000005367 */}

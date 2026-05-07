@@ -65,6 +65,7 @@
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
   --color-hero-shape: #F2D0B1;        /* Hero 장식 도형 배경 */
   --color-hero-heading: #464646;      /* Hero Premium Package 텍스트 */
+  --color-hero-subtext: #6C411F;      /* Hero 서브카피 텍스트 */
   --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
@@ -107,6 +108,7 @@
   --color-text-label: #777777;     /* Label — 폼·정보 영역 레이블 */
   --color-text-sub: #606060;       /* Sub — 주문 영역 보조 텍스트 */
   --color-text-muted: #DDDDDD;     /* Muted — 구분선, 비활성 텍스트 */
+  --color-text-caption: #C8C8C8;   /* Caption — 이미지 연출 면책 문구 등 부가 캡션 */
   --color-border: #B0B0B0;         /* Light border — 비활성 라디오·체크박스 테두리 */
   --color-ui-disabled: #D0D0D0;    /* Disabled — 비활성 UI 요소 (페이지네이션 화살표 등) */
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
@@ -146,6 +148,8 @@
   --color-sage: #87AB7D;                /* Sage Green — About CTA 카드 배경 */
   --color-star: #FDD264;                /* Gold — 리뷰 별점 아이콘 */
   --color-review-text: #2C2C2C;         /* 리뷰 카드 본문/이름 텍스트 */
+  --color-hero-cta-bg: #454545;         /* Hero CTA 버튼 배경 */
+  --color-hero-tagline: #C37132;        /* Hero 해시태그 문구 텍스트 */
 
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
@@ -187,6 +191,7 @@
   --color-hero-bg: var(--color-hero-bg);
   --color-hero-shape: var(--color-hero-shape);
   --color-hero-heading: var(--color-hero-heading);
+  --color-hero-subtext: var(--color-hero-subtext);
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-banner-heading: var(--color-support-banner-heading);
   --color-footer-bg: var(--color-footer-bg);
@@ -223,6 +228,8 @@
   --color-sage: var(--color-sage);
   --color-star: var(--color-star);
   --color-review-text: var(--color-review-text);
+  --color-hero-cta-bg: var(--color-hero-cta-bg);
+  --color-hero-tagline: var(--color-hero-tagline);
 
   /* Text */
   --color-text: var(--color-text);
@@ -233,6 +240,7 @@
   --color-text-label: var(--color-text-label);
   --color-text-sub: var(--color-text-sub);
   --color-text-muted: var(--color-text-muted);
+  --color-text-caption: var(--color-text-caption);
   --color-border: var(--color-border);
   --color-ui-disabled: var(--color-ui-disabled);
   --color-text-warm: var(--color-text-warm);

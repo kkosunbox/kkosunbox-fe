@@ -21,6 +21,7 @@ import SubscriptionCancelWithDeliveryModal from "../custom-modals/SubscriptionCa
 import PaymentCancelModal from "../custom-modals/PaymentCancelModal";
 import SubscriptionPauseModal from "../custom-modals/SubscriptionPauseModal";
 import SubscriptionChangeConfirmModal from "../custom-modals/SubscriptionChangeConfirmModal";
+import DeliveryReviewModal from "../custom-modals/DeliveryReviewModal";
 import AlertModal, { type AlertModalOptions } from "./AlertModal";
 import { alertStore } from "./alertStore";
 
@@ -37,7 +38,8 @@ export type ModalType =
   | "subscription-cancel-with-delivery"
   | "payment-cancel"
   | "subscription-pause"
-  | "subscription-change-confirm";
+  | "subscription-change-confirm"
+  | "delivery-review";
 
 interface ModalContextValue {
   openModal: (type: ModalType, onConfirm?: () => void, onConfirm2?: () => void) => void;
@@ -124,6 +126,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       {active === "payment-cancel"       && <PaymentCancelModal onClose={closeModal} onConfirm={handleConfirm} onConfirm2={handleConfirm2} />}
       {active === "subscription-pause"   && <SubscriptionPauseModal onClose={closeModal} onConfirm={handleConfirm} />}
       {active === "subscription-change-confirm" && <SubscriptionChangeConfirmModal onClose={closeModal} onConfirm={handleConfirm} />}
+      {active === "delivery-review"             && <DeliveryReviewModal onClose={closeModal} onConfirm={handleConfirm} />}
 
       {/* 범용 알림 모달 */}
       {alertOptions && <AlertModal {...alertOptions} onClose={closeModal} />}

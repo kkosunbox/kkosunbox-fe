@@ -51,6 +51,12 @@ const MODAL_ITEMS: { type: ModalType; label: string; description: string; color:
     description: "구독 변경 확인",
     color: "bg-[#FCA14E] text-white",
   },
+  {
+    type: "delivery-review",
+    label: "Modal 12",
+    description: "배송완료 후 리뷰쓰기",
+    color: "bg-[#DAE9FF] text-[var(--color-text)]",
+  },
 ];
 
 type DualActionItem = {

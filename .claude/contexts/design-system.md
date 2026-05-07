@@ -34,6 +34,7 @@
 | `--color-background` | `#FFF9F3` | Cream White — 전체 기본 배경 |
 | `--color-surface-dark` | `#171713` | Near Black — 다크 섹션 배경 (Stats Bar 등) |
 | `--color-surface-warm` | `#FFF8F2` | Warm Light — 따뜻한 섹션 배경 |
+| `--color-surface-peach` | `#FFF2E5` | Warm Peach — 구독관리 상단 배경 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
@@ -41,6 +42,25 @@
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
 | `--color-beige` | `#E8CFB9` | Beige — 테두리, 불릿, 서클 bg 등 장식 요소 |
+
+### Hero
+
+| Token | HEX | 용도 |
+|---|---|---|
+| `--color-hero-bg` | `#F6E1CE` | Hero 섹션 배경 |
+| `--color-hero-shape` | `#F2D0B1` | Hero 장식 도형 배경 |
+| `--color-hero-heading` | `#464646` | Hero 헤딩 텍스트 |
+| `--color-hero-subtext` | `#6C411F` | Hero 서브카피 텍스트 |
+| `--color-hero-tagline` | `#C37132` | Hero 해시태그 문구 텍스트 |
+| `--color-hero-cta-bg` | `#454545` | Hero CTA 버튼 배경 |
+
+### CTA / About
+
+| Token | HEX | 용도 |
+|---|---|---|
+| `--color-cta-logo-bg` | `#F9D5B4` | About CTA 로고 카드 배경 |
+| `--color-cta-sage-bg` | `#D3E2BE` | About CTA 텍스트 카드 배경 |
+| `--color-text-cta` | `#595045` | About CTA 헤딩/본문 텍스트 |
 
 ### Tier
 
@@ -77,6 +97,7 @@
 | `--color-text-placeholder` | `#929292` | 프로필 미입력 안내, 힌트 텍스트 |
 | `--color-text-label` | `#777777` | 폼·정보 영역 레이블 텍스트 |
 | `--color-text-muted` | `#DDDDDD` | 구분선, 비활성 텍스트 |
+| `--color-text-caption` | `#C8C8C8` | 이미지 연출 면책 문구 등 부가 캡션 |
 | `--color-text-warm` | `#917F71` | Warm Gray — 웜 섹션 서브텍스트 |
 | `--color-text-on-warm` | `#555555` | 웜 섹션 헤딩 |
 | `--color-text-body-warm` | `#5B5B5B` | 웜 섹션 본문 |
@@ -87,6 +108,11 @@
 |---|---|---|
 | `--color-accent-rust` | `#DC5200` | Burnt Orange — hero Ms Madi 장식 텍스트 |
 | `--color-divider-warm` | `#F3DFCF` | Warm Peach — 모바일 섹션 구분선 |
+| `--color-link-warm` | `#C3824E` | 로그인 회원가입하기 링크 |
+| `--color-link-blue` | `#1C67D4` | 체크리스트 모달 본문 강조 링크 |
+| `--color-sage` | `#87AB7D` | Sage Green — About CTA 카드 배경 |
+| `--color-star` | `#FDD264` | Gold — 리뷰 별점 아이콘 |
+| `--color-review-text` | `#2C2C2C` | 리뷰 카드 본문·이름 텍스트 |
 
 ### Gradient
 

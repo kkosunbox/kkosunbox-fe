@@ -57,7 +57,7 @@ shared/
 ### Styling
 
 - Tailwind CSS v4 (`@tailwindcss/postcss`)
-- 컬러 토큰 23개, 타이포그래피 클래스 21개 — `app/globals.css`에 정의
+- 컬러 토큰 75개+, 타이포그래피 클래스 — `app/globals.css`에 정의
 - 상세 내용: `.claude/contexts/design-system.md`, `.claude/contexts/typography.md`
 
 ### 색상 규칙 (필수)
@@ -65,21 +65,37 @@ shared/
 **JSX에서 hex 값 직접 사용 금지.** 모든 색상은 아래 중 하나로만 사용한다.
 
 ```tsx
-// ✅ 올바른 사용
+// ✅ CSS 변수 임의값 — 주 권장 패턴 (585+ 사용처)
 className="text-[var(--color-primary)]"
 className="bg-[var(--color-surface-warm)]"
+
+// ✅ Tailwind 테마 유틸 — @theme inline 등록 시 자동 생성 (111+ 사용처)
+className="text-primary"
+className="text-hero-subtext"
+
+// ✅ 그라디언트
 style={{ background: "var(--gradient-hero)" }}
 className="text-white"   // 예외: Tailwind 시맨틱 white/black
 
 // ❌ 금지
 className="text-[#5C4634]"
 className="bg-[#FFF8F2]"
+style={{ color: "#C37132" }}
+```
+
+**`@utility`는 타이포그래피 전용.** `@theme inline`에 등록된 색상은 `text-{이름}` 유틸이 자동 생성되므로 `@utility`로 중복 선언하지 않는다.
+
+```css
+/* ❌ 금지 — @theme inline이 이미 text-hero-tagline을 생성함 */
+@utility text-hero-tagline { color: #C37132; }
 ```
 
 **새 색상 추가 시:**
 1. `app/globals.css` `:root`에 `--color-{이름}` 등록
 2. `@theme inline`에 동일하게 등록
 3. `.claude/contexts/design-system.md` 토큰 표에 추가
+
+**신규 CSS 변수가 적용 안 될 때:** 브라우저 강제 새로고침(Ctrl+Shift+R) 또는 `pnpm dev` 재시작.
 
 ### 타이포그래피 클래스 추가 규칙 (필수)
 

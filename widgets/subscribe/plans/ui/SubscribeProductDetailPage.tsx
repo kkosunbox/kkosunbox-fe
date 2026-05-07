@@ -438,6 +438,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               {activeTierLabel}
             </span>
           </div>
+          <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
+            ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
+          </p>
 
           <h2 className="mt-[30px] text-[24px] font-semibold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
             {selectedPlan.name}
@@ -895,6 +898,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   {selectedTheme.tierLabel}
                 </span>
               </div>
+              <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
+                ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
+              </p>
             </div>
 
             <div className="mx-auto min-w-0 w-full max-w-[438px] xl:mx-0">

@@ -474,7 +474,7 @@ export default function OrderSection({
         });
 
         router.refresh();
-        router.push("/mypage/subscription");
+        router.push("/mypage/subscription?welcome=1");
       } catch (err) {
         openAlert({ title: getErrorMessage(err, "결제 처리 중 오류가 발생했습니다.") });
       } finally {

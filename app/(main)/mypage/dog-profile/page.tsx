@@ -14,6 +14,7 @@ export default async function DogProfilePage({
   const isNewMode = params.new === "true";
   const token = await getServerToken();
 
+  // TODO: 다중 구독 UI 대응 시 fetchSubscriptions으로 교체 후 ProfileManagementSection에 subscriptions[] 전달 필요
   const [profile, subscription] = await Promise.all([
     isNewMode ? Promise.resolve(null) : fetchProfile(token),
     fetchActiveSubscription(token),

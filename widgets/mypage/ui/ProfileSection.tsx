@@ -292,11 +292,12 @@ export function ProfileSection({
   profile: Profile | null;
   checklistQuestions: ChecklistQuestion[];
 }) {
-  const { profile: clientProfile, refreshProfile } = useProfile();
-  const { openAlert } = useModal();
+  const { profile: clientProfile, profiles, refreshProfile } = useProfile();
+  const { openAlert, openModal } = useModal();
   const profile = clientProfile ?? serverProfile;
 
   const hasProfile = hasProfileRecord(profile);
+  const hasNamedProfile = profiles.some((item) => Boolean(item.name?.trim())) || Boolean(profile?.name?.trim());
   const hasChecklist = hasChecklistAnswers(profile);
 
   const displayName = getProfileDisplayName(profile?.name);
@@ -387,14 +388,34 @@ export function ProfileSection({
               <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
               <div className="min-w-0 flex-1 md:pr-[84px]">
                 <div className="flex items-start justify-between gap-3">
-                  <Text
-                    as="h1"
-                    variant="title-24-b"
-                    mobileVariant="subtitle-18-b"
-                    className="min-w-0 leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
-                  >
-                    {displayName}
-                  </Text>
+                  <div className="flex min-w-0 items-center gap-1">
+                    <Text
+                      as="h1"
+                      variant="title-24-b"
+                      mobileVariant="subtitle-18-b"
+                      className="min-w-0 leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
+                    >
+                      {displayName}
+                    </Text>
+                    {hasNamedProfile && (
+                      <button
+                        type="button"
+                        aria-label="프로필 변경"
+                        onClick={() => openModal("profile-switch")}
+                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-border)] transition-opacity hover:opacity-80"
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M8.39922 7.33331L19.1992 7.33331M15.5992 11.0666L19.1992 7.33331L15.5992 3.59998M15.5992 16.6666L4.79922 16.6666M8.39922 12.9333L4.79922 16.6666L8.39922 20.4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
                   <Link
                     href="/mypage/dog-profile"
                     className="inline-flex shrink-0 items-center gap-0.5 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:hidden"

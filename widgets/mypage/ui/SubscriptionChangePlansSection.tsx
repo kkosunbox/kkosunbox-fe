@@ -61,7 +61,7 @@ function InfoIcon() {
 /* ─── Props ─── */
 
 interface Props {
-  subscription: UserSubscriptionDto | null;
+  subscriptions: UserSubscriptionDto[];
   plans: SubscriptionPlanDto[];
 }
 
@@ -71,7 +71,7 @@ function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-export default function SubscriptionChangePlansSection({ subscription, plans }: Props) {
+export default function SubscriptionChangePlansSection({ subscriptions, plans }: Props) {
   const router = useRouter();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
@@ -83,8 +83,17 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
     [plans],
   );
 
+  // 여러 구독 중 이미 해당 플랜을 구독 중인지 확인
+  function isCurrentPlan(plan: SubscriptionPlanDto): boolean {
+    return subscriptions.some((s) => s.plan.id === plan.id);
+  }
+
+  // 플랜 변경 대상: 해당 플랜을 구독 중이지 않은 첫 번째 활성 구독
+  // 활성 구독이 없으면 신규 주문으로 이동
   function handlePurchase(plan: SubscriptionPlanDto) {
-    if (!subscription) {
+    const targetSubscription = subscriptions.find((s) => s.plan.id !== plan.id) ?? subscriptions[0] ?? null;
+
+    if (!targetSubscription) {
       router.push(`/order?planId=${plan.id}&quantity=1`);
       return;
     }
@@ -92,7 +101,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
     showLoading("플랜 변경을 처리하고 있습니다...");
     startTransition(async () => {
       try {
-        await changePlan(subscription.id, { newPlanId: plan.id });
+        await changePlan(targetSubscription.id, { newPlanId: plan.id });
         openAlert({
           title: "플랜이 변경되었습니다.",
           description: "변경 사항은 다음 결제일에 반영됩니다.",
@@ -110,12 +119,11 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
   }
 
   function getDetailPrimaryButton(p: SubscriptionPlanDto) {
-    const isCurrentPlan = subscription?.plan.id === p.id;
-    if (isCurrentPlan) {
+    if (isCurrentPlan(p)) {
       return { label: "현재 구독중", onClick: () => {}, disabled: true as const };
     }
     return {
-      label: subscription ? "변경하기" : "구매하기",
+      label: subscriptions.length > 0 ? "변경하기" : "구매하기",
       onClick: () => handlePurchase(p),
       disabled: false,
     };
@@ -131,7 +139,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
             <Image
               src={heroTitleImage}
               alt={
-                subscription
+                subscriptions.length > 0
                   ? "기존 구독을 변경하려면 새로운 구독을 선택하세요."
                   : "원하는 구독 플랜을 선택해서 구독을 시작하세요."
               }
@@ -182,13 +190,13 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
             {sortedPlans.map((plan) => {
               const theme = packageThemeForPlan(plan);
               const color = theme.colorVar;
-              const isCurrentPlan = subscription?.plan.id === plan.id;
+              const currentPlan = isCurrentPlan(plan);
 
               return (
                 <div
                   key={plan.id}
                   className="flex flex-col overflow-hidden rounded-[20px] bg-[var(--color-background)]"
-                  style={isCurrentPlan ? { boxShadow: `0 0 0 2px ${color}` } : undefined}
+                  style={currentPlan ? { boxShadow: `0 0 0 2px ${color}` } : undefined}
                 >
                   <div className="relative aspect-[327/252] w-full">
                     <Image
@@ -205,7 +213,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
                         >
                           {theme.tierLabel}
                         </span>
-                        {isCurrentPlan ? (
+                        {currentPlan ? (
                           <span className="text-price-16-b" style={{ color }}>
                             이용중
                           </span>
@@ -252,7 +260,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
                       </span>
                     </div>
 
-                    {isCurrentPlan ? (
+                    {currentPlan ? (
                       <div
                         className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white opacity-70"
                         style={{ background: color }}
@@ -267,7 +275,7 @@ export default function SubscriptionChangePlansSection({ subscription, plans }: 
                         className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-70"
                         style={{ background: color }}
                       >
-                        {subscription ? "변경하기" : "구매하기"}
+                        {subscriptions.length > 0 ? "변경하기" : "구매하기"}
                       </button>
                     )}
                   </div>

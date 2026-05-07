@@ -190,8 +190,14 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   const [, startTransition] = useTransition();
   const [page, setPage] = useState(1);
 
+  const isActive = subscription.isActive;
   const theme = packageThemeForPlan(subscription.plan);
   const startDate = deriveStartDate(payments, subscription.nextBillingDate);
+  const endDate = subscription.cancelledAt
+    ? subscription.cancelledAt.slice(0, 10)
+    : subscription.terminatedAt
+      ? subscription.terminatedAt.slice(0, 10)
+      : null;
 
   const totalPages = Math.max(1, Math.ceil(payments.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -199,6 +205,10 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE,
   );
+
+  function handleResubscribe() {
+    router.push(`/subscribe/detail?planId=${subscription.plan.id}`);
+  }
 
   function handleCancel() {
     const hasCancellablePayment = payments.some(
@@ -452,67 +462,106 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               </span>
 
               <Text variant="subtitle-18-b" mobileVariant="body-14-sb" className="mb-1 text-[var(--color-text)] md:mb-2">
-                {subscription.plan.name} 구독중
+                {subscription.plan.name}{isActive ? " 구독중" : ""}
               </Text>
 
-              <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                {formatDate(startDate)} ~
-              </Text>
-              <div className="mt-1 flex flex-wrap items-center gap-3">
-                <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                  결제일 : {billingDayLabel(subscription.nextBillingDate)}
-                </Text>
-                {subscription.isPaused && (
-                  <span className="inline-flex items-center rounded-full px-2 py-0.5 text-btn-12-m bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending)]">
-                    쉬어가는 중
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={handleTogglePause}
-                  className="max-md:text-body-13-m md:text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
-                >
-                  {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
-                </button>
-              </div>
+              {isActive ? (
+                <>
+                  <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                    {formatDate(startDate)} ~
+                  </Text>
+                  <div className="mt-1 flex flex-wrap items-center gap-3">
+                    <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                      결제일 : {billingDayLabel(subscription.nextBillingDate)}
+                    </Text>
+                    {subscription.isPaused && (
+                      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-btn-12-m bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending)]">
+                        쉬어가는 중
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleTogglePause}
+                      className="max-md:text-body-13-m md:text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                    >
+                      {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {endDate && (
+                    <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                      {formatDate(endDate)}
+                    </Text>
+                  )}
+                  <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                    구독종료
+                  </Text>
+                </>
+              )}
             </div>
 
             {/* Desktop-only action buttons (inside card, right side) */}
             <div className="max-md:hidden flex shrink-0 items-center gap-2">
+              {isActive ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                  >
+                    구독 취소
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleChangeSubscription}
+                    className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                  >
+                    구독 변경
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResubscribe}
+                  className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                >
+                  구독 재시작
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile-only action buttons (below card, full-width split) */}
+        <div className="md:hidden mt-4 grid gap-2" style={{ gridTemplateColumns: isActive ? "1fr 1fr" : "1fr" }}>
+          {isActive ? (
+            <>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 취소
               </button>
               <button
                 type="button"
                 onClick={handleChangeSubscription}
-                className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 변경
               </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile-only action buttons (below card, full-width split) */}
-        <div className="md:hidden mt-4 grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] text-body-14-sb text-white transition-opacity hover:opacity-90"
-          >
-            구독 취소
-          </button>
-          <button
-            type="button"
-            onClick={handleChangeSubscription}
-            className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
-          >
-            구독 변경
-          </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResubscribe}
+              className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+            >
+              구독 재시작
+            </button>
+          )}
         </div>
 
         {/* Payment history card — Figma Group 1000005367 */}

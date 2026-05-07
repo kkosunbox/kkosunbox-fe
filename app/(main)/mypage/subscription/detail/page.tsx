@@ -19,7 +19,7 @@ export default async function SubscriptionDetailPage({ searchParams }: PageProps
 
   const targetId = subscriptionId ? Number(subscriptionId) : null;
   const subscription = targetId
-    ? subscriptions.find((s) => s.id === targetId && s.isActive)
+    ? subscriptions.find((s) => s.id === targetId)
     : subscriptions.find((s) => s.isActive);
 
   if (!subscription) {

@@ -101,8 +101,8 @@ export default function ProfileSwitchModal({ onClose }: Props) {
       <div className="relative z-10 w-full max-w-[416px] rounded-[24px] bg-white shadow-[0px_4px_8px_rgba(16,24,64,0.08)]">
         <div className="flex flex-col items-center px-7 pt-7 pb-7 gap-3">
           {/* Header */}
-          <div className="relative flex w-full items-center justify-center">
-            <h2 className="text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
+          <div className="relative flex w-full items-center justify-start">
+            <h2 className="pr-8 text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
               프로필 변경
             </h2>
             <button

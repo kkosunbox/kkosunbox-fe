@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createInquiry } from "@/features/inquiry/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.webp";
 import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.webp";
@@ -84,6 +84,7 @@ export default function InquirySection() {
     agreePrivacy: false,
   });
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [termsModal, setTermsModal] = useState<"terms" | "privacy" | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -171,6 +172,14 @@ export default function InquirySection() {
   if (!isLoggedIn) return null;
 
   return (
+    <>
+    {termsModal && (
+      <TermsViewModal
+        type={termsModal}
+        onClose={() => setTermsModal(null)}
+        onConfirm={() => setForm((prev) => ({ ...prev, [termsModal === "terms" ? "agreeTerms" : "agreePrivacy"]: true }))}
+      />
+    )}
     <div className="bg-white pb-16 pb-12">
       {/* 히어로 — Figma 215px, gradient */}
       <section
@@ -334,13 +343,13 @@ export default function InquirySection() {
                 <span className="text-body-13-m leading-4 text-[var(--color-text)]">
                   이용약관에 동의합니다.
                 </span>
-                <Link
-                  href="/terms"
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setTermsModal("terms"); }}
                   className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   전체보기
-                </Link>
+                </button>
               </label>
 
               <label
@@ -360,13 +369,13 @@ export default function InquirySection() {
                 <span className="text-body-13-m leading-4 text-[var(--color-text)]">
                   개인정보 제공 및 활용에 동의합니다.
                 </span>
-                <Link
-                  href="/privacy"
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setTermsModal("privacy"); }}
                   className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   전체보기
-                </Link>
+                </button>
               </label>
             </div>
 
@@ -383,5 +392,6 @@ export default function InquirySection() {
         </form>
       </div>
     </div>
+    </>
   );
 }

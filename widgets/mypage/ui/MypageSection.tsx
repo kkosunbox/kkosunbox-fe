@@ -12,7 +12,7 @@ import type { InquiryDto } from "@/features/inquiry/api/types";
 interface MypageSectionProps {
   profile: Profile | null;
   checklistQuestions: ChecklistQuestion[];
-  subscription: UserSubscriptionDto | null;
+  subscriptions: UserSubscriptionDto[];
   billingInfo: BillingInfo | null;
   inquiries: InquiryDto[];
 }
@@ -20,7 +20,7 @@ interface MypageSectionProps {
 export default function MypageSection({
   profile,
   checklistQuestions,
-  subscription,
+  subscriptions,
   billingInfo,
   inquiries,
 }: MypageSectionProps) {
@@ -41,8 +41,8 @@ export default function MypageSection({
             </Text>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
-              <SubscriptionCard subscription={subscription} />
-              <PaymentCard billingInfo={billingInfo} subscription={subscription} />
+              <SubscriptionCard subscriptions={subscriptions} />
+              <PaymentCard billingInfo={billingInfo} subscription={subscriptions[0] ?? null} />
               <DeliveryCard />
               <InquiryCard inquiries={inquiries} />
             </div>

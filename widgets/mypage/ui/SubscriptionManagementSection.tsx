@@ -228,18 +228,22 @@ function SubscriptionRow({
 
       <div className="flex min-w-0 flex-1 flex-col p-5">
         <div className="mb-3 flex items-start justify-between gap-2">
-          <span
-            className="inline-flex items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-            style={{ background: badgeColor }}
-          >
-            {theme.tierLabel}
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-flex items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+              style={{ background: badgeColor }}
+            >
+              {theme.tierLabel}
+            </span>
+            <span
+              className="text-body-14-sb leading-[17px]"
+              style={{ color: badgeColor }}
+            >
+              {subscription.quantity || 1}BOX
+            </span>
+          </div>
           <Link
-            href={
-              isActive
-                ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
-                : `/subscribe/detail?planId=${plan.id}`
-            }
+            href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
             className="text-body-13-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
           >
             자세히보기

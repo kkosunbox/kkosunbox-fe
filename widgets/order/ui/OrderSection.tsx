@@ -337,9 +337,6 @@ export default function OrderSection({
 
   const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
 
-  // 팝업에서 결제 확정 시 구독 생성 트리거
-  const [confirmedPayment, setConfirmedPayment] = useState(false);
-
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
@@ -356,20 +353,16 @@ export default function OrderSection({
         if (selectedBilling) {
           setBilling(selectedBilling);
         }
-        setConfirmedPayment(true);
       }
     }
     window.addEventListener("message", handlePaymentMessage);
     return () => window.removeEventListener("message", handlePaymentMessage);
   }, []);
 
-  // 결제 확정 시 구독 생성 진행
-  useEffect(() => {
-    if (!confirmedPayment) return;
-    setConfirmedPayment(false);
-    proceedSubscription();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [confirmedPayment]);
+  function openPaymentPopup(method: string) {
+    const url = `/payment?method=${encodeURIComponent(method)}`;
+    window.open(url, "paymentPopup", "width=480,height=700,scrollbars=yes");
+  }
 
   const unitPrice = plan.monthlyPrice;
   const basePrice = unitPrice * quantity;
@@ -437,9 +430,12 @@ export default function OrderSection({
       }
     }
 
-    // 결제수단 선택 팝업 열기
-    const url = `/payment?method=${encodeURIComponent(paymentMethod)}`;
-    window.open(url, "paymentPopup", "width=480,height=700,scrollbars=yes");
+    if (!billing) {
+      setSubmitError("결제수단을 선택해 주세요.");
+      return;
+    }
+
+    proceedSubscription();
   }
 
   function proceedSubscription() {
@@ -711,15 +707,22 @@ export default function OrderSection({
               <RadioButton
                 key={method}
                 checked={paymentMethod === method}
-                onChange={() => setPaymentMethod(method)}
+                onChange={() => {
+                  setPaymentMethod(method);
+                  openPaymentPopup(method);
+                }}
                 label={method}
               />
             ))}
           </div>
 
-          {/* 등록된 카드 정보 표시 */}
+          {/* 등록된 카드 정보 표시 — 클릭 시 카드 변경 팝업 */}
           {paymentMethod === "신용카드" && billing && (
-            <div className="flex items-center gap-3 border-t border-white pt-4">
+            <button
+              type="button"
+              onClick={() => openPaymentPopup(paymentMethod)}
+              className="flex items-center gap-3 border-t border-white pt-4 w-full text-left hover:opacity-70 transition-opacity"
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
                 <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
                 <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
@@ -731,7 +734,7 @@ export default function OrderSection({
                 <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
                 <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </div>
+            </button>
           )}
 
           {/* 쿠폰 사용 */}

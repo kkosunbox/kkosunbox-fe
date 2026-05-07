@@ -251,6 +251,12 @@ export default function ChecklistSection() {
 
       if (cancelled) return;
 
+      const fromNewProfile = sessionStorage.getItem("kkosun_from_new_profile") === "1";
+      if (fromNewProfile) {
+        sessionStorage.removeItem("kkosun_from_new_profile");
+        initialStep = 1;
+      }
+
       const questionId = Number(editQuestionIdParam);
       if (Number.isFinite(questionId)) {
         const questionIndex = questions.findIndex((question) => question.id === questionId);

@@ -226,6 +226,7 @@ export default function ProfileManagementSection({
   const { openAlert } = useModal();
   const [isPending, start] = useTransition();
   const hasAlertedLimit = useRef(false);
+  const initialProfilesCountRef = useRef<number | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -260,7 +261,11 @@ export default function ProfileManagementSection({
 
   useEffect(() => {
     if (!isNewProfile) return;
-    if (profiles.length < MAX_PROFILE_COUNT) return;
+    if (profiles.length === 0) return;
+    if (initialProfilesCountRef.current === null) {
+      initialProfilesCountRef.current = profiles.length;
+    }
+    if (initialProfilesCountRef.current < MAX_PROFILE_COUNT) return;
     if (hasAlertedLimit.current) return;
     hasAlertedLimit.current = true;
     openAlert({ title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
@@ -354,6 +359,7 @@ export default function ProfileManagementSection({
 
     const trimmedNotes = specialNotes.trim();
 
+    const isFirstProfile = isCreating && profiles.length === 0;
     showLoading("프로필을 저장하고 있습니다...");
     start(async () => {
       try {
@@ -373,6 +379,12 @@ export default function ProfileManagementSection({
           });
           await refreshProfile();
           setActiveProfileId(newProfile.id);
+          if (isFirstProfile) {
+            sessionStorage.setItem("kkosun_from_new_profile", "1");
+            router.push("/checklist");
+          } else {
+            router.push("/mypage");
+          }
         } else {
           await updateProfile(profile.id, {
             ...body,
@@ -380,9 +392,9 @@ export default function ProfileManagementSection({
             specialNotes: trimmedNotes || null,
           });
           await refreshProfile();
+          router.push("/mypage");
         }
 
-        router.push("/mypage");
         router.refresh();
       } catch (error) {
         setSaveError(getErrorMessage(error, "저장 중 오류가 발생했습니다. 다시 시도해주세요."));

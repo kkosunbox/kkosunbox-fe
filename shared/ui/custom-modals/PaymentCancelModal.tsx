@@ -34,7 +34,7 @@ export default function PaymentCancelModal({ onClose, onConfirm, onConfirm2 }: P
           className="relative
                      max-md:mt-[59px] md:mt-[80px]
                      max-md:rounded-[32px] md:rounded-[40px]
-                     max-md:pt-[110px] md:pt-[140px]
+                     max-md:pt-[110px] md:pt-[128px]
                      pb-6 px-6
                      flex flex-col items-center"
           style={{ background: "var(--gradient-modal-warning)" }}
@@ -52,8 +52,8 @@ export default function PaymentCancelModal({ onClose, onConfirm, onConfirm2 }: P
           <Image
             src="/images/modal/custom-modal-09-contents.png"
             alt="결제 취소 시 꼬순박스 구독도 취소하시겠습니까?"
-            width={280}
-            height={140}
+            width={268}
+            height={129}
             className="h-auto max-w-full"
           />
 

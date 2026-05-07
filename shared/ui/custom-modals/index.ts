@@ -10,3 +10,4 @@ export { default as AccountInfoModal } from "./AccountInfoModal";
 export { default as SubscriptionCancelWithDeliveryModal } from "./SubscriptionCancelWithDeliveryModal";
 export { default as PaymentCancelModal } from "./PaymentCancelModal";
 export { default as SubscriptionPauseModal } from "./SubscriptionPauseModal";
+export { default as SubscriptionChangeConfirmModal } from "./SubscriptionChangeConfirmModal";

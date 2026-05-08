@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { createProfile, deleteProfile, updateProfile } from "@/features/profile/api/profileApi";
 import { MAX_PROFILE_COUNT, type DogGender, type Profile } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import type { UserSubscriptionDto } from "@/features/subscription/api/types";
-import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
@@ -53,7 +51,6 @@ function formatWeightInput(value: string, isFocused: boolean): string {
 
 interface ProfileManagementSectionProps {
   profile: Profile | null;
-  subscription: UserSubscriptionDto | null;
   isNewProfile?: boolean;
 }
 
@@ -217,7 +214,6 @@ function GenderButtons({
 
 export default function ProfileManagementSection({
   profile: serverProfile,
-  subscription,
   isNewProfile = false,
 }: ProfileManagementSectionProps) {
   const router = useRouter();
@@ -246,8 +242,6 @@ export default function ProfileManagementSection({
   );
   const [isWeightFocused, setIsWeightFocused] = useState(false);
   const [specialNotes, setSpecialNotes] = useState(profile?.specialNotes ?? "");
-  const subscriptionPlanTheme = subscription ? packageThemeForPlan(subscription.plan) : null;
-
   useEffect(() => {
     if (isNewProfile) return;
     setProfileImageUrl(profile?.profileImageUrl ?? null);
@@ -430,44 +424,6 @@ export default function ProfileManagementSection({
                   uploading={isUploadingImage}
                 />
                 <p className="mt-[13px] text-title-24-b text-[var(--color-text)]">{getProfileDisplayName(petName)}</p>
-                <div className="mt-4 h-px w-[141px] bg-[var(--color-divider-warm)]" />
-                {subscription ? (
-                  <>
-                    <span
-                      className="mt-[20px] inline-flex h-6 items-center justify-center rounded-full px-3 text-body-14-sb text-white"
-                      style={{ background: subscriptionPlanTheme?.colorVar }}
-                    >
-                      {subscriptionPlanTheme?.tier}
-                    </span>
-                    <p className="mt-2 w-full text-center text-subtitle-16-sb tracking-tightest text-[var(--color-text)]">
-                      {subscription.plan.name} 구독중
-                    </p>
-                    <p className="mt-1 w-full text-center text-body-16-m text-[var(--color-text-secondary)]">
-                      {subscription.nextBillingDate.replace(/-/g, ".")} ~
-                    </p>
-                    <p className="mt-1 w-full text-center text-body-16-m text-[var(--color-text-secondary)]">
-                      결제일 : 매달 {parseInt(subscription.nextBillingDate.slice(8, 10), 10)}일
-                    </p>
-                    <Link
-                      href="/mypage/subscription"
-                      className="mt-[8px] text-body-14-m text-[var(--color-accent)] underline underline-offset-2 transition-opacity hover:opacity-80"
-                    >
-                      구독 변경
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <p className="mt-[18px] w-full text-center text-body-16-m text-[var(--color-text-secondary)]">
-                      아직 구독 정보가 없어요.
-                    </p>
-                    <Link
-                      href="/subscribe"
-                      className="mt-[8px] text-body-14-m text-[var(--color-accent)] underline underline-offset-2 transition-opacity hover:opacity-80"
-                    >
-                      구독 시작하기
-                    </Link>
-                  </>
-                )}
                 {imageError && (
                   <p className="mt-3 w-full text-center text-body-12-m text-[var(--color-accent-rust)]">{imageError}</p>
                 )}
@@ -618,11 +574,11 @@ export default function ProfileManagementSection({
   );
 
   const mobileLayout = (
-    <div className="md:hidden min-h-screen bg-white">
+    <div className="md:hidden max-md:bg-[var(--color-surface-warm)] md:bg-white ">
       {/* Warm background top section */}
-      <div className="bg-[var(--color-surface-warm)] px-6 pb-8 pt-6">
+      <div className="md:bg-[var(--color-surface-warm)] px-6 pt-6">
         {/* Header */}
-        <div className="mb-5 flex items-center gap-1 text-[var(--color-text)]">
+        <div className="flex items-center gap-1 text-[var(--color-text)]">
           <Link
             href="/mypage"
             aria-label="마이페이지로 돌아가기"
@@ -634,60 +590,17 @@ export default function ProfileManagementSection({
         </div>
 
         {/* White pet summary card */}
-        <div className="rounded-[20px] bg-white px-5 py-6">
-          <div className="flex items-center">
-            {/* Left: avatar + name */}
-            <div className="flex max-md:max-w-[80px] md:w-[110px] max-md:ml-4 shrink-0 flex-col items-center">
+        <div className="rounded-[20px] px-5 py-6">
+          <div className="flex items-center justify-center">
+            <div className="flex shrink-0 flex-col items-center">
               <PetAvatar
-                size={64}
-                editSize={20}
+                size={100}
+                editSize={32}
                 imageUrl={profileImageUrl}
                 onEditClick={() => fileInputRef.current?.click()}
                 uploading={isUploadingImage}
               />
               <p className="mt-2 text-subtitle-16-b text-[var(--color-text)]">{getProfileDisplayName(petName)}</p>
-            </div>
-            {/* Vertical divider */}
-            <div className="mx-2 max-md:mx-6 h-[97px] w-px shrink-0 self-center bg-[var(--color-text-muted)]" />
-            {/* Right: subscription info */}
-            <div className="min-w-0 flex-1 self-center">
-              {subscription ? (
-                <div className="flex flex-col items-start gap-2">
-                  <span
-                    className="inline-flex rounded-full px-3 py-[3px] text-body-14-sb text-white"
-                    style={{ background: subscriptionPlanTheme?.colorVar }}
-                  >
-                    {subscriptionPlanTheme?.tier}
-                  </span>
-                  <div>
-                    <p className="text-body-14-sb tracking-tightest text-[var(--color-text-emphasis)]">
-                      {subscription.plan.name} 구독중
-                    </p>
-                    <p className="mt-0.5 text-body-14-m text-[var(--color-text-label)]">
-                      {subscription.nextBillingDate.replace(/-/g, ".")} ~
-                    </p>
-                    <p className="text-body-14-m text-[var(--color-text-label)]">
-                      결제일 : 매달 {parseInt(subscription.nextBillingDate.slice(8, 10), 10)}일
-                    </p>
-                  </div>
-                  <Link
-                    href="/mypage/subscription"
-                    className="text-body-14-m text-[var(--color-accent)] underline underline-offset-2 transition-opacity hover:opacity-80"
-                  >
-                    구독 변경
-                  </Link>
-                </div>
-              ) : (
-                <div className="flex flex-col items-start gap-2">
-                  <p className="text-body-14-m text-[var(--color-text-secondary)]">아직 구독 정보가 없어요.</p>
-                  <Link
-                    href="/subscribe"
-                    className="text-body-14-m text-[var(--color-accent)] underline underline-offset-2 transition-opacity hover:opacity-80"
-                  >
-                    구독 시작
-                  </Link>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -695,7 +608,7 @@ export default function ProfileManagementSection({
       </div>
 
       {/* Profile info card */}
-      <div className="px-6 pt-6">
+      <div className="px-6 pt-6 max-md:bg-white">
         <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-6 py-6">
           <h2 className="text-subtitle-16-b tracking-tightest text-[var(--color-text)]">프로필 정보</h2>
 
@@ -770,7 +683,7 @@ export default function ProfileManagementSection({
       {saveError && <p className="mt-4 px-6 text-center text-body-13-m text-[var(--color-accent-rust)]">{saveError}</p>}
 
       {/* Bottom buttons */}
-      <div className="mt-6 flex gap-3 px-6 pb-10">
+      <div className="pt-6 flex gap-3 px-6 pb-10 max-md:bg-white">
         {!isCreating && (
           <button
             type="button"

@@ -157,12 +157,6 @@ function LeaveConfirmModal({
   );
 }
 
-// 선택 시 같은 질문의 다른 옵션을 모두 해제하는 배타적 선택지 slug 목록.
-// 반대로 다른 옵션을 선택하면 이 slug를 가진 선택지가 자동 해제된다.
-// (예: "알러지 없음", "선호 없음" 등 "해당 없음" 계열)
-const EXCLUSIVE_OPTION_SLUGS = new Set<string>([
-  "no_allergy",
-]);
 
 /* ─── Widget ─── */
 export default function ChecklistSection() {
@@ -172,6 +166,7 @@ export default function ChecklistSection() {
   const { profile: activeProfile, refreshProfile, setActiveProfileId } = useProfile();
   const editQuestionIdParam = searchParams.get("editQuestionId");
   const returnTo = searchParams.get("returnTo");
+  const isRewrite = searchParams.get("rewrite") === "1";
 
   const [questions, setQuestions] = useState<ChecklistQuestion[] | null>(null);
   const [questionsError, setQuestionsError] = useState<string | null>(null);
@@ -254,6 +249,8 @@ export default function ChecklistSection() {
       const fromNewProfile = sessionStorage.getItem("kkosun_from_new_profile") === "1";
       if (fromNewProfile) {
         sessionStorage.removeItem("kkosun_from_new_profile");
+        initialStep = 1;
+      } else if (isRewrite) {
         initialStep = 1;
       }
 
@@ -414,16 +411,15 @@ export default function ChecklistSection() {
       }
 
       const clickedOption = options.find((o) => o.id === optionId);
-      const isClickedExclusive = !!clickedOption && EXCLUSIVE_OPTION_SLUGS.has(clickedOption.slug);
 
       // 배타적 선택지 클릭 → 다른 모든 선택 해제 후 단독 선택
-      if (isClickedExclusive) {
+      if (clickedOption?.isExclusive) {
         return { ...prev, [questionId]: [optionId] };
       }
 
       // 일반 선택지 클릭 → 배타적 선택지가 있다면 제거 후 추가
       const exclusiveIds = new Set(
-        options.filter((o) => EXCLUSIVE_OPTION_SLUGS.has(o.slug)).map((o) => o.id),
+        options.filter((o) => o.isExclusive).map((o) => o.id),
       );
       return {
         ...prev,

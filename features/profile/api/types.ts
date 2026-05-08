@@ -5,14 +5,16 @@ export const MAX_PROFILE_COUNT = 3;
 
 export interface ChecklistOption {
   id: number;
-  text: string;       // 선택지 내용
-  slug: string;       // 추천 로직 식별자
-  sortOrder: number;  // 정렬 순서
+  text: string;         // 선택지 내용
+  slug: string;         // 추천 로직 식별자
+  sortOrder: number;    // 정렬 순서
+  isExclusive: boolean; // true이면 복수선택 질문에서도 단독 선택만 허용
 }
 
 export interface ChecklistQuestion {
   id: number;
-  text: string;                // 질문 내용
+  text: string;                // 질문 전체 내용
+  shortText: string | null;    // 마이페이지 등 압축 표시용 짧은 라벨
   description: string | null;  // 부연 설명
   isMultiSelect: boolean;      // 복수 선택 허용 여부
   sortOrder: number;           // 정렬 순서

@@ -21,6 +21,7 @@ import MobileTierDetailPanel from "@/widgets/subscribe/plans/ui/MobileTierDetail
 import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
+import { CheckCircleIcon } from "@/shared/ui";
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -32,30 +33,9 @@ const TIER_LABEL: Record<RecommendedTier, string> = {
   premium: "프리미엄",
 };
 
-/** 추천 티어부터 Premium까지의 패키지 목록 (뱃지용) */
 const TIER_ORDER: RecommendedTier[] = ["basic", "standard", "premium"];
-function getRecommendedBadgeTiers(recommendedTier: RecommendedTier) {
-  const idx = TIER_ORDER.indexOf(recommendedTier);
-  return TIER_ORDER.slice(idx).map((id) => PACKAGES.find((p) => p.id === id)!);
-}
 
 /* ── Icons ─── */
-
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0" aria-hidden="true">
-      <circle cx="9" cy="9" r="8" style={{ fill: color }} />
-      <path
-        d="M6 9L8 11L12 7"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
 
 function InfoIcon() {
   return (
@@ -143,7 +123,7 @@ function ResultPlanCard({ plan, isRecommended, onInfoClick }: ResultPlanCardProp
               key={item}
               className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
             >
-              <CheckIcon color={theme.colorVar} />
+              <CheckCircleIcon color={theme.colorVar} />
               {item}
             </li>
           ))}
@@ -217,13 +197,25 @@ export default function ChecklistResult({
   const effectiveRecommendedTier = apiRecommendedTier ?? recommendedTier;
   const hasApiRecommendation = apiRecommendedTier !== null;
   const petName = petInfo.name.trim() || "우리 아이";
+  /** API가 단일 isRecommended만 내려주므로 히어로 뱃지는 그 티어 하나만 표시 */
   const recommendedBadgeTiers = hasApiRecommendation
-    ? getRecommendedBadgeTiers(effectiveRecommendedTier)
+    ? (() => {
+        const pkg = PACKAGES.find((p) => p.id === effectiveRecommendedTier);
+        return pkg ? [pkg] : [];
+      })()
     : [];
 
-  /** 모바일 추천 문구: 추천 범위에 따라 달라짐 */
+  /** 모바일 추천 문구 — API 연동 시 데스크톱과 동일(단일 플랜). 없으면 클라이언트 티어 범위 문구 */
   const mobileDescription = (() => {
-    if (effectiveRecommendedTier === "premium") {
+    if (hasApiRecommendation) {
+      return (
+        <>
+          <strong className="text-body-16-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+          <strong className="font-bold">{TIER_LABEL[effectiveRecommendedTier]} 패키지</strong>입니다.
+        </>
+      );
+    }
+    if (recommendedTier === "premium") {
       return (
         <>
           <strong className="text-body-16-m font-bold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
@@ -231,7 +223,7 @@ export default function ChecklistResult({
         </>
       );
     }
-    if (effectiveRecommendedTier === "standard") {
+    if (recommendedTier === "standard") {
       return (
         <>
           <strong className="text-body-16-m font-bold">{petName}</strong>에게 가장 추천드리는 구성은{" "}
@@ -239,7 +231,6 @@ export default function ChecklistResult({
         </>
       );
     }
-    // basic
     return (
       <>
         <strong className="text-body-16-m font-bold">{petName}</strong>에게 꼭 필요한 프리미엄, 스탠다드, 베이직의{" "}

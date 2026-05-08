@@ -101,21 +101,13 @@ export default function ExistingBillingView({
         </div>
       </div>
 
-      {/* 새 카드 등록 버튼 */}
+      {/* 카드 정보 변경 버튼 */}
       <button
         type="button"
         onClick={onNewCard}
         className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-text-muted)] bg-white text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path
-            d="M7 1v12M1 7h12"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
-        새 카드 등록
+        카드 정보 변경
       </button>
 
       {/* 하단 이 카드로 결제 버튼 */}

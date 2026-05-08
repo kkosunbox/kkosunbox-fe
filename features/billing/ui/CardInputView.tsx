@@ -32,7 +32,6 @@ export default function CardInputView({ existingBilling, onConfirm, onBack, onCl
   const [expYear, setExpYear] = useState("");
   const [cvc, setCvc] = useState("");
   const [cardPw, setCardPw] = useState("");
-  const [saveCard, setSaveCard] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -198,34 +197,6 @@ export default function CardInputView({ existingBilling, onConfirm, onBack, onCl
           />
         </div>
 
-        {/* 카드 정보 저장 체크 */}
-        <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-          <button
-            type="button"
-            onClick={() => setSaveCard((v) => !v)}
-            className={[
-              "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
-              saveCard
-                ? "bg-[var(--color-accent)]"
-                : "border border-[var(--color-border)] bg-white",
-            ].join(" ")}
-          >
-            {saveCard && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path
-                  d="M2 6L4.5 8.5L10 3.5"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </button>
-          <span className="text-body-13-m text-[var(--color-text)]">
-            카드 정보 저장
-          </span>
-        </label>
       </div>
 
       {/* Error */}

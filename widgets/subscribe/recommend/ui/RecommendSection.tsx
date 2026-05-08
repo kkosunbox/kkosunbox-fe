@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ScrollReveal } from "@/shared/ui";
+import { CheckCircleIcon, ScrollReveal } from "@/shared/ui";
 import checklistDoneTitle from "@/widgets/checklist/assets/checklist-done-title.webp";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import doubleTwinkle from "../assets/double-twinkle.webp";
@@ -37,22 +37,6 @@ const TIER_DISPLAY: Record<RecommendedTier, PackageTier> = {
 };
 
 /* ── Icons ─── */
-
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0" aria-hidden="true">
-      <circle cx="9" cy="9" r="8" style={{ fill: color }} />
-      <path
-        d="M6 9L8 11L12 7"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
 
 function InfoIcon() {
   return (
@@ -294,7 +278,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                           key={item}
                           className="flex items-center gap-2 text-body-13-m leading-[1] text-[var(--color-text)]"
                         >
-                          <CheckIcon color={pkg.colorVar} />
+                          <CheckCircleIcon color={pkg.colorVar} />
                           {item}
                         </li>
                       ))}

@@ -15,3 +15,4 @@ export { default as LoadingOverlay, LoadingOverlayProvider, useLoadingOverlay } 
 export { default as ScrollReveal } from "./ScrollReveal";
 export { default as PawCircleIcon } from "./PawCircleIcon";
 export { default as DefaultPetIcon } from "./DefaultPetIcon";
+export { default as CheckCircleIcon } from "./CheckCircleIcon";

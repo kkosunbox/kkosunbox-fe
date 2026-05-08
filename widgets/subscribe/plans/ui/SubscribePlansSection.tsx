@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
+import { CheckCircleIcon, ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
@@ -28,22 +28,6 @@ function formatMonthlyPrice(n: number) {
 }
 
 /* ── Icons ───────────────────────────────────────────────────────── */
-
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0" aria-hidden="true">
-      <circle cx="9" cy="9" r="8" style={{ fill: color }} />
-      <path
-        d="M6 9L8 11L12 7"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
 
 function InfoIcon() {
   return (
@@ -115,7 +99,7 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
               key={item}
               className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
             >
-              <CheckIcon color={color} />
+              <CheckCircleIcon color={color} />
               {item}
             </li>
           ))}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { CheckCircleIcon } from "@/shared/ui";
 import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import {
   PACKAGES,
@@ -17,22 +18,6 @@ function formatMonthlyPrice(n: number) {
 }
 
 /* ─── Icons ─── */
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0" aria-hidden="true">
-      <circle cx="9" cy="9" r="8" style={{ fill: color }} />
-      <path
-        d="M6 9L8 11L12 7"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
-
 function HeartIcon({ filled }: { filled: boolean }) {
   const color = filled ? "var(--color-primary)" : "var(--color-text-muted)";
   return (
@@ -280,7 +265,7 @@ export default function PackageDetailView({
                   key={item}
                   className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
                 >
-                  <CheckIcon color={pkg.colorVar} />
+                  <CheckCircleIcon color={pkg.colorVar} />
                   {item}
                 </li>
               ))}
@@ -364,7 +349,7 @@ export default function PackageDetailView({
                     key={item}
                     className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
                   >
-                    <CheckIcon color={pkg.colorVar} />
+                    <CheckCircleIcon color={pkg.colorVar} />
                     {item}
                   </li>
                 ))}

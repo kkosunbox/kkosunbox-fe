@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Text, ScrollReveal } from "@/shared/ui";
-import reviewsTitle from "../assets/reviews-title.webp";
+import { useAuth } from "@/features/auth";
+import reviewsTitle from "../assets/reviews-title.png";
+import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
@@ -10,7 +15,7 @@ const REVIEWS = [
     name: "코코",
     subscription: "2026.04.20 · 프리미엄 패키지 BOX",
     review:
-      "처음엔 가격대가 있어서 고민했는데 받아보고 생각 바뀌었어요. 포장부터 너무 깔끔하고 고급스럽고, 무엇보다 우리 강아지가 진짜 잘 먹어요. 평소 간식 가리던 아이인데 꼬순박스는 뜯자마자 달려오네요ㅎㅎ 재구독 의사 100%입니다!",
+      "원래 간식 진짜 가리는 애라서 이것저것 다 사봤는데 이건 처음으로 먼저 달라고 찾아요!  ㅋㅋ  특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요. 이제 다른 간식은 못 먹일 것 같아요.",
     rating: 4.5,
     profile: reviewsProfile01,
   },
@@ -18,7 +23,7 @@ const REVIEWS = [
     name: "보리",
     subscription: "2026.04.20 · 스탠다드 패키지 BOX",
     review:
-      "성분 보고 선택했는데 진짜 만족이에요. 불필요한 첨가물 없고 믿고 먹일 수 있어서 좋아요. 간식 종류도 다양해서 매번 새로운 느낌이라 강아지도 질려하지 않네요. 구독 서비스 중에서는 제일 만족스러워요.",
+      "알러지 때문에 간식 고르는 게 항상 스트레스였는데 여기는 맞춤으로 추천해줘서 너무 편하고 좋아요. \n성분도 깔끔해서 믿고 먹일 수 있고 무엇보다 아이가 너무 잘 먹어서 계속 구독 중입니다.",
     rating: 5,
     profile: reviewsProfile02,
   },
@@ -26,7 +31,7 @@ const REVIEWS = [
     name: "두부",
     subscription: "2026.04.08 · 프리미엄 패키지 BOX",
     review:
-      "강아지 키우면서 간식 고민 많았는데 꼬순박스로 정착했어요. 매달 어떤 구성이 올지 기대하는 재미도 있고, 퀄리티가 확실히 일반 간식이랑 달라요. 주변 견주들한테도 추천 많이 하고 있어요",
+      "일반 간식 주면 꼭 항상 반 정도 남기던 애인데 이건 끝까지 다 먹어요.\n특히 종류가 다양해서 질려하지 않는 게 가장 좋아요. 가격 대비 만족도가 생각보다 훨씬 높네요.",
     rating: 5,
     profile: reviewsProfile03,
   },
@@ -76,7 +81,7 @@ function ReviewCard({ review }: { review: DisplayReview }) {
           ))}
         </div>
 
-        <p className="mb-6 flex-1 text-[14px] leading-[140%] text-[var(--color-review-text)]">
+        <p className="mb-6 flex-1 whitespace-pre-line text-[14px] leading-[140%] text-[var(--color-review-text)]">
           {review.review}
         </p>
 
@@ -96,9 +101,20 @@ function ReviewCard({ review }: { review: DisplayReview }) {
 }
 
 export default function ReviewsSection() {
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  function handleChecklistCtaClick() {
+    if (isLoggedIn) {
+      router.push("/checklist");
+      return;
+    }
+    router.push("/login?next=/checklist");
+  }
+
   return (
     <section
-      className="py-16 md:pt-[86px] md:pb-[116px]"
+      className="py-16 md:pt-[86px] md:pb-[58px]"
       style={{ background: "var(--gradient-reviews)" }}
     >
       <div className="mx-auto max-w-content max-md:px-6 md:px-0">
@@ -106,7 +122,12 @@ export default function ReviewsSection() {
           <Image
             src={reviewsTitle}
             alt="생생한 리뷰를 확인하세요!"
-            className="mx-auto h-auto w-full max-w-[min(100%,300px)] md:max-w-[412px]"
+            className="mx-auto h-auto w-full max-w-[623px] max-md:hidden"
+          />
+          <Image
+            src={reviewsTitleMobile}
+            alt="그래서 꼬순박스는 다르게 만들었습니다!"
+            className="mx-auto h-auto w-full max-w-[233px] md:hidden"
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
@@ -126,6 +147,17 @@ export default function ReviewsSection() {
             </ScrollReveal>
           ))}
         </div>
+        <ScrollReveal variant="fade-up" delay={450}>
+          <div className="mt-12 md:mt-14 flex justify-center">
+            <button
+              type="button"
+              onClick={handleChecklistCtaClick}
+              className="h-[52px] w-[282px] rounded-[50px] bg-[var(--color-accent-strong)] text-center text-[16px] font-semibold leading-[30px] tracking-[-0.04em] text-white"
+            >
+              10초 진단하고 우리 아이 맞춤 추천 받기
+            </button>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

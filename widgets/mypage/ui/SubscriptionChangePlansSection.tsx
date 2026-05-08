@@ -9,7 +9,7 @@ import heroTitleImage from "@/widgets/mypage/assets/subscription-change-plans-se
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import { getErrorMessage } from "@/shared/lib/api";
-import { useLoadingOverlay, useModal } from "@/shared/ui";
+import { CheckCircleIcon, useLoadingOverlay, useModal } from "@/shared/ui";
 import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
 import {
   comparePlansForDisplayOrder,
@@ -39,15 +39,6 @@ function PawDecoration({ className, style }: { className?: string; style?: React
 
 /* ─── Icons ─── */
 
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg width="16" height="16" viewBox="0 0 18 18" className="shrink-0" aria-hidden="true">
-      <circle cx="9" cy="9" r="8" style={{ fill: color }} />
-      <path d="M6 9L8 11L12 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </svg>
-  );
-}
-
 function InfoIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" className="shrink-0" aria-hidden="true">
@@ -63,6 +54,7 @@ function InfoIcon() {
 interface Props {
   subscriptions: UserSubscriptionDto[];
   plans: SubscriptionPlanDto[];
+  targetSubscriptionId?: number;
 }
 
 /* ─── Main ─── */
@@ -71,7 +63,7 @@ function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-export default function SubscriptionChangePlansSection({ subscriptions, plans }: Props) {
+export default function SubscriptionChangePlansSection({ subscriptions, plans, targetSubscriptionId }: Props) {
   const router = useRouter();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
@@ -83,17 +75,27 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
     [plans],
   );
 
-  // 여러 구독 중 이미 해당 플랜을 구독 중인지 확인
-  function isCurrentPlan(plan: SubscriptionPlanDto): boolean {
+  const isAddMode = !targetSubscriptionId;
+
+  const targetSubscription = useMemo(
+    () => subscriptions.find((s) => s.id === targetSubscriptionId) ?? null,
+    [subscriptions, targetSubscriptionId],
+  );
+
+  // 이미 구독 중인 플랜 여부 — 배지/카드 하이라이트 전용 (버튼 비활성과 무관)
+  function hasActiveSub(plan: SubscriptionPlanDto): boolean {
     return subscriptions.some((s) => s.plan.id === plan.id);
   }
 
-  // 플랜 변경 대상: 해당 플랜을 구독 중이지 않은 첫 번째 활성 구독
-  // 활성 구독이 없으면 신규 주문으로 이동
-  function handlePurchase(plan: SubscriptionPlanDto) {
-    const targetSubscription = subscriptions.find((s) => s.plan.id !== plan.id) ?? subscriptions[0] ?? null;
+  // 버튼 비활성: change 모드에서 교체 대상 플랜만, add 모드는 항상 false
+  function isDisabledPlan(plan: SubscriptionPlanDto): boolean {
+    if (isAddMode) return false;
+    return targetSubscription?.plan.id === plan.id;
+  }
 
-    if (!targetSubscription) {
+  function handlePurchase(plan: SubscriptionPlanDto) {
+    // add 모드: 항상 신규 주문 플로우
+    if (isAddMode || !targetSubscription) {
       router.push(`/order?planId=${plan.id}&quantity=1`);
       return;
     }
@@ -118,15 +120,16 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
     });
   }
 
+  function buttonLabel(): string {
+    if (isAddMode) return "구독하기";
+    return subscriptions.length > 0 ? "변경하기" : "구매하기";
+  }
+
   function getDetailPrimaryButton(p: SubscriptionPlanDto) {
-    if (isCurrentPlan(p)) {
+    if (isDisabledPlan(p)) {
       return { label: "현재 구독중", onClick: () => {}, disabled: true as const };
     }
-    return {
-      label: subscriptions.length > 0 ? "변경하기" : "구매하기",
-      onClick: () => handlePurchase(p),
-      disabled: false,
-    };
+    return { label: buttonLabel(), onClick: () => handlePurchase(p), disabled: false };
   }
 
   return (
@@ -190,13 +193,14 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
             {sortedPlans.map((plan) => {
               const theme = packageThemeForPlan(plan);
               const color = theme.colorVar;
-              const currentPlan = isCurrentPlan(plan);
+              const activeSub = hasActiveSub(plan);
+              const disabled = isDisabledPlan(plan);
 
               return (
                 <div
                   key={plan.id}
                   className="flex flex-col overflow-hidden rounded-[20px] bg-[var(--color-background)]"
-                  style={currentPlan ? { boxShadow: `0 0 0 2px ${color}` } : undefined}
+                  style={activeSub ? { boxShadow: `0 0 0 2px ${color}` } : undefined}
                 >
                   <div className="relative aspect-[327/252] w-full">
                     <Image
@@ -213,7 +217,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
                         >
                           {theme.tierLabel}
                         </span>
-                        {currentPlan ? (
+                        {activeSub ? (
                           <span className="text-price-16-b" style={{ color }}>
                             이용중
                           </span>
@@ -247,7 +251,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
                           key={feature}
                           className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
                         >
-                          <CheckIcon color={color} />
+                          <CheckCircleIcon color={color} />
                           {feature}
                         </li>
                       ))}
@@ -260,7 +264,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
                       </span>
                     </div>
 
-                    {currentPlan ? (
+                    {disabled ? (
                       <div
                         className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white opacity-70"
                         style={{ background: color }}
@@ -275,7 +279,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans }:
                         className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-70"
                         style={{ background: color }}
                       >
-                        {subscriptions.length > 0 ? "변경하기" : "구매하기"}
+                        {buttonLabel()}
                       </button>
                     )}
                   </div>

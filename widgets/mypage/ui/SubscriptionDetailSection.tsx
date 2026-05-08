@@ -315,7 +315,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
   function handleChangeSubscription() {
     openModal("subscription-change-confirm", () => {
-      router.push("/mypage/subscription/change");
+      router.push(`/mypage/subscription/change?subscriptionId=${subscription.id}`);
     });
   }
 
@@ -354,7 +354,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               <StatusBadge status={displayStatus} />
               {displayStatus === "예정" && (
                 <Link
-                  href="/mypage/subscription/change"
+                  href={`/mypage/subscription/change?subscriptionId=${subscription.id}`}
                   className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
                 >
                   플랜 변경하기
@@ -395,7 +395,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
             <StatusBadge status={displayStatus} />
             {displayStatus === "예정" && (
               <Link
-                href="/mypage/subscription/change"
+                href={`/mypage/subscription/change?subscriptionId=${subscription.id}`}
                 className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
               >
                 플랜 변경하기

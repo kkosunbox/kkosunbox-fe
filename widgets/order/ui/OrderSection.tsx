@@ -949,13 +949,7 @@ export default function OrderSection({
           src={heroRightPaw}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-[69%] top-[60%] h-auto w-[60px] -translate-y-1/2 max-md:hidden"
-        />
-        <Image
-          src={heroRightPaw}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[72%] top-[36%] h-auto w-[38px] -translate-y-1/2 max-md:hidden"
+          className="pointer-events-none absolute left-[69%] top-1/2 h-auto w-[84px] -translate-y-1/2 max-md:hidden"
         />
         <div className="relative z-10 text-center px-4 flex flex-col items-center gap-4">
           <Image

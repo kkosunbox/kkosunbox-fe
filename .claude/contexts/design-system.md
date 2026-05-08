@@ -34,6 +34,7 @@
 | `--color-background` | `#FFF9F3` | Cream White — 전체 기본 배경 |
 | `--color-surface-dark` | `#171713` | Near Black — 다크 섹션 배경 (Stats Bar 등) |
 | `--color-surface-warm` | `#FFF8F2` | Warm Light — 따뜻한 섹션 배경 |
+| `--color-checklist-bg` | `#FFFDF3` | 마이페이지 체크리스트 패널 배경 (Figma Rectangle 974) |
 | `--color-surface-peach` | `#FFF2E5` | Warm Peach — 구독관리 상단 배경 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |

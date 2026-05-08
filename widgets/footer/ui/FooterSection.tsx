@@ -134,7 +134,7 @@ export default function FooterSection() {
       {/* ── 데스크톱 레이아웃 ── */}
       <div className="max-md:hidden mx-auto flex max-w-content-wide flex-col px-8">
         <div className="flex items-start justify-between pt-[26px] pb-[26px]">
-          <div className="flex items-start gap-8">
+          <div className="flex items-start gap-20">
             <Link href="/" className="shrink-0 self-center" aria-label="꼬순박스 홈">
               <Image src={logoMono} alt="" width={LOGO_W} height={LOGO_H} className="h-[28px] w-[88px]" />
             </Link>

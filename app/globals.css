@@ -53,6 +53,7 @@
   --color-primary: #C97A3D;       /* Corgi Brown — 로고, 브랜드 아이콘, 메인 버튼 */
   --color-secondary: #F6E9DD;     /* Warm Beige — 카드, 섹션 배경, 패키지 디자인 */
   --color-accent: #7FB3FF;        /* Soft Sky Blue — 버튼, 링크, 강조 요소, CTA */
+  --color-accent-strong: #4F95FD; /* CTA Blue — 리뷰 섹션 하단 버튼 */
   --color-accent-soft: #E5F0FF;   /* Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) */
   --color-accent-orange: #EE681A; /* Warm Orange — 데코 강조 ("for you" 등) */
 
@@ -60,6 +61,8 @@
   --color-background: #FFF9F3;    /* Cream White — 전체 기본 배경 */
   --color-surface-dark: #171713;  /* Near Black — 다크 섹션 배경 (Stats Bar 등) */
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
+  --color-checklist-bg: #FFFDF3;  /* 마이페이지 체크리스트 패널 배경 (Figma Rectangle 974) */
+  --color-checklist-fallback-bg: #F5F3EC; /* 마이페이지 체크리스트 미작성 폴백 오버레이 배경 */
   --color-surface-peach: #FFF2E5; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-surface-light: #F8F8F8;
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
@@ -180,12 +183,15 @@
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);
   --color-accent: var(--color-accent);
+  --color-accent-strong: var(--color-accent-strong);
   --color-accent-soft: var(--color-accent-soft);
   --color-accent-orange: var(--color-accent-orange);
 
   /* Surface */
   --color-surface-dark: var(--color-surface-dark);
   --color-surface-warm: var(--color-surface-warm);
+  --color-checklist-bg: var(--color-checklist-bg);
+  --color-checklist-fallback-bg: var(--color-checklist-fallback-bg);
   --color-surface-peach: var(--color-surface-peach);
   --color-surface-light: var(--color-surface-light);
   --color-hero-bg: var(--color-hero-bg);

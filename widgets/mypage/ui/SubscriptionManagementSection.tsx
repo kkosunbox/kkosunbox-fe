@@ -83,14 +83,28 @@ function SubscriptionsSummaryCard({
     0,
   );
 
+  // 동일 플랜 복수 구독 시 박스 수 합산
+  const aggregatedPlans = useMemo(() => {
+    const map = new Map<number, { plan: UserSubscriptionDto["plan"]; totalQuantity: number }>();
+    for (const s of activeSubscriptions) {
+      const entry = map.get(s.plan.id);
+      if (entry) {
+        entry.totalQuantity += s.quantity || 1;
+      } else {
+        map.set(s.plan.id, { plan: s.plan, totalQuantity: s.quantity || 1 });
+      }
+    }
+    return [...map.values()];
+  }, [activeSubscriptions]);
+
   return (
     <div className="relative overflow-hidden rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
-      {activeSubscriptions.length > 0 && (
+      {aggregatedPlans.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          {activeSubscriptions.map((s) => {
-            const theme = packageThemeForPlan(s.plan);
+          {aggregatedPlans.map(({ plan, totalQuantity }) => {
+            const theme = packageThemeForPlan(plan);
             return (
-              <div key={s.id} className="inline-flex items-center gap-2">
+              <div key={plan.id} className="inline-flex items-center gap-2">
                 <span
                   className="inline-flex h-6 items-center rounded-full px-3 text-body-14-sb leading-[17px] text-white"
                   style={{ background: theme.colorVar }}
@@ -101,7 +115,7 @@ function SubscriptionsSummaryCard({
                   className="text-body-14-sb leading-[17px]"
                   style={{ color: theme.colorVar }}
                 >
-                  {s.quantity || 1}BOX
+                  {totalQuantity}BOX
                 </span>
               </div>
             );

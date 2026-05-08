@@ -6,10 +6,10 @@ import painPointDogs from "../assets/pain-point-dogs.webp";
 import painPointQuestion from "../assets/pain-point-question.webp";
 
 const PAIN_POINTS = [
-  "시중 간식 성분이 걱정돼서 아무거나 먹이기 불안해요",
-  "우리 강아지 입맛이 까다로워서 간식 고르기 어려워요",
-  "건강한 간식을 주고 싶은데 어떤 걸 골라야 할지 모르겠어요",
-  "매번 간식 쇼핑하기가 번거로워요",
+  "아무 간식이나 먹이기 불안해요 ",
+  "알러지 때문에 간식을 고르기 어려워요",
+  "간식을 먹다가 질려서 남기는 경우가 많아요",
+  "믿고 먹일 수 있는 간식이 없어요",
 ];
 
 export default function PainPointsSection() {
@@ -30,12 +30,12 @@ export default function PainPointsSection() {
             <Image
               src={painPointQuestion}
               alt="이런 고민 있으신가요?"
-              className="mb-6 h-auto w-full max-w-[258px] md:mb-8 md:max-w-[323px]"
+              className="mb-6 h-auto w-full max-w-[258px] md:mb-8 md:max-w-[387px]"
             />
           </ScrollReveal>
           {/* 모바일 전용 구분선 */}
-          <div className="md:hidden mb-3 w-full max-w-[294px] border-t border-[var(--color-divider-warm)]" />
-          <ul className="mx-auto flex w-fit max-w-full flex-col items-start gap-2 text-left md:mx-0 md:w-full md:gap-0">
+          <div className="md:hidden mb-3 w-full border-t border-[var(--color-divider-warm)]" />
+          <ul className="flex w-full max-w-full flex-col items-start gap-2 text-left md:mx-0 md:w-full md:gap-0">
             {PAIN_POINTS.map((item, i) => (
               <ScrollReveal key={item} variant="fade-up" delay={300 + i * 120}>
                 <li className="flex items-start gap-2 md:gap-3">

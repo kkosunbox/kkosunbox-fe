@@ -2,76 +2,51 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
-import { Text, ScrollReveal } from "@/shared/ui";
-import packagePlansTitle02 from "../assets/home-package-plans-title-02.webp";
+import { CheckCircleIcon, Text, ScrollReveal } from "@/shared/ui";
+import { PACKAGES as BASE_PACKAGES } from "@/widgets/subscribe/plans/ui/packageData";
+import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
 import packageImageStandard from "../assets/package-image-standard.png";
 import packageImagePremium from "../assets/package-image-premium.png";
 
-const PACKAGES = [
-  {
-    tier: "Basic",
+const HOME_PACKAGE_UI = {
+  Basic: {
     tierLabel: "Basic",
     colorVar: "var(--color-basic)",
     cardBg: "var(--color-card-basic)",
     msMadiColor: "var(--color-basic-light)",
     accentColor: "var(--color-basic)",
     rotate: 12,
-    name: "베이직 패키지 BOX",
     image: packageImageBasic as StaticImageData,
-    items: ["100% 원물 프리미엄 져키", "인공 첨가물 0%", "이중 안심 포장"],
   },
-  {
-    tier: "Standard",
+  Standard: {
     tierLabel: "Standard",
     colorVar: "var(--color-plus)",
     cardBg: "var(--color-card-standard)",
     msMadiColor: "var(--color-plus-light)",
     accentColor: "var(--color-plus)",
     rotate: 19,
-    name: "스탠다드 패키지 BOX",
     image: packageImageStandard as StaticImageData,
-    items: ["베이직의 모든 구성 포함", "영양 강화 플러스 져키", "균형 잡힌 영양 설계"],
   },
-  {
-    tier: "Premium",
+  Premium: {
     tierLabel: "Premium",
     colorVar: "var(--color-premium)",
     cardBg: "var(--color-card-premium)",
     msMadiColor: "var(--color-premium-light)",
     accentColor: "var(--color-accent-orange)",
     rotate: 15,
-    name: "프리미엄 패키지 BOX",
     image: packageImagePremium as StaticImageData,
-    items: ["휴먼그레이드 프리미엄 져키", "1:1 맞춤 큐레이션", "최상의 재료로 만든 패키지"],
   },
-];
+} as const;
+
+const PACKAGES = BASE_PACKAGES.map((pkg) => ({
+  ...pkg,
+  ...HOME_PACKAGE_UI[pkg.tier],
+}));
 
 const SIDE_OFFSET = 348;
 const AUTO_ROTATE_MS = 10000;
 const ACTIVE_VISUAL_DELAY_MS = 140;
-
-function CheckIcon({ color }: { color: string }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      className="shrink-0"
-      aria-hidden="true"
-    >
-      <circle cx="8" cy="8" r="6" style={{ fill: color }} />
-      <path
-        d="M5.5 8L7.2 9.7L10.5 6.3"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
 
 function PackageCard({
   pkg,
@@ -155,7 +130,7 @@ function PackageCard({
                   isActive ? "text-body-16-m" : "text-body-14-m",
                 ].join(" ")}
               >
-                <CheckIcon color={pkg.accentColor} />
+                <CheckCircleIcon color={pkg.accentColor} />
                 {item}
               </li>
             ))}
@@ -243,12 +218,12 @@ export default function PackagePlansSection() {
           <Image
             src={packagePlansTitle02}
             alt="원하는 패키지로 선택 후 구독하세요!"
-            className="mx-auto h-auto w-full max-w-[215px] md:max-w-[306px]"
+            className="mx-auto h-auto w-full max-w-[260px] md:max-w-[371px]"
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
           <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 mt-4 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
-            설문조사 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
+            체크리스트 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
           </Text>
         </ScrollReveal>
 

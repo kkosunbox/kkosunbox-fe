@@ -9,7 +9,7 @@ import aboutFeatureHealthy from "../assets/about-feature-healty.webp";
 import aboutFeatureCircle01 from "../assets/about-feature-circle-01.webp";
 import aboutFeatureCircle02 from "../assets/about-feature-circle-02.webp";
 import aboutFeatureCircle03 from "../assets/about-feature-circle-03.webp";
-import aboutCtaProduct from "../assets/about-cta-product.webp";
+import aboutCtaProduct from "../assets/about-cta-product.png";
 import aboutCtaMark from "../assets/about-cta-mark.webp";
 import aboutCtaLogo from "../assets/about-cta-logo.webp";
 

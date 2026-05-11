@@ -236,7 +236,7 @@ export function ProfileSection({
                         variant="body-16-m"
                         mobileVariant="body-13-r"
                         className={[
-                          "min-w-0 max-w-[min(200px,40vw)] shrink truncate leading-[140%]",
+                          "min-w-0 max-w-[min(200px,40vw)] shrink translate-y-[2px] truncate leading-[140%]",
                           breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
                         ].join(" ")}
                       >

@@ -269,7 +269,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   const profile = clientProfile ?? initialProfile;
   const hasProfile = hasProfileRecord(profile);
   const isChecklistDone = hasChecklistAnswers(profile);
-  const showModal = isLoggedIn && hasProfile && !isChecklistDone && !isDismissed;
+  const showModal = isLoggedIn && !isChecklistDone && !isDismissed;
 
   function handleClose() {
     setIsDismissed(true);

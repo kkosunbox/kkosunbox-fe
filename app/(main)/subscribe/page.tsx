@@ -24,8 +24,10 @@ export const metadata: Metadata = {
 
 export default async function SubscribePage() {
   const token = await getServerToken();
-  const profile = await fetchProfile(token);
-  const plans = await fetchSubscriptionPlans(token, profile?.id);
+  const [profile, plans] = await Promise.all([
+    fetchProfile(token),
+    fetchSubscriptionPlans(token),
+  ]);
 
   return <SubscribePlansSection plans={plans} initialProfile={profile} />;
 }

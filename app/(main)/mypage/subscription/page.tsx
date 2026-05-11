@@ -8,11 +8,10 @@ export const metadata = { title: "구독관리 | 꼬순박스" };
 
 export default async function SubscriptionManagementPage() {
   const token = await getServerToken();
-  const profile = await fetchProfile(token);
-
-  const [subscriptions, plans, billingInfo] = await Promise.all([
+  const [profile, subscriptions, plans, billingInfo] = await Promise.all([
+    fetchProfile(token),
     fetchSubscriptions(token),
-    fetchSubscriptionPlans(token, profile?.id),
+    fetchSubscriptionPlans(token),
     fetchBillingInfo(token),
   ]);
 

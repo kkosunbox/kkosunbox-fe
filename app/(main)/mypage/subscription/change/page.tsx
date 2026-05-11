@@ -11,12 +11,12 @@ export default async function SubscriptionChangePage({
   searchParams: Promise<{ subscriptionId?: string }>;
 }) {
   const token = await getServerToken();
-  const profile = await fetchProfile(token);
   const { subscriptionId } = await searchParams;
 
-  const [allSubscriptions, plans] = await Promise.all([
+  const [profile, allSubscriptions, plans] = await Promise.all([
+    fetchProfile(token),
     fetchSubscriptions(token),
-    fetchSubscriptionPlans(token, profile?.id),
+    fetchSubscriptionPlans(token),
   ]);
 
   const subscriptions = allSubscriptions.filter((s) => s.isActive);

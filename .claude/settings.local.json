@@ -96,7 +96,8 @@
       "Bash(Write-Output \"Copied\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-12-upper.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-12-upper.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-12-contents.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-12-contents.png\")",
-      "Bash(awk '/^:root {/,/^\\\\}/' C:/2026/ggosoonbox/app/globals.css)"
+      "Bash(awk '/^:root {/,/^\\\\}/' C:/2026/ggosoonbox/app/globals.css)",
+      "Bash(dir *)"
     ]
   }
 }

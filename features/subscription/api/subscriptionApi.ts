@@ -10,6 +10,9 @@ import type {
   CouponInfo,
   PauseSubscriptionResponse,
   PaymentHistoryResponse,
+  PaginatedPaymentHistoryResponse,
+  DeliveryStatusSummaryResponse,
+  GetPaymentHistoryParams,
   PaymentReceiptResponse,
   SubscriptionListResponse,
   SubscriptionPlanListResponse,
@@ -61,9 +64,19 @@ export function resumeSubscription(subscriptionId: number) {
   );
 }
 
-/** 결제 이력 조회 */
-export function getPaymentHistory() {
-  return apiClient.get<PaymentHistoryResponse>("/v1/subscriptions/payments");
+/** 전체 결제 이력 조회 (deliveryStatus 필터, 페이지네이션 지원) */
+export function getPaymentHistory(params?: GetPaymentHistoryParams) {
+  const parts: string[] = [];
+  if (params?.deliveryStatus) parts.push(`deliveryStatus=${params.deliveryStatus}`);
+  if (params?.page !== undefined) parts.push(`page=${params.page}`);
+  if (params?.limit !== undefined) parts.push(`limit=${params.limit}`);
+  const query = parts.length > 0 ? `?${parts.join("&")}` : "";
+  return apiClient.get<PaginatedPaymentHistoryResponse>(`/v1/subscriptions/payments${query}`);
+}
+
+/** 배송 상태 요약 조회 */
+export function getDeliveryStatusSummary() {
+  return apiClient.get<DeliveryStatusSummaryResponse>("/v1/subscriptions/payments/delivery-summary");
 }
 
 /** 구독 단위 결제 이력 조회 */

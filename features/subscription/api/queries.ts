@@ -4,7 +4,14 @@
  */
 import "server-only";
 import { apiClient } from "@/shared/lib/api";
-import type { UserSubscriptionDto, SubscriptionPlanDto, SubscriptionPaymentDto } from "./types";
+import type {
+  UserSubscriptionDto,
+  SubscriptionPlanDto,
+  SubscriptionPaymentDto,
+  DeliveryStatusSummaryResponse,
+  GetPaymentHistoryParams,
+  PaginatedPaymentHistoryResponse,
+} from "./types";
 
 function serverOpts(token?: string) {
   return { token, skipRefresh: true } as const;
@@ -44,12 +51,49 @@ export async function fetchSubscriptionPlans(
   });
 }
 
-/** 결제 내역 */
-export async function fetchPaymentHistory(token?: string): Promise<SubscriptionPaymentDto[]> {
+/** 결제 내역 (deliveryStatus 필터, 페이지네이션 지원) */
+export async function fetchPaymentHistory(
+  token?: string,
+  params?: GetPaymentHistoryParams,
+): Promise<SubscriptionPaymentDto[]> {
+  const parts: string[] = [];
+  if (params?.deliveryStatus) parts.push(`deliveryStatus=${params.deliveryStatus}`);
+  if (params?.page !== undefined) parts.push(`page=${params.page}`);
+  if (params?.limit !== undefined) parts.push(`limit=${params.limit}`);
+  const query = parts.length > 0 ? `?${parts.join("&")}` : "";
   const data = await apiClient
-    .get<{ payments: SubscriptionPaymentDto[] }>("/v1/subscriptions/payments", serverOpts(token))
+    .get<{ payments: SubscriptionPaymentDto[] }>(`/v1/subscriptions/payments${query}`, serverOpts(token))
     .catch(() => ({ payments: [] as SubscriptionPaymentDto[] }));
   return data.payments;
+}
+
+/** 배송 상태 요약 조회 */
+export async function fetchDeliveryStatusSummary(
+  token?: string,
+): Promise<DeliveryStatusSummaryResponse> {
+  return apiClient
+    .get<DeliveryStatusSummaryResponse>("/v1/subscriptions/payments/delivery-summary", serverOpts(token))
+    .catch(() => ({ pendingDelivery: 0, deliveryInProgress: 0, deliveryCompleted: 0 }));
+}
+
+/** 배송 상태별 결제 내역 (페이지네이션 메타 포함) */
+export async function fetchPaginatedPaymentHistory(
+  token?: string,
+  params?: GetPaymentHistoryParams,
+): Promise<PaginatedPaymentHistoryResponse> {
+  const parts: string[] = [];
+  if (params?.deliveryStatus) parts.push(`deliveryStatus=${params.deliveryStatus}`);
+  if (params?.page !== undefined) parts.push(`page=${params.page}`);
+  if (params?.limit !== undefined) parts.push(`limit=${params.limit}`);
+  const query = parts.length > 0 ? `?${parts.join("&")}` : "";
+  return apiClient
+    .get<PaginatedPaymentHistoryResponse>(`/v1/subscriptions/payments${query}`, serverOpts(token))
+    .catch(() => ({
+      payments: [],
+      total: 0,
+      page: params?.page ?? 1,
+      limit: params?.limit ?? 5,
+    }));
 }
 
 /** 구독 단위 결제 내역 */

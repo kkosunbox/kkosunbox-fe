@@ -16,7 +16,7 @@ export interface DogBreedOption extends DogBreedItem {
   groupName: string;
 }
 
-export const MIX_BREED_NAME = "어느 품종에도 속하지 않는 mix(기타)";
+export const MIX_BREED_NAME = "믹스견(기타)";
 
 // Source: KKF public international breed list (gid 1-10).
 // https://www.thekkf.or.kr/new_home/03_kkf_service/03_approval_2.php?gid=1

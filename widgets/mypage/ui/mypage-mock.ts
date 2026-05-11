@@ -30,7 +30,6 @@ export const PAYMENT = {
 };
 
 export const DELIVERY_STEPS = [
-  { label: "주문접수", count: 0 },
   { label: "배송준비중", count: 0 },
   { label: "배송중", count: 0 },
   { label: "배송완료", count: 0 },

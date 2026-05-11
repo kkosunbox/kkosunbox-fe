@@ -4,22 +4,6 @@ import { Text } from "@/shared/ui";
 import { DashboardCard, SectionHeader } from "./dashboard-shared";
 import { DELIVERY_STEPS } from "./mypage-mock";
 
-function OrderIcon() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M30 5.00002L9 5.00001C7.11438 5.00001 6.17157 5.00001 5.58579 5.5858C5 6.17159 5 7.1144 5 9.00001L5 35L10 33.3333L15 35L20 33.3333L25 35L25 15M30 5.00002C28.1308 5.00001 27.1962 5.00001 26.5 5.40194C26.0439 5.66524 25.6652 6.04396 25.4019 6.50002C25 7.19617 25 8.13078 25 10L25 15M30 5.00002C31.8692 5.00001 32.8038 5.00001 33.5 5.40194C33.9561 5.66524 34.3348 6.04396 34.5981 6.50002C35 7.19617 35 8.13078 35 10L35 14C35 14.4714 35 14.7071 34.8536 14.8536C34.7071 15 34.4714 15 34 15L25 15"
-        stroke="var(--color-icon-gray)"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <path d="M11.666 11.6667L18.3327 11.6667" stroke="var(--color-icon-gray)" strokeWidth="3" strokeLinecap="round" />
-      <path d="M13.334 18.3333H11.6673" stroke="var(--color-icon-gray)" strokeWidth="3" strokeLinecap="round" />
-      <path d="M11.666 25L16.666 25" stroke="var(--color-icon-gray)" strokeWidth="3" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function PackingIcon() {
   return (
     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +77,7 @@ function DeliveredIcon() {
   );
 }
 
-const DELIVERY_ICON_COMPONENTS = [OrderIcon, PackingIcon, TruckIcon, DeliveredIcon];
+const DELIVERY_ICON_COMPONENTS = [PackingIcon, TruckIcon, DeliveredIcon];
 
 function openAddressPopup() {
   const w = 420;
@@ -111,7 +95,7 @@ export function DeliveryCard() {
   return (
     <DashboardCard>
       <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" spacing="tight" />
-      <div className="grid grid-cols-4 gap-1 md:gap-10 pt-1 max-md:-mx-3">
+      <div className="grid grid-cols-3 gap-4 md:gap-16 pt-1 max-md:-mx-3">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];
           return (

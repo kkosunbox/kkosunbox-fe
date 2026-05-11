@@ -48,7 +48,7 @@ export type PaymentStatus =
   | "partially_refunded";
 
 export type PaymentType = "initial" | "renewal" | "upgrade";
-export type DeliveryStatus = "PendingDelivery" | "DeliveryCompleted";
+export type DeliveryStatus = "PendingDelivery" | "DeliveryInProgress" | "DeliveryCompleted";
 
 export interface SubscriptionPaymentDto {
   id: number;
@@ -133,6 +133,25 @@ export interface PauseSubscriptionResponse {
 
 export interface PaymentHistoryResponse {
   payments: SubscriptionPaymentDto[];
+}
+
+export interface PaginatedPaymentHistoryResponse {
+  payments: SubscriptionPaymentDto[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface DeliveryStatusSummaryResponse {
+  pendingDelivery: number;
+  deliveryInProgress: number;
+  deliveryCompleted: number;
+}
+
+export interface GetPaymentHistoryParams {
+  deliveryStatus?: DeliveryStatus;
+  page?: number;
+  limit?: number;
 }
 
 export interface PaymentReceiptResponse {

@@ -12,4 +12,5 @@ export { SubscriptionCardLoader } from "./ui/SubscriptionCardLoader";
 export { PaymentCardLoader } from "./ui/PaymentCardLoader";
 export { InquiryCardLoader } from "./ui/InquiryCardLoader";
 export { DeliveryCard } from "./ui/DeliveryCard";
+export { DeliveryCardLoader } from "./ui/DeliveryCardLoader";
 export { ProfileSectionSkeleton, CardSkeleton } from "./ui/mypage-skeletons";

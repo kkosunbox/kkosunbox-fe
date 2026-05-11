@@ -5,7 +5,7 @@ import {
   SubscriptionCardLoader,
   PaymentCardLoader,
   InquiryCardLoader,
-  DeliveryCard,
+  DeliveryCardLoader,
   ProfileSectionSkeleton,
   CardSkeleton,
 } from "@/widgets/mypage";
@@ -28,7 +28,11 @@ export default function MyPage() {
           <PaymentCardLoader />
         </Suspense>
       }
-      deliveryCard={<DeliveryCard />}
+      deliveryCard={
+        <Suspense fallback={<CardSkeleton />}>
+          <DeliveryCardLoader />
+        </Suspense>
+      }
       inquiryCard={
         <Suspense fallback={<CardSkeleton />}>
           <InquiryCardLoader />

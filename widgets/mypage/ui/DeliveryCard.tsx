@@ -2,7 +2,7 @@
 
 import { Text } from "@/shared/ui";
 import { DashboardCard, SectionHeader } from "./dashboard-shared";
-import { DELIVERY_STEPS } from "./mypage-mock";
+import type { DeliveryStatus, DeliveryStatusSummaryResponse } from "@/features/subscription/api/types";
 
 function PackingIcon() {
   return (
@@ -79,6 +79,16 @@ function DeliveredIcon() {
 
 const DELIVERY_ICON_COMPONENTS = [PackingIcon, TruckIcon, DeliveredIcon];
 
+const DELIVERY_STEPS: Array<{
+  label: string;
+  status: DeliveryStatus;
+  key: keyof DeliveryStatusSummaryResponse;
+}> = [
+  { label: "배송준비중", status: "PendingDelivery", key: "pendingDelivery" },
+  { label: "배송중", status: "DeliveryInProgress", key: "deliveryInProgress" },
+  { label: "배송완료", status: "DeliveryCompleted", key: "deliveryCompleted" },
+];
+
 function openAddressPopup() {
   const w = 420;
   const h = 680;
@@ -91,13 +101,30 @@ function openAddressPopup() {
   );
 }
 
-export function DeliveryCard() {
+function openDeliveryPopup(status: DeliveryStatus) {
+  const w = 420;
+  const h = 680;
+  const left = (screen.width - w) / 2;
+  const top = (screen.height - h) / 2;
+  window.open(
+    `/delivery?status=${status}`,
+    `deliveryPopup_${status}`,
+    `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+  );
+}
+
+interface DeliveryCardProps {
+  summary: DeliveryStatusSummaryResponse;
+}
+
+export function DeliveryCard({ summary }: DeliveryCardProps) {
   return (
     <DashboardCard>
       <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" spacing="tight" />
       <div className="grid grid-cols-3 gap-4 md:gap-16 pt-1 max-md:-mx-3">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];
+          const count = summary[step.key];
           return (
             <div key={step.label} className="flex flex-col items-center text-center">
               <div className="text-[var(--color-text-secondary)] mb-4">
@@ -106,9 +133,16 @@ export function DeliveryCard() {
               <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-md:mb-3 md:mb-2.5">
                 {step.label}
               </Text>
-              <Text as="span" variant="subtitle-20-b" className="text-primary">
-                {step.count}
-              </Text>
+              <button
+                type="button"
+                onClick={() => openDeliveryPopup(step.status)}
+                className="hover:opacity-70 transition-opacity"
+                aria-label={`${step.label} ${count}건 배송 현황 보기`}
+              >
+                <Text as="span" variant="subtitle-20-b" className="text-primary">
+                  {count}
+                </Text>
+              </button>
             </div>
           );
         })}

@@ -1,6 +1,8 @@
 "use client";
 
+import type { StaticImageData } from "next/image";
 import Image from "next/image";
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Text, ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
@@ -9,6 +11,7 @@ import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
+import reviewsProfile04 from "../assets/reviews-profile-04.jpg";
 
 const REVIEWS = [
   {
@@ -35,6 +38,14 @@ const REVIEWS = [
     rating: 5,
     profile: reviewsProfile03,
   },
+  {
+    name: "루루",
+    subscription: "2026.05.11 · 스탠다드 패키지 BOX",
+    review:
+      "처음엔 반신반의 하면서 시작했는데 지금은 간식 시간만 되면 눈빛이 완전 달라져요ㅋㅋ 배송도 깔끔하고 신선한 느낌이 확실히 있어서 ‘아 이건 다르다’ 싶었습니다.\n루루가 너무 좋아해서 앞으로도 꾸준히 구독할 의향 있어요~",
+    rating: 5,
+    profile: reviewsProfile04,
+  },
 ] as const;
 
 type DisplayReview = {
@@ -42,7 +53,7 @@ type DisplayReview = {
   subscription: string;
   review: string;
   rating: number;
-  profile: typeof reviewsProfile01;
+  profile: StaticImageData;
 };
 
 function StarIcon({ fillPercent = 100 }: { fillPercent?: number }) {
@@ -58,6 +69,124 @@ function StarIcon({ fillPercent = 100 }: { fillPercent?: number }) {
         style={{ clipPath: `inset(0 ${100 - fillPercent}% 0 0)` }}
       />
     </svg>
+  );
+}
+
+function CarouselPrevButton({
+  disabled,
+  onClick,
+}: {
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  const rawId = useId().replace(/:/g, "");
+  const filterId = `reviews-carousel-dl-${rawId}`;
+
+  return (
+    <button
+      type="button"
+      aria-label="이전 리뷰"
+      disabled={disabled}
+      onClick={onClick}
+      className="shrink-0 rounded-full text-[var(--color-text-label)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+    >
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <g filter={`url(#${filterId})`}>
+          <rect x="2" y="2" width="36" height="36" rx="18" fill="white" shapeRendering="crispEdges" />
+          <path
+            d="M24 12L15 20L24 28"
+            stroke="#999999"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <defs>
+          <filter
+            id={filterId}
+            x="0"
+            y="0"
+            width="44"
+            height="44"
+            filterUnits="userSpaceOnUse"
+            colorInterpolationFilters="sRGB"
+          >
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feOffset dx="2" dy="2" />
+            <feGaussianBlur stdDeviation="2" />
+            <feComposite in2="hardAlpha" operator="out" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+          </filter>
+        </defs>
+      </svg>
+    </button>
+  );
+}
+
+function CarouselNextButton({
+  disabled,
+  onClick,
+}: {
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  const rawId = useId().replace(/:/g, "");
+  const filterId = `reviews-carousel-dr-${rawId}`;
+
+  return (
+    <button
+      type="button"
+      aria-label="다음 리뷰"
+      disabled={disabled}
+      onClick={onClick}
+      className="shrink-0 rounded-full text-[var(--color-text-label)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+    >
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <g filter={`url(#${filterId})`}>
+          <rect width="36" height="36" rx="18" transform="matrix(-1 0 0 1 38 2)" fill="white" shapeRendering="crispEdges" />
+          <path
+            d="M16 12L25 20L16 28"
+            stroke="#DDDDDD"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <defs>
+          <filter
+            id={filterId}
+            x="0"
+            y="0"
+            width="44"
+            height="44"
+            filterUnits="userSpaceOnUse"
+            colorInterpolationFilters="sRGB"
+          >
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feOffset dx="2" dy="2" />
+            <feGaussianBlur stdDeviation="2" />
+            <feComposite in2="hardAlpha" operator="out" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+          </filter>
+        </defs>
+      </svg>
+    </button>
   );
 }
 
@@ -96,6 +225,79 @@ function ReviewCard({ review }: { review: DisplayReview }) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ReviewsCarousel() {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [startIndex, setStartIndex] = useState(0);
+  const [metrics, setMetrics] = useState({ slide: 0, gap: 36, desktop: false });
+
+  const measure = useCallback(() => {
+    const vp = viewportRef.current;
+    const track = trackRef.current;
+    if (!vp) return;
+    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    const w = vp.getBoundingClientRect().width;
+    const rawGap = track ? parseFloat(getComputedStyle(track).gap || "0") : 36;
+    const gap = Number.isFinite(rawGap) && rawGap > 0 ? rawGap : 36;
+    const slide = desktop ? (w - 2 * gap) / 3 : w;
+    setMetrics({ slide, gap, desktop });
+  }, []);
+
+  useLayoutEffect(() => {
+    const vp = viewportRef.current;
+    if (!vp) return;
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(vp);
+    const mq = window.matchMedia("(min-width: 768px)");
+    mq.addEventListener("change", measure);
+    queueMicrotask(measure);
+    return () => {
+      ro.disconnect();
+      mq.removeEventListener("change", measure);
+    };
+  }, [measure]);
+
+  const maxStart = useMemo(
+    () => (metrics.desktop ? Math.max(0, REVIEWS.length - 3) : Math.max(0, REVIEWS.length - 1)),
+    [metrics.desktop],
+  );
+
+  const displayIndex = Math.min(startIndex, maxStart);
+  const stepPx = metrics.slide > 0 ? metrics.slide + metrics.gap : 0;
+  const canPrev = displayIndex > 0;
+  const canNext = displayIndex < maxStart;
+
+  return (
+    <div className="flex items-center gap-3 md:gap-4">
+      <CarouselPrevButton
+        disabled={!canPrev}
+        onClick={() => setStartIndex(Math.max(0, displayIndex - 1))}
+      />
+      <div ref={viewportRef} className="min-w-0 w-full overflow-hidden pt-[60px]">
+        <div
+          ref={trackRef}
+          className="flex gap-9 transition-transform duration-300 ease-out"
+          style={stepPx > 0 ? { transform: `translateX(-${displayIndex * stepPx}px)` } : undefined}
+        >
+          {REVIEWS.map((review, i) => (
+            <div
+              key={review.name + i}
+              className="shrink-0"
+              style={metrics.slide > 0 ? { width: metrics.slide } : undefined}
+            >
+              <ReviewCard review={review} />
+            </div>
+          ))}
+        </div>
+      </div>
+      <CarouselNextButton
+        disabled={!canNext}
+        onClick={() => setStartIndex(Math.min(maxStart, displayIndex + 1))}
+      />
     </div>
   );
 }
@@ -140,13 +342,9 @@ export default function ReviewsSection() {
           </Text>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[88px] md:gap-9 pt-[60px]">
-          {REVIEWS.map((review, i) => (
-            <ScrollReveal key={review.name + i} variant="fade-up" delay={300 + i * 200} className="h-full">
-              <ReviewCard review={review} />
-            </ScrollReveal>
-          ))}
-        </div>
+        <ScrollReveal variant="fade-up" delay={300} className="w-full">
+          <ReviewsCarousel />
+        </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={450}>
           <div className="mt-12 md:mt-14 flex justify-center">
             <button

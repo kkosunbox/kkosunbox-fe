@@ -1,32 +1,24 @@
+import { ReactNode } from "react";
 import { Text } from "@/shared/ui";
-import { ProfileSection } from "./ProfileSection";
-import { SubscriptionCard } from "./SubscriptionCard";
-import { PaymentCard } from "./PaymentCard";
-import { DeliveryCard } from "./DeliveryCard";
-import { InquiryCard } from "./InquiryCard";
-import type { ChecklistQuestion, Profile } from "@/features/profile/api/types";
-import type { UserSubscriptionDto } from "@/features/subscription/api/types";
-import type { BillingInfo } from "@/features/billing/api/types";
-import type { InquiryDto } from "@/features/inquiry/api/types";
 
 interface MypageSectionProps {
-  profile: Profile | null;
-  checklistQuestions: ChecklistQuestion[];
-  subscriptions: UserSubscriptionDto[];
-  billingInfo: BillingInfo | null;
-  inquiries: InquiryDto[];
+  profileSection: ReactNode;
+  subscriptionCard: ReactNode;
+  paymentCard: ReactNode;
+  deliveryCard: ReactNode;
+  inquiryCard: ReactNode;
 }
 
 export default function MypageSection({
-  profile,
-  checklistQuestions,
-  subscriptions,
-  billingInfo,
-  inquiries,
+  profileSection,
+  subscriptionCard,
+  paymentCard,
+  deliveryCard,
+  inquiryCard,
 }: MypageSectionProps) {
   return (
     <div className="min-h-screen bg-[var(--color-background)] pb-12 md:pb-16">
-      <ProfileSection profile={profile} checklistQuestions={checklistQuestions} />
+      {profileSection}
 
       <section className="pt-4 md:pt-5">
         <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0">
@@ -41,10 +33,10 @@ export default function MypageSection({
             </Text>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
-              <SubscriptionCard subscriptions={subscriptions} />
-              <PaymentCard billingInfo={billingInfo} subscription={subscriptions[0] ?? null} />
-              <DeliveryCard />
-              <InquiryCard inquiries={inquiries} />
+              {subscriptionCard}
+              {paymentCard}
+              {deliveryCard}
+              {inquiryCard}
             </div>
           </div>
         </div>

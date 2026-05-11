@@ -108,6 +108,8 @@
   --color-text-secondary: #999999; /* Secondary — 보조 텍스트 */
   --color-text-tertiary: #808080;  /* Tertiary — 테이블 헤더, 비활성 UI 텍스트 */
   --color-text-placeholder: #929292; /* Placeholder — 프로필 미입력 안내, 힌트 텍스트 */
+  /* 마이페이지 프로필 — 생일·성별·몸무게 미입력 시 라벨 표시 색 (Figma #B6B6B6) */
+  --color-profile-meta-empty: #B6B6B6;
   --color-text-label: #777777;     /* Label — 폼·정보 영역 레이블 */
   --color-text-sub: #606060;       /* Sub — 주문 영역 보조 텍스트 */
   --color-text-muted: #DDDDDD;     /* Muted — 구분선, 비활성 텍스트 */
@@ -243,6 +245,7 @@
   --color-text-secondary: var(--color-text-secondary);
   --color-text-tertiary: var(--color-text-tertiary);
   --color-text-placeholder: var(--color-text-placeholder);
+  --color-profile-meta-empty: var(--color-profile-meta-empty);
   --color-text-label: var(--color-text-label);
   --color-text-sub: var(--color-text-sub);
   --color-text-muted: var(--color-text-muted);

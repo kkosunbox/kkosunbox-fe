@@ -51,7 +51,7 @@ export default function AlertModal({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
 
       {/* Card — 피그마 확인 모달(라운드 40, 넉넉한 여백) */}
-      <div className="relative z-10 w-full max-w-[320px] md:max-w-[388px] rounded-[40px] bg-white px-8 pt-10 pb-8 flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-[320px] md:max-w-[388px] rounded-[40px] bg-white px-5 pt-8 pb-4 flex flex-col items-center">
         {/* Title */}
         <h2 className="max-md:text-subtitle-16-sb md:text-subtitle-18-sb text-[var(--color-text)] text-center">
           {title}

@@ -194,7 +194,13 @@ export function ProfileSection({
   const birth = fmtDate(profile?.birthDate);
   const gender = fmtGender(profile?.gender);
   const weight = profile?.weight ? `${profile.weight}kg` : "-";
+  const birthEmpty = birth === "-";
+  const genderEmpty = gender === "-";
+  const weightEmpty = weight === "-";
   const specialNotes = profile?.specialNotes?.trim() ?? "";
+  const breedTrimmed = profile?.breed?.trim() ?? "";
+  const breedEmpty = !breedTrimmed;
+  const breedDisplay = breedEmpty ? "품종" : breedTrimmed;
 
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
@@ -216,15 +222,27 @@ export function ProfileSection({
               <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
               <div className="min-w-0 flex-1 md:pr-[84px]">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-1">
+                  <div className="flex min-w-0 items-center gap-3">
                     <Text
                       as="h1"
                       variant="title-24-b"
                       mobileVariant="subtitle-18-b"
-                      className="min-w-0 leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
+                      className="min-w-0 shrink truncate leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
                     >
                       {displayName}
                     </Text>
+                    {hasProfile && (
+                      <Text
+                        variant="body-16-m"
+                        mobileVariant="body-13-r"
+                        className={[
+                          "min-w-0 max-w-[min(200px,40vw)] shrink truncate leading-[140%]",
+                          breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
+                        ].join(" ")}
+                      >
+                        {breedDisplay}
+                      </Text>
+                    )}
                     {hasNamedProfile && (
                       <button
                         type="button"
@@ -254,17 +272,38 @@ export function ProfileSection({
                 </div>
                 {hasProfile ? (
                   <>
-                    <div className="mt-3 flex items-center gap-3 text-[var(--color-text-secondary)] md:mt-[10px]">
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%] tracking-[-0.02em]">
-                        {birth}
+                    <div className="mt-3 flex items-center gap-3 md:mt-[10px]">
+                      <Text
+                        variant="body-16-m"
+                        mobileVariant="body-13-r"
+                        className={[
+                          "leading-[140%] tracking-[-0.02em]",
+                          birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+                        ].join(" ")}
+                      >
+                        {birthEmpty ? "생일" : birth}
                       </Text>
                       <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                        {gender}
+                      <Text
+                        variant="body-16-m"
+                        mobileVariant="body-13-r"
+                        className={[
+                          "leading-[140%]",
+                          genderEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+                        ].join(" ")}
+                      >
+                        {genderEmpty ? "성별" : gender}
                       </Text>
                       <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                        {weight}
+                      <Text
+                        variant="body-16-m"
+                        mobileVariant="body-13-r"
+                        className={[
+                          "leading-[140%]",
+                          weightEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+                        ].join(" ")}
+                      >
+                        {weightEmpty ? "몸무게" : weight}
                       </Text>
                     </div>
                     <Text
@@ -272,10 +311,10 @@ export function ProfileSection({
                       mobileVariant="body-13-r"
                       className={[
                         "mt-1 line-clamp-2 leading-[140%] md:mt-1",
-                        specialNotes ? "text-[var(--color-text-label)]" : "text-[var(--color-text-placeholder)]",
+                        specialNotes ? "text-[var(--color-text)]" : "text-[var(--color-profile-meta-empty)]",
                       ].join(" ")}
                     >
-                      {specialNotes || "특징을 입력해주세요."}
+                      {specialNotes || "강아지의 특징을 입력해주세요."}
                     </Text>
                   </>
                 ) : (

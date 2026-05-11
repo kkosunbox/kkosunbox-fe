@@ -71,7 +71,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
         </PaymentRow>
 
         <PaymentRow label="카드 정보">
-          <div className="flex flex-wrap md:items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Text
               variant="body-13-r"
               className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}

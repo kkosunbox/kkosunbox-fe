@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CheckCircleIcon, ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
@@ -45,9 +45,10 @@ interface PlanCardProps {
   plan: SubscriptionPlanDto;
   onInfoClick: () => void;
   onPrimaryClick: () => void;
+  isPending?: boolean;
 }
 
-function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
+function PlanCard({ plan, onInfoClick, onPrimaryClick, isPending }: PlanCardProps) {
   const theme = packageThemeForPlan(plan);
   const color = theme.colorVar;
   const pkg = PACKAGES.find((p) => p.tier === theme.tier);
@@ -75,7 +76,8 @@ function PlanCard({ plan, onInfoClick, onPrimaryClick }: PlanCardProps) {
             type="button"
             aria-label={`${plan.name} 패키지 상세 정보`}
             onClick={onInfoClick}
-            className="flex shrink-0 items-center justify-center"
+            disabled={isPending}
+            className="flex shrink-0 items-center justify-center transition-opacity disabled:opacity-50"
           >
             <InfoIcon />
           </button>
@@ -136,6 +138,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { profile: clientProfile } = useProfile();
+  const [isPending, startTransition] = useTransition();
   const [isDismissed, setIsDismissed] = useState(false);
   /** 데스크톱 전용: 그리드 ↔ 단일 상세 뷰 전환 */
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
@@ -161,7 +164,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
 
   const handleInfoClick = useCallback((plan: SubscriptionPlanDto) => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
-      // 모바일: 해당 카드 inline 토글
+      // 모바일: 해당 카드 inline 토글 (즉각 반응)
       setExpandedPlanIds((prev) => {
         const next = new Set(prev);
         if (next.has(plan.id)) {
@@ -172,9 +175,11 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
         return next;
       });
     } else {
-      // 데스크톱: 기존 동작 — 그리드를 상세 뷰로 전체 교체
-      setHasOpenedDetail(true);
-      setSelectedPlan(plan);
+      // 데스크톱: 그리드 → 상세 뷰 전환 (무거운 렌더 → transition)
+      startTransition(() => {
+        setHasOpenedDetail(true);
+        setSelectedPlan(plan);
+      });
     }
   }, []);
 
@@ -188,12 +193,14 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   }, []);
 
   const handleCloseDesktopDetail = useCallback(() => {
-    setSelectedPlan(null);
+    startTransition(() => setSelectedPlan(null));
   }, []);
 
   const handleDesktopSelectPlan = useCallback((plan: SubscriptionPlanDto) => {
-    setHasOpenedDetail(true);
-    setSelectedPlan(plan);
+    startTransition(() => {
+      setHasOpenedDetail(true);
+      setSelectedPlan(plan);
+    });
   }, []);
 
   const handleTabClick = useCallback((planId: number) => {
@@ -358,6 +365,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                       plan={plan}
                       onInfoClick={() => handleInfoClick(plan)}
                       onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
+                      isPending={isPending}
                     />
                   </ScrollReveal>
                 ))}

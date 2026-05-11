@@ -65,56 +65,65 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
   const current = subscriptions[Math.min(activeIndex, subscriptions.length - 1)];
   const planTheme = packageThemeForPlan(current.plan);
 
+  const detailHref = `/mypage/subscription/detail?subscriptionId=${current.id}`;
+
   return (
     <div className="relative flex overflow-hidden rounded-[20px] max-md:bg-white md:h-[173px] md:bg-[var(--color-background)]">
-      {/* 이미지 — 카드 왼쪽에 패딩 없이 full-height */}
-      <div className="relative max-md:w-[100px] md:w-[160px] shrink-0 self-stretch">
-        <Image
-          src={TIER_THUMBNAILS[planTheme.tier]}
-          alt="꼬순박스 패키지"
-          fill
-          className="object-cover"
-        />
-      </div>
+      {/* 사진 + 구독 정보 — 클릭 시 해당 구독 상세 */}
+      <Link
+        href={detailHref}
+        aria-label={`${current.plan.name} 구독 상세 보기`}
+        className="relative z-0 flex min-w-0 flex-1 outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] max-md:focus-visible:ring-offset-white"
+      >
+        {/* 이미지 — 카드 왼쪽에 패딩 없이 full-height */}
+        <div className="relative max-md:w-[100px] md:w-[160px] shrink-0 self-stretch">
+          <Image
+            src={TIER_THUMBNAILS[planTheme.tier]}
+            alt=""
+            fill
+            className="object-cover"
+          />
+        </div>
 
-      {/* 텍스트 콘텐츠 */}
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 max-md:px-4 max-md:py-5 md:px-8">
-        <div className="flex items-center gap-2">
-          <span
-            className="inline-flex h-[24px] w-fit shrink-0 items-center rounded-full px-[12px] max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white"
-            style={{ background: planTheme.colorVar }}
-          >
-            {planTheme.tierLabel}
-          </span>
-          <span
-            className="max-md:text-body-13-sb md:text-body-14-sb leading-[1]"
-            style={{ fontWeight: 700, color: planTheme.colorVar }}
-          >
-            {current.quantity}BOX
-          </span>
+        {/* 텍스트 콘텐츠 */}
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 max-md:px-4 max-md:py-5 md:px-8">
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-flex h-[24px] w-fit shrink-0 items-center rounded-full px-[12px] max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white"
+              style={{ background: planTheme.colorVar }}
+            >
+              {planTheme.tierLabel}
+            </span>
+            <span
+              className="max-md:text-body-13-sb md:text-body-14-sb leading-[1]"
+              style={{ fontWeight: 700, color: planTheme.colorVar }}
+            >
+              {current.quantity}BOX
+            </span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text
+              variant="subtitle-16-sb"
+              mobileVariant="body-14-sb"
+              className="leading-tight tracking-[-0.04em] text-[var(--color-text)]"
+            >
+              {current.plan.name} 구독중
+            </Text>
+            <Text
+              variant="body-14-m"
+              className="leading-tight text-[var(--color-text-secondary)]"
+            >
+              결제일 : {billingDayLabel(current.nextBillingDate)}
+            </Text>
+            <Text
+              variant="body-14-m"
+              className="leading-tight text-[var(--color-text-secondary)]"
+            >
+              다음 결제 : {current.nextBillingDate.replace(/-/g, ".")}
+            </Text>
+          </div>
         </div>
-        <div className="flex flex-col gap-1">
-          <Text
-            variant="subtitle-16-sb"
-            mobileVariant="body-14-sb"
-            className="leading-tight tracking-[-0.04em] text-[var(--color-text)]"
-          >
-            {current.plan.name} 구독중
-          </Text>
-          <Text
-            variant="body-14-m"
-            className="leading-tight text-[var(--color-text-secondary)]"
-          >
-            결제일 : {billingDayLabel(current.nextBillingDate)}
-          </Text>
-          <Text
-            variant="body-14-m"
-            className="leading-tight text-[var(--color-text-secondary)]"
-          >
-            다음 결제 : {current.nextBillingDate.replace(/-/g, ".")}
-          </Text>
-        </div>
-      </div>
+      </Link>
 
       {/* 구독관리 */}
       <Link

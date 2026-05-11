@@ -70,7 +70,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
           </Text>
         </PaymentRow>
 
-        <PaymentRow label="간편결제">
+        <PaymentRow label="카드 정보">
           <div className="flex flex-wrap md:items-center gap-2">
             <Text
               variant="body-13-r"

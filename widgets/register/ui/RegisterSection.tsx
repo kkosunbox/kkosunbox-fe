@@ -85,6 +85,20 @@ function RegisterPasswordToggleIcon({ passwordVisible }: { passwordVisible: bool
   );
 }
 
+function meetsMinPasswordLength(password: string) {
+  return password.length >= 8;
+}
+
+function meetsPasswordComplexity(password: string) {
+  if (!password) return false;
+  return (
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /\d/.test(password) &&
+    /[^A-Za-z0-9]/.test(password)
+  );
+}
+
 /* ─── 약관 목록 ─── */
 const AGREEMENTS = [
   { key: "terms"     as const, label: "서비스 이용약관 동의",    required: true  },
@@ -148,12 +162,27 @@ export default function RegisterSection() {
   const [agreements, setAgreements] = useState({ terms: false, privacy: false, marketing: false });
   const [agreementsOpen, setAgreementsOpen] = useState(true);
   const [termsModal, setTermsModal] = useState<"terms" | "privacy" | "marketing" | null>(null);
+  /** 포커스를 벗어난 뒤에만 규칙/불일치 오류 표시 (입력 중에는 숨김) */
+  const [showPasswordRuleErrors, setShowPasswordRuleErrors] = useState(false);
+  const [showPasswordMismatch, setShowPasswordMismatch] = useState(false);
 
   /* ── 파생 상태 ── */
   const emailVerified = !!emailVerifiedToken;
+  const passwordRulesActive = emailVerified && password.length > 0;
+  const ruleMinLenInvalid =
+    passwordRulesActive && !meetsMinPasswordLength(password) && showPasswordRuleErrors;
+  const ruleComplexityInvalid =
+    passwordRulesActive && !meetsPasswordComplexity(password) && showPasswordRuleErrors;
+  const passwordMismatch =
+    emailVerified &&
+    passwordConfirm.length > 0 &&
+    password !== passwordConfirm &&
+    showPasswordMismatch;
+  const passwordValid =
+    meetsMinPasswordLength(password) && meetsPasswordComplexity(password);
   const canSubmit =
     emailVerified &&
-    password.length >= 8 &&
+    passwordValid &&
     password === passwordConfirm &&
     agreements.terms &&
     agreements.privacy &&
@@ -220,7 +249,11 @@ export default function RegisterSection() {
   function handleSignup() {
     if (!agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
     if (!agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
-    if (password.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
+    if (!meetsMinPasswordLength(password)) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
+    if (!meetsPasswordComplexity(password)) {
+      showError("대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.");
+      return;
+    }
     if (password !== passwordConfirm) { showError("비밀번호가 일치하지 않습니다."); return; }
     showLoading("회원가입을 처리하고 있습니다...");
     start(async () => {
@@ -376,6 +409,11 @@ export default function RegisterSection() {
                   placeholder="비밀번호를 입력해주세요"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => {
+                    setShowPasswordRuleErrors(false);
+                    setShowPasswordMismatch(false);
+                  }}
+                  onBlur={() => setShowPasswordRuleErrors(true)}
                   disabled={!emailVerified}
                   className={[inputBase, "pr-10", !emailVerified ? inputDisabled : ""].join(" ")}
                   autoComplete="new-password"
@@ -402,6 +440,8 @@ export default function RegisterSection() {
                   placeholder="비밀번호를 다시 입력해주세요"
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
+                  onFocus={() => setShowPasswordMismatch(false)}
+                  onBlur={() => setShowPasswordMismatch(true)}
                   disabled={!emailVerified}
                   className={[inputBase, "pr-10", !emailVerified ? inputDisabled : ""].join(" ")}
                   autoComplete="new-password"
@@ -417,12 +457,33 @@ export default function RegisterSection() {
                   </button>
                 )}
               </div>
+              {passwordMismatch && (
+                <p className="mt-1.5 text-caption-12-r text-[var(--color-accent-rust)]" role="alert">
+                  비밀번호가 일치하지 않습니다.
+                </p>
+              )}
             </FieldRow>
 
             {/* 비밀번호 힌트 */}
-            <div className="md:pl-[94px] text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
-              <p>* 비밀번호는 최소 8자 이상이어야 합니다.</p>
-              <p>* 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.</p>
+            <div className="md:pl-[94px] space-y-0.5 text-[12px] font-medium leading-[16px]">
+              <p
+                className={
+                  ruleMinLenInvalid
+                    ? "text-[var(--color-accent-rust)]"
+                    : "text-[var(--color-text-secondary)]"
+                }
+              >
+                * 비밀번호는 최소 8자 이상이어야 합니다.
+              </p>
+              <p
+                className={
+                  ruleComplexityInvalid
+                    ? "text-[var(--color-accent-rust)]"
+                    : "text-[var(--color-text-secondary)]"
+                }
+              >
+                * 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.
+              </p>
             </div>
 
             {/* ─── 약관 동의 ─── */}

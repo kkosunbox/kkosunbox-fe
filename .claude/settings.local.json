@@ -98,7 +98,11 @@
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/custom-modal/asset/custom-modal-12-contents.png\" \"C:/2026/ggosoonbox/public/images/modal/custom-modal-12-contents.png\")",
       "Bash(awk '/^:root {/,/^\\\\}/' C:/2026/ggosoonbox/app/globals.css)",
       "Bash(dir *)",
-      "PowerShell(git add *)"
+      "PowerShell(git add *)",
+      "Bash(findstr /C:\"Header\" /C:\"header\")",
+      "Bash(Select-String \"Header|header\")",
+      "PowerShell(pnpm lint *)",
+      "Bash(git rm *)"
     ]
   }
 }

@@ -98,7 +98,7 @@ function SubscriptionsSummaryCard({
   }, [activeSubscriptions]);
 
   return (
-    <div className="relative overflow-hidden rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
+    <div className="relative overflow-hidden md:rounded-[20px] md:bg-white max-md:p-5 md:px-8 md:py-6">
       {aggregatedPlans.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           {aggregatedPlans.map(({ plan, totalQuantity }) => {
@@ -183,7 +183,7 @@ function PaymentInfoCard({
   const valueCls = "text-body-14-sb text-[var(--color-text)]";
 
   return (
-    <div className="flex flex-col rounded-[20px] bg-white max-md:p-5 md:px-8 md:py-6">
+    <div className="flex flex-col md:rounded-[20px] md:bg-white max-md:p-5 md:px-8 md:py-6">
       <Text as="h3" variant="subtitle-16-b" className="mb-5 text-[var(--color-text)]">
         결제관리
       </Text>
@@ -231,7 +231,7 @@ function SubscriptionRow({
 
   return (
     <div className="flex items-stretch overflow-hidden rounded-[20px] bg-white">
-      <div className="relative h-[140px] w-[140px] shrink-0 bg-[var(--color-background)] md:h-[155px] md:w-[155px]">
+      <div className="relative min-h-[140px] w-[140px] shrink-0 bg-[var(--color-background)] md:min-h-[155px] md:w-[155px]">
         <Image
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
@@ -409,9 +409,10 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
             구독관리
           </button>
 
-          {/* Two summary cards */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+          {/* Two summary cards — mobile: single card w/ divider, desktop: two-column grid */}
+          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:grid md:grid-cols-2 md:gap-5">
             <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
+            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden" />
             <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
           </div>
         </div>

@@ -9,7 +9,7 @@ import { SupportSection } from "@/widgets/support/faq";
 import packageThumbnailBasic from "@/widgets/subscribe/plans/assets/package-thumbnail-basic.png";
 import packageThumbnailPremium from "@/widgets/subscribe/plans/assets/package-thumbnail-premium.png";
 import packageThumbnailStandard from "@/widgets/subscribe/plans/assets/package-thumbnail-standard.png";
-import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.webp";
+import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.png";
 import subscribeItemHeroTitle from "@/widgets/subscribe/plans/assets/subscribe-item-hero-title.webp";
 import subscribeItemHeroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
 import subscribeItemHeroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.webp";

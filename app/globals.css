@@ -181,6 +181,8 @@
 }
 
 @theme inline {
+  --breakpoint-md: 1024px;
+
   --color-background: var(--color-background);
   --color-foreground: var(--color-text);
 

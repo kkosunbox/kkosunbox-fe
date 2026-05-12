@@ -680,28 +680,29 @@ export default function ProfileManagementSection({
         </div>
       </div>
 
-      {saveError && <p className="mt-4 px-6 text-center text-body-13-m text-[var(--color-accent-rust)]">{saveError}</p>}
-
       {/* Bottom buttons */}
-      <div className="pt-6 flex gap-3 px-6 pb-10 max-md:bg-white">
-        {!isCreating && (
+      <div className="flex flex-col px-6 pb-10 pt-6 max-md:bg-white">
+        {saveError && <p className="mb-3 text-center text-body-13-m text-[var(--color-accent-rust)]">{saveError}</p>}
+        <div className="flex gap-3">
+          {!isCreating && (
+            <button
+              type="button"
+              onClick={handleDeleteProfile}
+              disabled={isPending || isUploadingImage || isDeleting}
+              className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+            >
+              {isDeleting ? "삭제 중..." : "프로필 삭제"}
+            </button>
+          )}
           <button
             type="button"
-            onClick={handleDeleteProfile}
+            onClick={handleSave}
             disabled={isPending || isUploadingImage || isDeleting}
-            className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           >
-            {isDeleting ? "삭제 중..." : "프로필 삭제"}
+            {isPending ? "저장 중..." : "확인"}
           </button>
-        )}
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isPending || isUploadingImage || isDeleting}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
-          {isPending ? "저장 중..." : "확인"}
-        </button>
+        </div>
       </div>
     </div>
   );

@@ -265,6 +265,114 @@ function DrawerNavIcon({ type }: { type: DrawerNavIconType }) {
   }
 }
 
+// ========== 데스크톱 드롭다운 메뉴 아이콘 (20×20, 웜 컬러) ==========
+
+function DropdownUserIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22 10C22 13.3137 19.3137 16 16 16C12.6863 16 10 13.3137 10 10C10 6.68629 12.6863 4 16 4C19.3137 4 22 6.68629 22 10Z" fill="var(--color-icon-warm)"/>
+      <path d="M16 12.0996C21.5062 12.0996 26.1391 16.2682 26.7705 21.793L26.8691 22.6523C27.1887 25.4485 25.0233 27.9001 22.2383 27.9004H9.76172C6.97674 27.9001 4.81132 25.4485 5.13086 22.6523L5.22949 21.793C5.86086 16.2682 10.4938 12.0996 16 12.0996Z" fill="url(#dd_u_g0)"/>
+      <path d="M16 12.0996C21.5062 12.0996 26.1391 16.2682 26.7705 21.793L26.8691 22.6523C27.1887 25.4485 25.0233 27.9001 22.2383 27.9004H9.76172C6.97674 27.9001 4.81132 25.4485 5.13086 22.6523L5.22949 21.793C5.86086 16.2682 10.4938 12.0996 16 12.0996Z" fill="#E08310" fillOpacity="0.2"/>
+      <path d="M16 12.0996C21.5062 12.0996 26.1391 16.2682 26.7705 21.793L26.8691 22.6523C27.1887 25.4485 25.0233 27.9001 22.2383 27.9004H9.76172C6.97674 27.9001 4.81132 25.4485 5.13086 22.6523L5.22949 21.793C5.86086 16.2682 10.4938 12.0996 16 12.0996Z" stroke="url(#dd_u_g1)" strokeWidth="0.2"/>
+      <defs>
+        <linearGradient id="dd_u_g0" x1="16" y1="11.3333" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.1"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="dd_u_g1" x1="16" y1="12" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.15"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+function DropdownPinIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3.63645 26.9091L17.4546 13.0909C17.8563 12.6893 18.5075 12.6893 18.9092 13.0909C19.3108 13.4926 19.3108 14.1438 18.9092 14.5455L5.091 28.3636C4.68934 28.7653 4.03811 28.7653 3.63645 28.3636C3.23479 27.962 3.23479 27.3108 3.63645 26.9091Z" fill="var(--color-icon-warm)"/>
+      <path d="M18.8037 3.15613C20.4687 1.49133 23.168 1.49129 24.833 3.15613L28.8438 7.16687C30.5088 8.83192 30.5088 11.5321 28.8438 13.1971L24.8076 17.2333C24.7007 17.3402 24.6098 17.4625 24.5381 17.5956L20.9385 24.2802C20.2772 25.5077 18.6198 25.7505 17.6338 24.7645L7.3877 14.5194C6.35991 13.4916 6.67578 11.7537 7.99902 11.1522L12.8926 8.92761C13.0622 8.85048 13.2169 8.74297 13.3486 8.61121L18.8037 3.15613Z" fill="url(#dd_p_g0)"/>
+      <path d="M18.8037 3.15613C20.4687 1.49133 23.168 1.49129 24.833 3.15613L28.8438 7.16687C30.5088 8.83192 30.5088 11.5321 28.8438 13.1971L24.8076 17.2333C24.7007 17.3402 24.6098 17.4625 24.5381 17.5956L20.9385 24.2802C20.2772 25.5077 18.6198 25.7505 17.6338 24.7645L7.3877 14.5194C6.35991 13.4916 6.67578 11.7537 7.99902 11.1522L12.8926 8.92761C13.0622 8.85048 13.2169 8.74297 13.3486 8.61121L18.8037 3.15613Z" fill="#E08310" fillOpacity="0.25"/>
+      <path d="M18.8037 3.15613C20.4687 1.49133 23.168 1.49129 24.833 3.15613L28.8438 7.16687C30.5088 8.83192 30.5088 11.5321 28.8438 13.1971L24.8076 17.2333C24.7007 17.3402 24.6098 17.4625 24.5381 17.5956L20.9385 24.2802C20.2772 25.5077 18.6198 25.7505 17.6338 24.7645L7.3877 14.5194C6.35991 13.4916 6.67578 11.7537 7.99902 11.1522L12.8926 8.92761C13.0622 8.85048 13.2169 8.74297 13.3486 8.61121L18.8037 3.15613Z" stroke="url(#dd_p_g1)" strokeWidth="0.2"/>
+      <defs>
+        <linearGradient id="dd_p_g0" x1="19.2728" y1="0.515162" x2="19.2728" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.1"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="dd_p_g1" x1="18.4352" y1="1.8075" x2="18.4352" y2="25.4749" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.15"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+function DropdownClipboardIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 6.33333C10 5.04467 11.0745 4 12.4 4H19.6C20.9255 4 22 5.04467 22 6.33333V8.66667C22 9.95533 20.9255 11 19.6 11H12.4C11.0745 11 10 9.95533 10 8.66667V6.33333Z" fill="var(--color-icon-warm)"/>
+      <path d="M9.75 7.09961H22.25C24.267 7.09961 25.9004 8.71569 25.9004 10.7061V24.2939C25.9004 26.2843 24.267 27.9004 22.25 27.9004H9.75C7.73304 27.9004 6.09961 26.2843 6.09961 24.2939V10.7061C6.09961 8.71569 7.73304 7.09961 9.75 7.09961Z" fill="url(#dd_c_g0)"/>
+      <path d="M9.75 7.09961H22.25C24.267 7.09961 25.9004 8.71569 25.9004 10.7061V24.2939C25.9004 26.2843 24.267 27.9004 22.25 27.9004H9.75C7.73304 27.9004 6.09961 26.2843 6.09961 24.2939V10.7061C6.09961 8.71569 7.73304 7.09961 9.75 7.09961Z" fill="#E08310" fillOpacity="0.32"/>
+      <path d="M9.75 7.09961H22.25C24.267 7.09961 25.9004 8.71569 25.9004 10.7061V24.2939C25.9004 26.2843 24.267 27.9004 22.25 27.9004H9.75C7.73304 27.9004 6.09961 26.2843 6.09961 24.2939V10.7061C6.09961 8.71569 7.73304 7.09961 9.75 7.09961Z" stroke="url(#dd_c_g1)" strokeWidth="0.2"/>
+      <g opacity="0.8">
+        <path d="M20.1176 22.2632C20.605 22.2632 21 22.652 21 23.1316C21 23.6112 20.605 24 20.1176 24H11.8824C11.395 24 11 23.6112 11 23.1316C11 22.652 11.395 22.2632 11.8824 22.2632H20.1176Z" fill="url(#dd_c_g2)"/>
+        <path d="M20.1176 17.6316C20.605 17.6316 21 18.0204 21 18.5C21 18.9796 20.605 19.3684 20.1176 19.3684H11.8824C11.395 19.3684 11 18.9796 11 18.5C11 18.0204 11.395 17.6316 11.8824 17.6316H20.1176Z" fill="url(#dd_c_g3)"/>
+        <path d="M20.1176 13C20.605 13 21 13.3888 21 13.8684C21 14.348 20.605 14.7368 20.1176 14.7368H11.8824C11.395 14.7368 11 14.348 11 13.8684C11 13.3888 11.395 13 11.8824 13H20.1176Z" fill="url(#dd_c_g4)"/>
+      </g>
+      <defs>
+        <linearGradient id="dd_c_g0" x1="16" y1="6.125" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.1"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="dd_c_g1" x1="16" y1="7" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.15"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="dd_c_g2" x1="16" y1="17" x2="16" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white"/>
+          <stop offset="1" stopColor="white" stopOpacity="0.3"/>
+        </linearGradient>
+        <linearGradient id="dd_c_g3" x1="16" y1="17" x2="16" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white"/>
+          <stop offset="1" stopColor="white" stopOpacity="0.3"/>
+        </linearGradient>
+        <linearGradient id="dd_c_g4" x1="16" y1="17" x2="16" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white"/>
+          <stop offset="1" stopColor="white" stopOpacity="0.3"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+function DropdownLogoutIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#dd_lo_clip)">
+        <path d="M8.23409 14.7323C7.68884 14.7323 7.24683 14.3246 7.24683 13.8216V10.1784C7.24683 9.67544 7.68884 9.26767 8.23409 9.26767H13.9108C14.0472 9.26767 14.1577 9.16573 14.1577 9.03998V6.9126C14.1577 6.10119 15.2211 5.69483 15.843 6.26859L21.3577 11.356C21.7432 11.7117 21.7432 12.2883 21.3577 12.644L15.843 17.7314C15.2211 18.3052 14.1577 17.8988 14.1577 17.0874V14.96C14.1577 14.8343 14.0472 14.7323 13.9108 14.7323H8.23409Z" fill="var(--color-icon-warm)"/>
+        <path d="M4.24702 21.5999C3.25291 21.5999 2.44702 20.7402 2.44702 19.6799V4.31985C2.44702 3.25947 3.25291 2.39985 4.24702 2.39985H7.84702C8.84113 2.39985 9.64702 3.25947 9.64702 4.31985V19.6799C9.64702 20.7402 8.84113 21.5999 7.84702 21.5999H4.24702Z" fill="url(#dd_lo_g0)"/>
+        <path d="M4.24702 21.5999C3.25291 21.5999 2.44702 20.7402 2.44702 19.6799V4.31985C2.44702 3.25947 3.25291 2.39985 4.24702 2.39985H7.84702C8.84113 2.39985 9.64702 3.25947 9.64702 4.31985V19.6799C9.64702 20.7402 8.84113 21.5999 7.84702 21.5999H4.24702Z" fill="#E08310" fillOpacity="0.25"/>
+        <path d="M2.54663 19.6799V4.31958C2.54677 3.30844 3.3141 2.50036 4.24683 2.50024H7.84741C8.78005 2.50047 9.54649 3.30851 9.54663 4.31958V19.6799C9.54659 20.6911 8.78011 21.5 7.84741 21.5002H4.24683C3.31404 21.5001 2.54667 20.6912 2.54663 19.6799Z" stroke="url(#dd_lo_g1)" strokeWidth="0.2"/>
+      </g>
+      <defs>
+        <linearGradient id="dd_lo_g0" x1="2.14702" y1="11.9999" x2="9.64702" y2="11.9999" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.1"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="dd_lo_g1" x1="2.44702" y1="11.9999" x2="9.64702" y2="11.9999" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white" stopOpacity="0.15"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <clipPath id="dd_lo_clip">
+          <rect width="24" height="24" fill="white" transform="matrix(0 -1 1 0 0 24)"/>
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
+
 // ========== 프로필 썸네일 ==========
 
 function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "sm" | "md" | "lg" | "xl" }) {
@@ -296,10 +404,10 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
 
   const menuItemClass = (active: boolean) =>
     [
-      "w-full h-[52px] px-[30px] flex items-center text-left tracking-[-0.02em] transition-colors",
+      "w-full h-[52px] px-6 flex items-center gap-3 text-left tracking-[-0.02em] transition-colors",
       active
-        ? "text-body-14-b text-[var(--color-primary)] bg-[var(--color-card-premium)]"
-        : "text-body-14-m text-[var(--color-text-tertiary)] hover:bg-[var(--color-surface-warm)] hover:text-[var(--color-primary)]",
+        ? "text-body-14-b text-[var(--color-primary)]"
+        : "text-body-14-m text-[var(--color-text-tertiary)] hover:text-[var(--color-primary)]",
     ].join(" ");
 
   const handleLogout = async () => {
@@ -318,16 +426,21 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
   };
 
   return (
-    <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[280px] rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden py-1">
+    <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-72 rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden">
       <div className="flex flex-col">
-        {/* 프로필 헤더 */}
-        <div className="flex items-center px-[30px] py-4">
-          <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
-          <div className="ml-4 min-w-0 flex-1">
+        {/* 프로필 헤더 — 그라디언트 배경 */}
+        <div
+          className="flex h-[90px] items-center gap-4 rounded-[10px_10px_0_0] px-5"
+          style={{ background: "var(--gradient-dropdown-header)" }}
+        >
+          <div className="shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
+            <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
+          </div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1 min-w-0">
               {hasProfile ? (
                 <>
-                  <span className="text-body-16-sb text-[var(--color-text)] truncate">{getProfileDisplayName(petName)}</span>
+                  <span className="text-body-14-sb text-[var(--color-text)] truncate">{getProfileDisplayName(petName)}</span>
                   <button onClick={handleSwitchProfile} aria-label="프로필 변경" className="shrink-0">
                     <SwitchHorizontalIcon />
                   </button>
@@ -335,7 +448,7 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
               ) : (
                 <button
                   onClick={handleAddProfile}
-                  className="flex items-center gap-1 text-body-16-sb text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors min-w-0"
+                  className="flex items-center gap-1 text-body-14-sb text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors min-w-0"
                 >
                   <span className="truncate">프로필 등록하기</span>
                   <PlusCircleIcon />
@@ -351,15 +464,19 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
         </div>
 
         <button onClick={() => { onClose(); router.push("/mypage"); }} className={menuItemClass(isMypageActive)}>
+          <DropdownUserIcon />
           마이페이지
         </button>
         <button onClick={() => { onClose(); openModal("account-info"); }} className={menuItemClass(false)}>
+          <DropdownPinIcon />
           계정정보
         </button>
         <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isSubscriptionActive)}>
+          <DropdownClipboardIcon />
           구독관리
         </button>
         <button onClick={handleLogout} className={menuItemClass(false)}>
+          <DropdownLogoutIcon />
           로그아웃
         </button>
       </div>

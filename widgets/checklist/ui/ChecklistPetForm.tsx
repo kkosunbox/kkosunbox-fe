@@ -138,7 +138,8 @@ export default function ChecklistPetForm({
                 onChange={(breed) => setPetInfo((p) => ({ ...p, breed }))}
                 placeholder="ex) 웰시코기"
                 className="w-full"
-                inputClassName="!h-10 !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 !pr-11 !text-body-14-r !font-normal !tracking-normal placeholder:text-[var(--color-text-secondary)] focus:!border-0 focus:!ring-0"
+                inputClassName="!h-10 !rounded-full !border-0 !bg-[var(--color-surface-light)] !px-5 !pr-[56px] !text-body-14-r !font-normal !tracking-normal placeholder:text-[var(--color-text-secondary)] focus:!border-0 focus:!ring-0"
+                clearButtonRight="right-[38px]"
               />
               <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
                 <BreedSearchGlyph />

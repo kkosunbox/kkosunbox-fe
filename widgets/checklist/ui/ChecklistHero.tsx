@@ -3,7 +3,7 @@ import { Text } from "@/shared/ui";
 import checklistHeroPcPattern from "../assets/checklist-hero-pc-pattern.webp";
 import checklistHeroMobilePaw from "../assets/checklist-hero-mobile-paw.webp";
 import checklistHeroTitle from "../assets/checklist-hero-title.webp";
-import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.webp";
+import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.png";
 
 const MOBILE_PADDING_TOP_PX = 20;
 const DESKTOP_FORM_OVERLAP_PX = 50;
@@ -38,14 +38,14 @@ export default function ChecklistHero() {
       </div>
       <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:-translate-y-[var(--checklist-hero-desktop-offset)] md:pt-0">
         <h1 className="m-0 flex w-full max-w-[940px] flex-col items-center justify-center px-1">
-          <Image
-            src={checklistHeroTitleMobile}
+          {/* eslint-disable-next-line @next/next/no-img-element -- 로고형 PNG, next/image 재인코딩 시 엣지 노이즈 방지 */}
+          <img
+            src={checklistHeroTitleMobile.src}
             alt="체크리스트 작성"
             width={checklistHeroTitleMobile.width}
             height={checklistHeroTitleMobile.height}
             className="mx-auto h-auto w-full max-w-[150px] object-contain md:hidden"
-            sizes="(max-width: 767px) min(100vw, 150px), 1px"
-            priority
+            fetchPriority="high"
           />
           <Image
             src={checklistHeroTitle}

@@ -115,6 +115,7 @@
   --color-text-muted: #DDDDDD;     /* Muted — 구분선, 비활성 텍스트 */
   --color-text-caption: #C8C8C8;   /* Caption — 이미지 연출 면책 문구 등 부가 캡션 */
   --color-border: #B0B0B0;         /* Light border — 비활성 라디오·체크박스 테두리 */
+  --color-border-light: #EEEEEE;   /* Light divider — 섹션 구분선 */
   --color-ui-disabled: #D0D0D0;    /* Disabled — 비활성 UI 요소 (페이지네이션 화살표 등) */
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
@@ -149,6 +150,7 @@
   /* Decoration */
   --color-accent-rust: #DC5200;         /* Burnt Orange — hero Ms Madi 장식 텍스트 */
   --color-divider-warm: #F3DFCF;        /* Warm Peach — 모바일 섹션 구분선 */
+  --color-divider-neutral: #EAEAEA;     /* Neutral — 프로필 카드 모바일 구분선 등 */
   --color-link-warm: #C3824E;           /* Warm Link — 로그인 회원가입하기 링크 */
   --color-link-blue: #1C67D4;           /* Blue Link — 체크리스트 모달 본문 강조 */
   --color-sage: #87AB7D;                /* Sage Green — About CTA 카드 배경 */
@@ -236,6 +238,7 @@
   /* Decoration */
   --color-accent-rust: var(--color-accent-rust);
   --color-divider-warm: var(--color-divider-warm);
+  --color-divider-neutral: var(--color-divider-neutral);
   --color-link-warm: var(--color-link-warm);
   --color-link-blue: var(--color-link-blue);
   --color-sage: var(--color-sage);
@@ -256,6 +259,7 @@
   --color-text-muted: var(--color-text-muted);
   --color-text-caption: var(--color-text-caption);
   --color-border: var(--color-border);
+  --color-border-light: var(--color-border-light);
   --color-ui-disabled: var(--color-ui-disabled);
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);
@@ -432,6 +436,8 @@ button:disabled {
 @utility text-body-13-m  { font-size: 13px; line-height: 18px; font-weight: 500; }
 @utility text-body-13-sb { font-size: 13px; line-height: 18px; font-weight: 600; }
 @utility text-body-13-b  { font-size: 13px; line-height: 18px; font-weight: 700; }
+/* Stats bar 등 360px 미만 초소형 뷰포트 */
+@utility text-body-11-sb { font-size: 11px; line-height: 16px; font-weight: 600; }
 
 /* Footer nav (Figma: Pretendard 500, 14px / 24px line-height) */
 @utility text-footer-nav { font-size: 14px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }

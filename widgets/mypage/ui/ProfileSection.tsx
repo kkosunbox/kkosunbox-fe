@@ -111,7 +111,11 @@ function ChecklistPanel({
   mobile?: boolean;
 }) {
   return (
-    <div className={mobile ? "mt-4 pt-4 border-t border-[var(--color-divider-warm)]" : "flex flex-col justify-center"}>
+    <div
+      className={
+        mobile ? "mt-4 pt-4 border-t border-[var(--color-divider-neutral)]" : "flex flex-col justify-center"
+      }
+    >
       <div className="mb-2.5 flex items-center justify-between">
         <Text variant="subtitle-16-b" className="tracking-tightest text-[var(--color-text)]">
           체크리스트
@@ -207,7 +211,14 @@ export function ProfileSection({
   return (
     <section className="pt-6 md:pt-7">
       <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0">
-        <div className="rounded-[20px] bg-white max-md:px-7 max-md:py-7 md:px-7 md:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
+        <div className="relative rounded-[20px] bg-white max-md:px-7 max-md:py-7 md:px-7 md:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
+          <Link
+            href="/mypage/dog-profile"
+            className="md:hidden absolute top-[8px] right-4 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+          >
+            <span>정보변경</span>
+            <ChevronRightIcon />
+          </Link>
           <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-0">
 
             {/* 프로필 정보 (좌) */}
@@ -221,7 +232,7 @@ export function ProfileSection({
               </Link>
               <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
               <div className="min-w-0 flex-1 md:pr-[84px]">
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <Text
                       as="h1"
@@ -262,17 +273,10 @@ export function ProfileSection({
                       </button>
                     )}
                   </div>
-                  <Link
-                    href="/mypage/dog-profile"
-                    className="inline-flex shrink-0 items-center gap-0.5 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 md:hidden"
-                  >
-                    <span>정보변경</span>
-                    <ChevronRightIcon />
-                  </Link>
                 </div>
                 {hasProfile ? (
                   <>
-                    <div className="mt-3 flex items-center gap-3 md:mt-[10px]">
+                    <div className="mt-3 flex items-center max-[374px]:gap-1 min-[375px]:gap-3 md:mt-[10px]">
                       <Text
                         variant="body-16-m"
                         mobileVariant="body-13-r"

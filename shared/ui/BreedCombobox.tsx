@@ -74,6 +74,7 @@ export interface BreedComboboxProps {
   placeholder?: string;
   className?: string;
   inputClassName?: string;
+  clearButtonRight?: string;
 }
 
 export default function BreedCombobox({
@@ -83,6 +84,7 @@ export default function BreedCombobox({
   placeholder = "품종 선택",
   className = "",
   inputClassName = "",
+  clearButtonRight = "right-2",
 }: BreedComboboxProps) {
   const isMix = isMixBreedValue(value);
   const [query, setQuery] = useState(isMix ? getMixCustomPart(value) : value);
@@ -222,7 +224,7 @@ export default function BreedCombobox({
               event.preventDefault();
               handleClear();
             }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-white transition-opacity hover:opacity-80"
+            className={`absolute ${clearButtonRight} top-1/2 -translate-y-1/2 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-white transition-opacity hover:opacity-80`}
           >
             <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true">
               <path d="M1 1l6 6M7 1L1 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

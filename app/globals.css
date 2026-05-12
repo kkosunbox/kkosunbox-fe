@@ -137,6 +137,7 @@
   /* Icon */
   --color-icon-muted: #CCCCCC;        /* Muted icon — 비활성 아이콘 (정보 아이콘 등) */
   --color-icon-gray: #BABABA;         /* Gray icon — 배송·아이콘 기본 선 색상 */
+  --color-icon-warm: #E8B791;         /* Warm icon — 모바일 드로워 메뉴 아이콘 */
 
   /* Social login brand colors */
   --color-kakao: #FEE500;
@@ -166,6 +167,7 @@
   --gradient-support-banner: linear-gradient(92.78deg, rgba(254, 234, 215, 0.5) 47.68%, rgba(173, 206, 255, 0.5) 105.7%);
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
+  --gradient-mobile-menu: linear-gradient(132.82deg, #FFFCF9 25.95%, #FFF7E9 94.09%); /* 모바일 드로워 상단 — 웜 크림 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
   --gradient-modal-danger: #F07050;                                               /* 구독 취소/회원 탈퇴 모달 05/07 — 코럴 오렌지 */
   --gradient-modal-restart: linear-gradient(180deg, #A8D4F5 0%, #EEF6FF 100%);  /* 구독 재시작 모달 06 — 라이트 블루 */
@@ -273,6 +275,7 @@
   /* Icon */
   --color-icon-muted: var(--color-icon-muted);
   --color-icon-gray: var(--color-icon-gray);
+  --color-icon-warm: var(--color-icon-warm);
 
   /* Social login */
   --color-kakao: var(--color-kakao);

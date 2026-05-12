@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useTransition, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { getPaymentHistory, cancelPayment } from "@/features/subscription/api/subscriptionApi";
+import { getErrorMessage } from "@/shared/lib/api";
+import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
 import type {
@@ -117,57 +120,6 @@ function Pagination({
         <ChevronNavIcon dir="right" />
       </button>
     </nav>
-  );
-}
-
-/* ── 주문취소 확인 다이얼로그 ─────────────────────────────── */
-
-function CancelConfirmDialog({
-  onConfirm,
-  onCancel,
-  isProcessing,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-  isProcessing: boolean;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label="주문 취소 확인"
-    >
-      <div className="absolute inset-0 bg-black/50" onClick={onCancel} aria-hidden="true" />
-      <div className="relative z-10 w-full max-w-[300px] rounded-2xl bg-white px-6 py-6 shadow-lg">
-        <p className="text-center text-body-16-sb text-[var(--color-text)] mb-2">
-          주문 취소
-        </p>
-        <p className="text-center text-body-14-m text-[var(--color-text-secondary)] mb-6">
-          이 배송 건을 취소하시겠습니까?
-          <br />
-          취소 후에는 되돌릴 수 없습니다.
-        </p>
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={isProcessing}
-            className="flex-1 h-[44px] rounded-[12px] border border-[var(--color-border)] text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] transition-colors disabled:opacity-50"
-          >
-            닫기
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isProcessing}
-            className="flex-1 h-[44px] rounded-[12px] bg-[var(--color-accent)] text-body-14-m text-white hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {isProcessing ? "처리중..." : "취소하기"}
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -292,11 +244,12 @@ export function DeliveryStatusManager({
   pageLimit,
   deliveryAddress,
 }: Props) {
+  const router = useRouter();
+  const { openModal, openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
   const [payments, setPayments] = useState(initialPayments);
   const [total, setTotal] = useState(initialTotal);
   const [page, setPage] = useState(1);
-  const [cancelTargetId, setCancelTargetId] = useState<number | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [isLoading, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -315,8 +268,8 @@ export function DeliveryStatusManager({
         setTotal(data.total);
         setPage(nextPage);
         setErrorMsg(null);
-      } catch {
-        setErrorMsg("목록을 불러오지 못했습니다. 다시 시도해 주세요.");
+      } catch (err) {
+        setErrorMsg(getErrorMessage(err, "목록을 불러오지 못했습니다. 다시 시도해 주세요."));
       }
     },
     [deliveryStatus, pageLimit],
@@ -329,23 +282,38 @@ export function DeliveryStatusManager({
   }
 
   function handleCancelRequest(paymentId: number) {
-    setCancelTargetId(paymentId);
     setErrorMsg(null);
-  }
-
-  async function handleCancelConfirm() {
-    if (!cancelTargetId) return;
-    const targetId = cancelTargetId;
-    setCancelTargetId(null);
-    setIsProcessing(true);
-    try {
-      await cancelPayment(targetId);
-      await loadPage(page);
-    } catch {
-      setErrorMsg("취소 처리 중 오류가 발생했습니다. 다시 시도해 주세요.");
-    } finally {
-      setIsProcessing(false);
-    }
+    openModal(
+      "payment-cancel",
+      () => {
+        showLoading("결제를 취소하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await cancelPayment(paymentId);
+            await loadPage(page);
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "결제 취소 처리 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+      () => {
+        showLoading("결제 취소 및 구독 해지를 처리하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await cancelPayment(paymentId, { cancelSubscription: true });
+            router.push("/mypage/subscription");
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "처리 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    );
   }
 
   return (
@@ -374,7 +342,7 @@ export function DeliveryStatusManager({
 
       {/* 목록 */}
       <div className="flex flex-col gap-3 px-4 pb-4 flex-1">
-        {isLoading || isProcessing ? (
+        {isLoading ? (
           <div className="flex flex-1 items-center justify-center py-16">
             <span className="text-body-14-m text-[var(--color-text-label)]">불러오는 중...</span>
           </div>
@@ -398,7 +366,7 @@ export function DeliveryStatusManager({
       </div>
 
       {/* 페이지네이션 */}
-      {!isLoading && !isProcessing && payments.length > 0 && (
+      {!isLoading && payments.length > 0 && (
         <div className="px-4 pb-6">
           <Pagination
             page={page}
@@ -408,15 +376,6 @@ export function DeliveryStatusManager({
             onSelect={handlePageChange}
           />
         </div>
-      )}
-
-      {/* 주문취소 확인 다이얼로그 */}
-      {cancelTargetId !== null && (
-        <CancelConfirmDialog
-          onConfirm={handleCancelConfirm}
-          onCancel={() => setCancelTargetId(null)}
-          isProcessing={isProcessing}
-        />
       )}
     </div>
   );

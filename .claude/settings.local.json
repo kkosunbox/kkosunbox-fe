@@ -102,7 +102,9 @@
       "Bash(findstr /C:\"Header\" /C:\"header\")",
       "Bash(Select-String \"Header|header\")",
       "PowerShell(pnpm lint *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-mobile-expanded.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-mobile.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))"
     ]
   }
 }

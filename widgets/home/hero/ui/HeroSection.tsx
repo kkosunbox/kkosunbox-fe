@@ -8,7 +8,7 @@ import logoMain from "@/shared/assets/logo-main.svg";
 import heroCatchPhrase from "../assets/hero-catch-phrase.png";
 import heroCatchPhraseMobile from "../assets/hero-catch-phrase-mobile.png";
 import heroMainBackground from "../assets/hero-main-background.png";
-import heroMainBackgroundMobile from "../assets/hero-main-background-mobile.png";
+import heroMainBackgroundMobile from "../assets/hero-main-background-mobile-expanded.png";
 
 export default function HeroSection() {
   const { isLoggedIn } = useAuth();
@@ -25,19 +25,22 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden h-[585px] md:h-[537px]">
       {/* 모바일 배경 이미지 */}
-      <Image
-        src={heroMainBackgroundMobile}
-        alt="꼬순박스 히어로 배경"
-        fill
-        className="object-cover object-center md:hidden"
-        priority
-      />
+      <div className="md:hidden absolute inset-0 flex justify-center overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={heroMainBackgroundMobile.src}
+          alt=""
+          aria-hidden="true"
+          className="h-full w-auto max-w-none shrink-0"
+          fetchPriority="high"
+        />
+      </div>
       {/* 데스크톱 배경 이미지 */}
       <Image
         src={heroMainBackground}
         alt="꼬순박스 히어로 배경"
         fill
-        className="object-cover object-center max-md:hidden"
+        className="object-cover object-bottom max-md:hidden"
         priority
       />
 

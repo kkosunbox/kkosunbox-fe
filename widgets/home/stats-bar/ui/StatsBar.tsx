@@ -61,7 +61,9 @@ export default function StatsBar() {
           <ScrollReveal key={item.label} variant="fade-up" delay={i * 150} duration={500}>
             <div className="flex items-center max-md:gap-1 md:gap-[5px]">
               <span className="text-[var(--color-secondary)]">{item.icon}</span>
-              <span className="max-md:text-body-13-sb md:text-body-16-sb text-[var(--color-secondary)] tracking-[0.02em]">{item.label}</span>
+              <span className="max-[359px]:text-body-11-sb min-[360px]:max-md:text-body-13-sb md:text-body-16-sb text-[var(--color-secondary)] tracking-[0.02em]">
+                {item.label}
+              </span>
             </div>
           </ScrollReveal>
         ))}

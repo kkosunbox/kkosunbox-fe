@@ -36,7 +36,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
           className="relative
                      max-md:mt-[59px] md:mt-[80px]
                      max-md:rounded-[32px] md:rounded-[40px]
-                     max-md:pt-[110px] md:pt-[140px]
+                     max-md:pt-[110px] md:pt-[120px]
                      pb-8 px-6
                      flex flex-col items-center"
           style={{ background: "var(--gradient-modal-checklist)" }}

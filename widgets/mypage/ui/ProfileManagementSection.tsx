@@ -353,7 +353,6 @@ export default function ProfileManagementSection({
 
     const trimmedNotes = specialNotes.trim();
 
-    const isFirstProfile = isCreating && profiles.length === 0;
     showLoading("프로필을 저장하고 있습니다...");
     start(async () => {
       try {
@@ -373,12 +372,8 @@ export default function ProfileManagementSection({
           });
           await refreshProfile();
           setActiveProfileId(newProfile.id);
-          if (isFirstProfile) {
-            sessionStorage.setItem("kkosun_from_new_profile", "1");
-            router.push("/checklist");
-          } else {
-            router.push("/mypage");
-          }
+          sessionStorage.setItem("kkosun_from_new_profile", "1");
+          router.push("/checklist");
         } else {
           await updateProfile(profile.id, {
             ...body,

@@ -11,6 +11,7 @@ import {
   cancelSubscription,
   getPaymentReceipt,
   pauseSubscription,
+  reactivateSubscription,
   resumeSubscription,
 } from "@/features/subscription/api/subscriptionApi";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
@@ -207,7 +208,20 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   );
 
   function handleResubscribe() {
-    router.push(`/subscribe/detail?planId=${subscription.plan.id}`);
+    openModal("subscription-restart", () => {
+      showLoading("구독을 재시작하고 있습니다...");
+      startTransition(async () => {
+        try {
+          await reactivateSubscription(subscription.id);
+          openAlert({ title: "구독이 재시작되었습니다." });
+          router.refresh();
+        } catch (err) {
+          openAlert({ title: getErrorMessage(err, "구독 재시작 처리 중 오류가 발생했습니다.") });
+        } finally {
+          hideLoading();
+        }
+      });
+    });
   }
 
   function handleCancel() {

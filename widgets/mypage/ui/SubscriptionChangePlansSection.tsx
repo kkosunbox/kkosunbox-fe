@@ -105,6 +105,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
       try {
         await changePlan(targetSubscription.id, { newPlanId: plan.id });
         openAlert({
+          type: "success",
           title: "플랜이 변경되었습니다.",
           description: "변경 사항은 다음 결제일에 반영됩니다.",
         });

@@ -120,6 +120,7 @@
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
   --color-text-body-warm: #5B5B5B; /* 웜 섹션 본문 */
+  --color-modal-desc: rgba(34, 34, 38, 0.82); /* 범용 모달 설명 텍스트 */
 
   /* Status */
   --color-status-pending-bg: #D3E1FE; /* 예정 뱃지 배경 */
@@ -180,6 +181,7 @@
   --gradient-checklist-result: linear-gradient(101.78deg, #FFF4EA 41.37%, #FFBF9A 118.84%); /* 체크리스트 결과 배너 (Figma) */
   --gradient-reviews: linear-gradient(180deg, #FFF9F3 0%, #E3EEFF 100%); /* 리뷰 섹션 배경 (크림 위 → 블루 아래) */
   --gradient-login-bg: linear-gradient(180.15deg, #FFF4EA 42.65%, #CDE1FF 120.01%); /* 로그인 모바일 배경 (피치 → 스카이블루) */
+  --gradient-modal-alert-header: linear-gradient(176.77deg, #FFF7E9 -5.94%, #FFFFFF 99.39%); /* 범용 모달 헤더 — 웜 크림 → 화이트 */
 }
 
 @theme inline {
@@ -264,6 +266,7 @@
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);
   --color-text-body-warm: var(--color-text-body-warm);
+  --color-modal-desc: var(--color-modal-desc);
 
   /* Status */
   --color-status-pending-bg: var(--color-status-pending-bg);

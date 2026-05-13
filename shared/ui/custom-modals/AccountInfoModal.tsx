@@ -154,7 +154,7 @@ export default function AccountInfoModal({ onClose }: Props) {
       try {
         await changePassword({ currentPassword, newPassword });
         // openAlert가 active=null로 이 모달을 닫고 알림을 표시
-        openAlert({ title: "비밀번호가 변경되었습니다." });
+        openAlert({ type: "success", title: "비밀번호가 변경되었습니다." });
       } catch (error) {
         setErrorMessage(getErrorMessage(error, "비밀번호 변경에 실패했습니다. 다시 시도해주세요."));
       } finally {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useModal, type ModalType } from "@/shared/ui";
+import { useModal, type ModalType, type AlertModalType } from "@/shared/ui";
 
 function fireTestConfetti() {
   import("canvas-confetti").then(({ default: confetti }) => {
@@ -110,11 +110,49 @@ const PAUSE_ITEM = {
   primaryLabel: "이번 달만 쉬어가기",
 };
 
+const ALERT_TYPE_ITEMS: { type: AlertModalType; label: string; description: string; color: string }[] = [
+  { type: "alert",    label: "Alert",    description: "경고 / 오류",  color: "bg-orange-100 text-orange-900" },
+  { type: "contents", label: "Contents", description: "내용 안내",    color: "bg-amber-100 text-amber-900" },
+  { type: "info",     label: "Info",     description: "정보 / 안내",  color: "bg-sky-100 text-sky-900" },
+  { type: "present",  label: "Present",  description: "선물 / 혜택",  color: "bg-pink-100 text-pink-900" },
+  { type: "success",  label: "Success",  description: "완료 / 성공",  color: "bg-green-100 text-green-900" },
+];
+
 export default function ModalTestButtons() {
-  const { openModal } = useModal();
+  const { openModal, openAlert } = useModal();
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Alert 모달 5가지 타입 */}
+      <div>
+        <p className="mb-2 text-xs font-semibold text-zinc-400">Alert 모달 · 5가지 타입</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          {ALERT_TYPE_ITEMS.map(({ type, label, description, color }) => (
+            <button
+              key={type}
+              onClick={() =>
+                openAlert({
+                  type,
+                  title: `${label} 모달 예시`,
+                  description:
+                    type === "present"
+                      ? "주문/결제 페이지의 '쿠폰 선택' 영역을 선택하면 [20% 할인 쿠폰]이 적용됩니다."
+                      : type === "contents"
+                      ? "페이지를 나가면 입력하신 정보가\n저장되지 않고 사라집니다.\n정말 이동하시겠습니까?"
+                      : undefined,
+                  secondaryLabel: type === "contents" ? "나가기" : undefined,
+                  primaryLabel: type === "contents" ? "계속 작성하기" : "확인",
+                })
+              }
+              className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
+            >
+              <span className="text-xs font-semibold opacity-70">{label}</span>
+              <span className="text-sm font-medium leading-tight">{description}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* 01–07: 단일 액션 */}
       <div>
         <p className="mb-2 text-xs font-semibold text-zinc-400">01 – 07 · 단일 액션</p>

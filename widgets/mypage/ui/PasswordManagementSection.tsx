@@ -132,6 +132,7 @@ export default function PasswordManagementSection() {
         });
 
         openAlert({
+          type: "success",
           title: "비밀번호가 변경되었습니다.",
           onPrimary: () => {
             router.push("/mypage/dog-profile");

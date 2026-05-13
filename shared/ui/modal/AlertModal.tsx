@@ -70,7 +70,7 @@ export default function AlertModal({
           type="button"
           onClick={handlePrimary}
           className="mt-7 w-full h-[48px] rounded-[30px] max-md:text-subtitle-14-sb md:text-subtitle-16-sb text-white hover:opacity-90 active:opacity-80 transition-opacity"
-          style={{ background: "var(--color-accent)" }}
+          style={{ background: "var(--color-text)" }}
         >
           {primaryLabel}
         </button>

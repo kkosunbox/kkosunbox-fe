@@ -230,8 +230,14 @@ function SubscriptionRow({
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-tertiary)";
 
   return (
-    <div className="flex items-stretch overflow-hidden rounded-[20px] bg-white">
-      <div className="relative min-h-[140px] w-[140px] shrink-0 bg-[var(--color-background)] md:min-h-[155px] md:w-[155px]">
+    <div
+      className={`flex items-stretch overflow-hidden md:rounded-[20px] md:bg-white max-md:rounded-[16px] max-md:h-[120px] ${
+        isActive
+          ? "max-md:bg-[var(--color-support-faq-surface)]"
+          : "max-md:bg-[var(--color-surface-light)]"
+      }`}
+    >
+      <div className="relative shrink-0 bg-[var(--color-background)] max-md:h-[120px] max-md:w-[129px] md:min-h-[155px] md:w-[155px]">
         <Image
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
@@ -240,17 +246,17 @@ function SubscriptionRow({
         />
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col p-5">
-        <div className="mb-3 flex items-start justify-between gap-2">
+      <div className="flex min-w-0 flex-1 flex-col max-md:px-4 max-md:py-[15px] md:p-5">
+        <div className="max-md:mb-2 md:mb-3 flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <span
-              className="inline-flex items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
+              className="inline-flex items-center rounded-full px-3 py-1 max-md:text-[12px] max-md:leading-[14px] max-md:font-semibold md:text-body-14-sb md:leading-[17px] text-white"
               style={{ background: badgeColor }}
             >
               {theme.tierLabel}
             </span>
             <span
-              className="text-body-14-sb leading-[17px]"
+              className="max-md:hidden text-body-14-sb leading-[17px]"
               style={{ color: badgeColor }}
             >
               {subscription.quantity || 1}BOX
@@ -260,18 +266,36 @@ function SubscriptionRow({
             href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
             className="text-body-13-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
           >
-            자세히보기
+            <span className="md:hidden">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="자세히보기">
+                <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+            <span className="max-md:hidden">자세히보기</span>
           </Link>
         </div>
 
-        <Text variant="subtitle-16-sb" className="mb-1.5 text-[var(--color-text)]">
-          {isActive ? `${plan.name} 구독중` : plan.name}
+        <Text
+          variant="subtitle-16-sb"
+          mobileVariant="body-14-sb"
+          className={`max-md:mb-1 md:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}
+        >
+          <span className="md:hidden">{plan.name}</span>
+          <span className="max-md:hidden">{isActive ? `${plan.name} 구독중` : plan.name}</span>
         </Text>
 
-        <Text variant="body-14-m" className="text-[var(--color-text-label)]">
+        <Text
+          variant="body-14-m"
+          mobileVariant="body-13-m"
+          className={isActive ? "text-[var(--color-text-label)]" : "text-[var(--color-text-tertiary)]"}
+        >
           {isActive ? `${formatDate(subscription.nextBillingDate)} ~` : "-"}
         </Text>
-        <Text variant="body-14-m" className="text-[var(--color-text-label)]">
+        <Text
+          variant="body-14-m"
+          mobileVariant="body-13-m"
+          className="text-[var(--color-text-label)]"
+        >
           {isActive
             ? `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`
             : "구독종료"}
@@ -331,9 +355,9 @@ function AddSubscriptionCard() {
   return (
     <Link
       href="/mypage/subscription/change"
-      className="flex h-full min-h-[140px] flex-col items-center justify-center gap-4 rounded-[20px] bg-white py-10 transition-opacity hover:opacity-80 md:min-h-[155px]"
+      className="flex max-md:h-[120px] max-md:rounded-[16px] max-md:bg-[var(--color-surface-light)] md:h-full md:min-h-[155px] md:rounded-[20px] md:bg-white md:py-10 flex-col items-center justify-center gap-4 transition-opacity hover:opacity-80"
     >
-      <Text variant="subtitle-16-sb" className="text-[var(--color-text)]">
+      <Text variant="subtitle-16-sb" mobileVariant="body-13-sb" className="max-md:text-[var(--color-text-tertiary)] md:text-[var(--color-text)]">
         구독 추가하기
       </Text>
       <PlusIcon />
@@ -420,10 +444,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
 
       {/* Subscription list — 구독 전체보기 */}
       <div className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
-        <div
-          className="rounded-[24px] max-md:p-5 md:px-8 md:py-8"
-          style={{ background: "var(--color-surface-peach)" }}
-        >
+        <div className="md:rounded-[24px] md:bg-[var(--color-surface-peach)] md:px-8 md:py-8">
           <div className="mb-6 flex items-center justify-between gap-3">
             <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
               구독 전체보기

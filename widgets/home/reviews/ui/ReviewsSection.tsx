@@ -239,7 +239,7 @@ function ReviewsCarousel() {
     const vp = viewportRef.current;
     const track = trackRef.current;
     if (!vp) return;
-    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    const desktop = window.matchMedia("(min-width: 1024px)").matches;
     const w = vp.getBoundingClientRect().width;
     const rawGap = track ? parseFloat(getComputedStyle(track).gap || "0") : 36;
     const gap = Number.isFinite(rawGap) && rawGap > 0 ? rawGap : 36;
@@ -252,7 +252,7 @@ function ReviewsCarousel() {
     if (!vp) return;
     const ro = new ResizeObserver(() => measure());
     ro.observe(vp);
-    const mq = window.matchMedia("(min-width: 768px)");
+    const mq = window.matchMedia("(min-width: 1024px)");
     mq.addEventListener("change", measure);
     queueMicrotask(measure);
     return () => {

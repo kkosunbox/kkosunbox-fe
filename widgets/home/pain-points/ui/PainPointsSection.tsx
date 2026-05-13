@@ -35,7 +35,7 @@ export default function PainPointsSection() {
           </ScrollReveal>
           {/* 모바일 전용 구분선 */}
           <div className="md:hidden mb-3 w-full border-t border-[var(--color-divider-warm)]" />
-          <ul className="flex w-full max-w-full flex-col items-start gap-2 text-left md:mx-0 md:w-full md:gap-0">
+          <ul className="flex w-full max-w-full flex-col items-start gap-2 text-left md:mx-0 max-md:max-w-[290px] md:w-full md:gap-0">
             {PAIN_POINTS.map((item, i) => (
               <ScrollReveal key={item} variant="fade-up" delay={300 + i * 120}>
                 <li className="flex items-start gap-2 md:gap-3">

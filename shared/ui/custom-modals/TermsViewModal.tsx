@@ -272,7 +272,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"
-          style={{ borderBottom: "1px solid var(--color-border)" }}
+          style={{ borderBottom: "1px solid var(--color-text-muted)" }}
         >
           <h2 className="text-subtitle-16-sb md:text-subtitle-18-sb text-[var(--color-text)]">
             {title}
@@ -325,14 +325,14 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
         {/* Footer */}
         <div
           className="px-6 pb-6 pt-4 shrink-0"
-          style={{ borderTop: "1px solid var(--color-border)" }}
+          style={{ borderTop: "1px solid var(--color-text-muted)" }}
         >
           <button
             ref={confirmBtnRef}
             type="button"
             onClick={handleConfirm}
             className="w-full h-[44px] rounded-full text-[14px] font-semibold text-white hover:opacity-90 active:opacity-80 transition-opacity"
-            style={{ background: "var(--color-accent)" }}
+            style={{ background: "var(--color-text)" }}
           >
             확인
           </button>

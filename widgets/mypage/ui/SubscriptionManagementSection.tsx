@@ -127,7 +127,7 @@ function SubscriptionsSummaryCard({
         {count > 0 ? `총 ${count}개의 구독 이용중` : "이용중인 구독이 없습니다"}
       </Text>
 
-      <div className="flex flex-col gap-1.5 text-body-16-m text-[var(--color-text-label)]">
+      <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
         <p>다음 결제일 : {nextDate ? formatDate(nextDate) : "-"}</p>
         <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
       </div>

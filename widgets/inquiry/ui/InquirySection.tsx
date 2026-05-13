@@ -107,17 +107,17 @@ export default function InquirySection() {
     if (files.length === 0) return;
 
     if (attachedFiles.length + files.length > MAX_ATTACHMENTS) {
-      openAlert({ title: `첨부파일은 최대 ${MAX_ATTACHMENTS}개까지 첨부할 수 있습니다.` });
+      openAlert({ type: "info", title: `첨부파일은 최대 ${MAX_ATTACHMENTS}개까지 첨부할 수 있습니다.` });
       return;
     }
 
     for (const file of files) {
       if (file.size > MAX_ATTACHMENT_BYTES) {
-        openAlert({ title: "첨부파일은 5MB 이하만 업로드할 수 있습니다." });
+        openAlert({ type: "info", title: "첨부파일은 5MB 이하만 업로드할 수 있습니다." });
         return;
       }
       if (file.type && !ACCEPT_ATTACHMENT.split(",").includes(file.type)) {
-        openAlert({ title: "이미지(JPG, PNG, WebP, GIF) 또는 PDF 파일만 첨부할 수 있습니다." });
+        openAlert({ type: "info", title: "이미지(JPG, PNG, WebP, GIF) 또는 PDF 파일만 첨부할 수 있습니다." });
         return;
       }
     }

@@ -262,7 +262,7 @@ export default function ProfileManagementSection({
     if (initialProfilesCountRef.current < MAX_PROFILE_COUNT) return;
     if (hasAlertedLimit.current) return;
     hasAlertedLimit.current = true;
-    openAlert({ title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
+    openAlert({ type: "info", title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
     router.replace("/mypage");
   }, [isNewProfile, profiles.length, openAlert, router]);
 
@@ -341,7 +341,7 @@ export default function ProfileManagementSection({
   function handleSave() {
     setSaveError(null);
     if (isCreating && profiles.length >= MAX_PROFILE_COUNT) {
-      openAlert({ title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
+      openAlert({ type: "info", title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.` });
       return;
     }
     const trimmedWeight = weight.trim();

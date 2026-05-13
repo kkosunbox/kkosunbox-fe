@@ -213,7 +213,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
       startTransition(async () => {
         try {
           await reactivateSubscription(subscription.id);
-          openAlert({ title: "구독이 재시작되었습니다." });
+          openAlert({ type: "success", title: "구독이 재시작되었습니다." });
           router.refresh();
         } catch (err) {
           openAlert({ title: getErrorMessage(err, "구독 재시작 처리 중 오류가 발생했습니다.") });
@@ -259,6 +259,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     const isPaused = subscription.isPaused;
     if (isPaused) {
       openAlert({
+        type: "info",
         title: "구독 쉬어가기를 해제할까요?",
         description: "다음 결제일에 정상적으로 결제됩니다.",
         primaryLabel: "쉬어가기 해제",

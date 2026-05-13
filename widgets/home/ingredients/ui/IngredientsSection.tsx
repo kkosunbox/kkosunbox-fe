@@ -18,6 +18,7 @@ export default function IngredientsSection() {
       return;
     }
     openAlert({
+      type: "info",
       title: "로그인이 필요해요",
       description: "체크리스트 작성은 로그인 후 이용할 수 있어요.",
       primaryLabel: "로그인 하러 가기",

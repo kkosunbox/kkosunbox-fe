@@ -7,7 +7,7 @@ export type { DatePickerProps } from "./DatePicker";
 export { default as BreedCombobox } from "./BreedCombobox";
 export type { BreedComboboxProps } from "./BreedCombobox";
 export { ModalProvider, useModal, openAlertModal } from "./modal";
-export type { ModalType, AlertModalOptions } from "./modal";
+export type { ModalType, AlertModalOptions, AlertModalType } from "./modal";
 export { ChecklistRecommendModal, PlanChangeModal, ChecklistDeferModal, CouponIssuedModal } from "./custom-modals";
 export { default as ButtonWithPawEffect } from "./ButtonWithPawEffect";
 export { default as CursorPaw } from "./CursorPaw";

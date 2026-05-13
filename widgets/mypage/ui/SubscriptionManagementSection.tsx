@@ -268,7 +268,7 @@ function SubscriptionRow({
           >
             <span className="md:hidden">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="자세히보기">
-                <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M7 4l6 6-6 6" stroke="#999999" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
             <span className="max-md:hidden">자세히보기</span>

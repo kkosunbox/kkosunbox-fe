@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Text, Button, ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import logoMain from "@/shared/assets/logo-main.svg";
 import heroCatchPhrase from "../assets/hero-catch-phrase.png";
 import heroCatchPhraseMobile from "../assets/hero-catch-phrase-mobile.png";
@@ -12,14 +13,20 @@ import heroMainBackgroundMobile from "../assets/hero-main-background-mobile-expa
 
 export default function HeroSection() {
   const { isLoggedIn } = useAuth();
+  const { profile } = useProfile();
   const router = useRouter();
 
   function handleChecklistCtaClick() {
-    if (isLoggedIn) {
-      router.push("/checklist");
+    if (!isLoggedIn) {
+      router.push("/login?next=/checklist");
       return;
     }
-    router.push("/login?next=/checklist");
+    const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
+    if (hasChecklist) {
+      router.push("/subscribe");
+      return;
+    }
+    router.push("/checklist");
   }
 
   return (

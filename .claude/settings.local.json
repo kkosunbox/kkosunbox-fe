@@ -106,7 +106,11 @@
       "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-mobile-expanded.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))",
       "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-mobile.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))",
       "PowerShell(head *)",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Directory | Where-Object {$_.Name -match \"app|features|components\"} | Select-Object -First 20 | ForEach-Object {$_.FullName})",
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Filter \"*modal*\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Select-String -Pattern \"profile-switch\")"
     ]
   }
 }

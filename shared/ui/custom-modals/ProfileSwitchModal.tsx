@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { deleteProfile } from "@/features/profile/api/profileApi";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { MAX_PROFILE_COUNT, type Profile } from "@/features/profile/api/types";
 import { getProfileDisplayName } from "@/shared/config/profile";
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import { useLoadingOverlay, useModal } from "@/shared/ui";
 import DefaultPetIcon from "../DefaultPetIcon";
 
 interface Props {
@@ -29,18 +32,41 @@ function AddIcon() {
   );
 }
 
-function ProfileItem({ pet, selected, onSelect }: { pet: Profile; selected: boolean; onSelect: () => void }) {
+function DeleteIcon() {
   return (
-    <button onClick={onSelect} className="flex flex-col items-center gap-2 w-20" type="button">
-      <div className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-full border ${selected ? "border-[var(--color-primary)]" : "border-[var(--color-border)]"}`}>
-        {pet.profileImageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL
-          <img src={pet.profileImageUrl} alt={pet.name ?? ""} className="h-full w-full object-cover" />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-[var(--color-secondary)]">
-            <DefaultPetIcon className="h-10 w-10" />
-          </div>
-        )}
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="16" rx="8" fill="#999999"/>
+      <path d="M5 11L11 5M5 5L11 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function ProfileItem({ pet, selected, onSelect, onDelete }: { pet: Profile; selected: boolean; onSelect: () => void; onDelete: () => void }) {
+  return (
+    <div className="relative flex flex-col items-center gap-2 w-20">
+      <div className="relative h-20 w-20 shrink-0">
+        <button
+          type="button"
+          onClick={onSelect}
+          className={`h-20 w-20 overflow-hidden rounded-full border ${selected ? "border-[var(--color-primary)]" : "border-[var(--color-border)]"}`}
+        >
+          {pet.profileImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL
+            <img src={pet.profileImageUrl} alt={pet.name ?? ""} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-[var(--color-secondary)]">
+              <DefaultPetIcon className="h-10 w-10" />
+            </div>
+          )}
+        </button>
+        <button
+          type="button"
+          aria-label={`${getProfileDisplayName(pet.name)} 프로필 삭제`}
+          onClick={onDelete}
+          className="absolute top-0.5 right-0.5 flex items-center justify-center hover:opacity-80 transition-opacity"
+        >
+          <DeleteIcon />
+        </button>
       </div>
       <div className="flex items-center gap-[2px]">
         {selected && <CheckIcon />}
@@ -48,7 +74,7 @@ function ProfileItem({ pet, selected, onSelect }: { pet: Profile; selected: bool
           {getProfileDisplayName(pet.name)}
         </span>
       </div>
-    </button>
+    </div>
   );
 }
 
@@ -66,8 +92,10 @@ function AddProfileItem({ onClick }: { onClick: () => void }) {
 }
 
 export default function ProfileSwitchModal({ onClose }: Props) {
-  const { profiles, profile, setActiveProfileId } = useProfile();
+  const { profiles, profile, setActiveProfileId, refreshProfile } = useProfile();
   const router = useRouter();
+  const { openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
   const [selectedId, setSelectedId] = useState<number>(profile?.id ?? profiles[0]?.id ?? 0);
 
   const isEmpty = profiles.length === 0;
@@ -85,6 +113,36 @@ export default function ProfileSwitchModal({ onClose }: Props) {
     if (!canAddProfile) return;
     onClose();
     router.push("/mypage/dog-profile?new=true");
+  };
+
+  const handleDeleteProfile = (pet: Profile) => {
+    openAlert({
+      title: "애견 프로필을 삭제할까요?",
+      description: "애견 프로필을 삭제하시겠습니까?\n작성된 내용은 복구되지 않습니다.",
+      primaryLabel: "삭제하기",
+      secondaryLabel: "취소하기",
+      onPrimary: () => { void handleConfirmDeleteProfile(pet); },
+    });
+  };
+
+  const handleConfirmDeleteProfile = async (pet: Profile) => {
+    showLoading("프로필을 삭제하고 있습니다...");
+    let errorMessage: string | null = null;
+    try {
+      await deleteProfile(pet.id);
+      await refreshProfile();
+      if (selectedId === pet.id) {
+        const remaining = profiles.filter((p) => p.id !== pet.id);
+        setSelectedId(remaining[0]?.id ?? 0);
+      }
+    } catch (error) {
+      errorMessage = getErrorMessage(error, "프로필 삭제에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      hideLoading();
+    }
+    if (errorMessage) {
+      openAlert({ title: errorMessage });
+    }
   };
 
   return (
@@ -126,6 +184,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
                   pet={pet}
                   selected={selectedId === pet.id}
                   onSelect={() => setSelectedId(pet.id)}
+                  onDelete={() => handleDeleteProfile(pet)}
                 />
               ))}
               {canAddProfile && <AddProfileItem onClick={handleAddProfile} />}

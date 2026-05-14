@@ -166,7 +166,7 @@ export default function LoginPage() {
         {/* 좌측 — 폼 */}
         <div className="flex-1 flex flex-col w-full px-6 max-md:justify-center md:justify-center md:min-h-[calc(100vh-54px)]">
           {/* 모바일: 고정 간격 블록, 세로 중앙 정렬 / 데스크톱: 기존 레이아웃 유지 */}
-          <div className="w-full md:max-w-[400px] px-0">
+          <div className="w-full max-w-[400px] px-0 max-md:mx-auto">
 
             {/* 모바일 전용: 로고 영역 */}
             <div className="max-md:flex md:hidden items-center justify-center pb-[100px]">

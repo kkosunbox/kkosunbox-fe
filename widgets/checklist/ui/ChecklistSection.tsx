@@ -242,6 +242,9 @@ export default function ChecklistSection() {
             ]),
           );
         }
+        if (pet.name.trim()) {
+          initialStep = 1;
+        }
       }
 
       if (cancelled) return;
@@ -428,6 +431,13 @@ export default function ChecklistSection() {
     });
   }
 
+  const currentQuestionId =
+    questions && step >= 1 && step <= questions.length ? questions[step - 1].id : null;
+  const isCurrentQuestionAnswered =
+    currentQuestionId === null
+      ? true
+      : (answersByQuestion[currentQuestionId] ?? []).length > 0;
+
   function handleNext() {
     if (!questions?.length) return;
     if (step === 0) {
@@ -436,6 +446,7 @@ export default function ChecklistSection() {
       setMaxVisitedStep((prev) => Math.max(prev, 1));
       return;
     }
+    if (!isCurrentQuestionAnswered) return;
     if (step < questions.length) {
       const next = step + 1;
       setStep(next);
@@ -449,6 +460,7 @@ export default function ChecklistSection() {
 
   function handleStepClick(targetStep: number) {
     if (targetStep >= 1 && targetStep <= maxVisitedStep && targetStep !== step) {
+      if (targetStep > step && !isCurrentQuestionAnswered) return;
       setStep(targetStep);
     }
   }
@@ -457,6 +469,7 @@ export default function ChecklistSection() {
     if (!questions?.length) return;
     const trimmedName = petInfo.name.trim();
     if (!trimmedName) return;
+    if (!isCurrentQuestionAnswered) return;
     isConfirmedLeaveRef.current = true;
     setIsAnalyzing(true);
 
@@ -581,7 +594,9 @@ export default function ChecklistSection() {
   const ctaLabel =
     step === 0 ? "체크리스트 작성하기" : step === lastQuestionStep ? "결과보기" : "다음";
   const isStep0NameValid = petInfo.name.trim().length > 0;
-  const isMobileCtaDisabled = step === 0 && !isStep0NameValid;
+  const isMobileCtaDisabled =
+    (step === 0 && !isStep0NameValid) ||
+    (step >= 1 && step <= qLen && !isCurrentQuestionAnswered);
 
   function handleMobileCta() {
     if (step === 0 && !isStep0NameValid) return;
@@ -637,6 +652,7 @@ export default function ChecklistSection() {
                       onBack={handleBack}
                       onNext={step === lastQuestionStep ? () => void handleSubmit() : handleNext}
                       isLastQuestion={step === lastQuestionStep}
+                      isNextDisabled={!isCurrentQuestionAnswered}
                       maxVisitedStep={maxVisitedStep}
                       onStepClick={handleStepClick}
                     />

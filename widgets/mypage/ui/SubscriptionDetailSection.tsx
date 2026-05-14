@@ -66,6 +66,15 @@ function formatPrice(n: number): string {
   return n.toLocaleString("ko-KR") + "원";
 }
 
+const DELIVERY_STATUS_LABEL: Record<string, string> = {
+  PendingDelivery: "상품준비중",
+  DeliveryInProgress: "배송중",
+  DeliveryCompleted: "배송완료",
+};
+
+const EPOST_TRACKING_BASE =
+  "https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm";
+
 function billingDayLabel(dateStr: string): string {
   const day = parseInt(dateStr.slice(8, 10), 10);
   return `매달 ${day}일`;
@@ -348,7 +357,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   /* Figma: 949px content × header 44px + row 49px each. Columns at 30/497/627/779 within bar.
      Translated to grid: [name+chip+link / 금액 / 날짜 / 영수증] with header inset matching. */
   const ROW_GRID =
-    "grid grid-cols-[1fr_130px_152px_140px] items-center";
+    "grid grid-cols-[1fr_120px_130px_152px_140px] items-center";
   const ROW_HEIGHT = "h-[49px]";
 
   function RecordRow({ record, desktop }: { record: SubscriptionPaymentDto; desktop: boolean }) {
@@ -394,7 +403,25 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               </button>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-body-14-m text-[var(--color-text)]">{formatPrice(record.amount)}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-body-14-m text-[var(--color-text)]">{formatPrice(record.amount)}</span>
+                {record.deliveryStatus && (
+                  record.trackingNumber ? (
+                    <a
+                      href={`${EPOST_TRACKING_BASE}?sid1=${encodeURIComponent(record.trackingNumber)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                    >
+                      {DELIVERY_STATUS_LABEL[record.deliveryStatus]}
+                    </a>
+                  ) : (
+                    <span className="text-body-14-m text-[var(--color-text-label)]">
+                      {DELIVERY_STATUS_LABEL[record.deliveryStatus]}
+                    </span>
+                  )
+                )}
+              </div>
               <span className="text-body-14-m text-[var(--color-text)]">{dateStr}</span>
             </div>
           </div>
@@ -424,6 +451,26 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               >
                 결제 취소
               </button>
+            )}
+          </div>
+          <div className="flex items-center">
+            {record.deliveryStatus ? (
+              record.trackingNumber ? (
+                <a
+                  href={`${EPOST_TRACKING_BASE}?sid1=${encodeURIComponent(record.trackingNumber)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                >
+                  {DELIVERY_STATUS_LABEL[record.deliveryStatus]}
+                </a>
+              ) : (
+                <span className="text-body-14-m text-[var(--color-text-label)]">
+                  {DELIVERY_STATUS_LABEL[record.deliveryStatus]}
+                </span>
+              )
+            ) : (
+              <span className="text-body-14-m text-[var(--color-text-muted)]">-</span>
             )}
           </div>
           <span className="text-body-14-m text-[var(--color-text)]">{formatPrice(record.amount)}</span>
@@ -585,6 +632,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
           <div className="max-md:hidden">
             <div className={`${ROW_GRID} h-11 rounded-lg bg-[var(--color-surface-light)] pl-[30px] pr-2`}>
               <span className="text-body-16-m text-[var(--color-text-tertiary)]">구독</span>
+              <span className="text-body-16-m text-[var(--color-text-tertiary)]">배송</span>
               <span className="text-body-16-m text-[var(--color-text-tertiary)]">금액</span>
               <span className="text-body-16-m text-[var(--color-text-tertiary)]">직접입력</span>
               <span className="text-body-16-m text-[var(--color-text-tertiary)]">영수증</span>

@@ -123,7 +123,7 @@ function ChecklistPanel({
         {hasChecklist && (
           <Link
             href="/checklist?rewrite=1"
-            className="flex items-center gap-1 text-body-14-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="flex items-center gap-1 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             다시 작성하기
             <ChevronRightIcon />

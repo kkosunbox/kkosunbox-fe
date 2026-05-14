@@ -117,8 +117,8 @@ export default function ProfileSwitchModal({ onClose }: Props) {
 
   const handleDeleteProfile = (pet: Profile) => {
     openAlert({
-      title: "애견 프로필을 삭제할까요?",
-      description: "애견 프로필을 삭제하시겠습니까?\n작성된 내용은 복구되지 않습니다.",
+      title: "프로필을 삭제하시겠습니까?",
+      description: "프로필을 삭제하시겠습니까?\n작성된 내용은 복구되지 않습니다.",
       primaryLabel: "삭제하기",
       secondaryLabel: "취소하기",
       onPrimary: () => { void handleConfirmDeleteProfile(pet); },

@@ -84,12 +84,12 @@ export default function AlertModal({
 
       {/* Card */}
       <div
-        className="relative z-10 w-full max-w-[380px] rounded-[24px] overflow-hidden"
+        className="relative z-10 w-full max-w-[380px] rounded-[24px] overflow-hidden bg-[var(--color-border-light)]"
         style={{ boxShadow: "0px 4px 24px rgba(0, 0, 0, 0.08)" }}
       >
         {/* Header — 웜 크림 그라디언트 */}
         <div
-          className="flex flex-col items-center gap-3 px-5 pt-8 pb-6"
+          className="flex flex-col items-center gap-3 py-4 pl-5 pr-4"
           style={{ background: "var(--gradient-modal-alert-header)" }}
         >
           <Image
@@ -110,7 +110,7 @@ export default function AlertModal({
         </div>
 
         {/* Footer — 화이트, 그라디언트 끝(#FFF)과 자연스럽게 이어짐 */}
-        <div className="bg-white flex flex-col items-center px-5 pt-4 pb-5 gap-4">
+        <div className="bg-white flex flex-col items-center px-5 py-4 gap-4" style={{ boxShadow: "0px 4px 4px rgba(16, 24, 64, 0.08)" }}>
           <button
             ref={primaryRef}
             type="button"

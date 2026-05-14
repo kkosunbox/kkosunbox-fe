@@ -29,9 +29,10 @@ function ChevronLeftIcon() {
 
 function PlusIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <circle cx="18" cy="18" r="17" stroke="var(--color-icon-gray)" strokeWidth="1.5" fill="none" />
-      <path d="M18 11V25M11 18H25" stroke="var(--color-icon-gray)" strokeWidth="1.5" strokeLinecap="round" />
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <circle cx="24" cy="24" r="18" stroke="var(--color-text-muted)" strokeWidth="4" />
+      <path d="M24 30L24 18" stroke="var(--color-text-muted)" strokeWidth="4" strokeLinecap="round" />
+      <path d="M30 24L18 24" stroke="var(--color-text-muted)" strokeWidth="4" strokeLinecap="round" />
     </svg>
   );
 }
@@ -357,7 +358,7 @@ function AddSubscriptionCard() {
       href="/mypage/subscription/change"
       className="flex max-md:h-[120px] max-md:rounded-[16px] max-md:bg-[var(--color-surface-light)] md:h-full md:min-h-[155px] md:rounded-[20px] md:bg-white md:py-10 flex-col items-center justify-center gap-4 transition-opacity hover:opacity-80"
     >
-      <Text variant="subtitle-16-sb" mobileVariant="body-13-sb" className="max-md:text-[var(--color-text-tertiary)] md:text-[var(--color-text)]">
+      <Text variant="subtitle-16-sb" mobileVariant="body-13-sb" className="max-md:text-[var(--color-text-tertiary)] md:text-[var(--color-text-secondary)]">
         구독 추가하기
       </Text>
       <PlusIcon />

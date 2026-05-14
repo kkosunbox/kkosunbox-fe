@@ -102,7 +102,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
         type="button"
         onClick={onRight}
         disabled={rightDisabled}
-        className="h-12 flex-1 rounded-full bg-[var(--color-text)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="h-12 flex-1 rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {rightLabel}
       </button>
@@ -202,14 +202,24 @@ export default function AccountInfoModal({ onClose }: Props) {
                   비밀번호 변경
                 </button>
               </div>
+            </div>
 
+            {/* 계정 탈퇴 링크 */}
+            <div className="mt-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => { onClose(); router.push("/mypage/withdraw"); }}
+                className="text-[14px] font-medium leading-[140%] tracking-[-0.02em] text-[var(--color-accent)] underline hover:opacity-70 transition-opacity"
+              >
+                계정 탈퇴
+              </button>
             </div>
           </div>
 
           <FooterButtons
-            leftLabel="계정 탈퇴"
+            leftLabel="취소"
             rightLabel="확인"
-            onLeft={() => { onClose(); router.push("/mypage/withdraw"); }}
+            onLeft={onClose}
             onRight={onClose}
           />
         </div>

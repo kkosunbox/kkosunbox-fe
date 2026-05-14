@@ -181,7 +181,7 @@ export default function AccountInfoModal({ onClose }: Props) {
           </div>
 
           {/* 콘텐츠 박스 */}
-          <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6 md:min-h-[246px]">
+          <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6 md:min-h-[246px] flex flex-col">
             <div className="flex flex-col gap-4">
               {/* 이메일 행 */}
               <div className="flex items-center">
@@ -205,7 +205,7 @@ export default function AccountInfoModal({ onClose }: Props) {
             </div>
 
             {/* 계정 탈퇴 링크 */}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-auto flex justify-center">
               <button
                 type="button"
                 onClick={() => { onClose(); router.push("/mypage/withdraw"); }}

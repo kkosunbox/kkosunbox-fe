@@ -6,6 +6,7 @@ import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "
 import { useRouter } from "next/navigation";
 import { Text, ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import reviewsTitle from "../assets/reviews-title.png";
 import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.webp";
@@ -304,14 +305,20 @@ function ReviewsCarousel() {
 
 export default function ReviewsSection() {
   const { isLoggedIn } = useAuth();
+  const { profile } = useProfile();
   const router = useRouter();
 
   function handleChecklistCtaClick() {
-    if (isLoggedIn) {
-      router.push("/checklist");
+    if (!isLoggedIn) {
+      router.push("/login?next=/checklist");
       return;
     }
-    router.push("/login?next=/checklist");
+    const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
+    if (hasChecklist) {
+      router.push("/subscribe");
+      return;
+    }
+    router.push("/checklist");
   }
 
   return (

@@ -89,6 +89,7 @@ interface Props {
   onBack: () => void;
   onNext: () => void;
   isLastQuestion: boolean;
+  isNextDisabled?: boolean;
   maxVisitedStep: number;
   onStepClick?: (step: number) => void;
 }
@@ -102,6 +103,7 @@ export default function ChecklistQuestionStep({
   onBack,
   onNext,
   isLastQuestion,
+  isNextDisabled,
   maxVisitedStep,
   onStepClick,
 }: Props) {
@@ -174,7 +176,7 @@ export default function ChecklistQuestionStep({
       </div>
 
       <div className="w-full max-md:hidden md:mx-auto md:max-w-[380px]">
-        <Button type="button" onClick={onNext} variant="primary" size="lg" className={CTA_CLASS}>
+        <Button type="button" onClick={onNext} disabled={isNextDisabled} variant="primary" size="lg" className={CTA_CLASS}>
           {nextLabel}
         </Button>
       </div>

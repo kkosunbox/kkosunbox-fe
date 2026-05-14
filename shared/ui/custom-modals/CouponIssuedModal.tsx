@@ -18,7 +18,7 @@ export default function CouponIssuedModal({ onClose }: Props) {
 
       {/* Group */}
       <div
-        className="relative z-10 w-full max-md:max-w-[320px] md:max-w-[388px]"
+        className="relative z-10 w-full max-md:max-w-[320px] md:max-w-[388px] max-md:-translate-y-[30px] md:-translate-y-[40px]"
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         {/* Upper image — mobile 160px / desktop 210px */}

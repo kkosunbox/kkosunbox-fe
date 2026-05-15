@@ -513,49 +513,51 @@ export default function OrderSection({
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
-        <div className="rounded-[20px] bg-white px-7 max-md:pt-3 max-md:pb-7 md:py-7 max-md:flex max-md:flex-col max-md:items-center max-md:gap-5 md:flex md:items-center md:gap-6">
-          <div className="max-md:w-[180px] max-md:h-[132px] md:w-[160px] md:h-[117px] shrink-0 flex items-center justify-center rounded-xl overflow-hidden">
-            <Image
-              src={TIER_THUMBNAILS[orderPlanTheme.tier]}
-              alt={plan.name}
-              width={180}
-              height={132}
-              className="object-contain md:-translate-y-2"
-            />
-          </div>
-          <div className="flex flex-col gap-3 max-md:w-full max-md:px-2">
-            <span
-              className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
-              style={{ background: orderPlanTheme.colorVar }}
-            >
-              {orderPlanTheme.tierLabel}
-            </span>
-            <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-              {plan.name}
-            </span>
-            <span className="max-md:text-price-14-eb md:text-price-16-eb text-[var(--color-surface-dark)]">
-              월 요금제 {formatPrice(unitPrice)}
-            </span>
-            <div className="flex items-center gap-3 mt-1">
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                disabled={quantity <= 1}
-                className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+        <div className="rounded-[20px] bg-white px-7 max-[585px]:pt-3 min-[586px]:max-md:pt-5 max-md:pb-7 md:py-7">
+          <div className="max-[585px]:mx-auto max-[585px]:flex max-[585px]:w-full max-[585px]:max-w-[170px] max-[585px]:flex-col max-[585px]:items-center max-[585px]:gap-5 min-[586px]:flex min-[586px]:items-center min-[586px]:gap-6">
+            <div className="max-[585px]:w-[132px] max-[585px]:h-[132px] min-[586px]:w-[117px] min-[586px]:h-[117px] shrink-0 flex items-center justify-center rounded-[16px] overflow-hidden">
+              <Image
+                src={TIER_THUMBNAILS[orderPlanTheme.tier]}
+                alt={plan.name}
+                width={180}
+                height={132}
+                className="h-full w-auto max-w-none object-contain object-center"
+              />
+            </div>
+            <div className="flex flex-col gap-3 max-[585px]:w-full max-[585px]:px-2">
+              <span
+                className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
+                style={{ background: orderPlanTheme.colorVar }}
               >
-                −
-              </button>
-              <span className="text-body-14-sb text-[var(--color-text)] min-w-[20px] text-center">
-                {quantity}
+                {orderPlanTheme.tierLabel}
               </span>
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-                disabled={quantity >= 99}
-                className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
-              >
-                +
-              </button>
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
+                {plan.name}
+              </span>
+              <span className="max-[585px]:text-price-14-eb min-[586px]:text-price-16-eb text-[var(--color-surface-dark)]">
+                월 요금제 {formatPrice(unitPrice)}
+              </span>
+              <div className="flex items-center gap-3 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+                >
+                  −
+                </button>
+                <span className="text-body-14-sb text-[var(--color-text)] min-w-[20px] text-center">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.min(99, q + 1))}
+                  disabled={quantity >= 99}
+                  className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
         </div>

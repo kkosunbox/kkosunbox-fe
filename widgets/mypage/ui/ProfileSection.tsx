@@ -117,16 +117,18 @@ function ChecklistPanel({
       }
     >
       <div className="mb-2.5 flex items-center justify-between">
-        <Text variant="subtitle-16-b" className="tracking-tightest text-[var(--color-text)]">
+        <Text as="h2" variant="body-14-sb-tight" className="text-[var(--color-text)]">
           체크리스트
         </Text>
         {hasChecklist && (
           <Link
             href="/checklist?rewrite=1"
-            className="flex items-center gap-1 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="flex h-5 items-center text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
-            다시 작성하기
-            <ChevronRightIcon />
+            <Text as="span" variant="body-13-m-tight">
+              다시 작성하기
+            </Text>
+            <ChevronRightIcon className="h-5 w-5" />
           </Link>
         )}
       </div>
@@ -141,12 +143,12 @@ function ChecklistPanel({
         >
           {items.map((item, i) => (
             <div key={i} className="flex items-center justify-between gap-3">
-              <span className="shrink-0 text-[12px] font-medium leading-[14px] text-[var(--color-text-secondary)]">
+              <Text as="span" variant="caption-12-m-tight" className="min-w-0 shrink-0 truncate text-[var(--color-text-label)]">
                 {item.label}
-              </span>
-              <span className="text-right text-[12px] font-semibold leading-[14px] text-[var(--color-text)]">
+              </Text>
+              <Text as="span" variant="caption-12-sb-tight" className="min-w-0 truncate text-right text-[var(--color-text)]">
                 {item.value}
-              </span>
+              </Text>
             </div>
           ))}
         </div>
@@ -214,7 +216,7 @@ export function ProfileSection({
         <div className="relative rounded-[20px] bg-white max-md:px-7 max-md:py-7 md:px-7 md:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
           <Link
             href="/mypage/dog-profile"
-            className="md:hidden absolute top-[8px] right-4 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-sb text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="md:hidden absolute top-4 right-4 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             <span>정보변경</span>
             <ChevronRightIcon />
@@ -225,7 +227,7 @@ export function ProfileSection({
             <div className="relative flex min-w-0 flex-1 items-start gap-5 md:min-h-0 md:items-center md:gap-8 md:self-stretch">
               <Link
                 href="/mypage/dog-profile"
-                className="max-md:hidden absolute top-2 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-sb text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
+                className="max-md:hidden absolute top-2 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
               >
                 <span>정보변경</span>
                 <ChevronRightIcon />
@@ -242,18 +244,6 @@ export function ProfileSection({
                     >
                       {displayName}
                     </Text>
-                    {hasProfile && (
-                      <Text
-                        variant="body-16-m"
-                        mobileVariant="body-13-r"
-                        className={[
-                          "min-w-0 max-w-[min(200px,40vw)] shrink translate-y-[2px] truncate leading-[140%]",
-                          breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
-                        ].join(" ")}
-                      >
-                        {breedDisplay}
-                      </Text>
-                    )}
                     {hasNamedProfile && (
                       <button
                         type="button"
@@ -271,6 +261,18 @@ export function ProfileSection({
                           />
                         </svg>
                       </button>
+                    )}
+                    {hasProfile && (
+                      <Text
+                        variant="body-16-m"
+                        mobileVariant="body-13-r"
+                        className={[
+                          "min-w-0 max-w-[min(200px,40vw)] shrink translate-y-[2px] truncate leading-[140%]",
+                          breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
+                        ].join(" ")}
+                      >
+                        {breedDisplay}
+                      </Text>
                     )}
                   </div>
                 </div>

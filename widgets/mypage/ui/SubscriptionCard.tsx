@@ -42,7 +42,7 @@ function SubscriptionEmpty() {
       </Text>
       <Link
         href="/subscribe"
-        className="inline-flex h-12 w-full max-w-[271px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+        className="inline-flex h-10 w-full max-w-[271px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
       >
         구독하러 가기
       </Link>

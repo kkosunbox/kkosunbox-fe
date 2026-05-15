@@ -30,13 +30,17 @@ export type TypographyVariant =
   | "body-16-m"
   | "body-16-r"
   | "body-14-sb"
+  | "body-14-sb-tight"
   | "body-14-m"
   | "body-14-r"
   | "body-13-r"
   | "body-13-m"
+  | "body-13-m-tight"
   | "body-13-sb"
   // Captions
   | "caption-12-sb"
+  | "caption-12-sb-tight"
+  | "caption-12-m-tight"
   | "caption-12-r"
   // Action
   | "btn-14-m"
@@ -77,12 +81,16 @@ const BASE: Record<TypographyVariant, string> = {
   "body-16-m":              "text-body-16-m",
   "body-16-r":              "text-body-16-r",
   "body-14-sb":             "text-body-14-sb",
+  "body-14-sb-tight":       "text-body-14-sb-tight",
   "body-14-m":              "text-body-14-m",
   "body-14-r":              "text-body-14-r",
   "body-13-r":              "text-body-13-r",
   "body-13-m":              "text-body-13-m",
+  "body-13-m-tight":        "text-body-13-m-tight",
   "body-13-sb":             "text-body-13-sb",
   "caption-12-sb":          "text-caption-12-sb",
+  "caption-12-sb-tight":    "text-caption-12-sb-tight",
+  "caption-12-m-tight":     "text-caption-12-m-tight",
   "caption-12-r":           "text-caption-12-r",
   "btn-14-m":               "text-btn-14-m",
   "link-14-sb":             "text-link-14-sb",
@@ -129,12 +137,16 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "body-16-m":              "max-md:text-body-16-m",
   "body-16-r":              "max-md:text-body-16-r",
   "body-14-sb":             "max-md:text-body-14-sb",
+  "body-14-sb-tight":       "max-md:text-body-14-sb-tight",
   "body-14-m":              "max-md:text-body-14-m",
   "body-14-r":              "max-md:text-body-14-r",
   "body-13-r":              "max-md:text-body-13-r",
   "body-13-m":              "max-md:text-body-13-m",
+  "body-13-m-tight":        "max-md:text-body-13-m-tight",
   "body-13-sb":             "max-md:text-body-13-sb",
   "caption-12-sb":          "max-md:text-caption-12-sb",
+  "caption-12-sb-tight":    "max-md:text-caption-12-sb-tight",
+  "caption-12-m-tight":     "max-md:text-caption-12-m-tight",
   "caption-12-r":           "max-md:text-caption-12-r",
   "btn-14-m":               "max-md:text-btn-14-m",
   "link-14-sb":             "max-md:text-link-14-sb",

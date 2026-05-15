@@ -432,11 +432,13 @@ button:disabled {
 }
 @utility text-body-15-m  { font-size: 15px; line-height: 20px; font-weight: 500; }
 @utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 600; }
+@utility text-body-14-sb-tight { font-size: 14px; line-height: 17px; font-weight: 600; letter-spacing: -0.02em; }
 @utility text-body-14-b  { font-size: 14px; line-height: 22px; font-weight: 700; }
 @utility text-body-14-m  { font-size: 14px; line-height: 22px; font-weight: 500; }
 @utility text-body-14-r  { font-size: 14px; line-height: 22px; font-weight: 400; }
 @utility text-body-13-r  { font-size: 13px; line-height: 20px; font-weight: 400; }
 @utility text-body-13-m  { font-size: 13px; line-height: 18px; font-weight: 500; }
+@utility text-body-13-m-tight { font-size: 13px; line-height: 130%; font-weight: 500; }
 @utility text-body-13-sb { font-size: 13px; line-height: 18px; font-weight: 600; }
 @utility text-body-13-b  { font-size: 13px; line-height: 18px; font-weight: 700; }
 /* Stats bar 등 360px 미만 초소형 뷰포트 */
@@ -448,9 +450,11 @@ button:disabled {
 /* Captions */
 @utility text-caption-11-r  { font-size: 11px; line-height: 1;    font-weight: 400; }
 @utility text-caption-12-sb { font-size: 12px; line-height: 20px; font-weight: 600; }
+@utility text-caption-12-sb-tight { font-size: 12px; line-height: 14px; font-weight: 600; }
 @utility text-caption-12-b  { font-size: 12px; line-height: 20px; font-weight: 700; }
 @utility text-caption-12-r  { font-size: 12px; line-height: 20px; font-weight: 400; }
 @utility text-caption-12-m  { font-size: 12px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
+@utility text-caption-12-m-tight { font-size: 12px; line-height: 14px; font-weight: 500; }
 
 /* Price display (tight leading, for numbers/amounts)
  * NOTE: `*-eb` utilities are Pretendard-only.

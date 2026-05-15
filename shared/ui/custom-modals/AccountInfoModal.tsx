@@ -94,7 +94,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
       <button
         type="button"
         onClick={onLeft}
-        className="h-12 flex-1 rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+        className="h-10 md:h-12 flex-1 rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
       >
         {leftLabel}
       </button>
@@ -102,7 +102,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
         type="button"
         onClick={onRight}
         disabled={rightDisabled}
-        className="h-12 flex-1 rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="h-10 md:h-12 flex-1 rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {rightLabel}
       </button>
@@ -204,8 +204,8 @@ export default function AccountInfoModal({ onClose }: Props) {
               </div>
             </div>
 
-            {/* 계정 탈퇴 링크 */}
-            <div className="mt-auto flex justify-center">
+            {/* 계정 탈퇴 링크 — 모바일은 min-height 없어 mt-auto가 0이 되므로 간격을 명시 */}
+            <div className="mt-6 flex justify-center md:mt-auto">
               <button
                 type="button"
                 onClick={() => { onClose(); router.push("/mypage/withdraw"); }}

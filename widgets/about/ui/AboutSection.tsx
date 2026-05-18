@@ -12,6 +12,7 @@ import aboutFeatureCircle03 from "../assets/about-feature-circle-03.webp";
 import aboutCtaProduct from "../assets/about-cta-product.png";
 import aboutCtaMark from "../assets/about-cta-mark.webp";
 import aboutCtaLogo from "../assets/about-cta-logo.webp";
+import { BREAKPOINT_MD_PX } from "@/shared/config/breakpoints";
 
 /** logo-main.svg viewBox 94×29 */
 const ABOUT_HERO_LOGO_W = 158;
@@ -44,7 +45,7 @@ export default function AboutSection() {
   return (
     <>
       {/* ━━━━ Section 1: 꼬순박스 소개 ━━━━ */}
-      <section className="bg-white max-md:pt-5 max-md:pb-9 md:py-0 md:max-h-[578px]">
+      <section className="overflow-hidden bg-white max-md:pt-5 max-md:pb-9 md:py-0 md:max-h-[578px]">
         <div className="mx-auto max-w-[var(--max-width-content)] px-6 md:px-0">
 
           {/* 모바일: 콜라주보다 위 — 데스크톱은 텍스트 열 타이틀만 사용 */}
@@ -81,7 +82,7 @@ export default function AboutSection() {
                     width={1186}
                     height={1276}
                     className="max-md:hidden h-auto w-full object-contain md:h-[650px] md:max-h-none md:w-auto md:max-w-none md:object-right md:-translate-y-2"
-                    sizes="(min-width: 768px) min(720px, 50vw)"
+                    sizes={`(min-width: ${BREAKPOINT_MD_PX}px) min(720px, 50vw)`}
                     priority
                   />
                 </div>

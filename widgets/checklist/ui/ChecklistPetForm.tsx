@@ -41,7 +41,7 @@ function PetAvatar({
         aria-label="프로필 사진 변경"
         onClick={onButtonClick}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onButtonClick(); } }}
-        className="flex h-[88px] w-[88px] cursor-pointer items-center justify-center overflow-hidden rounded-full"
+        className="flex h-[60px] w-[60px] md:h-[124px] md:w-[124px] cursor-pointer items-center justify-center overflow-hidden rounded-full"
         style={{ background: "var(--color-secondary)" }}
       >
         {src ? (
@@ -55,16 +55,11 @@ function PetAvatar({
         type="button"
         aria-label="프로필 사진 변경"
         onClick={onButtonClick}
-        className="absolute bottom-0 right-0 flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white shadow-md"
+        className="absolute max-md:-bottom-1 md:bottom-0 max-md:-right-1 md:right-0 flex h-[24px] w-[24px] md:h-[40px] md:w-[40px] items-center justify-center rounded-full bg-white shadow-md"
       >
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path
-            d="M9.5 1.5L11.5 3.5L4.5 10.5H2.5V8.5L9.5 1.5Z"
-            stroke="var(--color-text-on-warm)"
-            strokeWidth="1.3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <svg className="h-5 w-5 md:h-8 md:w-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.5205 6.42383C21.945 6.46921 22.2837 6.66391 22.5527 6.86914C22.837 7.08606 23.1418 7.39377 23.4551 7.70703L24.626 8.87891L24.6475 8.89941L24.6562 8.91016C24.9589 9.21268 25.254 9.50624 25.4639 9.78125C25.6984 10.0886 25.9189 10.4864 25.9189 11C25.9189 11.5136 25.6984 11.9114 25.4639 12.2188C25.2469 12.5031 24.9393 12.8078 24.626 13.1211L14.4326 23.3154C14.2755 23.4725 14.0713 23.6886 13.8076 23.8379C13.5439 23.9872 13.2536 24.0506 13.0381 24.1045L9.05078 25.1016C8.90291 25.1385 8.6815 25.1968 8.4873 25.2158C8.28067 25.236 7.82868 25.2425 7.45996 24.874C7.09145 24.5055 7.09798 24.0536 7.11816 23.8467C7.13717 23.6523 7.19545 23.4301 7.23242 23.2822L8.22852 19.2949C8.2824 19.0794 8.34678 18.7891 8.49609 18.5254L8.61816 18.3389C8.74905 18.1631 8.8998 18.0191 9.01758 17.9014L19.2119 7.70703C19.5253 7.39369 19.8299 7.08607 20.1143 6.86914C20.4216 6.63466 20.8195 6.41416 21.333 6.41406L21.5205 6.42383Z" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M18 9.00065L22 6.33398L26 10.334L23.3333 14.334L18 9.00065Z" fill="var(--color-text-secondary)" />
         </svg>
       </button>
     </div>

@@ -7,9 +7,9 @@ import { CheckCircleIcon, ChecklistRecommendModal, ScrollReveal } from "@/shared
 import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import { hasChecklistAnswers, hasProfileRecord } from "@/features/profile/lib/profileStatus";
+import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
-import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
+import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
@@ -19,6 +19,7 @@ import PackageDetailView from "./PackageDetailView";
 import MobileTierDetailPanel from "./MobileTierDetailPanel";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
+import { isBelowMdViewport } from "@/shared/config/breakpoints";
 
 /** 모바일 sticky 탭 + 고정 헤더의 합산 높이 — scroll offset / scroll-spy rootMargin 에 공통 사용 */
 const MOBILE_SCROLL_OFFSET = 120;
@@ -163,7 +164,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   );
 
   const handleInfoClick = useCallback((plan: SubscriptionPlanDto) => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
+    if (typeof window !== "undefined" && isBelowMdViewport(window.innerWidth)) {
       // 모바일: 해당 카드 inline 토글 (즉각 반응)
       setExpandedPlanIds((prev) => {
         const next = new Set(prev);
@@ -274,7 +275,6 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   }, [sortedPlans]);
 
   const profile = clientProfile ?? initialProfile;
-  const hasProfile = hasProfileRecord(profile);
   const isChecklistDone = hasChecklistAnswers(profile);
   const showModal = isLoggedIn && !isChecklistDone && !isDismissed;
 
@@ -291,16 +291,18 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="bg-white pb-16 md:pt-0 md:pb-20">
-        <div className="mx-auto px-6 md:px-0">
+      <section className="flex min-h-full flex-1 flex-col pb-16 md:pt-0 md:pb-20">
+        <div className="flex w-full flex-1 flex-col">
           {/* Hero image */}
           <ScrollReveal variant="fade-in" duration={600}>
             <div className="mb-6 text-center md:mb-8">
-              <Image
-                src={SubscribePlansHeroImageMobile}
-                alt="Subscribe Plans Hero"
-                className="max-md:block md:hidden w-[100vw] max-w-none relative left-1/2 -translate-x-1/2"
-              />
+              <div className="max-md:flex md:hidden h-[170px] overflow-hidden items-center justify-center">
+                <Image
+                  src={SubscribePlansHeroImageMobile}
+                  alt="Subscribe Plans Hero"
+                  className="h-[170px] w-auto max-w-none shrink-0"
+                />
+              </div>
               <div className="hidden h-[210px] overflow-hidden md:flex md:items-center md:justify-center">
                 <Image
                   src={SubscribePlansHeroImage}
@@ -311,110 +313,112 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
             </div>
           </ScrollReveal>
 
-          {/* 모바일 티어 탭 — sticky (고정 헤더 아래 고정), 클릭 시 해당 카드로 smooth scroll */}
-          {sortedPlans.length > 0 ? (
-            <div className="md:hidden sticky top-[54px] z-10 -mx-6 bg-white px-6 py-3 mb-4">
-              <div className="flex justify-center gap-3">
-                {sortedPlans.map((p) => {
-                  const theme = packageThemeForPlan(p);
-                  const isActive = activePlanId === p.id;
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => handleTabClick(p.id)}
-                      className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white transition-colors"
-                      style={{
-                        background: isActive ? theme.colorVar : "var(--color-text-muted)",
-                      }}
-                    >
-                      {theme.tierLabel}
-                    </button>
-                  );
-                })}
+          <div className="mx-auto flex w-full max-w-[587px] flex-1 flex-col px-6 md:max-w-none md:px-0">
+            {/* 모바일 티어 탭 — sticky (고정 헤더 아래 고정), 클릭 시 해당 카드로 smooth scroll */}
+            {sortedPlans.length > 0 ? (
+              <div className="md:hidden sticky top-[54px] z-10 -mx-6 bg-white px-6 py-3 mb-4">
+                <div className="flex justify-center gap-3">
+                  {sortedPlans.map((p) => {
+                    const theme = packageThemeForPlan(p);
+                    const isActive = activePlanId === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => handleTabClick(p.id)}
+                        className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white transition-colors"
+                        style={{
+                          background: isActive ? theme.colorVar : "var(--color-text-muted)",
+                        }}
+                      >
+                        {theme.tierLabel}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
 
-          {/* ══ Desktop (md+) — 기존 로직 그대로 유지 ══════════════════════ */}
-          <div className="max-md:hidden">
-            {selectedPlan ? (
-              <div className="mx-auto w-full max-w-[var(--max-width-content)]">
-                <PackageDetailView
-                  plan={selectedPlan}
-                  allPlans={sortedPlans}
-                  onSelectPlan={handleDesktopSelectPlan}
-                  onClose={handleCloseDesktopDetail}
-                />
-              </div>
-            ) : sortedPlans.length === 0 ? (
-              <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
-                표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
-              </p>
-            ) : (
-              <div className="mx-auto max-w-content grid grid-cols-3 gap-4">
-                {sortedPlans.map((plan, i) => (
-                  <ScrollReveal
-                    key={plan.id}
-                    variant="fade-up"
-                    delay={100 + i * 120}
-                    duration={600}
-                    immediate={hasOpenedDetail}
-                  >
-                    <PlanCard
-                      plan={plan}
-                      onInfoClick={() => handleInfoClick(plan)}
-                      onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-                      isPending={isPending}
-                    />
-                  </ScrollReveal>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* ══ Mobile (max-md) — 카드 항상 렌더 + 카드별 inline 토글 ══════ */}
-          <div className="md:hidden">
-            {sortedPlans.length === 0 ? (
-              <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
-                표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
-              </p>
-            ) : (
-              <div className="mx-auto max-w-content flex flex-col gap-4">
-                {sortedPlans.map((plan, i) => {
-                  const isExpanded = expandedPlanIds.has(plan.id);
-                  return (
+            {/* ══ Desktop (md+) — 기존 로직 그대로 유지 ══════════════════════ */}
+            <div className="max-md:hidden">
+              {selectedPlan ? (
+                <div className="mx-auto w-full max-w-[var(--max-width-content)]">
+                  <PackageDetailView
+                    plan={selectedPlan}
+                    allPlans={sortedPlans}
+                    onSelectPlan={handleDesktopSelectPlan}
+                    onClose={handleCloseDesktopDetail}
+                  />
+                </div>
+              ) : sortedPlans.length === 0 ? (
+                <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
+                  표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
+                </p>
+              ) : (
+                <div className="mx-auto max-w-content grid grid-cols-3 gap-4">
+                  {sortedPlans.map((plan, i) => (
                     <ScrollReveal
                       key={plan.id}
                       variant="fade-up"
                       delay={100 + i * 120}
                       duration={600}
+                      immediate={hasOpenedDetail}
                     >
-                      <div
-                        ref={(el) => {
-                          cardRefs.current.set(plan.id, el);
-                        }}
-                        data-plan-id={plan.id}
-                        style={{ scrollMarginTop: `${MOBILE_SCROLL_OFFSET}px` }}
-                      >
-                        {isExpanded ? (
-                          <MobileTierDetailPanel
-                            plan={plan}
-                            onClose={() => handleCollapseMobileCard(plan.id)}
-                          />
-                        ) : (
-                          <PlanCard
-                            plan={plan}
-                            onInfoClick={() => handleInfoClick(plan)}
-                            onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-                          />
-                        )}
-                      </div>
+                      <PlanCard
+                        plan={plan}
+                        onInfoClick={() => handleInfoClick(plan)}
+                        onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
+                        isPending={isPending}
+                      />
                     </ScrollReveal>
-                  );
-                })}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ══ Mobile (max-md) — 카드 항상 렌더 + 카드별 inline 토글 ══════ */}
+            <div className="md:hidden">
+              {sortedPlans.length === 0 ? (
+                <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
+                  표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
+                </p>
+              ) : (
+                <div className="mx-auto max-w-content flex flex-col gap-4">
+                  {sortedPlans.map((plan, i) => {
+                    const isExpanded = expandedPlanIds.has(plan.id);
+                    return (
+                      <ScrollReveal
+                        key={plan.id}
+                        variant="fade-up"
+                        delay={100 + i * 120}
+                        duration={600}
+                      >
+                        <div
+                          ref={(el) => {
+                            cardRefs.current.set(plan.id, el);
+                          }}
+                          data-plan-id={plan.id}
+                          style={{ scrollMarginTop: `${MOBILE_SCROLL_OFFSET}px` }}
+                        >
+                          {isExpanded ? (
+                            <MobileTierDetailPanel
+                              plan={plan}
+                              onClose={() => handleCollapseMobileCard(plan.id)}
+                            />
+                          ) : (
+                            <PlanCard
+                              plan={plan}
+                              onInfoClick={() => handleInfoClick(plan)}
+                              onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
+                            />
+                          )}
+                        </div>
+                      </ScrollReveal>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

@@ -9,7 +9,7 @@ import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { ApiError } from "@/shared/lib/api/types";
 import { PawCircleIcon, useModal } from "@/shared/ui";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
-import FaqQuestion from "../../faq/assets/faq-question.webp";
+import FaqQuestion from "../../faq/assets/faq-question.png";
 import InquiryPaw from "../assets/inquiry-paw.png";
 
 const ITEMS_PER_PAGE = 4;
@@ -144,8 +144,8 @@ export default function InquiryHistorySection() {
   };
 
   return (
-    <div className="min-h-screen bg-white max-md:py-6 md:py-10">
-      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
+    <div className="flex min-h-full flex-1 flex-col max-md:py-6 md:py-10">
+      <div className="mx-auto flex w-full max-w-[1013px] flex-1 flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
         <section
           className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
           style={{ background: "var(--gradient-support-banner)" }}
@@ -157,8 +157,8 @@ export default function InquiryHistorySection() {
               alt="꼬순박스에 궁금한 점이 있으신가요?"
               width={FaqQuestion.width}
               height={FaqQuestion.height}
-              sizes="(max-width: 767px) 220px, 320px"
-              className="h-auto max-md:w-[220px] md:w-[320px]"
+              sizes="(max-width: 767px) 252px, 320px"
+              className="h-auto max-md:w-[252px] md:w-[320px]"
             />
             <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
               1:1 문의를 남겨주시면 담당자가 확인 후
@@ -175,7 +175,7 @@ export default function InquiryHistorySection() {
         </section>
 
         <section
-          className="min-h-[592px] rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] md:pb-7 md:pt-8"
+          className="flex min-h-[592px] flex-1 flex-col rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] md:pb-7 md:pt-8"
           aria-label="내 문의내역"
         >
           <div className="mb-6 max-md:mb-6 md:mb-8">

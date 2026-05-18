@@ -229,6 +229,7 @@ function SubscriptionRow({
   const { plan, isActive } = subscription;
   const theme = packageThemeForPlan(plan);
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-tertiary)";
+  const boxQuantity = subscription.quantity || 1;
 
   return (
     <div
@@ -256,12 +257,14 @@ function SubscriptionRow({
             >
               {theme.tierLabel}
             </span>
-            <span
-              className="max-md:hidden text-body-14-sb leading-[17px]"
-              style={{ color: badgeColor }}
-            >
-              {subscription.quantity || 1}BOX
-            </span>
+            {boxQuantity > 1 && (
+              <span
+                className="max-md:hidden text-body-14-sb leading-[17px]"
+                style={{ color: badgeColor }}
+              >
+                {boxQuantity}BOX
+              </span>
+            )}
           </div>
           <Link
             href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}

@@ -8,6 +8,7 @@ import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
 import packageImageStandard from "../assets/package-image-standard.png";
 import packageImagePremium from "../assets/package-image-premium.png";
+import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 
 const HOME_PACKAGE_UI = {
   Basic: {
@@ -80,7 +81,7 @@ function PackageCard({
           alt={`${pkg.name} 이미지`}
           fill
           className="object-cover object-center"
-          sizes="(max-width: 768px) 327px, 380px"
+          sizes={`${MEDIA_MAX_MD_SIZES} 327px, 380px`}
         />
         {/* 티어 뱃지 */}
         <span

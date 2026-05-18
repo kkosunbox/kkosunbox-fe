@@ -103,6 +103,11 @@ export default function AddressListView({
                 <div className="min-w-0 flex-1">
                   {/* Name + selected badge */}
                   <div className="mb-1 flex items-center gap-2">
+                    {addr.nickname ? (
+                      <span className="text-body-14-sb text-[var(--color-text)]">
+                        {addr.nickname}
+                      </span>
+                    ) : null}
                     <span className="text-body-14-sb text-[var(--color-text)]">
                       {addr.receiverName}
                     </span>

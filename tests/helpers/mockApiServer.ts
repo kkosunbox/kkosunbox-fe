@@ -37,6 +37,7 @@ export const MOCK_PROFILE = {
 
 export const MOCK_ADDRESS = {
   id: 1,
+  nickname: "우리집",
   receiverName: "김테스트",
   phoneNumber: "01012345678",
   zipCode: "12345",

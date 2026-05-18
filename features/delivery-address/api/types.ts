@@ -2,6 +2,7 @@
 
 export interface DeliveryAddress {
   id: number;
+  nickname: string | null;
   receiverName: string;
   phoneNumber: string;
   zipCode: string;
@@ -15,6 +16,7 @@ export interface DeliveryAddress {
 // ── 요청 ──────────────────────────────────────────────────────────
 
 export interface CreateDeliveryAddressRequest {
+  nickname?: string;
   receiverName: string;
   phoneNumber: string;
   zipCode: string;
@@ -23,8 +25,9 @@ export interface CreateDeliveryAddressRequest {
   memo?: string;
 }
 
-/** PATCH — 수정할 필드만 전달. addressDetail/memo는 null로 전달 시 초기화. */
+/** PATCH — 수정할 필드만 전달. nickname/addressDetail/memo는 null로 전달 시 초기화. */
 export interface UpdateDeliveryAddressRequest {
+  nickname?: string | null;
   receiverName?: string;
   phoneNumber?: string;
   zipCode?: string;

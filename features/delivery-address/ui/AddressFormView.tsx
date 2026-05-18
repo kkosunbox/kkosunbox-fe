@@ -52,6 +52,7 @@ export default function AddressFormView({
   const [addressDetail, setAddressDetail] = useState(
     editingAddress?.addressDetail ?? "",
   );
+  const [nickname, setNickname] = useState(editingAddress?.nickname ?? "");
   const [phoneNumber, setPhoneNumber] = useState(
     formatPhoneNumber(editingAddress?.phoneNumber ?? ""),
   );
@@ -87,7 +88,8 @@ export default function AddressFormView({
 
     setSaving(true);
     try {
-      const body = {
+      const trimmedNickname = nickname.trim();
+      const common = {
         receiverName: receiverName.trim(),
         phoneNumber: phoneDigits,
         zipCode: pendingZipCode,
@@ -98,9 +100,15 @@ export default function AddressFormView({
 
       let saved: DeliveryAddress;
       if (isEditing) {
-        saved = await updateDeliveryAddress(editingAddress.id, body);
+        saved = await updateDeliveryAddress(editingAddress.id, {
+          ...common,
+          nickname: trimmedNickname || null,
+        });
       } else {
-        saved = await createDeliveryAddress(body);
+        saved = await createDeliveryAddress({
+          ...common,
+          nickname: trimmedNickname || undefined,
+        });
       }
       onSaved(saved);
     } catch {
@@ -134,7 +142,7 @@ export default function AddressFormView({
         </button>
       </div>
 
-      {/* Form fields — 순서·노출: 신규 배송지 모바일 UI 기준 (받는분 → 휴대폰 → 우편번호/찾기 → 기본주소 → 상세 → 배송메모) */}
+      {/* Form fields — 순서·노출: 신규 배송지 모바일 UI 기준 (받는분 → 휴대폰 → 우편번호/찾기 → 기본주소 → 상세 → 배송지명 → 배송메모) */}
       <div className="flex flex-col gap-5">
         {/* 받는분 */}
         <div className="flex items-center gap-3">
@@ -247,6 +255,21 @@ export default function AddressFormView({
           />
         </div>
         */}
+
+        {/* 배송지명 */}
+        <div className="flex items-center gap-3">
+          <label htmlFor="addr-nickname" className={LABEL_CLS}>
+            배송지명
+          </label>
+          <input
+            id="addr-nickname"
+            type="text"
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            placeholder="배송지명을 입력해주세요"
+            className={INPUT_CLS}
+          />
+        </div>
 
         {/* 배송메모 */}
         <div className="flex items-center gap-3">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import heroTitleImage from "@/widgets/mypage/assets/subscription-change-plans-selection.webp";
+import subscriptionChangeHeroPcPattern from "@/widgets/mypage/assets/subscription-change-hero-pc-pattern.webp";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -16,26 +17,6 @@ import {
   packageThemeForPlan,
   SUBSCRIBE_PLAN_CARD_FEATURES,
 } from "@/widgets/subscribe/plans/ui/packageData";
-
-/* ─── Paw decoration (반투명 흰색, 히어로 배경 위 장식) ─── */
-
-function PawDecoration({ className, style }: { className?: string; style?: React.CSSProperties }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      className={className}
-      style={style}
-      aria-hidden="true"
-    >
-      <ellipse cx="12" cy="15.5" rx="5" ry="4" fill="rgba(255,255,255,0.5)" />
-      <ellipse cx="6.5" cy="10.5" rx="2" ry="2.5" fill="rgba(255,255,255,0.5)" />
-      <ellipse cx="10" cy="8.5" rx="2" ry="2.5" fill="rgba(255,255,255,0.5)" />
-      <ellipse cx="14" cy="8.5" rx="2" ry="2.5" fill="rgba(255,255,255,0.5)" />
-      <ellipse cx="17.5" cy="10.5" rx="2" ry="2.5" fill="rgba(255,255,255,0.5)" />
-    </svg>
-  );
-}
 
 /* ─── Icons ─── */
 
@@ -137,7 +118,21 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <div className="relative overflow-hidden md:h-[210px]" style={{ background: "linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%)" }}>
-        <div className="relative mx-auto max-w-content px-6 md:px-0 flex h-full flex-col items-center justify-center gap-4 py-8 md:py-0">
+        <div
+          className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center px-4"
+          aria-hidden
+        >
+          <Image
+            src={subscriptionChangeHeroPcPattern}
+            alt=""
+            width={subscriptionChangeHeroPcPattern.width}
+            height={subscriptionChangeHeroPcPattern.height}
+            className="h-auto w-full max-w-[940px] object-contain max-md:hidden"
+            sizes="(max-width: 940px) 100vw, 940px"
+            priority
+          />
+        </div>
+        <div className="relative z-10 mx-auto flex h-full max-w-content flex-col items-center justify-center gap-4 px-6 py-8 md:px-0 md:py-0">
           {/* 타이틀 이미지 */}
           <h1>
             <Image
@@ -155,21 +150,14 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
           {/* 체크리스트 하러가기 버튼 */}
           <Link
             href="/checklist"
-            className="inline-flex h-[40px] items-center justify-center rounded-full bg-white px-10 text-body-14-sb tracking-[-0.02em] text-[var(--color-text)] shadow-sm transition-opacity hover:opacity-80"
+            className="inline-flex h-[40px] w-[190px] items-center justify-center rounded-[30px] p-px transition-opacity hover:opacity-80"
+            style={{ background: "var(--gradient-checklist-button-border)" }}
           >
-            체크리스트 하러가기
+            <span className="flex h-full w-full items-center justify-center rounded-[29px] bg-white text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">
+              체크리스트 하러가기
+            </span>
           </Link>
         </div>
-
-        {/* 발바닥 장식 — 우측 */}
-        <PawDecoration
-          className="absolute max-md:hidden"
-          style={{ width: 53, height: 44, right: "calc(50% - 560px)", top: 30, transform: "rotate(12.11deg)" }}
-        />
-        <PawDecoration
-          className="absolute max-md:hidden"
-          style={{ width: 84, height: 70, right: "calc(50% - 620px)", top: 100, transform: "rotate(-24.12deg)" }}
-        />
       </div>
 
       {/* Plan cards */}

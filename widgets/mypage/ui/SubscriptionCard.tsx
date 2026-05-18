@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
@@ -52,6 +52,8 @@ function SubscriptionEmpty() {
 
 export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscriptionDto[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const didSwipe = useRef(false);
 
   if (subscriptions.length === 0) {
     return (
@@ -66,10 +68,48 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
   const planTheme = packageThemeForPlan(current.plan);
 
   const detailHref = `/mypage/subscription/detail?subscriptionId=${current.id}`;
+  const goToPrevious = () => setActiveIndex((i) => Math.max(0, i - 1));
+  const goToNext = () => setActiveIndex((i) => Math.min(subscriptions.length - 1, i + 1));
+
+  function handleTouchStart(e: React.TouchEvent<HTMLDivElement>) {
+    if (!hasMultiple) return;
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent<HTMLDivElement>) {
+    if (!hasMultiple || touchStartX.current === null) return;
+
+    const touchEndX = e.changedTouches[0]?.clientX ?? touchStartX.current;
+    const distance = touchStartX.current - touchEndX;
+    touchStartX.current = null;
+
+    if (Math.abs(distance) < 40) return;
+    didSwipe.current = true;
+    window.setTimeout(() => {
+      didSwipe.current = false;
+    }, 300);
+
+    if (distance > 0) {
+      goToNext();
+    } else {
+      goToPrevious();
+    }
+  }
+
+  function handleClickCapture(e: React.MouseEvent<HTMLDivElement>) {
+    if (!didSwipe.current) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
   return (
     <div>
-      <div className="relative flex overflow-hidden rounded-[20px] max-md:bg-white md:h-[173px] md:bg-[var(--color-background)]">
+      <div
+        className="relative flex overflow-hidden rounded-[20px] max-md:bg-white md:h-[173px] md:bg-[var(--color-background)]"
+        onClickCapture={handleClickCapture}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* 사진 + 구독 정보 — 클릭 시 해당 구독 상세 */}
         <Link
           href={detailHref}
@@ -137,9 +177,9 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         {/* 좌우 화살표 — 여러 구독일 때만 표시 */}
         {hasMultiple && (
           <button
-            onClick={() => setActiveIndex((i) => Math.max(0, i - 1))}
+            onClick={goToPrevious}
             disabled={activeIndex === 0}
-            className="absolute left-0 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-[var(--color-border)] transition-opacity disabled:opacity-30 hover:opacity-70"
+            className="absolute left-0 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-[var(--color-border)] transition-opacity disabled:opacity-30 hover:opacity-70 max-md:hidden"
             aria-label="이전 구독"
           >
             <ChevronLeft />
@@ -147,9 +187,9 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         )}
         {hasMultiple && (
           <button
-            onClick={() => setActiveIndex((i) => Math.min(subscriptions.length - 1, i + 1))}
+            onClick={goToNext}
             disabled={activeIndex === subscriptions.length - 1}
-            className="absolute right-0 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] transition-opacity disabled:opacity-30 hover:opacity-70"
+            className="absolute right-0 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] transition-opacity disabled:opacity-30 hover:opacity-70 max-md:hidden"
             aria-label="다음 구독"
           >
             <ChevronRight />

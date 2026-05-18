@@ -244,16 +244,16 @@ export default function ChecklistResult({
     : null;
 
   return (
-    <section className="min-h-[calc(100vh-54px)] bg-white py-10 md:py-14">
-      <div className="mx-auto w-full max-w-[1013px] px-4 md:px-0">
+    <section className="min-h-[calc(100vh-54px)] bg-white max-md:py-9 md:py-[64px]">
+      <div className="mx-auto w-full max-md:max-w-[640px] md:max-w-[1013px] px-4 md:px-0">
 
         {/* 완료 타이틀 */}
-        <div className="mb-8 flex justify-center md:mb-10">
+        <div className="max-md:mb-9 flex justify-center md:mb-11">
           <h1 className="m-0">
             <Image
               src={checklistDoneTitle}
               alt="체크리스트 분석 완료!"
-              className="mx-auto h-auto max-md:w-[min(100%,280px)] max-md:max-w-[150px] md:w-auto md:max-w-[198px]"
+              className="mx-auto h-auto max-md:max-w-[198px] md:w-auto max-w-[231px]"
               priority
             />
           </h1>

@@ -615,8 +615,8 @@ export default function ChecklistSection() {
           </div>
         )}
 
-        <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 md:px-8">
-          <div className={`rounded-[20px] bg-white px-5 py-5 md:py-8 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] md:-mt-[50px] md:px-8 md:py-12 ${step === 0 ? "max-md:-mt-12" : "max-md:mt-4"}`}>
+        <div className="relative z-10 mx-auto w-full max-md:max-w-[640px] md:max-w-[1013px] px-4 md:px-8">
+          <div className={`rounded-[20px] bg-white px-5 py-5 md:py-8 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] md:-mt-[50px] md:px-8 md:py-12 ${step === 0 ? "max-md:-mt-9.5" : "max-md:mt-4"}`}>
             <div className="mx-auto w-full max-w-[900px]">
               {questionsError ? (
                 <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">{questionsError}</p>

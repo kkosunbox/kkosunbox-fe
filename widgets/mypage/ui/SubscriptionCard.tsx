@@ -8,23 +8,78 @@ import { Text } from "@/shared/ui";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 
+const MAX_VISIBLE_INDICATORS = 7;
+
 function billingDayLabel(nextBillingDate: string): string {
   const day = parseInt(nextBillingDate.slice(8, 10), 10);
   return `매월 ${day}일`;
 }
 
-function ChevronLeft() {
+function wrapIndex(index: number, total: number): number {
+  if (total <= 0) return 0;
+  return ((index % total) + total) % total;
+}
+
+function getCarouselIndicatorItems(
+  activeIndex: number,
+  total: number,
+): Array<{ index: number; offset: number }> {
+  if (total <= 1) return [];
+
+  const visibleCount = Math.min(total, MAX_VISIBLE_INDICATORS);
+  const startOffset = -Math.floor((visibleCount - 1) / 2);
+
+  return Array.from({ length: visibleCount }, (_, i) => {
+    const offset = startOffset + i;
+    return {
+      index: wrapIndex(activeIndex + offset, total),
+      offset,
+    };
+  });
+}
+
+function SubscriptionPrevButtonIcon() {
   return (
-    <svg width="10" height="18" viewBox="0 0 10 18" fill="none" aria-hidden>
-      <path d="M9 1L1 9L9 17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden>
+      <g filter="url(#subscription-prev-edge-shadow)">
+        <rect x="2" y="2" width="24" height="24" rx="12" fill="white" fillOpacity="0.3" shapeRendering="crispEdges" />
+        <path d="M16.666 8.66663L10.666 14L16.666 19.3333" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <defs>
+        <filter id="subscription-prev-edge-shadow" x="0" y="0" width="32" height="32" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+          <feOffset dx="2" dy="2" />
+          <feGaussianBlur stdDeviation="2" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_subscription_prev" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_subscription_prev" result="shape" />
+        </filter>
+      </defs>
     </svg>
   );
 }
 
-function ChevronRight() {
+function SubscriptionNextButtonIcon() {
   return (
-    <svg width="10" height="18" viewBox="0 0 10 18" fill="none" aria-hidden>
-      <path d="M1 1L9 9L1 17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden>
+      <g filter="url(#subscription-next-edge-shadow)">
+        <rect width="24" height="24" rx="12" transform="matrix(-1 0 0 1 26 2)" fill="white" fillOpacity="0.3" shapeRendering="crispEdges" />
+        <path d="M11.334 8.66663L17.334 14L11.334 19.3333" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <defs>
+        <filter id="subscription-next-edge-shadow" x="0" y="0" width="32" height="32" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+          <feOffset dx="2" dy="2" />
+          <feGaussianBlur stdDeviation="2" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_subscription_next" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_subscription_next" result="shape" />
+        </filter>
+      </defs>
     </svg>
   );
 }
@@ -50,6 +105,73 @@ function SubscriptionEmpty() {
   );
 }
 
+function dotSizeClass(offset: number): string {
+  const distance = Math.abs(offset);
+
+  if (distance === 0) return "h-2.5 w-2.5";
+  if (distance === 1) return "h-2.5 w-2.5";
+  if (distance === 2) return "h-2 w-2";
+  return "h-1.5 w-1.5";
+}
+
+function dotOpacityClass(offset: number): string {
+  const distance = Math.abs(offset);
+
+  if (distance <= 1) return "opacity-100";
+  if (distance === 2) return "opacity-80";
+  return "opacity-60";
+}
+
+function dotTransformStyle(offset: number) {
+  return {
+    transform: `translate(-50%, -50%) translateX(${offset * 16}px)`,
+  };
+}
+
+function SubscriptionCarouselIndicator({
+  activeIndex,
+  total,
+  onSelect,
+  className,
+}: {
+  activeIndex: number;
+  total: number;
+  onSelect: (index: number) => void;
+  className: string;
+}) {
+  if (total <= 1) return null;
+
+  const items = getCarouselIndicatorItems(activeIndex, total);
+
+  return (
+    <nav
+      className={[
+        "z-10 flex items-center justify-center",
+        className,
+      ].join(" ")}
+      aria-label="구독 목록 탐색"
+    >
+      <div className="relative h-4 w-[112px]">
+        {items.map(({ index, offset }) => (
+          <button
+            key={index}
+            type="button"
+            onClick={() => onSelect(index)}
+            aria-label={`${index + 1}번째 구독`}
+            aria-current={index === activeIndex ? "page" : undefined}
+            style={dotTransformStyle(offset)}
+            className={`absolute left-1/2 top-1/2 rounded-full transition-[transform,width,height,background-color,opacity] duration-300 ease-out ${dotSizeClass(offset)} ${dotOpacityClass(offset)} ${
+              index === activeIndex
+                ? "bg-[var(--color-accent)]"
+                : "bg-[var(--color-border)]"
+            }`}
+          />
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscriptionDto[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -64,12 +186,12 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
   }
 
   const hasMultiple = subscriptions.length > 1;
-  const current = subscriptions[Math.min(activeIndex, subscriptions.length - 1)];
+  const current = subscriptions[wrapIndex(activeIndex, subscriptions.length)];
   const planTheme = packageThemeForPlan(current.plan);
 
   const detailHref = `/mypage/subscription/detail?subscriptionId=${current.id}`;
-  const goToPrevious = () => setActiveIndex((i) => Math.max(0, i - 1));
-  const goToNext = () => setActiveIndex((i) => Math.min(subscriptions.length - 1, i + 1));
+  const goToPrevious = () => setActiveIndex((i) => wrapIndex(i - 1, subscriptions.length));
+  const goToNext = () => setActiveIndex((i) => wrapIndex(i + 1, subscriptions.length));
 
   function handleTouchStart(e: React.TouchEvent<HTMLDivElement>) {
     if (!hasMultiple) return;
@@ -105,7 +227,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
   return (
     <div>
       <div
-        className="relative flex overflow-hidden rounded-[20px] max-md:bg-white md:h-[173px] md:bg-[var(--color-background)]"
+        className="relative flex rounded-[20px] max-md:bg-white md:h-[173px] md:bg-[var(--color-background)]"
         onClickCapture={handleClickCapture}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -117,7 +239,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
           className="relative z-0 flex min-w-0 flex-1 outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] max-md:focus-visible:ring-offset-white"
         >
           {/* 이미지 — 카드 왼쪽에 패딩 없이 full-height */}
-          <div className="relative max-md:w-[100px] md:w-[160px] shrink-0 self-stretch">
+          <div className="relative max-md:w-[100px] md:w-[160px] shrink-0 self-stretch overflow-hidden rounded-l-[20px]">
             <Image
               src={TIER_THUMBNAILS[planTheme.tier]}
               alt=""
@@ -169,7 +291,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         {/* 구독관리 */}
         <Link
           href="/mypage/subscription"
-          className="absolute right-5 top-5 z-10 max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
+          className="absolute right-8 top-5 z-10 max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
         >
           구독관리
         </Link>
@@ -178,60 +300,38 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         {hasMultiple && (
           <button
             onClick={goToPrevious}
-            disabled={activeIndex === 0}
-            className="absolute left-0 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-[var(--color-border)] transition-opacity disabled:opacity-30 hover:opacity-70 max-md:hidden"
+            className="absolute left-[-16px] top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-80 max-md:hidden"
             aria-label="이전 구독"
           >
-            <ChevronLeft />
+            <SubscriptionPrevButtonIcon />
           </button>
         )}
         {hasMultiple && (
           <button
             onClick={goToNext}
-            disabled={activeIndex === subscriptions.length - 1}
-            className="absolute right-0 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-[var(--color-text-secondary)] transition-opacity disabled:opacity-30 hover:opacity-70 max-md:hidden"
+            className="absolute right-[-16px] top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-80 max-md:hidden"
             aria-label="다음 구독"
           >
-            <ChevronRight />
+            <SubscriptionNextButtonIcon />
           </button>
         )}
 
         {/* 도트 인디케이터 — 데스크톱: 카드 안 absolute */}
-        {hasMultiple && (
-          <div className="max-md:hidden absolute bottom-4 left-0 right-0 z-10 flex justify-center gap-3">
-            {subscriptions.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveIndex(i)}
-                aria-label={`${i + 1}번째 구독`}
-                className={`h-3 w-3 rounded-full transition-colors ${
-                  i === activeIndex
-                    ? "bg-[var(--color-accent)]"
-                    : "bg-[var(--color-border)]"
-                }`}
-              />
-            ))}
-          </div>
-        )}
+        <SubscriptionCarouselIndicator
+          activeIndex={activeIndex}
+          total={subscriptions.length}
+          onSelect={setActiveIndex}
+          className="absolute bottom-4 left-0 right-0 md:translate-x-8 max-md:hidden"
+        />
       </div>
 
       {/* 도트 인디케이터 — 모바일: 카드 외부 하단 */}
-      {hasMultiple && (
-        <div className="md:hidden flex justify-center gap-3 pt-3">
-          {subscriptions.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIndex(i)}
-              aria-label={`${i + 1}번째 구독`}
-              className={`h-3 w-3 rounded-full transition-colors ${
-                i === activeIndex
-                  ? "bg-[var(--color-accent)]"
-                  : "bg-[var(--color-border)]"
-              }`}
-            />
-          ))}
-        </div>
-      )}
+      <SubscriptionCarouselIndicator
+        activeIndex={activeIndex}
+        total={subscriptions.length}
+        onSelect={setActiveIndex}
+        className="pt-3 md:hidden"
+      />
     </div>
   );
 }

@@ -211,7 +211,7 @@ export function ProfileSection({
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
-    <section className="pt-6 md:pt-7">
+    <section className="pt-6 md:pt-[64px]">
       <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0">
         <div className="relative rounded-[20px] bg-white max-md:px-7 max-md:py-7 md:px-7 md:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
           <Link
@@ -227,7 +227,7 @@ export function ProfileSection({
             <div className="relative flex min-w-0 flex-1 items-start gap-5 md:min-h-0 md:items-center md:gap-8 md:self-stretch">
               <Link
                 href="/mypage/dog-profile"
-                className="max-md:hidden absolute top-2 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
+                className="max-md:hidden absolute top-0 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
               >
                 <span>정보변경</span>
                 <ChevronRightIcon />

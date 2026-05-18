@@ -477,12 +477,16 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden">
-        <Image
-          src={subscribeItemHeroMobile}
-          alt="구독 상세 소개 배너"
-          className="mb-2 h-auto w-full"
-          priority
-        />
+        <div className="relative mb-2 h-[148px] w-full overflow-hidden">
+          <Image
+            src={subscribeItemHeroMobile}
+            alt="구독 상세 소개 배너"
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+            priority
+          />
+        </div>
 
         <div className="px-6">
           <div className="mb-3 flex items-center justify-center gap-3 py-2">

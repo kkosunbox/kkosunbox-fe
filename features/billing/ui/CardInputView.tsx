@@ -212,7 +212,7 @@ export default function CardInputView({ existingBilling, onConfirm, onBack, onCl
           type="button"
           onClick={handleConfirm}
           disabled={isPending}
-          className="w-full h-14 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중…" : "확인"}
         </button>

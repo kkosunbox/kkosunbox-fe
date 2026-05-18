@@ -299,7 +299,7 @@ export default function RegisterSection() {
       />
     )}
     <div className="min-h-screen bg-white pt-[54px]">
-      <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 md:py-12">
+      <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 md:py-[96px]">
 
         {/* 타이틀 */}
         <div className="mb-7 text-center md:mb-11">

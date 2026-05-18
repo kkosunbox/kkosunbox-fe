@@ -71,7 +71,7 @@ export default function PaymentMethodView({
         <button
           type="button"
           onClick={onNext}
-          className="w-full h-14 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb transition-opacity hover:opacity-90"
+          className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb transition-opacity hover:opacity-90"
         >
           다음
         </button>

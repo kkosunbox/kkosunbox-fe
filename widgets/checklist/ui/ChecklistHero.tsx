@@ -5,14 +5,14 @@ import checklistHeroMobilePaw from "../assets/checklist-hero-mobile-paw.webp";
 import checklistHeroTitle from "../assets/checklist-hero-title.webp";
 import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.png";
 
-const MOBILE_PADDING_TOP_PX = 20;
+const MOBILE_PADDING_TOP_PX = 36;
 const DESKTOP_FORM_OVERLAP_PX = 50;
 const DESKTOP_CONTENT_OFFSET_PX = DESKTOP_FORM_OVERLAP_PX / 2;
 
 export default function ChecklistHero() {
   return (
     <section
-      className="relative flex h-[210px] shrink-0 flex-col items-center overflow-hidden px-4 max-md:h-[143px] max-md:justify-start md:justify-center"
+      className="relative flex h-[210px] shrink-0 flex-col items-center overflow-hidden px-4 max-md:h-[156px] max-md:justify-start md:justify-center"
       style={
         {
           background: "var(--gradient-checklist-hero)",

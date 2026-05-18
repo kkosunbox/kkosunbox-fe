@@ -8,6 +8,7 @@ import { useModal, useLoadingOverlay } from "@/shared/ui";
 import logoMain from "@/shared/assets/logo-main.svg";
 import { getErrorMessage } from "@/shared/lib/api";
 import orderTitleImage from "@/widgets/order/assets/order-title-please-order.webp";
+import orderMobileHeroImage from "@/widgets/order/assets/order-mobile-hero.png";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import orderDogImage from "@/widgets/order/assets/order-advertise-banner.webp";
 import heroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
@@ -941,21 +942,31 @@ export default function OrderSection({
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
         strategy="afterInteractive"
       />
+      <div className="flex h-[128px] justify-center overflow-hidden md:hidden">
+        <Image
+          src={orderMobileHeroImage}
+          alt="주문을 완료해주세요! 입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요."
+          height={128}
+          className="h-[128px] w-auto max-w-none shrink-0 object-contain object-center"
+          priority
+        />
+      </div>
+
       <div
-        className="relative overflow-hidden py-10 md:h-[160px] md:py-0 flex items-center justify-center"
+        className="relative overflow-hidden max-md:hidden md:h-[160px] md:py-0 flex items-center justify-center"
         style={{ background: "var(--gradient-checklist-hero)" }}
       >
         <Image
           src={heroLeftPaw}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-[25%] top-1/2 h-auto w-[74px] -translate-y-1/2 max-md:hidden"
+          className="pointer-events-none absolute left-[25%] top-1/2 h-auto w-[74px] -translate-y-1/2"
         />
         <Image
           src={heroRightPaw}
           alt=""
           aria-hidden="true"
-          className="pointer-events-none absolute left-[69%] top-1/2 h-auto w-[84px] -translate-y-1/2 max-md:hidden"
+          className="pointer-events-none absolute left-[69%] top-1/2 h-auto w-[84px] -translate-y-1/2"
         />
         <div className="relative z-10 text-center px-4 flex flex-col items-center gap-4">
           <Image
@@ -963,11 +974,11 @@ export default function OrderSection({
             alt="주문을 완료해주세요!"
             width={400}
             height={60}
-            className="max-md:w-[200px] md:w-[268px] h-auto object-contain"
+            className="h-auto w-[268px] object-contain"
             priority
           />
           <p
-            className="max-md:text-[14px] md:text-[16px] leading-5 tracking-[-0.02em] text-[var(--color-text)]"
+            className="text-[16px] leading-5 tracking-[-0.02em] text-[var(--color-text)]"
             style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
           >
             입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요.

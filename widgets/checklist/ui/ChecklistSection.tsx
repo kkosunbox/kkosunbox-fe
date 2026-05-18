@@ -606,7 +606,7 @@ export default function ChecklistSection() {
 
   return (
     <>
-      <div className="min-h-[calc(100vh-54px)] bg-white pb-12 max-md:bg-[var(--color-background)] md:bg-white md:pb-16">
+      <div className="min-h-[calc(100vh-54px)] bg-white pb-12 bg-white md:pb-16">
         {step === 0 ? (
           <ChecklistHero />
         ) : (

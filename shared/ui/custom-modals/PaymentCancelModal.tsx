@@ -54,7 +54,7 @@ export default function PaymentCancelModal({ onClose, onConfirm, onConfirm2 }: P
             alt="결제 취소 시 꼬순박스 구독도 취소하시겠습니까?"
             width={268}
             height={129}
-            className="h-auto max-w-full"
+            className="h-auto w-full max-md:max-w-[236px] md:max-w-[268px]"
           />
 
           <p className="mt-5 max-md:text-[13px] md:text-[14px] font-medium leading-[160%] tracking-[-0.04em] text-white text-center">

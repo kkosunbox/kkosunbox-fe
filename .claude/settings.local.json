@@ -110,7 +110,8 @@
       "PowerShell(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Directory | Where-Object {$_.Name -match \"app|features|components\"} | Select-Object -First 20 | ForEach-Object {$_.FullName})",
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Filter \"*modal*\" -Recurse -File)",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(Select-String -Pattern \"profile-switch\")"
+      "Bash(Select-String -Pattern \"profile-switch\")",
+      "Bash(git reset *)"
     ]
   }
 }

@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import titleImg from "../assets/withdraw-confirm-title.webp";
+import titleImgDesktop from "../assets/withdraw-confirm-title.webp";
+import titleImgMobile from "../assets/withdraw-confirm-title-mobile.png";
 import pawsImg from "../assets/widthraw-confirm-paws.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
@@ -60,16 +61,6 @@ function RadioButton({
   );
 }
 
-/* ── 뒤로가기 아이콘 ──────────────────────────────────────────────── */
-
-function BackIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M15 5L7 12l8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 /* ── 메인 컴포넌트 ────────────────────────────────────────────────── */
 
 interface WithdrawConfirmSectionProps {
@@ -112,11 +103,11 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   /* ── 데스크톱 ──────────────────────────────────────────────────── */
 
   const desktopLayout = (
-    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pt-10 pb-[104px]">
+    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pt-[64px] pb-[104px]">
       {/* 타이틀 이미지 */}
-      <div className="flex justify-center">
+      <div className="flex justify-center md:max-w-[387px] mx-auto">
         <img
-          src={titleImg.src}
+          src={titleImgDesktop.src}
           alt="정말로 꼬순박스를 탈퇴하실건가요?"
           className="h-8 object-contain"
         />
@@ -124,7 +115,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
 
       {/* 프로필 배너 */}
       <div
-        className="relative mt-8 overflow-hidden rounded-[20px] px-14 py-7"
+        className="relative mt-11 overflow-hidden rounded-[20px] px-14 py-7"
         style={{ background: "var(--gradient-checklist-result)" }}
       >
         {/* 장식 발바닥 이미지 */}
@@ -156,9 +147,16 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
 
           {/* 메시지 */}
           <p className="text-body-16-r-griun text-[var(--color-text)]">
-            {daysWithUs
-              ? `꼬순박스와 함께한 지 ${daysWithUs}일째,`
-              : "꼬순박스 회원님,"}
+            {daysWithUs ? (
+              <>
+                꼬순박스와 함께한 지{" "}
+                <span className="text-[24px]">
+                  <span className="text-[var(--color-primary)]">{daysWithUs}</span>일째,
+                </span>
+              </>
+            ) : (
+              "꼬순박스 회원님,"
+            )}
             <br />
             관련된 모든 구독 서비스를 탈퇴하시겠습니까?
           </p>
@@ -237,72 +235,83 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
 
   const mobileLayout = (
     <div className="md:hidden bg-white px-5 pb-10 pt-6">
-      {/* 헤더 */}
-      <div className="mb-5 flex items-center gap-1 text-[var(--color-text)]">
-        <Link
-          href="/mypage/dog-profile"
-          aria-label="프로필 관리로 돌아가기"
-          className="inline-flex h-8 w-8 items-center justify-center text-[var(--color-text-secondary)]"
-        >
-          <BackIcon />
-        </Link>
-        <h1 className="text-subtitle-18-b tracking-tightest">회원 탈퇴</h1>
-      </div>
 
       {/* 타이틀 이미지 */}
-      <div className="flex justify-center">
+      <div className="flex justify-center w-full max-w-[172px] mx-auto">
         <img
-          src={titleImg.src}
+          src={titleImgMobile.src}
           alt="정말로 꼬순박스를 탈퇴하실건가요?"
-          className="h-7 object-contain"
+          className="object-contain"
         />
       </div>
 
       {/* 프로필 배너 */}
-      <div
-        className="relative mt-4 overflow-hidden rounded-[16px] px-5 py-5"
-        style={{ background: "var(--gradient-checklist-result)" }}
-      >
-        <img
-          src={pawsImg.src}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute right-2 top-0 h-full object-contain opacity-60"
-        />
-
-        <div className="relative flex items-center gap-4">
-          <div className="h-[56px] w-[56px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
-            {profileImageUrl ? (
-              <img
-                src={profileImageUrl}
-                alt="프로필"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[var(--color-cta-logo-bg)]">
-                <svg viewBox="0 0 40 40" className="h-7 w-7" aria-hidden="true">
-                  <circle cx="20" cy="16" r="8" fill="var(--color-brown)" opacity="0.6" />
-                  <ellipse cx="20" cy="34" rx="14" ry="10" fill="var(--color-brown)" opacity="0.4" />
-                </svg>
-              </div>
-            )}
-          </div>
-
-          <p
-            className="text-[var(--color-text)]"
+      <div className="relative mt-12">
+        {/* 배너 본체 */}
+        <div
+          className="relative h-[115px] overflow-hidden rounded-[20px]"
+          style={{
+            background:
+              "linear-gradient(90.82deg, #FFF4EA 49.3%, #FFBF9A 158.37%)",
+          }}
+        >
+          {/* 발바닥 장식 */}
+          <img
+            src={pawsImg.src}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute"
             style={{
+              width: "57.65px",
+              height: "44.65px",
+              top: "44px",
+              right: "29px",
+              transform: "rotate(-16.43deg)",
+            }}
+          />
+
+          {/* 메시지 */}
+          <p
+            className="absolute inset-x-0 text-center text-[var(--color-text)]"
+            style={{
+              top: "46px",
               fontFamily: '"Griun PolFairness", "Pretendard", sans-serif',
               fontSize: 14,
               lineHeight: "150%",
               letterSpacing: "-0.02em",
             }}
           >
-            {daysWithUs
-              ? `꼬순박스와 함께한 지 ${daysWithUs}일째,`
-              : "꼬순박스 회원님,"}
+            {daysWithUs ? (
+              <>
+                꼬순박스와 함께한 지{" "}
+                <span className="text-[16px]">
+                  <span className="text-[var(--color-primary)]">{daysWithUs}</span>일째,
+                </span>
+              </>
+            ) : (
+              "꼬순박스 회원님,"
+            )}
             <br />
-            관련된 모든 구독 서비스를 탈퇴하시겠습니까?
+            관련된 모든 구독 서비스를 탈퇴하시겠어요?
           </p>
+        </div>
+
+        {/* 프로필 이미지 (배너 상단에 걸쳐있음) */}
+        <div className="absolute left-1/2 -top-8 z-10 h-16 w-16 -translate-x-1/2 overflow-hidden rounded-full border border-[var(--color-text-muted)] bg-white">
+          {profileImageUrl ? (
+            <img
+              src={profileImageUrl}
+              alt="프로필"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-[var(--color-cta-logo-bg)]">
+              <svg viewBox="0 0 40 40" className="h-9 w-9" aria-hidden="true">
+                <circle cx="20" cy="16" r="8" fill="var(--color-brown)" opacity="0.6" />
+                <ellipse cx="20" cy="34" rx="14" ry="10" fill="var(--color-brown)" opacity="0.4" />
+              </svg>
+            </div>
+          )}
         </div>
       </div>
 
@@ -375,7 +384,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   );
 
   return (
-    <div className="bg-white">
+    <div className="flex min-h-0 flex-1 flex-col bg-white">
       {desktopLayout}
       {mobileLayout}
     </div>

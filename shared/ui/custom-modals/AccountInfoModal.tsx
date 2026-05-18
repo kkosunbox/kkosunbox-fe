@@ -113,7 +113,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
 export default function AccountInfoModal({ onClose }: Props) {
   const { user } = useAuth();
   const router = useRouter();
-  const { openAlert } = useModal();
+  const { openAlert, openModal } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [view, setView] = useState<View>("info");
 
@@ -208,7 +208,11 @@ export default function AccountInfoModal({ onClose }: Props) {
             <div className="mt-6 flex justify-center md:mt-auto">
               <button
                 type="button"
-                onClick={() => { onClose(); router.push("/mypage/withdraw"); }}
+                onClick={() => {
+                  openModal("member-withdraw", () => {
+                    router.push("/mypage/withdraw");
+                  });
+                }}
                 className="text-[14px] font-medium leading-[140%] tracking-[-0.02em] text-[var(--color-accent)] underline hover:opacity-70 transition-opacity"
               >
                 계정 탈퇴

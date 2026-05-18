@@ -573,7 +573,11 @@ export default function OrderSection({
           <div className="flex flex-col gap-3 pb-1">
             {/* 라벨 + 이름 | 전화번호 | 이메일 */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-body-13-m text-[var(--color-text)]">우리집</span>
+              {selectedAddress.nickname ? (
+                <span className="text-body-13-m text-[var(--color-text)]">
+                  {selectedAddress.nickname}
+                </span>
+              ) : null}
               <CheckCircleIcon />
               <span className="text-body-13-m text-[var(--color-text)]">{selectedAddress.receiverName}</span>
               <span className="text-body-13-m text-[var(--color-text-secondary)]">|</span>

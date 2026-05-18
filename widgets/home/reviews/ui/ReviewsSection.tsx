@@ -13,6 +13,7 @@ import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
 import reviewsProfile04 from "../assets/reviews-profile-04.jpg";
+import { MEDIA_MD_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [
   {
@@ -240,7 +241,7 @@ function ReviewsCarousel() {
     const vp = viewportRef.current;
     const track = trackRef.current;
     if (!vp) return;
-    const desktop = window.matchMedia("(min-width: 1024px)").matches;
+    const desktop = window.matchMedia(MEDIA_MD_MIN).matches;
     const w = vp.getBoundingClientRect().width;
     const rawGap = track ? parseFloat(getComputedStyle(track).gap || "0") : 36;
     const gap = Number.isFinite(rawGap) && rawGap > 0 ? rawGap : 36;
@@ -253,7 +254,7 @@ function ReviewsCarousel() {
     if (!vp) return;
     const ro = new ResizeObserver(() => measure());
     ro.observe(vp);
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia(MEDIA_MD_MIN);
     mq.addEventListener("change", measure);
     queueMicrotask(measure);
     return () => {

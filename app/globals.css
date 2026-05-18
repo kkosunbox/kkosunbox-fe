@@ -169,6 +169,7 @@
   --gradient-checklist-hero: linear-gradient(268.21deg, rgba(255, 223, 173, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
   --gradient-support-banner: linear-gradient(92.78deg, rgba(254, 234, 215, 0.5) 47.68%, rgba(173, 206, 255, 0.5) 105.7%);
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
+  --gradient-checklist-button-border: linear-gradient(90deg, #FEEAD7 0%, #ADCEFF 100%); /* 체크리스트 CTA 외곽선 — 가로 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-mobile-menu: linear-gradient(132.82deg, #FFFCF9 25.95%, #FFF7E9 94.09%); /* 모바일 드로워 상단 — 웜 크림 */
   --gradient-dropdown-header: linear-gradient(92.7deg, #FFFCF9 34.33%, #FFF7EA 100%); /* 데스크톱 프로필 드롭다운 헤더 — 웜 크림 */
@@ -184,9 +185,16 @@
   --gradient-modal-alert-header: linear-gradient(176.77deg, #FFF7E9 -5.94%, #FFFFFF 99.39%); /* 범용 모달 헤더 — 웜 크림 → 화이트 */
 }
 
-@theme inline {
-  --breakpoint-md: 1024px;
+/*
+ * md 분기 — @theme inline 이 아닌 @theme 에 rem 으로 정의 (Tailwind v4 필수).
+ * px·rem 혼용·lg(64rem=1024px)보다 작은 md 값은 빌드 시 분기가 무시될 수 있음.
+ * JS 상수: shared/config/breakpoints.ts
+ */
+@theme {
+  --breakpoint-md: 65rem; /* 1040px — lg(80rem) 보다 작아야 함 */
+}
 
+@theme inline {
   --color-background: var(--color-background);
   --color-foreground: var(--color-text);
 

@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
-import FaqQuestion from "../assets/faq-question.webp";
+import FaqQuestion from "../assets/faq-question.png";
 
 /* ── FAQ 데이터 ──────────────────────────────────────────── */
 interface FaqItem {
@@ -222,7 +222,14 @@ function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void 
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
-export default function SupportSection({ showBanner = true }: { showBanner?: boolean }) {
+export default function SupportSection({
+  showBanner = true,
+  /** /support 페이지: main flex 영역을 채우고 푸터를 뷰포트 하단에 맞춤 */
+  fillViewport = false,
+}: {
+  showBanner?: boolean;
+  fillViewport?: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [selectedFaq, setSelectedFaq] = useState<FaqItem | null>(null);
@@ -249,8 +256,14 @@ export default function SupportSection({ showBanner = true }: { showBanner?: boo
   };
 
   return (
-    <div className="min-h-screen bg-white max-md:py-6 md:py-10">
-      <div className="mx-auto flex w-full max-w-[1013px] flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
+    <div
+      className={
+        fillViewport
+          ? "flex min-h-full flex-1 flex-col max-md:py-6 md:py-10"
+          : "bg-white max-md:py-6 md:py-10"
+      }
+    >
+      <div className="mx-auto flex w-full max-w-[1013px] flex-1 flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
         {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image
@@ -286,8 +299,8 @@ export default function SupportSection({ showBanner = true }: { showBanner?: boo
                     alt="꼬순박스에 궁금한 점이 있으신가요?"
                     width={FaqQuestion.width}
                     height={FaqQuestion.height}
-                    sizes="(max-width: 767px) 220px, 320px"
-                    className="h-auto max-md:w-[220px] md:w-[320px]"
+                    sizes="(max-width: 767px) 252px, 320px"
+                    className="h-auto max-md:w-[252px] md:w-[320px]"
                   />
                   <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
                     1:1 문의를 남겨주시면 담당자가 확인 후
@@ -319,7 +332,7 @@ export default function SupportSection({ showBanner = true }: { showBanner?: boo
         {/* ── FAQ 패널 (#FFF7EF) ── */}
         <ScrollReveal variant="fade-up" delay={150}>
           <section
-            className="rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] md:pb-7 md:pt-6"
+            className={`rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] md:pb-7 md:pt-6${fillViewport ? " flex min-h-0 flex-1 flex-col" : ""}`}
             aria-label="자주 묻는 질문"
           >
           {/* 검색 + 내 문의내역 */}

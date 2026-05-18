@@ -38,6 +38,7 @@ import {
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { getReviews } from "@/features/review/api";
 import type { ReviewResponse } from "@/features/review/api";
+import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 
 interface Props {
   initialPlan: SubscriptionPlanDto;
@@ -81,6 +82,7 @@ const SORT_OPTIONS = ["최신순", "평점 높은순", "평점 낮은순"] as co
 
 
 const REVIEWS_PER_PAGE = 10;
+const REVIEW_CONTENT_COLLAPSED_LINES = 3;
 
 const AVATAR_COLORS = ["#E8B89B", "#C9DBB5", "#F7D4A7", "#B5C9DB", "#DBB5C9", "#A5C4A5"];
 
@@ -289,6 +291,85 @@ function ReviewImageLightbox({
   );
 }
 
+function ReviewContent({ content, className }: { content: string; className: string }) {
+  const contentRef = useRef<HTMLParagraphElement | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState(false);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el || expanded) return;
+
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        setCanExpand(el.scrollHeight > el.clientHeight + 1);
+      });
+    };
+
+    measure();
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    resizeObserver?.observe(el);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [content, expanded]);
+
+  return (
+    <div className={className}>
+      <p
+        ref={contentRef}
+        className="whitespace-pre-line text-[14px] font-medium leading-[20px] tracking-[-0.04em] text-[var(--color-text)]"
+        style={
+          expanded
+            ? undefined
+            : {
+                display: "-webkit-box",
+                WebkitLineClamp: REVIEW_CONTENT_COLLAPSED_LINES,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }
+        }
+      >
+        {content}
+      </p>
+      {canExpand ? (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((prev) => !prev)}
+          className="mt-2 inline-flex h-5 items-center gap-1 text-[14px] font-medium leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)] capitalize transition-opacity hover:opacity-80"
+        >
+          {expanded ? "접기" : "더보기"}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            aria-hidden="true"
+            className={expanded ? "-rotate-90" : "rotate-90"}
+          >
+            <path
+              d="M8 5L13 10L8 15"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
 export default function SubscribeProductDetailPage({ initialPlan, plans }: Props) {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
@@ -383,7 +464,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const activeTierLabel = selectedTheme.tierLabel;
 
   return (
-    <section className="bg-white md:pb-16">
+    <section className="flex min-h-full flex-1 flex-col md:pb-16">
       {reviewLightbox ? (
         <ReviewImageLightbox
           urls={reviewLightbox.urls}
@@ -427,7 +508,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               src={packageThumbnail}
               alt={`${selectedPlan.name} 대표 이미지`}
               fill
-              sizes="(max-width: 768px) 100vw, 508px"
+              sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 508px`}
               className="object-cover"
               priority
             />
@@ -709,9 +790,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                         </div>
                       </div>
                     </div>
-                    <p className="mt-[9px] pl-[66px] text-[14px] font-medium leading-[20px] tracking-[-0.04em] text-[var(--color-text)]">
-                      {review.content}
-                    </p>
+                    <ReviewContent content={review.content} className="mt-[9px] pl-[66px]" />
                     {review.imageUrls && review.imageUrls.length > 0 && (
                       <div className="mt-4 flex gap-2 pl-[66px]">
                         {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
@@ -1158,9 +1237,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                               {formatReviewDate(review.createdAt)}
                             </span>
                           </div>
-                          <p className="text-[14px] font-normal leading-[22px] text-[var(--color-text)]">
-                            {review.content}
-                          </p>
+                          <ReviewContent content={review.content} className="" />
                           {review.imageUrls && review.imageUrls.length > 0 && (
                             <div className="mt-3 flex gap-2">
                               {review.imageUrls.slice(0, 3).map((url, imgIdx) => (

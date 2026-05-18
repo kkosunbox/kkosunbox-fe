@@ -8,11 +8,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="flex min-h-dvh flex-col">
       {/* <CursorPaw /> */}
       <Header />
-      <main className="pt-[54px]">{children}</main>
+      <main className="flex flex-1 flex-col pt-[54px]">{children}</main>
       <FooterSection />
-    </>
+    </div>
   );
 }

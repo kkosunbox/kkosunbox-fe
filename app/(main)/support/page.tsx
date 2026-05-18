@@ -20,5 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default function SupportPage() {
-  return <SupportSection />;
+  return <SupportSection fillViewport />;
 }

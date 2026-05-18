@@ -12,6 +12,7 @@ import {
   type PackageTier,
 } from "./packageData";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -239,7 +240,7 @@ export default function PackageDetailView({
               alt={`${pkg.name} 이미지`}
               fill
               className={TIER_THUMBNAIL_IMAGE_CLASS}
-              sizes="(max-width: 1023px) 100vw, 327px"
+              sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 327px`}
             />
             <div className="absolute inset-x-0 top-0 flex items-start px-7 pt-5">
               <span

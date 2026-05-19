@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import heroTitleImage from "@/widgets/mypage/assets/subscription-change-plans-selection.webp";
+import subscriptionChangeHeroMobileBg from "@/widgets/mypage/assets/subscription-change-hero-mobile-bg-with-pattern.png";
 import subscriptionChangeHeroPcPattern from "@/widgets/mypage/assets/subscription-change-hero-pc-pattern.webp";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
@@ -117,9 +118,23 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="relative overflow-hidden md:h-[210px]" style={{ background: "linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%)" }}>
+      <div className="relative overflow-hidden max-md:h-[210px] md:h-[210px] md:[background:linear-gradient(268.21deg,rgba(173,206,255,0.5)_3.87%,rgba(254,234,215,0.5)_56.14%)]">
         <div
-          className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center px-4"
+          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden md:hidden"
+          aria-hidden
+        >
+          <Image
+            src={subscriptionChangeHeroMobileBg}
+            alt=""
+            width={subscriptionChangeHeroMobileBg.width}
+            height={subscriptionChangeHeroMobileBg.height}
+            className="h-full w-auto max-w-none shrink-0"
+            sizes="100vw"
+            priority
+          />
+        </div>
+        <div
+          className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center px-4 max-md:hidden"
           aria-hidden
         >
           <Image
@@ -127,12 +142,12 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             alt=""
             width={subscriptionChangeHeroPcPattern.width}
             height={subscriptionChangeHeroPcPattern.height}
-            className="h-auto w-full max-w-[940px] object-contain max-md:hidden"
+            className="h-auto w-full max-w-[940px] object-contain"
             sizes="(max-width: 940px) 100vw, 940px"
             priority
           />
         </div>
-        <div className="relative z-10 mx-auto flex h-full max-w-content flex-col items-center justify-center gap-4 px-6 py-8 md:px-0 md:py-0">
+        <div className="relative z-10 mx-auto flex h-full max-w-content flex-col items-center justify-center gap-4 px-6 md:px-0">
           {/* 타이틀 이미지 */}
           <h1>
             <Image

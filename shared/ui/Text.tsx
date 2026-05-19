@@ -103,12 +103,12 @@ const BASE: Record<TypographyVariant, string> = {
  * max-md: variants — used for mobileVariant overrides.
  *
  * Tailwind v4 CSS generation order: base classes are emitted AFTER media-query
- * classes, so a plain `text-*` base class always wins over `md:text-*`.
- * The fix mirrors the `hidden md:block` rule: use `max-md:text-*` (also a
+ * classes, so a plain `text-*` base class always wins over `lg:text-*`.
+ * The fix mirrors the `hidden md:block lg:block` rule: use `max-md:text-*` (also a
  * media-query class) for the mobile override so both sides are media-query-based
  * and ordering is deterministic.
  *
- * Pattern: `max-md:{mobile} {base}`  (NOT `{mobile} md:{base}`)
+ * Pattern: `max-md:{mobile} {base}`  (NOT `{mobile} lg:{base}`)
  */
 const MAX_MD: Record<TypographyVariant, string> = {
   "title-42-b":             "max-md:text-title-42-b",

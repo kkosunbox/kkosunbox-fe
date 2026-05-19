@@ -27,12 +27,10 @@ function ChevronLeftIcon() {
   );
 }
 
-function PlusIcon() {
+function ChevronRightIcon() {
   return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <circle cx="24" cy="24" r="18" stroke="var(--color-text-muted)" strokeWidth="4" />
-      <path d="M24 30L24 18" stroke="var(--color-text-muted)" strokeWidth="4" strokeLinecap="round" />
-      <path d="M30 24L18 24" stroke="var(--color-text-muted)" strokeWidth="4" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -353,19 +351,58 @@ function SubscriptionFilterTabs({
 }
 
 /* ─────────────────────────────
-   Add Subscription Card (구독 추가하기)
+   Pagination
 ───────────────────────────── */
-function AddSubscriptionCard() {
+const PAGE_SIZE = 6;
+
+function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
   return (
-    <Link
-      href="/mypage/subscription/change"
-      className="flex max-md:h-[120px] max-md:rounded-[16px] max-md:bg-[var(--color-surface-light)] md:h-full md:min-h-[155px] md:rounded-[20px] md:bg-white md:py-10 flex-col items-center justify-center gap-4 transition-opacity hover:opacity-80"
-    >
-      <Text variant="subtitle-16-sb" mobileVariant="body-13-sb" className="max-md:text-[var(--color-text-tertiary)] md:text-[var(--color-text-secondary)]">
-        구독 추가하기
-      </Text>
-      <PlusIcon />
-    </Link>
+    <div className="mt-8 flex items-center justify-center gap-1">
+      <button
+        type="button"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
+        aria-label="이전 페이지"
+      >
+        <ChevronLeftIcon />
+      </button>
+      {pages.map((page) => (
+        <button
+          key={page}
+          type="button"
+          onClick={() => onPageChange(page)}
+          className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+            page === currentPage
+              ? "text-body-14-sb text-[var(--color-text)]"
+              : "text-body-14-m text-[var(--color-text-label)] hover:bg-[var(--color-surface-warm)]"
+          }`}
+        >
+          {page}
+        </button>
+      ))}
+      <button
+        type="button"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
+        aria-label="다음 페이지"
+      >
+        <ChevronRightIcon />
+      </button>
+    </div>
   );
 }
 
@@ -376,6 +413,12 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<SubscriptionFilter>("active");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  function handleFilterChange(next: SubscriptionFilter) {
+    setFilter(next);
+    setCurrentPage(1);
+  }
 
   useEffect(() => {
     if (!searchParams.get("welcome")) return;
@@ -418,7 +461,12 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
     return sortedSubscriptions;
   }, [sortedSubscriptions, filter]);
 
-  const showAddCard = filter !== "ended";
+  const totalPages = Math.ceil(filteredSubscriptions.length / PAGE_SIZE);
+  const pagedSubscriptions = filteredSubscriptions.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
   const earliestBillingDate = earliestNextBillingDate(activeSubscriptions);
   const hasPlans = plans.length > 0;
 
@@ -450,29 +498,43 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
       <div className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
         <div className="md:rounded-[24px] md:bg-[var(--color-surface-peach)] md:px-8 md:py-8">
           <div className="mb-6 flex items-center justify-between gap-3">
-            <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
-              구독 전체보기
-            </Text>
-            <SubscriptionFilterTabs value={filter} onChange={setFilter} />
+            <div className="flex items-center gap-3">
+              <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
+                구독 전체보기
+              </Text>
+              <Link
+                href="/mypage/subscription/change"
+                className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-85"
+              >
+                구독 추가하기
+              </Link>
+            </div>
+            <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
           </div>
 
           {!hasPlans ? (
             <p className="text-body-14-m text-[var(--color-text-label)]">
               플랜 정보를 불러올 수 없습니다.
             </p>
-          ) : filteredSubscriptions.length === 0 && !showAddCard ? (
+          ) : filteredSubscriptions.length === 0 ? (
             <p className="text-body-14-m text-[var(--color-text-label)]">
               {filter === "ended"
                 ? "구독종료된 항목이 없습니다."
                 : "구독 내역이 없습니다."}
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
-              {filteredSubscriptions.map((subscription) => (
-                <SubscriptionRow key={subscription.id} subscription={subscription} />
-              ))}
-              {showAddCard && <AddSubscriptionCard />}
-            </div>
+            <>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+                {pagedSubscriptions.map((subscription) => (
+                  <SubscriptionRow key={subscription.id} subscription={subscription} />
+                ))}
+              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
           )}
         </div>
       </div>

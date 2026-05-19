@@ -148,7 +148,7 @@ function Pagination({
 }) {
   if (totalPages <= 1) return null;
   return (
-    <nav className="flex items-center max-md:justify-center md:justify-end gap-2 pt-6" aria-label="결제내역 페이지 탐색">
+    <nav className="flex items-center max-md:justify-center md:justify-end lg:justify-end gap-2 pt-6" aria-label="결제내역 페이지 탐색">
       <button
         onClick={onPrev}
         disabled={page === 1}
@@ -492,7 +492,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
   return (
     <div className="min-h-screen bg-[var(--color-support-faq-surface)]">
-      <div className="mx-auto max-w-content max-md:px-4 md:px-0 pt-6 md:pt-10 pb-12">
+      <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-6 md:pt-10 lg:pt-10 pb-12">
         {/* Back + title */}
         <button
           type="button"
@@ -505,7 +505,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
         {/* Plan summary card */}
         <div className="flex items-stretch overflow-hidden rounded-[20px] bg-white">
-          <div className="relative w-[120px] shrink-0 self-stretch bg-[var(--color-background)] md:h-[180px] md:w-[180px] md:self-auto">
+          <div className="relative w-[120px] shrink-0 self-stretch bg-[var(--color-background)] md:h-[180px] lg:h-[180px] md:w-[180px] lg:w-[180px] md:self-auto lg:self-auto">
             <Image
               src={TIER_THUMBNAILS[theme.tier]}
               alt={`${subscription.plan.name} 이미지`}
@@ -514,16 +514,16 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-2 p-4 md:flex-row md:items-center md:gap-6 md:p-8">
+          <div className="flex flex-1 flex-col gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:p-8 lg:p-8">
             <div className="flex min-w-0 flex-1 flex-col">
               <span
-                className="mb-2 inline-flex w-fit items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white md:mb-3"
+                className="mb-2 inline-flex w-fit items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white md:mb-3 lg:mb-3"
                 style={{ background: theme.colorVar }}
               >
                 {theme.tierLabel}
               </span>
 
-              <Text variant="subtitle-18-b" mobileVariant="body-14-sb" className="mb-1 text-[var(--color-text)] md:mb-2">
+              <Text variant="subtitle-18-b" mobileVariant="body-14-sb" className="mb-1 text-[var(--color-text)] md:mb-2 lg:mb-2">
                 {subscription.plan.name}{isActive ? " 구독중" : ""}
               </Text>
 
@@ -544,7 +544,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                     <button
                       type="button"
                       onClick={handleTogglePause}
-                      className="max-md:text-body-13-m md:text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                      className="max-md:text-body-13-m md:text-body-14-m lg:text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
                     >
                       {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
                     </button>
@@ -597,7 +597,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
         </div>
 
         {/* Mobile-only action buttons (below card, full-width split) */}
-        <div className="md:hidden mt-4 grid gap-2" style={{ gridTemplateColumns: isActive ? "1fr 1fr" : "1fr" }}>
+        <div className="md:hidden lg:hidden mt-4 grid gap-2" style={{ gridTemplateColumns: isActive ? "1fr 1fr" : "1fr" }}>
           {isActive ? (
             <>
               <button
@@ -627,7 +627,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
         </div>
 
         {/* Payment history card — Figma Group 1000005367 */}
-        <div className="mt-8 rounded-[20px] bg-white max-md:p-5 md:p-8">
+        <div className="mt-8 rounded-[20px] bg-white max-md:p-5 md:p-8 lg:p-8">
           {/* Desktop table */}
           <div className="max-md:hidden">
             <div className={`${ROW_GRID} h-11 rounded-lg bg-[var(--color-surface-light)] pl-[30px] pr-2`}>
@@ -661,7 +661,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
           </div>
 
           {/* Mobile list */}
-          <div className="md:hidden">
+          <div className="md:hidden lg:hidden">
             {payments.length === 0 ? (
               <p className="py-12 text-center text-body-14-m text-[var(--color-text-label)]">
                 결제 내역이 없습니다.

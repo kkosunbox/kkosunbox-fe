@@ -243,7 +243,7 @@ export default function PasswordManagementSection() {
   );
 
   const mobileLayout = (
-    <div className="md:hidden min-h-screen bg-white px-6 pb-10 pt-4">
+    <div className="md:hidden lg:hidden min-h-screen bg-white px-6 pb-10 pt-4">
       <div className="mb-[26px] flex items-center gap-2 text-[var(--color-text)]">
         <Link
           href="/mypage/dog-profile"

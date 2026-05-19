@@ -89,7 +89,7 @@ export function DeliveryCard({ summary }: DeliveryCardProps) {
               <div className="text-[var(--color-text-secondary)] mb-4">
                 <Icon />
               </div>
-              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-md:mb-3 md:mb-2.5">
+              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-md:mb-3 md:mb-2.5 lg:mb-2.5">
                 {step.label}
               </Text>
               <button

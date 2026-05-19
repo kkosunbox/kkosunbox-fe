@@ -569,9 +569,9 @@ export default function ProfileManagementSection({
   );
 
   const mobileLayout = (
-    <div className="md:hidden max-md:bg-[var(--color-surface-warm)] md:bg-white ">
+    <div className="md:hidden lg:hidden max-md:bg-[var(--color-surface-warm)] md:bg-white lg:bg-white ">
       {/* Warm background top section */}
-      <div className="md:bg-[var(--color-surface-warm)] px-6 pt-6">
+      <div className="md:bg-[var(--color-surface-warm)] lg:bg-[var(--color-surface-warm)] px-6 pt-6">
         {/* Header */}
         <div className="flex items-center gap-1 text-[var(--color-text)]">
           <Link

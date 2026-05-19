@@ -118,9 +118,9 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="relative overflow-hidden max-md:h-[210px] md:h-[210px] md:[background:linear-gradient(268.21deg,rgba(173,206,255,0.5)_3.87%,rgba(254,234,215,0.5)_56.14%)]">
+      <div className="relative overflow-hidden max-md:h-[210px] md:h-[210px] lg:h-[210px] md:[background lg:[background:linear-gradient(268.21deg,rgba(173,206,255,0.5)_3.87%,rgba(254,234,215,0.5)_56.14%)]">
         <div
-          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden md:hidden"
+          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden md:hidden lg:hidden"
           aria-hidden
         >
           <Image
@@ -147,7 +147,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             priority
           />
         </div>
-        <div className="relative z-10 mx-auto flex h-full max-w-content flex-col items-center justify-center gap-4 px-6 md:px-0">
+        <div className="relative z-10 mx-auto flex h-full max-w-content flex-col items-center justify-center gap-4 px-6 md:px-0 lg:px-0">
           {/* 타이틀 이미지 */}
           <h1>
             <Image
@@ -157,7 +157,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
                   ? "기존 구독을 변경하려면 새로운 구독을 선택하세요."
                   : "원하는 구독 플랜을 선택해서 구독을 시작하세요."
               }
-              className="mx-auto w-auto max-w-[240px] md:max-w-[328px]"
+              className="mx-auto w-auto max-w-[240px] md:max-w-[328px] lg:max-w-[328px]"
               priority
             />
           </h1>
@@ -176,7 +176,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
       </div>
 
       {/* Plan cards */}
-      <div className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
+      <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 py-10">
         {selectedPlan ? (
           <div className="w-full">
             <PackageDetailView
@@ -193,7 +193,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             플랜 정보를 불러올 수 없습니다.
           </p>
         ) : (
-          <div className="flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
+          <div className="flex flex-col gap-4 md:grid lg:grid md:grid-cols-3 lg:grid-cols-3 md:gap-4 lg:gap-4">
             {sortedPlans.map((plan) => {
               const theme = packageThemeForPlan(plan);
               const color = theme.colorVar;

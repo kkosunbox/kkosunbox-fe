@@ -68,7 +68,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
               onClick={() => setPage(n)}
               aria-current={page === n ? "page" : undefined}
               className={[
-                "min-w-[16px] max-md:text-caption-11-r md:text-caption-12-r leading-none transition-colors",
+                "min-w-[16px] max-md:text-caption-11-r md:text-caption-12-r lg:text-caption-12-r leading-none transition-colors",
                 page === n
                   ? "font-semibold text-[var(--color-text)]"
                   : "text-[var(--color-text-secondary)]",

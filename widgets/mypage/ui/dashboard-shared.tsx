@@ -12,7 +12,7 @@ export function DashboardCard({
   return (
     <div
       className={[
-        "flex flex-col rounded-[20px] max-md:bg-white max-md:px-7 max-md:py-6 md:bg-[var(--color-surface-light)] md:min-h-[173px] md:px-8 md:py-6",
+        "flex flex-col rounded-[20px] max-md:bg-white max-md:px-7 max-md:py-6 md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:min-h-[173px] lg:min-h-[173px] md:px-8 lg:px-8 md:py-6 lg:py-6",
         className,
       ]
         .filter(Boolean)
@@ -37,7 +37,7 @@ export function SectionHeader({
   spacing?: "default" | "tight";
 }) {
   const linkCls =
-    "max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
+    "max-md:text-body-13-sb md:text-body-14-sb lg:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
 
   return (
     <div

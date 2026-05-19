@@ -34,8 +34,8 @@ function PencilIcon({ className }: { className?: string }) {
 
 function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
   return (
-    <div className="relative shrink-0 md:pl-7">
-      <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] md:h-[124px] md:w-[124px]">
+    <div className="relative shrink-0 md:pl-7 lg:pl-7">
+      <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] md:h-[124px] lg:h-[124px] md:w-[124px] lg:w-[124px]">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
           <img
@@ -50,16 +50,16 @@ function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
             className="absolute inset-0 flex items-center justify-center rounded-full bg-[var(--color-secondary)]"
             aria-hidden
           >
-            <DefaultPetIcon className="h-12 w-12 shrink-0 md:h-16 md:w-16" />
+            <DefaultPetIcon className="h-12 w-12 shrink-0 md:h-16 lg:h-16 md:w-16 lg:w-16" />
           </div>
         )}
       </div>
       <Link
         href="/mypage/dog-profile"
         aria-label="프로필 사진 변경"
-        className="absolute bottom-0 right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-secondary)] transition-opacity hover:opacity-90 md:h-[40px] md:w-[40px]"
+        className="absolute bottom-0 right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-secondary)] transition-opacity hover:opacity-90 md:h-[40px] lg:h-[40px] md:w-[40px] lg:w-[40px]"
       >
-        <PencilIcon className="h-5 w-5 md:h-8 md:w-8" />
+        <PencilIcon className="h-5 w-5 md:h-8 lg:h-8 md:w-8 lg:w-8" />
       </Link>
     </div>
   );
@@ -211,20 +211,20 @@ export function ProfileSection({
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
-    <section className="pt-6 md:pt-[64px]">
-      <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0">
-        <div className="relative rounded-[20px] bg-white max-md:px-7 max-md:py-7 md:px-7 md:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
+    <section className="pt-6 md:pt-[64px] lg:pt-[64px]">
+      <div className="mx-auto w-full max-w-content max-md:px-6 md:px-0 lg:px-0">
+        <div className="relative rounded-[20px] bg-white max-md:px-7 max-md:py-7 md:px-7 lg:px-7 md:py-[26px] lg:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
           <Link
             href="/mypage/dog-profile"
-            className="md:hidden absolute top-4 right-4 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="md:hidden lg:hidden absolute top-4 right-4 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             <span>정보변경</span>
             <ChevronRightIcon />
           </Link>
-          <div className="flex flex-col gap-4 md:flex-row md:items-stretch md:gap-0">
+          <div className="flex flex-col gap-4 md:flex-row lg:flex-row md:items-stretch lg:items-stretch md:gap-0 lg:gap-0">
 
             {/* 프로필 정보 (좌) */}
-            <div className="relative flex min-w-0 flex-1 items-start gap-5 md:min-h-0 md:items-center md:gap-8 md:self-stretch">
+            <div className="relative flex min-w-0 flex-1 items-start gap-5 md:min-h-0 lg:min-h-0 md:items-center lg:items-center md:gap-8 lg:gap-8 md:self-stretch lg:self-stretch">
               <Link
                 href="/mypage/dog-profile"
                 className="max-md:hidden absolute top-0 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
@@ -233,7 +233,7 @@ export function ProfileSection({
                 <ChevronRightIcon />
               </Link>
               <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
-              <div className="min-w-0 flex-1 md:pr-[84px]">
+              <div className="min-w-0 flex-1 md:pr-[84px] lg:pr-[84px]">
                 <div className="flex items-start gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <Text
@@ -278,7 +278,7 @@ export function ProfileSection({
                 </div>
                 {hasProfile ? (
                   <>
-                    <div className="mt-3 flex items-center max-[374px]:gap-1 min-[375px]:gap-3 md:mt-[10px]">
+                    <div className="mt-3 flex items-center max-[374px]:gap-1 min-[375px]:gap-3 md:mt-[10px] lg:mt-[10px]">
                       <Text
                         variant="body-16-m"
                         mobileVariant="body-13-r"
@@ -316,7 +316,7 @@ export function ProfileSection({
                       variant="body-16-m"
                       mobileVariant="body-13-r"
                       className={[
-                        "mt-1 line-clamp-2 leading-[140%] md:mt-1",
+                        "mt-1 line-clamp-2 leading-[140%] md:mt-1 lg:mt-1",
                         specialNotes ? "text-[var(--color-text)]" : "text-[var(--color-profile-meta-empty)]",
                       ].join(" ")}
                     >
@@ -325,7 +325,7 @@ export function ProfileSection({
                   </>
                 ) : (
                   <>
-                    <div className="mt-2.5 flex items-center gap-3 text-[var(--color-text-placeholder)] md:mt-[10px]">
+                    <div className="mt-2.5 flex items-center gap-3 text-[var(--color-text-placeholder)] md:mt-[10px] lg:mt-[10px]">
                       <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
                         생년월일
                       </Text>
@@ -350,13 +350,13 @@ export function ProfileSection({
             <div className="max-md:hidden mx-[20px] w-px self-stretch bg-[var(--color-text-muted)]" />
 
             {/* 체크리스트 패널 (데스크톱) */}
-            <div className="max-md:hidden md:w-[318px] md:flex-none md:self-center">
+            <div className="max-md:hidden md:w-[318px] lg:w-[318px] md:flex-none lg:flex-none md:self-center lg:self-center">
               <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} />
             </div>
           </div>
 
           {/* 체크리스트 패널 (모바일) */}
-          <div className="md:hidden">
+          <div className="md:hidden lg:hidden">
             <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} mobile />
           </div>
         </div>

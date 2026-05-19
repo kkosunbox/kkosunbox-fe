@@ -16,7 +16,7 @@ function PaymentRow({ label, children }: { label: string; children: ReactNode })
     <div className="flex items-center gap-4">
       <Text
         variant="body-13-r"
-        className="w-[64px] shrink-0 font-medium text-[var(--color-text-secondary)] md:w-[88px]"
+        className="w-[64px] shrink-0 font-medium text-[var(--color-text-secondary)] md:w-[88px] lg:w-[88px]"
       >
         {label}
       </Text>

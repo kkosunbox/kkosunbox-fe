@@ -309,7 +309,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
     <div className="min-h-screen bg-[var(--color-background)]">
 
       {/* ━━━━━━━━ 모바일 레이아웃 ━━━━━━━━ */}
-      <div className="md:hidden pb-12">
+      <div className="md:hidden lg:hidden pb-12">
         <div className="flex items-center gap-2 px-6 py-5">
           <Link
             href="/mypage"
@@ -386,7 +386,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
 
       {/* ━━━━━━━━ 데스크톱 레이아웃 ━━━━━━━━ */}
       <div className="max-md:hidden py-10">
-        <div className="mx-auto max-w-content px-8 md:px-0">
+        <div className="mx-auto max-w-content px-8 md:px-0 lg:px-0">
           <div className="rounded-2xl bg-white px-8 py-8">
             <div className="mb-6 flex items-center gap-2">
               <Link

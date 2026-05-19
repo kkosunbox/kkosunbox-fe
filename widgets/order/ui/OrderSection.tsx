@@ -180,7 +180,7 @@ function SectionCard({
         aria-controls={contentId}
         className="w-full flex items-center justify-between py-7 text-left"
       >
-        <span className="max-md:text-subtitle-16-b md:text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
+        <span className="max-md:text-subtitle-16-b md:text-subtitle-18-b lg:text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
         <ChevronIcon open={open} />
       </button>
       <CollapsiblePanel id={contentId} open={open} innerClassName="pb-7">
@@ -514,7 +514,7 @@ export default function OrderSection({
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
-        <div className="rounded-[20px] bg-white px-7 max-[585px]:pt-3 min-[586px]:max-md:pt-5 max-md:pb-7 md:py-7">
+        <div className="rounded-[20px] bg-white px-7 max-[585px]:pt-3 min-[586px]:max-md:pt-5 max-md:pb-7 md:py-7 lg:py-7">
           <div className="max-[585px]:mx-auto max-[585px]:flex max-[585px]:w-full max-[585px]:max-w-[170px] max-[585px]:flex-col max-[585px]:items-center max-[585px]:gap-5 min-[586px]:flex min-[586px]:items-center min-[586px]:gap-6">
             <div className="max-[585px]:w-[132px] max-[585px]:h-[132px] min-[586px]:w-[117px] min-[586px]:h-[117px] shrink-0 flex items-center justify-center rounded-[16px] overflow-hidden">
               <Image
@@ -609,7 +609,7 @@ export default function OrderSection({
           /* ── 새 배송지 입력 폼 ── */
           <div className="flex flex-col gap-4">
             {/* 받는분 / 휴대폰 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               <FormRow label="받는분">
                 <input
                   value={newAddr.receiverName}
@@ -942,7 +942,7 @@ export default function OrderSection({
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
         strategy="afterInteractive"
       />
-      <div className="flex h-[128px] justify-center overflow-hidden md:hidden">
+      <div className="flex h-[128px] justify-center overflow-hidden md:hidden lg:hidden">
         <Image
           src={orderMobileHeroImage}
           alt="주문을 완료해주세요! 입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요."
@@ -953,7 +953,7 @@ export default function OrderSection({
       </div>
 
       <div
-        className="relative overflow-hidden max-md:hidden md:h-[160px] md:py-0 flex items-center justify-center"
+        className="relative overflow-hidden max-md:hidden md:h-[160px] lg:h-[160px] md:py-0 lg:py-0 flex items-center justify-center"
         style={{ background: "var(--gradient-checklist-hero)" }}
       >
         <Image
@@ -986,9 +986,9 @@ export default function OrderSection({
         </div>
       </div>
 
-      <div className="bg-white md:overflow-x-auto">
+      <div className="bg-white md:overflow-x-auto lg:overflow-x-auto">
         <div
-          className="mx-auto px-4 md:px-0 py-6 md:py-8 md:min-w-[900px]"
+          className="mx-auto px-4 md:px-0 lg:px-0 py-6 md:py-8 lg:py-8 md:min-w-[900px] lg:min-w-[900px]"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
           <div className="max-md:hidden mb-4">
@@ -1018,12 +1018,12 @@ export default function OrderSection({
             </div>
           </div>
 
-          <div className="max-md:hidden md:grid md:grid-cols-[1fr_327px] gap-4 items-start">
+          <div className="max-md:hidden md:grid lg:grid md:grid-cols-[1fr_327px] lg:grid-cols-[1fr_327px] gap-4 items-start">
             {leftSections}
             {rightColumn}
           </div>
 
-          <div className="max-md:flex max-md:flex-col md:hidden gap-4">
+          <div className="max-md:flex max-md:flex-col md:hidden lg:hidden gap-4">
             {leftSections}
             {rightColumn}
           </div>

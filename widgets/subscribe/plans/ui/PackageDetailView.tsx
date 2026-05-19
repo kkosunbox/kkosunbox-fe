@@ -227,7 +227,7 @@ export default function PackageDetailView({
   return (
     <>
       {/* ══ MOBILE LAYOUT (lg 미만) ══════════════════════════════════ */}
-      <div className="lg:hidden flex flex-col gap-4">
+      <div className="md:hidden lg:hidden flex flex-col gap-4">
 
         {/* 상단: 패키지 정보 카드 — 모바일 탭 선택 시 숨김 (탭은 SubscribePlansSection에서 렌더) */}
         <div
@@ -398,7 +398,7 @@ export default function PackageDetailView({
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white">
 
               {/* Tabs */}
-              <div className="flex gap-0.5 px-6 pt-8 md:pt-12">
+              <div className="flex gap-0.5 px-6 pt-8 md:pt-12 lg:pt-12">
                 {COMPARE_PACKAGES.map((p) => {
                   const isActive = selectedTier === p.tier;
                   const isHoverActive = !isActive && hoveredTier === p.tier;

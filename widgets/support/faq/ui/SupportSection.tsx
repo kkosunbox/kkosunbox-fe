@@ -259,11 +259,11 @@ export default function SupportSection({
     <div
       className={
         fillViewport
-          ? "flex min-h-full flex-1 flex-col max-md:py-6 md:py-10"
-          : "bg-white max-md:py-6 md:py-10"
+          ? "flex min-h-full flex-1 flex-col max-md:py-6 md:py-10 lg:py-10"
+          : "bg-white max-md:py-6 md:py-10 lg:py-10"
       }
     >
-      <div className="mx-auto flex w-full max-w-[1013px] flex-1 flex-col gap-4 md:gap-6 px-4 max-md:px-4 md:px-0">
+      <div className="mx-auto flex w-full max-w-[1013px] flex-1 flex-col gap-4 md:gap-6 lg:gap-6 px-4 max-md:px-4 md:px-0 lg:px-0">
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
         {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image
@@ -289,28 +289,28 @@ export default function SupportSection({
           <>
             <ScrollReveal variant="fade-up">
               <section
-                className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row md:items-center md:justify-between md:gap-6 md:px-11 md:py-0"
+                className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row lg:flex-row md:items-center lg:items-center md:justify-between lg:justify-between md:gap-6 lg:gap-6 md:px-11 lg:px-11 md:py-0 lg:py-0"
                 style={{ background: "var(--gradient-support-banner)" }}
                 aria-label="1:1 문의 안내"
               >
-                <div className="flex w-full flex-col gap-[11px] max-md:items-center max-md:text-center md:max-w-[330px] md:items-start md:text-left">
+                <div className="flex w-full flex-col gap-[11px] max-md:items-center max-md:text-center md:max-w-[330px] lg:max-w-[330px] md:items-start lg:items-start md:text-left lg:text-left">
                   <Image
                     src={FaqQuestion}
                     alt="꼬순박스에 궁금한 점이 있으신가요?"
                     width={FaqQuestion.width}
                     height={FaqQuestion.height}
                     sizes="(max-width: 767px) 252px, 320px"
-                    className="h-auto max-md:w-[252px] md:w-[320px]"
+                    className="h-auto max-md:w-[252px] md:w-[320px] lg:w-[320px]"
                   />
-                  <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left">
+                  <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left lg:text-left">
                     1:1 문의를 남겨주시면 담당자가 확인 후
-                    <br className="md:hidden" />
+                    <br className="md:hidden lg:hidden" />
                     {" "}빠르게 답변해 드립니다.
                   </p>
                 </div>
                 <Link
                   href="/inquiry"
-                  className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:mx-auto max-md:w-full max-md:max-w-[410px] md:w-[200px]"
+                  className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:mx-auto max-md:w-full max-md:max-w-[410px] md:w-[200px] lg:w-[200px]"
                 >
                   문의하기
                 </Link>
@@ -318,7 +318,7 @@ export default function SupportSection({
             </ScrollReveal>
 
             {/* ── 모바일 전용: 내 문의내역 (두 섹션 사이) ── */}
-            <ScrollReveal variant="fade-in" delay={200} className="flex justify-center md:hidden">
+            <ScrollReveal variant="fade-in" delay={200} className="flex justify-center md:hidden lg:hidden">
               <Link
                 href="/support/history"
                 className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
@@ -332,13 +332,13 @@ export default function SupportSection({
         {/* ── FAQ 패널 (#FFF7EF) ── */}
         <ScrollReveal variant="fade-up" delay={150}>
           <section
-            className={`rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] md:pb-7 md:pt-6${fillViewport ? " flex min-h-0 flex-1 flex-col" : ""}`}
+            className={`rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-6 lg:pt-6${fillViewport ? " flex min-h-0 flex-1 flex-col" : ""}`}
             aria-label="자주 묻는 질문"
           >
           {/* 검색 + 내 문의내역 */}
-          <div className="mb-6 grid w-full grid-cols-1 gap-3 md:mb-8 md:grid-cols-[1fr_auto_1fr] md:items-center">
+          <div className="mb-6 grid w-full grid-cols-1 gap-3 md:mb-8 lg:mb-8 md:grid-cols-[1fr_auto_1fr] lg:grid-cols-[1fr_auto_1fr] md:items-center lg:items-center">
             <div aria-hidden="true" className="max-md:hidden" />
-            <label className="mx-auto flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-full bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:mx-0 md:w-[320px] md:shrink-0">
+            <label className="mx-auto flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-full bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:mx-0 lg:mx-0 md:w-[320px] lg:w-[320px] md:shrink-0 lg:shrink-0">
               <span className="sr-only">질문 검색</span>
               <SearchIcon />
               <input
@@ -360,12 +360,12 @@ export default function SupportSection({
           </div>
 
           {currentItems.length > 0 ? (
-            <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-3">
               {currentItems.map((item) => (
                 <li
                   key={item.question}
                   onClick={() => setSelectedFaq(item)}
-                  className="flex cursor-pointer flex-col gap-3 rounded-[20px] bg-white p-4 transition-shadow hover:shadow-md md:min-h-[208px] md:p-4"
+                  className="flex cursor-pointer flex-col gap-3 rounded-[20px] bg-white p-4 transition-shadow hover:shadow-md md:min-h-[208px] lg:min-h-[208px] md:p-4 lg:p-4"
                 >
                   <PawCircleIcon />
                   <div className="flex flex-col gap-2">

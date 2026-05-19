@@ -79,7 +79,7 @@ export default function FooterSection() {
     <footer className="bg-[var(--color-footer-bg)] text-[var(--color-footer-text)]" aria-label="사이트 푸터">
 
       {/* ── 모바일 레이아웃 ── */}
-      <div className="max-md:flex max-md:flex-col md:hidden px-6 py-8">
+      <div className="max-md:flex max-md:flex-col md:hidden lg:hidden px-6 py-8">
         <div className="space-y-1 text-center">
           {COMPANY_REGISTRATION_MOBILE.map((line) => (
             <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">

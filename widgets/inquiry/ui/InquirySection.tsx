@@ -183,7 +183,7 @@ export default function InquirySection() {
     <div className="bg-white pb-16 pb-12">
       {/* 히어로 — Figma 215px, gradient */}
       <section
-        className="flex flex-col items-center min-h-[182px] md:min-h-[215px] px-4 pb-8 max-md:pb-6 max-md:pt-12 md:pb-10 md:pt-[42px]"
+        className="flex flex-col items-center min-h-[182px] md:min-h-[215px] lg:min-h-[215px] px-4 pb-8 max-md:pb-6 max-md:pt-12 md:pb-10 lg:pb-10 md:pt-[42px] lg:pt-[42px]"
         style={{ background: "var(--gradient-inquiry-hero)" }}
         aria-label="문의 페이지 소개"
       >
@@ -193,7 +193,7 @@ export default function InquirySection() {
           width={97}
           height={38}
           sizes="97px"
-          className="max-md:block max-md:w-[97px] md:hidden"
+          className="max-md:block max-md:w-[97px] md:hidden lg:hidden"
           priority
         />
         <Image
@@ -201,11 +201,11 @@ export default function InquirySection() {
           alt="문의하기"
           width={110}
           height={40}
-          className="max-md:hidden md:block md:h-auto md:w-[110px]"
+          className="max-md:hidden md:block lg:block md:h-auto lg:h-auto md:w-[110px] lg:w-[110px]"
           priority
         />
         <p
-          className="mt-4 md:mt-8 max-w-[345px] text-center text-body-16-r leading-5 tracking-[-0.02em] text-[var(--color-text)]"
+          className="mt-4 md:mt-8 lg:mt-8 max-w-[345px] text-center text-body-16-r leading-5 tracking-[-0.02em] text-[var(--color-text)]"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}
@@ -215,10 +215,10 @@ export default function InquirySection() {
       </section>
 
       {/* 카드 — Figma 1013×632, shadow, 카드가 히어로와 살짝 겹침 */}
-      <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-0">
+      <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-0 lg:px-0">
         <form
           onSubmit={handleSubmit}
-          className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] md:px-8 md:py-12"
+          className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] lg:-mt-[50px] md:px-8 lg:px-8 md:py-12 lg:py-12"
         >
           <div className="mx-auto flex w-full max-w-[718px] flex-col gap-6">
             {/* 제목 */}
@@ -262,7 +262,7 @@ export default function InquirySection() {
             </div>
 
             {/* 첨부파일 + 연락처 */}
-            <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 md:gap-x-[26px]">
+            <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 lg:grid-cols-2 md:gap-x-[26px] lg:gap-x-[26px]">
               <div className="flex min-w-0 flex-col gap-2">
                 <span id="file-label" className={labelClass}>
                   첨부파일

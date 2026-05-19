@@ -6,7 +6,7 @@ const STATS = [
   {
     icon:
       <svg
-        className="max-md:size-6 md:size-8 shrink-0"
+        className="max-md:size-6 md:size-8 lg:size-8 shrink-0"
         width="32"
         height="32"
         viewBox="0 0 32 32"
@@ -20,7 +20,7 @@ const STATS = [
   {
     icon: (
       <svg
-        className="max-md:size-6 md:size-7 shrink-0"
+        className="max-md:size-6 md:size-7 lg:size-7 shrink-0"
         width="28"
         height="28"
         viewBox="0 0 28 28"
@@ -37,7 +37,7 @@ const STATS = [
   {
     icon: (
       <svg
-        className="max-md:size-6 md:size-7 shrink-0"
+        className="max-md:size-6 md:size-7 lg:size-7 shrink-0"
         width="28"
         height="28"
         viewBox="0 0 28 28"
@@ -55,13 +55,13 @@ const STATS = [
 
 export default function StatsBar() {
   return (
-    <section className="bg-[var(--color-footer-bg)] max-md:py-3 md:py-3">
-      <div className="mx-auto flex max-w-content items-center justify-between max-md:gap-3 md:gap-0 px-4 md:px-5 max-md:max-w-[510px]">
+    <section className="bg-[var(--color-footer-bg)] max-md:py-3 md:py-3 lg:py-3">
+      <div className="mx-auto flex max-w-content items-center justify-between max-md:gap-3 md:gap-0 lg:gap-0 px-4 md:px-5 lg:px-5 max-md:max-w-[510px]">
         {STATS.map((item, i) => (
           <ScrollReveal key={item.label} variant="fade-up" delay={i * 150} duration={500}>
-            <div className="flex items-center max-md:gap-1 md:gap-[5px]">
+            <div className="flex items-center max-md:gap-1 md:gap-[5px] lg:gap-[5px]">
               <span className="text-[var(--color-secondary)]">{item.icon}</span>
-              <span className="max-[369px]:text-body-11-sb min-[370px]:max-md:text-body-13-sb md:text-body-16-sb text-[var(--color-secondary)] tracking-[0.02em]">
+              <span className="max-[369px]:text-body-11-sb min-[370px]:max-md:text-body-13-sb md:text-body-16-sb lg:text-body-16-sb text-[var(--color-secondary)] tracking-[0.02em]">
                 {item.label}
               </span>
             </div>

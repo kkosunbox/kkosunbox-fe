@@ -30,9 +30,9 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative overflow-hidden h-[585px] md:h-[537px]">
-      {/* 모바일 배경 이미지 */}
-      <div className="md:hidden absolute inset-0 flex justify-center overflow-hidden">
+    <section className="relative overflow-hidden max-lg:h-[585px] lg:h-[537px]">
+      {/* 모바일/태블릿 배경 이미지 */}
+      <div className="lg:hidden absolute inset-0 flex justify-center overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={heroMainBackgroundMobile.src}
@@ -47,18 +47,18 @@ export default function HeroSection() {
         src={heroMainBackground}
         alt="꼬순박스 히어로 배경"
         fill
-        className="object-cover object-bottom max-md:hidden"
+        className="object-cover object-bottom max-lg:hidden"
         priority
       />
 
       {/* 콘텐츠 오버레이 */}
-      <div className="relative z-10 mx-auto max-w-content h-full flex max-md:items-start md:items-center max-md:justify-center max-md:pt-[43px] px-5 md:px-0">
-        <div className="flex flex-col max-md:items-center md:items-start justify-center md:pl-20">
+      <div className="relative z-10 mx-auto max-w-content h-full flex max-lg:items-start lg:items-center max-lg:justify-center max-lg:pt-[43px] max-lg:px-5 lg:px-0">
+        <div className="flex flex-col max-lg:items-center lg:items-start justify-center lg:pl-20">
           <ScrollReveal variant="fade-up" delay={100}>
             <Image
               src={logoMain}
               alt="꼬순박스 로고"
-              className="w-full max-md:max-w-[158px] md:max-w-[114px] max-md:max-h-[54px] md:max-h-[36px] mb-3 md:mb-5"
+              className="w-full max-lg:max-w-[158px] lg:max-w-[114px] max-lg:max-h-[54px] lg:max-h-[36px] max-lg:mb-3 lg:mb-5"
             />
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={250}>
@@ -66,26 +66,25 @@ export default function HeroSection() {
             <Image
               src={heroCatchPhrase}
               alt="강아지가 먼저 찾는 간식"
-              className="md:max-w-[290px] h-auto mb-2 md:mb-4 max-md:hidden"
+              className="lg:max-w-[290px] h-auto max-lg:mb-2 lg:mb-4 max-lg:hidden"
             />
-            {/* 모바일 캐치프레이즈 */}
+            {/* 모바일/태블릿 캐치프레이즈 */}
             <Image
               src={heroCatchPhraseMobile}
               alt="강아지가 먼저 찾는 간식"
-              className="w-[212px] h-auto mb-3 md:hidden"
+              className="w-[212px] h-auto mb-3 lg:hidden"
             />
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={400}>
             <Text
               variant="subtitle-20-m"
-              mobileVariant="body-14-m"
-              className="text-hero-subtext max-md:text-center md:text-left md:text-[18px] md:leading-[21px] md:font-medium md:whitespace-nowrap mb-1 md:mb-3"
+              className="text-hero-subtext max-lg:text-body-14-m max-lg:text-center lg:text-left lg:text-[18px] lg:leading-[21px] lg:font-medium lg:whitespace-nowrap max-lg:mb-1 lg:mb-3"
             >
               먹는 순간 표정이 달라지는 휴먼그레이드 수제 간식 구독
             </Text>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={450}>
-            <p className="text-[var(--color-hero-tagline)] max-md:text-center max-md:text-body-13-r md:text-left md:text-body-14-m md:leading-[17px] md:whitespace-nowrap mb-6 md:mb-[52px]">
+            <p className="text-[var(--color-hero-tagline)] max-lg:text-center max-lg:text-body-13-r lg:text-left lg:text-body-14-m lg:leading-[17px] lg:whitespace-nowrap max-lg:mb-6 lg:mb-[52px]">
               #재구매율 91%, #100% 국내산 수제, #알러지 맞춤 추천
             </p>
           </ScrollReveal>
@@ -94,7 +93,7 @@ export default function HeroSection() {
               onClick={handleChecklistCtaClick}
               variant="primary"
               size="lg"
-              className="bg-primary max-md:w-[230px] md:w-[282px] max-md:h-[40px] max-md:px-5 max-md:text-[13px] max-md:leading-[30px] md:text-[16px] md:leading-[30px] whitespace-nowrap"
+              className="bg-primary max-lg:w-[230px] lg:w-[282px] max-lg:h-[40px] max-lg:px-5 max-lg:text-[13px] lg:text-[16px] leading-[30px] whitespace-nowrap"
             >
               10초 진단하고 우리 아이 맞춤 추천 받기
             </Button>

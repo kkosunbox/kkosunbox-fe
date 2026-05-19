@@ -40,36 +40,36 @@ const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
 export default function HowItWorksSection() {
   return (
     <section
-      className="bg-[var(--color-surface-light)] py-[60px] md:py-[90px] text-center"
+      className="bg-[var(--color-surface-light)] py-[60px] md:py-[90px] lg:py-[90px] text-center"
       aria-labelledby="how-it-works-heading"
     >
-      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
-        <h2 id="how-it-works-heading" className="mb-6 md:mb-8 flex justify-center">
+      <div className="mx-auto max-w-content max-md:px-8 md:px-0 lg:px-0">
+        <h2 id="how-it-works-heading" className="mb-6 md:mb-8 lg:mb-8 flex justify-center">
           <Image
             src={logoMain2x}
             alt="꼬순박스"
             width={LOGO_WIDTH}
             height={LOGO_HEIGHT}
-            className="h-auto w-[140px] md:w-[208px] max-w-full"
+            className="h-auto w-[140px] md:w-[208px] lg:w-[208px] max-w-full"
           />
         </h2>
         <Text
           variant="section-intro-griun"
           mobileVariant="section-intro-griun-sm"
-          className="mb-10 md:mb-12 text-[var(--color-text)]"
+          className="mb-10 md:mb-12 lg:mb-12 text-[var(--color-text)]"
         >
           꼬순박스의 배송 방법과 급여 방법을 알려드립니다.
         </Text>
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 lg:gap-x-14 lg:gap-y-0">
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 lg:grid-cols-4 md:gap-x-14 lg:gap-x-14 md:gap-y-0 lg:gap-y-0">
           {STEPS.map((step) => (
-            <li key={step.text} className="flex flex-col items-center gap-5 md:gap-9">
-              <div className="flex min-h-[60px] md:min-h-[76px] w-full items-center justify-center" aria-hidden>
+            <li key={step.text} className="flex flex-col items-center gap-5 md:gap-9 lg:gap-9">
+              <div className="flex min-h-[60px] md:min-h-[76px] lg:min-h-[76px] w-full items-center justify-center" aria-hidden>
                 <Image
                   src={step.image}
                   alt=""
                   width={step.iconWidth}
                   height={step.iconHeight}
-                  className="h-auto max-h-[60px] md:max-h-[76px] w-auto max-w-full object-contain"
+                  className="h-auto max-h-[60px] md:max-h-[76px] lg:max-h-[76px] w-auto max-w-full object-contain"
                 />
               </div>
               <Text

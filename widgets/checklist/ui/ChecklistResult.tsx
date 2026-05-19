@@ -91,7 +91,7 @@ function ResultPlanCard({ plan, isRecommended, onInfoClick }: ResultPlanCardProp
           <Image
             src={stamp}
             alt="BEST CHOICE 추천 스탬프"
-            className="pointer-events-none absolute right-3 top-12 h-[120px] w-[120px] object-contain md:right-4 md:top-14 md:h-[140px] md:w-[140px]"
+            className="pointer-events-none absolute right-3 top-12 h-[120px] w-[120px] object-contain md:right-4 lg:right-4 md:top-14 lg:top-14 md:h-[140px] lg:h-[140px] md:w-[140px] lg:w-[140px]"
           />
         )}
       </div>
@@ -103,7 +103,7 @@ function ResultPlanCard({ plan, isRecommended, onInfoClick }: ResultPlanCardProp
               src={doubleTwinkle}
               alt=""
               aria-hidden
-              className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] md:w-[40px]"
+              className="absolute -left-5 -top-8 h-[36px] w-[36px] object-contain md:h-[40px] lg:h-[40px] md:w-[40px] lg:w-[40px]"
             />
           )}
           <h2 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
@@ -244,25 +244,25 @@ export default function ChecklistResult({
     : null;
 
   return (
-    <section className="min-h-[calc(100vh-54px)] bg-white max-md:py-9 md:py-[64px]">
-      <div className="mx-auto w-full max-md:max-w-[640px] md:max-w-[1013px] px-4 md:px-0">
+    <section className="min-h-[calc(100vh-54px)] bg-white max-md:py-9 md:py-[64px] lg:py-[64px]">
+      <div className="mx-auto w-full max-md:max-w-[640px] md:max-w-[1013px] lg:max-w-[1013px] px-4 md:px-0 lg:px-0">
 
         {/* 완료 타이틀 */}
-        <div className="max-md:mb-9 flex justify-center md:mb-11">
+        <div className="max-md:mb-9 flex justify-center md:mb-11 lg:mb-11">
           <h1 className="m-0">
             <Image
               src={checklistDoneTitle}
               alt="체크리스트 분석 완료!"
-              className="mx-auto h-auto max-md:max-w-[198px] md:w-auto max-w-[231px]"
+              className="mx-auto h-auto max-md:max-w-[198px] md:w-auto lg:w-auto max-w-[231px]"
               priority
             />
           </h1>
         </div>
 
         {/* 추천 배너 */}
-        <div className="relative mb-6 md:mb-8">
+        <div className="relative mb-6 md:mb-8 lg:mb-8">
           {/* 모바일: 아바타가 박스 위로 돌출 */}
-          <div className="relative z-10 -mb-[32px] flex justify-center md:hidden">
+          <div className="relative z-10 -mb-[32px] flex justify-center md:hidden lg:hidden">
             <div
               className="flex h-[64px] w-[64px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)]"
               style={{ background: "var(--color-secondary)" }}
@@ -277,7 +277,7 @@ export default function ChecklistResult({
           </div>
 
           <div
-            className="relative flex overflow-hidden rounded-[20px] max-md:flex-col max-md:items-center max-md:px-5 max-md:pb-5 max-md:pt-[44px] max-md:text-center md:h-[126px] md:flex-row md:items-center md:gap-6 md:px-8"
+            className="relative flex overflow-hidden rounded-[20px] max-md:flex-col max-md:items-center max-md:px-5 max-md:pb-5 max-md:pt-[44px] max-md:text-center md:h-[126px] lg:h-[126px] md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8"
             style={{ background: "var(--gradient-checklist-result)" }}
           >
             {/* 데스크톱: 아바타 인라인 */}
@@ -297,7 +297,7 @@ export default function ChecklistResult({
             <div className="flex flex-col gap-2 max-md:items-center">
               {/* 모바일: 추천 범위 뱃지들 (추천 결과가 있을 때만 표시) */}
               {hasApiRecommendation ? (
-                <div className="flex items-center gap-1.5 md:hidden">
+                <div className="flex items-center gap-1.5 md:hidden lg:hidden">
                   {recommendedBadgeTiers.map((pkg) => (
                     <span
                       key={pkg.id}
@@ -327,7 +327,7 @@ export default function ChecklistResult({
 
               {/* 모바일 문구 */}
               <p
-                className="text-body-13-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] md:hidden"
+                className="text-body-13-r leading-[1.6] tracking-[-0.02em] text-[var(--color-text)] md:hidden lg:hidden"
                 style={{
                   fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
                 }}
@@ -368,7 +368,7 @@ export default function ChecklistResult({
               src={checklistDoneTitlePawsMobile}
               alt=""
               aria-hidden
-              className="pointer-events-none absolute bottom-7 right-5 h-[60px] w-auto opacity-40 md:hidden"
+              className="pointer-events-none absolute bottom-7 right-5 h-[60px] w-auto opacity-40 md:hidden lg:hidden"
             />
           </div>
         </div>
@@ -422,7 +422,7 @@ export default function ChecklistResult({
             </div>
 
             {/* ══ Mobile (<md): i 버튼 → MobileTierDetailPanel 인라인 토글 ══ */}
-            <div className="flex flex-col gap-4 md:hidden">
+            <div className="flex flex-col gap-4 md:hidden lg:hidden">
               {sortedPlans.map((plan) => {
                 const theme = packageThemeForPlan(plan);
                 const pkgId = theme.tier.toLowerCase() as RecommendedTier;

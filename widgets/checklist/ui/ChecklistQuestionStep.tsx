@@ -23,7 +23,7 @@ function ProgressBar({
 }) {
   return (
     <div
-      className="flex gap-1 max-md:min-w-0 max-md:flex-1 md:flex-none md:gap-2"
+      className="flex gap-1 max-md:min-w-0 max-md:flex-1 md:flex-none lg:flex-none md:gap-2 lg:gap-2"
       aria-label={`${current} / ${total} 단계`}
     >
       {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
@@ -34,7 +34,7 @@ function ProgressBar({
             key={n}
             type="button"
             onClick={() => onStepClick(n)}
-            className="h-[5px] rounded-full transition-colors duration-300 hover:opacity-70 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
+            className="h-[5px] rounded-full transition-colors duration-300 hover:opacity-70 max-md:min-w-0 max-md:flex-1 md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none"
             style={{
               background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)",
               cursor: "pointer",
@@ -44,7 +44,7 @@ function ProgressBar({
         ) : (
           <div
             key={n}
-            className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] md:flex-none"
+            className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none"
             style={{ background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)" }}
           />
         );
@@ -67,11 +67,11 @@ function OptionButton({
       type="button"
       onClick={onClick}
       className={[
-        "flex w-full items-center justify-center border-2 max-md:text-body-14-m md:text-body-15-m transition-colors md:h-[52px] md:rounded-full",
+        "flex w-full items-center justify-center border-2 max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m transition-colors md:h-[52px] lg:h-[52px] md:rounded-full lg:rounded-full",
         "max-md:min-h-[52px] max-md:rounded-[14px] max-md:px-4 max-md:py-3.5",
         selected
-          ? "max-md:border-[var(--color-accent)] max-md:bg-[var(--color-accent-soft)] max-md:text-[var(--color-text)] md:border-[var(--color-accent)] md:bg-white md:text-[var(--color-accent)]"
-          : "max-md:border-transparent max-md:bg-[var(--color-surface-light)] max-md:text-[var(--color-text)] md:border-transparent md:bg-[var(--color-surface-light)] md:text-[var(--color-text)]",
+          ? "max-md:border-[var(--color-accent)] max-md:bg-[var(--color-accent-soft)] max-md:text-[var(--color-text)] md:border-[var(--color-accent)] lg:border-[var(--color-accent)] md:bg-white lg:bg-white md:text-[var(--color-accent)] lg:text-[var(--color-accent)]"
+          : "max-md:border-transparent max-md:bg-[var(--color-surface-light)] max-md:text-[var(--color-text)] md:border-transparent lg:border-transparent md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:text-[var(--color-text)] lg:text-[var(--color-text)]",
       ].join(" ")}
     >
       {label}
@@ -111,7 +111,7 @@ export default function ChecklistQuestionStep({
 
   return (
     <div className="flex flex-col">
-      <div className="mb-4 flex items-center md:hidden -ml-2">
+      <div className="mb-4 flex items-center md:hidden lg:hidden -ml-2">
         <button
           type="button"
           onClick={onBack}
@@ -131,15 +131,15 @@ export default function ChecklistQuestionStep({
         <ProgressBar current={stepIndex} total={totalSteps} maxVisited={maxVisitedStep} onStepClick={onStepClick} />
       </div>
 
-      <Text as="h2" variant="subtitle-18-b" className="mb-2 text-[var(--color-text)] md:hidden">
+      <Text as="h2" variant="subtitle-18-b" className="mb-2 text-[var(--color-text)] md:hidden lg:hidden">
         {question.text}
       </Text>
 
-      <div className="mb-8 max-md:hidden md:flex md:items-center md:justify-between md:gap-4">
+      <div className="mb-8 max-md:hidden md:flex lg:flex md:items-center lg:items-center md:justify-between lg:justify-between md:gap-4 lg:gap-4">
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 md:gap-3 max-md:text-subtitle-16-b md:text-subtitle-18-b text-[var(--color-text)]"
+          className="flex items-center gap-1.5 md:gap-3 lg:gap-3 max-md:text-subtitle-16-b md:text-subtitle-18-b lg:text-subtitle-18-b text-[var(--color-text)]"
           aria-label="이전 단계로"
         >
           <svg width="9" height="16" viewBox="0 0 9 16" fill="none" aria-hidden="true">
@@ -163,7 +163,7 @@ export default function ChecklistQuestionStep({
         <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">
           {question.isMultiSelect ? "복수 선택 가능" : "한 가지를 선택해 주세요"}
         </p>
-        <div className="max-md:flex max-md:flex-col max-md:gap-3 md:grid md:grid-cols-2 md:gap-3">
+        <div className="max-md:flex max-md:flex-col max-md:gap-3 md:grid lg:grid md:grid-cols-2 lg:grid-cols-2 md:gap-3 lg:gap-3">
           {question.options.map((option) => (
             <OptionButton
               key={option.id}
@@ -175,7 +175,7 @@ export default function ChecklistQuestionStep({
         </div>
       </div>
 
-      <div className="w-full max-md:hidden md:mx-auto md:max-w-[380px]">
+      <div className="w-full max-md:hidden md:mx-auto lg:mx-auto md:max-w-[380px] lg:max-w-[380px]">
         <Button type="button" onClick={onNext} disabled={isNextDisabled} variant="primary" size="lg" className={CTA_CLASS}>
           {nextLabel}
         </Button>

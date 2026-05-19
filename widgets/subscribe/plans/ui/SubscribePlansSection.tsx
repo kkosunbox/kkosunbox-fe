@@ -8,7 +8,7 @@ import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
-import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.webp";
+import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
 import {
   comparePlansForDisplayOrder,
@@ -293,22 +293,29 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
 
       <section className="flex min-h-full flex-1 flex-col pb-16 md:pt-0 md:pb-20">
         <div className="flex w-full flex-1 flex-col">
-          {/* Hero image */}
+          {/* Hero — 모바일: 이미지 / 데스크톱: 전폭 그라디언트 + 중앙 이미지 (와이드 뷰포트 좌우 빈 영역 보완) */}
           <ScrollReveal variant="fade-in" duration={600}>
-            <div className="mb-6 text-center md:mb-8">
-              <div className="max-md:flex md:hidden h-[170px] overflow-hidden items-center justify-center">
+            <div className="mb-6 md:mb-8">
+              <div className="flex h-[170px] items-center justify-center overflow-hidden md:hidden">
                 <Image
                   src={SubscribePlansHeroImageMobile}
-                  alt="Subscribe Plans Hero"
+                  alt="이제 수제 간식도 맞춤형으로 구독하세요"
                   className="h-[170px] w-auto max-w-none shrink-0"
+                  priority
                 />
               </div>
-              <div className="hidden h-[210px] overflow-hidden md:flex md:items-center md:justify-center">
-                <Image
-                  src={SubscribePlansHeroImage}
-                  alt="Subscribe Plans Hero"
-                  className="h-[210px] w-auto min-w-[1920px] max-w-none shrink-0"
-                />
+              <div
+                className="relative hidden h-[210px] w-full overflow-hidden md:block"
+                style={{ background: "var(--gradient-subscribe-plans-hero)" }}
+              >
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+                  <Image
+                    src={SubscribePlansHeroImage}
+                    alt="이제 수제 간식도 맞춤형으로 구독하세요"
+                    className="h-[170px] w-auto max-w-none shrink-0 translate-y-[10px]"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </ScrollReveal>

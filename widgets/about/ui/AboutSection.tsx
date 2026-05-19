@@ -104,24 +104,26 @@ export default function AboutSection() {
                   />
                 </h1>
               </ScrollReveal>
-              <div className="max-w-[426px] space-y-6 max-md:mx-auto max-md:text-center max-md:text-body-14-r text-body-16-r text-[var(--color-text)]">
+              <div className="max-w-[426px] max-md:space-y-6 md:space-y-[24px] max-md:mx-auto max-md:text-center text-[var(--color-text)]">
                 <ScrollReveal variant="fade-up" delay={200}>
-                  <p>우리는 반려견에게 간식을 고를 때 늘 고민했습니다.</p>
+                  <p className="max-md:text-body-14-r text-body-16-r">간식을 고를 때마다 고민이 됩니다.</p>
                 </ScrollReveal>
                 <ScrollReveal variant="fade-up" delay={350}>
-                  <p className="max-md:text-body-14-r-griun text-body-16-r-griun">
-                    &ldquo;이 간식은 정말 건강할까?&rdquo;
-                    <br />
-                    &ldquo;우리 아이에게 맞는 간식일까?&rdquo;
+                  <p className="max-md:text-body-14-r text-body-16-r">
+                    번거롭기도 하고,<br />
+                    우리 아이에게 맞는 건지 늘 불안합니다.
                   </p>
                 </ScrollReveal>
                 <ScrollReveal variant="fade-up" delay={500}>
-                  <p>꼬순박스는 이런 고민에서 시작되었습니다.</p>
+                  <p className="max-md:text-body-14-r-griun text-title-20-r-griun">
+                    그래서, 안심하고 먹일 수 있는 간식만<br />
+                    주고 싶었습니다.
+                  </p>
                 </ScrollReveal>
                 <ScrollReveal variant="fade-up" delay={650}>
-                  <p>
-                    사랑하는 반려견에게 안심하고 먹일 수 있는<br/>건강한 수제간식을 정기적으로 전달하고
-                    싶었습니다.
+                  <p className="max-md:text-body-14-r text-body-16-r text-[var(--color-brown-deep)]">
+                    꼬순박스는<br />
+                    그 고민을 대신하기 위해 시작되었습니다.
                   </p>
                 </ScrollReveal>
               </div>
@@ -131,7 +133,7 @@ export default function AboutSection() {
         </div>
       </section>
 
-      {/* ━━━━ Section 2: 믿을 수 있는 건강한 간식 + 피처 카드 ━━━━ */}
+      {/* ━━━━ Section 2: 믿고 먹일 수 있는 간식, 생각보다 어렵습니다. + 피처 카드 ━━━━ */}
       <section className="bg-[var(--color-secondary)] py-10 md:py-[72px]">
         <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-0 md:gap-12 px-6 md:px-0">
 
@@ -140,10 +142,10 @@ export default function AboutSection() {
             <Text
               as="h2"
               variant="title-28-r-griun"
-              mobileVariant="title-20-r-griun"
+              mobileVariant="title-24-r-griun"
               className="text-center text-[var(--color-amber)] md:hidden"
             >
-              믿을 수 있는 건강한 간식!
+              믿고 먹일 수 있는 간식,<br className="md:hidden" /> 생각보다 어렵습니다.
             </Text>
           </ScrollReveal>
 
@@ -167,22 +169,25 @@ export default function AboutSection() {
               {/* 데스크톱 전용 헤딩 (모바일에서 숨김) */}
               <ScrollReveal variant="slide-right" delay={200}>
                 <h2 className="max-md:hidden text-title-28-r-griun text-[var(--color-amber)]">
-                  믿을 수 있는 건강한 간식!
+                  믿고 먹일 수 있는 간식, 생각보다 어렵습니다.
                 </h2>
               </ScrollReveal>
               <ScrollReveal variant="slide-right" delay={350}>
                 <div className="flex max-w-[426px] flex-col gap-4 text-[var(--color-text)]">
-                  <Text variant="body-16-m" mobileVariant="body-14-r" as="p">
-                    꼬순박스는 단순한 간식이 아닌
-                    <br className="max-md:hidden" />
-                    우리 아이의 건강과
-                    <br className="md:hidden" />
-                    행복을 위한 작은 정성이라고 생각합니다.
+                  <Text variant="body-16-r" mobileVariant="body-14-r" as="p">
+                    좋은 재료여도 맞지 않을 수 있고,<br />
+                    수제 간식도 매번 고르기 쉽지 않습니다.
                   </Text>
-                  <Text variant="body-16-m" mobileVariant="body-14-r" as="p">좋은 재료로 정직하게 만들고,</Text>
-                  <Text variant="body-16-m" mobileVariant="body-14-r" as="p">
-                    반려견에게 꼭 필요한 영양을 고려하여<br />
-                    건강하고 안전한 간식을 제공합니다.
+                  <Text variant="body-16-b" mobileVariant="body-14-b" as="p">
+                    그래서 기준을 만들었습니다.
+                  </Text>
+                  <Text variant="body-16-r" mobileVariant="body-14-r" as="p">
+                    제대로 확인된 재료,<br />
+                    믿을 수 있는 과정,<br />
+                    그리고 우리 아이에게 맞는 선택.
+                  </Text>
+                  <Text variant="body-16-r" mobileVariant="body-14-r" as="p">
+                    꼬순박스는 그 기준으로 간식을 담습니다.
                   </Text>
                 </div>
               </ScrollReveal>
@@ -194,8 +199,8 @@ export default function AboutSection() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-md:mt-[22px]">
             {[
               { icon: aboutFeatureCircle01, title: "건강한 재료", desc: "반려견에게 안전하고 건강한\n재료만 사용합니다." },
-              { icon: aboutFeatureCircle02, title: "정성 가득 수제간식", desc: "사람의 손길로 정성을\n가득 넣어 만듭니다." },
-              { icon: aboutFeatureCircle03, title: "우리 아이 맞춤 간식", desc: "반려견의 특성과\n건강 상태를 고려합니다." },
+              { icon: aboutFeatureCircle02, title: "정성 가득 수제간식", desc: "대량 생산이 아닌,\n직접 만든 간식만 담습니다." },
+              { icon: aboutFeatureCircle03, title: "우리 아이 맞춤 간식", desc: "우리 아이의 특성과 알러지를\n고려해 추천드립니다." },
             ].map((card, i) => (
               <ScrollReveal key={card.title} variant="fade-up" delay={200 + i * 150}>
                 <FeatureCard
@@ -258,11 +263,14 @@ export default function AboutSection() {
                     aria-hidden
                     className="absolute right-5 top-[14px] max-md:w-[36px] max-md:h-[30px]"
                   />
-                  <p className="max-md:text-[16px] max-md:font-semibold max-md:leading-[28px] max-md:tracking-[-0.04em] text-title-28-sb text-[var(--color-text-cta)]">
+                  <Text
+                    variant="title-24-sb-lh42"
+                    className="text-[var(--color-text-cta)] max-md:text-[16px] max-md:font-semibold max-md:leading-[28px] max-md:tracking-[-0.04em]"
+                  >
                     우리 아이의<br />
                     행복한 간식 시간을<br />
                     꼬순박스와 함께하세요.
-                  </p>
+                  </Text>
                 </div>
               </ScrollReveal>
 

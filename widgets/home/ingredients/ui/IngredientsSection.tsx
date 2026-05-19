@@ -35,7 +35,7 @@ export default function IngredientsSection() {
           <Image
             src={ingredientsDetailHappy}
             alt="행복한 강아지와 수제간식 재료"
-            className="h-auto w-full md:max-w-[645px] rounded-[32px] md:rounded-[52px] object-cover"
+            className="h-auto w-full max-md:max-w-[640px] md:max-w-[645px] rounded-[32px] md:rounded-[52px] object-cover"
           />
         </ScrollReveal>
 

@@ -279,7 +279,7 @@ function ReviewsCarousel() {
         disabled={!canPrev}
         onClick={() => setStartIndex(Math.max(0, displayIndex - 1))}
       />
-      <div ref={viewportRef} className="min-w-0 w-full overflow-hidden pt-[60px]">
+      <div ref={viewportRef} className="min-w-0 w-full overflow-hidden pt-[60px] max-md:max-w-[640px] max-md:mx-auto">
         <div
           ref={trackRef}
           className="flex gap-9 transition-transform duration-300 ease-out"

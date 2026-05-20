@@ -111,8 +111,7 @@
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Filter \"*modal*\" -Recurse -File)",
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(Select-String -Pattern \"profile-switch\")",
-      "Bash(git reset *)",
-      "Bash(git -C \"C:/2026/ggosoonbox\" diff --stat HEAD)"
+      "Bash(git reset *)"
     ]
   }
 }

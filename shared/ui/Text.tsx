@@ -10,9 +10,11 @@ export type TypographyVariant =
   | "title-20-b"
   | "title-20-sb"
   | "title-28-r-griun"
+  | "title-24-r-griun"
   | "title-20-r-griun"
   | "title-24-b"
   | "title-24-sb"
+  | "title-24-sb-lh42"
   | "title-24-m"
   // Subtitles
   | "subtitle-20-b"
@@ -26,9 +28,11 @@ export type TypographyVariant =
   | "subtitle-16-sb"
   // Body
   | "body-18-r"
+  | "body-16-b"
   | "body-16-sb"
   | "body-16-m"
   | "body-16-r"
+  | "body-14-b"
   | "body-14-sb"
   | "body-14-sb-tight"
   | "body-14-m"
@@ -63,9 +67,11 @@ const BASE: Record<TypographyVariant, string> = {
   "title-20-b":             "text-title-20-b",
   "title-20-sb":            "text-title-20-sb",
   "title-28-r-griun":       "text-title-28-r-griun",
+  "title-24-r-griun":       "text-title-24-r-griun",
   "title-20-r-griun":       "text-title-20-r-griun",
   "title-24-b":             "text-title-24-b",
   "title-24-sb":            "text-title-24-sb",
+  "title-24-sb-lh42":       "text-title-24-sb-lh42",
   "title-24-m":             "text-title-24-m",
   "subtitle-20-b":          "text-subtitle-20-b",
   "subtitle-20-m":          "text-subtitle-20-m",
@@ -77,9 +83,11 @@ const BASE: Record<TypographyVariant, string> = {
   "subtitle-16-r":          "text-subtitle-16-r",
   "subtitle-16-sb":         "text-subtitle-16-sb",
   "body-18-r":              "text-body-18-r",
+  "body-16-b":              "text-body-16-b",
   "body-16-sb":             "text-body-16-sb",
   "body-16-m":              "text-body-16-m",
   "body-16-r":              "text-body-16-r",
+  "body-14-b":              "text-body-14-b",
   "body-14-sb":             "text-body-14-sb",
   "body-14-sb-tight":       "text-body-14-sb-tight",
   "body-14-m":              "text-body-14-m",
@@ -119,9 +127,11 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "title-20-b":             "max-md:text-title-20-b",
   "title-20-sb":            "max-md:text-title-20-sb",
   "title-28-r-griun":       "max-md:text-title-28-r-griun",
+  "title-24-r-griun":       "max-md:text-title-24-r-griun",
   "title-20-r-griun":       "max-md:text-title-20-r-griun",
   "title-24-b":             "max-md:text-title-24-b",
   "title-24-sb":            "max-md:text-title-24-sb",
+  "title-24-sb-lh42":       "max-md:text-title-24-sb-lh42",
   "title-24-m":             "max-md:text-title-24-m",
   "subtitle-20-b":          "max-md:text-subtitle-20-b",
   "subtitle-20-m":          "max-md:text-subtitle-20-m",
@@ -133,9 +143,11 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "subtitle-16-r":          "max-md:text-subtitle-16-r",
   "subtitle-16-sb":         "max-md:text-subtitle-16-sb",
   "body-18-r":              "max-md:text-body-18-r",
+  "body-16-b":              "max-md:text-body-16-b",
   "body-16-sb":             "max-md:text-body-16-sb",
   "body-16-m":              "max-md:text-body-16-m",
   "body-16-r":              "max-md:text-body-16-r",
+  "body-14-b":              "max-md:text-body-14-b",
   "body-14-sb":             "max-md:text-body-14-sb",
   "body-14-sb-tight":       "max-md:text-body-14-sb-tight",
   "body-14-m":              "max-md:text-body-14-m",

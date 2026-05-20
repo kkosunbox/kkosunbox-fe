@@ -331,7 +331,7 @@ export default function ForgotPasswordSection() {
           type="button"
           disabled={!canSubmit}
           onClick={handleResetPassword}
-          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-full max-md:text-subtitle-16-sb md:text-subtitle-18-sb lg:text-subtitle-18-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14 md:h-[54px] lg:h-[54px]"
+          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-full max-md:text-subtitle-16-sb md:text-body-14-sb lg:text-body-14-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14 md:h-[54px] lg:h-[54px]"
           style={{ background: "var(--color-accent)" }}
         >
           {isPending ? "처리 중..." : "확인"}

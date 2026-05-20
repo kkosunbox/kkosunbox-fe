@@ -899,7 +899,7 @@ export default function OrderSection({
               type="button"
               disabled={!agreeAll || isPending}
               onClick={handlePay}
-              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-subtitle-18-sb disabled:opacity-50"
+              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-body-14-sb disabled:opacity-50"
             >
               {isPending ? "처리 중…" : "결제하기"}
             </button>

@@ -28,6 +28,42 @@ function isSubsequence(query: string, target: string): boolean {
   return query.length === 0;
 }
 
+function editDistance(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  const dp = Array.from({ length: n + 1 }, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const temp = dp[j];
+      dp[j] = a[i - 1] === b[j - 1] ? prev : 1 + Math.min(prev, dp[j - 1], dp[j]);
+      prev = temp;
+    }
+  }
+  return dp[n];
+}
+
+// 오타 내성: 비슷한 길이의 품종명과 편집 거리 비교 (예: "스피치" → "스피츠")
+function getFuzzyScore(query: string, target: string): number {
+  if (query.length < 3) return Number.POSITIVE_INFINITY;
+  const threshold = query.length <= 4 ? 1 : 2;
+
+  if (Math.abs(target.length - query.length) <= 2) {
+    const dist = editDistance(query, target);
+    if (dist <= threshold) return 90 + dist * 5;
+  }
+
+  if (target.length > query.length) {
+    for (let i = 0; i <= target.length - query.length; i++) {
+      const dist = editDistance(query, target.substring(i, i + query.length));
+      if (dist <= threshold) return 92 + i;
+    }
+  }
+
+  return Number.POSITIVE_INFINITY;
+}
+
 function getBreedSearchScore(option: DogBreedOption, normalizedQuery: string): number {
   if (!normalizedQuery) return 0;
 
@@ -45,26 +81,78 @@ function getBreedSearchScore(option: DogBreedOption, normalizedQuery: string): n
     if (isSubsequence(normalizedQuery, normalizedValue)) bestScore = Math.min(bestScore, 70 + normalizedValue.length - normalizedQuery.length);
   }
 
+  // 위 조건에서 매칭 안 된 경우에만 퍼지 검색 적용
+  if (!Number.isFinite(bestScore)) {
+    for (const value of searchableValues) {
+      const normalizedValue = normalizeBreedSearchText(value);
+      if (!normalizedValue) continue;
+      bestScore = Math.min(bestScore, getFuzzyScore(normalizedQuery, normalizedValue));
+    }
+  }
+
   return bestScore;
 }
 
-function getBreedOptions(query: string): DogBreedOption[] {
+// ---- 그룹 헤더 지원 ----
+
+interface BreedListHeader {
+  kind: "header";
+  groupName: string;
+}
+interface BreedListBreed {
+  kind: "breed";
+  option: DogBreedOption;
+  selectableIndex: number;
+}
+type BreedListItem = BreedListHeader | BreedListBreed;
+
+function getBreedListItems(query: string): { items: BreedListItem[]; selectableOptions: DogBreedOption[] } {
   const normalizedQuery = normalizeBreedSearchText(query);
   const mixOption = DOG_BREED_OPTIONS.find((option) => option.name === MIX_BREED_NAME);
   const baseOptions = DOG_BREED_OPTIONS.filter((option) => option.name !== MIX_BREED_NAME);
 
+  let scoredOptions: { option: DogBreedOption; score: number }[];
+
   if (!normalizedQuery) {
-    return [...baseOptions.slice(0, MAX_VISIBLE_BREED_OPTIONS), ...(mixOption ? [mixOption] : [])];
+    scoredOptions = baseOptions.slice(0, MAX_VISIBLE_BREED_OPTIONS).map((option) => ({ option, score: 0 }));
+  } else {
+    scoredOptions = baseOptions
+      .map((option) => ({ option, score: getBreedSearchScore(option, normalizedQuery) }))
+      .filter(({ score }) => Number.isFinite(score))
+      .sort((a, b) => a.score - b.score || a.option.name.localeCompare(b.option.name, "ko"))
+      .slice(0, MAX_VISIBLE_BREED_OPTIONS);
   }
 
-  const filteredOptions = baseOptions
-    .map((option) => ({ option, score: getBreedSearchScore(option, normalizedQuery) }))
-    .filter(({ score }) => Number.isFinite(score))
-    .sort((a, b) => a.score - b.score || a.option.name.localeCompare(b.option.name, "ko"))
-    .slice(0, MAX_VISIBLE_BREED_OPTIONS)
-    .map(({ option }) => option);
+  // 그룹별로 묶되, 스코어 정렬 순서(그룹 첫 등장 순)를 유지
+  const groupOrder: number[] = [];
+  const groupMap = new Map<number, { groupName: string; options: DogBreedOption[] }>();
+  for (const { option } of scoredOptions) {
+    if (!groupMap.has(option.groupId)) {
+      groupOrder.push(option.groupId);
+      groupMap.set(option.groupId, { groupName: option.groupName, options: [] });
+    }
+    groupMap.get(option.groupId)!.options.push(option);
+  }
 
-  return [...filteredOptions, ...(mixOption ? [mixOption] : [])];
+  const items: BreedListItem[] = [];
+  const selectableOptions: DogBreedOption[] = [];
+
+  for (const groupId of groupOrder) {
+    const group = groupMap.get(groupId)!;
+    items.push({ kind: "header", groupName: group.groupName });
+    for (const option of group.options) {
+      items.push({ kind: "breed", option, selectableIndex: selectableOptions.length });
+      selectableOptions.push(option);
+    }
+  }
+
+  if (mixOption) {
+    items.push({ kind: "header", groupName: "기타" });
+    items.push({ kind: "breed", option: mixOption, selectableIndex: selectableOptions.length });
+    selectableOptions.push(mixOption);
+  }
+
+  return { items, selectableOptions };
 }
 
 export interface BreedComboboxProps {
@@ -96,7 +184,7 @@ export default function BreedCombobox({
   valueRef.current = value;
   queryRef.current = query;
 
-  const options = useMemo(() => getBreedOptions(query), [query]);
+  const { items, selectableOptions } = useMemo(() => getBreedListItems(query), [query]);
   const listboxId = `${id}-listbox`;
 
   useEffect(() => {
@@ -105,8 +193,8 @@ export default function BreedCombobox({
   }, [value]);
 
   useEffect(() => {
-    setActiveIndex((current) => Math.min(current, Math.max(options.length - 1, 0)));
-  }, [options.length]);
+    setActiveIndex((current) => Math.min(current, Math.max(selectableOptions.length - 1, 0)));
+  }, [selectableOptions.length]);
 
   function selectOption(option: DogBreedOption) {
     onChange(option.name);
@@ -143,7 +231,7 @@ export default function BreedCombobox({
     if (event.key === "ArrowDown") {
       event.preventDefault();
       setIsOpen(true);
-      setActiveIndex((current) => Math.min(current + 1, options.length - 1));
+      setActiveIndex((current) => Math.min(current + 1, selectableOptions.length - 1));
       return;
     }
     if (event.key === "ArrowUp") {
@@ -154,7 +242,7 @@ export default function BreedCombobox({
     }
     if (event.key === "Enter" && isOpen) {
       event.preventDefault();
-      const option = options[activeIndex];
+      const option = selectableOptions[activeIndex];
       if (option) selectOption(option);
       return;
     }
@@ -176,7 +264,11 @@ export default function BreedCombobox({
           aria-autocomplete="list"
           aria-controls={listboxId}
           aria-expanded={isOpen}
-          aria-activedescendant={isOpen && options[activeIndex] ? `${listboxId}-option-${activeIndex}` : undefined}
+          aria-activedescendant={
+            isOpen && selectableOptions[activeIndex]
+              ? `${listboxId}-option-${activeIndex}`
+              : undefined
+          }
           autoComplete="off"
           value={query}
           onChange={(event) => {
@@ -239,16 +331,33 @@ export default function BreedCombobox({
           role="listbox"
           className="absolute left-0 top-[calc(100%+4px)] z-30 max-h-[240px] w-max min-w-[max(100%,21rem)] max-w-[min(40rem,calc(100vw-1.5rem))] overflow-y-auto overflow-x-auto rounded-[8px] border border-[var(--color-divider-warm)] bg-white p-1 shadow-[0_8px_24px_rgba(78,78,78,0.14)]"
         >
-          {options.map((option, index) => {
+          {items.map((item, itemIndex) => {
+            if (item.kind === "header") {
+              return (
+                <div
+                  key={`header-${item.groupName}`}
+                  role="presentation"
+                  className={[
+                    "px-3 pb-1 text-[11px] font-semibold text-[var(--color-text-muted)]",
+                    itemIndex === 0 ? "pt-1" : "mt-1 border-t border-[var(--color-divider-warm)] pt-2",
+                  ].join(" ")}
+                >
+                  {item.groupName}
+                </div>
+              );
+            }
+
+            const { option, selectableIndex } = item;
             const isSelected = option.name === value || (option.name === MIX_BREED_NAME && isMixBreedValue(value));
-            const isActive = index === activeIndex;
+            const isActive = selectableIndex === activeIndex;
+
             return (
               <div
-                id={`${listboxId}-option-${index}`}
+                id={`${listboxId}-option-${selectableIndex}`}
                 key={`${option.groupId}-${option.name}`}
                 role="option"
                 aria-selected={isSelected}
-                onMouseEnter={() => setActiveIndex(index)}
+                onMouseEnter={() => setActiveIndex(selectableIndex)}
                 onMouseDown={(event) => {
                   event.preventDefault();
                   selectOption(option);

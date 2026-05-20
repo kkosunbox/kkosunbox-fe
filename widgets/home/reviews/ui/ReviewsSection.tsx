@@ -9,8 +9,8 @@ import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import reviewsTitle from "../assets/reviews-title.png";
 import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
-import reviewsProfile01 from "../assets/reviews-profile-01.webp";
-import reviewsProfile02 from "../assets/reviews-profile-02.webp";
+import reviewsProfile01 from "../assets/reviews-profile-01.jpg";
+import reviewsProfile02 from "../assets/reviews-profile-02.jpg";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
 import reviewsProfile04 from "../assets/reviews-profile-04.jpg";
 import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
@@ -23,6 +23,7 @@ const REVIEWS = [
       "원래 간식 진짜 가리는 애라서 이것저것 다 사봤는데 이건 처음으로 먼저 달라고 찾아요!  ㅋㅋ  특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요. 이제 다른 간식은 못 먹일 것 같아요.",
     rating: 4.5,
     profile: reviewsProfile01,
+    profileObjectPosition: "center 5%",
   },
   {
     name: "보리",
@@ -31,6 +32,7 @@ const REVIEWS = [
       "알러지 때문에 간식 고르는 게 항상 스트레스였는데 여기는 맞춤으로 추천해줘서 너무 편하고 좋아요. \n성분도 깔끔해서 믿고 먹일 수 있고 무엇보다 아이가 너무 잘 먹어서 계속 구독 중입니다.",
     rating: 5,
     profile: reviewsProfile02,
+    profileObjectPosition: "93% center",
   },
   {
     name: "두부",
@@ -56,6 +58,7 @@ type DisplayReview = {
   review: string;
   rating: number;
   profile: StaticImageData;
+  profileObjectPosition?: string;
 };
 
 function StarIcon({ fillPercent = 100 }: { fillPercent?: number }) {
@@ -202,6 +205,11 @@ function ReviewCard({ review }: { review: DisplayReview }) {
           width={120}
           height={120}
           className="h-full w-full object-cover"
+          style={
+            review.profileObjectPosition
+              ? { objectPosition: review.profileObjectPosition }
+              : undefined
+          }
         />
       </div>
 

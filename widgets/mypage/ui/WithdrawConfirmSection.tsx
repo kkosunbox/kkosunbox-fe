@@ -105,7 +105,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   const desktopLayout = (
     <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pt-[64px] pb-[104px]">
       {/* 타이틀 이미지 */}
-      <div className="flex justify-center md:max-w-[387px] mx-auto">
+      <div className="flex justify-center md:max-w-[387px] lg:max-w-[387px] mx-auto">
         <img
           src={titleImgDesktop.src}
           alt="정말로 꼬순박스를 탈퇴하실건가요?"
@@ -234,7 +234,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   /* ── 모바일 ────────────────────────────────────────────────────── */
 
   const mobileLayout = (
-    <div className="md:hidden bg-white px-5 pb-10 pt-6">
+    <div className="md:hidden lg:hidden bg-white px-5 pb-10 pt-6">
 
       {/* 타이틀 이미지 */}
       <div className="flex justify-center w-full max-w-[172px] mx-auto">

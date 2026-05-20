@@ -13,7 +13,7 @@ import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
 import reviewsProfile04 from "../assets/reviews-profile-04.jpg";
-import { MEDIA_MD_MIN } from "@/shared/config/breakpoints";
+import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [
   {
@@ -212,7 +212,7 @@ function ReviewCard({ review }: { review: DisplayReview }) {
           ))}
         </div>
 
-        <p className="mb-6 flex-1 whitespace-pre-line text-[14px] leading-[140%] text-[var(--color-review-text)]">
+        <p className="max-lg:mb-2 lg:mb-6 flex-1 whitespace-pre-line text-[14px] leading-[140%] text-[var(--color-review-text)]">
           {review.review}
         </p>
 
@@ -235,18 +235,20 @@ function ReviewsCarousel() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [startIndex, setStartIndex] = useState(0);
-  const [metrics, setMetrics] = useState({ slide: 0, gap: 36, desktop: false });
+  const [metrics, setMetrics] = useState({ slide: 0, gap: 36, visibleCards: 1 });
 
   const measure = useCallback(() => {
     const vp = viewportRef.current;
     const track = trackRef.current;
     if (!vp) return;
-    const desktop = window.matchMedia(MEDIA_MD_MIN).matches;
+    const isDesktop = window.matchMedia(MEDIA_LG_MIN).matches;
+    const isTablet = window.matchMedia(MEDIA_MD_MIN).matches;
+    const visibleCards = isDesktop ? 3 : isTablet ? 2 : 1;
     const w = vp.getBoundingClientRect().width;
     const rawGap = track ? parseFloat(getComputedStyle(track).gap || "0") : 36;
     const gap = Number.isFinite(rawGap) && rawGap > 0 ? rawGap : 36;
-    const slide = desktop ? (w - 2 * gap) / 3 : w;
-    setMetrics({ slide, gap, desktop });
+    const slide = isDesktop ? (w - 2 * gap) / 3 : isTablet ? (w - gap) / 2 : w;
+    setMetrics({ slide, gap, visibleCards });
   }, []);
 
   useLayoutEffect(() => {
@@ -254,18 +256,21 @@ function ReviewsCarousel() {
     if (!vp) return;
     const ro = new ResizeObserver(() => measure());
     ro.observe(vp);
-    const mq = window.matchMedia(MEDIA_MD_MIN);
-    mq.addEventListener("change", measure);
+    const mqMd = window.matchMedia(MEDIA_MD_MIN);
+    const mqLg = window.matchMedia(MEDIA_LG_MIN);
+    mqMd.addEventListener("change", measure);
+    mqLg.addEventListener("change", measure);
     queueMicrotask(measure);
     return () => {
       ro.disconnect();
-      mq.removeEventListener("change", measure);
+      mqMd.removeEventListener("change", measure);
+      mqLg.removeEventListener("change", measure);
     };
   }, [measure]);
 
   const maxStart = useMemo(
-    () => (metrics.desktop ? Math.max(0, REVIEWS.length - 3) : Math.max(0, REVIEWS.length - 1)),
-    [metrics.desktop],
+    () => Math.max(0, REVIEWS.length - metrics.visibleCards),
+    [metrics.visibleCards],
   );
 
   const displayIndex = Math.min(startIndex, maxStart);
@@ -274,7 +279,7 @@ function ReviewsCarousel() {
   const canNext = displayIndex < maxStart;
 
   return (
-    <div className="flex items-center gap-3 md:gap-4">
+    <div className="flex items-center gap-3 md:gap-4 lg:gap-4">
       <CarouselPrevButton
         disabled={!canPrev}
         onClick={() => setStartIndex(Math.max(0, displayIndex - 1))}
@@ -324,29 +329,29 @@ export default function ReviewsSection() {
 
   return (
     <section
-      className="py-16 md:pt-[86px] md:pb-[58px]"
+      className="py-16 md:pt-[50px] lg:pt-[86px] md:pb-[58px] lg:pb-[58px]"
       style={{ background: "var(--gradient-reviews)" }}
     >
-      <div className="mx-auto max-w-content max-md:px-6 md:px-0">
+      <div className="mx-auto max-w-content max-md:px-6 md:px-0 lg:px-0">
         <ScrollReveal variant="fade-up">
           <Image
             src={reviewsTitle}
             alt="생생한 리뷰를 확인하세요!"
-            className="mx-auto h-auto w-full max-w-[623px] max-md:hidden"
+            className="mx-auto h-auto w-full max-w-[623px] max-lg:hidden"
           />
           <Image
             src={reviewsTitleMobile}
             alt="그래서 꼬순박스는 다르게 만들었습니다!"
-            className="mx-auto h-auto w-full max-w-[233px] md:hidden"
+            className="mx-auto h-auto w-full max-w-[233px] lg:hidden"
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
           <Text
             variant="body-16-r"
             mobileVariant="body-14-m"
-            className="mt-4 md:mt-5.5 mb-12 md:mb-[55px] text-center text-[var(--color-text-warm)] tracking-[-0.02em]"
+            className="mt-4 md:mt-5.5 lg:mt-5.5 mb-12 md:mb-[55px] lg:mb-[55px] text-center text-[var(--color-text-warm)] tracking-[-0.02em] max-lg:text-body-14-m"
           >
-            실제 꼬순박스 패키지를 구매하신&nbsp;<br className="md:hidden"/>고객님들의 생생한 리뷰입니다.
+            실제 꼬순박스 패키지를 구매하신&nbsp;<br className="md:hidden lg:hidden"/>고객님들의 생생한 리뷰입니다.
           </Text>
         </ScrollReveal>
 
@@ -354,11 +359,11 @@ export default function ReviewsSection() {
           <ReviewsCarousel />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={450}>
-          <div className="mt-12 md:mt-14 flex justify-center">
+          <div className="mt-12 md:mt-14 lg:mt-14 flex justify-center">
             <button
               type="button"
               onClick={handleChecklistCtaClick}
-              className="h-[52px] w-[282px] rounded-[50px] bg-[var(--color-accent-strong)] text-center text-[16px] font-semibold leading-[30px] tracking-[-0.04em] text-white"
+              className="max-lg:h-10 max-lg:w-[327px] max-lg:text-[13px] lg:h-[52px] lg:w-[282px] lg:text-[16px] rounded-[50px] bg-[var(--color-accent-strong)] text-center font-semibold leading-[30px] tracking-[-0.04em] text-white"
             >
               10초 진단하고 우리 아이 맞춤 추천 받기
             </button>

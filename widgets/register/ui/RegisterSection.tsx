@@ -23,7 +23,7 @@ const RESEND_COOLDOWN = 60;
 
 /* ─── 공통 스타일 ─── */
 const inputBase =
-  "h-[32px] w-full md:w-[220px] rounded-[4px] bg-white px-3 text-[13px] font-medium leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none focus:ring-1 focus:ring-[var(--color-accent)] transition-opacity";
+  "h-[32px] w-full md:w-[220px] lg:w-[220px] rounded-[4px] bg-white px-3 text-[13px] font-medium leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none focus:ring-1 focus:ring-[var(--color-accent)] transition-opacity";
 
 const inputDisabled = "opacity-50 pointer-events-none bg-[var(--color-surface-light)]";
 
@@ -119,10 +119,10 @@ function FieldRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex max-md:flex-col md:flex-row md:items-start gap-2 md:gap-0">
+    <div className="flex max-md:flex-col md:flex-row lg:flex-row md:items-start lg:items-start gap-2 md:gap-0 lg:gap-0">
       <label
         htmlFor={htmlFor}
-        className="shrink-0 md:w-[94px] md:h-[32px] md:flex md:items-center text-[13px] font-medium leading-[16px] text-[var(--color-text)]"
+        className="shrink-0 md:w-[94px] lg:w-[94px] md:h-[32px] lg:h-[32px] md:flex lg:flex md:items-center lg:items-center text-[13px] font-medium leading-[16px] text-[var(--color-text)]"
       >
         {label}
         {required && <span style={{ color: "var(--color-accent-rust)" }}>*</span>}
@@ -299,26 +299,26 @@ export default function RegisterSection() {
       />
     )}
     <div className="min-h-screen bg-white pt-[54px]">
-      <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 md:py-[96px]">
+      <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 lg:px-6 md:py-[96px] lg:py-[96px]">
 
         {/* 타이틀 */}
-        <div className="mb-7 text-center md:mb-11">
+        <div className="mb-7 text-center md:mb-11 lg:mb-11">
           <h1>
             <Image
               src={registerTitleMobi}
               alt="회원가입을 완료해주세요!"
-              className="mx-auto w-auto max-w-[98px] md:hidden"
+              className="mx-auto w-auto max-w-[98px] md:hidden lg:hidden"
               priority
             />
             <Image
               src={registerTitle}
               alt="회원가입을 완료해주세요!"
-              className="mx-auto w-auto max-md:hidden md:max-w-[322px]"
+              className="mx-auto w-auto max-md:hidden md:max-w-[322px] lg:max-w-[322px]"
               priority
             />
           </h1>
           <p
-            className="mt-3 md:mt-4 max-md:text-body-13-r md:text-body-16-r text-[var(--color-text)]"
+            className="mt-3 md:mt-4 lg:mt-4 max-md:text-body-13-r md:text-body-16-r lg:text-body-16-r text-[var(--color-text)]"
             style={{ fontFamily: "Griun PolFairness", letterSpacing: "-0.02em" }}
           >
             회원가입을 위해 필수 입력사항을 입력해주세요.
@@ -327,10 +327,10 @@ export default function RegisterSection() {
 
         {/* ─── 폼 카드 ─── */}
         <div
-          className="relative overflow-hidden rounded-[20px] px-5 py-6 md:mx-auto md:w-full md:max-w-[874px] md:min-h-[524px] md:py-11"
+          className="relative overflow-hidden rounded-[20px] px-5 py-6 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] md:py-11 lg:py-11"
           style={{ background: "var(--color-surface-warm)" }}
         >
-          <div className="flex flex-col gap-4 md:mx-auto md:w-[414px]">
+          <div className="flex flex-col gap-4 md:mx-auto lg:mx-auto md:w-[414px] lg:w-[414px]">
 
             {/* ── 이메일 ── */}
             <FieldRow label="이메일" required htmlFor="reg-email">
@@ -465,7 +465,7 @@ export default function RegisterSection() {
             </FieldRow>
 
             {/* 비밀번호 힌트 */}
-            <div className="md:pl-[94px] space-y-0.5 text-[12px] font-medium leading-[16px]">
+            <div className="md:pl-[94px] lg:pl-[94px] space-y-0.5 text-[12px] font-medium leading-[16px]">
               <p
                 className={
                   ruleMinLenInvalid
@@ -545,7 +545,7 @@ export default function RegisterSection() {
             src={registerPaw}
             alt=""
             aria-hidden="true"
-            className="absolute right-4 bottom-4 md:bottom-[88px] md:right-[44px] w-[60px] h-[50px] md:w-[84px] md:h-[70px] opacity-60"
+            className="absolute right-4 bottom-4 md:bottom-[88px] lg:bottom-[88px] md:right-[44px] lg:right-[44px] w-[60px] h-[50px] md:w-[84px] lg:w-[84px] md:h-[70px] lg:h-[70px] opacity-60"
           />
         </div>
 
@@ -554,18 +554,18 @@ export default function RegisterSection() {
           type="button"
           disabled={!canSubmit}
           onClick={handleSignup}
-          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] items-center justify-center rounded-full max-md:text-subtitle-16-sb md:text-subtitle-18-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 md:h-[54px]"
+          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-full max-md:text-subtitle-16-sb md:text-body-14-sb lg:text-body-14-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14 md:h-[54px] lg:h-[54px]"
           style={{ background: "var(--color-accent)" }}
         >
           {isPending ? "처리 중..." : "가입하기"}
         </button>
 
         {/* 로그인 링크 */}
-        {/* <div className="mt-4 flex items-center justify-center gap-1 md:mt-6">
-          <span className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m">
+        {/* <div className="mt-4 flex items-center justify-center gap-1 md:mt-6 lg:mt-6">
+          <span className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m lg:text-body-16-m">
             이미 계정이 있으신가요?
           </span>
-          <a href="/login" className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb">
+          <a href="/login" className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb lg:text-body-16-sb">
             로그인하기
           </a>
         </div> */}

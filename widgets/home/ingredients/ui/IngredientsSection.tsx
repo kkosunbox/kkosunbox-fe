@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button, Text, ScrollReveal, useModal } from "@/shared/ui";
+import { Button, ScrollReveal, useModal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import ingredientsDetailHappy from "../assets/ingredients-detail-happy.webp";
 import ingredientsDetailProfitPackage from "../assets/ingredients-detail-profit-package.png";
@@ -28,22 +28,22 @@ export default function IngredientsSection() {
   }
 
   return (
-    <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-7 pb-10 md:pt-16 md:pb-16">
-      <div className="mx-auto flex flex-col md:flex-row max-w-content justify-between items-center gap-5 md:gap-[54px] md:px-0">
-        {/* Left — 이미지 + 발바닥 장식 */}
-        <ScrollReveal variant="slide-left" duration={800} className="relative flex w-full items-center justify-center md:max-w-[630px] px-6 md:px-0">
+    <section style={{ background: "var(--color-ingredients-bg)" }} className="pt-7 pb-10 md:pt-16 lg:pt-16 md:pb-16 lg:pb-16">
+      <div className="mx-auto flex flex-col md:flex-row lg:flex-row md:max-w-[838px] lg:max-w-content max-md:justify-between md:justify-start lg:justify-between max-md:items-center md:items-end lg:items-center gap-5 md:gap-[80px] lg:gap-[54px] md:px-0 lg:px-0">
+        {/* Left — 이미지 */}
+        <ScrollReveal variant="slide-left" duration={800} className="relative flex w-full items-center justify-center md:max-w-[458px] lg:max-w-[630px] px-6 md:px-0 lg:px-0">
           <Image
             src={ingredientsDetailHappy}
             alt="행복한 강아지와 수제간식 재료"
-            className="h-auto w-full max-md:max-w-[640px] md:max-w-[645px] rounded-[32px] md:rounded-[52px] object-cover"
+            className="h-auto w-full max-md:max-w-[640px] md:max-w-[458px] lg:max-w-[645px] max-md:rounded-[32px] md:rounded-[24px] lg:rounded-[52px] object-cover"
           />
         </ScrollReveal>
 
         {/* Right — 텍스트 */}
-        <div className="flex flex-col items-center md:items-start md:pt-28">
+        <div className="flex flex-col items-center md:items-start lg:items-start lg:pt-28">
           <ScrollReveal variant="slide-right" delay={200}>
             <p
-              className="text-[22px] md:text-[28px] leading-[35px] tracking-[-0.08em] capitalize text-[var(--color-amber)] mb-2"
+              className="text-[22px] md:text-[18px] lg:text-[28px] leading-[35px] tracking-[-0.08em] capitalize text-[var(--color-amber)] mb-2"
               style={{ fontFamily: "Griun PolFairness" }}
             >
               우리 아이를 위한
@@ -53,23 +53,19 @@ export default function IngredientsSection() {
             <Image
               src={ingredientsDetailProfitPackage}
               alt="맞춤 패키지 박스 찾기"
-              className="mb-6 h-auto w-full max-w-[220px] md:mb-8 md:max-w-[318px]"
+              className="mb-6 h-auto w-full max-w-[220px] md:mb-4 lg:mb-8 md:max-w-[223px] lg:max-w-[318px]"
             />
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={500}>
-            <Text
-              variant="subtitle-18-m"
-              mobileVariant="body-14-m"
-              className="mb-8 max-w-[328px] text-[var(--color-text-body-warm)] md:leading-[28px] max-md:text-center"
-            >
+            <p className="max-lg:text-body-14-m lg:text-subtitle-18-m mb-6 md:mb-8 max-w-[299px] lg:max-w-[328px] text-[var(--color-text-body-warm)] lg:leading-[28px] max-md:text-center">
               우리 아이를 위한 체크리스트를 완성해 보세요! <br />꼭 필요한 재료만 쏙쏙 골라 <br />맞춤 패키지 박스를 추천해 드려요.
-            </Text>
+            </p>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={650}>
             <Button
               onClick={handleChecklistClick}
               size="lg"
-              className="max-md:h-10 max-md:w-[212px] max-md:text-[13px] max-md:font-semibold max-md:leading-[30px] max-md:tracking-[-0.04em] md:h-[52px] md:w-[196px] md:text-[16px] md:font-semibold md:leading-[30px] md:tracking-[-0.04em] bg-[var(--color-text)] text-white rounded-[50px]"
+              className="max-lg:h-10 max-lg:w-[212px] max-lg:text-[13px] max-lg:font-semibold max-lg:leading-[30px] max-lg:tracking-[-0.04em] lg:h-[52px] lg:w-[196px] lg:text-[16px] lg:font-semibold lg:leading-[30px] lg:tracking-[-0.04em] bg-[var(--color-text)] text-white rounded-[50px]"
             >
               체크리스트 작성 하러가기
             </Button>

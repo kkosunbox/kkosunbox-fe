@@ -19,7 +19,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
 
       {/* Group */}
       <div
-        className="relative z-10 w-full max-md:max-w-[320px] md:max-w-[388px] max-md:-translate-y-[30px] md:-translate-y-[40px]"
+        className="relative z-10 w-full max-md:max-w-[320px] md:max-w-[388px] lg:max-w-[388px] max-md:-translate-y-[30px] md:-translate-y-[40px] lg:-translate-y-[40px]"
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         {/* Upper image — mobile 160px / desktop 210px, 돌출: mobile 59px / desktop 80px */}
@@ -29,16 +29,16 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
           width={210}
           height={210}
           className="absolute top-0 left-1/2 -translate-x-1/2 z-10
-                     max-md:w-[160px] max-md:h-[160px] md:w-[210px] md:h-[210px]
+                     max-md:w-[160px] max-md:h-[160px] md:w-[210px] lg:w-[210px] md:h-[210px] lg:h-[210px]
                      animate-float"
         />
 
         {/* Card */}
         <div
           className="relative
-                     max-md:mt-[59px] md:mt-[80px]
-                     max-md:rounded-[32px] md:rounded-[40px]
-                     max-md:pt-[110px] md:pt-[120px]
+                     max-md:mt-[59px] md:mt-[80px] lg:mt-[80px]
+                     max-md:rounded-[32px] md:rounded-[40px] lg:rounded-[40px]
+                     max-md:pt-[110px] md:pt-[120px] lg:pt-[120px]
                      pb-6 px-6
                      flex flex-col items-center"
           style={{ background: "var(--gradient-modal-checklist)" }}
@@ -64,7 +64,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
           />
 
           {/* Body — mobile 13px / desktop 14px */}
-          <p className="mt-5 max-md:text-[13px] md:text-[14px] font-medium leading-[160%] tracking-[-0.04em] text-[var(--color-text)] text-center">
+          <p className="mt-5 max-md:text-[13px] md:text-[14px] lg:text-[14px] font-medium leading-[160%] tracking-[-0.04em] text-[var(--color-text)] text-center">
             아이의 특성을 입력하고, 맞춤형 패키지<br />솔루션을 확인하세요.
           </p>
 
@@ -72,7 +72,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
           <button
             onClick={onConfirm ?? onClose}
             className="mt-7 w-full h-[48px] rounded-[30px] bg-white
-                       max-md:text-[14px] md:text-[16px]
+                       max-md:text-[14px] md:text-[16px] lg:text-[16px]
                        font-semibold leading-[150%] tracking-[-0.02em] text-[var(--color-text)]
                        hover:opacity-90 transition-opacity"
           >

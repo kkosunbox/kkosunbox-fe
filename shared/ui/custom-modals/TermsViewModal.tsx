@@ -274,7 +274,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
           className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"
           style={{ borderBottom: "1px solid var(--color-text-muted)" }}
         >
-          <h2 className="text-subtitle-16-sb md:text-subtitle-18-sb text-[var(--color-text)]">
+          <h2 className="text-subtitle-16-sb md:text-subtitle-18-sb lg:text-subtitle-18-sb text-[var(--color-text)]">
             {title}
           </h2>
           <button

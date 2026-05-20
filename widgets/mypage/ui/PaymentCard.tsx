@@ -16,7 +16,7 @@ function PaymentRow({ label, children }: { label: string; children: ReactNode })
     <div className="flex items-center gap-4">
       <Text
         variant="body-13-r"
-        className="w-[64px] shrink-0 font-medium text-[var(--color-text-secondary)] md:w-[88px]"
+        className="w-[64px] shrink-0 font-medium text-[var(--color-text-secondary)] lg:w-[88px]"
       >
         {label}
       </Text>
@@ -60,7 +60,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
     <DashboardCard>
       <SectionHeader title="결제관리" linkLabel="결제관리" />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex min-h-0 flex-1 flex-col max-lg:gap-4 lg:gap-2">
         <PaymentRow label="결제수단">
           <Text
             variant="body-13-r"
@@ -71,17 +71,17 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
         </PaymentRow>
 
         <PaymentRow label="카드 정보">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2 max-lg:flex-wrap lg:flex-nowrap">
             <Text
               variant="body-13-r"
-              className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
+              className={`min-w-0 truncate font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
             >
               {cardLabel}
             </Text>
             <button
               type="button"
               onClick={handleOpenPayment}
-              className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-body-13-m text-white transition-opacity hover:opacity-90"
+              className="inline-flex h-[24px] shrink-0 items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-body-13-m text-white transition-opacity hover:opacity-90"
             >
               결제등록/변경
             </button>

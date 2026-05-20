@@ -80,16 +80,16 @@ export function DeliveryCard({ summary }: DeliveryCardProps) {
   return (
     <DashboardCard>
       <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" spacing="tight" />
-      <div className="grid grid-cols-3 gap-4 pt-1 max-md:-mx-3 px-[24px]">
+      <div className="grid min-h-0 flex-1 grid-cols-3 gap-4 pt-1 max-lg:-mx-3 max-lg:px-[24px] lg:px-2">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];
           const count = summary[step.key];
           return (
             <div key={step.label} className="flex flex-col items-center text-center">
-              <div className="text-[var(--color-text-secondary)] mb-4">
+              <div className="text-[var(--color-text-secondary)] max-lg:mb-4 lg:mb-2 lg:[&_svg]:h-8 lg:[&_svg]:w-8">
                 <Icon />
               </div>
-              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-md:mb-3 md:mb-2.5">
+              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-lg:mb-3 lg:mb-1.5">
                 {step.label}
               </Text>
               <button
@@ -98,7 +98,7 @@ export function DeliveryCard({ summary }: DeliveryCardProps) {
                 className="hover:opacity-70 transition-opacity"
                 aria-label={`${step.label} ${count}건 배송 현황 보기`}
               >
-                <Text as="span" variant="subtitle-20-b" className="text-primary">
+                <Text as="span" variant="subtitle-20-b" mobileVariant="subtitle-18-b" className="text-primary md:leading-[22px]">
                   {count}
                 </Text>
               </button>

@@ -71,7 +71,7 @@ const PRIVACY_SECTIONS = [
 export default function PrivacySection() {
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-content py-14 md:px-0 max-md:px-6 max-md:py-10">
+      <div className="mx-auto max-w-content py-14 md:px-0 lg:px-0 max-md:px-6 max-md:py-10">
         <Image
           src={privacyTitle}
           alt="개인정보처리방침"

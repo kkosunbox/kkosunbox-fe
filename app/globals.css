@@ -192,12 +192,26 @@
 }
 
 /*
- * md 분기 — @theme inline 이 아닌 @theme 에 rem 으로 정의 (Tailwind v4 필수).
- * px·rem 혼용·lg(64rem=1024px)보다 작은 md 값은 빌드 시 분기가 무시될 수 있음.
+ * 반응형 브레이크포인트 — @theme inline 이 아닌 @theme 에 rem 으로 정의 (Tailwind v4 필수).
+ * 모바일 < 834px (max-md:) | 태블릿 834–1199px (md:) | 데스크탑 ≥ 1200px (lg:)
  * JS 상수: shared/config/breakpoints.ts
  */
 @theme {
-  --breakpoint-md: 65rem; /* 1040px — lg(80rem) 보다 작아야 함 */
+  --breakpoint-md: 52.125rem; /* 834px  — 태블릿 시작 */
+  --breakpoint-lg: 75rem;    /* 1200px — 데스크탑 시작 */
+}
+
+/*
+ * 태블릿 콘텐츠 너비 — 834px에서도 충분한 여백을 확보하기 위해
+ * 데스크탑 값(1012/940/1140px)보다 좁은 값으로 오버라이드.
+ * JSX 변경 없이 max-w-[var(--max-width-content*)] 사용처 전체에 자동 적용.
+ */
+@media (min-width: 52.125rem) and (max-width: 74.9375rem) {
+  :root {
+    --max-width-content:        800px; /* 데스크탑 1012px → 좌우 50px @ 834px */
+    --max-width-content-narrow: 700px; /* 데스크탑  940px → 좌우 100px @ 834px */
+    --max-width-content-wide:   860px; /* 데스크탑 1140px → 좌우 20px @ 834px */
+  }
 }
 
 @theme inline {
@@ -341,7 +355,7 @@ button:disabled {
  *
  * @layer utilities { .text-* { } } 대신 @utility를 사용해야 한다.
  * @layer utilities의 커스텀 클래스는 @import "tailwindcss"로 생성된
- * 반응형 변형(max-md:, md: 등)보다 CSS에서 항상 늦게 출력되어
+ * 반응형 변형(max-md:, lg: 등)보다 CSS에서 항상 늦게 출력되어
  * 미디어쿼리 오버라이드가 동작하지 않는 버그가 발생한다.
  * @utility로 등록하면 Tailwind cascade에 완전히 통합되어 반응형 변형이
  * 올바른 순서로 생성된다.
@@ -443,6 +457,13 @@ button:disabled {
 @utility text-body-12-r-griun-lh210 {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 12px;
+  line-height: 210%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-body-13-r-griun-lh210 {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 13px;
   line-height: 210%;
   font-weight: 400;
   letter-spacing: -0.04em;

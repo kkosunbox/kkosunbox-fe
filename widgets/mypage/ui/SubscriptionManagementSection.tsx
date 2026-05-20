@@ -97,7 +97,7 @@ function SubscriptionsSummaryCard({
   }, [activeSubscriptions]);
 
   return (
-    <div className="relative overflow-hidden md:rounded-[20px] md:bg-white max-md:p-5 md:px-8 md:py-6">
+    <div className="relative overflow-hidden md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white max-md:p-5 md:px-8 lg:px-8 md:py-6 lg:py-6">
       {aggregatedPlans.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           {aggregatedPlans.map(({ plan, totalQuantity }) => {
@@ -135,7 +135,7 @@ function SubscriptionsSummaryCard({
         src={pawsImg.src}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-3 right-4 h-[72px] w-auto select-none opacity-90 md:bottom-4 md:right-6 md:h-[88px]"
+        className="pointer-events-none absolute bottom-3 right-4 h-[72px] w-auto select-none opacity-90 md:bottom-4 lg:bottom-4 md:right-6 lg:right-6 md:h-[88px] lg:h-[88px]"
       />
     </div>
   );
@@ -182,7 +182,7 @@ function PaymentInfoCard({
   const valueCls = "text-body-14-sb text-[var(--color-text)]";
 
   return (
-    <div className="flex flex-col md:rounded-[20px] md:bg-white max-md:p-5 md:px-8 md:py-6">
+    <div className="flex flex-col md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white max-md:p-5 md:px-8 lg:px-8 md:py-6 lg:py-6">
       <Text as="h3" variant="subtitle-16-b" className="mb-5 text-[var(--color-text)]">
         결제관리
       </Text>
@@ -231,13 +231,13 @@ function SubscriptionRow({
 
   return (
     <div
-      className={`flex items-stretch overflow-hidden md:rounded-[20px] md:bg-white max-md:rounded-[16px] max-md:h-[120px] ${
+      className={`flex items-stretch overflow-hidden md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white max-md:rounded-[16px] max-md:h-[120px] ${
         isActive
           ? "max-md:bg-[var(--color-support-faq-surface)]"
           : "max-md:bg-[var(--color-surface-light)]"
       }`}
     >
-      <div className="relative shrink-0 bg-[var(--color-background)] max-md:h-[120px] max-md:w-[129px] md:min-h-[155px] md:w-[155px]">
+      <div className="relative shrink-0 bg-[var(--color-background)] max-md:h-[120px] max-md:w-[129px] md:min-h-[155px] lg:min-h-[155px] md:w-[155px] lg:w-[155px]">
         <Image
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
@@ -246,11 +246,11 @@ function SubscriptionRow({
         />
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col max-md:px-4 max-md:py-[15px] md:p-5">
-        <div className="max-md:mb-2 md:mb-3 flex items-start justify-between gap-2">
+      <div className="flex min-w-0 flex-1 flex-col max-md:px-4 max-md:py-[15px] md:p-5 lg:p-5">
+        <div className="max-md:mb-2 md:mb-3 lg:mb-3 flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <span
-              className="inline-flex items-center rounded-full px-3 py-1 max-md:text-[12px] max-md:leading-[14px] max-md:font-semibold md:text-body-14-sb md:leading-[17px] text-white"
+              className="inline-flex items-center rounded-full px-3 py-1 max-md:text-[12px] max-md:leading-[14px] max-md:font-semibold md:text-body-14-sb lg:text-body-14-sb md:leading-[17px] lg:leading-[17px] text-white"
               style={{ background: badgeColor }}
             >
               {theme.tierLabel}
@@ -268,7 +268,7 @@ function SubscriptionRow({
             href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
             className="text-body-13-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
           >
-            <span className="md:hidden">
+            <span className="md:hidden lg:hidden">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="자세히보기">
                 <path d="M7 4l6 6-6 6" stroke="#999999" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -280,9 +280,9 @@ function SubscriptionRow({
         <Text
           variant="subtitle-16-sb"
           mobileVariant="body-14-sb"
-          className={`max-md:mb-1 md:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}
+          className={`max-md:mb-1 md:mb-1.5 lg:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}
         >
-          <span className="md:hidden">{plan.name}</span>
+          <span className="md:hidden lg:hidden">{plan.name}</span>
           <span className="max-md:hidden">{isActive ? `${plan.name} 구독중` : plan.name}</span>
         </Text>
 
@@ -474,7 +474,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
     <div className="min-h-screen bg-white">
       {/* Upper band */}
       <div style={{ background: "linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%)" }}>
-        <div className="mx-auto max-w-content max-md:px-4 md:px-0 pb-8 pt-6 md:pt-10">
+        <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pb-8 pt-6 md:pt-10 lg:pt-10">
           {/* Back + title */}
           <button
             type="button"
@@ -486,17 +486,17 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
           </button>
 
           {/* Two summary cards — mobile: single card w/ divider, desktop: two-column grid */}
-          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:grid md:grid-cols-2 md:gap-5">
+          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:grid lg:grid md:grid-cols-2 lg:grid-cols-2 md:gap-5 lg:gap-5">
             <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
-            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden" />
+            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
             <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
           </div>
         </div>
       </div>
 
       {/* Subscription list — 구독 전체보기 */}
-      <div className="mx-auto max-w-content max-md:px-4 md:px-0 py-10">
-        <div className="md:rounded-[24px] md:bg-[var(--color-surface-peach)] md:px-8 md:py-8">
+      <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 py-10">
+        <div className="md:rounded-[24px] lg:rounded-[24px] md:bg-[var(--color-surface-peach)] lg:bg-[var(--color-surface-peach)] md:px-8 lg:px-8 md:py-8 lg:py-8">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
@@ -524,7 +524,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 md:gap-5 lg:gap-5">
                 {pagedSubscriptions.map((subscription) => (
                   <SubscriptionRow key={subscription.id} subscription={subscription} />
                 ))}

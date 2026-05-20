@@ -6,7 +6,7 @@ import { loginAndGoTo } from "../helpers/auth";
 // A. 비밀번호 변경 (/mypage/password)
 //
 // 레이아웃 주의: PasswordManagementSection은 모바일/데스크톱 DOM을 동시에 렌더링한다.
-//   - 모바일 레이아웃(md:hidden): Desktop Chrome에서 display:none → 비상호작용
+//   - 모바일 레이아웃(lg:hidden): Desktop Chrome에서 display:none → 비상호작용
 //   - 데스크톱 레이아웃(max-md:hidden): Desktop Chrome에서 표시
 // 데스크톱 전용 id 속성(#current-password 등)을 사용해 strict mode 위반을 방지한다.
 // 버튼·에러 메시지는 두 레이아웃 모두 동일한 텍스트를 가지므로 .last()로 데스크톱 요소를 선택.
@@ -125,7 +125,7 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
 //   fetchActiveSubscription(token) → GET /v1/subscriptions → MOCK_SUBSCRIPTION
 //
 // 레이아웃 주의: ProfileManagementSection은 모바일/데스크톱 DOM을 동시에 렌더링한다.
-//   - 모바일 레이아웃(md:hidden): Desktop Chrome에서 display:none → 비상호작용
+//   - 모바일 레이아웃(lg:hidden): Desktop Chrome에서 display:none → 비상호작용
 //   - 데스크톱 레이아웃(max-md:hidden): Desktop Chrome에서 표시
 // 입력 필드: 데스크톱 #d-name / #d-breed / #d-weight, 모바일 #m-name / #m-breed / #m-weight
 // 버튼·에러: .last()로 데스크톱 요소 선택 (모바일 DOM이 앞, 데스크톱이 뒤)

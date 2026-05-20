@@ -123,14 +123,14 @@ function LeaveConfirmModal({
       aria-labelledby="leave-modal-title"
     >
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} aria-hidden="true" />
-      <div className="relative z-10 w-full max-w-[320px] rounded-[24px] bg-white px-6 py-8 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] md:max-w-[360px]">
+      <div className="relative z-10 w-full max-w-[320px] rounded-[24px] bg-white px-6 py-8 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] md:max-w-[360px] lg:max-w-[360px]">
         <p
           id="leave-modal-title"
-          className="text-center max-md:text-subtitle-17-b md:text-subtitle-18-b tracking-[-0.02em] text-[var(--color-text)]"
+          className="text-center max-md:text-subtitle-17-b md:text-subtitle-18-b lg:text-subtitle-18-b tracking-[-0.02em] text-[var(--color-text)]"
         >
           작성 중인 내용이 있어요
         </p>
-        <p className="mt-3 text-center max-md:text-body-13-m md:text-body-14-m leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)]">
+        <p className="mt-3 text-center max-md:text-body-13-m md:text-body-14-m lg:text-body-14-m leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)]">
           페이지를 나가면 지금까지 작성한
           <br />
           내용이 저장되지 않아요.
@@ -139,7 +139,7 @@ function LeaveConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="h-[48px] w-full rounded-full max-md:text-body-14-sb md:text-btn-15-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+            className="h-[48px] w-full rounded-full max-md:text-body-14-sb md:text-btn-15-sb lg:text-btn-15-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
             style={{ background: "var(--color-accent)" }}
           >
             계속 작성하기
@@ -147,7 +147,7 @@ function LeaveConfirmModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] max-md:text-body-14-m md:text-body-15-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
+            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
           >
             나가기
           </button>
@@ -565,7 +565,7 @@ export default function ChecklistSection() {
           />
         </div>
         <p
-          className="text-center max-md:text-body-16-r md:text-subtitle-18-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]"
+          className="text-center max-md:text-body-16-r md:text-subtitle-18-m lg:text-subtitle-18-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]"
           style={{
             fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
           }}
@@ -606,7 +606,7 @@ export default function ChecklistSection() {
 
   return (
     <>
-      <div className="min-h-[calc(100vh-54px)] bg-white pb-12 bg-white md:pb-16">
+      <div className="min-h-[calc(100vh-54px)] bg-white pb-12 bg-white md:pb-16 lg:pb-16">
         {step === 0 ? (
           <ChecklistHero />
         ) : (
@@ -615,8 +615,8 @@ export default function ChecklistSection() {
           </div>
         )}
 
-        <div className="relative z-10 mx-auto w-full max-md:max-w-[640px] md:max-w-[1013px] px-4 md:px-8">
-          <div className={`rounded-[20px] bg-white px-5 py-5 md:py-8 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] md:-mt-[50px] md:px-8 md:py-12 ${step === 0 ? "max-md:-mt-9.5" : "max-md:mt-4"}`}>
+        <div className="relative z-10 mx-auto w-full max-md:max-w-[640px] md:max-w-[1013px] lg:max-w-[1013px] px-4 md:px-8 lg:px-8">
+          <div className={`rounded-[20px] bg-white px-5 py-5 md:py-8 lg:py-8 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] md:-mt-[50px] lg:-mt-[50px] md:px-8 lg:px-8 md:py-12 lg:py-12 ${step === 0 ? "max-md:-mt-9.5" : "max-md:mt-4"}`}>
             <div className="mx-auto w-full max-w-[900px]">
               {questionsError ? (
                 <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">{questionsError}</p>
@@ -663,7 +663,7 @@ export default function ChecklistSection() {
           </div>
 
           {questions && questions.length > 0 && initReady ? (
-            <div className="mt-6 w-full md:hidden">
+            <div className="mt-6 w-full md:hidden lg:hidden">
               <Button
                 type="button"
                 onClick={handleMobileCta}

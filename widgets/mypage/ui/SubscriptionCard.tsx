@@ -179,7 +179,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
 
   if (subscriptions.length === 0) {
     return (
-      <div className="flex rounded-[20px] max-md:bg-white max-md:px-5 max-md:py-5 md:bg-[var(--color-surface-light)] md:min-h-[173px] md:px-6 md:py-5">
+      <div className="flex rounded-[20px] max-lg:bg-white max-lg:px-5 max-lg:py-5 lg:h-[173px] lg:bg-[var(--color-surface-light)] lg:px-6 lg:py-5">
         <SubscriptionEmpty />
       </div>
     );
@@ -225,9 +225,9 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
   }
 
   return (
-    <div>
+    <div className="max-lg:mb-5 lg:h-[173px]">
       <div
-        className="relative flex rounded-[20px] max-md:bg-white md:h-[173px] md:bg-[var(--color-background)]"
+        className="relative flex h-full rounded-[20px] max-lg:bg-white max-lg:min-h-0 lg:h-[173px] lg:bg-[var(--color-background)]"
         onClickCapture={handleClickCapture}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -239,7 +239,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
           className="relative z-0 flex min-w-0 flex-1 outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)] max-md:focus-visible:ring-offset-white"
         >
           {/* 이미지 — 카드 왼쪽에 패딩 없이 full-height */}
-          <div className="relative max-md:w-[100px] md:w-[160px] shrink-0 self-stretch overflow-hidden rounded-l-[20px]">
+          <div className="relative shrink-0 self-stretch overflow-hidden rounded-l-[20px] max-[450px]:w-[110px] min-[481px]:max-lg:w-[164px] lg:w-[160px]">
             <Image
               src={TIER_THUMBNAILS[planTheme.tier]}
               alt=""
@@ -249,16 +249,16 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
           </div>
 
           {/* 텍스트 콘텐츠 */}
-          <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 max-md:px-4 max-md:py-5 md:px-8">
+          <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 max-lg:px-4 max-lg:py-5 lg:px-8">
             <div className="flex items-center gap-2">
               <span
-                className="inline-flex h-[24px] w-fit shrink-0 items-center rounded-full px-[12px] max-md:text-body-13-sb md:text-body-14-sb leading-[1] text-white"
+                className="inline-flex h-[24px] w-fit shrink-0 items-center rounded-full px-[12px] max-lg:text-body-13-sb lg:text-body-14-sb leading-[1] text-white"
                 style={{ background: planTheme.colorVar }}
               >
                 {planTheme.tierLabel}
               </span>
               <span
-                className="max-md:text-body-13-sb md:text-body-14-sb leading-[1]"
+                className="max-lg:text-body-13-sb lg:text-body-14-sb leading-[1]"
                 style={{ fontWeight: 700, color: planTheme.colorVar }}
               >
                 {current.quantity}BOX
@@ -291,7 +291,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         {/* 구독관리 */}
         <Link
           href="/mypage/subscription"
-          className="absolute right-8 top-5 z-10 max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
+          className="absolute right-8 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
         >
           구독관리
         </Link>
@@ -300,7 +300,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         {hasMultiple && (
           <button
             onClick={goToPrevious}
-            className="absolute left-[-16px] top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-80 max-md:hidden"
+            className="absolute left-[-16px] top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-80 max-lg:hidden"
             aria-label="이전 구독"
           >
             <SubscriptionPrevButtonIcon />
@@ -309,7 +309,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         {hasMultiple && (
           <button
             onClick={goToNext}
-            className="absolute right-[-16px] top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-80 max-md:hidden"
+            className="absolute right-[-16px] top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-80 max-lg:hidden"
             aria-label="다음 구독"
           >
             <SubscriptionNextButtonIcon />
@@ -321,7 +321,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
           activeIndex={activeIndex}
           total={subscriptions.length}
           onSelect={setActiveIndex}
-          className="absolute bottom-4 left-0 right-0 md:translate-x-8 max-md:hidden"
+          className="absolute bottom-4 left-0 right-0 lg:translate-x-8 max-lg:hidden"
         />
       </div>
 
@@ -330,7 +330,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         activeIndex={activeIndex}
         total={subscriptions.length}
         onSelect={setActiveIndex}
-        className="pt-3 md:hidden"
+        className="pt-3 lg:hidden"
       />
     </div>
   );

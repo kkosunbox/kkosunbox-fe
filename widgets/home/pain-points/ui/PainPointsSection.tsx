@@ -14,13 +14,13 @@ const PAIN_POINTS = [
 
 export default function PainPointsSection() {
   return (
-    <section style={{ background: "var(--color-ingredients-bg)" }} className="pb-10 md:pb-16 md:pt-[46px]">
-      <div className="mx-auto flex max-w-content flex-col items-center max-md:px-8 md:flex-row md:items-start md:justify-start md:gap-8 md:px-0">
+    <section style={{ background: "var(--color-ingredients-bg)" }} className="pb-10 md:pb-16 lg:pb-16 md:pt-[46px] lg:pt-[46px]">
+      <div className="mx-auto flex md:max-w-[838px] lg:max-w-content flex-col items-center max-md:px-8 md:flex-row lg:flex-row md:items-start lg:items-start md:justify-start lg:justify-start md:gap-8 lg:gap-8 md:px-0 lg:px-0">
         {/* Left — 텍스트 (남는 가로 공간 우선 확보, 체크리스트가 중앙선 넘어 확장 가능) */}
-        <div className="flex w-full min-w-0 flex-col max-md:items-center md:items-start md:flex-1 md:pr-4 md:pt-8">
+        <div className="flex w-full min-w-0 flex-col max-md:items-center md:items-start lg:items-start md:flex-1 lg:flex-1 md:pr-4 lg:pr-4 md:pt-8 lg:pt-8">
           <ScrollReveal variant="fade-up">
             <p
-              className="text-[32px] md:text-[40px] leading-[64px] tracking-[-0.08em] underline lowercase text-[var(--color-accent-orange)] mb-0 md:mb-3"
+              className="max-md:text-[32px] md:text-[32px] lg:text-[40px] leading-[64px] md:leading-[51px] lg:leading-[64px] tracking-[-0.08em] underline lowercase text-[var(--color-accent-orange)] mb-0 md:mb-3 lg:mb-3"
               style={{ fontFamily: "var(--font-give-you-glory)" }}
             >
               for you
@@ -30,18 +30,18 @@ export default function PainPointsSection() {
             <Image
               src={painPointQuestion}
               alt="이런 고민 있으신가요?"
-              className="mb-6 h-auto w-full max-w-[258px] md:mb-8 md:max-w-[387px]"
+              className="mb-6 h-auto w-full max-w-[258px] md:mb-8 lg:mb-8 md:max-w-[258px] lg:max-w-[387px]"
             />
           </ScrollReveal>
           {/* 모바일 전용 구분선 */}
-          <div className="md:hidden mb-3 w-full border-t border-[var(--color-divider-warm)]" />
-          <ul className="flex w-full max-w-full flex-col items-start gap-2 text-left md:mx-0 max-md:max-w-[290px] md:w-full md:gap-0">
+          <div className="md:hidden lg:hidden mb-3 w-full border-t border-[var(--color-divider-warm)]" />
+          <ul className="flex w-full max-w-full flex-col items-start gap-2 text-left md:mx-0 lg:mx-0 max-md:max-w-[290px] md:w-full lg:w-full md:gap-0 lg:gap-0">
             {PAIN_POINTS.map((item, i) => (
               <ScrollReveal key={item} variant="fade-up" delay={300 + i * 120}>
-                <li className="flex items-start gap-2 md:gap-3">
-                  <div className="md:mt-1 shrink-0">
+                <li className="flex items-start gap-2 md:gap-3 lg:gap-3">
+                  <div className="md:mt-1 lg:mt-1 shrink-0">
                     <svg
-                      className="max-md:size-5 md:size-6 shrink-0"
+                      className="max-md:size-5 md:size-5 lg:size-6 shrink-0"
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
@@ -57,7 +57,7 @@ export default function PainPointsSection() {
                       />
                     </svg>
                   </div>
-                  <span className="max-md:text-body-12-r-griun-lh210 md:text-body-16-r-griun-lh210 text-[var(--color-text-body-warm)] md:whitespace-nowrap">
+                  <span className="max-md:text-body-12-r-griun-lh210 md:text-body-13-r-griun-lh210 lg:text-body-16-r-griun-lh210 text-[var(--color-text-body-warm)] lg:whitespace-nowrap">
                     {item}
                   </span>
                 </li>
@@ -67,11 +67,11 @@ export default function PainPointsSection() {
         </div>
 
         {/* Right — 강아지 이미지 2장 */}
-        <ScrollReveal variant="slide-right" duration={900} className="flex w-full shrink-0 items-end justify-center max-md:pt-4 md:w-auto md:flex-none md:py-0">
+        <ScrollReveal variant="slide-right" duration={900} className="flex w-full shrink-0 items-end justify-center max-md:pt-4 md:w-auto lg:w-auto md:flex-none lg:flex-none md:py-0 lg:py-0">
           <Image
             src={painPointDogs}
             alt="귀여운 강아지들"
-            className="object-contain w-full max-w-[320px] md:max-w-[495px] h-auto"
+            className="object-contain w-full max-w-[320px] md:max-w-[419px] lg:max-w-[495px] h-auto"
           />
         </ScrollReveal>
       </div>

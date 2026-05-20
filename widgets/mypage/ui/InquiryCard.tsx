@@ -17,9 +17,10 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
 
   return (
     <>
-      <DashboardCard>
+      <DashboardCard className="max-lg:min-h-0 max-lg:h-auto">
         <SectionHeader title="문의관리" href="/support" linkLabel="문의관리" spacing="tight" />
 
+        <div className="flex min-h-0 flex-1 flex-col">
         {inquiries.length === 0 ? (
           <div className="flex flex-1 items-center justify-center py-6">
             <Text variant="body-13-r" className="text-[var(--color-text-secondary)]">
@@ -27,13 +28,13 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             </Text>
           </div>
         ) : (
-          <div className="flex-1">
+          <div className="min-h-0 flex-1 overflow-hidden">
             {pageItems.map((inq, index) => (
               <div
                 key={inq.id}
                 onClick={() => setSelectedInquiry(inq)}
                 className={[
-                  "flex cursor-pointer items-center gap-x-3 py-1.5 transition-opacity hover:opacity-70",
+                  "flex cursor-pointer items-center gap-x-3 max-lg:py-1.5 lg:py-1 transition-opacity hover:opacity-70",
                   index < pageItems.length - 1 ? "border-b border-[var(--color-divider-warm)]" : "",
                 ]
                   .filter(Boolean)
@@ -49,7 +50,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
         )}
 
         <nav
-          className="mt-auto flex items-center justify-center gap-1 pt-4 text-[var(--color-text-secondary)]"
+          className="mt-auto flex shrink-0 items-center justify-center gap-1 max-lg:pt-4 lg:pt-2 text-[var(--color-text-secondary)]"
           aria-label="문의 페이지 탐색"
         >
           <button
@@ -68,7 +69,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
               onClick={() => setPage(n)}
               aria-current={page === n ? "page" : undefined}
               className={[
-                "min-w-[16px] max-md:text-caption-11-r md:text-caption-12-r leading-none transition-colors",
+                "min-w-[16px] max-lg:text-caption-11-r lg:text-caption-12-r leading-none transition-colors",
                 page === n
                   ? "font-semibold text-[var(--color-text)]"
                   : "text-[var(--color-text-secondary)]",
@@ -89,6 +90,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             <ChevronRightIcon />
           </button>
         </nav>
+        </div>
       </DashboardCard>
 
       {selectedInquiry && (

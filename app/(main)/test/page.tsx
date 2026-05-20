@@ -85,7 +85,7 @@ export default function TestPage() {
           description="textarea에 직접 타이핑해 폰트 렌더링을 확인합니다."
           defaultOpen={false}
         >
-          <section className="grid gap-5 lg:grid-cols-2">
+          <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-2">
             {fontSamples.map((font) => (
               <article
                 key={font.name}

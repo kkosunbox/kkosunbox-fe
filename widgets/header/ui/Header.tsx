@@ -517,10 +517,10 @@ export default function Header() {
   return (
     <>
       <nav className="fixed inset-x-0 top-0 z-50 h-[54px] bg-white shadow-[0_3px_30px_rgba(0,0,0,0.03)]">
-        <div className="mx-auto flex h-full max-w-content items-center justify-between max-md:px-6 md:px-[20px]">
+        <div className="mx-auto flex h-full max-w-content items-center justify-between max-md:px-6 md:px-[20px] lg:px-[20px]">
           <div className="flex items-center gap-3">
             <button
-              className="max-md:flex md:hidden items-center justify-center"
+              className="max-md:flex md:flex lg:hidden items-center justify-center"
               onClick={() => setIsMenuOpen(true)}
               aria-label="메뉴 열기"
               aria-expanded={isMenuOpen}
@@ -534,13 +534,13 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex items-center gap-[46px]">
-            <Link href="/about" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
+            <Link href="/about" className="max-md:hidden md:hidden lg:block text-body-14-sb text-[var(--color-text)] hover:text-primary">
               꼬순박스 소개
             </Link>
-            <Link href="/subscribe" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
+            <Link href="/subscribe" className="max-md:hidden md:hidden lg:block text-body-14-sb text-[var(--color-text)] hover:text-primary">
               구독 시작하기
             </Link>
-            <Link href="/support" className="max-md:hidden text-body-14-sb text-[var(--color-text)] hover:text-primary">
+            <Link href="/support" className="max-md:hidden md:hidden lg:block text-body-14-sb text-[var(--color-text)] hover:text-primary">
               고객센터
             </Link>
             {isAuthLoading ? (
@@ -576,7 +576,7 @@ export default function Header() {
 
       {/* Mobile menu overlay */}
       <div
-        className={`fixed inset-0 z-[60] bg-white transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-0 z-[60] bg-white transition-transform duration-300 ease-in-out lg:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         role="dialog"

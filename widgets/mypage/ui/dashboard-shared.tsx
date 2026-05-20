@@ -2,6 +2,10 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import { Text } from "@/shared/ui";
 
+/** 태블릿·데스크톱 마이페이지 대시보드 카드 — Figma 173px 고정 */
+export const DASHBOARD_CARD_SURFACE_CLASS =
+  "flex flex-col overflow-hidden rounded-[20px] max-lg:bg-white max-lg:px-7 max-lg:py-6 lg:h-[173px] lg:bg-[var(--color-surface-light)] lg:px-8 lg:py-5";
+
 export function DashboardCard({
   children,
   className,
@@ -11,12 +15,7 @@ export function DashboardCard({
 }) {
   return (
     <div
-      className={[
-        "flex flex-col rounded-[20px] max-md:bg-white max-md:px-7 max-md:py-6 md:bg-[var(--color-surface-light)] md:min-h-[173px] md:px-8 md:py-6",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      className={[DASHBOARD_CARD_SURFACE_CLASS, className].filter(Boolean).join(" ")}
     >
       {children}
     </div>
@@ -37,13 +36,15 @@ export function SectionHeader({
   spacing?: "default" | "tight";
 }) {
   const linkCls =
-    "max-md:text-body-13-sb md:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
+    "max-lg:text-body-13-sb lg:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
 
   return (
     <div
       className={[
         "flex items-center justify-between gap-3",
-        spacing === "tight" ? "mb-4" : "mb-6",
+        spacing === "tight"
+          ? "mb-4 lg:mb-3"
+          : "max-lg:mb-6 lg:mb-4",
       ].join(" ")}
     >
       <Text

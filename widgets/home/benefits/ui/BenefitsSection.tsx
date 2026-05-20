@@ -12,17 +12,17 @@ const TAGS = ["#프리미엄", "#수제간식", "#국내산", "#구독"];
 export default function BenefitsSection() {
   return (
     <>
-    <section className="bg-[var(--color-background)] md:h-[370px]">
-      <div className="h-full mx-auto flex flex-col md:flex-row max-w-content items-center justify-between gap-7 md:gap-16 max-md:px-8 md:px-0 py-8.5 md:py-0">
+    <section className="bg-[var(--color-background)] md:h-[370px] lg:h-[370px]">
+      <div className="h-full mx-auto flex flex-col md:flex-row lg:flex-row max-w-content items-center justify-between gap-7 md:gap-16 lg:gap-16 max-md:px-8 md:px-0 lg:px-0 py-8.5 md:py-0 lg:py-0">
         {/* Left */}
-        <div className="w-full flex flex-col items-center md:items-start">
+        <div className="w-full flex flex-col items-center md:items-start lg:items-start">
           <span className="sr-only">Point 1</span>
           <Image src={benefitsTitle} alt="" aria-hidden className="w-full h-full object-cover max-w-[66px] max-h-[28px] mb-5" />
           <h2 className="sr-only">우리아이 행복 간식</h2>
-          <Image src={benefitsContents01} alt="" aria-hidden className="w-full h-full object-cover max-w-[193px] md:max-w-[254px] max-md:mb-2 md:mb-4" />
+          <Image src={benefitsContents01} alt="" aria-hidden className="w-full h-full object-cover max-w-[193px] md:max-w-[254px] lg:max-w-[254px] max-md:mb-2 md:mb-4 lg:mb-4" />
           <p className="sr-only">다양하게 즐겨요</p>
-          <Image src={benefitsContents02} alt="" aria-hidden className="w-full h-full object-cover max-w-[243px] md:max-w-[292px] mb-5" />
-          <div className="flex flex-wrap justify-center md:justify-start gap-2">
+          <Image src={benefitsContents02} alt="" aria-hidden className="w-full h-full object-cover max-w-[243px] md:max-w-[292px] lg:max-w-[292px] mb-5" />
+          <div className="flex flex-wrap justify-center md:justify-start lg:justify-start gap-2">
             {TAGS.map((tag) => (
               <span
                 key={tag}
@@ -35,12 +35,12 @@ export default function BenefitsSection() {
         </div>
 
         {/* Right — 강아지 원형 사진 */}
-        <div className="flex w-full md:w-auto shrink-0 items-center justify-center">
-          <Image src={dogImage} alt="강아지 사진" className="w-full h-full object-cover max-h-[310px] md:max-h-[300px] translate-x-3 md:translate-x-0" />
+        <div className="flex w-full md:w-auto lg:w-auto shrink-0 items-center justify-center">
+          <Image src={dogImage} alt="강아지 사진" className="w-full h-full object-cover max-h-[310px] md:max-h-[300px] lg:max-h-[300px] translate-x-3 md:translate-x-0 lg:translate-x-0" />
         </div>
       </div>
     </section>
-    <Image src={mobilebottom} alt="" aria-hidden className="md:hidden w-full h-auto" />
+    <Image src={mobilebottom} alt="" aria-hidden className="md:hidden lg:hidden w-full h-auto" />
     </>
   );
 }

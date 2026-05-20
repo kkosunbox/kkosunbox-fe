@@ -291,12 +291,12 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="flex min-h-full flex-1 flex-col pb-16 md:pt-0 md:pb-20">
+      <section className="flex min-h-full flex-1 flex-col pb-16 md:pt-0 lg:pt-0 md:pb-20 lg:pb-20">
         <div className="flex w-full flex-1 flex-col">
           {/* Hero — 모바일: 이미지 / 데스크톱: 전폭 그라디언트 + 중앙 이미지 (와이드 뷰포트 좌우 빈 영역 보완) */}
           <ScrollReveal variant="fade-in" duration={600}>
-            <div className="mb-6 md:mb-8">
-              <div className="flex h-[170px] items-center justify-center overflow-hidden md:hidden">
+            <div className="mb-6 md:mb-8 lg:mb-8">
+              <div className="flex h-[170px] items-center justify-center overflow-hidden md:hidden lg:hidden">
                 <Image
                   src={SubscribePlansHeroImageMobile}
                   alt="이제 수제 간식도 맞춤형으로 구독하세요"
@@ -305,7 +305,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                 />
               </div>
               <div
-                className="relative hidden h-[210px] w-full overflow-hidden md:block"
+                className="relative hidden h-[210px] w-full overflow-hidden md:block lg:block"
                 style={{ background: "var(--gradient-subscribe-plans-hero)" }}
               >
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
@@ -320,10 +320,10 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
             </div>
           </ScrollReveal>
 
-          <div className="mx-auto flex w-full max-w-[587px] flex-1 flex-col px-6 md:max-w-none md:px-0">
+          <div className="mx-auto flex w-full max-w-[587px] flex-1 flex-col max-md:px-6 md:max-w-content lg:max-w-content md:px-8 max-lg:px-8 lg:px-0">
             {/* 모바일 티어 탭 — sticky (고정 헤더 아래 고정), 클릭 시 해당 카드로 smooth scroll */}
             {sortedPlans.length > 0 ? (
-              <div className="md:hidden sticky top-[54px] z-10 -mx-6 bg-white px-6 py-3 mb-4">
+              <div className="md:hidden lg:hidden sticky top-[54px] z-10 -mx-6 bg-white px-6 py-3 mb-4">
                 <div className="flex justify-center gap-3">
                   {sortedPlans.map((p) => {
                     const theme = packageThemeForPlan(p);
@@ -384,7 +384,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
             </div>
 
             {/* ══ Mobile (max-md) — 카드 항상 렌더 + 카드별 inline 토글 ══════ */}
-            <div className="md:hidden">
+            <div className="md:hidden lg:hidden">
               {sortedPlans.length === 0 ? (
                 <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
                   표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.

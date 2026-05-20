@@ -8,7 +8,12 @@ import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
 import packageImageStandard from "../assets/package-image-standard.png";
 import packageImagePremium from "../assets/package-image-premium.png";
-import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import {
+  BREAKPOINT_LG_PX,
+  BREAKPOINT_MD_PX,
+  MEDIA_MAX_MD_SIZES,
+  MEDIA_MAX_LG_SIZES,
+} from "@/shared/config/breakpoints";
 
 const HOME_PACKAGE_UI = {
   Basic: {
@@ -45,7 +50,14 @@ const PACKAGES = BASE_PACKAGES.map((pkg) => ({
   ...HOME_PACKAGE_UI[pkg.tier],
 }));
 
-const SIDE_OFFSET = 348;
+// 데스크탑(≥1200px) 기준
+const SIDE_OFFSET_LG = 348;
+const SIDE_VERTICAL_OFFSET_LG = 64;
+
+// 태블릿(900–1199px) 기준 — 카드가 작아 간격을 줄임
+const SIDE_OFFSET_MD = 285;
+const SIDE_VERTICAL_OFFSET_MD = 16;
+
 const AUTO_ROTATE_MS = 10000;
 const ACTIVE_VISUAL_DELAY_MS = 140;
 
@@ -61,8 +73,8 @@ function PackageCard({
       className={[
         "flex flex-col rounded-[20px] overflow-hidden transition-[height,width,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
         isActive
-          ? "max-md:h-[490px] md:h-[522px] max-md:w-full md:w-[375px]"
-          : "h-[419px] w-[280px]",
+          ? "max-md:h-[490px] md:h-[419px] lg:h-[522px] max-md:w-full md:w-[280px] lg:w-[375px]"
+          : "md:h-[387px] lg:h-[419px] md:w-[254px] lg:w-[280px]",
       ].join(" ")}
       style={{
         background: pkg.cardBg,
@@ -73,7 +85,9 @@ function PackageCard({
       <div
         className={[
           "relative w-full shrink-0 overflow-hidden transition-[height] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          isActive ? "max-md:h-[303px] md:h-[348px]" : "h-[260px]",
+          isActive
+            ? "max-md:h-[303px] md:h-[260px] lg:h-[348px]"
+            : "md:h-[234px] lg:h-[260px]",
         ].join(" ")}
       >
         <Image
@@ -81,7 +95,7 @@ function PackageCard({
           alt={`${pkg.name} 이미지`}
           fill
           className="object-cover object-center"
-          sizes={`${MEDIA_MAX_MD_SIZES} 327px, 380px`}
+          sizes={`${MEDIA_MAX_MD_SIZES} 327px, ${MEDIA_MAX_LG_SIZES} 280px, 380px`}
         />
         {/* 티어 뱃지 */}
         <span
@@ -98,7 +112,9 @@ function PackageCard({
         <span
           className={[
             "pointer-events-none absolute bottom-5 right-4 leading-[36px] tracking-[0.02em] capitalize opacity-50",
-            isActive ? "text-[36px]" : "text-[32px]",
+            isActive
+              ? "max-md:text-[36px] md:text-[28px] lg:text-[36px]"
+              : "md:text-[24px] lg:text-[32px]",
           ].join(" ")}
           style={{
             fontFamily: "var(--font-ms-madi)",
@@ -113,8 +129,8 @@ function PackageCard({
           className={[
             "text-center capitalize tracking-[-0.04em] transition-[font-size,line-height,margin-bottom] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
             isActive
-              ? "mb-4 text-[24px] leading-[29px] font-extrabold"
-              : "mb-3 text-[20px] leading-[24px] font-extrabold",
+              ? "mb-4 max-md:text-[24px] max-md:leading-[29px] md:text-[20px] md:leading-[24px] lg:text-[24px] lg:leading-[29px] font-extrabold"
+              : "mb-3 md:text-[16px] md:leading-[19px] lg:text-[20px] lg:leading-[24px] font-extrabold",
           ].join(" ")}
           style={{ color: pkg.accentColor }}
         >
@@ -128,7 +144,9 @@ function PackageCard({
                 key={item}
                 className={[
                   "flex items-center gap-2 text-left text-black !leading-[1]",
-                  isActive ? "text-body-16-m" : "text-body-14-m",
+                  isActive
+                    ? "max-md:text-body-16-m md:text-body-14-m lg:text-body-16-m"
+                    : "text-body-14-m",
                 ].join(" ")}
               >
                 <CheckCircleIcon color={pkg.accentColor} />
@@ -146,9 +164,27 @@ export default function PackagePlansSection() {
   const [activeIndex, setActiveIndex] = useState(1);
   const [visualActiveIndex, setVisualActiveIndex] = useState(1);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
+  const [layout, setLayout] = useState({
+    sideOffset: SIDE_OFFSET_LG,
+    verticalOffset: SIDE_VERTICAL_OFFSET_LG,
+  });
   const total = PACKAGES.length;
   const autoRotateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeVisualTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      const isMd = w >= BREAKPOINT_MD_PX && w < BREAKPOINT_LG_PX;
+      setLayout({
+        sideOffset: isMd ? SIDE_OFFSET_MD : SIDE_OFFSET_LG,
+        verticalOffset: isMd ? SIDE_VERTICAL_OFFSET_MD : SIDE_VERTICAL_OFFSET_LG,
+      });
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const getRelativeOffset = (index: number) => {
     const raw = (index - activeIndex + total) % total;
@@ -213,34 +249,34 @@ export default function PackagePlansSection() {
   }, []);
 
   return (
-    <section className="bg-white py-12 md:pt-[68px] md:pb-12">
-      <div className="mx-auto max-w-content max-md:px-8 md:px-0">
+    <section className="bg-white py-12 md:pt-[68px] lg:pt-[68px] md:pb-12 lg:pb-12">
+      <div className="mx-auto max-w-content max-md:px-8 md:px-0 lg:px-0">
         <ScrollReveal variant="fade-up">
           <Image
             src={packagePlansTitle02}
             alt="원하는 패키지로 선택 후 구독하세요!"
-            className="mx-auto h-auto w-full max-w-[260px] md:max-w-[371px]"
+            className="mx-auto h-auto w-full max-w-[260px] md:max-w-[371px] lg:max-w-[371px]"
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
-          <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 mt-4 md:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
-            체크리스트 후 우리 아이에게 적절한 <br className="md:hidden" />패키지 박스를 추천받을 수 있습니다!
+          <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 lg:mb-11 mt-4 md:mt-9 lg:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
+            체크리스트 후 우리 아이에게 적절한 <br className="md:hidden lg:hidden" />패키지 박스를 추천받을 수 있습니다!
           </Text>
         </ScrollReveal>
 
         {/* 모바일 - 단일 카드 */}
-        <ScrollReveal variant="scale-in" delay={300} className="md:hidden">
+        <ScrollReveal variant="scale-in" delay={300} className="md:hidden lg:hidden">
           <div className="mx-auto w-full max-w-[327px]">
             <PackageCard pkg={PACKAGES[activeIndex]} isActive />
           </div>
         </ScrollReveal>
 
-        {/* 데스크톱 - 3카드 캐러셀 */}
+        {/* 태블릿·데스크탑 - 3카드 캐러셀 */}
         <ScrollReveal
           variant="scale-in"
           delay={300}
           as="div"
-          className="relative mx-auto h-[522px] w-full max-w-[1012px] max-md:hidden"
+          className="relative mx-auto md:h-[460px] lg:h-[522px] w-full max-w-[1012px] max-md:hidden"
         >
           <div
             className="h-full w-full"
@@ -257,8 +293,8 @@ export default function PackagePlansSection() {
                   key={pkg.tier}
                   className="absolute left-1/2 top-0 will-change-transform transition-[transform] duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
                   style={{
-                    transform: `translate3d(calc(-50% + ${offset * SIDE_OFFSET}px), ${
-                      isCentered ? 0 : 64
+                    transform: `translate3d(calc(-50% + ${offset * layout.sideOffset}px), ${
+                      isCentered ? 0 : layout.verticalOffset
                     }px, 0)`,
                     zIndex: isCentered ? 20 : 10 - Math.abs(offset),
                   }}

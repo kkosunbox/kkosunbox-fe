@@ -245,7 +245,7 @@ function ReviewImageLightbox({
       <button
         type="button"
         aria-label="닫기"
-        className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-[24px] font-light leading-none text-white hover:bg-black/70 md:right-6 md:top-6"
+        className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-[24px] font-light leading-none text-white hover:bg-black/70 md:right-6 lg:right-6 md:top-6 lg:top-6"
         onClick={(e) => {
           e.stopPropagation();
           onClose();
@@ -266,7 +266,7 @@ function ReviewImageLightbox({
           <button
             type="button"
             aria-label="이전 사진"
-            className="absolute left-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-left-1 md:-left-14"
+            className="absolute left-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-left-1 md:-left-14 lg:-left-14"
             disabled={index <= 0}
             onClick={() => onNavigate(index - 1)}
           >
@@ -279,7 +279,7 @@ function ReviewImageLightbox({
           <button
             type="button"
             aria-label="다음 사진"
-            className="absolute right-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-right-1 md:-right-14"
+            className="absolute right-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-right-1 md:-right-14 lg:-right-14"
             disabled={index >= urls.length - 1}
             onClick={() => onNavigate(index + 1)}
           >
@@ -464,7 +464,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const activeTierLabel = selectedTheme.tierLabel;
 
   return (
-    <section className="flex min-h-full flex-1 flex-col md:pb-16">
+    <section className="flex min-h-full flex-1 flex-col md:pb-16 lg:pb-16">
       {reviewLightbox ? (
         <ReviewImageLightbox
           urls={reviewLightbox.urls}
@@ -476,7 +476,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
         />
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
-      <div className="md:hidden">
+      <div className="md:hidden lg:hidden">
         <div className="relative mb-2 h-[148px] w-full overflow-hidden">
           <Image
             src={subscribeItemHeroMobile}
@@ -940,7 +940,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
         </div>
 
         <div className="mx-auto w-full max-w-[var(--max-width-content)]">
-          <div className="mb-8 md:min-h-[64px] flex items-center gap-3 border-b border-[var(--color-text-muted)] pb-5">
+          <div className="mb-8 md:min-h-[64px] lg:min-h-[64px] flex items-center gap-3 border-b border-[var(--color-text-muted)] pb-5">
             <span className="text-body-16-sb text-[var(--color-text-muted)]">구독선택</span>
             <div className="flex flex-wrap gap-2">
               {sortedPlans.map((plan) => {
@@ -963,8 +963,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             </div>
           </div>
 
-          <div className="grid gap-8 xl:mx-auto xl:w-[1013px] xl:grid-cols-[508px_438px] xl:justify-between xl:gap-0">
-            <div className="mx-auto min-w-0 w-full max-w-[508px] xl:mx-0">
+          <div className="grid gap-8 lg:mx-auto lg:w-[1013px] lg:grid-cols-[508px_438px] lg:justify-between lg:gap-0">
+            <div className="mx-auto min-w-0 w-full max-w-[508px] lg:mx-0">
               <div className="relative h-[508px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
                 <Image
                   src={packageThumbnail}
@@ -986,7 +986,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               </p>
             </div>
 
-            <div className="mx-auto min-w-0 w-full max-w-[438px] xl:mx-0">
+            <div className="mx-auto min-w-0 w-full max-w-[438px] lg:mx-0">
               <h2 className="mb-2 text-[28px] font-semibold tracking-[-0.04em] text-[var(--color-text-emphasis)]">
                 {selectedPlan.name}
               </h2>
@@ -1009,14 +1009,14 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 </span>
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
-                <div className="space-y-6 md:space-y-8">
-                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 text-body-14-m">
+                <div className="space-y-6 md:space-y-8 lg:space-y-8">
+                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품구성</span>
                     <span className="justify-self-start max-w-[240px] text-left text-body-14-b leading-[17px]" style={{ color: selectedTheme.colorVar }}>
                       {selectedPackage.contents.join(" ")}
                     </span>
                   </div>
-                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 text-body-14-m">
+                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">배송방법</span>
                     <div className="justify-self-start max-w-[240px] text-left">
                       <p className="text-body-13-m leading-[140%] text-[var(--color-text)]">우체국택배</p>
@@ -1025,7 +1025,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 md:gap-x-9 text-body-14-m">
+                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품수량</span>
                     <div className="justify-self-start flex h-[34px] items-center gap-3 rounded-[5px] border border-[var(--color-text-muted)] px-3">
                       <button
@@ -1058,7 +1058,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <button
                   type="button"
                   onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-                  className="flex h-[48px] w-full items-center justify-center md:mt-8 rounded-[30px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
+                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[30px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                   style={{ background: selectedTheme.colorVar }}
                 >
                   구독하기
@@ -1069,7 +1069,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div
             ref={desktopTabsRef}
-            className="md:mt-[54px] scroll-mt-4 border-b border-[var(--color-text-muted)] pb-4"
+            className="md:mt-[54px] lg:mt-[54px] scroll-mt-4 border-b border-[var(--color-text-muted)] pb-4"
           >
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center text-center">
               {TABS.map((tab, idx) => {
@@ -1097,8 +1097,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           {activeTab === "info" && (
-            <div className="pt-5 md:pt-20">
-              <div className="mx-auto w-full md:max-w-[800px]">
+            <div className="pt-5 md:pt-20 lg:pt-20">
+              <div className="mx-auto w-full md:max-w-[800px] lg:max-w-[800px]">
                 {detailImages.map((imageSrc, index) => (
                   <Image
                     key={`${selectedTier}-${index}`}

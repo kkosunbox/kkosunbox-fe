@@ -133,10 +133,10 @@ export default function LoginPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="min-h-screen bg-white flex flex-col md:pt-[54px]">
+    <form onSubmit={handleSubmit} className="min-h-screen bg-white flex flex-col md:pt-[54px] lg:pt-[54px]">
 
       {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}
-      <div className="md:hidden absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="md:hidden lg:hidden absolute inset-0 overflow-hidden pointer-events-none">
         {/* 그라데이션 둥근 배경 — 뷰포트 전체를 감싸도록 배치 */}
         <div
           className="absolute left-1/2 -translate-x-1/2"
@@ -161,15 +161,15 @@ export default function LoginPage() {
       </div>
 
       {/* ── 콘텐츠: 모바일 세로 중앙 / 데스크톱 2컬럼 ── */}
-      <div className="flex flex-1 flex-col max-md:items-center max-md:justify-center md:mx-auto md:w-full md:max-w-content md:flex-row relative">
+      <div className="relative flex flex-1 flex-col max-md:items-center max-md:justify-center md:mx-auto md:flex-row md:w-full md:max-w-none md:px-8 max-lg:overflow-x-auto max-lg:px-8 lg:max-w-content lg:px-0">
 
         {/* 좌측 — 폼 */}
-        <div className="flex-1 flex flex-col w-full px-6 max-md:justify-center md:justify-center md:min-h-[calc(100vh-54px)]">
+        <div className="flex w-full flex-col px-6 max-md:flex-1 max-md:justify-center md:min-h-[calc(100vh-54px)] md:min-w-[448px] md:flex-1 md:justify-center lg:min-h-[calc(100vh-54px)]">
           {/* 모바일: 고정 간격 블록, 세로 중앙 정렬 / 데스크톱: 기존 레이아웃 유지 */}
           <div className="w-full max-w-[400px] px-0 max-md:mx-auto">
 
             {/* 모바일 전용: 로고 영역 */}
-            <div className="max-md:flex md:hidden items-center justify-center pb-[100px]">
+            <div className="max-md:flex md:hidden lg:hidden items-center justify-center pb-[100px]">
               <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto relative" priority />
             </div>
 
@@ -202,11 +202,11 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-full outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
                 max-md:h-[48px] max-md:px-8 max-md:text-[14px] max-md:bg-white
-                md:h-[54px] md:px-6 md:tracking-[0.2px] md:bg-[var(--color-surface-light)] md:text-body-16-m"
+                md:h-[54px] lg:h-[54px] md:px-6 lg:px-6 md:tracking-[0.2px] lg:tracking-[0.2px] md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:text-body-16-m lg:text-body-16-m"
             />
 
             {/* 비밀번호 입력 */}
-            <div className="relative max-md:mt-[24px] md:mt-6">
+            <div className="relative max-md:mt-[24px] md:mt-6 lg:mt-6">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="비밀번호를 입력하세요"
@@ -215,17 +215,17 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-full outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
                   max-md:h-[48px] max-md:px-8 max-md:pr-12 max-md:text-[14px] max-md:bg-white
-                  md:h-[54px] md:px-6 md:pr-16 md:bg-[var(--color-surface-light)] md:text-body-16-m"
+                  md:h-[54px] lg:h-[54px] md:px-6 lg:px-6 md:pr-16 lg:pr-16 md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:text-body-16-m lg:text-body-16-m"
               />
               <button
                 type="button"
-                className="absolute right-5 top-1/2 -translate-y-1/2 opacity-80 md:right-6"
+                className="absolute right-5 top-1/2 -translate-y-1/2 opacity-80 md:right-6 lg:right-6"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
               >
                 {showPassword
-                  ? <EyeIcon className="w-4 h-4 md:w-6 md:h-6" />
-                  : <EyeOffIcon className="w-4 h-4 md:w-6 md:h-6" />}
+                  ? <EyeIcon className="w-4 h-4 md:w-6 lg:w-6 md:h-6 lg:h-6" />
+                  : <EyeOffIcon className="w-4 h-4 md:w-6 lg:w-6 md:h-6 lg:h-6" />}
               </button>
             </div>
 
@@ -237,10 +237,10 @@ export default function LoginPage() {
             )}
 
             {/* 비밀번호 찾기 */}
-            <div className="max-md:mt-[24px] md:mt-5 text-right">
+            <div className="max-md:mt-[24px] md:mt-5 lg:mt-5 text-right">
               <Link
                 href="/forgot-password"
-                className="text-[var(--color-accent)] underline max-md:text-[13px] md:text-body-14-m"
+                className="text-[var(--color-accent)] underline max-md:text-[13px] md:text-body-14-m lg:text-body-14-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 비밀번호를 잃어버리셨나요?
@@ -253,21 +253,21 @@ export default function LoginPage() {
               disabled={isPending}
               className="w-full rounded-full bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
                 max-md:h-[48px] max-md:text-[14px] max-md:font-semibold max-md:tracking-[-0.04em] max-md:mt-[90px]
-                md:h-[54px] md:text-subtitle-16-sb md:tracking-[0.2px] md:mt-[68px]"
+                md:h-[54px] lg:h-[54px] md:text-subtitle-16-sb lg:text-subtitle-16-sb md:tracking-[0.2px] lg:tracking-[0.2px] md:mt-[68px] lg:mt-[68px]"
             >
               {isPending ? "로그인 중..." : "로그인"}
             </button>
 
             {/* 간편로그인 */}
             <p
-              className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-[18px] md:mt-6"
+              className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-[18px] md:mt-6 lg:mt-6"
               style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
             >
               - 간편로그인 -
             </p>
 
             {/* 소셜 버튼 */}
-            <div className="flex items-center justify-center gap-[40px] mt-7 md:mt-8">
+            <div className="flex items-center justify-center gap-[40px] mt-7 md:mt-8 lg:mt-8">
               <button type="button" aria-label="카카오로 로그인"
                 onClick={() => handleSocialLogin("kakao")}
                 className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
@@ -288,16 +288,16 @@ export default function LoginPage() {
             </div>
 
             {/* 회원가입 */}
-            <div className="flex items-center justify-center gap-2 md:gap-1 mt-4 md:mt-8">
+            <div className="flex items-center justify-center gap-2 md:gap-1 lg:gap-1 mt-4 md:mt-8 lg:mt-8">
               <span
-                className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m"
+                className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m lg:text-body-16-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 계정이 없으신가요?
               </span>
               <Link
                 href="/register"
-                className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb"
+                className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb lg:text-body-16-sb"
                 style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 회원가입하기
@@ -308,7 +308,7 @@ export default function LoginPage() {
         </div>
 
         {/* 우측 — 데스크톱 전용 배너 */}
-        <div className="max-md:hidden md:w-[548px] md:shrink-0 relative min-h-[calc(100vh-54px)]">
+        <div className="relative max-md:hidden md:min-w-0 md:max-w-[548px] md:flex-[0_1_548px] md:min-h-[calc(100vh-54px)] lg:w-[548px] lg:flex-none lg:shrink-0">
           <Image
             src={loginBannerHd}
             alt="꼬순박스 배너"

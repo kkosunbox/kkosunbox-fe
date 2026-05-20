@@ -12,7 +12,7 @@ const DESKTOP_CONTENT_OFFSET_PX = DESKTOP_FORM_OVERLAP_PX / 2;
 export default function ChecklistHero() {
   return (
     <section
-      className="relative flex h-[210px] shrink-0 flex-col items-center overflow-hidden px-4 max-md:h-[156px] max-md:justify-start md:justify-center"
+      className="relative flex h-[210px] shrink-0 flex-col items-center overflow-hidden px-4 max-md:h-[156px] max-md:justify-start md:justify-center lg:justify-center"
       style={
         {
           background: "var(--gradient-checklist-hero)",
@@ -36,7 +36,7 @@ export default function ChecklistHero() {
           priority
         />
       </div>
-      <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:-translate-y-[var(--checklist-hero-desktop-offset)] md:pt-0">
+      <div className="relative z-10 flex w-full flex-col items-center text-center max-md:pt-[var(--checklist-hero-mobile-pt)] md:-translate-y-[var(--checklist-hero-desktop-offset)] lg:-translate-y-[var(--checklist-hero-desktop-offset)] md:pt-0 lg:pt-0">
         <h1 className="m-0 flex w-full max-w-[940px] flex-col items-center justify-center px-1">
           {/* eslint-disable-next-line @next/next/no-img-element -- 로고형 PNG, next/image 재인코딩 시 엣지 노이즈 방지 */}
           <img
@@ -44,7 +44,7 @@ export default function ChecklistHero() {
             alt="체크리스트 작성"
             width={checklistHeroTitleMobile.width}
             height={checklistHeroTitleMobile.height}
-            className="mx-auto h-auto w-full max-w-[150px] object-contain md:hidden"
+            className="mx-auto h-auto w-full max-w-[150px] object-contain md:hidden lg:hidden"
             fetchPriority="high"
           />
           <Image
@@ -52,12 +52,12 @@ export default function ChecklistHero() {
             alt="체크리스트를 작성해주세요!"
             width={checklistHeroTitle.width}
             height={checklistHeroTitle.height}
-            className="h-auto object-contain max-md:hidden md:w-full md:max-w-[347px]"
+            className="h-auto object-contain max-md:hidden md:w-full lg:w-full md:max-w-[347px] lg:max-w-[347px]"
             sizes="(max-width: 767px) 100vw, 347px"
             priority
           />
         </h1>
-        <div className="relative w-full max-w-[345px] px-2 max-md:mt-2 md:mt-3">
+        <div className="relative w-full max-w-[345px] px-2 max-md:mt-2 md:mt-3 lg:mt-3">
           <Text
             as="p"
             variant="body-16-r"
@@ -74,7 +74,7 @@ export default function ChecklistHero() {
             alt=""
             width={checklistHeroMobilePaw.width}
             height={checklistHeroMobilePaw.height}
-            className="pointer-events-none absolute right-0 top-1/2 h-[35px] w-[39px] -translate-y-1/2 object-contain md:hidden"
+            className="pointer-events-none absolute right-0 top-1/2 h-[35px] w-[39px] -translate-y-1/2 object-contain md:hidden lg:hidden"
             sizes="39px"
             priority
           />

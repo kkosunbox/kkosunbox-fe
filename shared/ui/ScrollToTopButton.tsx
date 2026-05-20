@@ -47,7 +47,7 @@ export default function ScrollToTopButton() {
       type="button"
       onClick={handleClick}
       aria-label="맨 위로 이동"
-      className={`fixed right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-text-muted)]/25 bg-white/85 text-[var(--color-text)] shadow-[0_2px_8px_rgba(0,0,0,0.06)] backdrop-blur-[2px] transition-[opacity,transform] duration-200 ease-out active:scale-95 md:hidden ${
+      className={`fixed right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--color-text-muted)]/25 bg-white/85 text-[var(--color-text)] shadow-[0_2px_8px_rgba(0,0,0,0.06)] backdrop-blur-[2px] transition-[opacity,transform] duration-200 ease-out active:scale-95 md:hidden lg:hidden ${
         isPastViewport
           ? "pointer-events-auto bottom-6 translate-y-0 opacity-100"
           : "pointer-events-none bottom-6 translate-y-2 opacity-0"

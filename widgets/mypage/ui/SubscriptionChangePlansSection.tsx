@@ -151,7 +151,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             priority
           />
         </div>
-        <div className="relative z-10 mx-auto flex h-full max-w-content flex-col items-center justify-center gap-4 px-6 md:px-0 lg:px-0">
+        <div className="relative z-10 mx-auto flex h-full max-w-content max-md:max-w-[640px] flex-col items-center justify-center gap-4 max-lg:px-6 lg:px-0">
           {/* 타이틀 이미지 */}
           <h1>
             <Image
@@ -180,7 +180,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
       </div>
 
       {/* Plan cards */}
-      <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 py-10">
+      <div className="mx-auto max-w-content max-md:max-w-[640px] max-md:px-4 md:px-6 lg:px-0 py-6">
         {selectedPlan ? (
           <div className="w-full">
             <PackageDetailView
@@ -197,7 +197,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             플랜 정보를 불러올 수 없습니다.
           </p>
         ) : (
-          <div className="flex flex-col gap-4 md:grid lg:grid md:grid-cols-3 lg:grid-cols-3 md:gap-4 lg:gap-4">
+          <div className="flex flex-col gap-6 md:grid lg:grid md:grid-cols-3 lg:grid-cols-3 md:gap-4 lg:gap-4">
             {sortedPlans.map((plan) => {
               const theme = packageThemeForPlan(plan);
               const color = theme.colorVar;

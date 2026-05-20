@@ -266,14 +266,12 @@ function SubscriptionRow({
           </div>
           <Link
             href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
-            className="text-body-13-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80"
+            className="transition-opacity hover:opacity-70"
+            aria-label="자세히보기"
           >
-            <span className="md:hidden lg:hidden">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="자세히보기">
-                <path d="M7 4l6 6-6 6" stroke="#999999" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className="max-md:hidden">자세히보기</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M7 4l6 6-6 6" stroke="#999999" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </Link>
         </div>
 

@@ -100,7 +100,7 @@ export default function AboutSection() {
 
       {/* ━━━━ Section 1: 꼬순박스 소개 ━━━━ */}
 
-      <section className="overflow-hidden bg-white max-md:pt-5 max-md:pb-9 lg:py-0 lg:max-h-[578px]">
+      <section className="overflow-hidden bg-white max-md:pt-5 max-md:pb-9 md:pb-14 max-lg:pb-14 lg:py-0 lg:max-h-[578px]">
 
         <div className="mx-auto max-w-[var(--max-width-content)] px-6 lg:px-0">
 
@@ -190,7 +190,7 @@ export default function AboutSection() {
 
             {/* 텍스트 — DOM 두 번째 (모바일·태블릿: 이미지 아래, 데스크톱: 왼쪽) */}
 
-            <div className="flex w-full flex-1 flex-col max-md:items-center lg:min-w-[426px]">
+            <div className="flex w-full flex-1 flex-col max-lg:items-center lg:items-start lg:min-w-[426px]">
 
               <ScrollReveal variant="fade-up" delay={100}>
 
@@ -217,7 +217,7 @@ export default function AboutSection() {
                 </h1>
 
               </ScrollReveal>
-              <div className="max-w-[426px] max-md:space-y-6 md:space-y-[24px] max-md:mx-auto max-md:text-center text-[var(--color-text)]">
+              <div className="max-w-[426px] max-md:space-y-6 md:space-y-[24px] max-lg:mx-auto max-lg:text-center lg:mx-0 lg:text-left text-[var(--color-text)]">
                 <ScrollReveal variant="fade-up" delay={200}>
                   <p className="max-md:text-body-14-r text-body-16-r">간식을 고를 때마다 고민이 됩니다.</p>
                 </ScrollReveal>
@@ -312,12 +312,12 @@ export default function AboutSection() {
 
             {/* Right — 텍스트 */}
 
-            <div className="flex w-full flex-1 flex-col gap-4 lg:gap-8 max-md:items-center max-md:text-center">
+            <div className="flex w-full flex-1 flex-col gap-4 lg:gap-8 max-lg:items-center max-lg:text-center lg:items-start lg:text-left">
 
               {/* 데스크톱 전용 헤딩 (모바일·태블릿에서 숨김) */}
 
               <ScrollReveal variant="slide-right" delay={200}>
-                <h2 className="max-md:hidden text-title-28-r-griun text-[var(--color-amber)]">
+                <h2 className="max-md:hidden max-lg:text-center lg:text-left text-title-28-r-griun text-[var(--color-amber)]">
                   믿고 먹일 수 있는 간식, 생각보다 어렵습니다.
                 </h2>
 
@@ -325,7 +325,7 @@ export default function AboutSection() {
 
               <ScrollReveal variant="slide-right" delay={350}>
 
-                <div className="flex max-w-[426px] flex-col gap-4 text-[var(--color-text)]">
+                <div className="flex max-w-[426px] flex-col gap-4 text-[var(--color-text)] max-lg:mx-auto lg:mx-0">
                   <Text variant="body-16-r" mobileVariant="body-14-r" as="p">
                     좋은 재료여도 맞지 않을 수 있고,<br />
                     수제 간식도 매번 고르기 쉽지 않습니다.
@@ -442,7 +442,7 @@ export default function AboutSection() {
 
               <ScrollReveal variant="fade-up" delay={150}>
 
-                <div className="flex items-center justify-center rounded-[20px] bg-[var(--color-cta-logo-bg)] px-6 py-5 max-md:h-[108px] lg:h-[135px] lg:rounded-2xl lg:py-0">
+                <div className="flex items-center justify-center rounded-[20px] bg-[var(--color-cta-logo-bg)] px-6 py-5 min-h-[108px] max-lg:min-h-[108px] lg:min-h-[135px] lg:rounded-2xl lg:py-0">
 
                   <Image
 
@@ -468,7 +468,7 @@ export default function AboutSection() {
 
               <ScrollReveal variant="fade-up" delay={300}>
 
-                <div className="relative flex flex-1 flex-col justify-end rounded-[20px] bg-[var(--color-cta-sage-bg)] px-6 max-md:pb-[24px] max-md:pt-6 lg:pb-[42px] lg:pt-10 max-md:min-h-[208px] lg:h-[314px] lg:rounded-2xl lg:px-10">
+                <div className="relative flex flex-col justify-end rounded-[20px] bg-[var(--color-cta-sage-bg)] px-6 min-h-[208px] max-lg:min-h-[208px] max-lg:pb-[24px] max-lg:pt-6 lg:flex-1 lg:h-[314px] lg:min-h-[314px] lg:pb-[42px] lg:pt-10 lg:rounded-2xl lg:px-10">
 
                   <Image
 
@@ -482,12 +482,12 @@ export default function AboutSection() {
 
                     aria-hidden
 
-                    className="absolute right-5 top-[14px] max-md:w-[36px] max-md:h-[30px]"
+                    className="absolute right-5 top-[14px] h-[30px] w-[36px] lg:h-16 lg:w-[78px]"
 
                   />
                   <Text
                     variant="title-24-sb-lh42"
-                    className="text-[var(--color-text-cta)] max-md:text-[16px] max-md:font-semibold max-md:leading-[28px] max-md:tracking-[-0.04em]"
+                    className="text-[var(--color-text-cta)] max-lg:text-[16px] max-lg:font-semibold max-lg:leading-[28px] max-lg:tracking-[-0.04em] lg:text-title-24-sb-lh42"
                   >
                     우리 아이의<br />
 
@@ -511,7 +511,7 @@ export default function AboutSection() {
 
               <div
 
-                className="relative w-full overflow-hidden rounded-[20px] max-md:aspect-[586/469] lg:h-full lg:min-h-[469px] lg:aspect-auto lg:rounded-2xl"
+                className="relative w-full overflow-hidden rounded-[20px] max-lg:aspect-[586/469] max-lg:min-h-[300px] lg:aspect-auto lg:h-full lg:min-h-[469px] lg:rounded-2xl"
 
                 style={{ background: "var(--gradient-cta-product)" }}
 

@@ -226,8 +226,8 @@ export default function PackageDetailView({
 
   return (
     <>
-      {/* ══ MOBILE LAYOUT (lg 미만) ══════════════════════════════════ */}
-      <div className="md:hidden lg:hidden flex flex-col gap-4">
+      {/* ══ MOBILE LAYOUT (< md) ═════════════════════════════════════ */}
+      <div className="max-md:flex max-md:flex-col max-md:gap-4 md:hidden">
 
         {/* 상단: 패키지 정보 카드 — 모바일 탭 선택 시 숨김 (탭은 SubscribePlansSection에서 렌더) */}
         <div
@@ -300,9 +300,9 @@ export default function PackageDetailView({
         <MobileCompareWarmPanel key={plan.id} plan={plan} onClose={onClose} />
       </div>
 
-      {/* ══ DESKTOP LAYOUT (lg 이상) ══════════════════════════════════ */}
+      {/* ══ TABLET·DESKTOP LAYOUT (md 이상) ═══════════════════════════ */}
       <div
-        className="max-lg:hidden relative overflow-hidden rounded-[20px]"
+        className="max-md:hidden relative overflow-hidden rounded-[20px]"
         style={{ background: "var(--color-surface-warm)" }}
       >
         <div className="absolute right-6 top-5 z-10">
@@ -310,7 +310,7 @@ export default function PackageDetailView({
         </div>
 
         <div
-          className="grid min-h-[570px] items-stretch [grid-template-rows:minmax(0,auto)]"
+          className="grid min-h-[570px] items-stretch gap-[28px] [grid-template-rows:minmax(0,auto)]"
           style={{
             gridTemplateColumns: "327px 1fr",
           }}

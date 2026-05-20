@@ -320,7 +320,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
             </div>
           </ScrollReveal>
 
-          <div className="mx-auto flex w-full max-w-[587px] flex-1 flex-col px-6 md:max-w-none lg:max-w-none md:px-0 lg:px-0">
+          <div className="mx-auto flex w-full max-w-[587px] flex-1 flex-col max-md:px-6 md:max-w-content lg:max-w-content md:px-8 max-lg:px-8 lg:px-0">
             {/* 모바일 티어 탭 — sticky (고정 헤더 아래 고정), 클릭 시 해당 카드로 smooth scroll */}
             {sortedPlans.length > 0 ? (
               <div className="md:hidden lg:hidden sticky top-[54px] z-10 -mx-6 bg-white px-6 py-3 mb-4">

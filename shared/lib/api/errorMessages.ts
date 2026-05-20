@@ -40,6 +40,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   SUBSCRIPTION_EXPIRED: "만료된 구독입니다.",
   SUBSCRIPTION_INACTIVE: "비활성 상태의 구독입니다.",
   ALREADY_CANCELLED: "이미 취소된 구독입니다.",
+  SUBSCRIPTION_NOT_CANCELLED: "취소(Cancelled) 상태인 구독만 삭제할 수 있습니다.",
   SUBSCRIPTION_ALREADY_PAUSED: "이미 쉬어가기가 적용된 구독입니다.",
   SUBSCRIPTION_NOT_PAUSED: "쉬어가기 상태가 아닌 구독입니다.",
 

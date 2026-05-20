@@ -217,11 +217,9 @@ export default function InquirySection() {
 
       {/* 카드 — Figma 1013×632, shadow, 카드가 히어로와 살짝 겹침 */}
       <div className={`relative z-10 ${PAGE_CONTENT_WRAPPER_CLASS}`}>
-        <form
-          onSubmit={handleSubmit}
-          className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] lg:-mt-[50px] md:px-8 lg:px-8 md:py-12 lg:py-12"
-        >
-          <div className="mx-auto flex w-full max-w-[718px] flex-col gap-6">
+        <form onSubmit={handleSubmit}>
+          <div className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] lg:-mt-[50px] md:px-8 lg:px-8 md:py-12 lg:py-12">
+          <div className="mx-auto flex w-full max-w-[718px] flex-col gap-1 lg:gap-3">
             {/* 제목 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="title" className={labelClass}>
@@ -325,71 +323,139 @@ export default function InquirySection() {
               </div>
             </div>
 
-            {/* 동의 — SVG 토글(체크/미체크), 숨김 checkbox + label 연동 */}
-            <div className="flex flex-col gap-4">
-              <label
-                htmlFor="inquiry-agree-terms"
-                className="flex cursor-pointer flex-wrap items-center gap-2"
-              >
-                <input
-                  id="inquiry-agree-terms"
-                  type="checkbox"
-                  checked={form.agreeTerms}
-                  onChange={() => handleCheckbox("agreeTerms")}
-                  className="sr-only"
-                />
-                <span className="shrink-0" aria-hidden>
-                  {form.agreeTerms ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
-                </span>
-                <span className="text-body-13-m leading-4 text-[var(--color-text)]">
-                  이용약관에 동의합니다.
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); setTermsModal("terms"); }}
-                  className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+            {/* 동의 + 제출 — 태블릿·데스크탑 전용 */}
+            <div className="max-md:hidden">
+              <div className="flex flex-col gap-4 lg:mt-8">
+                <label
+                  htmlFor="inquiry-agree-terms"
+                  className="flex cursor-pointer flex-wrap items-center gap-2"
                 >
-                  전체보기
-                </button>
-              </label>
+                  <input
+                    id="inquiry-agree-terms"
+                    type="checkbox"
+                    checked={form.agreeTerms}
+                    onChange={() => handleCheckbox("agreeTerms")}
+                    className="sr-only"
+                  />
+                  <span className="shrink-0" aria-hidden>
+                    {form.agreeTerms ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
+                  </span>
+                  <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+                    이용약관에 동의합니다.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setTermsModal("terms"); }}
+                    className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+                  >
+                    전체보기
+                  </button>
+                </label>
 
-              <label
-                htmlFor="inquiry-agree-privacy"
-                className="flex cursor-pointer flex-wrap items-center gap-2"
-              >
-                <input
-                  id="inquiry-agree-privacy"
-                  type="checkbox"
-                  checked={form.agreePrivacy}
-                  onChange={() => handleCheckbox("agreePrivacy")}
-                  className="sr-only"
-                />
-                <span className="shrink-0" aria-hidden>
-                  {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
-                </span>
-                <span className="text-body-13-m leading-4 text-[var(--color-text)]">
-                  개인정보 제공 및 활용에 동의합니다.
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); setTermsModal("privacy"); }}
-                  className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+                <label
+                  htmlFor="inquiry-agree-privacy"
+                  className="flex cursor-pointer flex-wrap items-center gap-2"
                 >
-                  전체보기
+                  <input
+                    id="inquiry-agree-privacy"
+                    type="checkbox"
+                    checked={form.agreePrivacy}
+                    onChange={() => handleCheckbox("agreePrivacy")}
+                    className="sr-only"
+                  />
+                  <span className="shrink-0" aria-hidden>
+                    {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
+                  </span>
+                  <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+                    개인정보 제공 및 활용에 동의합니다.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setTermsModal("privacy"); }}
+                    className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+                  >
+                    전체보기
+                  </button>
+                </label>
+              </div>
+              <div className="flex justify-center pt-2 lg:pt-[26px]">
+                <button
+                  type="submit"
+                  disabled={!isSubmittable || isPending}
+                  className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+                >
+                  {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
                 </button>
-              </label>
-            </div>
-
-            <div className="flex justify-center pt-2">
-              <button
-                type="submit"
-                disabled={!isSubmittable || isPending}
-                className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
-              >
-                {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
-              </button>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* 동의 + 제출 — 모바일 전용 (카드 바깥) */}
+        <div className="md:hidden px-5 pt-6 pb-4">
+          <div className="flex flex-col gap-4">
+            <label
+              htmlFor="mobile-inquiry-agree-terms"
+              className="flex cursor-pointer flex-wrap items-center gap-2"
+            >
+              <input
+                id="mobile-inquiry-agree-terms"
+                type="checkbox"
+                checked={form.agreeTerms}
+                onChange={() => handleCheckbox("agreeTerms")}
+                className="sr-only"
+              />
+              <span className="shrink-0" aria-hidden>
+                {form.agreeTerms ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
+              </span>
+              <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+                이용약관에 동의합니다.
+              </span>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setTermsModal("terms"); }}
+                className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+              >
+                전체보기
+              </button>
+            </label>
+
+            <label
+              htmlFor="mobile-inquiry-agree-privacy"
+              className="flex cursor-pointer flex-wrap items-center gap-2"
+            >
+              <input
+                id="mobile-inquiry-agree-privacy"
+                type="checkbox"
+                checked={form.agreePrivacy}
+                onChange={() => handleCheckbox("agreePrivacy")}
+                className="sr-only"
+              />
+              <span className="shrink-0" aria-hidden>
+                {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
+              </span>
+              <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+                개인정보 제공 및 활용에 동의합니다.
+              </span>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setTermsModal("privacy"); }}
+                className="text-body-13-r leading-4 text-[var(--color-text-secondary)] underline underline-offset-2"
+              >
+                전체보기
+              </button>
+            </label>
+          </div>
+          <div className="flex justify-center pt-6">
+            <button
+              type="submit"
+              disabled={!isSubmittable || isPending}
+              className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+            >
+              {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
+            </button>
+          </div>
+        </div>
         </form>
       </div>
     </div>

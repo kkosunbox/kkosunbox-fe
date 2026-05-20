@@ -608,8 +608,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <button
               type="button"
               onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-              className="flex h-12 w-full items-center justify-center rounded-[30px] text-subtitle-16-sb text-white"
-              style={{ background: "var(--color-accent)" }}
+              className="flex h-12 w-full items-center justify-center rounded-[30px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
+              style={{ background: selectedTheme.colorVar }}
             >
               구독하기
             </button>

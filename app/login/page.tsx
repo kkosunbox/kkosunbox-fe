@@ -161,10 +161,10 @@ export default function LoginPage() {
       </div>
 
       {/* ── 콘텐츠: 모바일 세로 중앙 / 데스크톱 2컬럼 ── */}
-      <div className="flex flex-1 flex-col max-md:items-center max-md:justify-center md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-content lg:max-w-content md:flex-row lg:flex-row relative">
+      <div className="relative flex flex-1 flex-col max-md:items-center max-md:justify-center md:mx-auto md:flex-row md:w-full md:max-w-none md:px-8 max-lg:overflow-x-auto max-lg:px-8 lg:max-w-content lg:px-0">
 
         {/* 좌측 — 폼 */}
-        <div className="flex-1 flex flex-col w-full px-6 max-md:justify-center md:justify-center lg:justify-center md:min-h-[calc(100vh-54px)] lg:min-h-[calc(100vh-54px)]">
+        <div className="flex w-full flex-col px-6 max-md:flex-1 max-md:justify-center md:min-h-[calc(100vh-54px)] md:min-w-[448px] md:flex-1 md:justify-center lg:min-h-[calc(100vh-54px)]">
           {/* 모바일: 고정 간격 블록, 세로 중앙 정렬 / 데스크톱: 기존 레이아웃 유지 */}
           <div className="w-full max-w-[400px] px-0 max-md:mx-auto">
 
@@ -308,7 +308,7 @@ export default function LoginPage() {
         </div>
 
         {/* 우측 — 데스크톱 전용 배너 */}
-        <div className="max-md:hidden md:w-[548px] lg:w-[548px] md:shrink-0 lg:shrink-0 relative min-h-[calc(100vh-54px)]">
+        <div className="relative max-md:hidden md:min-w-0 md:max-w-[548px] md:flex-[0_1_548px] md:min-h-[calc(100vh-54px)] lg:w-[548px] lg:flex-none lg:shrink-0">
           <Image
             src={loginBannerHd}
             alt="꼬순박스 배너"

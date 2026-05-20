@@ -7,6 +7,7 @@ import type { InquiryDto } from "@/features/inquiry/api";
 import { deleteInquiry, getInquiries } from "@/features/inquiry/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { ApiError } from "@/shared/lib/api/types";
+import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { PawCircleIcon, useModal } from "@/shared/ui";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import FaqQuestion from "../../faq/assets/faq-question.png";
@@ -145,7 +146,7 @@ export default function InquiryHistorySection() {
 
   return (
     <div className="flex min-h-full flex-1 flex-col max-md:py-6 md:py-10 lg:py-10">
-      <div className="mx-auto flex w-full max-w-[1013px] flex-1 flex-col gap-4 md:gap-6 lg:gap-6 px-4 max-md:px-4 md:px-0 lg:px-0">
+      <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
         <section
           className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row lg:flex-row md:items-center lg:items-center md:justify-between lg:justify-between md:gap-6 lg:gap-6 md:px-11 lg:px-11 md:py-0 lg:py-0"
           style={{ background: "var(--gradient-support-banner)" }}

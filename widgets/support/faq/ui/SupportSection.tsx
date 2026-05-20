@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
 import FaqQuestion from "../assets/faq-question.png";
 
@@ -263,7 +264,7 @@ export default function SupportSection({
           : "bg-white max-md:py-6 md:py-10 lg:py-10"
       }
     >
-      <div className="mx-auto flex w-full max-w-[1013px] flex-1 flex-col gap-4 md:gap-6 lg:gap-6 px-4 max-md:px-4 md:px-0 lg:px-0">
+      <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
         {/* ── 페이지 타이틀: Gangwon → PNG (faq-title) / 부제: Griun PolFairness ── */}
         {/* <header className="max-md:hidden flex flex-col items-center gap-3 text-center">
           <Image

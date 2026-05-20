@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createInquiry } from "@/features/inquiry/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
+import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
@@ -215,7 +216,7 @@ export default function InquirySection() {
       </section>
 
       {/* 카드 — Figma 1013×632, shadow, 카드가 히어로와 살짝 겹침 */}
-      <div className="relative z-10 mx-auto w-full max-w-[1013px] px-4 max-md:px-4 md:px-0 lg:px-0">
+      <div className={`relative z-10 ${PAGE_CONTENT_WRAPPER_CLASS}`}>
         <form
           onSubmit={handleSubmit}
           className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] lg:-mt-[50px] md:px-8 lg:px-8 md:py-12 lg:py-12"

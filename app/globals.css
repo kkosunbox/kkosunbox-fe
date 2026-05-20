@@ -193,24 +193,24 @@
 
 /*
  * 반응형 브레이크포인트 — @theme inline 이 아닌 @theme 에 rem 으로 정의 (Tailwind v4 필수).
- * 모바일 < 900px (max-md:) | 태블릿 900–1199px (md:) | 데스크탑 ≥ 1200px (lg:)
+ * 모바일 < 834px (max-md:) | 태블릿 834–1199px (md:) | 데스크탑 ≥ 1200px (lg:)
  * JS 상수: shared/config/breakpoints.ts
  */
 @theme {
-  --breakpoint-md: 56.25rem; /* 900px  — 태블릿 시작 */
+  --breakpoint-md: 52.125rem; /* 834px  — 태블릿 시작 */
   --breakpoint-lg: 75rem;    /* 1200px — 데스크탑 시작 */
 }
 
 /*
- * 태블릿 콘텐츠 너비 — 900px에서도 충분한 여백을 확보하기 위해
+ * 태블릿 콘텐츠 너비 — 834px에서도 충분한 여백을 확보하기 위해
  * 데스크탑 값(1012/940/1140px)보다 좁은 값으로 오버라이드.
  * JSX 변경 없이 max-w-[var(--max-width-content*)] 사용처 전체에 자동 적용.
  */
-@media (min-width: 56.25rem) and (max-width: 74.9375rem) {
+@media (min-width: 52.125rem) and (max-width: 74.9375rem) {
   :root {
-    --max-width-content:        800px; /* 데스크탑 1012px → 좌우 50px @ 900px */
-    --max-width-content-narrow: 700px; /* 데스크탑  940px → 좌우 100px @ 900px */
-    --max-width-content-wide:   860px; /* 데스크탑 1140px → 좌우 20px @ 900px */
+    --max-width-content:        800px; /* 데스크탑 1012px → 좌우 50px @ 834px */
+    --max-width-content-narrow: 700px; /* 데스크탑  940px → 좌우 100px @ 834px */
+    --max-width-content-wide:   860px; /* 데스크탑 1140px → 좌우 20px @ 834px */
   }
 }
 

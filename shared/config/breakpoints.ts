@@ -1,5 +1,5 @@
 /** Tailwind `md:` / `max-md:` — 태블릿 시작 (globals.css `@theme --breakpoint-md` 와 동기화) */
-export const BREAKPOINT_MD_PX = 900;
+export const BREAKPOINT_MD_PX = 834;
 
 export const MEDIA_MD_MIN = `(min-width: ${BREAKPOINT_MD_PX}px)`;
 

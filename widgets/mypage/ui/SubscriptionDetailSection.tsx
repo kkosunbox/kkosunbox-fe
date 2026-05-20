@@ -9,6 +9,7 @@ import { getErrorMessage } from "@/shared/lib/api";
 import {
   cancelPayment,
   cancelSubscription,
+  deleteSubscriptionRecord,
   getPaymentReceipt,
   pauseSubscription,
   reactivateSubscription,
@@ -215,6 +216,30 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE,
   );
+
+  function handleDeleteRecord() {
+    openAlert({
+      type: "info",
+      title: "구독 이력을 삭제할까요?",
+      description: "삭제하면 해당 구독 정보가 목록에서 제거됩니다.",
+      primaryLabel: "삭제",
+      secondaryLabel: "취소",
+      onPrimary: () => {
+        showLoading("구독 이력을 삭제하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await deleteSubscriptionRecord(subscription.id);
+            router.push("/mypage/subscription");
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "구독 이력 삭제 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    });
+  }
 
   function handleResubscribe() {
     openModal("subscription-restart", () => {
@@ -492,7 +517,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
   return (
     <div className="min-h-screen bg-[var(--color-support-faq-surface)]">
-      <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-6 md:pt-10 lg:pt-10 pb-12">
+      <div className="mx-auto max-w-content max-md:px-4 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10 pb-12">
         {/* Back + title */}
         <button
           type="button"
@@ -571,58 +596,76 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-[36px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
                   >
                     구독 취소
                   </button>
                   <button
                     type="button"
                     onClick={handleChangeSubscription}
-                    className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-[36px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
                   >
                     구독 변경
                   </button>
                 </>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleResubscribe}
-                  className="inline-flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] px-6 text-body-14-sb text-white transition-opacity hover:opacity-90"
-                >
-                  구독 재시작
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={handleDeleteRecord}
+                    className="inline-flex h-[36px] w-[99px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] text-body-14-sb text-white tracking-[-0.02em] transition-opacity hover:opacity-90"
+                  >
+                    삭제
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResubscribe}
+                    className="inline-flex h-[36px] w-[99px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white tracking-[-0.02em] transition-opacity hover:opacity-90"
+                  >
+                    구독 재시작
+                  </button>
+                </>
               )}
             </div>
           </div>
         </div>
 
         {/* Mobile-only action buttons (below card, full-width split) */}
-        <div className="md:hidden lg:hidden mt-4 grid gap-2" style={{ gridTemplateColumns: isActive ? "1fr 1fr" : "1fr" }}>
+        <div className="md:hidden lg:hidden mt-4 grid gap-2" style={{ gridTemplateColumns: "1fr 1fr" }}>
           {isActive ? (
             <>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[36px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 취소
               </button>
               <button
                 type="button"
                 onClick={handleChangeSubscription}
-                className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[36px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 변경
               </button>
             </>
           ) : (
-            <button
-              type="button"
-              onClick={handleResubscribe}
-              className="flex h-[44px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
-            >
-              구독 재시작
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleDeleteRecord}
+                className="flex h-[36px] items-center justify-center rounded-full bg-[var(--color-ui-disabled)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+              >
+                삭제
+              </button>
+              <button
+                type="button"
+                onClick={handleResubscribe}
+                className="flex h-[36px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+              >
+                구독 재시작
+              </button>
+            </>
           )}
         </div>
 

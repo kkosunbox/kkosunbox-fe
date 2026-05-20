@@ -43,6 +43,11 @@ export function cancelSubscription(subscriptionId: number, cancelEligiblePayment
   return apiClient.delete<void>(`/v1/subscriptions/${subscriptionId}${query}`);
 }
 
+/** 구독 이력 삭제 (Cancelled 상태인 구독만 가능) */
+export function deleteSubscriptionRecord(subscriptionId: number) {
+  return apiClient.delete<void>(`/v1/subscriptions/${subscriptionId}/record`);
+}
+
 /** 구독 재활성화 (취소한 구독 복구) */
 export function reactivateSubscription(subscriptionId: number) {
   return apiClient.post<void>(

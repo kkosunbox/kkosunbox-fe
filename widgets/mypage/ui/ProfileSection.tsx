@@ -123,12 +123,10 @@ function ChecklistPanel({
         {hasChecklist && (
           <Link
             href="/checklist?rewrite=1"
-            className="flex h-5 items-center text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
-            <Text as="span" variant="body-13-m-tight">
-              다시 작성하기
-            </Text>
-            <ChevronRightIcon className="h-5 w-5" />
+            <span>다시 작성하기</span>
+            <ChevronRightIcon />
           </Link>
         )}
       </div>
@@ -216,7 +214,7 @@ export function ProfileSection({
         <div className="relative rounded-[20px] bg-white max-lg:px-7 max-lg:py-7 lg:px-7 lg:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
           <Link
             href="/mypage/dog-profile"
-            className="lg:hidden absolute top-4 right-4 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className="lg:hidden absolute top-4 right-7 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             <span>정보변경</span>
             <ChevronRightIcon />

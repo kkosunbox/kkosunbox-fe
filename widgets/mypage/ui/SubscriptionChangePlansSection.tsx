@@ -118,9 +118,12 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
-      <div className="relative overflow-hidden max-md:h-[210px] md:h-[210px] lg:h-[210px] md:[background lg:[background:linear-gradient(268.21deg,rgba(173,206,255,0.5)_3.87%,rgba(254,234,215,0.5)_56.14%)]">
+      <div
+        className="relative h-[210px] overflow-hidden lg:[background:var(--gradient-subscribe-plans-hero)]"
+      >
+        {/* 모바일·태블릿 — 전폭 배경 이미지 */}
         <div
-          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden md:hidden lg:hidden"
+          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden lg:hidden"
           aria-hidden
         >
           <Image
@@ -133,8 +136,9 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             priority
           />
         </div>
+        {/* 데스크톱 — 패턴 오버레이 */}
         <div
-          className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center px-4 max-md:hidden"
+          className="pointer-events-none absolute inset-0 z-[1] max-lg:hidden lg:flex lg:items-center lg:justify-center lg:px-4"
           aria-hidden
         >
           <Image

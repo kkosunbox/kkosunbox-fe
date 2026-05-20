@@ -394,7 +394,7 @@ export default function ProfileManagementSection({
   }
 
   const desktopLayout = (
-    <div className="max-md:hidden min-h-screen bg-[var(--color-background)] overflow-x-auto px-6 pb-16 pt-[64px]">
+    <div className="max-lg:hidden min-h-screen bg-[var(--color-background)] overflow-x-auto px-6 pb-16 pt-[64px]">
       <div className="mx-auto w-full max-w-[1014px] min-w-[924px]">
         <div className="rounded-[20px] bg-white px-[28px] pb-[34px] pt-[24px] shadow-[0_8px_30px_rgba(185,148,116,0.08)]">
           <div className="mb-4 flex items-center gap-1 text-[var(--color-text)]">
@@ -569,9 +569,9 @@ export default function ProfileManagementSection({
   );
 
   const mobileLayout = (
-    <div className="md:hidden lg:hidden max-md:bg-[var(--color-surface-warm)] md:bg-white lg:bg-white ">
+    <div className="lg:hidden bg-[var(--color-surface-warm)]">
       {/* Warm background top section */}
-      <div className="md:bg-[var(--color-surface-warm)] lg:bg-[var(--color-surface-warm)] px-6 pt-6">
+      <div className="px-6 pt-6">
         {/* Header */}
         <div className="flex items-center gap-1 text-[var(--color-text)]">
           <Link
@@ -603,7 +603,7 @@ export default function ProfileManagementSection({
       </div>
 
       {/* Profile info card */}
-      <div className="px-6 pt-6 max-md:bg-white">
+      <div className="px-6 pt-6 bg-white">
         <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-6 py-6">
           <h2 className="text-subtitle-16-b tracking-tightest text-[var(--color-text)]">프로필 정보</h2>
 
@@ -676,7 +676,7 @@ export default function ProfileManagementSection({
       </div>
 
       {/* Bottom buttons */}
-      <div className="flex flex-col px-6 pb-10 pt-6 max-md:bg-white">
+      <div className="flex flex-col px-6 pb-10 pt-6 bg-white">
         {saveError && <p className="mb-3 text-center text-body-13-m text-[var(--color-accent-rust)]">{saveError}</p>}
         <div className="flex gap-3">
           {!isCreating && (

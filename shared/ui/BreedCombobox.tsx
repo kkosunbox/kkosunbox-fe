@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { DOG_BREED_OPTIONS, MIX_BREED_NAME, type DogBreedOption } from "@/shared/config/dogBreeds";
 
-const MAX_VISIBLE_BREED_OPTIONS = 80;
+const MAX_VISIBLE_BREED_OPTIONS = 300;
 
 function isMixBreedValue(v: string): boolean {
   return v === MIX_BREED_NAME || /^믹스견\(.+\)$/.test(v);

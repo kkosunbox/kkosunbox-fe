@@ -112,7 +112,9 @@
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(Select-String -Pattern \"profile-switch\")",
       "Bash(git reset *)",
-      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Filter \"*subscription*\" -Recurse -ErrorAction SilentlyContinue)"
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Filter \"*subscription*\" -Recurse -ErrorAction SilentlyContinue)",
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

@@ -54,7 +54,7 @@ const PACKAGES = BASE_PACKAGES.map((pkg) => ({
 const SIDE_OFFSET_LG = 348;
 const SIDE_VERTICAL_OFFSET_LG = 64;
 
-// 태블릿(900–1199px) 기준 — 카드가 작아 간격을 줄임
+// 태블릿(768–1199px) 기준 — 카드가 작아 간격을 줄임
 const SIDE_OFFSET_MD = 285;
 const SIDE_VERTICAL_OFFSET_MD = 16;
 

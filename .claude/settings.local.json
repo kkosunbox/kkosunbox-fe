@@ -114,7 +114,11 @@
       "Bash(git reset *)",
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Filter \"*subscription*\" -Recurse -ErrorAction SilentlyContinue)",
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(node *)",
+      "Bash(where npx *)",
+      "Bash(findstr \":300\")",
+      "Bash(pnpm remove *)"
     ]
   }
 }

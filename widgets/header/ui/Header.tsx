@@ -574,110 +574,120 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Mobile menu overlay */}
+      {/* 딤 오버레이 */}
       <div
-        className={`fixed inset-0 z-[60] bg-white transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed inset-0 z-[59] bg-black/50 transition-opacity duration-300 lg:hidden ${
+          isMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={closeMenu}
+      />
+
+      {/* 사이드바 드로워 (최대 375px, 왼쪽 슬라이드) */}
+      <div
+        className={`fixed left-0 top-0 z-[60] flex h-full w-full max-w-[375px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         role="dialog"
         aria-modal="true"
         aria-label="모바일 메뉴"
       >
-        <div className="flex h-full flex-col">
-
-          {/* 상단 그라디언트 섹션 */}
-          <div
-            className="relative flex flex-col items-center"
-            style={{ background: "var(--gradient-mobile-menu)", borderRadius: "0 0 40px 40px" }}
+        {/* 상단 그라디언트 섹션 */}
+        <div
+          className="relative shrink-0 flex flex-col items-center"
+          style={{ background: "#ffffff", borderRadius: "0 0 40px 40px" }}
+        >
+          {/* 닫기 버튼 */}
+          <button
+            onClick={closeMenu}
+            aria-label="메뉴 닫기"
+            className="absolute right-6 top-4 flex items-center justify-center"
           >
-            {/* 닫기 버튼 */}
-            <button
-              onClick={closeMenu}
-              aria-label="메뉴 닫기"
-              className="absolute right-6 top-8 flex items-center justify-center"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6 18M6 6L18 18" stroke="var(--color-text)" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="var(--color-text)" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
 
-            {/* 프로필 이미지 */}
-            <div className="mt-[40px]">
-              {isLoggedIn ? (
-                <Link href="/mypage" onClick={closeMenu}>
-                  <ProfileThumbnail imageUrl={profileImageUrl} size="xl" />
-                </Link>
-              ) : (
-                <ProfileThumbnail imageUrl={null} size="xl" />
-              )}
-            </div>
-
-            {/* 이름 / 로그인 텍스트 */}
-            <div className="mt-2 flex items-center gap-1">
-              {isAuthLoading ? (
-                <div className="h-6 w-24 animate-pulse rounded bg-[var(--color-secondary)]" />
-              ) : isLoggedIn ? (
-                hasProfile ? (
-                  <>
-                    <span className="text-body-20-sb text-[var(--color-text)]">
-                      {getProfileDisplayName(profile?.name)}
-                    </span>
-                    <button
-                      onClick={() => { closeMenu(); openModal("profile-switch"); }}
-                      aria-label="프로필 변경"
-                      className="shrink-0"
-                    >
-                      <SwitchHorizontalIcon />
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => { closeMenu(); router.push("/mypage/dog-profile?new=true"); }}
-                    className="text-body-20-sb text-[var(--color-text-secondary)]"
-                  >
-                    프로필 등록하기
-                  </button>
-                )
-              ) : (
-                <Link href="/login" onClick={closeMenu} className="text-body-20-sb text-[var(--color-text)]">
-                  로그인 하기
-                </Link>
-              )}
-            </div>
-
-            {/* 이메일 */}
-            {isLoggedIn && user?.email && (
-              <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)]">{user.email}</p>
+          {/* 프로필 이미지 */}
+          <div className="mt-[25px]">
+            {isLoggedIn ? (
+              <Link href="/mypage" onClick={closeMenu}>
+                <ProfileThumbnail imageUrl={profileImageUrl} size="xl" />
+              </Link>
+            ) : (
+              <ProfileThumbnail imageUrl={null} size="xl" />
             )}
-
-            {/* 단축 아이콘 3종 */}
-            <div className="mt-6 flex w-full items-start justify-between px-[68px] pb-8">
-              <button
-                onClick={() => { closeMenu(); router.push(isLoggedIn ? "/mypage" : "/login"); }}
-                className="flex flex-col items-center gap-2"
-              >
-                <DrawerUserIcon />
-                <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">마이페이지</span>
-              </button>
-              <button
-                onClick={() => { closeMenu(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
-                className="flex flex-col items-center gap-2"
-              >
-                <DrawerPinIcon />
-                <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">계정정보</span>
-              </button>
-              <button
-                onClick={() => { closeMenu(); router.push(isLoggedIn ? "/mypage/subscription" : "/login"); }}
-                className="flex flex-col items-center gap-2"
-              >
-                <DrawerClipboardIcon />
-                <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">구독관리</span>
-              </button>
-            </div>
           </div>
 
-          {/* 네비게이션 메뉴 */}
-          <nav className="flex-1 pt-3">
+          {/* 이름 / 로그인 텍스트 */}
+          <div className="mt-2 flex items-center gap-1">
+            {isAuthLoading ? (
+              <div className="h-6 w-24 animate-pulse rounded bg-[var(--color-secondary)]" />
+            ) : isLoggedIn ? (
+              hasProfile ? (
+                <>
+                  <span className="text-body-20-sb text-[var(--color-text)]">
+                    {getProfileDisplayName(profile?.name)}
+                  </span>
+                  <button
+                    onClick={() => { closeMenu(); openModal("profile-switch"); }}
+                    aria-label="프로필 변경"
+                    className="shrink-0"
+                  >
+                    <SwitchHorizontalIcon />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => { closeMenu(); router.push("/mypage/dog-profile?new=true"); }}
+                  className="text-body-20-sb text-[var(--color-text-secondary)]"
+                >
+                  프로필 등록하기
+                </button>
+              )
+            ) : (
+              <Link href="/login" onClick={closeMenu} className="text-body-20-sb text-[var(--color-text)]">
+                로그인 하기
+              </Link>
+            )}
+          </div>
+
+          {/* 이메일 */}
+          {isLoggedIn && user?.email && (
+            <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)]">{user.email}</p>
+          )}
+
+          {/* 단축 아이콘 3종 */}
+          <div className="mt-7 flex w-full items-start justify-center gap-12 pb-7">
+            <button
+              onClick={() => { closeMenu(); router.push(isLoggedIn ? "/mypage" : "/login"); }}
+              className="flex flex-col items-center gap-2"
+            >
+              <DrawerUserIcon />
+              <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">마이페이지</span>
+            </button>
+            <button
+              onClick={() => { closeMenu(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
+              className="flex min-w-[56px] flex-col items-center gap-2"
+            >
+              <DrawerPinIcon />
+              <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">계정정보</span>
+            </button>
+            <button
+              onClick={() => { closeMenu(); router.push(isLoggedIn ? "/mypage/subscription" : "/login"); }}
+              className="flex min-w-[56px] flex-col items-center gap-2"
+            >
+              <DrawerClipboardIcon />
+              <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">구독관리</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 구분선 */}
+        <div className="shrink-0 border-t border-[#EAEAEA]" />
+
+        {/* 스크롤 가능 영역 (네비게이션 + 로그아웃) */}
+        <div className="flex flex-1 flex-col overflow-y-auto">
+          <nav className="pt-3">
             {NAV_ITEMS.map((item) => {
               const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
@@ -699,17 +709,31 @@ export default function Header() {
             })}
           </nav>
 
-          {/* 로그아웃 */}
-          <div className="mx-7 mb-10">
-            <button
-              onClick={async () => { closeMenu(); await logout(); }}
-              className="flex h-[58px] w-full items-center gap-4 px-3"
-            >
-              <DrawerLogoutIcon />
-              <span className="text-body-14-m text-[var(--color-text-secondary)]">로그아웃</span>
-            </button>
-          </div>
+          <div className="flex-1" />
 
+          {/* 로그아웃 — 로그인 상태에서만 표시 */}
+          {isLoggedIn && (
+            <div className="mx-7 py-2">
+              <button
+                onClick={async () => { closeMenu(); await logout(); }}
+                className="flex h-[58px] w-full items-center gap-4 px-3"
+              >
+                <DrawerLogoutIcon />
+                <span className="text-body-14-m text-[var(--color-text-secondary)]">로그아웃</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* 하단 배너 */}
+        <div className="shrink-0">
+          <Image
+            src="/images/sidebar-banner-001.png"
+            alt="꼬순박스 배너"
+            width={375}
+            height={126}
+            className="w-full"
+          />
         </div>
       </div>
     </>

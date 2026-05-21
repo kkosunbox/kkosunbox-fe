@@ -657,21 +657,21 @@ export default function Header() {
                 className="flex flex-col items-center gap-2"
               >
                 <DrawerUserIcon />
-                <span className="text-body-13-m tracking-[-0.02em] text-[var(--color-text)]">마이페이지</span>
+                <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">마이페이지</span>
               </button>
               <button
                 onClick={() => { closeMenu(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
                 className="flex flex-col items-center gap-2"
               >
                 <DrawerPinIcon />
-                <span className="text-body-13-m tracking-[-0.02em] text-[var(--color-text)]">계정정보</span>
+                <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">계정정보</span>
               </button>
               <button
                 onClick={() => { closeMenu(); router.push(isLoggedIn ? "/mypage/subscription" : "/login"); }}
                 className="flex flex-col items-center gap-2"
               >
                 <DrawerClipboardIcon />
-                <span className="text-body-13-m tracking-[-0.02em] text-[var(--color-text)]">구독관리</span>
+                <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">구독관리</span>
               </button>
             </div>
           </div>
@@ -691,7 +691,7 @@ export default function Header() {
                   ].join(" ")}
                 >
                   <DrawerNavIcon type={item.icon} />
-                  <span className={isActive ? "text-body-14-b text-[var(--color-text)]" : "text-body-14-m text-[var(--color-text)]"}>
+                  <span className={isActive ? "text-body-14-b text-[var(--color-text)]" : "text-body-14-sb text-[var(--color-text)]"}>
                     {item.label}
                   </span>
                 </Link>

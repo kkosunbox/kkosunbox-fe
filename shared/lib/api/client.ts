@@ -64,7 +64,6 @@ async function request<T>(
     };
 
     const url = `${env.apiUrl}${path}`;
-    console.log(`[api] ${method} URL=`, JSON.stringify(url));
     return fetch(url, {
       ...fetchOptions,
       method,

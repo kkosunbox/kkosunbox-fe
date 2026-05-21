@@ -1,11 +1,9 @@
 "use server";
 
-import dns from "node:dns/promises";
 import { cookies } from "next/headers";
-import { COOKIE_NAME } from "./constants";
+import { COOKIE_NAME, COOKIE_MAX_AGE_SEC } from "./constants";
 import { login as loginApi, signup as signupApi } from "../api/authApi";
 import { ApiError, getErrorMessage } from "@/shared/lib/api";
-import { env } from "@/shared/config/env";
 import type { AuthUser } from "../model/types";
 
 const COOKIE_OPTS = {
@@ -13,7 +11,7 @@ const COOKIE_OPTS = {
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
   path: "/",
-  maxAge: 60 * 60 * 24 * 7, // 7일
+  maxAge: COOKIE_MAX_AGE_SEC,
 };
 
 export async function loginAction(
@@ -25,13 +23,6 @@ export async function loginAction(
   refreshToken?: string;
   error?: string;
 }> {
-  console.log("[loginAction] env.apiUrl=", JSON.stringify(env.apiUrl));
-  try {
-    const lookup = await dns.lookup("api-dev.kkosunbox.com").catch((e) => ({ error: e.message }));
-    console.log("[loginAction] dns.lookup(api-dev.kkosunbox.com)=", JSON.stringify(lookup));
-  } catch (e) {
-    console.log("[loginAction] dns.lookup threw=", e);
-  }
   try {
     const data = await loginApi({ email, password });
 
@@ -49,13 +40,8 @@ export async function loginAction(
       refreshToken: data.refreshToken,
     };
   } catch (err) {
-    if (err instanceof ApiError) {
-      console.error("[loginAction] ApiError", err.statusCode, err.code, err.message);
-      if (err.isUnauthorized || err.statusCode === 400) {
-        return { error: "아이디 또는 비밀번호가 올바르지 않습니다." };
-      }
-    } else {
-      console.error("[loginAction] Unexpected error:", err);
+    if (err instanceof ApiError && (err.isUnauthorized || err.statusCode === 400)) {
+      return { error: "아이디 또는 비밀번호가 올바르지 않습니다." };
     }
     return { error: getErrorMessage(err, "로그인 중 오류가 발생했습니다.") };
   }
@@ -96,11 +82,6 @@ export async function signupAction(
       refreshToken: data.refreshToken,
     };
   } catch (err) {
-    if (err instanceof ApiError) {
-      console.error("[signupAction] ApiError", err.statusCode, err.code, err.message);
-    } else {
-      console.error("[signupAction] Unexpected error:", err);
-    }
     return { error: getErrorMessage(err, "회원가입 중 오류가 발생했습니다.") };
   }
 }
@@ -143,16 +124,6 @@ export async function socialLoginAction(
       isNewUser: data.isNewUser,
     };
   } catch (err) {
-    if (err instanceof ApiError) {
-      console.error(
-        `[socialLoginAction:${provider}] ApiError`,
-        err.statusCode,
-        err.code,
-        err.message,
-      );
-    } else {
-      console.error(`[socialLoginAction:${provider}] Unexpected error:`, err);
-    }
     return {
       error: getErrorMessage(err, "소셜 로그인 중 오류가 발생했습니다."),
     };

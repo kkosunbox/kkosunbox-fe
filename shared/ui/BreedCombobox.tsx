@@ -67,7 +67,7 @@ function getFuzzyScore(query: string, target: string): number {
 function getBreedSearchScore(option: DogBreedOption, normalizedQuery: string): number {
   if (!normalizedQuery) return 0;
 
-  const searchableValues = [option.name, option.englishName, option.groupName, ...(option.aliases ?? [])];
+  const searchableValues = [option.name, option.englishName, ...(option.aliases ?? [])];
   let bestScore = Number.POSITIVE_INFINITY;
 
   for (const value of searchableValues) {
@@ -93,66 +93,26 @@ function getBreedSearchScore(option: DogBreedOption, normalizedQuery: string): n
   return bestScore;
 }
 
-// ---- 그룹 헤더 지원 ----
-
-interface BreedListHeader {
-  kind: "header";
-  groupName: string;
-}
-interface BreedListBreed {
-  kind: "breed";
-  option: DogBreedOption;
-  selectableIndex: number;
-}
-type BreedListItem = BreedListHeader | BreedListBreed;
-
-function getBreedListItems(query: string): { items: BreedListItem[]; selectableOptions: DogBreedOption[] } {
+function getBreedListItems(query: string): { items: DogBreedOption[]; selectableOptions: DogBreedOption[] } {
   const normalizedQuery = normalizeBreedSearchText(query);
   const mixOption = DOG_BREED_OPTIONS.find((option) => option.name === MIX_BREED_NAME);
   const baseOptions = DOG_BREED_OPTIONS.filter((option) => option.name !== MIX_BREED_NAME);
 
-  let scoredOptions: { option: DogBreedOption; score: number }[];
+  let visible: DogBreedOption[];
 
   if (!normalizedQuery) {
-    scoredOptions = baseOptions.slice(0, MAX_VISIBLE_BREED_OPTIONS).map((option) => ({ option, score: 0 }));
+    visible = baseOptions.slice(0, MAX_VISIBLE_BREED_OPTIONS);
   } else {
-    scoredOptions = baseOptions
+    visible = baseOptions
       .map((option) => ({ option, score: getBreedSearchScore(option, normalizedQuery) }))
       .filter(({ score }) => Number.isFinite(score))
       .sort((a, b) => a.score - b.score || a.option.name.localeCompare(b.option.name, "ko"))
-      .slice(0, MAX_VISIBLE_BREED_OPTIONS);
+      .slice(0, MAX_VISIBLE_BREED_OPTIONS)
+      .map(({ option }) => option);
   }
 
-  // 그룹별로 묶되, 스코어 정렬 순서(그룹 첫 등장 순)를 유지
-  const groupOrder: number[] = [];
-  const groupMap = new Map<number, { groupName: string; options: DogBreedOption[] }>();
-  for (const { option } of scoredOptions) {
-    if (!groupMap.has(option.groupId)) {
-      groupOrder.push(option.groupId);
-      groupMap.set(option.groupId, { groupName: option.groupName, options: [] });
-    }
-    groupMap.get(option.groupId)!.options.push(option);
-  }
-
-  const items: BreedListItem[] = [];
-  const selectableOptions: DogBreedOption[] = [];
-
-  for (const groupId of groupOrder) {
-    const group = groupMap.get(groupId)!;
-    items.push({ kind: "header", groupName: group.groupName });
-    for (const option of group.options) {
-      items.push({ kind: "breed", option, selectableIndex: selectableOptions.length });
-      selectableOptions.push(option);
-    }
-  }
-
-  if (mixOption) {
-    items.push({ kind: "header", groupName: "기타" });
-    items.push({ kind: "breed", option: mixOption, selectableIndex: selectableOptions.length });
-    selectableOptions.push(mixOption);
-  }
-
-  return { items, selectableOptions };
+  const selectableOptions = mixOption ? [...visible, mixOption] : visible;
+  return { items: selectableOptions, selectableOptions };
 }
 
 export interface BreedComboboxProps {
@@ -331,30 +291,14 @@ export default function BreedCombobox({
           role="listbox"
           className="absolute left-0 top-[calc(100%+4px)] z-30 max-h-[240px] w-max min-w-[max(100%,21rem)] max-w-[min(40rem,calc(100vw-1.5rem))] overflow-y-auto overflow-x-auto rounded-[8px] border border-[var(--color-divider-warm)] bg-white p-1 shadow-[0_8px_24px_rgba(78,78,78,0.14)]"
         >
-          {items.map((item, itemIndex) => {
-            if (item.kind === "header") {
-              return (
-                <div
-                  key={`header-${item.groupName}`}
-                  role="presentation"
-                  className={[
-                    "px-3 pb-1 text-[11px] font-semibold text-[var(--color-text-muted)]",
-                    itemIndex === 0 ? "pt-1" : "mt-1 border-t border-[var(--color-divider-warm)] pt-2",
-                  ].join(" ")}
-                >
-                  {item.groupName}
-                </div>
-              );
-            }
-
-            const { option, selectableIndex } = item;
+          {items.map((option, selectableIndex) => {
             const isSelected = option.name === value || (option.name === MIX_BREED_NAME && isMixBreedValue(value));
             const isActive = selectableIndex === activeIndex;
 
             return (
               <div
                 id={`${listboxId}-option-${selectableIndex}`}
-                key={`${option.groupId}-${option.name}`}
+                key={option.name}
                 role="option"
                 aria-selected={isSelected}
                 onMouseEnter={() => setActiveIndex(selectableIndex)}

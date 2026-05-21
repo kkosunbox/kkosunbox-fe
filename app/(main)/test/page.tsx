@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import CollapseSection from "./CollapseSection";
 import DesignSystemPanels from "./DesignSystemPanels";
 import ModalTestButtons from "./ModalTestButtons";
@@ -43,6 +44,8 @@ const fontSamples = [
 ] as const;
 
 export default function TestPage() {
+  if (process.env.NODE_ENV === "production") notFound();
+
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-950">
       <div className="mx-auto flex max-w-7xl flex-col gap-6">

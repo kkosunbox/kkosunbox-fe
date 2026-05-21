@@ -3,7 +3,7 @@ import { ElementType, ComponentPropsWithoutRef } from "react";
 type ButtonVariant = "primary" | "secondary" | "ghost";
 type ButtonSize = "lg" | "md" | "sm";
 
-type ButtonProps<T extends ElementType = "button"> = {
+export type ButtonProps<T extends ElementType = "button"> = {
   as?: T;
   variant?: ButtonVariant;
   size?: ButtonSize;

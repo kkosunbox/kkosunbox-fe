@@ -1,22 +1,7 @@
 "use client";
 
-import { useState, useCallback, ElementType } from "react";
-import Button from "./Button";
-
-type ButtonVariant = "primary" | "secondary" | "ghost";
-type ButtonSize = "lg" | "md" | "sm";
-
-type ButtonWithPawEffectProps = {
-  as?: ElementType;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  onClick?: React.MouseEventHandler;
-  className?: string;
-  children?: React.ReactNode;
-  disabled?: boolean;
-  type?: "button" | "submit" | "reset";
-  [key: string]: unknown;
-};
+import { useState, useCallback } from "react";
+import Button, { type ButtonProps } from "./Button";
 
 type Particle = {
   id: number;
@@ -101,10 +86,10 @@ function PawParticle({
 export default function ButtonWithPawEffect({
   onClick,
   ...buttonProps
-}: ButtonWithPawEffectProps) {
+}: ButtonProps<"button">) {
   const [particles, setParticles] = useState<Particle[]>([]);
 
-  const handleClick = useCallback<React.MouseEventHandler>(
+  const handleClick = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
     (e) => {
       onClick?.(e);
       // 누적 append — 빠른 연속 클릭 시 이전 파티클이 계속 날아가는 채로 새 파티클 추가
@@ -119,8 +104,7 @@ export default function ButtonWithPawEffect({
 
   return (
     <span className="relative inline-flex">
-      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-      <Button {...(buttonProps as any)} onClick={handleClick} />
+      <Button {...buttonProps} onClick={handleClick} />
       {particles.map((p) => (
         <PawParticle key={p.id} particle={p} onEnd={() => removeParticle(p.id)} />
       ))}

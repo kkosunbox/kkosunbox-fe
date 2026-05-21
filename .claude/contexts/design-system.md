@@ -140,22 +140,34 @@
 >
 > **규칙: 반응형 전환이 필요한 경우 양쪽 모두 미디어쿼리 기반 클래스를 사용한다.**
 
+### 브레이크포인트 5단계
+
+| 단계 | Tailwind prefix | 범위 | JS 상수 |
+|---|---|---|---|
+| 초소형 | `max-sm:` | < 360px | `BREAKPOINT_SM_PX` |
+| 모바일 | `sm:` ~ `max-md:` | 360px – 767px | `BREAKPOINT_SM_PX` / `BREAKPOINT_MD_PX` |
+| 태블릿 | `md:` ~ `max-lg:` | 768px – 1199px | `BREAKPOINT_MD_PX` / `BREAKPOINT_LG_PX` |
+| 데스크탑 | `lg:` ~ `max-xl:` | 1200px – 1439px | `BREAKPOINT_LG_PX` / `BREAKPOINT_XL_PX` |
+| 와이드 | `xl:` | ≥ 1440px | `BREAKPOINT_XL_PX` |
+
 ### 표시/숨김 패턴
 
 ```tsx
 // ✅ 올바른 패턴 — 둘 다 미디어쿼리 기반
-<div className="max-md:hidden">데스크톱 전용</div>   // md 미만에서 숨김
-<div className="md:hidden">모바일 전용</div>          // md 이상에서 숨김
+<div className="max-md:hidden">태블릿↑ 전용</div>    // 768px 미만에서 숨김
+<div className="md:hidden">모바일·초소형 전용</div>   // 768px 이상에서 숨김
+<div className="max-lg:hidden">데스크탑↑ 전용</div>   // 1200px 미만에서 숨김
+<div className="max-sm:hidden">모바일↑ 전용</div>     // 360px 미만에서 숨김
 
 // ❌ 금지 — hidden은 베이스 클래스라 v4에서 충돌 발생
-<div className="hidden md:block">데스크톱 전용</div>
+<div className="hidden md:block">태블릿↑ 전용</div>
 ```
 
 ### 반응형 타이포그래피 패턴
 
 ```tsx
 // ✅ 올바른 패턴 — max-md:{mobile} {base}
-// max-md:text-* 도 미디어쿼리 기반이므로 베이스보다 나중에 생성 → 모바일에서 우선 적용
+// max-md:text-* 도 미디어쿼리 기반이므로 베이스보다 나중에 생성 → 모바일·초소형에서 우선 적용
 <Text variant="body-18-r" mobileVariant="body-13-r">...</Text>
 // → "max-md:text-body-13-r text-body-18-r"
 

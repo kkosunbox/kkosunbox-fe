@@ -126,7 +126,7 @@ export default function ModalTestButtons() {
       {/* Alert 모달 5가지 타입 */}
       <div>
         <p className="mb-2 text-xs font-semibold text-zinc-400">Alert 모달 · 5가지 타입</p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {ALERT_TYPE_ITEMS.map(({ type, label, description, color }) => (
             <button
               key={type}
@@ -156,7 +156,7 @@ export default function ModalTestButtons() {
       {/* 01–07: 단일 액션 */}
       <div>
         <p className="mb-2 text-xs font-semibold text-zinc-400">01 – 07 · 단일 액션</p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {MODAL_ITEMS.map(({ type, label, description, color }) => (
             <button
               key={type}
@@ -173,7 +173,7 @@ export default function ModalTestButtons() {
       {/* 08–09: 이중 액션 (onConfirm / onConfirm2 구분) */}
       <div>
         <p className="mb-2 text-xs font-semibold text-zinc-400">08 – 09 · 이중 액션 (콘솔 로그로 확인)</p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {DUAL_ACTION_ITEMS.map(({ type, label, description, color, primaryLabel, secondaryLabel }) => (
             <button
               key={type}
@@ -198,7 +198,7 @@ export default function ModalTestButtons() {
       {/* 10: 단일 확인 + 취소 */}
       <div>
         <p className="mb-2 text-xs font-semibold text-zinc-400">10 · 쉬어가기 확인</p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <button
             onClick={() =>
               openModal(
@@ -218,7 +218,7 @@ export default function ModalTestButtons() {
       {/* 구매 성공 팡파레 */}
       <div>
         <p className="mb-2 text-xs font-semibold text-zinc-400">기타 · 이펙트</p>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <button
             onClick={fireTestConfetti}
             className="flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 bg-[#C8E6C9] text-[var(--color-text)]"

@@ -138,23 +138,26 @@ export default function BreedCombobox({
   const [query, setQuery] = useState(isMix ? getMixCustomPart(value) : value);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  // 스테일 클로저 방지용 refs
+  // 스테일 클로저 방지용 refs — 이벤트 핸들러에서만 읽으므로 useEffect로 충분
   const valueRef = useRef(value);
   const queryRef = useRef(query);
-  valueRef.current = value;
-  queryRef.current = query;
+  useEffect(() => {
+    valueRef.current = value;
+    queryRef.current = query;
+  });
+
+  // value prop이 외부에서 바뀌면 query 동기화 — React docs 권장 "adjusting state on prop change" 패턴
+  const [lastSyncedValue, setLastSyncedValue] = useState(value);
+  if (lastSyncedValue !== value) {
+    setLastSyncedValue(value);
+    setQuery(isMixBreedValue(value) ? getMixCustomPart(value) : value);
+  }
 
   const { items, selectableOptions } = useMemo(() => getBreedListItems(query), [query]);
   const listboxId = `${id}-listbox`;
 
-  useEffect(() => {
-    const mix = isMixBreedValue(value);
-    setQuery(mix ? getMixCustomPart(value) : value);
-  }, [value]);
-
-  useEffect(() => {
-    setActiveIndex((current) => Math.min(current, Math.max(selectableOptions.length - 1, 0)));
-  }, [selectableOptions.length]);
+  // options 수가 줄어도 activeIndex 범위 보장 — effect 없이 render 시 clamp
+  const safeActiveIndex = Math.min(activeIndex, Math.max(selectableOptions.length - 1, 0));
 
   function selectOption(option: DogBreedOption) {
     onChange(option.name);
@@ -202,7 +205,7 @@ export default function BreedCombobox({
     }
     if (event.key === "Enter" && isOpen) {
       event.preventDefault();
-      const option = selectableOptions[activeIndex];
+      const option = selectableOptions[safeActiveIndex];
       if (option) selectOption(option);
       return;
     }
@@ -225,8 +228,8 @@ export default function BreedCombobox({
           aria-controls={listboxId}
           aria-expanded={isOpen}
           aria-activedescendant={
-            isOpen && selectableOptions[activeIndex]
-              ? `${listboxId}-option-${activeIndex}`
+            isOpen && selectableOptions[safeActiveIndex]
+              ? `${listboxId}-option-${safeActiveIndex}`
               : undefined
           }
           autoComplete="off"
@@ -293,7 +296,7 @@ export default function BreedCombobox({
         >
           {items.map((option, selectableIndex) => {
             const isSelected = option.name === value || (option.name === MIX_BREED_NAME && isMixBreedValue(value));
-            const isActive = selectableIndex === activeIndex;
+            const isActive = selectableIndex === safeActiveIndex;
 
             return (
               <div

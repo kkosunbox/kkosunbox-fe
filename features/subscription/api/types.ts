@@ -4,13 +4,17 @@ export interface SubscriptionPlanDto {
   id: number;
   name: string;
   monthlyPrice: number;
+  originalPrice: number;
+  /** 할인율 (1~100, 정수 %). 표시 시 `${discountRate}%` 형태로 사용. */
+  discountRate: number;
   /**
    * 표시 순서. 백엔드가 1~3을 내려주면 티어(베이직/스탠다드/프리미엄) 매핑에 사용.
    * 0 또는 미설정인 경우 프론트는 `name`·`id`로 티어·색상을 추론함.
    */
   sortOrder: number;
   isRecommended: boolean;
-  description?: string;
+  description?: string | null;
+  tags: string[];
 }
 
 // ── Subscription ──────────────────────────────────────────────────

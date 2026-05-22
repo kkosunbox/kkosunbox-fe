@@ -4,7 +4,9 @@ import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Text, Button, ScrollReveal } from "@/shared/ui";
-import { PACKAGES, PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
+import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { getSubscriptionPlans } from "@/features/subscription/api";
+import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import packageExplainWithBasic from "../assets/package-explain-with-basic.png";
 import packageExplainWithPremium from "../assets/package-explain-with-premium.png";
 import packageExplainWithStandard from "../assets/package-explain-with-standard.png";
@@ -47,18 +49,13 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
   Premium: packageImagePremium,
 };
 
-const PACKAGE_PRICES: Record<PackageTier, { price: string; discountRate: string }> = {
-  Basic: { price: "18,000원", discountRate: "10%" },
-  Standard: { price: "13,000원", discountRate: "10%" },
-  Premium: { price: "23,000원", discountRate: "10%" },
-};
-
 export default function PackagePlansSection() {
   const { isLoggedIn } = useAuth();
   const { profile } = useProfile();
   const router = useRouter();
   const [activePackageIndex, setActivePackageIndex] = useState(0);
   const activePackage = PACKAGE_EXPLAIN_IMAGES[activePackageIndex];
+  const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -66,6 +63,10 @@ export default function PackagePlansSection() {
     }, ROTATION_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
   }, []);
 
   function handleSubscribeClick() {
@@ -126,8 +127,8 @@ export default function PackagePlansSection() {
             <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
               {PACKAGE_SUMMARY_ORDER.map((tier) => {
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
-                const { price, discountRate } = PACKAGE_PRICES[tier];
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
+                const plan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
 
                 return (
                   <div
@@ -150,21 +151,23 @@ export default function PackagePlansSection() {
                       <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
                         월 요금제
                       </p>
-                      <div className="mb-0.5 flex items-baseline gap-2">
-                        <span
-                          className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[16px]"
-                        >
-                          {discountRate}
-                        </span>
-                        <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
-                          {price}
-                        </span>
-                      </div>
-                      <span
-                        className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[14px]"
-                      >
-                        첫 구독 할인
-                      </span>
+                      {plan ? (
+                        <>
+                          <div className="mb-0.5 flex items-baseline gap-2">
+                            <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[16px]">
+                              {plan.discountRate}%
+                            </span>
+                            <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                              {plan.monthlyPrice.toLocaleString("ko-KR")}원
+                            </span>
+                          </div>
+                          <span className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[14px]">
+                            첫 구독 할인
+                          </span>
+                        </>
+                      ) : (
+                        <div className="h-[36px] animate-pulse rounded bg-[var(--color-text-muted)]" />
+                      )}
                     </div>
                   </div>
                 );

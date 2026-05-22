@@ -26,7 +26,7 @@ const DEV_SUBSCRIPTION: UserSubscriptionDto = {
   userId: 1,
   petProfileId: 1,
   deliveryAddressId: 1,
-  plan: { id: 3, name: "프리미엄 패키지", monthlyPrice: 25000, sortOrder: 3, isRecommended: true },
+  plan: { id: 3, name: "프리미엄 패키지", monthlyPrice: 25000, originalPrice: 32000, discountRate: 22, sortOrder: 3, isRecommended: true, tags: [] },
   quantity: 1,
   status: "active",
   nextBillingDate: "2026-04-21",

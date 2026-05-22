@@ -566,7 +566,7 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Button as={Link} href="/login" size="sm">
+              <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
                 로그인
               </Button>
             )}

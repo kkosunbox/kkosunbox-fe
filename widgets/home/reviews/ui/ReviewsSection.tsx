@@ -1,59 +1,54 @@
-"use client";
+﻿"use client";
 
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
-import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Text, ScrollReveal } from "@/shared/ui";
+import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import reviewsTitle from "../assets/reviews-title.png";
-import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
+import reviewsBg from "../assets/reviews-bg.png";
+import reviewsTitle from "../assets/reviews-title-new.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.jpg";
 import reviewsProfile02 from "../assets/reviews-profile-02.jpg";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
-import reviewsProfile04 from "../assets/reviews-profile-04.jpg";
 import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [
   {
-    name: "코코",
-    subscription: "2026.04.20 · 프리미엄 패키지 BOX",
+    name: "콩콩",
+    subscriptionBadge: "구독 3개월",
+    subscription: "2026.04.20 (구독 3개월, 프리미엄)",
     review:
-      "원래 간식 진짜 가리는 애라서 이것저것 다 사봤는데 이건 처음으로 먼저 달라고 찾아요!  ㅋㅋ  특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요. 이제 다른 간식은 못 먹일 것 같아요.",
-    rating: 4.5,
+      "원래 간식 진짜 가리는 애라서 이것저것 다 사봤는데 이건 처음으로 먼저 달라고 찾아요! ㅋㅋ 특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요. 이제 다른 간식은 못 먹일 것 같아요.",
+    rating: 5,
     profile: reviewsProfile01,
     profileObjectPosition: "center 5%",
   },
   {
     name: "보리",
-    subscription: "2026.04.20 · 스탠다드 패키지 BOX",
+    subscriptionBadge: "구독 5개월",
+    subscription: "2026.04.20 (구독 5개월, 스탠다드)",
     review:
-      "알러지 때문에 간식 고르는 게 항상 스트레스였는데 여기는 맞춤으로 추천해줘서 너무 편하고 좋아요. \n성분도 깔끔해서 믿고 먹일 수 있고 무엇보다 아이가 너무 잘 먹어서 계속 구독 중입니다.",
+      "알러지 때문에 간식 고르는 게 항상 스트레스였는데 여기는 맞춤으로 추천해줘서 너무 편하고 좋아요. 성분도 깔끔해서 믿고 먹일 수 있고 무엇보다 아이가 너무 잘 먹어서 계속 구독 중입니다.",
     rating: 5,
     profile: reviewsProfile02,
     profileObjectPosition: "93% center",
   },
   {
     name: "두부",
-    subscription: "2026.04.08 · 프리미엄 패키지 BOX",
+    subscriptionBadge: "구독 2개월",
+    subscription: "2026.04.08 (구독 2개월, 베이직)",
     review:
-      "일반 간식 주면 꼭 항상 반 정도 남기던 애인데 이건 끝까지 다 먹어요.\n특히 종류가 다양해서 질려하지 않는 게 가장 좋아요. 가격 대비 만족도가 생각보다 훨씬 높네요.",
+      "일반 간식 주면 꼭 항상 반 정도 남기던 애인데 이건 끝까지 다 먹어요. 특히 종류가 다양해서 질려하지 않는 게 가장 좋아요. 가격 대비 만족도가 생각보다 훨씬 높네요.",
     rating: 5,
     profile: reviewsProfile03,
-  },
-  {
-    name: "루루",
-    subscription: "2026.05.11 · 스탠다드 패키지 BOX",
-    review:
-      "처음엔 반신반의 하면서 시작했는데 지금은 간식 시간만 되면 눈빛이 완전 달라져요ㅋㅋ 배송도 깔끔하고 신선한 느낌이 확실히 있어서 ‘아 이건 다르다’ 싶었습니다.\n루루가 너무 좋아해서 앞으로도 꾸준히 구독할 의향 있어요~",
-    rating: 5,
-    profile: reviewsProfile04,
   },
 ] as const;
 
 type DisplayReview = {
   name: string;
+  subscriptionBadge: string;
   subscription: string;
   review: string;
   rating: number;
@@ -84,53 +79,23 @@ function CarouselPrevButton({
   disabled: boolean;
   onClick: () => void;
 }) {
-  const rawId = useId().replace(/:/g, "");
-  const filterId = `reviews-carousel-dl-${rawId}`;
-
   return (
     <button
       type="button"
       aria-label="이전 리뷰"
       disabled={disabled}
       onClick={onClick}
-      className="shrink-0 rounded-full text-[var(--color-text-label)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+      style={{ background: "rgba(255,255,255,0.3)" }}
     >
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <g filter={`url(#${filterId})`}>
-          <rect x="2" y="2" width="36" height="36" rx="18" fill="white" shapeRendering="crispEdges" />
-          <path
-            d="M24 12L15 20L24 28"
-            stroke="#999999"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </g>
-        <defs>
-          <filter
-            id={filterId}
-            x="0"
-            y="0"
-            width="44"
-            height="44"
-            filterUnits="userSpaceOnUse"
-            colorInterpolationFilters="sRGB"
-          >
-            <feFlood floodOpacity="0" result="BackgroundImageFix" />
-            <feColorMatrix
-              in="SourceAlpha"
-              type="matrix"
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-              result="hardAlpha"
-            />
-            <feOffset dx="2" dy="2" />
-            <feGaussianBlur stdDeviation="2" />
-            <feComposite in2="hardAlpha" operator="out" />
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-          </filter>
-        </defs>
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <path
+          d="M11 4L6 9L11 14"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </button>
   );
@@ -143,53 +108,23 @@ function CarouselNextButton({
   disabled: boolean;
   onClick: () => void;
 }) {
-  const rawId = useId().replace(/:/g, "");
-  const filterId = `reviews-carousel-dr-${rawId}`;
-
   return (
     <button
       type="button"
       aria-label="다음 리뷰"
       disabled={disabled}
       onClick={onClick}
-      className="shrink-0 rounded-full text-[var(--color-text-label)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+      style={{ background: "rgba(255,255,255,0.3)" }}
     >
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <g filter={`url(#${filterId})`}>
-          <rect width="36" height="36" rx="18" transform="matrix(-1 0 0 1 38 2)" fill="white" shapeRendering="crispEdges" />
-          <path
-            d="M16 12L25 20L16 28"
-            stroke="#DDDDDD"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </g>
-        <defs>
-          <filter
-            id={filterId}
-            x="0"
-            y="0"
-            width="44"
-            height="44"
-            filterUnits="userSpaceOnUse"
-            colorInterpolationFilters="sRGB"
-          >
-            <feFlood floodOpacity="0" result="BackgroundImageFix" />
-            <feColorMatrix
-              in="SourceAlpha"
-              type="matrix"
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-              result="hardAlpha"
-            />
-            <feOffset dx="2" dy="2" />
-            <feGaussianBlur stdDeviation="2" />
-            <feComposite in2="hardAlpha" operator="out" />
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-          </filter>
-        </defs>
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <path
+          d="M7 4L12 9L7 14"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </button>
   );
@@ -197,8 +132,8 @@ function CarouselNextButton({
 
 function ReviewCard({ review }: { review: DisplayReview }) {
   return (
-    <div className="relative flex h-full flex-col items-center rounded-2xl bg-white px-8 pb-8 pt-[84px] shadow-[0px_4px_10px_rgba(82,82,82,0.1)]">
-      <div className="absolute -top-[60px] left-1/2 h-[120px] w-[120px] -translate-x-1/2 overflow-hidden rounded-full border-[8px] border-white">
+    <div className="relative flex min-h-[366px] min-w-[300px] flex-col items-center rounded-2xl bg-white px-8 pt-[164px] shadow-[0px_4px_16px_rgba(82,82,82,0.2)]">
+      <div className="absolute -top-[60px] left-1/2 z-30 h-[120px] w-[120px] -translate-x-1/2 overflow-hidden rounded-full border-[8px] border-white">
         <Image
           src={review.profile}
           alt={`${review.name} 프로필`}
@@ -213,26 +148,28 @@ function ReviewCard({ review }: { review: DisplayReview }) {
         />
       </div>
 
-      <div className="flex w-full flex-1 flex-col items-center">
-        <div className="mb-6 flex gap-0">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <StarIcon key={i} fillPercent={Math.max(0, Math.min(100, (review.rating - i) * 100))} />
-          ))}
-        </div>
+      <span
+        className="absolute left-1/2 top-[76px] z-10 flex h-6 min-w-[85px] -translate-x-1/2 items-center justify-center rounded-[30px] bg-review-chip px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
+      >
+        {review.subscriptionBadge}
+      </span>
 
-        <p className="max-lg:mb-2 lg:mb-6 flex-1 whitespace-pre-line text-[14px] leading-[140%] text-[var(--color-review-text)]">
-          {review.review}
-        </p>
+      <div className="absolute left-1/2 top-[108px] z-10 flex h-6 w-[120px] -translate-x-1/2 gap-0">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <StarIcon key={i} fillPercent={Math.max(0, Math.min(100, (review.rating - i) * 100))} />
+        ))}
+      </div>
 
-        <div className="flex w-full shrink-0 flex-col items-center gap-2">
-          <span className="text-center text-[18px] font-bold leading-[21px] text-[var(--color-review-text)]">
-            {review.name}
-          </span>
-          <div className="flex flex-col items-center gap-1 text-center text-[14px] font-medium leading-[17px] text-[var(--color-text-label)]">
-            {review.subscription.split(/\s*·\s*/).map((part, idx) => (
-              <span key={idx}>{part}</span>
-            ))}
-          </div>
+      <p className="h-[100px] w-full whitespace-pre-line text-[14px] font-normal leading-[140%] text-[var(--color-review-text)]">
+        {review.review}
+      </p>
+
+      <div className="absolute bottom-8 left-8 right-8 flex h-[46px] flex-col items-center gap-2 text-center">
+        <span className="text-[18px] font-bold leading-[21px] text-[var(--color-review-text)]">
+          {review.name}
+        </span>
+        <div className="text-[14px] font-medium leading-[17px] text-[var(--color-text-label)]">
+          {review.subscription}
         </div>
       </div>
     </div>
@@ -287,12 +224,12 @@ function ReviewsCarousel() {
   const canNext = displayIndex < maxStart;
 
   return (
-    <div className="flex items-center gap-3 md:gap-4 lg:gap-4">
+    <div className="mx-auto flex w-full max-w-[1107px] items-center justify-between gap-3 md:gap-4 lg:gap-6">
       <CarouselPrevButton
         disabled={!canPrev}
         onClick={() => setStartIndex(Math.max(0, displayIndex - 1))}
       />
-      <div ref={viewportRef} className="min-w-0 w-full overflow-hidden pt-[60px] max-md:max-w-[640px] max-md:mx-auto">
+      <div ref={viewportRef} className="min-w-0 w-full max-w-[1011px] overflow-hidden pt-[60px] max-md:max-w-[640px] max-md:mx-auto">
         <div
           ref={trackRef}
           className="flex gap-9 transition-transform duration-300 ease-out"
@@ -337,41 +274,43 @@ export default function ReviewsSection() {
 
   return (
     <section
-      className="py-16 md:pt-[50px] lg:pt-[86px] md:pb-[58px] lg:pb-[58px]"
-      style={{ background: "var(--gradient-reviews)" }}
+      className="relative overflow-hidden py-16 md:py-20 lg:h-[862px] lg:py-0"
+      style={{ background: "var(--color-cta-button)" }}
     >
-      <div className="mx-auto max-w-content max-md:px-6 md:px-0 lg:px-0">
+      <Image
+        src={reviewsBg}
+        alt=""
+        fill
+        className="object-cover"
+        sizes="100vw"
+        priority
+        aria-hidden="true"
+      />
+      <div className="relative z-10 mx-auto max-w-[1107px] max-md:px-6 md:px-6 lg:px-0 lg:pt-[100px]">
         <ScrollReveal variant="fade-up">
           <Image
             src={reviewsTitle}
-            alt="생생한 리뷰를 확인하세요!"
-            className="mx-auto h-auto w-full max-w-[623px] max-lg:hidden"
-          />
-          <Image
-            src={reviewsTitleMobile}
-            alt="그래서 꼬순박스는 다르게 만들었습니다!"
-            className="mx-auto h-auto w-full max-w-[233px] lg:hidden"
+            alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
+            className="mx-auto h-auto w-full max-w-[640px] md:max-w-[760px] lg:max-w-[845px]"
+            sizes="(min-width: 1200px) 845px, (min-width: 768px) 760px, 640px"
+            priority
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
-          <Text
-            variant="body-16-r"
-            mobileVariant="body-14-m"
-            className="mt-4 md:mt-5.5 lg:mt-5.5 mb-12 md:mb-[55px] lg:mb-[55px] text-center text-[var(--color-text-warm)] tracking-[-0.02em] max-lg:text-body-14-m"
-          >
-            실제 꼬순박스 패키지를 구매하신&nbsp;<br className="md:hidden lg:hidden"/>고객님들의 생생한 리뷰입니다.
-          </Text>
+          <p className="mt-4 text-center text-[14px] font-medium leading-[18px] tracking-[-0.02em] text-white md:text-[16px] md:leading-[19px]">
+            실제 꼬순박스 패키지를 구매하신 고객님들의 생생한 리뷰입니다.
+          </p>
         </ScrollReveal>
 
-        <ScrollReveal variant="fade-up" delay={300} className="w-full">
+        <ScrollReveal variant="fade-up" delay={300} className="mt-[34px] w-full md:mt-[64px] lg:mt-[94px]">
           <ReviewsCarousel />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={450}>
-          <div className="mt-12 md:mt-14 lg:mt-14 flex justify-center">
+          <div className="mt-12 md:mt-[52px] flex justify-center">
             <button
               type="button"
               onClick={handleChecklistCtaClick}
-              className="max-lg:h-10 max-lg:w-[327px] max-lg:text-[13px] lg:h-[52px] lg:w-[282px] lg:text-[16px] rounded-[50px] bg-[var(--color-accent-strong)] text-center font-semibold leading-[30px] tracking-[-0.04em] text-white"
+              className="h-12 w-[327px] rounded-[12px] bg-[var(--color-text)] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white md:h-[52px] md:w-[312px] md:text-[16px]"
             >
               10초 진단하고 우리 아이 맞춤 추천 받기
             </button>

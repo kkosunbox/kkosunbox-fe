@@ -43,6 +43,11 @@
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
 | `--color-beige` | `#E8CFB9` | Beige — 테두리, 불릿, 서클 bg 등 장식 요소 |
+| `--color-why-bg` | `#584B40` | WhyGallery 섹션 배경 |
+| `--color-gallery-cta-peach` | `#FFE2C8` | WhyGallery 하단 단색 타일 |
+| `--color-gallery-peach-soft` | `#FFD6B0` | WhyGallery 상단 단색 타일 |
+| `--color-gallery-peach-warm` | `#FFC086` | WhyGallery 상단 단색 타일 |
+| `--color-gallery-sage-muted` | `#8C9075` | WhyGallery 하단 단색 타일 |
 
 ### Hero
 
@@ -115,6 +120,7 @@
 | `--color-sage` | `#87AB7D` | Sage Green — About CTA 카드 배경 |
 | `--color-star` | `#FDD264` | Gold — 리뷰 별점 아이콘 |
 | `--color-review-text` | `#2C2C2C` | 리뷰 카드 본문·이름 텍스트 |
+| `--color-review-chip` | `#A16240` | 리뷰 카드 구독 기간 칩 |
 
 ### Gradient
 

@@ -1,0 +1,1 @@
+﻿export { default as WhyGallerySection } from "./ui/WhyGallerySection";

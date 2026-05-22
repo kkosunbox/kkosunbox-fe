@@ -16,6 +16,7 @@ import type {
   Profile,
 } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import ChecklistHero from "./ChecklistHero";
@@ -167,6 +168,7 @@ export default function ChecklistSection() {
   const editQuestionIdParam = searchParams.get("editQuestionId");
   const returnTo = searchParams.get("returnTo");
   const isRewrite = searchParams.get("rewrite") === "1";
+  const isViewResult = searchParams.get("result") === "1";
 
   const [questions, setQuestions] = useState<ChecklistQuestion[] | null>(null);
   const [questionsError, setQuestionsError] = useState<string | null>(null);
@@ -191,6 +193,7 @@ export default function ChecklistSection() {
   const [recommendedProfileId, setRecommendedProfileId] = useState<number | null>(null);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const pendingNavigateRef = useRef<(() => void) | null>(null);
+  const viewResultDone = useRef(false);
 
   const resultStep = questions && questions.length > 0 ? questions.length + 1 : 6;
 
@@ -283,6 +286,45 @@ export default function ChecklistSection() {
       cancelled = true;
     };
   }, [editQuestionIdParam, questions, isLoggedIn, activeProfile]);
+
+  // ?result=1로 진입 시: 이미 작성된 체크리스트 기반으로 결과 자동 표시
+  useEffect(() => {
+    if (!isViewResult || !initReady || viewResultDone.current) return;
+    if (!activeProfile || !hasChecklistAnswers(activeProfile)) return;
+
+    viewResultDone.current = true;
+
+    const answers = activeProfile.checklistAnswers.map((a) => ({
+      questionId: a.questionId,
+      optionIds: a.selectedOptions.map((o) => o.id),
+    }));
+
+    void (async () => {
+      setIsAnalyzing(true);
+      try {
+        const planRes = await getSubscriptionPlans(activeProfile.id);
+        const rec = planRes.plans.find((p) => p.isRecommended);
+        let tier: RecommendedTier = fallbackRecommend(answers);
+        if (rec) {
+          const pt = tierFromSubscriptionPlan(rec);
+          tier = pt === "Premium" ? "premium" : pt === "Standard" ? "standard" : "basic";
+        }
+        setPetInfo(profileToPetInfo(activeProfile));
+        setAvatarSrc(activeProfile.profileImageUrl);
+        setRecommendedTier(tier);
+        setRecommendedProfileId(activeProfile.id);
+        setStep(resultStep);
+      } catch {
+        setPetInfo(profileToPetInfo(activeProfile));
+        setAvatarSrc(activeProfile.profileImageUrl);
+        setRecommendedTier(fallbackRecommend(answers));
+        setRecommendedProfileId(activeProfile.id);
+        setStep(resultStep);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    })();
+  }, [isViewResult, initReady, activeProfile, resultStep]);
 
   const isDirty =
     questions !== null &&

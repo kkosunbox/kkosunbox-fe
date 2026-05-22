@@ -118,7 +118,17 @@
       "Bash(node *)",
       "Bash(where npx *)",
       "Bash(findstr \":300\")",
-      "Bash(pnpm remove *)"
+      "Bash(pnpm remove *)",
+      "Bash(Out-File -Encoding UTF8 \"C:/2026/ggosoonbox/widgets/home/reviews/ui/ReviewsSection.tsx\")",
+      "Bash(Write-Host \"restored\")",
+      "PowerShell(New-Item *)",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/main-hero-kkosun-truck-title.png\" \"C:/2026/ggosoonbox/public/images/hero-truck-title.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/main-hero-kkosun-happy-puppy-title.png\" \"C:/2026/ggosoonbox/public/images/hero-dog-title.png\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(findstr /C:\"error\" /C:\"HeroSection\" /C:\"ProfileFloat\" /C:\"ChecklistSection\")",
+      "Bash(Select-String \"error\")",
+      "Bash(Select-String -NotMatch \"warning\")"
     ]
   }
 }

@@ -1,328 +1,177 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
-import { CheckCircleIcon, Text, ScrollReveal } from "@/shared/ui";
-import { PACKAGES as BASE_PACKAGES } from "@/widgets/subscribe/plans/ui/packageData";
-import packagePlansTitle02 from "../assets/home-package-plans-title-02.png";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Text, Button, ScrollReveal } from "@/shared/ui";
+import { PACKAGES, PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
+import packageExplainWithBasic from "../assets/package-explain-with-basic.png";
+import packageExplainWithPremium from "../assets/package-explain-with-premium.png";
+import packageExplainWithStandard from "../assets/package-explain-with-standard.png";
+import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
-import packageImageStandard from "../assets/package-image-standard.png";
 import packageImagePremium from "../assets/package-image-premium.png";
-import {
-  BREAKPOINT_LG_PX,
-  BREAKPOINT_MD_PX,
-  MEDIA_MAX_MD_SIZES,
-  MEDIA_MAX_LG_SIZES,
-} from "@/shared/config/breakpoints";
+import packageImageStandard from "../assets/package-image-standard.png";
+import { useAuth } from "@/features/auth";
+import { useProfile } from "@/features/profile/ui/ProfileProvider";
 
-const HOME_PACKAGE_UI = {
-  Basic: {
-    tierLabel: "Basic",
-    colorVar: "var(--color-basic)",
-    cardBg: "var(--color-card-basic)",
-    msMadiColor: "var(--color-basic-light)",
-    accentColor: "var(--color-basic)",
-    rotate: 12,
-    image: packageImageBasic as StaticImageData,
+const ROTATION_INTERVAL_MS = 8000;
+
+const PACKAGE_EXPLAIN_IMAGES: Array<{
+  tier: PackageTier;
+  src: StaticImageData;
+  alt: string;
+}> = [
+  {
+    tier: "Basic",
+    src: packageExplainWithBasic,
+    alt: "베이직 패키지 BOX 설명",
   },
-  Standard: {
-    tierLabel: "Standard",
-    colorVar: "var(--color-plus)",
-    cardBg: "var(--color-card-standard)",
-    msMadiColor: "var(--color-plus-light)",
-    accentColor: "var(--color-plus)",
-    rotate: 19,
-    image: packageImageStandard as StaticImageData,
+  {
+    tier: "Standard",
+    src: packageExplainWithStandard,
+    alt: "스탠다드 패키지 BOX 설명",
   },
-  Premium: {
-    tierLabel: "Premium",
-    colorVar: "var(--color-premium)",
-    cardBg: "var(--color-card-premium)",
-    msMadiColor: "var(--color-premium-light)",
-    accentColor: "var(--color-accent-orange)",
-    rotate: 15,
-    image: packageImagePremium as StaticImageData,
+  {
+    tier: "Premium",
+    src: packageExplainWithPremium,
+    alt: "프리미엄 패키지 BOX 설명",
   },
-} as const;
+];
 
-const PACKAGES = BASE_PACKAGES.map((pkg) => ({
-  ...pkg,
-  ...HOME_PACKAGE_UI[pkg.tier],
-}));
+const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 
-// 데스크탑(≥1200px) 기준
-const SIDE_OFFSET_LG = 348;
-const SIDE_VERTICAL_OFFSET_LG = 64;
+const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
+  Basic: packageImageBasic,
+  Standard: packageImageStandard,
+  Premium: packageImagePremium,
+};
 
-// 태블릿(768–1199px) 기준 — 카드가 작아 간격을 줄임
-const SIDE_OFFSET_MD = 285;
-const SIDE_VERTICAL_OFFSET_MD = 16;
-
-const AUTO_ROTATE_MS = 10000;
-const ACTIVE_VISUAL_DELAY_MS = 140;
-
-function PackageCard({
-  pkg,
-  isActive,
-}: {
-  pkg: (typeof PACKAGES)[number];
-  isActive: boolean;
-}) {
-  return (
-    <div
-      className={[
-        "flex flex-col rounded-[20px] overflow-hidden transition-[height,width,transform] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-        isActive
-          ? "max-md:h-[490px] md:h-[419px] lg:h-[522px] max-md:w-full md:w-[280px] lg:w-[375px]"
-          : "md:h-[387px] lg:h-[419px] md:w-[254px] lg:w-[280px]",
-      ].join(" ")}
-      style={{
-        background: pkg.cardBg,
-        transform: isActive ? "scale(1)" : "scale(0.985)",
-      }}
-    >
-      {/* 이미지 영역 */}
-      <div
-        className={[
-          "relative w-full shrink-0 overflow-hidden transition-[height] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          isActive
-            ? "max-md:h-[303px] md:h-[260px] lg:h-[348px]"
-            : "md:h-[234px] lg:h-[260px]",
-        ].join(" ")}
-      >
-        <Image
-          src={pkg.image}
-          alt={`${pkg.name} 이미지`}
-          fill
-          className="object-cover object-center"
-          sizes={`${MEDIA_MAX_MD_SIZES} 327px, ${MEDIA_MAX_LG_SIZES} 280px, 380px`}
-        />
-        {/* 티어 뱃지 */}
-        <span
-          className="absolute top-4 left-1/2 -translate-x-1/2 text-body-14-sb rounded-full px-3 py-1 text-white !leading-[1] whitespace-nowrap"
-          style={{ background: pkg.colorVar }}
-        >
-          {pkg.tier}
-        </span>
-      </div>
-
-      {/* 텍스트 영역 */}
-      <div className="relative flex flex-1 flex-col items-center px-6 pt-5 pb-7 overflow-hidden">
-        {/* Ms Madi 워터마크 */}
-        <span
-          className={[
-            "pointer-events-none absolute bottom-5 right-4 leading-[36px] tracking-[0.02em] capitalize opacity-50",
-            isActive
-              ? "max-md:text-[36px] md:text-[28px] lg:text-[36px]"
-              : "md:text-[24px] lg:text-[32px]",
-          ].join(" ")}
-          style={{
-            fontFamily: "var(--font-ms-madi)",
-            color: pkg.accentColor,
-            transform: `rotate(${pkg.rotate}deg)`,
-          }}
-        >
-          {pkg.tierLabel}
-        </span>
-
-        <h3
-          className={[
-            "text-center capitalize tracking-[-0.04em] transition-[font-size,line-height,margin-bottom] duration-[550ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-            isActive
-              ? "mb-4 max-md:text-[24px] max-md:leading-[29px] md:text-[20px] md:leading-[24px] lg:text-[24px] lg:leading-[29px] font-extrabold"
-              : "mb-3 md:text-[16px] md:leading-[19px] lg:text-[20px] lg:leading-[24px] font-extrabold",
-          ].join(" ")}
-          style={{ color: pkg.accentColor }}
-        >
-          {pkg.name}
-        </h3>
-
-        <div className="flex w-full justify-center">
-          <ul className="flex w-fit flex-col items-start gap-[13px]">
-            {pkg.items.map((item) => (
-              <li
-                key={item}
-                className={[
-                  "flex items-center gap-2 text-left text-black !leading-[1]",
-                  isActive
-                    ? "max-md:text-body-16-m md:text-body-14-m lg:text-body-16-m"
-                    : "text-body-14-m",
-                ].join(" ")}
-              >
-                <CheckCircleIcon color={pkg.accentColor} />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}
+const PACKAGE_PRICES: Record<PackageTier, { price: string; discountRate: string }> = {
+  Basic: { price: "18,000원", discountRate: "10%" },
+  Standard: { price: "13,000원", discountRate: "10%" },
+  Premium: { price: "23,000원", discountRate: "10%" },
+};
 
 export default function PackagePlansSection() {
-  const [activeIndex, setActiveIndex] = useState(1);
-  const [visualActiveIndex, setVisualActiveIndex] = useState(1);
-  const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
-  const [layout, setLayout] = useState({
-    sideOffset: SIDE_OFFSET_LG,
-    verticalOffset: SIDE_VERTICAL_OFFSET_LG,
-  });
-  const total = PACKAGES.length;
-  const autoRotateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const activeVisualTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { isLoggedIn } = useAuth();
+  const { profile } = useProfile();
+  const router = useRouter();
+  const [activePackageIndex, setActivePackageIndex] = useState(0);
+  const activePackage = PACKAGE_EXPLAIN_IMAGES[activePackageIndex];
 
   useEffect(() => {
-    const update = () => {
-      const w = window.innerWidth;
-      const isMd = w >= BREAKPOINT_MD_PX && w < BREAKPOINT_LG_PX;
-      setLayout({
-        sideOffset: isMd ? SIDE_OFFSET_MD : SIDE_OFFSET_LG,
-        verticalOffset: isMd ? SIDE_VERTICAL_OFFSET_MD : SIDE_VERTICAL_OFFSET_LG,
-      });
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    const intervalId = window.setInterval(() => {
+      setActivePackageIndex((currentIndex) => (currentIndex + 1) % PACKAGE_EXPLAIN_IMAGES.length);
+    }, ROTATION_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
   }, []);
 
-  const getRelativeOffset = (index: number) => {
-    const raw = (index - activeIndex + total) % total;
-    return raw > total / 2 ? raw - total : raw;
-  };
-
-  const clearAutoRotateTimer = useCallback(() => {
-    if (autoRotateTimerRef.current) {
-      clearTimeout(autoRotateTimerRef.current);
-      autoRotateTimerRef.current = null;
-    }
-  }, []);
-
-  const clearActiveVisualTimer = useCallback(() => {
-    if (activeVisualTimerRef.current) {
-      clearTimeout(activeVisualTimerRef.current);
-      activeVisualTimerRef.current = null;
-    }
-  }, []);
-
-  const goToNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % total);
-  }, [total]);
-
-  const scheduleAutoRotate = useCallback(() => {
-    clearAutoRotateTimer();
-    autoRotateTimerRef.current = setTimeout(() => {
-      goToNext();
-    }, AUTO_ROTATE_MS);
-  }, [clearAutoRotateTimer, goToNext]);
-
-  const handleIndicatorClick = (index: number) => {
-    setActiveIndex(index);
-    scheduleAutoRotate();
-  };
-
-  useEffect(() => {
-    if (isAutoPlayPaused) {
-      clearAutoRotateTimer();
+  function handleSubscribeClick() {
+    if (!isLoggedIn) {
+      router.push("/login?next=/checklist");
       return;
     }
-    scheduleAutoRotate();
-    return clearAutoRotateTimer;
-  }, [activeIndex, isAutoPlayPaused, scheduleAutoRotate, clearAutoRotateTimer]);
-
-  useEffect(() => {
-    clearActiveVisualTimer();
-    activeVisualTimerRef.current = setTimeout(() => {
-      setVisualActiveIndex(activeIndex);
-    }, ACTIVE_VISUAL_DELAY_MS);
-
-    return clearActiveVisualTimer;
-  }, [activeIndex, clearActiveVisualTimer]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsAutoPlayPaused(document.hidden);
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []);
+    const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
+    router.push(hasChecklist ? "/subscribe" : "/checklist");
+  }
 
   return (
-    <section className="bg-white py-12 md:pt-[68px] lg:pt-[68px] md:pb-12 lg:pb-12">
-      <div className="mx-auto max-w-content max-md:px-8 md:px-0 lg:px-0">
+    <section className="bg-white py-12 md:py-16 lg:py-20">
+      <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0">
+        {/* 섹션 헤더 */}
         <ScrollReveal variant="fade-up">
           <Image
-            src={packagePlansTitle02}
-            alt="원하는 패키지로 선택 후 구독하세요!"
-            className="mx-auto h-auto w-full max-w-[260px] md:max-w-[371px] lg:max-w-[371px]"
+            src={homePackagePlansTitle}
+            alt="우리 아이에게 맞는 간식 선택 후 구독하세요!"
+            className="mx-auto h-auto w-full max-w-[300px] md:max-w-[352px]"
+            sizes="(min-width: 768px) 352px, 300px"
+            priority
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
-          <Text variant="subtitle-18-m" mobileVariant="body-14-m" className="mx-auto mb-7 md:mb-11 lg:mb-11 mt-4 md:mt-9 lg:mt-9 max-w-lg text-center text-[var(--color-text-warm)] max-md:leading-[20px]">
-            체크리스트 후 우리 아이에게 적절한 <br className="md:hidden lg:hidden" />패키지 박스를 추천받을 수 있습니다!
+          <Text
+            variant="subtitle-18-m"
+            mobileVariant="body-14-m"
+            className="mt-4 mb-10 md:mb-12 lg:mb-14 text-center text-[var(--color-text-warm)] max-md:leading-[20px]"
+          >
+            체크리스트 후 우리 아이에게 적절한{" "}
+            <br className="md:hidden lg:hidden" />
+            패키지 박스를 추천받을 수 있습니다!
           </Text>
         </ScrollReveal>
 
-        {/* 모바일 - 단일 카드 */}
-        <ScrollReveal variant="scale-in" delay={300} className="md:hidden lg:hidden">
-          <div className="mx-auto w-full max-w-[327px]">
-            <PackageCard pkg={PACKAGES[activeIndex]} isActive />
+        <ScrollReveal variant="fade-up" delay={200}>
+          <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center lg:gap-7">
+            <div className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] shadow-sm md:rounded-[28px]">
+              <Image
+                key={activePackage.tier}
+                src={activePackage.src}
+                alt={activePackage.alt}
+                className="h-auto w-full transition-opacity duration-500"
+                sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
+                priority
+              />
+              <Button
+                onClick={handleSubscribeClick}
+                variant="primary"
+                size="lg"
+                className="absolute bottom-4 right-4 h-10 w-[180px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] shadow-md max-md:bottom-3 max-md:right-3 max-md:w-[150px] max-md:px-4 lg:bottom-11 lg:right-11"
+              >
+                제품 살펴보기
+              </Button>
+            </div>
+
+            <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
+              {PACKAGE_SUMMARY_ORDER.map((tier) => {
+                const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
+                const { price, discountRate } = PACKAGE_PRICES[tier];
+                const img = PACKAGE_SUMMARY_IMAGES[tier];
+
+                return (
+                  <div
+                    key={tier}
+                    className="flex h-[132px] overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md md:h-[167px] lg:shadow-none lg:hover:shadow-sm"
+                  >
+                    <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
+                      <Image
+                        src={img}
+                        alt={pkg.name}
+                        fill
+                        className="object-cover"
+                        sizes="180px"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1 px-4 py-[18px] md:py-[25px] lg:pl-6 lg:pr-0">
+                      <p className="mb-4 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                        {pkg.name}
+                      </p>
+                      <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
+                        월 요금제
+                      </p>
+                      <div className="mb-0.5 flex items-baseline gap-2">
+                        <span
+                          className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[16px]"
+                        >
+                          {discountRate}
+                        </span>
+                        <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                          {price}
+                        </span>
+                      </div>
+                      <span
+                        className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[14px]"
+                      >
+                        첫 구독 할인
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </ScrollReveal>
-
-        {/* 태블릿·데스크탑 - 3카드 캐러셀 */}
-        <ScrollReveal
-          variant="scale-in"
-          delay={300}
-          as="div"
-          className="relative mx-auto md:h-[460px] lg:h-[522px] w-full max-w-[1012px] max-md:hidden"
-        >
-          <div
-            className="h-full w-full"
-            onMouseEnter={() => setIsAutoPlayPaused(true)}
-            onMouseLeave={() => setIsAutoPlayPaused(false)}
-          >
-            {PACKAGES.map((pkg, index) => {
-              const offset = getRelativeOffset(index);
-              const isCentered = offset === 0;
-              const isVisuallyActive = visualActiveIndex === index;
-
-              return (
-                <div
-                  key={pkg.tier}
-                  className="absolute left-1/2 top-0 will-change-transform transition-[transform] duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-                  style={{
-                    transform: `translate3d(calc(-50% + ${offset * layout.sideOffset}px), ${
-                      isCentered ? 0 : layout.verticalOffset
-                    }px, 0)`,
-                    zIndex: isCentered ? 20 : 10 - Math.abs(offset),
-                  }}
-                >
-                  <PackageCard pkg={pkg} isActive={isVisuallyActive} />
-                </div>
-              );
-            })}
-          </div>
-        </ScrollReveal>
-
-        {/* 캐러셀 인디케이터 */}
-        <div className="mt-7.5 flex items-center justify-center gap-3">
-          {PACKAGES.map((pkg, index) => (
-            <button
-              key={pkg.tier}
-              type="button"
-              aria-label={`${pkg.tier} 패키지 보기`}
-              aria-pressed={activeIndex === index}
-              onClick={() => handleIndicatorClick(index)}
-              className="h-3 w-3 rounded-full transition-colors duration-300"
-              style={{
-                background:
-                  activeIndex === index ? pkg.accentColor : "var(--color-text-muted)",
-              }}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );

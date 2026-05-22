@@ -58,7 +58,8 @@
   --color-accent: #7FB3FF;        /* Soft Sky Blue — 버튼, 링크, 강조 요소, CTA */
   --color-accent-strong: #4F95FD; /* CTA Blue — 리뷰 섹션 하단 버튼 */
   --color-accent-soft: #E5F0FF;   /* Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) */
-  --color-accent-orange: #EE681A; /* Warm Orange — 데코 강조 ("for you" 등) */
+  --color-accent-orange: #EE681A;       /* Warm Orange — 데코 강조 ("for you" 등) */
+  --color-accent-orange-light: #FEF0E6; /* Warm Orange Light — 오렌지 선택 배경 (성별 버튼 등) */
 
   /* Surface */
   --color-background: #FFF9F3;    /* Cream White — 전체 기본 배경 */
@@ -69,6 +70,7 @@
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-surface-light: #F8F8F8;
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
+  --color-hero-truck-bg: #FFEAAF;     /* Hero 슬라이드1 (트럭) 배경 */
   --color-hero-shape: #F2D0B1;        /* Hero 장식 도형 배경 */
   --color-hero-heading: #464646;      /* Hero Premium Package 텍스트 */
   --color-hero-subtext: #6C411F;      /* Hero 서브카피 텍스트 */
@@ -152,6 +154,15 @@
   /* UI state */
   --color-ui-inactive-bg: #EAEAEA;      /* 비활성 탭·컨트롤 배경 */
 
+  /* WhyChoose + Gallery 섹션 */
+  --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */
+  --color-cta-button: #EC7700;          /* WhyChoose CTA 버튼 (진한 오렌지) */
+  --color-gallery-cta-peach: #FFE2C8;   /* Gallery CTA 카드 A 배경 (피치) */
+  --color-gallery-peach-soft: #FFD6B0;  /* WhyGallery upper 단색 타일 */
+  --color-gallery-peach-warm: #FFC086;  /* WhyGallery upper 단색 타일 */
+  --color-gallery-sage-muted: #8C9075;  /* WhyGallery downer 단색 타일 */
+  --color-gallery-text: #3E3021;        /* Gallery CTA 카드 헤딩 텍스트 (딥 브라운) */
+
   /* Decoration */
   --color-accent-rust: #DC5200;         /* Burnt Orange — hero Ms Madi 장식 텍스트 */
   --color-divider-warm: #F3DFCF;        /* Warm Peach — 모바일 섹션 구분선 */
@@ -161,6 +172,7 @@
   --color-sage: #87AB7D;                /* Sage Green — About CTA 카드 배경 */
   --color-star: #FDD264;                /* Gold — 리뷰 별점 아이콘 */
   --color-review-text: #2C2C2C;         /* 리뷰 카드 본문/이름 텍스트 */
+  --color-review-chip: #A16240;         /* 리뷰 카드 구독 기간 칩 */
   --color-hero-cta-bg: #454545;         /* Hero CTA 버튼 배경 */
   --color-hero-tagline: #C37132;        /* Hero 해시태그 문구 텍스트 */
 
@@ -227,6 +239,7 @@
   --color-accent-strong: var(--color-accent-strong);
   --color-accent-soft: var(--color-accent-soft);
   --color-accent-orange: var(--color-accent-orange);
+  --color-accent-orange-light: var(--color-accent-orange-light);
 
   /* Surface */
   --color-surface-dark: var(--color-surface-dark);
@@ -236,6 +249,14 @@
   --color-surface-peach: var(--color-surface-peach);
   --color-surface-light: var(--color-surface-light);
   --color-hero-bg: var(--color-hero-bg);
+  --color-hero-truck-bg: var(--color-hero-truck-bg);
+  --color-why-bg: var(--color-why-bg);
+  --color-cta-button: var(--color-cta-button);
+  --color-gallery-cta-peach: var(--color-gallery-cta-peach);
+  --color-gallery-peach-soft: var(--color-gallery-peach-soft);
+  --color-gallery-peach-warm: var(--color-gallery-peach-warm);
+  --color-gallery-sage-muted: var(--color-gallery-sage-muted);
+  --color-gallery-text: var(--color-gallery-text);
   --color-hero-shape: var(--color-hero-shape);
   --color-hero-heading: var(--color-hero-heading);
   --color-hero-subtext: var(--color-hero-subtext);
@@ -277,6 +298,7 @@
   --color-sage: var(--color-sage);
   --color-star: var(--color-star);
   --color-review-text: var(--color-review-text);
+  --color-review-chip: var(--color-review-chip);
   --color-hero-cta-bg: var(--color-hero-cta-bg);
   --color-hero-tagline: var(--color-hero-tagline);
 
@@ -537,6 +559,25 @@ button:disabled {
 @utility text-btn-15-sb  { font-size: 15px; line-height: 20px; font-weight: 600; }
 @utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 600; }
 @utility text-btn-12-m   { font-size: 12px; line-height: 16px; font-weight: 500; }
+
+/* ─── Gallery auto-roll (GPU compositor, no JS) ──────────────────────────── */
+@keyframes roll-right {
+  from { transform: translateX(-33.333%); }
+  to   { transform: translateX(0%); }
+}
+
+@keyframes roll-left {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-33.333%); }
+}
+
+@utility animate-gallery-right {
+  animation: roll-right 23s linear infinite;
+}
+
+@utility animate-gallery-left {
+  animation: roll-left 23s linear infinite;
+}
 
 /* ─── Floating animation ─────────────────────────────────────────────────── */
 @keyframes float {

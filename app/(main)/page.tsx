@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { HeroSection } from "@/widgets/home/hero";
 import { StatsBar } from "@/widgets/home/stats-bar";
 import { PackagePlansSection } from "@/widgets/home/package-plans";
-import { IngredientsSection } from "@/widgets/home/ingredients";
-import { PainPointsSection } from "@/widgets/home/pain-points";
+import { WhyGallerySection } from "@/widgets/home/why-gallery";
 import { ReviewsSection } from "@/widgets/home/reviews";
 
 const description = "믿을 수 있는 재료로 만든 수제간식을 매월 문 앞에. 우리 강아지를 위한 프리미엄 정기구독 서비스.";
@@ -30,8 +29,7 @@ export default function Home() {
       <HeroSection />
       <StatsBar />
       <PackagePlansSection />
-      <IngredientsSection />
-      <PainPointsSection />
+      <WhyGallerySection />
       <ReviewsSection />
     </>
   );

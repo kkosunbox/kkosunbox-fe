@@ -55,7 +55,7 @@ const STATS = [
 
 export default function StatsBar() {
   return (
-    <section className="bg-[var(--color-footer-bg)] max-md:py-3 md:py-3 lg:py-3">
+    <section className="bg-[var(--color-stats-bar-bg)] max-md:py-3 md:py-3 lg:py-3">
       <div className="mx-auto flex max-w-content items-center justify-between max-md:gap-3 md:gap-0 lg:gap-0 px-4 md:px-5 lg:px-5 max-md:max-w-[510px]">
         {STATS.map((item, i) => (
           <ScrollReveal key={item.label} variant="fade-up" delay={i * 150} duration={500}>

@@ -33,7 +33,8 @@ export interface UserSubscriptionDto {
   plan: SubscriptionPlanDto;
   quantity: number;
   status: SubscriptionStatus;
-  nextBillingDate: string; // YYYY-MM-DD
+  startDate?: string;       // YYYY-MM-DD
+  nextBillingDate: string;  // YYYY-MM-DD
   isActive: boolean;
   /** true면 이번 결제일에 결제 건너뜀 (쉬어가기 활성화) */
   isPaused: boolean;

@@ -201,7 +201,7 @@ export default function WhyGallerySection() {
 
   return (
     <section className="overflow-hidden pb-10 md:pb-14 lg:pb-16" style={{ background: "var(--color-why-bg)" }}>
-      <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-10 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[64px] lg:pt-24">
+      <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-10 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
         <Image
           src={whyGalleryTitle}
           alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"

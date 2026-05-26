@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { DefaultPetIcon, Text, useModal } from "@/shared/ui";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { ChevronRightIcon } from "./mypage-icons";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getProfileDisplayName } from "@/shared/config/profile";
@@ -34,7 +35,7 @@ function PencilIcon({ className }: { className?: string }) {
 
 function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
   return (
-    <div className="relative shrink-0 lg:pl-7">
+    <div className="relative shrink-0">
       <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] lg:h-[124px] lg:w-[124px]">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
@@ -117,21 +118,32 @@ function ChecklistPanel({
       }
     >
       <div className="mb-2.5 flex items-center justify-between">
-        <Text as="h2" variant="body-14-sb-tight" className="text-[var(--color-text)]">
-          체크리스트
-        </Text>
+        <div className="flex items-center gap-2">
+          <Text as="h2" variant="body-14-sb-tight" className="text-[var(--color-text)]">
+            체크리스트
+          </Text>
+          {hasChecklist && (
+            <Link
+              href="/recommend"
+              className="inline-flex h-6 items-center rounded-[4px] bg-[var(--color-text)] px-2 text-body-13-m text-white transition-opacity hover:opacity-80"
+            >
+              추천상품보기
+            </Link>
+          )}
+        </div>
         {hasChecklist && (
-          <Link
-            href="/checklist?rewrite=1"
+          <button
+            type="button"
+            onClick={() => openChecklistForm({ rewrite: true })}
             className="inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             <span>다시 작성하기</span>
             <ChevronRightIcon />
-          </Link>
+          </button>
         )}
       </div>
 
-      <div className="relative rounded-[12px] bg-[var(--color-checklist-bg)] px-4 py-[10px]">
+      <div className="relative rounded-[12px] bg-white px-6 py-5">
         <div
           className={[
             "flex flex-col gap-[14px]",
@@ -165,12 +177,13 @@ function ChecklistPanel({
                 <br />
                 체크리스트를 작성해주세요.
               </Text>
-              <Link
-                href="/checklist"
+              <button
+                type="button"
+                onClick={() => openChecklistForm()}
                 className="inline-flex h-[28px] items-center rounded-full bg-[var(--color-accent)] px-4 text-body-13-m text-white transition-opacity hover:opacity-90"
               >
                 체크리스트 작성하기
-              </Link>
+              </button>
             </div>
           </>
         )}
@@ -204,14 +217,14 @@ export function ProfileSection({
   const specialNotes = profile?.specialNotes?.trim() ?? "";
   const breedTrimmed = profile?.breed?.trim() ?? "";
   const breedEmpty = !breedTrimmed;
-  const breedDisplay = breedEmpty ? "품종" : breedTrimmed;
+  const breedDisplay = breedEmpty ? "견종" : breedTrimmed;
 
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
-    <section className="pt-6 lg:pt-[64px]">
+    <section className="pt-6 pb-6 lg:pt-3 lg:pb-3">
       <div className="mx-auto w-full max-w-content max-lg:px-6 lg:px-0">
-        <div className="relative rounded-[20px] bg-white max-lg:px-7 max-lg:py-7 lg:px-7 lg:py-[26px] shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
+        <div className="relative max-lg:px-7 max-lg:py-7 lg:px-7 lg:py-[26px]">
           <Link
             href="/mypage/dog-profile"
             className="lg:hidden absolute top-4 right-7 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
@@ -232,7 +245,7 @@ export function ProfileSection({
               </Link>
               <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
               <div className="min-w-0 flex-1 lg:pr-[84px]">
-                <div className="flex items-start gap-3">
+                <div className="flex flex-col gap-[12px]">
                   <div className="flex min-w-0 items-center gap-3">
                     <Text
                       as="h1"
@@ -260,19 +273,19 @@ export function ProfileSection({
                         </svg>
                       </button>
                     )}
-                    {hasProfile && (
-                      <Text
-                        variant="body-16-m"
-                        mobileVariant="body-13-r"
-                        className={[
-                          "min-w-0 max-w-[min(200px,40vw)] shrink translate-y-[2px] truncate leading-[140%]",
-                          breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
-                        ].join(" ")}
-                      >
-                        {breedDisplay}
-                      </Text>
-                    )}
                   </div>
+                  {hasProfile && (
+                    <Text
+                      variant="body-16-m"
+                      mobileVariant="body-13-r"
+                      className={[
+                        "min-w-0 truncate leading-[140%]",
+                        breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
+                      ].join(" ")}
+                    >
+                      {breedDisplay}
+                    </Text>
+                  )}
                 </div>
                 {hasProfile ? (
                   <>
@@ -285,7 +298,7 @@ export function ProfileSection({
                           birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
                         ].join(" ")}
                       >
-                        {birthEmpty ? "생일" : birth}
+                        {birthEmpty ? "생년월일" : birth}
                       </Text>
                       <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
                       <Text
@@ -348,7 +361,7 @@ export function ProfileSection({
             <div className="max-lg:hidden mx-[20px] w-px self-stretch bg-[var(--color-text-muted)]" />
 
             {/* 체크리스트 패널 (데스크톱) */}
-            <div className="max-lg:hidden lg:w-[318px] lg:flex-none lg:self-center">
+            <div className="max-lg:hidden lg:w-[358px] lg:flex-none lg:self-center">
               <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} />
             </div>
           </div>

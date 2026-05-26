@@ -39,6 +39,7 @@
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
+| `--color-stats-bar-bg` | `#101010` | 메인 StatsBar 배경 |
 | `--color-footer-bg` | `#4A4440` | 사이트 푸터 배경 |
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
@@ -67,6 +68,9 @@
 | `--color-cta-logo-bg` | `#F9D5B4` | About CTA 로고 카드 배경 |
 | `--color-cta-sage-bg` | `#D3E2BE` | About CTA 텍스트 카드 배경 |
 | `--color-text-cta` | `#595045` | About CTA 헤딩/본문 텍스트 |
+| `--color-about-hero-bg` | `#715D4C` | About Hero 섹션 배경 |
+| `--color-about-hero-accent` | `#E97E12` | About Hero 강조 문구 |
+| `--color-about-feature-heading` | `#49403B` | About Feature 섹션 헤딩 |
 
 ### Tier
 

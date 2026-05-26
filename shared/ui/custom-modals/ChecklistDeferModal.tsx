@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 
 interface Props {
   onClose: () => void;
@@ -79,7 +80,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
 
           {/* Secondary */}
           <button
-            onClick={onClose}
+            onClick={() => { onClose(); openChecklistForm(); }}
             className="mt-4 text-[13px] font-medium leading-[16px] tracking-[-0.04em]
                        text-[var(--color-text-tertiary)] underline
                        hover:opacity-70 transition-opacity"

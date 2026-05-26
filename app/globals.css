@@ -78,6 +78,7 @@
   --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
+  --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 */
   --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
   --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
   --color-footer-text: #999999;   /* Footer 본문·링크·SNS 아이콘 */
@@ -85,9 +86,12 @@
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
+  --color-about-hero-bg: #715D4C; /* About Hero 섹션 배경 (웜 브라운) */
+  --color-about-hero-accent: #E97E12; /* About Hero 강조 문구 */
+  --color-about-feature-heading: #49403B; /* About Feature 섹션 헤딩 */
 
   /* Tier */
-  --color-premium: #F07F3D;
+  --color-premium: #EE681A;
   --color-plus: #3E9ED9;
   --color-basic: #3F6900;
 
@@ -157,6 +161,10 @@
 
   /* WhyChoose + Gallery 섹션 */
   --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */
+  --color-plan-chip-inactive: #6B645F;  /* 플랜 선택 탭바 비활성 칩 배경 */
+  --color-badge-warm-bg: #FFF1CD;       /* 상품 뱃지 '가장 미발음' 배경 */
+  --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 미발음' 텍스트 */
+  --color-badge-best-bg: #DFEEF7;       /* 상품 뱃지 'BEST' 배경 */
   --color-cta-button: #EC7700;          /* WhyChoose CTA 버튼 (진한 오렌지) */
   --color-gallery-cta-peach: #FFE2C8;   /* Gallery CTA 카드 A 배경 (피치) */
   --color-gallery-peach-soft: #FFD6B0;  /* WhyGallery upper 단색 타일 */
@@ -253,6 +261,10 @@
   --color-hero-bg: var(--color-hero-bg);
   --color-hero-truck-bg: var(--color-hero-truck-bg);
   --color-why-bg: var(--color-why-bg);
+  --color-plan-chip-inactive: var(--color-plan-chip-inactive);
+  --color-badge-warm-bg: var(--color-badge-warm-bg);
+  --color-badge-warm-text: var(--color-badge-warm-text);
+  --color-badge-best-bg: var(--color-badge-best-bg);
   --color-cta-button: var(--color-cta-button);
   --color-gallery-cta-peach: var(--color-gallery-cta-peach);
   --color-gallery-peach-soft: var(--color-gallery-peach-soft);
@@ -264,6 +276,7 @@
   --color-hero-subtext: var(--color-hero-subtext);
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-banner-heading: var(--color-support-banner-heading);
+  --color-stats-bar-bg: var(--color-stats-bar-bg);
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);
   --color-footer-text: var(--color-footer-text);
@@ -271,6 +284,9 @@
   --color-cta-logo-bg: var(--color-cta-logo-bg);
   --color-cta-sage-bg: var(--color-cta-sage-bg);
   --color-text-cta: var(--color-text-cta);
+  --color-about-hero-bg: var(--color-about-hero-bg);
+  --color-about-hero-accent: var(--color-about-hero-accent);
+  --color-about-feature-heading: var(--color-about-feature-heading);
 
   /* Tier */
   --color-premium: var(--color-premium);

@@ -17,12 +17,16 @@ export default function MypageSection({
   inquiryCard,
 }: MypageSectionProps) {
   return (
-    <div className="min-h-screen bg-[var(--color-background)] pb-12 lg:pb-16">
-      {profileSection}
+    <div className="flex flex-1 flex-col">
+      {/* 상단 — 크림 배경 */}
+      <div className="shrink-0 bg-support-faq-surface">
+        {profileSection}
+      </div>
 
-      <section className="pt-4 lg:pt-5">
-        <div className="mx-auto w-full max-w-content max-lg:px-6 lg:px-0">
-          <div className="lg:rounded-[30px] lg:bg-white lg:px-8 lg:py-7 lg:shadow-[0_8px_30px_rgba(185,148,116,0.06)]">
+      {/* 하단 — 흰색 배경 (콘텐츠가 짧아도 main 영역 하단까지 채움) */}
+      <div className="flex flex-1 flex-col bg-white pb-12 lg:pb-16">
+        <section className="pt-4 lg:pt-8">
+          <div className="mx-auto w-full max-w-content max-lg:px-6 lg:px-0">
             <Text
               as="h2"
               variant="title-20-sb"
@@ -38,8 +42,8 @@ export default function MypageSection({
               {inquiryCard}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

@@ -167,6 +167,132 @@ interface Props {
   getPrimaryButton?: (plan: SubscriptionPlanDto) => PackageDetailPrimaryButton;
 }
 
+/* ─── 비교 표만 담는 독립 컴포넌트 (오버레이용) ─── */
+export function PackageCompareTable({
+  initialTier,
+  onClose,
+}: {
+  initialTier: PackageTier;
+  onClose: () => void;
+}) {
+  const [selectedTier, setSelectedTier] = useState<PackageTier>(initialTier);
+  const [hoveredTier, setHoveredTier] = useState<PackageTier | null>(null);
+
+  return (
+    <div className="relative overflow-hidden rounded-[20px] bg-white">
+      <div className="absolute right-6 top-5 z-10">
+        <CloseButton onClick={onClose} />
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-0.5 px-6 pt-10">
+        {COMPARE_PACKAGES.map((p) => {
+          const isActive = selectedTier === p.tier;
+          const isHoverActive = !isActive && hoveredTier === p.tier;
+          const showActiveStyle = isActive || isHoverActive;
+          return (
+            <button
+              key={p.tier}
+              type="button"
+              onClick={() => setSelectedTier(p.tier)}
+              onMouseEnter={() => setHoveredTier(p.tier)}
+              onMouseLeave={() => setHoveredTier(null)}
+              className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors text-body-13-sb"
+              style={{
+                borderRadius: "20px 20px 0 0",
+                background: showActiveStyle ? p.tabActiveBg : "var(--color-ui-inactive-bg)",
+                color: showActiveStyle ? "var(--color-text)" : "var(--color-text-secondary)",
+                fontSize: isActive ? "14px" : "13px",
+              }}
+            >
+              {p.name}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Comparison rows */}
+      <div className="overflow-x-auto overflow-y-auto">
+        <div className="min-w-[360px] px-6 pb-6">
+
+          <div className="grid grid-cols-3">
+            {COMPARE_PACKAGES.map((p) => (
+              <div key={p.tier} className="flex items-center justify-center py-5">
+                <span
+                  className="inline-block rounded-full px-3 py-[3px] text-body-13-sb text-white"
+                  style={{ background: selectedTier === p.tier ? p.colorVar : "var(--color-text-muted)" }}
+                >
+                  {p.tier}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 border-t border-b border-[var(--color-text-muted)]">
+            {COMPARE_PACKAGES.map((p) => (
+              <div key={p.tier} className="flex items-center justify-center px-2 py-3">
+                <p
+                  className="whitespace-pre-line text-center text-body-13-r leading-[17px] text-[var(--color-text)]"
+                  style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
+                >
+                  &ldquo;{p.quote}&rdquo;
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
+            {COMPARE_PACKAGES.map((p) => (
+              <div key={p.tier} className="flex flex-col items-center justify-center gap-0.5 px-2 py-3">
+                {p.contents.map((c) => (
+                  <p
+                    key={c}
+                    className={`text-center leading-[20px] ${selectedTier === p.tier ? "text-body-13-b" : "text-body-13-r"}`}
+                    style={{ color: selectedTier === p.tier ? p.colorVar : "var(--color-text)" }}
+                  >
+                    {c}
+                  </p>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
+            {COMPARE_PACKAGES.map((p) => (
+              <div key={p.tier} className="flex items-center justify-center px-2 py-3">
+                <p className="text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
+                  {p.special}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
+            {COMPARE_PACKAGES.map((p) => (
+              <div key={p.tier} className="flex items-center justify-center px-2 py-3">
+                <p className="whitespace-pre-line text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
+                  {p.customization}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 py-3">
+            {COMPARE_PACKAGES.map((p) => (
+              <div key={p.tier} className="flex items-center justify-center gap-1">
+                {Array.from({ length: p.hearts }).map((_, i) => (
+                  <HeartIcon key={i} filled={selectedTier === p.tier} />
+                ))}
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PackageDetailView({
   plan,
   allPlans,

@@ -678,7 +678,6 @@ export default function ChecklistSection() {
                       setPetInfo={setPetInfo}
                       avatarSrc={avatarSrc}
                       onAvatarChange={handleAvatarChange}
-                      onNext={handleNext}
                     />
                   )}
                   {step > 0 && step <= qLen && questions[step - 1] ? (
@@ -692,9 +691,6 @@ export default function ChecklistSection() {
                         toggleOptionForQuestion(questions[step - 1], optionId)
                       }
                       onBack={handleBack}
-                      onNext={step === lastQuestionStep ? () => void handleSubmit() : handleNext}
-                      isLastQuestion={step === lastQuestionStep}
-                      isNextDisabled={!isCurrentQuestionAnswered}
                       maxVisitedStep={maxVisitedStep}
                       onStepClick={handleStepClick}
                     />
@@ -705,17 +701,19 @@ export default function ChecklistSection() {
           </div>
 
           {questions && questions.length > 0 && initReady ? (
-            <div className="mt-6 w-full md:hidden lg:hidden">
-              <Button
-                type="button"
-                onClick={handleMobileCta}
-                disabled={isMobileCtaDisabled}
-                variant="primary"
-                size="lg"
-                className={CTA_CLASS}
-              >
-                {ctaLabel}
-              </Button>
+            <div className="mt-8 md:mt-10 w-full">
+              <div className="md:mx-auto md:max-w-[320px]">
+                <Button
+                  type="button"
+                  onClick={handleMobileCta}
+                  disabled={isMobileCtaDisabled}
+                  variant="primary"
+                  size="lg"
+                  className={CTA_CLASS}
+                >
+                  {ctaLabel}
+                </Button>
+              </div>
             </div>
           ) : null}
         </div>

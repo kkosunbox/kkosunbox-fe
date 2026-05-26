@@ -1,14 +1,11 @@
 "use client";
 
-import { Button, Text } from "@/shared/ui";
+import { Text } from "@/shared/ui";
 import type { ChecklistOption, ChecklistQuestion } from "@/features/profile/api/types";
 
 function optionLabel(o: ChecklistOption): string {
   return o.text || `선택지 ${o.id}`;
 }
-
-const CTA_CLASS =
-  "!h-[56px] !w-full !bg-[var(--color-accent)] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80";
 
 function ProgressBar({
   current,
@@ -67,7 +64,7 @@ function OptionButton({
       type="button"
       onClick={onClick}
       className={[
-        "flex w-full items-center justify-center border-2 max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m transition-colors md:h-[52px] lg:h-[52px] md:rounded-full lg:rounded-full",
+        "flex w-full items-center justify-center border-2 max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m transition-colors md:h-[40px] lg:h-[40px] md:rounded-[8px] lg:rounded-[8px]",
         "max-md:min-h-[52px] max-md:rounded-[14px] max-md:px-4 max-md:py-3.5",
         selected
           ? "max-md:border-[var(--color-accent)] max-md:bg-[var(--color-accent-soft)] max-md:text-[var(--color-text)] md:border-[var(--color-accent)] lg:border-[var(--color-accent)] md:bg-white lg:bg-white md:text-[var(--color-accent)] lg:text-[var(--color-accent)]"
@@ -87,9 +84,6 @@ interface Props {
   selectedOptionIds: number[];
   onToggleOption: (optionId: number) => void;
   onBack: () => void;
-  onNext: () => void;
-  isLastQuestion: boolean;
-  isNextDisabled?: boolean;
   maxVisitedStep: number;
   onStepClick?: (step: number) => void;
 }
@@ -101,13 +95,9 @@ export default function ChecklistQuestionStep({
   selectedOptionIds,
   onToggleOption,
   onBack,
-  onNext,
-  isLastQuestion,
-  isNextDisabled,
   maxVisitedStep,
   onStepClick,
 }: Props) {
-  const nextLabel = isLastQuestion ? "결과보기" : "다음";
 
   return (
     <div className="flex flex-col">
@@ -135,7 +125,7 @@ export default function ChecklistQuestionStep({
         {question.text}
       </Text>
 
-      <div className="mb-8 max-md:hidden md:flex lg:flex md:items-center lg:items-center md:justify-between lg:justify-between md:gap-4 lg:gap-4">
+      <div className="mb-14 max-md:hidden md:flex lg:flex md:items-center lg:items-center md:justify-between lg:justify-between md:gap-4 lg:gap-4">
         <button
           type="button"
           onClick={onBack}
@@ -156,14 +146,14 @@ export default function ChecklistQuestionStep({
         <ProgressBar current={stepIndex} total={totalSteps} maxVisited={maxVisitedStep} onStepClick={onStepClick} />
       </div>
 
-      <div className="mb-8 max-md:mt-0">
+      <div>
         {question.description ? (
           <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">{question.description}</p>
         ) : null}
         <p className="mb-3 text-caption-12-r text-[var(--color-text-secondary)]">
           {question.isMultiSelect ? "복수 선택 가능" : "한 가지를 선택해 주세요"}
         </p>
-        <div className="max-md:flex max-md:flex-col max-md:gap-3 md:grid lg:grid md:grid-cols-2 lg:grid-cols-2 md:gap-3 lg:gap-3">
+        <div className="max-md:flex max-md:flex-col max-md:gap-3 md:grid lg:grid md:grid-cols-2 lg:grid-cols-2 md:gap-x-[26px] md:gap-y-5 lg:gap-x-[26px] lg:gap-y-5">
           {question.options.map((option) => (
             <OptionButton
               key={option.id}
@@ -175,11 +165,6 @@ export default function ChecklistQuestionStep({
         </div>
       </div>
 
-      <div className="w-full max-md:hidden md:mx-auto lg:mx-auto md:max-w-[380px] lg:max-w-[380px]">
-        <Button type="button" onClick={onNext} disabled={isNextDisabled} variant="primary" size="lg" className={CTA_CLASS}>
-          {nextLabel}
-        </Button>
-      </div>
     </div>
   );
 }

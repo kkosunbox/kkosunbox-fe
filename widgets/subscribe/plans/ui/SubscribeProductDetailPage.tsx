@@ -9,10 +9,6 @@ import { SupportSection } from "@/widgets/support/faq";
 import packageThumbnailBasic from "@/widgets/subscribe/plans/assets/package-thumbnail-basic.png";
 import packageThumbnailPremium from "@/widgets/subscribe/plans/assets/package-thumbnail-premium.png";
 import packageThumbnailStandard from "@/widgets/subscribe/plans/assets/package-thumbnail-standard.png";
-import subscribeItemHeroMobile from "@/widgets/subscribe/plans/assets/subscribe-item-hero-mobile.png";
-import subscribeItemHeroTitle from "@/widgets/subscribe/plans/assets/subscribe-item-hero-title.webp";
-import subscribeItemHeroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
-import subscribeItemHeroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.webp";
 import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.png";
 import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.png";
 import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.webp";
@@ -49,10 +45,6 @@ function formatWon(value: number) {
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
-// 추후 쿠폰/할인 필드 추가 시 활성화
-// function discountedPrice(value: number) {
-//   return Math.floor(value * 0.9);
-// }
 
 const DETAIL_ASSET_IMAGES: Record<
   PackageTier,
@@ -78,7 +70,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "support", label: "고객센터" },
 ];
 
-const SORT_OPTIONS = ["최신순", "평점 높은순", "평점 낮은순"] as const;
+const SORT_OPTIONS = ["최신순", "평점순", "평점 높은순", "평점 낮은순"] as const;
 
 
 const REVIEWS_PER_PAGE = 10;
@@ -433,7 +425,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
   const sortedReviews = useMemo(() => {
     const sorted = [...reviews];
-    if (activeSort === "평점 높은순") sorted.sort((a, b) => b.rating - a.rating);
+    if (activeSort === "평점순" || activeSort === "평점 높은순") sorted.sort((a, b) => b.rating - a.rating);
     else if (activeSort === "평점 낮은순") sorted.sort((a, b) => a.rating - b.rating);
     else sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return sorted;
@@ -451,8 +443,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
   const packageThumbnail = PACKAGE_THUMBNAILS[selectedTier];
 
-  const basePrice = selectedPlan.monthlyPrice;
-  const salePrice = basePrice * quantity;
+  const originalPrice = selectedPlan.originalPrice;
+  const discountedUnitPrice = selectedPlan.monthlyPrice;
+  const hasDiscount = selectedPlan.discountRate > 0;
+  const salePrice = discountedUnitPrice * quantity;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
@@ -460,8 +454,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
     setReviewsPage(1);
     router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
   }
-
-  const activeTierLabel = selectedTheme.tierLabel;
 
   return (
     <section className="flex min-h-full flex-1 flex-col md:pb-16 lg:pb-16">
@@ -477,19 +469,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden lg:hidden">
-        <div className="relative mb-2 h-[148px] w-full overflow-hidden">
-          <Image
-            src={subscribeItemHeroMobile}
-            alt="구독 상세 소개 배너"
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
-            priority
-          />
-        </div>
-
-        <div className="px-6">
-          <div className="mb-3 flex items-center justify-center gap-3 py-2">
+        <div className="px-6 pb-2 pt-3">
+          <div className="mb-3 flex items-center justify-center gap-3">
             {sortedPlans.map((plan) => {
               const theme = packageThemeForPlan(plan);
               const isActive = selectedPlan.id === plan.id;
@@ -498,7 +479,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   key={plan.id}
                   type="button"
                   onClick={() => handleSelectPlan(plan)}
-                  className="rounded-full px-3 py-1 text-body-14-sb text-white"
+                  className="rounded-full px-3 py-1 text-body-14-sb text-white transition-opacity hover:opacity-90"
                   style={{ background: isActive ? theme.colorVar : "var(--color-text-muted)" }}
                 >
                   {theme.tierLabel}
@@ -506,7 +487,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               );
             })}
           </div>
+        </div>
 
+        <div className="px-6">
           <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
             <Image
               src={packageThumbnail}
@@ -516,12 +499,20 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               className="object-cover"
               priority
             />
-            <span
-              className="absolute left-4 top-4 z-10 inline-flex rounded-full px-3 py-1 text-body-14-sb text-white"
-              style={{ background: selectedTheme.colorVar }}
-            >
-              {activeTierLabel}
-            </span>
+            <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5">
+              <span
+                className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
+                style={{ background: "var(--color-badge-warm-bg)", color: "var(--color-badge-warm-text)" }}
+              >
+                가장 미발음
+              </span>
+              <span
+                className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
+                style={{ background: "var(--color-badge-best-bg)", color: "var(--color-plus)" }}
+              >
+                BEST
+              </span>
+            </div>
           </div>
           <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -531,21 +522,31 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             {selectedPlan.name}
           </h2>
 
-          <div className="mt-[12px] flex items-baseline gap-3">
-            <span className="text-[20px] font-bold leading-6 tracking-[-0.05em] text-[var(--color-surface-dark)] capitalize">
+          <div className="mt-[12px] flex items-center gap-2">
+            <span className="text-[20px] font-bold leading-6 tracking-[-0.05em] text-[var(--color-surface-dark)]">
               월 요금제
             </span>
-            <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-              {formatWon(basePrice)}
+            {hasDiscount && (
+              <span className="text-[16px] font-semibold leading-8 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
+                {formatWon(originalPrice)}
+              </span>
+            )}
+            <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
+              {formatWon(discountedUnitPrice)}
             </span>
           </div>
 
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-3 flex items-center gap-2">
             <Stars rating={reviewsAverage} size={24} />
+            {reviewsAverage > 0 && (
+              <span className="text-[18px] font-semibold leading-[21px] tracking-[-0.02em] text-[var(--color-text)]">
+                {reviewsAverage.toFixed(1)}
+              </span>
+            )}
             <button
               type="button"
               onClick={handleReviewCountClick}
-              className="text-[14px] font-normal leading-[21px] tracking-[-0.02em] text-[var(--color-text-secondary)] underline decoration-[var(--color-text-secondary)]"
+              className="text-[14px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text-tertiary)] underline decoration-[var(--color-text-tertiary)]"
             >
               {reviewsTotal}개 리뷰
             </button>
@@ -608,8 +609,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <button
               type="button"
               onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-              className="flex h-12 w-full items-center justify-center rounded-[30px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ background: selectedTheme.colorVar }}
+              className="flex h-12 w-full items-center justify-center rounded-[8px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
+              style={{ background: "var(--color-why-bg)" }}
             >
               구독하기
             </button>
@@ -910,38 +911,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
       {/* Desktop layout */}
       <div className="max-md:hidden">
-        <div
-          className="relative mx-auto mb-5 flex h-[160px] w-full items-center justify-center overflow-hidden px-4 text-center"
-          style={{ background: "var(--gradient-checklist-hero)" }}
-        >
-          <Image
-            src={subscribeItemHeroLeftPaw}
-            alt=""
-            className="pointer-events-none absolute left-[24%] top-1/2 h-auto w-[82px] -translate-y-1/2"
-          />
-          <Image
-            src={subscribeItemHeroRightPaw}
-            alt=""
-            className="pointer-events-none absolute left-[71%] top-1/2 h-auto w-[74px] -translate-y-1/2"
-          />
-          <div className="relative z-10">
-            <Image
-              src={subscribeItemHeroTitle}
-              alt="구독 전, 제품을 확인해보세요"
-              className="mx-auto mb-2 h-auto w-[362px] max-w-full"
-            />
-            <p
-              className="text-[16px] font-normal leading-5 tracking-[-0.02em] text-[var(--color-text)]"
-              style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
-            >
-              우리 아이를 위한 선택, 성분과 특징을 더 꼼꼼하게 확인해보세요.
-            </p>
-          </div>
-        </div>
-
-        <div className="mx-auto w-full max-w-[var(--max-width-content)]">
-          <div className="mb-8 md:min-h-[64px] lg:min-h-[64px] flex items-center gap-3 border-b border-[var(--color-text-muted)] pb-5">
-            <span className="text-body-16-sb text-[var(--color-text-muted)]">구독선택</span>
+        {/* Plan selector — full-width dark tab bar */}
+        <div className="mb-[44px] w-full" style={{ background: "var(--color-why-bg)" }}>
+          <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3">
+            <span className="text-body-14-sb text-[var(--color-text-muted)]">구독선택</span>
             <div className="flex flex-wrap gap-2">
               {sortedPlans.map((plan) => {
                 const theme = packageThemeForPlan(plan);
@@ -953,7 +926,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                     onClick={() => handleSelectPlan(plan)}
                     className="rounded-full px-3 py-1 text-body-14-sb text-white transition-opacity hover:opacity-90"
                     style={{
-                      background: isActive ? theme.colorVar : "var(--color-text-muted)",
+                      background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
                     }}
                   >
                     {theme.tierLabel}
@@ -962,6 +935,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               })}
             </div>
           </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-[var(--max-width-content)]">
 
           <div className="grid gap-8 lg:mx-auto lg:w-[1013px] lg:grid-cols-[508px_438px] lg:justify-between lg:gap-0">
             <div className="mx-auto min-w-0 w-full max-w-[508px] lg:mx-0">
@@ -974,12 +950,20 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   className="object-cover"
                   priority
                 />
-                <span
-                  className="absolute left-6 top-6 z-10 rounded-full px-3 py-1 text-body-14-sb text-white"
-                  style={{ background: selectedTheme.colorVar }}
-                >
-                  {selectedTheme.tierLabel}
-                </span>
+                <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+                  <span
+                    className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
+                    style={{ background: "var(--color-badge-warm-bg)", color: "var(--color-badge-warm-text)" }}
+                  >
+                    가장 미발음
+                  </span>
+                  <span
+                    className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
+                    style={{ background: "var(--color-badge-best-bg)", color: "var(--color-plus)" }}
+                  >
+                    BEST
+                  </span>
+                </div>
               </div>
               <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
                 ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -990,12 +974,17 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               <h2 className="mb-2 text-[28px] font-semibold tracking-[-0.04em] text-[var(--color-text-emphasis)]">
                 {selectedPlan.name}
               </h2>
-              <div className="mb-4 flex items-center gap-2">
+              <div className="mb-4 flex items-center gap-3">
                 <Stars rating={reviewsAverage} size={24} />
+                {reviewsAverage > 0 && (
+                  <span className="text-[18px] font-semibold leading-[21px] tracking-[-0.02em] text-[var(--color-text)]">
+                    {reviewsAverage.toFixed(1)}
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={handleReviewCountClick}
-                  className="text-body-13-r text-[var(--color-text-secondary)] underline decoration-[var(--color-text-secondary)]"
+                  className="text-[14px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text-tertiary)] underline decoration-[var(--color-text-tertiary)]"
                 >
                   {reviewsTotal}개 리뷰
                 </button>
@@ -1004,8 +993,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <span className="text-body-20-sb tracking-[-0.05em] text-[var(--color-surface-dark)]">
                   월 요금제
                 </span>
+                {hasDiscount && (
+                  <span className="text-[16px] font-semibold leading-8 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
+                    {formatWon(originalPrice)}
+                  </span>
+                )}
                 <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
-                  {formatWon(basePrice)}
+                  {formatWon(discountedUnitPrice)}
                 </span>
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
@@ -1058,8 +1052,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <button
                   type="button"
                   onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[30px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: selectedTheme.colorVar }}
+                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[8px] text-subtitle-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+                  style={{ background: "var(--color-why-bg)" }}
                 >
                   구독하기
                 </button>
@@ -1069,7 +1063,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div
             ref={desktopTabsRef}
-            className="md:mt-[54px] lg:mt-[54px] scroll-mt-4 border-b border-[var(--color-text-muted)] pb-4"
+            className="md:mt-8 lg:mt-8 scroll-mt-4 border-b border-[var(--color-text-muted)] pb-4"
           >
             <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center text-center">
               {TABS.map((tab, idx) => {
@@ -1097,7 +1091,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           {activeTab === "info" && (
-            <div className="pt-5 md:pt-20 lg:pt-20">
+            <div className="pt-5 md:pt-10 lg:pt-[54px]">
               <div className="mx-auto w-full md:max-w-[800px] lg:max-w-[800px]">
                 {detailImages.map((imageSrc, index) => (
                   <Image
@@ -1197,11 +1191,12 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   {sortedReviews.map((review) => (
                     <li
                       key={review.id}
-                      className="flex items-start gap-6 border-b border-[var(--color-text-muted)] py-6 last:border-b-0"
+                      className="flex items-start gap-4 border-b border-[var(--color-text-muted)] py-6 last:border-b-0"
                     >
+                      {/* Left: avatar + info + content */}
                       <div className="flex flex-1 items-start gap-4">
                         <div
-                          className="h-12 w-12 shrink-0 overflow-hidden rounded-full"
+                          className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
                           aria-hidden="true"
                         >
                           {review.snapshotPetProfileImageUrl ? (
@@ -1219,56 +1214,46 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                           )}
                         </div>
                         <div className="flex-1">
-                          <div className="mb-2 flex items-center gap-3">
-                            <span
-                              className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
-                              style={{ background: selectedTheme.colorVar }}
-                            >
-                              {selectedTheme.tierLabel}
-                            </span>
-                            <Stars rating={review.rating} size={20} />
-                          </div>
-                          <div className="mb-3 flex items-center gap-3 text-[13px] leading-[16px]">
-                            <span className="font-semibold text-[var(--color-text)]">
+                          <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
+                            <span className="font-bold text-[var(--color-text)]">
                               {review.snapshotPetName ?? "익명"}
                             </span>
                             {review.snapshotUserEmail && (
-                              <span className="text-[var(--color-text-secondary)]">
+                              <span className="font-medium text-[var(--color-text-secondary)]">
                                 {maskEmail(review.snapshotUserEmail)}
                               </span>
                             )}
-                            <span className="text-[var(--color-text-secondary)]">
+                            <span className="font-medium text-[var(--color-text-secondary)]">
                               {formatReviewDate(review.createdAt)}
                             </span>
                           </div>
+                          <div className="mb-3">
+                            <Stars rating={review.rating} size={24} />
+                          </div>
                           <ReviewContent content={review.content} className="" />
-                          {review.imageUrls && review.imageUrls.length > 0 && (
-                            <div className="mt-3 flex gap-2">
-                              {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
-                                <button
-                                  key={imgIdx}
-                                  type="button"
-                                  onClick={() =>
-                                    setReviewLightbox({
-                                      urls: review.imageUrls ? [...review.imageUrls] : [],
-                                      index: imgIdx,
-                                    })
-                                  }
-                                  className="h-[100px] w-[100px] overflow-hidden rounded-[8px] border border-[var(--color-text-muted)] transition-opacity hover:opacity-90 active:opacity-80"
-                                  aria-label={`리뷰 사진 ${imgIdx + 1} 크게 보기`}
-                                >
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={url}
-                                    alt={`리뷰 사진 ${imgIdx + 1}`}
-                                    className="pointer-events-none h-full w-full object-cover"
-                                  />
-                                </button>
-                              ))}
-                            </div>
-                          )}
                         </div>
                       </div>
+                      {/* Right: first review photo */}
+                      {review.imageUrls && review.imageUrls.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setReviewLightbox({
+                              urls: review.imageUrls ? [...review.imageUrls] : [],
+                              index: 0,
+                            })
+                          }
+                          className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] transition-opacity hover:opacity-90 active:opacity-80"
+                          aria-label="리뷰 사진 크게 보기"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={review.imageUrls[0]}
+                            alt="리뷰 사진"
+                            className="pointer-events-none h-full w-full object-cover"
+                          />
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>

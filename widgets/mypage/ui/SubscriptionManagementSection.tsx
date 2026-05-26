@@ -13,6 +13,7 @@ import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
 } from "@/widgets/subscribe/plans/ui/packageData";
+import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "./dashboard-shared";
 
 type SubscriptionFilter = "all" | "active" | "ended";
 
@@ -200,7 +201,7 @@ function PaymentInfoCard({
             <button
               type="button"
               onClick={handleOpenPayment}
-              className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-body-13-m text-white transition-opacity hover:opacity-90"
+              className={PAYMENT_REGISTER_CHIP_BUTTON_CLASS}
             >
               결제등록/변경
             </button>

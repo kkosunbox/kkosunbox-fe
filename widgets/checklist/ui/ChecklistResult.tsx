@@ -13,8 +13,7 @@ import {
   type PackageData,
   type PackageTier,
 } from "@/widgets/subscribe/plans/ui/packageData";
-import PackageDetailView from "@/widgets/subscribe/plans/ui/PackageDetailView";
-import MobileTierDetailPanel from "@/widgets/subscribe/plans/ui/MobileTierDetailPanel";
+import { PackageCompareTable } from "@/widgets/subscribe/plans/ui/PackageDetailView";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
@@ -189,18 +188,30 @@ function CardBody({
       {/* 본문: 이미지(좌) + 추천이유(우) */}
       <div className="flex gap-5 max-lg:flex-col">
 
-        {/* 이미지 영역 */}
-        <div className="relative shrink-0 overflow-hidden rounded-[20px] max-lg:aspect-[562/521] max-lg:w-full lg:h-[521px] lg:w-[562px]">
-          <Image
-            src={explainImage}
-            alt={`${pkg.name} 설명`}
-            fill
-            className="object-cover"
-            sizes="(min-width: 1200px) 562px, calc(100vw - 72px)"
-            priority
-          />
+        {/* 이미지 영역 — 외부 wrapper는 overflow-visible */}
+        <div className="relative shrink-0 max-lg:aspect-[562/521] max-lg:w-full lg:h-[521px] lg:w-[562px]">
+          {/* 이미지 클리핑 전용 — overflow-hidden은 여기서만 */}
+          <div className="absolute inset-0 overflow-hidden rounded-[20px]">
+            <Image
+              src={explainImage}
+              alt={`${pkg.name} 설명`}
+              fill
+              className="object-cover"
+              sizes="(min-width: 1200px) 562px, calc(100vw - 72px)"
+              priority
+            />
+            {/* 제품 상세보기 버튼 (우하단) */}
+            <button
+              type="button"
+              onClick={onDetailClick}
+              className="absolute bottom-[26px] right-[26px] flex h-[40px] w-[180px] items-center justify-center rounded-[8px] text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white shadow-md transition-opacity hover:opacity-90 active:opacity-80 max-md:bottom-4 max-md:right-4"
+              style={{ background: "var(--color-brown-dark)" }}
+            >
+              제품 상세보기
+            </button>
+          </div>
 
-          {/* Info 버튼 (우상단) — 영양정보 확인 트리거 */}
+          {/* ℹ 버튼 — 기존 위치 right-3 top-3 */}
           <button
             type="button"
             onClick={onNutritionClick}
@@ -210,15 +221,16 @@ function CardBody({
             <InfoIcon />
           </button>
 
-          {/* 제품 상세보기 버튼 (우하단) */}
-          <button
-            type="button"
-            onClick={onDetailClick}
-            className="absolute bottom-[26px] right-[26px] flex h-[40px] w-[180px] items-center justify-center rounded-[8px] text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white shadow-md transition-opacity hover:opacity-90 active:opacity-80 max-md:bottom-4 max-md:right-4"
-            style={{ background: "var(--color-brown-dark)" }}
-          >
-            제품 상세보기
-          </button>
+          {/* 말풍선 — ℹ 버튼 기준 65px 오른쪽, 위로 올려 이미지 바깥 표시 */}
+          <div className="pointer-events-none absolute right-3 top-3 z-20 -translate-y-full translate-x-[65px]">
+            <Image
+              src="/images/please-info-check.png"
+              alt="영양정보 확인"
+              width={130}
+              height={55}
+              className="h-auto w-[130px] max-md:w-[100px]"
+            />
+          </div>
         </div>
 
         {/* 추천이유 영역 */}
@@ -275,8 +287,7 @@ export default function ChecklistResult({
   profileId,
 }: Props) {
   const router = useRouter();
-  const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
-  const [mobileDetailPlanId, setMobileDetailPlanId] = useState<number | null>(null);
+  const [showNutritionOverlay, setShowNutritionOverlay] = useState(false);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
 
@@ -326,14 +337,6 @@ export default function ChecklistResult({
   const reasons = RECOMMENDATION_REASONS[effectiveRecommendedTier];
   const explainImage = PACKAGE_EXPLAIN_IMAGES[recommendedPlanTier];
 
-  const detailPlan = selectedTier
-    ? sortedPlans.find((p) => tierFromSubscriptionPlan(p) === selectedTier)
-    : null;
-  const mobileDetailPlan =
-    mobileDetailPlanId !== null
-      ? sortedPlans.find((p) => p.id === mobileDetailPlanId)
-      : null;
-
   const navigateToDetail = () =>
     recommendedApiPlan &&
     router.push(`/subscribe/detail?planId=${recommendedApiPlan.id}`);
@@ -370,51 +373,31 @@ export default function ChecklistResult({
         />
 
         {/* 메인 추천 카드 */}
-        <div className="relative mb-14 overflow-hidden rounded-[20px] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] max-md:mb-10">
-
-          {/* 데스크톱 */}
-          <div className="max-md:hidden">
-            {selectedTier ? (
-              detailPlan ? (
-                <PackageDetailView
-                  key={detailPlan.id}
-                  plan={detailPlan}
-                  allPlans={sortedPlans}
-                  onSelectPlan={(p) => setSelectedTier(tierFromSubscriptionPlan(p))}
-                  onClose={() => setSelectedTier(null)}
-                />
-              ) : (
-                <p className="p-8 text-center text-body-16-m text-[var(--color-text-secondary)]">
-                  플랜 정보를 불러오지 못했습니다.
-                </p>
-              )
-            ) : (
-              <CardBody
-                {...sharedCardProps}
-                onNutritionClick={() => setSelectedTier(recommendedPlanTier)}
-                onDetailClick={navigateToDetail}
-              />
-            )}
-          </div>
-
-          {/* 모바일 */}
-          <div className="md:hidden lg:hidden">
-            {mobileDetailPlan ? (
-              <MobileTierDetailPanel
-                plan={mobileDetailPlan}
-                onClose={() => setMobileDetailPlanId(null)}
-              />
-            ) : (
-              <CardBody
-                {...sharedCardProps}
-                onNutritionClick={() =>
-                  recommendedApiPlan && setMobileDetailPlanId(recommendedApiPlan.id)
-                }
-                onDetailClick={navigateToDetail}
-              />
-            )}
-          </div>
+        <div className="relative mb-14 rounded-[20px] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] max-md:mb-10">
+          <CardBody
+            {...sharedCardProps}
+            onNutritionClick={() => setShowNutritionOverlay(true)}
+            onDetailClick={navigateToDetail}
+          />
         </div>
+
+        {/* 영양정보 오버레이 — 비교 표만 표시 */}
+        {showNutritionOverlay && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+            onClick={() => setShowNutritionOverlay(false)}
+          >
+            <div
+              className="max-h-[90vh] w-full max-w-[520px] overflow-auto rounded-[20px] shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <PackageCompareTable
+                initialTier={recommendedPlanTier}
+                onClose={() => setShowNutritionOverlay(false)}
+              />
+            </div>
+          </div>
+        )}
 
         {/* 하단: 전체 패키지 구독 섹션 */}
         {!plansLoading && sortedPlans.length > 0 && (

@@ -92,7 +92,7 @@ export default function ProfileFloatWidget() {
     if (submitting) return;
     // 비로그인 상태에서 제출 시 로그인 페이지로
     if (!isLoggedIn) {
-      router.push("/login?next=/checklist");
+      router.push("/login?next=/");
       return;
     }
     setSubmitting(true);
@@ -113,10 +113,11 @@ export default function ProfileFloatWidget() {
         await createProfile(body);
       }
       await refreshProfile();
-      router.push("/checklist");
+      setVisible(false);
+      setForceVisible(false);
+      window.dispatchEvent(new CustomEvent("ggosoon:open-checklist-form"));
     } catch {
-      // silent — navigate anyway so user can complete checklist
-      router.push("/checklist");
+      window.dispatchEvent(new CustomEvent("ggosoon:open-checklist-form"));
     } finally {
       setSubmitting(false);
     }

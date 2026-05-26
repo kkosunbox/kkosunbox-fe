@@ -52,13 +52,15 @@ export default function HeroSection() {
   }, [advance]);
 
   function handleCta() {
-    // 로그인 + 프로필 + 체크리스트 완료: 결과 페이지
     if (isLoggedIn && profiles.length > 0) {
       const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
-      router.push(hasChecklist ? "/checklist?result=1" : "/checklist");
+      if (hasChecklist) {
+        router.push("/checklist/result");
+      } else {
+        window.dispatchEvent(new CustomEvent("ggosoon:open-checklist-form"));
+      }
       return;
     }
-    // 비로그인 또는 프로필 없음: 플로팅 모달 표시 (모달 안에서 로그인 여부에 따라 처리)
     window.dispatchEvent(new CustomEvent("ggosoon:show-profile-widget"));
   }
 
@@ -114,7 +116,8 @@ export default function HeroSection() {
                   onClick={handleCta}
                   variant="primary"
                   size="lg"
-                  className="max-lg:w-[260px] lg:w-[320px] max-lg:h-[40px] max-lg:text-[13px] lg:text-[16px] whitespace-nowrap"
+                  style={{ background: "var(--color-cta-button)", borderRadius: 12 }}
+                  className="text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 max-lg:h-[40px] max-lg:w-[260px] max-lg:text-[13px] lg:h-[52px] lg:w-[282px] lg:text-[16px]"
                 >
                   10초 진단하고 우리 아이 맞춤 추천 받기
                 </Button>

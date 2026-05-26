@@ -6,6 +6,10 @@ import { Text } from "@/shared/ui";
 export const DASHBOARD_CARD_SURFACE_CLASS =
   "flex flex-col overflow-hidden rounded-[20px] max-lg:bg-white max-lg:px-7 max-lg:py-6 lg:h-[173px] lg:bg-[var(--color-surface-light)] lg:px-8 lg:py-5";
 
+/** Figma chip2 — 결제등록/변경 (88×24, padding 4px 8px, bg #2F2F2F) */
+export const PAYMENT_REGISTER_CHIP_BUTTON_CLASS =
+  "inline-flex h-6 w-[88px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-text)] px-2 py-1 text-body-13-m leading-4 text-white transition-opacity hover:opacity-90";
+
 export function DashboardCard({
   children,
   className,

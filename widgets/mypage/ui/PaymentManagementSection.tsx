@@ -8,6 +8,7 @@ import { getErrorMessage } from "@/shared/lib/api";
 import { getPaymentReceipt, cancelSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
+import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "./dashboard-shared";
 
 /* ── 결제 상태 변환 ────────────────────────────────────────── */
 type DisplayStatus = "예정" | "완료" | "실패" | "환불";
@@ -340,7 +341,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
                 <button
                   type="button"
                   onClick={handleOpenPayment}
-                  className="inline-flex w-[88px] h-[24px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-accent)] text-body-13-m text-white hover:opacity-90 transition-opacity"
+                  className={PAYMENT_REGISTER_CHIP_BUTTON_CLASS}
                 >
                   결제등록/변경
                 </button>
@@ -421,7 +422,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
                   <button
                     type="button"
                     onClick={handleOpenPayment}
-                    className="inline-flex items-center rounded-[4px] bg-[var(--color-accent)] px-2 py-[4px] text-body-13-m text-white hover:opacity-90 transition-opacity"
+                    className={PAYMENT_REGISTER_CHIP_BUTTON_CLASS}
                   >
                     결제등록/변경
                   </button>

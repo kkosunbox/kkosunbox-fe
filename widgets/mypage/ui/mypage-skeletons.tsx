@@ -29,7 +29,7 @@ export function ProfileSectionSkeleton() {
               </div>
             </div>
             {/* 체크리스트 (데스크톱) */}
-            <div className="max-lg:hidden lg:w-[318px] lg:flex-none lg:self-center">
+            <div className="max-lg:hidden lg:w-[358px] lg:flex-none lg:self-center">
               <Bone className="h-[120px] rounded-[12px]" />
             </div>
           </div>

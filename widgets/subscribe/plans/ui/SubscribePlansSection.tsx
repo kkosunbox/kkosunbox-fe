@@ -1,131 +1,59 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { CheckCircleIcon, ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
-import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
+import Image, { type StaticImageData } from "next/image";
+import { ChecklistRecommendModal, ScrollReveal, Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
-import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero.png";
+import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-renewal.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
+import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
+import packageExplainWithPremium from "@/widgets/home/package-plans/assets/package-explain-with-premium.png";
+import packageExplainWithStandard from "@/widgets/home/package-plans/assets/package-explain-with-standard.png";
+import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
+import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
+import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
 import {
   comparePlansForDisplayOrder,
-  packageThemeForPlan,
   PACKAGES,
+  tierFromSubscriptionPlan,
+  type PackageTier,
 } from "./packageData";
-import PackageDetailView from "./PackageDetailView";
-import MobileTierDetailPanel from "./MobileTierDetailPanel";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
-import { isBelowMdViewport } from "@/shared/config/breakpoints";
 
-/** 모바일 sticky 탭 + 고정 헤더의 합산 높이 — scroll offset / scroll-spy rootMargin 에 공통 사용 */
-const MOBILE_SCROLL_OFFSET = 120;
+const PACKAGE_EXPLAIN_IMAGES: Record<PackageTier, StaticImageData> = {
+  Basic: packageExplainWithBasic,
+  Standard: packageExplainWithStandard,
+  Premium: packageExplainWithPremium,
+};
+
+const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
+  Basic: packageImageBasic,
+  Standard: packageImageStandard,
+  Premium: packageImagePremium,
+};
+
+/** 메인 PackagePlansSection 과 동일한 우측 카드 순서 */
+const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-/* ── Icons ───────────────────────────────────────────────────────── */
-
-function InfoIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 22 22" className="shrink-0" aria-hidden="true">
-      <circle cx="11" cy="11" r="10" stroke="var(--color-icon-muted)" strokeWidth="1.5" fill="none" />
-      <path d="M11 10V15" stroke="var(--color-icon-muted)" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="11" cy="7.5" r="1" fill="var(--color-icon-muted)" />
-    </svg>
-  );
+function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
+  return plans.find((p) => tierFromSubscriptionPlan(p) === tier);
 }
 
-/* ── Plan Card ───────────────────────────────────────────────────── */
-
-interface PlanCardProps {
-  plan: SubscriptionPlanDto;
-  onInfoClick: () => void;
-  onPrimaryClick: () => void;
-  isPending?: boolean;
-}
-
-function PlanCard({ plan, onInfoClick, onPrimaryClick, isPending }: PlanCardProps) {
-  const theme = packageThemeForPlan(plan);
-  const color = theme.colorVar;
-  const pkg = PACKAGES.find((p) => p.tier === theme.tier);
-
-  return (
-    <div className="flex h-full flex-col overflow-hidden rounded-[20px] bg-[var(--color-background)]">
-      {/* Image — fills card top edge-to-edge, 327:252 ratio, badge/info overlaid */}
-      <div className="relative aspect-[327/252] w-full">
-        <Image
-          src={TIER_THUMBNAILS[theme.tier]}
-          alt={`${plan.name} 이미지`}
-          fill
-          className={TIER_THUMBNAIL_IMAGE_CLASS}
-        />
-        <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 px-7 pt-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-              style={{ background: color }}
-            >
-              {theme.tierLabel}
-            </span>
-          </div>
-          <button
-            type="button"
-            aria-label={`${plan.name} 패키지 상세 정보`}
-            onClick={onInfoClick}
-            disabled={isPending}
-            className="flex shrink-0 items-center justify-center transition-opacity disabled:opacity-50"
-          >
-            <InfoIcon />
-          </button>
-        </div>
-      </div>
-
-      <div className="flex flex-1 flex-col px-7 pb-7 pt-5">
-        <h2 className="mb-7.5 text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">
-          {plan.name}
-        </h2>
-
-        {plan.description ? (
-          <p className="mb-4 text-body-13-r text-[var(--color-text-secondary)]">
-            {plan.description}
-          </p>
-        ) : null}
-
-        <ul className="mb-7 flex flex-col gap-[14px]">
-          {(pkg?.items ?? []).map((item) => (
-            <li
-              key={item}
-              className="flex items-center gap-2 text-body-13-m leading-[16px] text-black"
-            >
-              <CheckCircleIcon color={color} />
-              {item}
-            </li>
-          ))}
-        </ul>
-
-        <div className="mb-7 mt-auto flex items-center justify-between border-t border-[var(--color-text-muted)] pt-3">
-          <span className="text-body-14-b text-black">월 요금제</span>
-          <span className="text-price-20-eb leading-8 text-[var(--color-surface-dark)]">
-            {formatMonthlyPrice(plan.monthlyPrice)}
-          </span>
-        </div>
-
-        <button
-          type="button"
-          onClick={onPrimaryClick}
-          className="flex h-[48px] w-full items-center justify-center rounded-[30px] text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-          style={{ background: color }}
-        >
-          제품 상세보기
-        </button>
-      </div>
-    </div>
-  );
+function initialSelectedTier(plans: SubscriptionPlanDto[]): PackageTier {
+  for (const tier of PACKAGE_SUMMARY_ORDER) {
+    if (planForTier(plans, tier)) return tier;
+  }
+  const sorted = [...plans].sort(comparePlansForDisplayOrder);
+  const first = sorted[0];
+  return first ? tierFromSubscriptionPlan(first) : "Premium";
 }
 
 /* ── Main Section ───────────────────────────────────────────────── */
@@ -139,140 +67,19 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { profile: clientProfile } = useProfile();
-  const [isPending, startTransition] = useTransition();
   const [isDismissed, setIsDismissed] = useState(false);
-  /** 데스크톱 전용: 그리드 ↔ 단일 상세 뷰 전환 */
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanDto | null>(null);
-  const [hasOpenedDetail, setHasOpenedDetail] = useState(false);
-  /** 모바일 전용: 카드별 독립 토글. 여러 카드 동시 확장 허용 */
-  const [expandedPlanIds, setExpandedPlanIds] = useState<Set<number>>(new Set());
-  /** 모바일 상단 탭 active (scroll-spy로 자동 갱신) — 초기값은 첫 플랜 */
-  const [activePlanId, setActivePlanId] = useState<number | null>(() => {
-    const sorted = [...plans].sort(comparePlansForDisplayOrder);
-    return sorted[0]?.id ?? null;
-  });
-  /** 각 카드 래퍼 DOM ref — 탭 scrollIntoView & scroll-spy 대상 */
-  const cardRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
-  /** 탭 클릭으로 유발된 smooth scroll 중에는 scroll-spy의 active 갱신을 잠시 막음 (중간 카드 지나가며 깜빡이는 현상 방지) */
-  const scrollLockRef = useRef(false);
-  const scrollIdleTimerRef = useRef<number | undefined>(undefined);
-  const scrollLockFailsafeRef = useRef<number | undefined>(undefined);
 
   const sortedPlans = useMemo(
     () => [...plans].sort(comparePlansForDisplayOrder),
     [plans],
   );
 
-  const handleInfoClick = useCallback((plan: SubscriptionPlanDto) => {
-    if (typeof window !== "undefined" && isBelowMdViewport(window.innerWidth)) {
-      // 모바일: 해당 카드 inline 토글 (즉각 반응)
-      setExpandedPlanIds((prev) => {
-        const next = new Set(prev);
-        if (next.has(plan.id)) {
-          next.delete(plan.id);
-        } else {
-          next.add(plan.id);
-        }
-        return next;
-      });
-    } else {
-      // 데스크톱: 그리드 → 상세 뷰 전환 (무거운 렌더 → transition)
-      startTransition(() => {
-        setHasOpenedDetail(true);
-        setSelectedPlan(plan);
-      });
-    }
-  }, []);
+  const [selectedTier, setSelectedTier] = useState<PackageTier>(() =>
+    initialSelectedTier(plans),
+  );
 
-  const handleCollapseMobileCard = useCallback((planId: number) => {
-    setExpandedPlanIds((prev) => {
-      if (!prev.has(planId)) return prev;
-      const next = new Set(prev);
-      next.delete(planId);
-      return next;
-    });
-  }, []);
-
-  const handleCloseDesktopDetail = useCallback(() => {
-    startTransition(() => setSelectedPlan(null));
-  }, []);
-
-  const handleDesktopSelectPlan = useCallback((plan: SubscriptionPlanDto) => {
-    startTransition(() => {
-      setHasOpenedDetail(true);
-      setSelectedPlan(plan);
-    });
-  }, []);
-
-  const handleTabClick = useCallback((planId: number) => {
-    setActivePlanId(planId);
-    // scroll-spy를 잠가, 애니메이션 중 중간 카드들에 의해 active 가 깜빡이지 않게 함
-    scrollLockRef.current = true;
-    if (scrollLockFailsafeRef.current !== undefined) {
-      window.clearTimeout(scrollLockFailsafeRef.current);
-    }
-    // scrollIntoView 가 사실상 no-op 이거나 scroll 이벤트가 안 뜰 경우의 페일세이프
-    scrollLockFailsafeRef.current = window.setTimeout(() => {
-      scrollLockRef.current = false;
-    }, 1200);
-
-    const el = cardRefs.current.get(planId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, []);
-
-  /** scroll-idle 기반 lock 해제 — 스크롤 이벤트가 100ms 간 끊기면 애니메이션 종료로 간주 */
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const onScroll = () => {
-      if (!scrollLockRef.current) return;
-      if (scrollIdleTimerRef.current !== undefined) {
-        window.clearTimeout(scrollIdleTimerRef.current);
-      }
-      scrollIdleTimerRef.current = window.setTimeout(() => {
-        scrollLockRef.current = false;
-      }, 100);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (scrollIdleTimerRef.current !== undefined) {
-        window.clearTimeout(scrollIdleTimerRef.current);
-      }
-      if (scrollLockFailsafeRef.current !== undefined) {
-        window.clearTimeout(scrollLockFailsafeRef.current);
-      }
-    };
-  }, []);
-
-  /** 모바일 scroll-spy — 현재 뷰포트 상단 밴드에 걸친 카드를 active 로 표시 */
-  useEffect(() => {
-    if (typeof window === "undefined" || sortedPlans.length === 0) return;
-    const targets = sortedPlans
-      .map((p) => cardRefs.current.get(p.id))
-      .filter((el): el is HTMLDivElement => !!el);
-    if (targets.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (scrollLockRef.current) return; // 탭 클릭 스크롤 애니메이션 중에는 무시
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible[0]) {
-          const id = Number(visible[0].target.getAttribute("data-plan-id"));
-          if (!Number.isNaN(id)) setActivePlanId(id);
-        }
-      },
-      {
-        rootMargin: `-${MOBILE_SCROLL_OFFSET}px 0px -60% 0px`,
-        threshold: 0,
-      },
-    );
-    targets.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [sortedPlans]);
+  const activePlan = planForTier(sortedPlans, selectedTier);
+  const activePkg = PACKAGES.find((p) => p.tier === selectedTier);
 
   const profile = clientProfile ?? initialProfile;
   const isChecklistDone = hasChecklistAnswers(profile);
@@ -287,15 +94,20 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
     router.push("/checklist");
   }
 
+  function handleDetailClick() {
+    if (!activePlan) return;
+    router.push(`/subscribe/detail?planId=${activePlan.id}`);
+  }
+
   return (
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="flex min-h-full flex-1 flex-col pb-16 md:pt-0 lg:pt-0 md:pb-20 lg:pb-20">
+      <section className="flex min-h-full flex-1 flex-col bg-white pb-16 md:pb-20">
         <div className="flex w-full flex-1 flex-col">
-          {/* Hero — 모바일: 이미지 / 데스크톱: 전폭 그라디언트 + 중앙 이미지 (와이드 뷰포트 좌우 빈 영역 보완) */}
+          {/* Hero — 모바일: 전용 이미지 / 데스크톱: 배경 포함 renewal 배너 (118px, 좁은 뷰포트는 가로 중앙) */}
           <ScrollReveal variant="fade-in" duration={600}>
-            <div className="mb-6 md:mb-8 lg:mb-8">
+            <div className="mb-6 md:mb-10 lg:mb-10">
               <div className="flex h-[170px] items-center justify-center overflow-hidden md:hidden lg:hidden">
                 <Image
                   src={SubscribePlansHeroImageMobile}
@@ -304,15 +116,12 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                   priority
                 />
               </div>
-              <div
-                className="relative hidden h-[210px] w-full overflow-hidden md:block lg:block"
-                style={{ background: "var(--gradient-subscribe-plans-hero)" }}
-              >
+              <div className="relative hidden h-[118px] w-full overflow-hidden md:block lg:block">
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
                   <Image
                     src={SubscribePlansHeroImage}
                     alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                    className="h-[170px] w-auto max-w-none shrink-0 translate-y-[10px]"
+                    className="h-[118px] w-auto max-w-none shrink-0"
                     priority
                   />
                 </div>
@@ -320,112 +129,89 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
             </div>
           </ScrollReveal>
 
-          <div className="mx-auto flex w-full max-w-[587px] flex-1 flex-col max-md:px-6 md:max-w-content lg:max-w-content md:px-8 max-lg:px-8 lg:px-0">
-            {/* 모바일 티어 탭 — sticky (고정 헤더 아래 고정), 클릭 시 해당 카드로 smooth scroll */}
-            {sortedPlans.length > 0 ? (
-              <div className="md:hidden lg:hidden sticky top-[54px] z-10 -mx-6 bg-white px-6 py-3 mb-4">
-                <div className="flex justify-center gap-3">
-                  {sortedPlans.map((p) => {
-                    const theme = packageThemeForPlan(p);
-                    const isActive = activePlanId === p.id;
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => handleTabClick(p.id)}
-                        className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white transition-colors"
-                        style={{
-                          background: isActive ? theme.colorVar : "var(--color-text-muted)",
-                        }}
-                      >
-                        {theme.tierLabel}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : null}
-
-            {/* ══ Desktop (md+) — 기존 로직 그대로 유지 ══════════════════════ */}
-            <div className="max-md:hidden">
-              {selectedPlan ? (
-                <div className="mx-auto w-full max-w-[var(--max-width-content)]">
-                  <PackageDetailView
-                    plan={selectedPlan}
-                    allPlans={sortedPlans}
-                    onSelectPlan={handleDesktopSelectPlan}
-                    onClose={handleCloseDesktopDetail}
-                  />
-                </div>
-              ) : sortedPlans.length === 0 ? (
-                <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
-                  표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
-                </p>
-              ) : (
-                <div className="mx-auto max-w-content grid grid-cols-3 gap-4">
-                  {sortedPlans.map((plan, i) => (
-                    <ScrollReveal
-                      key={plan.id}
-                      variant="fade-up"
-                      delay={100 + i * 120}
-                      duration={600}
-                      immediate={hasOpenedDetail}
-                    >
-                      <PlanCard
-                        plan={plan}
-                        onInfoClick={() => handleInfoClick(plan)}
-                        onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-                        isPending={isPending}
+          <div className="mx-auto w-full max-w-content max-md:px-5 md:px-6 lg:px-0">
+            {sortedPlans.length === 0 ? (
+              <p className="text-center text-body-16-m text-[var(--color-text-secondary)]">
+                표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
+              </p>
+            ) : (
+              <ScrollReveal variant="fade-up" delay={150}>
+                <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center lg:gap-7">
+                  {/* 좌측 — 선택된 패키지 설명 (메인 PackagePlansSection 패턴) */}
+                  <div className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] shadow-sm md:rounded-[28px]">
+                    {activePkg ? (
+                      <Image
+                        key={selectedTier}
+                        src={PACKAGE_EXPLAIN_IMAGES[selectedTier]}
+                        alt={`${activePkg.name} 설명`}
+                        className="h-auto w-full transition-opacity duration-300"
+                        sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
+                        priority
                       />
-                    </ScrollReveal>
-                  ))}
-                </div>
-              )}
-            </div>
+                    ) : null}
+                    <Button
+                      type="button"
+                      onClick={handleDetailClick}
+                      variant="primary"
+                      size="lg"
+                      disabled={!activePlan}
+                      className="absolute bottom-4 right-4 h-10 w-[180px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] shadow-md max-md:bottom-3 max-md:right-3 max-md:w-[150px] max-md:px-4 lg:bottom-11 lg:right-11"
+                    >
+                      제품 상세보기
+                    </Button>
+                  </div>
 
-            {/* ══ Mobile (max-md) — 카드 항상 렌더 + 카드별 inline 토글 ══════ */}
-            <div className="md:hidden lg:hidden">
-              {sortedPlans.length === 0 ? (
-                <p className="mx-auto max-w-content text-center text-body-16-m text-[var(--color-text-secondary)]">
-                  표시할 구독 플랜이 없습니다. 잠시 후 다시 시도해 주세요.
-                </p>
-              ) : (
-                <div className="mx-auto max-w-content flex flex-col gap-4">
-                  {sortedPlans.map((plan, i) => {
-                    const isExpanded = expandedPlanIds.has(plan.id);
-                    return (
-                      <ScrollReveal
-                        key={plan.id}
-                        variant="fade-up"
-                        delay={100 + i * 120}
-                        duration={600}
-                      >
-                        <div
-                          ref={(el) => {
-                            cardRefs.current.set(plan.id, el);
-                          }}
-                          data-plan-id={plan.id}
-                          style={{ scrollMarginTop: `${MOBILE_SCROLL_OFFSET}px` }}
+                  {/* 우측 — 패키지 요약 카드 목록 */}
+                  <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
+                    {PACKAGE_SUMMARY_ORDER.map((tier) => {
+                      const pkg = PACKAGES.find((p) => p.tier === tier)!;
+                      const plan = planForTier(sortedPlans, tier);
+                      const img = PACKAGE_SUMMARY_IMAGES[tier];
+
+                      if (!plan) return null;
+
+                      return (
+                        <button
+                          key={tier}
+                          type="button"
+                          onClick={() => setSelectedTier(tier)}
+                          className="flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm transition-shadow hover:shadow-md md:h-[167px] lg:shadow-none lg:hover:shadow-sm"
                         >
-                          {isExpanded ? (
-                            <MobileTierDetailPanel
-                              plan={plan}
-                              onClose={() => handleCollapseMobileCard(plan.id)}
+                          <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
+                            <Image
+                              src={img}
+                              alt={pkg.name}
+                              fill
+                              className="object-cover"
+                              sizes="180px"
                             />
-                          ) : (
-                            <PlanCard
-                              plan={plan}
-                              onInfoClick={() => handleInfoClick(plan)}
-                              onPrimaryClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-                            />
-                          )}
-                        </div>
-                      </ScrollReveal>
-                    );
-                  })}
+                          </div>
+                          <div className="min-w-0 flex-1 px-4 py-[18px] md:py-[25px] lg:pl-6 lg:pr-0">
+                            <p className="mb-4 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                              {pkg.name}
+                            </p>
+                            <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
+                              월 요금제
+                            </p>
+                            <div className="mb-0.5 flex items-baseline gap-2">
+                              <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[16px]">
+                                {plan.discountRate}%
+                              </span>
+                              <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                                {formatMonthlyPrice(plan.monthlyPrice)}
+                              </span>
+                            </div>
+                            <span className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[14px]">
+                              첫 구독 할인
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
-            </div>
+              </ScrollReveal>
+            )}
           </div>
         </div>
       </section>

@@ -690,7 +690,7 @@ export default function ProfileManagementSection({
               type="button"
               onClick={() => router.back()}
               disabled={isPending || isUploadingImage || isDeleting}
-              className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+              className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
             >
               취소
             </button>
@@ -698,7 +698,7 @@ export default function ProfileManagementSection({
               type="button"
               onClick={handleSave}
               disabled={isPending || isUploadingImage || isDeleting}
-              className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {isPending ? "저장 중..." : "확인"}
             </button>

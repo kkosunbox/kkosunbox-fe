@@ -215,7 +215,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       <div className="mt-[44px] flex justify-center gap-[17px]">
         <Link
           href="/mypage/dog-profile"
-          className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+          className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
         >
           유지하기
         </Link>
@@ -223,7 +223,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           type="button"
           onClick={handleWithdraw}
           disabled={!canSubmit || isPending}
-          className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중..." : "탈퇴하기"}
         </button>
@@ -367,7 +367,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       <div className="mt-6 flex justify-center gap-3">
         <Link
           href="/mypage/dog-profile"
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
         >
           유지하기
         </Link>
@@ -375,7 +375,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           type="button"
           onClick={handleWithdraw}
           disabled={!canSubmit || isPending}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중..." : "탈퇴하기"}
         </button>

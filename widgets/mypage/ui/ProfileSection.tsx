@@ -180,7 +180,7 @@ function ChecklistPanel({
               <button
                 type="button"
                 onClick={() => openChecklistForm()}
-                className="inline-flex h-[28px] items-center rounded-full bg-[var(--color-accent)] px-4 text-body-13-m text-white transition-opacity hover:opacity-90"
+                className="inline-flex h-[28px] items-center rounded-[8px] bg-[var(--color-accent)] px-4 text-body-13-m text-white transition-opacity hover:opacity-90"
               >
                 체크리스트 작성하기
               </button>

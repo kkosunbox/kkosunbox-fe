@@ -331,7 +331,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
             ref={confirmBtnRef}
             type="button"
             onClick={handleConfirm}
-            className="w-full h-[44px] rounded-full text-[14px] font-semibold text-white hover:opacity-90 active:opacity-80 transition-opacity"
+            className="w-full h-[44px] rounded-[8px] text-[14px] font-semibold text-white hover:opacity-90 active:opacity-80 transition-opacity"
             style={{ background: "var(--color-text)" }}
           >
             확인

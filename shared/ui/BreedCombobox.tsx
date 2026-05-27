@@ -279,7 +279,7 @@ export default function BreedCombobox({
               event.preventDefault();
               handleClear();
             }}
-            className={`absolute ${clearButtonRight} top-1/2 -translate-y-1/2 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-white transition-opacity hover:opacity-80`}
+            className={`absolute ${clearButtonRight} top-1/2 -translate-y-1/2 flex h-4 w-4 items-center justify-center rounded-[4px] bg-[var(--color-text-muted)] text-white transition-opacity hover:opacity-80`}
           >
             <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true">
               <path d="M1 1l6 6M7 1L1 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

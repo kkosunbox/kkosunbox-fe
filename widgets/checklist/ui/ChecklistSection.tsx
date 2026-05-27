@@ -140,7 +140,7 @@ function LeaveConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="h-[48px] w-full rounded-full max-md:text-body-14-sb md:text-btn-15-sb lg:text-btn-15-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+            className="h-[48px] w-full rounded-[8px] max-md:text-body-14-sb md:text-btn-15-sb lg:text-btn-15-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
             style={{ background: "var(--color-accent)" }}
           >
             계속 작성하기
@@ -148,7 +148,7 @@ function LeaveConfirmModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
+            className="h-[48px] w-full rounded-[8px] bg-[var(--color-surface-light)] max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
           >
             나가기
           </button>

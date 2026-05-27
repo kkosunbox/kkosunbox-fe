@@ -299,7 +299,7 @@ export default function RecommendSection({ recommendedTier, petName }: Recommend
                       onClick={() => {
                         if (matchedPlan) router.push(`/subscribe/detail?planId=${matchedPlan.id}`);
                       }}
-                      className="flex h-[52px] w-full items-center justify-center rounded-full text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+                      className="flex h-[52px] w-full items-center justify-center rounded-[8px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                       style={{ background: pkg.colorVar }}
                     >
                       구독하기

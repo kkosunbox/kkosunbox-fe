@@ -70,7 +70,7 @@ export default function SubscriptionCancelModal({ onClose, onConfirm }: Props) {
           {/* CTA button — white bg, dark text */}
           <button
             onClick={onClose}
-            className="mt-7 w-full h-[48px] rounded-[30px] bg-white
+            className="mt-7 w-full h-[48px] rounded-[8px] bg-white
                        max-md:text-[14px] md:text-[16px] lg:text-[16px]
                        font-semibold leading-[150%] tracking-[-0.02em] text-[var(--color-text)]
                        hover:opacity-90 transition-opacity"

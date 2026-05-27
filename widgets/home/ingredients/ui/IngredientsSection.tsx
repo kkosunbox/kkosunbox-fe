@@ -65,7 +65,7 @@ export default function IngredientsSection() {
             <Button
               onClick={handleChecklistClick}
               size="lg"
-              className="max-lg:h-10 max-lg:w-[212px] max-lg:text-[13px] max-lg:font-semibold max-lg:leading-[30px] max-lg:tracking-[-0.04em] lg:h-[52px] lg:w-[196px] lg:text-[16px] lg:font-semibold lg:leading-[30px] lg:tracking-[-0.04em] bg-[var(--color-text)] text-white rounded-[50px]"
+              className="max-lg:h-10 max-lg:w-[212px] max-lg:text-[13px] max-lg:font-semibold max-lg:leading-[30px] max-lg:tracking-[-0.04em] lg:h-[52px] lg:w-[196px] lg:text-[16px] lg:font-semibold lg:leading-[30px] lg:tracking-[-0.04em] bg-[var(--color-text)] text-white rounded-[8px]"
             >
               체크리스트 작성 하러가기
             </Button>

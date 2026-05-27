@@ -54,7 +54,7 @@ export default function WhyChooseSection() {
           <button
             type="button"
             onClick={handleChecklistClick}
-            className="max-md:h-10 max-md:w-[270px] max-md:text-[13px] md:h-[52px] md:w-[288px] md:text-[15px] lg:h-[56px] lg:w-[288px] lg:text-[16px] rounded-full font-semibold tracking-[-0.04em] text-white transition-opacity hover:opacity-90"
+            className="max-md:h-10 max-md:w-[270px] max-md:text-[13px] md:h-[52px] md:w-[288px] md:text-[15px] lg:h-[56px] lg:w-[288px] lg:text-[16px] rounded-[8px] font-semibold tracking-[-0.04em] text-white transition-opacity hover:opacity-90"
             style={{ background: "var(--color-cta-button)" }}
           >
             체크리스트 작성 후 구독하러 가기

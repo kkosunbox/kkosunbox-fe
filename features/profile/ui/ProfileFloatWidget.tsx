@@ -226,7 +226,7 @@ export default function ProfileFloatWidget() {
                 key={g}
                 type="button"
                 onClick={() => setGender(g)}
-                className="flex-1 rounded-xl py-2.5 text-[14px] font-medium transition-colors border"
+                className="flex-1 rounded-[8px] py-2.5 text-[14px] font-medium transition-colors border"
                 style={
                   gender === g
                     ? {
@@ -264,7 +264,7 @@ export default function ProfileFloatWidget() {
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
-          className="mt-1 w-full rounded-2xl py-4 text-[15px] font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="mt-1 w-full rounded-[8px] py-4 text-[15px] font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           style={{ background: "var(--color-brown-dark)" }}
         >
           간식박스 추천받기

@@ -115,7 +115,7 @@ export default function AlertModal({
             ref={primaryRef}
             type="button"
             onClick={handlePrimary}
-            className="w-full h-12 rounded-[30px] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
+            className="w-full h-12 rounded-[8px] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
             style={{ background: "var(--color-text)" }}
           >
             {primaryLabel}

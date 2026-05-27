@@ -362,7 +362,7 @@ export default function InquirySection() {
                 <button
                   type="submit"
                   disabled={!isSubmittable || isPending}
-                  className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+                  className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
                 >
                   {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
                 </button>
@@ -430,7 +430,7 @@ export default function InquirySection() {
             <button
               type="submit"
               disabled={!isSubmittable || isPending}
-              className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+              className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
             >
               {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
             </button>

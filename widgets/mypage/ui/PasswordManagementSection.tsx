@@ -224,7 +224,7 @@ export default function PasswordManagementSection() {
           <div className="mt-[28px] flex justify-end gap-[17px]">
             <Link
               href="/mypage/dog-profile"
-              className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+              className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
             >
               취소
             </Link>
@@ -232,7 +232,7 @@ export default function PasswordManagementSection() {
               type="button"
               onClick={handleSubmit}
               disabled={isPending}
-              className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {isPending ? "변경 중..." : "변경 완료"}
             </button>
@@ -326,7 +326,7 @@ export default function PasswordManagementSection() {
       <div className="mt-[23px] flex gap-[11px]">
         <Link
           href="/mypage/dog-profile"
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
         >
           취소
         </Link>
@@ -334,7 +334,7 @@ export default function PasswordManagementSection() {
           type="button"
           onClick={handleSubmit}
           disabled={isPending}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {isPending ? "변경 중..." : "변경 완료"}
         </button>

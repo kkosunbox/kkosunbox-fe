@@ -167,7 +167,7 @@ function LeaveConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="h-[48px] w-full rounded-full text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+            className="h-[48px] w-full rounded-[8px] text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
             style={{ background: "var(--color-accent)" }}
           >
             계속 작성하기
@@ -175,7 +175,7 @@ function LeaveConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            className="h-[48px] w-full rounded-full bg-[var(--color-surface-light)] text-body-14-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
+            className="h-[48px] w-full rounded-[8px] bg-[var(--color-surface-light)] text-body-14-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
           >
             닫기
           </button>

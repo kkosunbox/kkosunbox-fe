@@ -27,7 +27,7 @@ export default function NotFoundSection() {
         {/* 버튼 — 서브텍스트 하단과 142px 간격 */}
         <Link
           href="/"
-          className="mt-[142px] max-md:mt-16 w-[400px] max-md:w-[312px] h-[48px] flex items-center justify-center rounded-full bg-[var(--color-accent)] text-white"
+          className="mt-[142px] max-md:mt-16 w-[400px] max-md:w-[312px] h-[48px] flex items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-white"
           style={{ fontWeight: 600, fontSize: "16px", lineHeight: "140%", letterSpacing: "0.2px" }}
         >
           처음으로 돌아가기

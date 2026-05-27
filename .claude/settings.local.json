@@ -128,7 +128,9 @@
       "Bash(python -c ' *)",
       "Bash(findstr /C:\"error\" /C:\"HeroSection\" /C:\"ProfileFloat\" /C:\"ChecklistSection\")",
       "Bash(Select-String \"error\")",
-      "Bash(Select-String -NotMatch \"warning\")"
+      "Bash(Select-String -NotMatch \"warning\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Filter \"*support*\" -Directory)",
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\support\" -Recurse)"
     ]
   }
 }

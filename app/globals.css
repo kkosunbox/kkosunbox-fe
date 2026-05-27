@@ -375,6 +375,7 @@
   --max-width-content: 1012px;
   --max-width-content-narrow: 940px;
   --max-width-content-wide: 1140px;
+  --max-width-profile-management: 924px;
 }
 
 body {

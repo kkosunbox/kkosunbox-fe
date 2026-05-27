@@ -10,7 +10,7 @@ import { ApiError } from "@/shared/lib/api/types";
 import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { PawCircleIcon, useModal } from "@/shared/ui";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
-import FaqQuestion from "../../faq/assets/faq-question.png";
+import { SupportHero } from "@/widgets/support/shared";
 import InquiryPaw from "../assets/inquiry-paw.png";
 
 const ITEMS_PER_PAGE = 4;
@@ -145,36 +145,10 @@ export default function InquiryHistorySection() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col max-md:py-6 md:py-10 lg:py-10">
+    <div className="flex min-h-full flex-1 flex-col">
+      <SupportHero />
+      <div className="flex flex-1 flex-col max-md:py-6 md:py-10 lg:py-10">
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
-        <section
-          className="flex min-h-[118px] flex-col items-stretch justify-center gap-4 rounded-[20px] px-6 py-6 max-md:py-6 md:flex-row lg:flex-row md:items-center lg:items-center md:justify-between lg:justify-between md:gap-6 lg:gap-6 md:px-11 lg:px-11 md:py-0 lg:py-0"
-          style={{ background: "var(--gradient-support-banner)" }}
-          aria-label="1:1 문의 안내"
-        >
-          <div className="flex w-full flex-col gap-[11px] max-md:items-center max-md:text-center md:max-w-[330px] lg:max-w-[330px] md:items-start lg:items-start md:text-left lg:text-left">
-            <Image
-              src={FaqQuestion}
-              alt="꼬순박스에 궁금한 점이 있으신가요?"
-              width={FaqQuestion.width}
-              height={FaqQuestion.height}
-              sizes="(max-width: 767px) 252px, 320px"
-              className="h-auto max-md:w-[252px] md:w-[320px] lg:w-[320px]"
-            />
-            <p className="text-body-14-m capitalize leading-[17px] tracking-[-0.04em] text-[var(--color-text)] max-md:text-center md:text-left lg:text-left">
-              1:1 문의를 남겨주시면 담당자가 확인 후
-              <br className="md:hidden lg:hidden" />
-              {" "}빠르게 답변해 드립니다.
-            </p>
-          </div>
-          <Link
-            href="/inquiry"
-            className="inline-flex h-[40px] shrink-0 items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 text-center max-md:text-body-14-sb text-subtitle-16-sb leading-[150%] tracking-[-0.02em] text-white max-md:mx-auto max-md:w-full max-md:max-w-[410px] md:w-[200px] lg:w-[200px]"
-          >
-            문의하기
-          </Link>
-        </section>
-
         <section
           className="flex min-h-[592px] flex-1 flex-col rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-8 lg:pt-8"
           aria-label="내 문의내역"
@@ -332,6 +306,7 @@ export default function InquiryHistorySection() {
             </nav>
           )}
         </section>
+      </div>
       </div>
 
       {selectedInquiry && (

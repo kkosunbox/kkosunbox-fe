@@ -130,7 +130,8 @@
       "Bash(Select-String \"error\")",
       "Bash(Select-String -NotMatch \"warning\")",
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Filter \"*support*\" -Directory)",
-      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\support\" -Recurse)"
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\support\" -Recurse)",
+      "PowerShell(git commit -m $msg)"
     ]
   }
 }

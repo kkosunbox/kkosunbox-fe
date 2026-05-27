@@ -131,9 +131,15 @@ export default function PackagePlansSection() {
                 const plan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
 
                 return (
-                  <div
+                  <button
                     key={tier}
-                    className="group flex h-[132px] overflow-hidden rounded-2xl bg-white shadow-sm md:h-[167px] lg:shadow-none"
+                    type="button"
+                    disabled={!plan}
+                    onClick={() => {
+                      if (!plan) return;
+                      router.push(`/subscribe/detail?planId=${plan.id}`);
+                    }}
+                    className="group flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm transition-opacity md:h-[167px] lg:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
                       <Image
@@ -169,7 +175,7 @@ export default function PackagePlansSection() {
                         <div className="h-[36px] animate-pulse rounded bg-[var(--color-text-muted)]" />
                       )}
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>

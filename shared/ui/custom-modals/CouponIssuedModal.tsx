@@ -35,7 +35,7 @@ export default function CouponIssuedModal({ onClose }: Props) {
         <div
           className="relative
                      max-md:mt-[59px] md:mt-[80px] lg:mt-[80px]
-                     max-md:rounded-[32px] md:rounded-[40px] lg:rounded-[40px]
+                     rounded-[24px]
                      max-md:pt-[110px] md:pt-[130px] lg:pt-[130px]
                      pb-6 px-6
                      flex flex-col items-center"

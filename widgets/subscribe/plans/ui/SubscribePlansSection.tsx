@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { ChecklistRecommendModal, ScrollReveal, Button } from "@/shared/ui";
@@ -24,12 +24,6 @@ import {
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
 
-const PACKAGE_EXPLAIN_IMAGES: Record<PackageTier, StaticImageData> = {
-  Basic: packageExplainWithBasic,
-  Standard: packageExplainWithStandard,
-  Premium: packageExplainWithPremium,
-};
-
 const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
   Basic: packageImageBasic,
   Standard: packageImageStandard,
@@ -39,21 +33,25 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 /** 메인 PackagePlansSection 과 동일한 우측 카드 순서 */
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 
+const ROTATION_INTERVAL_MS = 8000;
+
+/** 메인 PackagePlansSection 과 동일한 좌측 롤링 순서 */
+const PACKAGE_EXPLAIN_ROTATION: Array<{
+  tier: PackageTier;
+  src: StaticImageData;
+  alt: string;
+}> = [
+  { tier: "Basic", src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
+  { tier: "Standard", src: packageExplainWithStandard, alt: "스탠다드 패키지 BOX 설명" },
+  { tier: "Premium", src: packageExplainWithPremium, alt: "프리미엄 패키지 BOX 설명" },
+];
+
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
 function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
   return plans.find((p) => tierFromSubscriptionPlan(p) === tier);
-}
-
-function initialSelectedTier(plans: SubscriptionPlanDto[]): PackageTier {
-  for (const tier of PACKAGE_SUMMARY_ORDER) {
-    if (planForTier(plans, tier)) return tier;
-  }
-  const sorted = [...plans].sort(comparePlansForDisplayOrder);
-  const first = sorted[0];
-  return first ? tierFromSubscriptionPlan(first) : "Premium";
 }
 
 /* ── Main Section ───────────────────────────────────────────────── */
@@ -74,12 +72,21 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
     [plans],
   );
 
-  const [selectedTier, setSelectedTier] = useState<PackageTier>(() =>
-    initialSelectedTier(plans),
-  );
+  const [activePackageIndex, setActivePackageIndex] = useState(0);
+  const activePackage = PACKAGE_EXPLAIN_ROTATION[activePackageIndex];
 
-  const activePlan = planForTier(sortedPlans, selectedTier);
-  const activePkg = PACKAGES.find((p) => p.tier === selectedTier);
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActivePackageIndex(
+        (currentIndex) => (currentIndex + 1) % PACKAGE_EXPLAIN_ROTATION.length,
+      );
+    }, ROTATION_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const activePlan = planForTier(sortedPlans, activePackage.tier);
+  const activePkg = PACKAGES.find((p) => p.tier === activePackage.tier);
 
   const profile = clientProfile ?? initialProfile;
   const isChecklistDone = hasChecklistAnswers(profile);
@@ -141,10 +148,10 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                   <div className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] shadow-sm md:rounded-[28px]">
                     {activePkg ? (
                       <Image
-                        key={selectedTier}
-                        src={PACKAGE_EXPLAIN_IMAGES[selectedTier]}
-                        alt={`${activePkg.name} 설명`}
-                        className="h-auto w-full transition-opacity duration-300"
+                        key={activePackage.tier}
+                        src={activePackage.src}
+                        alt={activePackage.alt}
+                        className="h-auto w-full transition-opacity duration-500"
                         sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
                         priority
                       />
@@ -174,7 +181,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                         <button
                           key={tier}
                           type="button"
-                          onClick={() => setSelectedTier(tier)}
+                          onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
                           className="group flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm md:h-[167px] lg:shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">

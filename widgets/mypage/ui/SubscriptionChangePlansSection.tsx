@@ -198,7 +198,6 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
                     const plan = planForTier(sortedPlans, tier);
                     const img = PACKAGE_SUMMARY_IMAGES[tier];
                     const isActive = hasActiveSub(tier);
-                    const isSelected = selectedTier === tier;
 
                     if (!plan) return null;
 

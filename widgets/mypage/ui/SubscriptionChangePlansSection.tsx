@@ -163,7 +163,10 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             <ScrollReveal variant="fade-up" delay={150}>
               <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center lg:gap-7">
                 {/* 좌측 — 선택된 패키지 설명 이미지 + 액션 버튼 */}
-                <div className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] shadow-sm md:rounded-[28px]">
+                <div
+                  className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] md:rounded-[28px]"
+                  style={{ boxShadow: "var(--shadow-card-soft)" }}
+                >
                   {activePkg ? (
                     <Image
                       key={selectedTier}
@@ -230,7 +233,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
                             </>
                           )}
                         </div>
-                        <div className="min-w-0 flex-1 px-4 py-[18px] md:py-[25px] lg:pl-6 lg:pr-0">
+                        <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
                           <div className="mb-4 md:mb-6">
                             <p className="truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:text-[20px]">
                               {pkg.name}

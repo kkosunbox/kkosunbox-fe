@@ -9,6 +9,7 @@ import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import reviewsBg from "../assets/reviews-bg.png";
 import reviewsTitle from "../assets/reviews-title-new.png";
+import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.jpg";
 import reviewsProfile02 from "../assets/reviews-profile-02.jpg";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
@@ -291,8 +292,15 @@ export default function ReviewsSection() {
           <Image
             src={reviewsTitle}
             alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
-            className="mx-auto h-auto w-full max-w-[640px] md:max-w-[760px] lg:max-w-[845px]"
-            sizes="(min-width: 1200px) 845px, (min-width: 768px) 760px, 640px"
+            className="mx-auto hidden h-auto w-full md:block md:max-w-[760px] lg:max-w-[845px]"
+            sizes="(min-width: 1200px) 845px, 760px"
+            priority
+          />
+          <Image
+            src={reviewsTitleMobile}
+            alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
+            className="mx-auto block h-auto max-h-[96px] w-full max-w-[486px] object-contain md:hidden"
+            sizes="486px"
             priority
           />
         </ScrollReveal>
@@ -303,6 +311,18 @@ export default function ReviewsSection() {
         </ScrollReveal>
 
         <ScrollReveal variant="fade-up" delay={300} className="mt-[34px] w-full md:mt-[64px] lg:mt-[94px]">
+          <div className="md:hidden mx-auto flex w-full max-w-[360px] flex-col gap-[84px] pt-[60px]">
+            {REVIEWS.slice(0, 3).map((review, i) => (
+              <ReviewCard key={`${review.name}-mobile-${i}`} review={review} />
+            ))}
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal
+          variant="fade-up"
+          delay={300}
+          className="mt-[34px] hidden w-full md:mt-[64px] md:block lg:mt-[94px]"
+        >
           <ReviewsCarousel />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={450}>

@@ -9,6 +9,11 @@ import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import heroThirdBg from "../assets/hero-main-background-third-ver.png";
 import heroThirdHeading from "../assets/hero-catch-phrase-third-web.png";
+import heroThirdMobileBg from "../assets/hero-main-background-third-mobile-expanded.png";
+import heroMainMobileBg from "../assets/hero-main-background-mobile-expanded.png";
+import heroDogTitleMobile01 from "../assets/hero-dog-title-mobile-01.png";
+import heroDogTitleMobile02 from "../assets/hero-dog-title-mobile-02.png";
+import heroDogTitleMobile03 from "../assets/hero-dog-title-mobile-03.png";
 
 const SLIDE_INTERVAL = 8000;
 
@@ -17,7 +22,9 @@ type HeroSlide = {
   type: "solid" | "photo" | "fullBg";
   bg?: string;
   bgImage?: string;
+  mobileBgImage?: string;
   headingImg: string;
+  mobileHeadingImg: string;
   headingAlt: string;
   headingW: number;
   headingH: number;
@@ -34,7 +41,9 @@ const slides: HeroSlide[] = [
     id: "custom-snack",
     type: "fullBg",
     bgImage: heroThirdBg.src,
+    mobileBgImage: heroThirdMobileBg.src,
     headingImg: heroThirdHeading.src,
+    mobileHeadingImg: heroDogTitleMobile03.src,
     headingAlt: "우리 아이를 위한 맞춤 건강간식",
     headingW: 333,
     headingH: 103,
@@ -52,6 +61,7 @@ const slides: HeroSlide[] = [
     type: "solid",
     bg: "var(--color-hero-truck-bg)",
     headingImg: "/images/hero-truck-title.png",
+    mobileHeadingImg: heroDogTitleMobile02.src,
     headingAlt: "매주 신선하게 정기배송",
     headingW: 558,
     headingH: 206,
@@ -63,7 +73,9 @@ const slides: HeroSlide[] = [
     id: "dog",
     type: "photo",
     bg: "var(--color-hero-bg)",
+    mobileBgImage: heroMainMobileBg.src,
     headingImg: "/images/hero-dog-title.png",
+    mobileHeadingImg: heroDogTitleMobile01.src,
     headingAlt: "강아지가 먼저 찾는 간식",
     headingW: 571,
     headingH: 203,
@@ -102,7 +114,7 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="overflow-hidden relative max-lg:min-h-[420px] lg:min-h-[537px]">
+    <section className="overflow-hidden relative max-md:h-[585px] md:max-lg:min-h-[420px] lg:min-h-[537px]">
       {slides.map((slide, index) => {
         const isActive = index === current;
         return (
@@ -114,44 +126,70 @@ export default function HeroSection() {
             }`}
             style={slide.bg ? { background: slide.bg } : undefined}
           >
+            {/* 모바일 전용 배경 이미지 (< 768px) */}
+            {slide.mobileBgImage && (
+              <img
+                src={slide.mobileBgImage}
+                alt=""
+                className="md:hidden absolute inset-0 h-full w-full object-cover object-center"
+                loading={index === 0 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            )}
+
+            {/* 사진 배경 (태블릿·데스크탑 전용) */}
             {slide.type === "photo" && (
               <img
                 src="/images/hero-dog-hd.png"
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="max-md:hidden absolute inset-0 h-full w-full object-cover object-center"
                 decoding="async"
               />
             )}
 
+            {/* 풀 배경 이미지 (태블릿·데스크탑 전용) */}
             {slide.type === "fullBg" && slide.bgImage && (
               <img
                 src={slide.bgImage}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover object-[70%_center] max-lg:object-[85%_center]"
+                className="max-md:hidden absolute inset-0 h-full w-full object-cover object-[70%_center] max-lg:object-[85%_center]"
                 decoding="async"
               />
             )}
 
+            {/* 사진 오버레이 (태블릿 전용) */}
             {slide.type === "photo" && (
-              <div className="absolute inset-0 lg:hidden" style={{ background: "rgba(255,248,240,0.45)" }} />
+              <div
+                className="absolute inset-0 max-md:hidden lg:hidden"
+                style={{ background: "rgba(255,248,240,0.45)" }}
+              />
             )}
 
-            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:py-10 h-full lg:min-h-[537px]">
+            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 md:max-lg:py-10 max-md:pt-[58px] h-full lg:min-h-[537px]">
               {/* 좌측: 텍스트 */}
-              <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left max-lg:order-2 lg:order-1 lg:pl-20">
+              <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left max-lg:order-2 max-md:order-1 lg:order-1 lg:pl-20">
                 <h1 className="max-lg:mb-4 lg:mb-6">
+                  {/* 모바일 제목 이미지 (< 768px) */}
+                  <img
+                    src={slide.mobileHeadingImg}
+                    alt={slide.headingAlt}
+                    className="md:hidden h-[83px] w-auto"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
+                  {/* 태블릿·데스크탑 제목 이미지 */}
                   <img
                     src={slide.headingImg}
                     alt={slide.headingAlt}
                     width={slide.headingW}
                     height={slide.headingH}
-                    className={slide.headingClass}
+                    className={`max-md:hidden ${slide.headingClass}`}
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                   />
                 </h1>
                 <p
-                  className={`max-lg:mb-2 lg:mb-3 ${
+                  className={`max-lg:mb-2 lg:mb-3 max-md:h-[20px] max-md:overflow-hidden max-md:text-[14px] max-md:leading-[20px] ${
                     slide.subtextClass ??
                     "max-lg:text-[14px] max-lg:font-medium lg:text-[20px] lg:font-medium text-[var(--color-hero-subtext)]"
                   }`}
@@ -159,7 +197,7 @@ export default function HeroSection() {
                   {slide.subtext}
                 </p>
                 <p
-                  className={`max-lg:mb-6 lg:mb-[52px] ${
+                  className={`max-lg:mb-6 lg:mb-[52px] max-md:h-[40px] max-md:overflow-hidden max-md:text-[13px] max-md:leading-[20px] ${
                     slide.tagsClass ??
                     "text-[var(--color-hero-tagline)] max-lg:text-body-13-r lg:text-body-14-m"
                   }`}
@@ -180,9 +218,9 @@ export default function HeroSection() {
                 </Button>
               </div>
 
-              {/* 우측: 트럭 이미지 (슬라이드 1 전용) */}
+              {/* 우측: 트럭 이미지 (solid 슬라이드 전용) */}
               {slide.type === "solid" && (
-                <div className="flex flex-1 items-center justify-center max-lg:order-1 lg:order-2 max-lg:mb-4 lg:py-10">
+                <div className="flex flex-1 items-center justify-center max-lg:order-1 max-md:order-2 lg:order-2 max-lg:mb-4 lg:py-10">
                   <img
                     src="/images/hero-truck.png"
                     alt="꼬순박스 배송 트럭"

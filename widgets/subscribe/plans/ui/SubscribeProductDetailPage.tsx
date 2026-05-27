@@ -6,9 +6,7 @@ import Link from "next/link";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { SupportSection } from "@/widgets/support/faq";
-import packageThumbnailBasic from "@/widgets/subscribe/plans/assets/package-thumbnail-basic.png";
-import packageThumbnailPremium from "@/widgets/subscribe/plans/assets/package-thumbnail-premium.png";
-import packageThumbnailStandard from "@/widgets/subscribe/plans/assets/package-thumbnail-standard.png";
+import { TIER_DETAIL_HERO_IMAGES } from "./packageThumbnails";
 import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.png";
 import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.png";
 import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.webp";
@@ -53,12 +51,6 @@ const DETAIL_ASSET_IMAGES: Record<
   Premium: [subscribeItem01A, subscribeItem01B, subscribeItem01BB, subscribeItem01C, subscribeItem01D],
   Standard: [subscribeItem02A, subscribeItem02B, subscribeItem02BB, subscribeItem02C, subscribeItem02D],
   Basic: [subscribeItem03A, subscribeItem03B, subscribeItem03BB, subscribeItem03C, subscribeItem03D],
-};
-
-const PACKAGE_THUMBNAILS: Record<PackageTier, StaticImageData> = {
-  Basic: packageThumbnailBasic,
-  Standard: packageThumbnailStandard,
-  Premium: packageThumbnailPremium,
 };
 
 type TabKey = "info" | "review" | "delivery" | "support";
@@ -441,7 +433,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const selectedTier = tierFromSubscriptionPlan(selectedPlan);
   const selectedPackage = PACKAGES.find((pkg) => pkg.tier === selectedTier) ?? PACKAGES[0];
   const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
-  const packageThumbnail = PACKAGE_THUMBNAILS[selectedTier];
+  const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
   const originalPrice = selectedPlan.originalPrice;
   const discountedUnitPrice = selectedPlan.monthlyPrice;

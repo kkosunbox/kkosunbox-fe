@@ -98,7 +98,7 @@ function SubscriptionsSummaryCard({
   }, [activeSubscriptions]);
 
   return (
-    <div className="relative overflow-hidden md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white max-md:p-5 md:px-8 lg:px-8 md:py-6 lg:py-6">
+    <div className="relative overflow-hidden max-md:p-5 md:flex-1 lg:flex-1 md:px-8 lg:px-8 md:py-8 lg:py-8">
       {aggregatedPlans.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           {aggregatedPlans.map(({ plan, totalQuantity }) => {
@@ -183,7 +183,7 @@ function PaymentInfoCard({
   const valueCls = "text-body-14-sb text-[var(--color-text)]";
 
   return (
-    <div className="flex flex-col md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white max-md:p-5 md:px-8 lg:px-8 md:py-6 lg:py-6">
+    <div className="flex flex-col max-md:p-5 md:flex-1 lg:flex-1 md:px-8 lg:px-8 md:py-8 lg:py-8">
       <Text as="h3" variant="subtitle-16-b" className="mb-5 text-[var(--color-text)]">
         결제관리
       </Text>
@@ -227,18 +227,12 @@ function SubscriptionRow({
 }) {
   const { plan, isActive } = subscription;
   const theme = packageThemeForPlan(plan);
-  const badgeColor = isActive ? theme.colorVar : "var(--color-text-tertiary)";
+  const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
   const boxQuantity = subscription.quantity || 1;
 
   return (
-    <div
-      className={`flex items-stretch overflow-hidden md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white max-md:rounded-[16px] max-md:h-[120px] ${
-        isActive
-          ? "max-md:bg-[var(--color-support-faq-surface)]"
-          : "max-md:bg-[var(--color-surface-light)]"
-      }`}
-    >
-      <div className="relative shrink-0 bg-[var(--color-background)] max-md:h-[120px] max-md:w-[129px] md:min-h-[155px] lg:min-h-[155px] md:w-[155px] lg:w-[155px]">
+    <div className="flex items-stretch overflow-hidden rounded-[20px] bg-[var(--color-surface-light)] max-md:h-[120px] max-md:rounded-[16px]">
+      <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-[129px] md:min-h-[170px] lg:min-h-[170px] md:w-[182px] lg:w-[182px]">
         <Image
           src={TIER_THUMBNAILS[theme.tier]}
           alt={`${plan.name} 이미지`}
@@ -279,21 +273,21 @@ function SubscriptionRow({
         <Text
           variant="subtitle-16-sb"
           mobileVariant="body-14-sb"
-          className={`max-md:mb-1 md:mb-1.5 lg:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}
+          className={`max-md:mb-1 md:mb-1.5 lg:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
         >
           <span className="md:hidden lg:hidden">{plan.name}</span>
           <span className="max-md:hidden">{isActive ? `${plan.name} 구독중` : plan.name}</span>
         </Text>
 
         <Text
-          variant="body-14-m"
+          variant="body-16-m"
           mobileVariant="body-13-m"
-          className={isActive ? "text-[var(--color-text-label)]" : "text-[var(--color-text-tertiary)]"}
+          className={isActive ? "text-[var(--color-text-label)]" : "text-[var(--color-text-secondary)]"}
         >
           {isActive ? `${formatDate(subscription.nextBillingDate)} ~` : "-"}
         </Text>
         <Text
-          variant="body-14-m"
+          variant="body-16-m"
           mobileVariant="body-13-m"
           className="text-[var(--color-text-label)]"
         >
@@ -323,7 +317,7 @@ function SubscriptionFilterTabs({
   ];
 
   return (
-    <div className="flex items-center text-body-14-m">
+    <div className="flex items-center">
       {items.map((item, idx) => {
         const selected = value === item.key;
         return (
@@ -331,16 +325,16 @@ function SubscriptionFilterTabs({
             <button
               type="button"
               onClick={() => onChange(item.key)}
-              className={`px-2 transition-colors ${
+              className={`px-2 text-body-16-m transition-colors ${
                 selected
-                  ? "text-body-14-sb text-[var(--color-text)]"
-                  : "text-[var(--color-text-label)] hover:text-[var(--color-text)]"
+                  ? "text-body-16-sb text-[var(--color-text)]"
+                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
               }`}
             >
               {item.label}
             </button>
             {idx < items.length - 1 && (
-              <span className="text-[var(--color-text-muted)]">|</span>
+              <span className="text-body-16-m text-[var(--color-text-secondary)]">|</span>
             )}
           </div>
         );
@@ -470,42 +464,46 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
   const hasPlans = plans.length > 0;
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Upper band */}
-      <div style={{ background: "linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%)" }}>
-        <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pb-8 pt-6 md:pt-10 lg:pt-10">
-          {/* Back + title */}
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
-          >
-            <ChevronLeftIcon />
-            구독관리
-          </button>
+    <div className="relative min-h-screen bg-white">
+      {/* Upper solid color band — 258px tall */}
+      <div className="absolute left-0 right-0 top-0 h-[258px] bg-[var(--color-surface-warm)]" />
 
-          {/* Two summary cards — mobile: single card w/ divider, desktop: two-column grid */}
-          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:grid lg:grid md:grid-cols-2 lg:grid-cols-2 md:gap-5 lg:gap-5">
-            <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
-            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
-            <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
-          </div>
+      {/* Hero content — overlaps the 258px boundary */}
+      <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-6 md:pt-10 lg:pt-10">
+        {/* Back + title */}
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
+        >
+          <ChevronLeftIcon />
+          구독관리
+        </button>
+
+        {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
+        <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_24px_rgba(0,0,0,0.08)] lg:shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
+          <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
+          {/* Mobile: horizontal divider */}
+          <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
+          {/* Desktop: vertical divider */}
+          <div className="max-md:hidden w-px shrink-0 bg-[#EEEEEE] my-10" />
+          <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
         </div>
       </div>
 
       {/* Subscription list — 구독 전체보기 */}
-      <div className="mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 py-10">
-        <div className="md:rounded-[24px] lg:rounded-[24px] md:bg-[var(--color-surface-peach)] lg:bg-[var(--color-surface-peach)] md:px-8 lg:px-8 md:py-8 lg:py-8">
+      <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-8 pb-10">
+        <div className="md:px-0 lg:px-0">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
+              <Text as="h2" variant="subtitle-20-b" className="text-[var(--color-text)]">
                 구독 전체보기
               </Text>
               <Link
                 href="/mypage/subscription/change"
-                className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-accent)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-85"
+                className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-text)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-80"
               >
-                구독 추가하기
+                구독추가
               </Link>
             </div>
             <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
@@ -523,7 +521,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 md:gap-5 lg:gap-5">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2 md:gap-3 lg:gap-3">
                 {pagedSubscriptions.map((subscription) => (
                   <SubscriptionRow key={subscription.id} subscription={subscription} />
                 ))}

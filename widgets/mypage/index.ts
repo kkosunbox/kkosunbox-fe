@@ -13,4 +13,11 @@ export { PaymentCardLoader } from "./ui/PaymentCardLoader";
 export { InquiryCardLoader } from "./ui/InquiryCardLoader";
 export { DeliveryCard } from "./ui/DeliveryCard";
 export { DeliveryCardLoader } from "./ui/DeliveryCardLoader";
-export { ProfileSectionSkeleton, CardSkeleton } from "./ui/mypage-skeletons";
+export {
+  ProfileSectionSkeleton,
+  SubscriptionCardSkeleton,
+  PaymentCardSkeleton,
+  DeliveryCardSkeleton,
+  InquiryCardSkeleton,
+  CardSkeleton,
+} from "./ui/mypage-skeletons";

@@ -31,7 +31,7 @@ function dismissToday() {
 
 export default function ProfileFloatWidget() {
   const { isLoggedIn, isAuthLoading } = useAuth();
-  const { profiles, profile, refreshProfile } = useProfile();
+  const { profiles, profile, refreshProfile, isProfilesReady } = useProfile();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -65,15 +65,24 @@ export default function ProfileFloatWidget() {
     setNote(profile.specialNotes ?? "");
   }, [profile]);
 
-  // 표시 조건 판단: 로그인 완료 후 실행
+  // 표시 조건 판단: 인증·프로필 fetch 완료 후에만 평가 (fetch 전 빈 배열로 잠깐 뜨는 것 방지)
   useEffect(() => {
-    if (isAuthLoading) return;
-    if (!isLoggedIn) { setVisible(false); return; }
-    if (isDismissedToday()) { setVisible(false); return; }
+    if (isAuthLoading || !isProfilesReady) {
+      setVisible(false);
+      return;
+    }
+    if (!isLoggedIn) {
+      setVisible(false);
+      return;
+    }
+    if (isDismissedToday()) {
+      setVisible(false);
+      return;
+    }
     const needsProfile = profiles.length === 0;
-    const needsChecklist = !hasChecklistAnswers(profile);
+    const needsChecklist = profile != null && !hasChecklistAnswers(profile);
     setVisible(needsProfile || needsChecklist);
-  }, [isLoggedIn, isAuthLoading, profiles, profile]);
+  }, [isLoggedIn, isAuthLoading, isProfilesReady, profiles, profile]);
 
   // CTA 버튼 등 외부에서 명시적으로 표시 요청 시 강제 오픈 (로그인 여부 무관)
   useEffect(() => {

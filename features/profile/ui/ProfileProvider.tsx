@@ -11,6 +11,8 @@ interface ProfileContextValue {
   profile: Profile | null;
   /** 전체 프로필 목록 */
   profiles: Profile[];
+  /** 로그인 상태에서 최초 프로필 fetch가 끝났는지 (fetch 전에는 false) */
+  isProfilesReady: boolean;
   /** 활성 프로필 변경 */
   setActiveProfileId: (id: number) => void;
   /** 프로필 데이터를 서버에서 다시 가져온다 (수정 후 호출) */
@@ -22,6 +24,7 @@ const ProfileContext = createContext<ProfileContextValue | null>(null);
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [isProfilesReady, setIsProfilesReady] = useState(false);
   const [activeId, setActiveId] = useState<number | null>(() => tokenStore.getActiveProfileId());
 
   const refreshProfile = useCallback(async () => {
@@ -42,18 +45,22 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const timerId = window.setTimeout(() => {
-        void refreshProfile();
-      }, 0);
-      return () => window.clearTimeout(timerId);
-    } else {
-      const timerId = window.setTimeout(() => {
-        setProfiles([]);
-        setActiveId(null);
-      }, 0);
-      return () => window.clearTimeout(timerId);
+    if (!isLoggedIn) {
+      setProfiles([]);
+      setActiveId(null);
+      setIsProfilesReady(false);
+      return;
     }
+
+    let cancelled = false;
+    setIsProfilesReady(false);
+    void refreshProfile().finally(() => {
+      if (!cancelled) setIsProfilesReady(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [isLoggedIn, refreshProfile]);
 
   const profile = profiles.find((p) => p.id === activeId) ?? null;
@@ -64,7 +71,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ProfileContext.Provider value={{ profile, profiles, setActiveProfileId, refreshProfile }}>
+    <ProfileContext.Provider
+      value={{ profile, profiles, isProfilesReady, setActiveProfileId, refreshProfile }}
+    >
       {children}
     </ProfileContext.Provider>
   );

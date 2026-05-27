@@ -7,7 +7,10 @@ import {
   InquiryCardLoader,
   DeliveryCardLoader,
   ProfileSectionSkeleton,
-  CardSkeleton,
+  SubscriptionCardSkeleton,
+  PaymentCardSkeleton,
+  DeliveryCardSkeleton,
+  InquiryCardSkeleton,
 } from "@/widgets/mypage";
 
 export default function MyPage() {
@@ -19,22 +22,22 @@ export default function MyPage() {
         </Suspense>
       }
       subscriptionCard={
-        <Suspense fallback={<CardSkeleton />}>
+        <Suspense fallback={<SubscriptionCardSkeleton />}>
           <SubscriptionCardLoader />
         </Suspense>
       }
       paymentCard={
-        <Suspense fallback={<CardSkeleton />}>
+        <Suspense fallback={<PaymentCardSkeleton />}>
           <PaymentCardLoader />
         </Suspense>
       }
       deliveryCard={
-        <Suspense fallback={<CardSkeleton />}>
+        <Suspense fallback={<DeliveryCardSkeleton />}>
           <DeliveryCardLoader />
         </Suspense>
       }
       inquiryCard={
-        <Suspense fallback={<CardSkeleton />}>
+        <Suspense fallback={<InquiryCardSkeleton />}>
           <InquiryCardLoader />
         </Suspense>
       }

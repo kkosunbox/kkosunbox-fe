@@ -70,7 +70,7 @@ export default function SubscriptionRestartModal({ onClose, onConfirm }: Props) 
           {/* CTA button — accent bg, white text */}
           <button
             onClick={onConfirm ?? onClose}
-            className="mt-7 w-full h-[48px] rounded-[30px]
+            className="mt-7 w-full h-[48px] rounded-[8px]
                        max-md:text-[14px] md:text-[16px] lg:text-[16px]
                        font-semibold leading-[150%] tracking-[-0.02em] text-white
                        hover:opacity-90 transition-opacity"

@@ -144,7 +144,7 @@ export default function ModalTestButtons() {
                   primaryLabel: type === "contents" ? "계속 작성하기" : "확인",
                 })
               }
-              className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
+              className={`flex flex-col items-start gap-1 rounded-[8px] px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
             >
               <span className="text-xs font-semibold opacity-70">{label}</span>
               <span className="text-sm font-medium leading-tight">{description}</span>
@@ -161,7 +161,7 @@ export default function ModalTestButtons() {
             <button
               key={type}
               onClick={() => openModal(type)}
-              className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
+              className={`flex flex-col items-start gap-1 rounded-[8px] px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
             >
               <span className="text-xs font-semibold opacity-70">{label}</span>
               <span className="text-sm font-medium leading-tight">{description}</span>
@@ -184,7 +184,7 @@ export default function ModalTestButtons() {
                   () => console.log(`[${label}] 2차 확인: ${secondaryLabel}`),
                 )
               }
-              className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
+              className={`flex flex-col items-start gap-1 rounded-[8px] px-4 py-3 text-left transition-opacity hover:opacity-80 ${color}`}
             >
               <span className="text-xs font-semibold opacity-70">{label}</span>
               <span className="text-sm font-medium leading-tight">{description}</span>
@@ -206,7 +206,7 @@ export default function ModalTestButtons() {
                 () => console.log(`[Modal 10] 확인: ${PAUSE_ITEM.primaryLabel}`),
               )
             }
-            className={`flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 ${PAUSE_ITEM.color}`}
+            className={`flex flex-col items-start gap-1 rounded-[8px] px-4 py-3 text-left transition-opacity hover:opacity-80 ${PAUSE_ITEM.color}`}
           >
             <span className="text-xs font-semibold opacity-70">{PAUSE_ITEM.label}</span>
             <span className="text-sm font-medium leading-tight">{PAUSE_ITEM.description}</span>
@@ -221,7 +221,7 @@ export default function ModalTestButtons() {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           <button
             onClick={fireTestConfetti}
-            className="flex flex-col items-start gap-1 rounded-xl px-4 py-3 text-left transition-opacity hover:opacity-80 bg-[#C8E6C9] text-[var(--color-text)]"
+            className="flex flex-col items-start gap-1 rounded-[8px] px-4 py-3 text-left transition-opacity hover:opacity-80 bg-[#C8E6C9] text-[var(--color-text)]"
           >
             <span className="text-xs font-semibold opacity-70">Confetti</span>
             <span className="text-sm font-medium leading-tight">구매 성공 팡파레</span>

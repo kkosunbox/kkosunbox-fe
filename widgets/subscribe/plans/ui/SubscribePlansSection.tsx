@@ -175,14 +175,14 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                           key={tier}
                           type="button"
                           onClick={() => setSelectedTier(tier)}
-                          className="flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm transition-shadow hover:shadow-md md:h-[167px] lg:shadow-none lg:hover:shadow-sm"
+                          className="group flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm md:h-[167px] lg:shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
                             <Image
                               src={img}
                               alt={pkg.name}
                               fill
-                              className="object-cover"
+                              className="object-cover transition-transform duration-300 group-hover:scale-105"
                               sizes="180px"
                             />
                           </div>

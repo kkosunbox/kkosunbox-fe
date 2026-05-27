@@ -58,7 +58,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             aria-label="이전 페이지"
-            className="flex h-5 w-5 items-center justify-center rounded-full transition-opacity disabled:opacity-30 hover:opacity-70"
+            className="flex h-5 w-5 items-center justify-center rounded-[8px] transition-opacity disabled:opacity-30 hover:opacity-70"
           >
             <ChevronLeftIcon />
           </button>
@@ -85,7 +85,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             aria-label="다음 페이지"
-            className="flex h-5 w-5 items-center justify-center rounded-full transition-opacity disabled:opacity-30 hover:opacity-70"
+            className="flex h-5 w-5 items-center justify-center rounded-[8px] transition-opacity disabled:opacity-30 hover:opacity-70"
           >
             <ChevronRightIcon />
           </button>

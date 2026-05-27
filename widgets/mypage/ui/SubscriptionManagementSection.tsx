@@ -367,7 +367,7 @@ function Pagination({
         type="button"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
+        className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
         aria-label="이전 페이지"
       >
         <ChevronLeftIcon />
@@ -377,7 +377,7 @@ function Pagination({
           key={page}
           type="button"
           onClick={() => onPageChange(page)}
-          className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+          className={`flex h-8 w-8 items-center justify-center rounded-[8px] transition-colors ${
             page === currentPage
               ? "text-body-14-sb text-[var(--color-text)]"
               : "text-body-14-m text-[var(--color-text-label)] hover:bg-[var(--color-surface-warm)]"
@@ -390,7 +390,7 @@ function Pagination({
         type="button"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
+        className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
         aria-label="다음 페이지"
       >
         <ChevronRightIcon />

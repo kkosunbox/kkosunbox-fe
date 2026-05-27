@@ -75,7 +75,7 @@ export default function OAuthCallbackPage() {
         <button
           type="button"
           onClick={() => router.replace("/login")}
-          className="rounded-full bg-[var(--color-accent)] px-8 py-3 text-white text-body-16-sb transition-opacity hover:opacity-90"
+          className="rounded-[8px] bg-[var(--color-accent)] px-8 py-3 text-white text-body-16-sb transition-opacity hover:opacity-90"
         >
           로그인으로 돌아가기
         </button>

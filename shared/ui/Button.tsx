@@ -33,7 +33,7 @@ export default function Button<T extends ElementType = "button">({
   return (
     <Component
       className={[
-        "inline-flex items-center justify-center rounded-full [font-feature-settings:'liga'_off]",
+        "inline-flex items-center justify-center rounded-[8px] [font-feature-settings:'liga'_off]",
         variantStyles[variant],
         sizeStyles[size],
         className,

@@ -225,7 +225,7 @@ export default function WhyGallerySection() {
         <button
           type="button"
           onClick={handleChecklistClick}
-          className="h-12 w-[270px] rounded-[12px] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white transition-opacity hover:opacity-90 md:h-[56px] md:w-[288px] md:text-[16px]"
+          className="h-12 w-[270px] rounded-[8px] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white transition-opacity hover:opacity-90 md:h-[56px] md:w-[288px] md:text-[16px]"
           style={{ background: "var(--color-cta-button)" }}
         >
           체크리스트 작성 후 구독하러 가기

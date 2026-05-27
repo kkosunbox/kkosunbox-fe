@@ -251,7 +251,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-full bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
+              className="w-full rounded-[8px] bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
                 max-md:h-[48px] max-md:text-[14px] max-md:font-semibold max-md:tracking-[-0.04em] max-md:mt-[90px]
                 md:h-[54px] lg:h-[54px] md:text-subtitle-16-sb lg:text-subtitle-16-sb md:tracking-[0.2px] lg:tracking-[0.2px] md:mt-[68px] lg:mt-[68px]"
             >
@@ -270,19 +270,19 @@ export default function LoginPage() {
             <div className="flex items-center justify-center gap-[40px] mt-7 md:mt-8 lg:mt-8">
               <button type="button" aria-label="카카오로 로그인"
                 onClick={() => handleSocialLogin("kakao")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
+                className="flex h-[46px] w-[46px] items-center justify-center rounded-[8px] transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "var(--color-kakao)" }}>
                 <KakaoIcon />
               </button>
               <button type="button" aria-label="네이버로 로그인"
                 onClick={() => handleSocialLogin("naver")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
+                className="flex h-[46px] w-[46px] items-center justify-center rounded-[8px] transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "var(--color-naver)" }}>
                 <NaverIcon />
               </button>
               <button type="button" aria-label="구글로 로그인"
                 onClick={() => handleSocialLogin("google")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
+                className="flex h-[46px] w-[46px] items-center justify-center rounded-[8px] bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
                 <GoogleIcon />
               </button>
             </div>

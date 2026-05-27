@@ -200,7 +200,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
           {isEmpty ? (
             <button
               onClick={handleAddProfile}
-              className="w-full h-[48px] rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white bg-[var(--color-primary)] hover:opacity-90 transition-colors"
+              className="w-full h-[48px] rounded-[8px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white bg-[var(--color-primary)] hover:opacity-90 transition-colors"
             >
               프로필 등록하기
             </button>
@@ -208,7 +208,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
             <button
               onClick={handleConfirm}
               disabled={!isChanged}
-              className={`w-full h-[48px] rounded-[30px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-colors ${
+              className={`w-full h-[48px] rounded-[8px] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-colors ${
                 isChanged
                   ? "bg-[var(--color-primary)] hover:opacity-90"
                   : "bg-[var(--color-border)]"

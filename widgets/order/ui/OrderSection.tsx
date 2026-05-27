@@ -5,14 +5,9 @@ import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import logoMain from "@/shared/assets/logo-main.svg";
 import { getErrorMessage } from "@/shared/lib/api";
-import orderTitleImage from "@/widgets/order/assets/order-title-please-order.webp";
 import orderMobileHeroImage from "@/widgets/order/assets/order-mobile-hero.png";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
-import orderDogImage from "@/widgets/order/assets/order-advertise-banner.webp";
-import heroLeftPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-left-paw.webp";
-import heroRightPaw from "@/widgets/subscribe/plans/assets/subscribe-item-hero-right-paw.webp";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -25,7 +20,7 @@ import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/ap
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 
 const inputCls =
-  "h-8 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
+  "h-8 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
 function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -172,18 +167,18 @@ function SectionCard({
   const contentId = useId();
 
   return (
-    <div className="rounded-[20px] bg-[var(--color-surface-warm)] px-7">
+    <div className="rounded-[20px] bg-white px-3">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
         aria-controls={contentId}
-        className="w-full flex items-center justify-between py-7 text-left"
+        className="w-full flex items-center justify-between pt-7 pb-5 text-left border-b border-[var(--color-text-muted)]"
       >
         <span className="max-md:text-subtitle-16-b md:text-subtitle-18-b lg:text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
         <ChevronIcon open={open} />
       </button>
-      <CollapsiblePanel id={contentId} open={open} innerClassName="pb-7">
+      <CollapsiblePanel id={contentId} open={open} innerClassName="pt-5 pb-5">
         {children}
       </CollapsiblePanel>
     </div>
@@ -231,7 +226,7 @@ function RadioButton({
         type="button"
         onClick={onChange}
         className={[
-          "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
+          "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
           checked ? "border-2 border-[var(--color-accent)]" : "border border-[var(--color-border)]",
         ].join(" ")}
       >
@@ -514,7 +509,7 @@ export default function OrderSection({
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
-        <div className="rounded-[20px] bg-white px-7 max-[585px]:pt-3 min-[586px]:max-md:pt-5 max-md:pb-7 md:py-7 lg:py-7">
+        <div>
           <div className="max-[585px]:mx-auto max-[585px]:flex max-[585px]:w-full max-[585px]:max-w-[170px] max-[585px]:flex-col max-[585px]:items-center max-[585px]:gap-5 min-[586px]:flex min-[586px]:items-center min-[586px]:gap-6">
             <div className="max-[585px]:w-[132px] max-[585px]:h-[132px] min-[586px]:w-[117px] min-[586px]:h-[117px] shrink-0 flex items-center justify-center rounded-[16px] overflow-hidden">
               <Image
@@ -543,7 +538,7 @@ export default function OrderSection({
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+                  className="w-7 h-7 rounded-[5px] border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
                 >
                   −
                 </button>
@@ -554,7 +549,7 @@ export default function OrderSection({
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                   disabled={quantity >= 99}
-                  className="w-7 h-7 rounded-full border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+                  className="w-7 h-7 rounded-[5px] border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
                 >
                   +
                 </button>
@@ -593,7 +588,7 @@ export default function OrderSection({
               <button
                 type="button"
                 onClick={handleChangeAddress}
-                className="shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 py-1.5 text-body-13-m text-white"
+                className="shrink-0 rounded-[5px] bg-[var(--color-accent)] px-3 py-1.5 text-body-13-m text-white"
               >
                 배송지 변경
               </button>
@@ -656,7 +651,7 @@ export default function OrderSection({
                 <button
                   type="button"
                   onClick={handleSearchAddress}
-                  className="h-8 shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                  className="h-8 shrink-0 rounded-[5px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
                 >
                   주소찾기
                 </button>
@@ -728,7 +723,7 @@ export default function OrderSection({
             <button
               type="button"
               onClick={() => openPaymentPopup(paymentMethod)}
-              className="flex items-center gap-3 border-t border-white pt-4 w-full text-left hover:opacity-70 transition-opacity"
+              className="flex items-center gap-3 border-t border-[var(--color-border-light)] pt-4 w-full text-left hover:opacity-70 transition-opacity"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
                 <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
@@ -745,7 +740,7 @@ export default function OrderSection({
           )}
 
           {/* 쿠폰 사용 */}
-          <div className="flex flex-col gap-3 border-t border-white pt-4">
+          <div className="flex flex-col gap-3 border-t border-[var(--color-border-light)] pt-4">
             <Checkbox
               checked={couponEnabled}
               onChange={() => {
@@ -774,7 +769,7 @@ export default function OrderSection({
                     <button
                       type="button"
                       onClick={() => void handleApplyCoupon()}
-                      className="h-8 shrink-0 rounded-[4px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                      className="h-8 shrink-0 rounded-[5px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
                     >
                       쿠폰적용
                     </button>
@@ -838,6 +833,8 @@ export default function OrderSection({
               </div>
             </div>
 
+            <div className="border-t border-[var(--color-border-light)]" />
+
             <div className="flex justify-between items-center">
               <span className="text-body-14-b text-[var(--color-text)]">월 요금제</span>
               <span className="text-price-20-eb text-[var(--color-text)]">{formatPrice(total)}</span>
@@ -869,7 +866,7 @@ export default function OrderSection({
                 id="order-agreements-panel"
                 open={agreeOpen}
                 className="mt-3"
-                innerClassName="flex flex-col gap-2.5 border-t border-white pt-3 pl-1"
+                innerClassName="flex flex-col gap-2.5 border-t border-[var(--color-border-light)] pt-3 pl-1"
               >
                   <Checkbox
                     checked={agreeTerms}
@@ -899,39 +896,21 @@ export default function OrderSection({
               type="button"
               disabled={!agreeAll || isPending}
               onClick={handlePay}
-              className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-body-14-sb disabled:opacity-50"
+              className="w-full h-12 rounded-[8px] bg-[var(--color-why-bg)] text-white text-body-16-sb tracking-[-0.02em] disabled:opacity-50"
             >
               {isPending ? "처리 중…" : "결제하기"}
             </button>
         </div>
       </SectionCard>
 
-      <div
-        className="rounded-[20px] flex justify-center items-center gap-0 overflow-hidden"
-        style={{ background: "var(--color-surface-light)", height: "104px" }}
-      >
-        <div className="shrink-0 flex items-center justify-center" style={{ width: "110px", height: "104px" }}>
-          <Image
-            src={orderDogImage}
-            alt="강아지"
-            width={96}
-            height={96}
-            className="object-contain"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <Image src={logoMain} alt="꼬순박스" width={64} height={22} className="object-contain object-left" />
-          <span
-            style={{ fontFamily: '"Griun Fromsol", sans-serif', fontSize: "16px", lineHeight: "21px", color: "var(--color-text)" }}
-          >
-            100% 국내산
-          </span>
-          <span
-            style={{ fontFamily: '"Griun Fromsol", sans-serif', fontSize: "16px", lineHeight: "21px", color: "var(--color-text)" }}
-          >
-            휴먼그레이드 수제간식 구독
-          </span>
-        </div>
+      <div className="overflow-hidden rounded-[8px]">
+        <Image
+          src="/images/sidebar-banner-001.png"
+          alt="꼬순박스 배너"
+          width={375}
+          height={126}
+          className="w-full h-auto"
+        />
       </div>
     </div>
   );
@@ -952,37 +931,27 @@ export default function OrderSection({
         />
       </div>
 
-      <div
-        className="relative overflow-hidden max-md:hidden md:h-[160px] lg:h-[160px] md:py-0 lg:py-0 flex items-center justify-center"
-        style={{ background: "var(--gradient-checklist-hero)" }}
-      >
-        <Image
-          src={heroLeftPaw}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[25%] top-1/2 h-auto w-[74px] -translate-y-1/2"
-        />
-        <Image
-          src={heroRightPaw}
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[69%] top-1/2 h-auto w-[84px] -translate-y-1/2"
-        />
-        <div className="relative z-10 text-center px-4 flex flex-col items-center gap-4">
-          <Image
-            src={orderTitleImage}
-            alt="주문을 완료해주세요!"
-            width={400}
-            height={60}
-            className="h-auto w-[268px] object-contain"
-            priority
-          />
-          <p
-            className="text-[16px] leading-5 tracking-[-0.02em] text-[var(--color-text)]"
-            style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
-          >
-            입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요.
-          </p>
+      <div className="max-md:hidden w-full" style={{ background: "var(--color-why-bg)" }}>
+        <div className="mx-auto flex h-[58px] w-full max-w-[var(--max-width-content)] items-center justify-center gap-10 px-4">
+          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
+            주문상품금액&nbsp;&nbsp;{formatPrice(basePrice)}
+          </span>
+          <span className="text-subtitle-16-sb text-white">+</span>
+          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
+            총 할인금액&nbsp;&nbsp;
+            <span className={couponDiscount > 0 ? "text-[var(--color-accent-orange)]" : ""}>
+              {formatPrice(couponDiscount)}
+            </span>
+          </span>
+          <span className="text-subtitle-16-sb text-white">-</span>
+          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
+            총 배송비&nbsp;&nbsp;0원
+          </span>
+          <span className="text-subtitle-16-sb text-white">=</span>
+          <div className="flex items-center gap-3">
+            <span className="text-subtitle-16-b tracking-[-0.04em] text-[var(--color-accent-orange)]">총 주문금액</span>
+            <span className="text-subtitle-20-b tracking-[-0.04em] text-[var(--color-accent-orange)]">{formatPrice(total)}</span>
+          </div>
         </div>
       </div>
 
@@ -991,35 +960,9 @@ export default function OrderSection({
           className="mx-auto px-4 md:px-0 lg:px-0 py-6 md:py-8 lg:py-8 md:min-w-[900px] lg:min-w-[900px]"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
-          <div className="max-md:hidden mb-4">
-            <div
-              className="rounded-[20px] flex items-center justify-center h-20 gap-10"
-              style={{ background: "var(--color-surface-warm)" }}
-            >
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-                주문상품금액&nbsp;&nbsp;{formatPrice(basePrice)}
-              </span>
-              <span className="text-subtitle-16-sb text-[var(--color-text)]">+</span>
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-                총 할인금액&nbsp;&nbsp;
-                <span className={couponDiscount > 0 ? "text-[var(--color-primary)]" : ""}>
-                  {formatPrice(couponDiscount)}
-                </span>
-              </span>
-              <span className="text-subtitle-16-sb text-[var(--color-text)]">-</span>
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
-                총 배송비&nbsp;&nbsp;0원
-              </span>
-              <span className="text-subtitle-16-sb text-[var(--color-text)]">=</span>
-              <div className="flex items-center gap-3">
-                <span className="text-subtitle-16-b tracking-[-0.04em] text-[var(--color-primary)]">총 주문금액</span>
-                <span className="text-subtitle-20-b tracking-[-0.04em] text-[var(--color-primary)]">{formatPrice(total)}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="max-md:hidden md:grid lg:grid md:grid-cols-[1fr_327px] lg:grid-cols-[1fr_327px] gap-4 items-start">
+          <div className="max-md:hidden md:grid lg:grid md:grid-cols-[1fr_1px_327px] lg:grid-cols-[1fr_1px_327px] md:gap-x-8 lg:gap-x-8 items-start">
             {leftSections}
+            <div className="self-stretch bg-[var(--color-text-muted)]" />
             {rightColumn}
           </div>
 

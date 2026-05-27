@@ -94,7 +94,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
       <button
         type="button"
         onClick={onLeft}
-        className="h-10 md:h-12 lg:h-12 flex-1 rounded-full bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+        className="h-10 md:h-12 lg:h-12 flex-1 rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
       >
         {leftLabel}
       </button>
@@ -102,7 +102,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
         type="button"
         onClick={onRight}
         disabled={rightDisabled}
-        className="h-10 md:h-12 lg:h-12 flex-1 rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="h-10 md:h-12 lg:h-12 flex-1 rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {rightLabel}
       </button>

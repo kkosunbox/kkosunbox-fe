@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createInquiry } from "@/features/inquiry/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
@@ -10,8 +10,7 @@ import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import InquiryTitle from "@/widgets/support/faq/assets/inquiry-title.webp";
-import InquiryTitleMobile from "@/widgets/support/faq/assets/inquiry-title-mobile.webp";
+import { SupportHero } from "@/widgets/support/shared";
 
 const MAX_TITLE_LENGTH = 50;
 const MAX_CONTENT_LENGTH = 200;
@@ -181,45 +180,26 @@ export default function InquirySection() {
         onConfirm={() => setForm((prev) => ({ ...prev, [termsModal === "terms" ? "agreeTerms" : "agreePrivacy"]: true }))}
       />
     )}
-    <div className="bg-white pb-16 pb-12">
-      {/* 히어로 — Figma 215px, gradient */}
-      <section
-        className="flex flex-col items-center min-h-[182px] md:min-h-[215px] lg:min-h-[215px] px-4 pb-8 max-md:pb-6 max-md:pt-12 md:pb-10 lg:pb-10 md:pt-[42px] lg:pt-[42px]"
-        style={{ background: "var(--gradient-inquiry-hero)" }}
-        aria-label="문의 페이지 소개"
-      >
-        <Image
-          src={InquiryTitleMobile}
-          alt="문의하기"
-          width={97}
-          height={38}
-          sizes="97px"
-          className="max-md:block max-md:w-[97px] md:hidden lg:hidden"
-          priority
-        />
-        <Image
-          src={InquiryTitle}
-          alt="문의하기"
-          width={110}
-          height={40}
-          className="max-md:hidden md:block lg:block md:h-auto lg:h-auto md:w-[110px] lg:w-[110px]"
-          priority
-        />
-        <p
-          className="mt-4 md:mt-8 lg:mt-8 max-w-[345px] text-center text-body-16-r leading-5 tracking-[-0.02em] text-[var(--color-text)]"
-          style={{
-            fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-          }}
-        >
-          궁금한 사항이 있으시면 상세히 안내해 드리겠습니다.
-        </p>
-      </section>
+    <div className="bg-white">
+      <SupportHero showButton={false} />
 
-      {/* 카드 — Figma 1013×632, shadow, 카드가 히어로와 살짝 겹침 */}
-      <div className={`relative z-10 ${PAGE_CONTENT_WRAPPER_CLASS}`}>
+      {/* 폼 영역 */}
+      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:py-10 lg:py-10`}>
         <form onSubmit={handleSubmit}>
-          <div className="max-md:-mt-12 rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:-mt-[50px] lg:-mt-[50px] md:px-8 lg:px-8 md:py-12 lg:py-12">
+          <div className="rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:px-8 lg:px-8 md:py-12 lg:py-12">
           <div className="mx-auto flex w-full max-w-[718px] flex-col gap-1 lg:gap-3">
+            {/* 뒤로가기 + 제목 */}
+            <div className="mb-6 max-md:mb-4">
+              <Link
+                href="/support"
+                className="inline-flex items-center gap-1 text-body-20-sb text-[var(--color-text)]"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M15 6L9 12L15 18" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <span>문의하기</span>
+              </Link>
+            </div>
             {/* 제목 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="title" className={labelClass}>
@@ -382,7 +362,7 @@ export default function InquirySection() {
                 <button
                   type="submit"
                   disabled={!isSubmittable || isPending}
-                  className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+                  className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
                 >
                   {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
                 </button>
@@ -450,7 +430,7 @@ export default function InquirySection() {
             <button
               type="submit"
               disabled={!isSubmittable || isPending}
-              className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[30px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+              className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
             >
               {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
             </button>

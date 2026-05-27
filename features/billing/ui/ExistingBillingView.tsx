@@ -115,7 +115,7 @@ export default function ExistingBillingView({
         <button
           type="button"
           onClick={() => onConfirm(billing)}
-          className="w-full h-12 rounded-[30px] bg-[var(--color-accent)] text-white text-body-14-sb transition-opacity hover:opacity-90"
+          className="w-full h-12 rounded-[8px] bg-[var(--color-accent)] text-white text-body-14-sb transition-opacity hover:opacity-90"
         >
           이 카드로 결제
         </button>

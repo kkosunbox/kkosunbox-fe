@@ -301,7 +301,7 @@ export default function AddressFormView({
           type="button"
           onClick={handleSubmit}
           disabled={saving}
-          className="h-12 w-full rounded-full bg-[var(--color-accent)] text-btn-15-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="h-12 w-full rounded-[8px] bg-[var(--color-accent)] text-btn-15-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "저장 중..." : "저장하기"}
         </button>

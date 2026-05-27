@@ -85,7 +85,7 @@ function CarouselPrevButton({
       aria-label="이전 리뷰"
       disabled={disabled}
       onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
       style={{ background: "rgba(255,255,255,0.3)" }}
     >
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -114,7 +114,7 @@ function CarouselNextButton({
       aria-label="다음 리뷰"
       disabled={disabled}
       onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-white shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
       style={{ background: "rgba(255,255,255,0.3)" }}
     >
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -310,7 +310,7 @@ export default function ReviewsSection() {
             <button
               type="button"
               onClick={handleChecklistCtaClick}
-              className="h-12 w-[327px] rounded-[12px] bg-[var(--color-text)] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white md:h-[52px] md:w-[312px] md:text-[16px]"
+              className="h-12 w-[327px] rounded-[8px] bg-[var(--color-text)] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white md:h-[52px] md:w-[312px] md:text-[16px]"
             >
               10초 진단하고 우리 아이 맞춤 추천 받기
             </button>

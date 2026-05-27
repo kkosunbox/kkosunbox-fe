@@ -172,7 +172,7 @@ export default function PackagePlansSection() {
                           </span>
                         </>
                       ) : (
-                        <div className="h-[36px] animate-pulse rounded bg-[var(--color-text-muted)]" />
+                        <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
                       )}
                     </div>
                   </button>

@@ -11,13 +11,12 @@ import { getErrorMessage } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import registerPaw from "@/widgets/register/assets/register-pow.webp";
 import forgotPasswordTitle from "../assets/forgot-password-title.webp";
-
 /* ─── 상수 ─── */
 const RESEND_COOLDOWN = 60;
 
 /* ─── 공통 스타일 ─── */
 const inputBase =
-  "h-[32px] w-full md:w-[220px] lg:w-[220px] rounded-[4px] bg-white px-3 text-[13px] font-medium leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none focus:ring-1 focus:ring-[var(--color-accent)] transition-opacity";
+  "h-10 w-full md:w-[220px] lg:w-[220px] rounded-[4px] bg-white px-3 text-[13px] font-medium leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none focus:ring-1 focus:ring-[var(--color-accent)] transition-opacity";
 
 const inputDisabled = "opacity-50 pointer-events-none bg-[var(--color-surface-light)]";
 
@@ -56,7 +55,7 @@ function FieldRow({
     <div className="flex max-md:flex-col md:flex-row lg:flex-row md:items-start lg:items-start gap-2 md:gap-0 lg:gap-0">
       <label
         htmlFor={htmlFor}
-        className="shrink-0 md:w-[94px] lg:w-[94px] md:h-[32px] lg:h-[32px] md:flex lg:flex md:items-center lg:items-center text-[13px] font-medium leading-[16px] text-[var(--color-text)]"
+        className="shrink-0 md:w-[94px] lg:w-[94px] md:h-10 lg:h-10 md:flex lg:flex md:items-center lg:items-center text-[13px] font-medium leading-[16px] text-[var(--color-text)]"
       >
         {label}
       </label>

@@ -266,7 +266,7 @@ export default function BreedCombobox({
           onKeyDown={handleKeyDown}
           placeholder={isMixMode ? "기타" : placeholder}
           className={[
-            "h-9 w-full min-w-0 truncate rounded-[4px] border border-[var(--color-divider-warm)] bg-white px-3 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-accent)]",
+            "h-10 w-full min-w-0 truncate rounded-[4px] border border-[var(--color-divider-warm)] bg-white px-3 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-accent)]",
             query ? "pr-8" : "",
             inputClassName,
           ].join(" ")}

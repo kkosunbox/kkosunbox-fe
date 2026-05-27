@@ -18,9 +18,8 @@ import {
 } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
-
 const inputCls =
-  "h-8 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
+  "h-10 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
 function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";

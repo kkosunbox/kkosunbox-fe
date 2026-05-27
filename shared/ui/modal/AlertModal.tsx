@@ -84,7 +84,7 @@ export default function AlertModal({
 
       {/* Card */}
       <div
-        className="relative z-10 w-full max-w-[380px] rounded-[24px] overflow-hidden bg-[var(--color-border-light)]"
+        className="relative z-10 w-full max-w-[380px] rounded-[20px] overflow-hidden bg-[var(--color-border-light)]"
         style={{ boxShadow: "0px 4px 24px rgba(0, 0, 0, 0.08)" }}
       >
         {/* Header — 웜 크림 그라디언트 */}
@@ -115,8 +115,7 @@ export default function AlertModal({
             ref={primaryRef}
             type="button"
             onClick={handlePrimary}
-            className="w-full h-12 rounded-[8px] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
-            style={{ background: "var(--color-text)" }}
+            className="w-full h-12 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
           >
             {primaryLabel}
           </button>

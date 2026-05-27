@@ -177,7 +177,7 @@ function BaseInput({
       {...props}
       readOnly={readOnly}
       className={[
-        "h-9 w-full rounded-[4px] border-0 bg-[var(--color-surface-light)] px-3 text-body-13-m text-[var(--color-text)] outline-none",
+        "h-10 w-full rounded-[4px] border-0 bg-[var(--color-surface-light)] px-3 text-body-13-m text-[var(--color-text)] outline-none",
         readOnly ? "cursor-default text-[var(--color-text-secondary)]" : "",
         className,
       ].join(" ")}
@@ -194,7 +194,7 @@ function GenderButtons({
 }) {
   const className = (value: DogGender) =>
     [
-      "flex h-8 flex-1 items-center justify-center rounded-[4px] text-body-13-m transition-colors",
+      "flex h-10 flex-1 items-center justify-center rounded-[4px] text-body-13-m transition-colors",
       gender === value
         ? "bg-[var(--color-secondary)] font-semibold text-[var(--color-surface-dark)]"
         : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
@@ -621,7 +621,7 @@ export default function ProfileManagementSection({
                   value={petName}
                   onChange={(event) => setPetName(event.target.value)}
                   placeholder="이름을 입력해주세요"
-                  className="!h-8 !border-0"
+                  className="!h-10 !border-0"
                 />
               </FieldShell>
               <FieldShell id="m-breed" label="강아지 품종" mobile>
@@ -631,7 +631,7 @@ export default function ProfileManagementSection({
                   onChange={setBreed}
                   placeholder="품종 선택"
                   className="min-w-0 w-full"
-                  inputClassName="!h-8 !border-0"
+                  inputClassName="!h-10 !border-0"
                 />
               </FieldShell>
               <FieldShell id="m-weight" label="몸무게" mobile>
@@ -644,7 +644,7 @@ export default function ProfileManagementSection({
                   onBlur={() => setIsWeightFocused(false)}
                   onChange={(event) => setWeight(sanitizeWeightInput(event.target.value))}
                   placeholder="예) 8"
-                  className="!h-8 !border-0"
+                  className="!h-10 !border-0"
                 />
               </FieldShell>
               <FieldShell id="m-birth" label="생년월일" mobile>
@@ -659,7 +659,7 @@ export default function ProfileManagementSection({
                   }}
                   placeholder="생년월일 선택"
                   formatDisplay={formatBirthDateDisplayDots}
-                  triggerClassName="!h-8 !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
+                  triggerClassName="!h-10 !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
                 />
               </FieldShell>
               <FieldShell label="성별" mobile>
@@ -673,7 +673,7 @@ export default function ProfileManagementSection({
                   onChange={(event) => setSpecialNotes(event.target.value)}
                   placeholder={SPECIAL_NOTES_PLACEHOLDER}
                   maxLength={SPECIAL_NOTES_MAX_LENGTH}
-                  className="!h-8 !border-0"
+                  className="!h-10 !border-0"
                 />
               </FieldShell>
             </div>

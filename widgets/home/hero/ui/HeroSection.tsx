@@ -1,18 +1,55 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- Hero는 대형 원본 해상도 유지가 필요해 Next/Image 미사용 */
+
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import heroThirdBg from "../assets/hero-main-background-third-ver.png";
+import heroThirdHeading from "../assets/hero-catch-phrase-third-web.png";
 
 const SLIDE_INTERVAL = 8000;
 
-const slides = [
+type HeroSlide = {
+  id: string;
+  type: "solid" | "photo" | "fullBg";
+  bg?: string;
+  bgImage?: string;
+  headingImg: string;
+  headingAlt: string;
+  headingW: number;
+  headingH: number;
+  headingClass: string;
+  subtext: string;
+  tags: string;
+  subtextClass?: string;
+  tagsClass?: string;
+  ctaBg?: string;
+};
+
+const slides: HeroSlide[] = [
+  {
+    id: "custom-snack",
+    type: "fullBg",
+    bgImage: heroThirdBg.src,
+    headingImg: heroThirdHeading.src,
+    headingAlt: "우리 아이를 위한 맞춤 건강간식",
+    headingW: 333,
+    headingH: 103,
+    headingClass: "max-lg:w-[200px] lg:w-[333px] h-auto",
+    subtext: "꼬순박스를 첫 구독하시는 분들께 드리는 혜택!",
+    tags: "#꼬순박스맞춤간식, #우리아이 건강간식, #반려견간식",
+    subtextClass:
+      "font-medium text-white max-lg:text-[14px] max-lg:leading-[17px] lg:text-[18px] lg:leading-[21px]",
+    tagsClass:
+      "font-medium text-[14px] leading-[17px] text-[var(--color-hero-third-tagline)]",
+    ctaBg: "var(--color-hero-third-cta)",
+  },
   {
     id: "truck",
-    type: "solid" as const,
+    type: "solid",
     bg: "var(--color-hero-truck-bg)",
     headingImg: "/images/hero-truck-title.png",
     headingAlt: "매주 신선하게 정기배송",
@@ -24,7 +61,7 @@ const slides = [
   },
   {
     id: "dog",
-    type: "photo" as const,
+    type: "photo",
     bg: "var(--color-hero-bg)",
     headingImg: "/images/hero-dog-title.png",
     headingAlt: "강아지가 먼저 찾는 간식",
@@ -34,7 +71,7 @@ const slides = [
     subtext: "먹는 순간 표정이 달라지는 휴먼그레이드 수제 간식 구독",
     tags: "#재구매율 91% #100% 국내산 수제 #알러지 맞춤 추천",
   },
-] as const;
+];
 
 export default function HeroSection() {
   const { isLoggedIn } = useAuth();
@@ -75,20 +112,26 @@ export default function HeroSection() {
             className={`absolute inset-0 transition-opacity duration-1000 ${
               isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
             }`}
-            style={{ background: slide.bg }}
+            style={slide.bg ? { background: slide.bg } : undefined}
           >
-            {/* 슬라이드 2: 전체 배경 사진 */}
             {slide.type === "photo" && (
-              <Image
+              <img
                 src="/images/hero-dog-hd.png"
                 alt=""
-                fill
-                className="object-cover object-center"
-                priority={false}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                decoding="async"
               />
             )}
 
-            {/* 모바일 텍스트 가독성 보조 오버레이 */}
+            {slide.type === "fullBg" && slide.bgImage && (
+              <img
+                src={slide.bgImage}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover object-[70%_center] max-lg:object-[85%_center]"
+                decoding="async"
+              />
+            )}
+
             {slide.type === "photo" && (
               <div className="absolute inset-0 lg:hidden" style={{ background: "rgba(255,248,240,0.45)" }} />
             )}
@@ -96,27 +139,41 @@ export default function HeroSection() {
             <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:py-10 h-full lg:min-h-[537px]">
               {/* 좌측: 텍스트 */}
               <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left max-lg:order-2 lg:order-1 lg:pl-20">
-                <h1 className="max-lg:mb-3 lg:mb-4">
-                  <Image
+                <h1 className="max-lg:mb-4 lg:mb-6">
+                  <img
                     src={slide.headingImg}
                     alt={slide.headingAlt}
                     width={slide.headingW}
                     height={slide.headingH}
                     className={slide.headingClass}
-                    priority={index === 0}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
                   />
                 </h1>
-                <p className="max-lg:text-[14px] max-lg:font-medium lg:text-[20px] lg:font-medium text-[var(--color-hero-subtext)] max-lg:mb-2 lg:mb-3">
+                <p
+                  className={`max-lg:mb-2 lg:mb-3 ${
+                    slide.subtextClass ??
+                    "max-lg:text-[14px] max-lg:font-medium lg:text-[20px] lg:font-medium text-[var(--color-hero-subtext)]"
+                  }`}
+                >
                   {slide.subtext}
                 </p>
-                <p className="text-[var(--color-hero-tagline)] max-lg:text-body-13-r lg:text-body-14-m max-lg:mb-6 lg:mb-[52px]">
+                <p
+                  className={`max-lg:mb-6 lg:mb-[52px] ${
+                    slide.tagsClass ??
+                    "text-[var(--color-hero-tagline)] max-lg:text-body-13-r lg:text-body-14-m"
+                  }`}
+                >
                   {slide.tags}
                 </p>
                 <Button
                   onClick={handleCta}
                   variant="primary"
                   size="lg"
-                  style={{ background: "var(--color-cta-button)", borderRadius: 12 }}
+                  style={{
+                    background: slide.ctaBg ?? "var(--color-cta-button)",
+                    borderRadius: 12,
+                  }}
                   className="text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 max-lg:h-[40px] max-lg:w-[260px] max-lg:text-[13px] lg:h-[52px] lg:w-[282px] lg:text-[16px]"
                 >
                   10초 진단하고 우리 아이 맞춤 추천 받기
@@ -126,13 +183,14 @@ export default function HeroSection() {
               {/* 우측: 트럭 이미지 (슬라이드 1 전용) */}
               {slide.type === "solid" && (
                 <div className="flex flex-1 items-center justify-center max-lg:order-1 lg:order-2 max-lg:mb-4 lg:py-10">
-                  <Image
+                  <img
                     src="/images/hero-truck.png"
                     alt="꼬순박스 배송 트럭"
                     width={460}
                     height={380}
                     className="max-lg:max-w-[220px] lg:max-w-[460px] w-full object-contain"
-                    priority
+                    loading="eager"
+                    decoding="async"
                   />
                 </div>
               )}

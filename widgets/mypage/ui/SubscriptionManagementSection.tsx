@@ -111,12 +111,14 @@ function SubscriptionsSummaryCard({
                 >
                   {theme.tierLabel}
                 </span>
-                <span
-                  className="text-body-14-sb leading-[17px]"
-                  style={{ color: theme.colorVar }}
-                >
-                  {totalQuantity}BOX
-                </span>
+                {totalQuantity > 1 && (
+                  <span
+                    className="text-body-14-sb leading-[17px]"
+                    style={{ color: theme.colorVar }}
+                  >
+                    {totalQuantity}BOX
+                  </span>
+                )}
               </div>
             );
           })}
@@ -243,22 +245,15 @@ function SubscriptionRow({
 
       <div className="flex min-w-0 flex-1 flex-col max-md:px-4 max-md:py-[15px] md:p-5 lg:p-5">
         <div className="max-md:mb-2 md:mb-3 lg:mb-3 flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-flex items-center rounded-full px-3 py-1 max-md:text-[12px] max-md:leading-[14px] max-md:font-semibold md:text-body-14-sb lg:text-body-14-sb md:leading-[17px] lg:leading-[17px] text-white"
-              style={{ background: badgeColor }}
-            >
-              {theme.tierLabel}
-            </span>
-            {boxQuantity > 1 && (
-              <span
-                className="max-md:hidden text-body-14-sb leading-[17px]"
-                style={{ color: badgeColor }}
-              >
-                {boxQuantity}BOX
-              </span>
-            )}
-          </div>
+          <span
+            className={`text-body-14-sb leading-[17px] max-md:text-[12px] max-md:leading-[14px] ${
+              boxQuantity <= 1 ? "invisible" : ""
+            }`}
+            style={{ color: badgeColor }}
+            aria-hidden={boxQuantity <= 1}
+          >
+            {boxQuantity}BOX
+          </span>
           <Link
             href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
             className="transition-opacity hover:opacity-70"

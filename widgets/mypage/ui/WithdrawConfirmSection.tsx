@@ -192,7 +192,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
               onChange={(e) => setEtcText(e.target.value)}
               placeholder="탈퇴 이유를 작성해주세요."
               disabled={!isEtc}
-              className="h-8 w-[271px] rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] disabled:opacity-50"
+              className="h-10 w-[271px] rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] disabled:opacity-50"
             />
           </div>
         </div>
@@ -343,7 +343,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
                 value={etcText}
                 onChange={(e) => setEtcText(e.target.value)}
                 placeholder="탈퇴 이유를 작성해주세요."
-                className="ml-8 h-8 rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)]"
+                className="ml-8 h-10 rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)]"
               />
             )}
           </div>

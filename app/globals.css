@@ -185,6 +185,8 @@
   --color-review-chip: #A16240;         /* 리뷰 카드 구독 기간 칩 */
   --color-hero-cta-bg: #454545;         /* Hero CTA 버튼 배경 */
   --color-hero-tagline: #C37132;        /* Hero 해시태그 문구 텍스트 */
+  --color-hero-third-tagline: #813800;  /* Hero 슬라이드3 해시태그 */
+  --color-hero-third-cta: #89431D;      /* Hero 슬라이드3 CTA 버튼 */
 
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
@@ -321,6 +323,8 @@
   --color-review-chip: var(--color-review-chip);
   --color-hero-cta-bg: var(--color-hero-cta-bg);
   --color-hero-tagline: var(--color-hero-tagline);
+  --color-hero-third-tagline: var(--color-hero-third-tagline);
+  --color-hero-third-cta: var(--color-hero-third-cta);
 
   /* Text */
   --color-text: var(--color-text);

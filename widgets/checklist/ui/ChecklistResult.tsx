@@ -420,7 +420,7 @@ export default function ChecklistResult({
                   <Link
                     key={plan.id}
                     href={`/subscribe/detail?planId=${plan.id}`}
-                    className="flex w-full max-w-[272px] flex-col overflow-hidden rounded-[16px] bg-white max-md:max-w-full"
+                    className="group flex w-full max-w-[272px] flex-col overflow-hidden rounded-[16px] bg-white max-md:max-w-full"
                   >
                     {/* 패키지 이미지 */}
                     <div className="relative h-[252px] w-full overflow-hidden max-md:h-[180px]">
@@ -428,7 +428,7 @@ export default function ChecklistResult({
                         src={img}
                         alt={pkg.name}
                         fill
-                        className="object-cover"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                         sizes="(min-width: 768px) 272px, calc(100vw - 32px)"
                       />
                       {tier === recommendedPlanTier && (

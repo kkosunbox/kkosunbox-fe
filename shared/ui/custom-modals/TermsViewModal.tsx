@@ -268,7 +268,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
 
       {/* Card */}
-      <div className="relative z-10 flex flex-col w-full max-w-[480px] max-h-[80dvh] rounded-[20px] bg-white overflow-hidden">
+      <div className="relative z-10 flex flex-col w-full max-w-[480px] max-h-[80dvh] rounded-[24px] bg-white overflow-hidden">
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"

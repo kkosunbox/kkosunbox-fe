@@ -3,8 +3,10 @@
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Text, Button, ScrollReveal } from "@/shared/ui";
+import { Text, Button, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import packageExplainWithBasic from "../assets/package-explain-with-basic.png";
@@ -54,8 +56,10 @@ export default function PackagePlansSection() {
   const { profile } = useProfile();
   const router = useRouter();
   const [activePackageIndex, setActivePackageIndex] = useState(0);
-  const activePackage = PACKAGE_EXPLAIN_IMAGES[activePackageIndex];
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const activePackage = PACKAGE_EXPLAIN_IMAGES[activePackageIndex];
+  const activePkg = PACKAGES.find((packageItem) => packageItem.tier === activePackage.tier);
+  const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === activePackage.tier);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -76,6 +80,11 @@ export default function PackagePlansSection() {
     }
     const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
     router.push(hasChecklist ? "/subscribe" : "/checklist");
+  }
+
+  function handleDetailClick() {
+    if (!activePlan) return;
+    router.push(`/subscribe/detail?planId=${activePlan.id}`);
   }
 
   return (
@@ -104,8 +113,64 @@ export default function PackagePlansSection() {
         </ScrollReveal>
 
         <ScrollReveal variant="fade-up" delay={200}>
-          <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center lg:gap-7">
-            <div className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] shadow-sm md:rounded-[28px]">
+          <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center max-md:gap-[46px] lg:gap-7">
+            {/* 모바일 — detail 대표 이미지 + 패키지명·설명·상세보기 버튼 분리 */}
+            <div className="w-full max-w-[600px] max-md:block md:hidden lg:hidden">
+              <div
+                className="relative w-full overflow-hidden rounded-[22px]"
+                style={{ boxShadow: "var(--shadow-card-soft)" }}
+              >
+                <div className="relative aspect-square w-full bg-[var(--color-surface-warm)]">
+                  <Image
+                    key={activePackage.tier}
+                    src={TIER_DETAIL_HERO_IMAGES[activePackage.tier]}
+                    alt={`${activePkg?.name ?? activePackage.tier} 대표 이미지`}
+                    fill
+                    className="object-cover transition-opacity duration-500"
+                    sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
+                    priority
+                  />
+                </div>
+              </div>
+
+              {activePkg ? (
+                <div className="mt-4">
+                  <p
+                    className="text-[17px] font-bold leading-[22px] tracking-[-0.04em]"
+                    style={{ color: activePkg.colorVar }}
+                  >
+                    {activePkg.name}
+                  </p>
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <ul className="min-w-0 flex-1 flex flex-col gap-2">
+                      {activePkg.items.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-2 text-body-13-m leading-[18px] text-[var(--color-text)]"
+                        >
+                          <CheckCircleIcon color={activePkg.colorVar} className="mt-0.5 shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={handleDetailClick}
+                      disabled={!activePlan}
+                      className="flex h-10 w-[108px] shrink-0 flex-row items-center justify-center self-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      제품 상세보기
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {/* 태블릿·데스크탑 — 합성 설명 이미지 + 버튼 오버레이 */}
+            <div
+              className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] max-md:hidden md:rounded-[28px]"
+              style={{ boxShadow: "var(--shadow-card-soft)" }}
+            >
               <Image
                 key={activePackage.tier}
                 src={activePackage.src}
@@ -118,7 +183,7 @@ export default function PackagePlansSection() {
                 onClick={handleSubscribeClick}
                 variant="primary"
                 size="lg"
-                className="absolute bottom-4 right-4 h-10 w-[180px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] shadow-md max-md:bottom-3 max-md:right-3 max-md:w-[150px] max-md:px-4 lg:bottom-11 lg:right-11"
+                className="absolute bottom-4 right-4 h-10 w-[180px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] shadow-md lg:bottom-11 lg:right-11"
               >
                 제품 살펴보기
               </Button>
@@ -139,7 +204,7 @@ export default function PackagePlansSection() {
                       if (!plan) return;
                       router.push(`/subscribe/detail?planId=${plan.id}`);
                     }}
-                    className="group flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm transition-opacity md:h-[167px] lg:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+                    className="group flex h-[132px] w-full overflow-hidden rounded-2xl border-0 bg-white text-left max-md:shadow-none shadow-sm transition-opacity md:h-[167px] lg:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
                       <Image
@@ -150,26 +215,27 @@ export default function PackagePlansSection() {
                         sizes="180px"
                       />
                     </div>
-                    <div className="min-w-0 flex-1 px-4 py-[18px] md:py-[25px] lg:pl-6 lg:pr-0">
-                      <p className="mb-4 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                    <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
+                      <p className="mb-[14px] truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
                         {pkg.name}
                       </p>
-                      <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
+                      {/* Figma Group 1000005477 — 월 요금제 / n% + 금액 / 첫 구독 할인 */}
+                      <p className="mb-[7px] text-left text-[16px] font-bold capitalize leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
                         월 요금제
                       </p>
                       {plan ? (
                         <>
-                          <div className="mb-0.5 flex items-baseline gap-2">
-                            <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[16px]">
+                          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                            <span className="relative top-[-2px] text-left text-[16px] font-semibold capitalize leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)]">
                               {plan.discountRate}%
                             </span>
-                            <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                            <span className="text-left text-[20px] font-extrabold capitalize leading-[24px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
                               {plan.monthlyPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>
-                          <span className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[14px]">
+                          <p className="mt-[6px] text-left text-[14px] font-semibold capitalize leading-[17px] tracking-[-0.05em] text-[var(--color-cta-button)]">
                             첫 구독 할인
-                          </span>
+                          </p>
                         </>
                       ) : (
                         <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />

@@ -6,6 +6,7 @@ import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import logoMain from "@/shared/assets/logo-main.svg";
 import whyGalleryTitle from "../assets/why-gallery-title.png";
+import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.png";
 import galleryDogsUpper001 from "./gallery-dogs-upper-001.png";
 import galleryDogsUpper002 from "./gallery-dogs-upper-002.png";
 import galleryDogsUpper003 from "./gallery-dogs-upper-003.jpg";
@@ -21,10 +22,10 @@ type GalleryItem =
 function ArrowButton() {
   return (
     <div
-      className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-[2px_2px_4px_rgba(0,0,0,0.12)]"
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full shadow-[2px_2px_4px_rgba(0,0,0,0.12)] md:h-9 md:w-9"
       style={{ background: "rgba(255,255,255,0.5)" }}
     >
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+      <svg className="h-2.5 w-2.5 md:h-3.5 md:w-3.5" viewBox="0 0 14 14" fill="none" aria-hidden>
         <path
           d="M5 3L9 7L5 11"
           stroke="#2F2F2F"
@@ -40,13 +41,11 @@ function ArrowButton() {
 function PawDeco() {
   return (
     <svg
-      width="112"
-      height="123"
       viewBox="0 0 112 123"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className="pointer-events-none absolute right-4 top-3 h-[123px] w-[112px] select-none"
+      className="pointer-events-none absolute right-2 top-2 h-[51px] w-[49px] select-none md:right-4 md:top-3 md:h-[123px] md:w-[112px]"
     >
       <path d="M55.9595 56.5548C50.8201 57.8148 46.1233 59.7799 41.9064 62.7886C37.4775 65.9483 31.7177 66.2095 28.0217 63.5424C24.1026 60.7142 22.8492 52.0027 30.5267 46.751C32.6522 43.6566 28.4254 37.8824 38.1027 33.552C47.7903 30.56 50.3784 37.8005 53.6815 38.2071C60.9314 36.416 65.5958 41.8132 65.3771 46.3343C65.1565 50.8944 61.3356 55.237 55.9595 56.5548Z" fill="white" fillOpacity="0.8" />
       <path d="M62.1898 29.4486C60.3909 30.5843 56.1779 30.5392 54.8964 29.5832C53.9681 28.8901 53.4172 27.9366 53.1778 26.8207C52.6007 24.1289 53.3721 21.1516 55.298 18.4182C56.0724 17.3199 57.6924 16.8772 58.3035 15.6085C58.251 15.5856 61.1744 13.7104 62.4282 14.7533C65.9088 17.6496 67.0898 26.3553 62.1898 29.4486Z" fill="white" fillOpacity="0.8" />
@@ -79,18 +78,23 @@ function GalleryCTACard({
       onClick={onClick}
       aria-label={text}
       className={[
-        "relative overflow-hidden rounded-[20px] shrink-0 flex items-end justify-between text-left p-5 transition-opacity hover:opacity-90 xl:px-12 xl:pb-12",
+        "relative flex shrink-0 items-end justify-between overflow-hidden rounded-[20px] text-left transition-opacity hover:opacity-90",
+        "max-md:p-3 md:p-5 xl:px-12 xl:pb-12",
         wide
-          ? "w-[300px] lg:w-[420px] xl:w-[547px] h-[190px] lg:h-[220px] xl:h-[268px]"
-          : "w-[190px] lg:w-[240px] xl:w-[289px] h-[190px] lg:h-[220px] xl:h-[268px]",
+          ? "h-[120px] w-[245px] md:h-[190px] md:w-[300px] lg:h-[220px] lg:w-[420px] xl:h-[268px] xl:w-[547px]"
+          : "h-[120px] w-[129px] md:h-[190px] md:w-[190px] lg:h-[220px] lg:w-[240px] xl:h-[268px] xl:w-[289px]",
       ].join(" ")}
       style={{ background: bg }}
     >
       <PawDeco />
-      <div className="flex min-w-0 flex-col gap-4">
-        <Image src={logoMain} alt="꼬순박스" className="h-auto w-[64px] lg:w-[76px] xl:w-[90px]" />
+      <div className="flex min-w-0 flex-1 flex-col gap-4 max-md:gap-0">
+        <Image
+          src={logoMain}
+          alt="꼬순박스"
+          className="max-md:hidden h-auto w-[64px] lg:w-[76px] xl:w-[90px]"
+        />
         <p
-          className="font-bold text-[14px] lg:text-[18px] xl:text-[22px] leading-[1.35] tracking-[-0.04em] whitespace-pre-line"
+          className="max-md:text-[14px] max-md:font-bold max-md:leading-[17px] font-bold text-[14px] capitalize leading-[1.35] tracking-[-0.04em] whitespace-pre-line lg:text-[18px] xl:text-[22px]"
           style={{ color: "var(--color-gallery-text)" }}
         >
           {text}
@@ -104,7 +108,7 @@ function GalleryCTACard({
 function GalleryTile({ item }: { item: GalleryItem }) {
   return (
     <div
-      className="relative shrink-0 rounded-[20px] overflow-hidden w-[190px] lg:w-[240px] xl:w-[289px] h-[190px] lg:h-[220px] xl:h-[268px]"
+      className="relative h-[120px] w-[129px] shrink-0 overflow-hidden rounded-[20px] md:h-[190px] md:w-[190px] lg:h-[220px] lg:w-[240px] xl:h-[268px] xl:w-[289px]"
       style={item.type === "solid" ? { background: item.bg } : undefined}
       aria-hidden={item.type === "solid" ? "true" : undefined}
     >
@@ -114,7 +118,7 @@ function GalleryTile({ item }: { item: GalleryItem }) {
           alt={item.alt}
           fill
           className="object-cover"
-          sizes="(min-width: 1440px) 289px, (min-width: 1200px) 240px, 190px"
+          sizes="(min-width: 1440px) 289px, (min-width: 1200px) 240px, (min-width: 768px) 190px, 129px"
         />
       )}
     </div>
@@ -201,15 +205,37 @@ export default function WhyGallerySection() {
 
   return (
     <section className="overflow-hidden pb-10 md:pb-14 lg:pb-16" style={{ background: "var(--color-why-bg)" }}>
-      <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-10 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
+      <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
         <Image
           src={whyGalleryTitle}
           alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
-          className="mb-8 h-auto w-full max-w-[320px] md:mb-10 lg:mb-[64px] md:max-w-[466px]"
-          sizes="(min-width: 768px) 466px, 320px"
+          className="mb-8 hidden h-auto w-full md:block md:mb-10 md:max-w-[466px] lg:mb-[64px]"
+          sizes="466px"
           priority
         />
-        <p className="mb-8 max-w-[464px] text-center text-[18px] leading-[28px] tracking-[-0.02em] text-white md:mb-10 md:text-[24px] md:leading-[32px]">
+        <Image
+          src={whyGalleryTitleMobile}
+          alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
+          className="mb-7 block h-auto max-h-[96px] w-full max-w-[320px] object-contain md:hidden"
+          sizes="320px"
+          priority
+        />
+        {/* 모바일 — Figma Group 1000005556 */}
+        <p className="mb-11 max-w-[271px] text-center text-[14px] leading-[20px] tracking-[-0.02em] text-white md:hidden">
+          <span className="font-bold">
+            모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
+          </span>
+          <br />
+          <br />
+          <span className="font-medium">
+            <span className="font-bold text-[var(--color-cta-button)]">우리 아이의 취향</span>과{" "}
+            <span className="font-bold text-[var(--color-cta-button)]">건강 상태를 반영</span>한
+            <br />
+            맞춤형 수제 간식을 꼬순박스가 제안합니다.
+          </span>
+        </p>
+        {/* 태블릿·데스크탑 */}
+        <p className="mb-8 hidden max-w-[464px] text-center text-[18px] leading-[28px] tracking-[-0.02em] text-white md:mb-10 md:block md:text-[24px] md:leading-[32px]">
           <span className="font-bold">
             모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
           </span>
@@ -225,7 +251,7 @@ export default function WhyGallerySection() {
         <button
           type="button"
           onClick={handleChecklistClick}
-          className="h-12 w-[270px] rounded-[8px] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white transition-opacity hover:opacity-90 md:h-[56px] md:w-[288px] md:text-[16px]"
+          className="h-10 w-[230px] rounded-[8px] text-center text-[13px] font-semibold leading-[30px] tracking-[-0.04em] text-white [font-feature-settings:'liga'_off] transition-opacity hover:opacity-90 md:h-[56px] md:w-[288px] md:text-[16px]"
           style={{ background: "var(--color-cta-button)" }}
         >
           체크리스트 작성 후 구독하러 가기
@@ -237,11 +263,11 @@ export default function WhyGallerySection() {
         {renderRollingRow(ROW_2_BASE, "r2", "left")}
       </div>
 
-      <div className="md:hidden overflow-x-auto px-5 pb-2 flex flex-col gap-4">
-        <div className="flex gap-3" style={{ width: "max-content" }}>
+      <div className="flex flex-col gap-8 overflow-x-auto pb-2 md:hidden">
+        <div className="flex gap-4 pl-5" style={{ width: "max-content" }}>
           {ROW_1_BASE.map((item, i) => renderItem(item, `m1-${i}`))}
         </div>
-        <div className="flex gap-3" style={{ width: "max-content" }}>
+        <div className="flex gap-4 pl-5" style={{ width: "max-content" }}>
           {ROW_2_BASE.map((item, i) => renderItem(item, `m2-${i}`))}
         </div>
       </div>

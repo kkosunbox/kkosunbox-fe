@@ -159,6 +159,7 @@
 
   /* UI state */
   --color-ui-inactive-bg: #EAEAEA;      /* 비활성 탭·컨트롤 배경 */
+  --shadow-card-soft: 0px 4px 16px 0px #0000001F; /* 패키지 섹션 카드 공통 그림자 */
 
   /* WhyChoose + Gallery 섹션 */
   --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */

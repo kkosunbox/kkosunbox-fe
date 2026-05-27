@@ -145,7 +145,10 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
               <ScrollReveal variant="fade-up" delay={150}>
                 <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center lg:gap-7">
                   {/* 좌측 — 선택된 패키지 설명 (메인 PackagePlansSection 패턴) */}
-                  <div className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] shadow-sm md:rounded-[28px]">
+                  <div
+                    className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] md:rounded-[28px]"
+                    style={{ boxShadow: "var(--shadow-card-soft)" }}
+                  >
                     {activePkg ? (
                       <Image
                         key={activePackage.tier}
@@ -193,8 +196,8 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                               sizes="180px"
                             />
                           </div>
-                          <div className="min-w-0 flex-1 px-4 py-[18px] md:py-[25px] lg:pl-6 lg:pr-0">
-                            <p className="mb-4 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                          <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
+                            <p className="mb-[14px] truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
                               {pkg.name}
                             </p>
                             <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">

@@ -176,7 +176,7 @@ export default function PasswordManagementSection() {
                   autoComplete="current-password"
                   visible={showCurrent}
                   onToggleVisible={() => setShowCurrent((prev) => !prev)}
-                  inputClassName="h-8 w-[220px]"
+                  inputClassName="h-10 w-[220px]"
                 />
 
                 <label htmlFor="new-password" className="text-body-13-m text-[var(--color-text)]">
@@ -190,7 +190,7 @@ export default function PasswordManagementSection() {
                   autoComplete="new-password"
                   visible={showNew}
                   onToggleVisible={() => setShowNew((prev) => !prev)}
-                  inputClassName="h-8 w-[220px]"
+                  inputClassName="h-10 w-[220px]"
                 />
 
                 <div />
@@ -211,7 +211,7 @@ export default function PasswordManagementSection() {
                   autoComplete="new-password"
                   visible={showConfirm}
                   onToggleVisible={() => setShowConfirm((prev) => !prev)}
-                  inputClassName="h-8 w-[220px]"
+                  inputClassName="h-10 w-[220px]"
                 />
               </div>
 
@@ -273,7 +273,7 @@ export default function PasswordManagementSection() {
             autoComplete="current-password"
             visible={showCurrent}
             onToggleVisible={() => setShowCurrent((prev) => !prev)}
-            inputClassName="h-8 w-full"
+            inputClassName="h-10 w-full"
           />
 
           <label
@@ -290,7 +290,7 @@ export default function PasswordManagementSection() {
             autoComplete="new-password"
             visible={showNew}
             onToggleVisible={() => setShowNew((prev) => !prev)}
-            inputClassName="h-8 w-full"
+            inputClassName="h-10 w-full"
           />
 
           <div />
@@ -314,7 +314,7 @@ export default function PasswordManagementSection() {
             autoComplete="new-password"
             visible={showConfirm}
             onToggleVisible={() => setShowConfirm((prev) => !prev)}
-            inputClassName="h-8 w-full"
+            inputClassName="h-10 w-full"
           />
         </div>
 

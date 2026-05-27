@@ -1075,8 +1075,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                       onClick={() => setActiveTab(tab.key)}
                       className={
                         isActive
-                          ? "text-body-20-sb text-[var(--color-text)]"
-                          : "text-body-20-m text-[var(--color-text-secondary)]"
+                          ? "text-body-16-sb text-[var(--color-text)]"
+                          : "text-body-16-m text-[var(--color-text-secondary)]"
                       }
                     >
                       {tab.label}

@@ -5,9 +5,8 @@ import { registerBilling, updateBilling } from "../api/billingApi";
 import type { BillingInfo } from "../api/types";
 import { getErrorMessage } from "@/shared/lib/api";
 import { LoadingOverlay } from "@/shared/ui";
-
 const inputCls =
-  "h-9 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none border border-[var(--color-border)]";
+  "h-10 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none border border-[var(--color-border)]";
 
 function digitsOnly(s: string) {
   return s.replace(/\D/g, "");

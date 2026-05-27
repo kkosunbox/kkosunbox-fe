@@ -28,7 +28,7 @@ interface FormState {
 }
 
 const fieldClass =
-  "min-h-[42px] w-full rounded-full bg-[var(--color-surface-light)] px-5 py-[15px] text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0";
+  "h-10 w-full rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0";
 
 const labelClass =
   "text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80";

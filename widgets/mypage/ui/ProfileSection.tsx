@@ -124,7 +124,7 @@ function ChecklistPanel({
           </Text>
           {hasChecklist && (
             <Link
-              href="/recommend"
+              href="/checklist/result"
               className="inline-flex h-6 items-center rounded-[4px] bg-[var(--color-text)] px-2 text-body-13-m text-white transition-opacity hover:opacity-80"
             >
               추천상품보기

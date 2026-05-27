@@ -200,9 +200,7 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-full outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
-                max-md:h-[48px] max-md:px-8 max-md:text-[14px] max-md:bg-white
-                md:h-[54px] lg:h-[54px] md:px-6 lg:px-6 md:tracking-[0.2px] lg:tracking-[0.2px] md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:text-body-16-m lg:text-body-16-m"
+              className="h-10 w-full rounded-full bg-white px-6 text-[14px] font-medium text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] md:bg-[var(--color-surface-light)] md:text-body-16-m md:tracking-[0.2px] lg:bg-[var(--color-surface-light)] lg:text-body-16-m lg:tracking-[0.2px]"
             />
 
             {/* 비밀번호 입력 */}
@@ -213,9 +211,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-full outline-none text-[var(--color-text)] font-medium placeholder:text-[var(--color-text-secondary)]
-                  max-md:h-[48px] max-md:px-8 max-md:pr-12 max-md:text-[14px] max-md:bg-white
-                  md:h-[54px] lg:h-[54px] md:px-6 lg:px-6 md:pr-16 lg:pr-16 md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:text-body-16-m lg:text-body-16-m"
+                className="h-10 w-full rounded-full bg-white px-6 pr-12 text-[14px] font-medium text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] md:bg-[var(--color-surface-light)] md:pr-16 md:text-body-16-m md:tracking-[0.2px] lg:bg-[var(--color-surface-light)] lg:pr-16 lg:text-body-16-m lg:tracking-[0.2px]"
               />
               <button
                 type="button"

@@ -168,7 +168,7 @@ export default function ProfileFloatWidget() {
             value={dogName}
             onChange={(e) => setDogName(e.target.value)}
             placeholder="이름"
-            className="w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 py-3 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors"
+            className="h-10 w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors"
           />
         </div>
 
@@ -194,7 +194,7 @@ export default function ProfileFloatWidget() {
               onChange={(e) => setWeight(e.target.value)}
               min="0"
               step="0.1"
-              className="w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 py-3 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors pr-10"
+              className="h-10 w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 pr-10 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-[var(--color-text-label)]">kg</span>
           </div>
@@ -213,7 +213,7 @@ export default function ProfileFloatWidget() {
             }
             maxDate={new Date()}
             minDate={new Date(new Date().getFullYear() - 40, 0, 1)}
-            triggerClassName="!rounded-xl !bg-[var(--color-surface-warm)] !border-[var(--color-border-light)] hover:!border-[var(--color-accent-orange)] [&_span:first-child]:!text-[13px]"
+            triggerClassName="!h-10 !rounded-xl !bg-[var(--color-surface-warm)] !border-[var(--color-border-light)] hover:!border-[var(--color-accent-orange)] [&_span:first-child]:!text-[13px]"
           />
         </div>
 
@@ -226,7 +226,7 @@ export default function ProfileFloatWidget() {
                 key={g}
                 type="button"
                 onClick={() => setGender(g)}
-                className="flex-1 rounded-[8px] py-2.5 text-[14px] font-medium transition-colors border"
+                className="flex h-10 flex-1 items-center justify-center rounded-[8px] text-[14px] font-medium transition-colors border"
                 style={
                   gender === g
                     ? {

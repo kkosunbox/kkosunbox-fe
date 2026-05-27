@@ -329,7 +329,7 @@ export default function DatePicker({
 
   /* ── trigger 기본 스타일 */
   const triggerBase = [
-    "flex h-[44px] w-full items-center justify-between",
+    "flex h-10 w-full items-center justify-between",
     "rounded-lg border border-[var(--color-divider-warm)] bg-white px-4",
     "text-left outline-none transition-colors",
     "disabled:cursor-not-allowed disabled:opacity-50",

@@ -59,6 +59,8 @@
 | `--color-hero-heading` | `#464646` | Hero 헤딩 텍스트 |
 | `--color-hero-subtext` | `#6C411F` | Hero 서브카피 텍스트 |
 | `--color-hero-tagline` | `#C37132` | Hero 해시태그 문구 텍스트 |
+| `--color-hero-third-tagline` | `#813800` | Hero 슬라이드3 해시태그 |
+| `--color-hero-third-cta` | `#89431D` | Hero 슬라이드3 CTA 버튼 |
 | `--color-hero-cta-bg` | `#454545` | Hero CTA 버튼 배경 |
 
 ### CTA / About

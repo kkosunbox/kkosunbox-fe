@@ -177,7 +177,7 @@ function BaseInput({
       {...props}
       readOnly={readOnly}
       className={[
-        "h-9 w-full rounded-[4px] border border-[var(--color-divider-warm)] bg-white px-3 text-body-13-m text-[var(--color-text)] outline-none",
+        "h-9 w-full rounded-[4px] border-0 bg-[var(--color-surface-light)] px-3 text-body-13-m text-[var(--color-text)] outline-none",
         readOnly ? "cursor-default text-[var(--color-text-secondary)]" : "",
         className,
       ].join(" ")}
@@ -196,7 +196,7 @@ function GenderButtons({
     [
       "flex h-8 flex-1 items-center justify-center rounded-[4px] text-body-13-m transition-colors",
       gender === value
-        ? "bg-[var(--color-accent-soft)] font-semibold text-[var(--color-accent)]"
+        ? "bg-[var(--color-secondary)] font-semibold text-[var(--color-surface-dark)]"
         : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
     ].join(" ");
 
@@ -394,10 +394,13 @@ export default function ProfileManagementSection({
   }
 
   const desktopLayout = (
-    <div className="max-lg:hidden min-h-screen bg-[var(--color-background)] overflow-x-auto px-6 pb-16 pt-[64px]">
-      <div className="mx-auto w-full max-w-[1014px] min-w-[924px]">
-        <div className="rounded-[20px] bg-white px-[28px] pb-[34px] pt-[24px] shadow-[0_8px_30px_rgba(185,148,116,0.08)]">
-          <div className="mb-4 flex items-center gap-1 text-[var(--color-text)]">
+    <div className="max-lg:hidden relative flex min-h-screen flex-col overflow-x-auto bg-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[258px] bg-[var(--color-surface-warm)]" />
+
+      <div className="relative z-10 px-6 pb-20 pt-[64px]">
+        <div className="mx-auto w-full max-w-profile-management">
+          {/* Page header */}
+          <div className="mb-8 flex items-center gap-1 text-[var(--color-text)]">
             <Link
               href="/mypage"
               aria-label="마이페이지로 돌아가기"
@@ -408,85 +411,86 @@ export default function ProfileManagementSection({
             <h1 className="text-title-24-sb tracking-tightest">{isCreating ? "프로필 등록" : "프로필 관리"}</h1>
           </div>
 
-          <div className="flex min-w-0 items-start gap-[28px]">
-            <div className="flex min-w-0 flex-1 justify-center">
-              <aside className="flex w-[170px] shrink-0 flex-col items-center pt-8">
-                <PetAvatar
-                  size={124}
-                  editSize={40}
-                  imageUrl={profileImageUrl}
-                  onEditClick={() => fileInputRef.current?.click()}
-                  uploading={isUploadingImage}
-                />
-                <p className="mt-[13px] text-title-24-b text-[var(--color-text)]">{getProfileDisplayName(petName)}</p>
-                {!isCreating && (
-                  <button
-                    type="button"
-                    onClick={handleDeleteProfile}
-                    disabled={isPending || isUploadingImage || isDeleting}
-                    className="mt-3 text-body-13-m text-[var(--color-accent)] underline disabled:opacity-60"
-                  >
-                    {isDeleting ? "삭제 중..." : "프로필 삭제"}
-                  </button>
-                )}
-                {imageError && (
-                  <p className="mt-3 w-full text-center text-body-12-m text-[var(--color-accent-rust)]">{imageError}</p>
-                )}
-              </aside>
-            </div>
+          {/* Content row */}
+          <div className="mx-auto flex w-fit items-start gap-8">
+            {/* Profile image — outside the form card */}
+            <aside className="flex w-[180px] shrink-0 flex-col items-center pt-6 lg:pt-12">
+              <PetAvatar
+                size={124}
+                editSize={40}
+                imageUrl={profileImageUrl}
+                onEditClick={() => fileInputRef.current?.click()}
+                uploading={isUploadingImage}
+              />
+              <p className="mt-3 text-title-24-b text-[var(--color-text)]">{getProfileDisplayName(petName)}</p>
+              {!isCreating && (
+                <button
+                  type="button"
+                  onClick={handleDeleteProfile}
+                  disabled={isPending || isUploadingImage || isDeleting}
+                  className="mt-2 text-body-13-m text-[var(--color-accent)] underline disabled:opacity-60"
+                >
+                  {isDeleting ? "삭제 중..." : "프로필 삭제"}
+                </button>
+              )}
+              {imageError && (
+                <p className="mt-3 w-full text-center text-body-12-m text-[var(--color-accent-rust)]">{imageError}</p>
+              )}
+            </aside>
 
-            <div className="w-[670px] shrink-0">
-              <section className="rounded-[20px] bg-[var(--color-background)] px-7 pb-[52px] pt-7">
-                <h2 className="text-subtitle-18-b tracking-tightest text-[var(--color-text)]">프로필 정보</h2>
+            {/* White form card */}
+            <div className="flex flex-1 flex-col rounded-[20px] bg-white px-8 pb-7 pt-7 shadow-[0_4px_24px_rgba(0,0,0,0.08)] max-w-[670px] lg:min-h-[480px]">
+              <h2 className="text-subtitle-18-b tracking-tightest text-[var(--color-text-emphasis)]">프로필 정보</h2>
 
-                <div className="mt-6 grid grid-cols-[290px_290px] gap-x-[34px] gap-y-4">
-                  <div className="flex items-center">
-                    <label htmlFor="d-name" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      강아지 이름
-                    </label>
-                    <BaseInput
-                      id="d-name"
-                      type="text"
-                      value={petName}
-                      onChange={(event) => setPetName(event.target.value)}
-                      className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
-                    />
-                  </div>
+              <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-5">
+                <div className="flex items-center gap-4">
+                  <label htmlFor="d-name" className="w-[62px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                    강아지 이름
+                  </label>
+                  <BaseInput
+                    id="d-name"
+                    type="text"
+                    value={petName}
+                    onChange={(event) => setPetName(event.target.value)}
+                    className="flex-1 min-w-0"
+                  />
+                </div>
 
-                  <div className="flex items-center">
-                    <label htmlFor="d-breed" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      강아지 품종
-                    </label>
-                    <BreedCombobox
-                      id="d-breed"
-                      value={breed}
-                      onChange={setBreed}
-                      placeholder="품종 선택"
-                      className="!w-[220px]"
-                      inputClassName="h-8 border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
-                    />
-                  </div>
+                <div className="flex items-center gap-4">
+                  <label htmlFor="d-breed" className="w-[62px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                    강아지 품종
+                  </label>
+                  <BreedCombobox
+                    id="d-breed"
+                    value={breed}
+                    onChange={setBreed}
+                    placeholder="품종 선택"
+                    className="flex-1 min-w-0"
+                    inputClassName="!border-0 !bg-[var(--color-surface-light)] text-body-13-m text-[var(--color-text)]"
+                  />
+                </div>
 
-                  <div className="flex items-center">
-                    <label htmlFor="d-weight" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      몸무게
-                    </label>
-                    <BaseInput
-                      id="d-weight"
-                      type="text"
-                      inputMode="decimal"
-                      value={formatWeightInput(weight, isWeightFocused)}
-                      onFocus={() => setIsWeightFocused(true)}
-                      onBlur={() => setIsWeightFocused(false)}
-                      onChange={(event) => setWeight(sanitizeWeightInput(event.target.value))}
-                      className="h-8 !w-[220px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
-                    />
-                  </div>
+                <div className="flex items-center gap-4">
+                  <label htmlFor="d-weight" className="w-[62px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                    몸무게
+                  </label>
+                  <BaseInput
+                    id="d-weight"
+                    type="text"
+                    inputMode="decimal"
+                    value={formatWeightInput(weight, isWeightFocused)}
+                    onFocus={() => setIsWeightFocused(true)}
+                    onBlur={() => setIsWeightFocused(false)}
+                    onChange={(event) => setWeight(sanitizeWeightInput(event.target.value))}
+                    className="flex-1 min-w-0"
+                  />
+                </div>
 
-                  <div className="flex items-center">
-                    <label htmlFor="d-birth" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      생년월일
-                    </label>
+                <div className="flex items-center gap-4">
+                  <label htmlFor="d-birth" className="w-[62px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                    생년월일
+                  </label>
+                  <div className="flex-1 min-w-0">
                     <DatePicker
                       id="d-birth"
                       value={birthDateToValue(birthDate)}
@@ -498,68 +502,58 @@ export default function ProfileManagementSection({
                       }}
                       placeholder="생년월일 선택"
                       formatDisplay={formatBirthDateDisplayDots}
-                      triggerClassName="!h-8 !w-[220px] !rounded-[4px] !border-0 !bg-white !px-3 hover:!border-0 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
-                    />
-                  </div>
-
-                  <div className="flex items-center">
-                    <span className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">성별</span>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setGender("male")}
-                        className={[
-                          "inline-flex h-8 w-[106px] items-center justify-center rounded-[4px] text-body-13-m transition-colors",
-                          gender === "male"
-                            ? "bg-[var(--color-accent-soft)] font-semibold text-[var(--color-accent)]"
-                            : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
-                        ].join(" ")}
-                      >
-                        남
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setGender("female")}
-                        className={[
-                          "inline-flex h-8 w-[106px] items-center justify-center rounded-[4px] text-body-13-m transition-colors",
-                          gender === "female"
-                            ? "bg-[var(--color-accent-soft)] font-semibold text-[var(--color-accent)]"
-                            : "bg-[var(--color-ui-inactive-bg)] text-[var(--color-text)]",
-                        ].join(" ")}
-                      >
-                        여
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 flex items-center">
-                    <label htmlFor="d-feature" className="w-[70px] shrink-0 text-body-13-m text-[var(--color-text)]">
-                      특징
-                    </label>
-                    <BaseInput
-                      id="d-feature"
-                      type="text"
-                      value={specialNotes}
-                      onChange={(event) => setSpecialNotes(event.target.value)}
-                      placeholder={SPECIAL_NOTES_PLACEHOLDER}
-                      maxLength={SPECIAL_NOTES_MAX_LENGTH}
-                      className="h-8 !w-[544px] border-0 bg-white px-3 text-body-13-m text-[var(--color-text)]"
+                      triggerClassName="!w-full !rounded-[4px] !border-0 !bg-[var(--color-surface-light)] !px-3 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
                     />
                   </div>
                 </div>
 
-                {saveError && <p className="mt-5 text-center text-body-13-m text-[var(--color-accent-rust)]">{saveError}</p>}
-              </section>
+                <div className="flex items-center gap-4">
+                  <span className="w-[62px] shrink-0 text-body-13-m text-[var(--color-text)]">성별</span>
+                  <div className="w-[220px]">
+                    <GenderButtons gender={gender} onChange={setGender} />
+                  </div>
+                </div>
 
-              <div className="mt-[28px] flex justify-end">
+                <div className="col-span-2 flex items-center gap-4">
+                  <label htmlFor="d-feature" className="w-[62px] shrink-0 text-body-13-m text-[var(--color-text)]">
+                    특징
+                  </label>
+                  <BaseInput
+                    id="d-feature"
+                    type="text"
+                    value={specialNotes}
+                    onChange={(event) => setSpecialNotes(event.target.value)}
+                    placeholder={SPECIAL_NOTES_PLACEHOLDER}
+                    maxLength={SPECIAL_NOTES_MAX_LENGTH}
+                    className="flex-1 min-w-0"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-auto">
+                {saveError && (
+                  <p className="mb-5 text-center text-body-13-m text-[var(--color-accent-rust)]">{saveError}</p>
+                )}
+
+                {/* Action buttons */}
+                <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  disabled={isPending || isUploadingImage || isDeleting}
+                  className="inline-flex h-10 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-ui-inactive-bg)] text-body-14-sb text-white transition-opacity hover:opacity-80 disabled:opacity-60"
+                >
+                  취소
+                </button>
                 <button
                   type="button"
                   onClick={handleSave}
                   disabled={isPending || isUploadingImage || isDeleting}
-                  className="inline-flex h-9 w-[132px] items-center justify-center rounded-full bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className="inline-flex h-10 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-why-bg)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
                   {isPending ? "저장 중..." : "확인"}
                 </button>
+                </div>
               </div>
             </div>
           </div>

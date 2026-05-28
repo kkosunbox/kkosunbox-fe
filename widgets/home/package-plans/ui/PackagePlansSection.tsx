@@ -3,7 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Text, Button, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
@@ -16,8 +16,6 @@ import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
 import packageImagePremium from "../assets/package-image-premium.png";
 import packageImageStandard from "../assets/package-image-standard.png";
-import { useAuth } from "@/features/auth";
-import { useProfile } from "@/features/profile/ui/ProfileProvider";
 
 const ROTATION_INTERVAL_MS = 8000;
 
@@ -52,8 +50,6 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 };
 
 export default function PackagePlansSection() {
-  const { isLoggedIn } = useAuth();
-  const { profile } = useProfile();
   const router = useRouter();
   const [activePackageIndex, setActivePackageIndex] = useState(0);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
@@ -72,15 +68,6 @@ export default function PackagePlansSection() {
   useEffect(() => {
     getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
   }, []);
-
-  function handleSubscribeClick() {
-    if (!isLoggedIn) {
-      router.push("/login?next=/checklist");
-      return;
-    }
-    const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
-    router.push(hasChecklist ? "/subscribe" : "/checklist");
-  }
 
   function handleDetailClick() {
     if (!activePlan) return;
@@ -179,14 +166,14 @@ export default function PackagePlansSection() {
                 sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
                 priority
               />
-              <Button
-                onClick={handleSubscribeClick}
-                variant="primary"
-                size="lg"
-                className="absolute bottom-4 right-4 h-10 w-[180px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] shadow-md lg:bottom-11 lg:right-11"
+              <button
+                type="button"
+                onClick={handleDetailClick}
+                disabled={!activePlan}
+                className="absolute bottom-4 right-4 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-11 lg:right-11"
               >
-                제품 살펴보기
-              </Button>
+                제품 상세보기
+              </button>
             </div>
 
             <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">

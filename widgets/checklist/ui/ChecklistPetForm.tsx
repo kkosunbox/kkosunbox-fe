@@ -38,7 +38,7 @@ function PetAvatar({
         aria-label="프로필 사진 변경"
         onClick={onButtonClick}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onButtonClick(); } }}
-        className="flex h-[60px] w-[60px] md:h-[124px] lg:h-[124px] md:w-[124px] lg:w-[124px] cursor-pointer items-center justify-center overflow-hidden rounded-full"
+        className="flex max-md:h-[88px] max-md:w-[88px] md:h-[124px] md:w-[124px] cursor-pointer items-center justify-center overflow-hidden rounded-full"
         style={{ background: "var(--color-secondary)" }}
       >
         {src ? (
@@ -136,7 +136,7 @@ export default function ChecklistPetForm({
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 max-md:order-4">
             <label
               htmlFor="checklist-pet-birth"
               className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]"
@@ -155,7 +155,7 @@ export default function ChecklistPetForm({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 max-md:order-3">
             <label className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">몸무게</label>
             <div className="relative">
               <input
@@ -198,14 +198,13 @@ export default function ChecklistPetForm({
             <label htmlFor="checklist-pet-special" className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">
               특징
             </label>
-            <input
+            <textarea
               id="checklist-pet-special"
-              type="text"
               placeholder={SPECIAL_NOTES_PLACEHOLDER}
               value={petInfo.specialNotes}
               maxLength={SPECIAL_NOTES_MAX_LENGTH}
               onChange={(e) => setPetInfo((p) => ({ ...p, specialNotes: e.target.value }))}
-              className="h-10 rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+              className="max-md:h-14 md:h-10 resize-none rounded-[8px] bg-[var(--color-surface-light)] px-5 py-2.5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
             />
           </div>
         </div>

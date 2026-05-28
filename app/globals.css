@@ -69,6 +69,7 @@
   --color-recommend-reason-bg: #FFFBE9; /* 체크리스트 결과 추천이유 패널 배경 (Figma Rectangle 974) */
   --color-checklist-fallback-bg: #F5F3EC; /* 마이페이지 체크리스트 미작성 폴백 오버레이 배경 */
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
+  --color-subscription-header-bg: #FEF6EE; /* 구독관리 페이지 상단 배경 밴드 */
   --color-surface-light: #F8F8F8;
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
   --color-hero-truck-bg: #FFEAAF;     /* Hero 슬라이드1 (트럭) 배경 */
@@ -164,8 +165,8 @@
   /* WhyChoose + Gallery 섹션 */
   --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */
   --color-plan-chip-inactive: #6B645F;  /* 플랜 선택 탭바 비활성 칩 배경 */
-  --color-badge-warm-bg: #FFF1CD;       /* 상품 뱃지 '가장 미발음' 배경 */
-  --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 미발음' 텍스트 */
+  --color-badge-warm-bg: #FFF1CD;       /* 상품 뱃지 '가장 리뷰 많은' 배경 */
+  --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 리뷰 많은' 텍스트 */
   --color-badge-best-bg: #DFEEF7;       /* 상품 뱃지 'BEST' 배경 */
   --color-cta-button: #EC7700;          /* WhyChoose CTA 버튼 (진한 오렌지) */
   --color-gallery-cta-peach: #FFE2C8;   /* Gallery CTA 카드 A 배경 (피치) */
@@ -219,13 +220,15 @@
 /*
  * 반응형 브레이크포인트 — @theme inline 이 아닌 @theme 에 rem 으로 정의 (Tailwind v4 필수).
  * 초소형 <360px (max-sm:) | 모바일 360–767px (sm:) | 태블릿 768–1199px (md:) | 데스크탑 1200–1439px (lg:) | 와이드 ≥1440px (xl:)
+ * md2 (910px): 일부 hero 섹션 전용 커스텀 브레이크포인트 (subscribe·support hero 이미지 전환)
  * JS 상수: shared/config/breakpoints.ts
  */
 @theme {
-  --breakpoint-sm: 22.5rem;  /* 360px  — 모바일 시작 */
-  --breakpoint-md: 48rem;    /* 768px  — 태블릿 시작 */
-  --breakpoint-lg: 75rem;    /* 1200px — 데스크탑 시작 */
-  --breakpoint-xl: 90rem;    /* 1440px — 와이드 데스크탑 시작 */
+  --breakpoint-sm: 22.5rem;    /* 360px  — 모바일 시작 */
+  --breakpoint-md: 48rem;      /* 768px  — 태블릿 시작 */
+  --breakpoint-md2: 56.875rem; /* 910px  — 일부 hero 섹션 전용 커스텀 브레이크포인트 */
+  --breakpoint-lg: 75rem;      /* 1200px — 데스크탑 시작 */
+  --breakpoint-xl: 90rem;      /* 1440px — 와이드 데스크탑 시작 */
 }
 
 /*
@@ -261,6 +264,7 @@
   --color-recommend-reason-bg: var(--color-recommend-reason-bg);
   --color-checklist-fallback-bg: var(--color-checklist-fallback-bg);
   --color-surface-peach: var(--color-surface-peach);
+  --color-subscription-header-bg: var(--color-subscription-header-bg);
   --color-surface-light: var(--color-surface-light);
   --color-hero-bg: var(--color-hero-bg);
   --color-hero-truck-bg: var(--color-hero-truck-bg);

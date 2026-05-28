@@ -9,6 +9,13 @@ export const MEDIA_MAX_SM_SIZES = `(max-width: ${BREAKPOINT_SM_PX - 1}px)`;
 /** Tailwind `md:` / `max-md:` — 태블릿 시작 (globals.css `@theme --breakpoint-md` 와 동기화) */
 export const BREAKPOINT_MD_PX = 768;
 
+/** Tailwind `md2:` / `max-md2:` — 일부 hero 섹션 전용 커스텀 브레이크포인트 (globals.css `@theme --breakpoint-md2` 와 동기화) */
+export const BREAKPOINT_MD2_PX = 910;
+
+export const MEDIA_MD2_MIN = `(min-width: ${BREAKPOINT_MD2_PX}px)`;
+
+export const MEDIA_MAX_MD2_SIZES = `(max-width: ${BREAKPOINT_MD2_PX - 1}px)`;
+
 export const MEDIA_MD_MIN = `(min-width: ${BREAKPOINT_MD_PX}px)`;
 
 /** Image `sizes` 등 max-md 상한 */

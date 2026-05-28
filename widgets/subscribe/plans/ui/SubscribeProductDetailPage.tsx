@@ -496,7 +496,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
                 style={{ background: "var(--color-badge-warm-bg)", color: "var(--color-badge-warm-text)" }}
               >
-                가장 미발음
+                가장 리뷰 많은
               </span>
               <span
                 className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
@@ -947,7 +947,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                     className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
                     style={{ background: "var(--color-badge-warm-bg)", color: "var(--color-badge-warm-text)" }}
                   >
-                    가장 미발음
+                    가장 리뷰 많은
                   </span>
                   <span
                     className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"

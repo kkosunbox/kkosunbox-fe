@@ -11,7 +11,6 @@ import {
 
 import aboutHeroTitle from "../assets/about-hero-title.png";
 import aboutHeroCollage from "../assets/about-hero-collage.png";
-import aboutHeroCollageMobile from "../assets/about-hero-collage-mobile.webp";
 import aboutFeatureHealthy from "../assets/about-feature-healty.webp";
 import aboutFeatureCircle01 from "../assets/about-feature-circle-01.png";
 import aboutFeatureCircle02 from "../assets/about-feature-circle-02.png";
@@ -49,16 +48,16 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 */}
-      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-md:pt-5 max-md:pb-9 md:pb-14 max-lg:pb-14 lg:py-0 lg:max-h-[578px]">
+      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-md:pt-[52px] max-md:pb-9 md:pb-14 max-lg:pb-14 lg:py-0 lg:max-h-[578px]">
         <div className="mx-auto max-w-[var(--max-width-content)] px-6 lg:px-0">
-          <h1 className="flex justify-center max-md:-mb-[30px] lg:hidden">
+          <h1 className="flex justify-center max-md:mb-10 lg:hidden">
             <Image
               src={aboutHeroTitle}
-              alt="꼬순박스 로고"
+              alt="About Us"
               width={ABOUT_HERO_LOGO_W}
               height={ABOUT_HERO_LOGO_H}
-              className="h-auto w-[120px]"
-              sizes="120px"
+              className="h-auto w-[134px]"
+              sizes="134px"
               priority
             />
           </h1>
@@ -67,15 +66,15 @@ export default function AboutSection() {
             <ScrollReveal
               variant="slide-right"
               duration={900}
-              className="flex w-full max-w-[520px] flex-1 shrink-0 max-md:max-w-none max-md:self-stretch max-md:-mr-6 max-md:w-[calc(100%+1.5rem)] lg:max-h-[578px] lg:max-w-none lg:min-w-[640px] lg:order-last"
+              className="flex w-full max-w-[520px] flex-1 shrink-0 max-md:max-w-none lg:max-h-[578px] lg:max-w-none lg:min-w-[640px] lg:order-last"
             >
               <div className="flex w-full justify-center lg:h-[578px] lg:max-h-[578px] lg:items-center lg:justify-end lg:overflow-hidden">
-                <div className="w-full overflow-hidden rounded-2xl max-md:rounded-l-2xl max-md:rounded-r-none lg:overflow-visible lg:rounded-none">
+                <div className="w-full overflow-hidden rounded-2xl lg:overflow-visible lg:rounded-none">
                   <Image
-                    src={aboutHeroCollageMobile}
+                    src={aboutHeroCollage}
                     alt="꼬순박스 소개 — 반려견 사진과 브랜드 로고가 담긴 콜라주"
-                    width={aboutHeroCollageMobile.width}
-                    height={aboutHeroCollageMobile.height}
+                    width={1186}
+                    height={1276}
                     className="mx-auto h-auto w-full max-w-[390px] object-contain object-top lg:hidden"
                     sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 390px`}
                     priority
@@ -152,7 +151,7 @@ export default function AboutSection() {
             </Text>
           </ScrollReveal>
 
-          <div className="flex flex-col items-center gap-0 lg:flex-row lg:gap-[84px] lg:pl-[70px]">
+          <div className="flex flex-col items-center gap-0 max-md:mt-6 lg:flex-row lg:gap-[84px] lg:pl-[70px]">
             <ScrollReveal variant="scale-in" duration={800} className="flex w-full justify-center lg:w-[336px] lg:flex-none">
               <Image
                 src={aboutFeatureHealthy}
@@ -176,7 +175,7 @@ export default function AboutSection() {
                   좋은 재료여도 맞지 않을 수 있고,<br/>
                   수제 간식도 매번 고르기 쉽지 않습니다.<br/><br/>
                   <span className="text-[var(--color-about-hero-accent)] font-bold">그래서 기준을 만들었습니다.</span><br/><br/>
-                  제대로 확인된 재료,믿을 수 있는 과정,<br/>
+                  제대로 확인된 재료,&nbsp;<br className="md:hidden"/>믿을 수 있는 과정,<br/>
                   그리고 우리 아이에게 맞는 선택.<br/><br/>
                   꼬순박스는 그 기준으로 간식을 담습니다.
                 </p>

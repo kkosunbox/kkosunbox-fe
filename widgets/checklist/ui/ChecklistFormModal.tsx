@@ -558,11 +558,11 @@ function ChecklistFormModalInner({
     else handleNext();
   }
 
-  const headerTitle = step === 0 ? "프로필 작성" : "체크리스트 작성";
+  const headerTitle = "체크리스트 작성";
 
   return (
     <div
-      className="fixed inset-0 z-[200] md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
+      className="fixed inset-x-0 bottom-0 max-md:top-[54px] md:inset-0 z-[200] md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
       role="dialog"
       aria-modal="true"
       aria-label={headerTitle}
@@ -579,7 +579,7 @@ function ChecklistFormModalInner({
         {/* 헤더 */}
         <div
           className="flex h-[48px] shrink-0 items-center justify-between px-6"
-          style={{ background: "var(--color-accent-orange)" }}
+          style={{ background: "var(--color-cta-button)" }}
         >
           <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">{headerTitle}</span>
           <button

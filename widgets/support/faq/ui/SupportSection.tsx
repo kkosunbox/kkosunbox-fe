@@ -261,9 +261,15 @@ export default function SupportSection({
       {showBanner && <SupportHero />}
       <div className={`max-md:py-6 md:py-10 lg:py-10${fillViewport ? " flex flex-1 flex-col" : ""}`}>
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
-        {/* ── 모바일 전용: 내 문의내역 (히어로 아래) ── */}
+        {/* ── 모바일 전용 (< 910px): 문의하기 CTA + 내 문의내역 (히어로 아래) ── */}
         {showBanner && (
-          <ScrollReveal variant="fade-in" delay={200} className="flex justify-center md:hidden lg:hidden">
+          <ScrollReveal variant="fade-in" delay={200} className="flex flex-col items-center gap-3 md2:hidden">
+            <Link
+              href="/inquiry"
+              className="flex h-12 w-full items-center justify-center rounded-lg bg-[var(--color-cta-button)] text-body-16-sb leading-[1.5] tracking-[-0.02em] text-white"
+            >
+              문의하기
+            </Link>
             <Link
               href="/support/history"
               className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"

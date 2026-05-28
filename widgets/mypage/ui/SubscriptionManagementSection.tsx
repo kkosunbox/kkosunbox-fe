@@ -176,7 +176,7 @@ function PaymentInfoCard({
   }
 
   const cardDisplay = billingInfo
-    ? `${billingInfo.cardCompany} (${billingInfo.lastFourDigits} - **** - **** - ****)`
+    ? `${billingInfo.cardCompany} (${billingInfo.lastFourDigits})`
     : "미등록";
   const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
   const nextDateDisplay = nextBillingDate ? `${formatDate(nextBillingDate)} (카드결제)` : "-";
@@ -244,7 +244,7 @@ function SubscriptionRow({
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col max-md:px-4 max-md:py-[15px] md:p-5 lg:p-5">
-        <div className="max-md:mb-2 md:mb-3 lg:mb-3 flex items-start justify-between gap-2">
+        <div className="max-md:mb-0.5 md:mb-3 lg:mb-3 flex items-start justify-between gap-2">
           <span
             className={`text-body-14-sb leading-[17px] max-md:text-[12px] max-md:leading-[14px] ${
               boxQuantity <= 1 ? "invisible" : ""
@@ -270,8 +270,7 @@ function SubscriptionRow({
           mobileVariant="body-14-sb"
           className={`max-md:mb-1 md:mb-1.5 lg:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
         >
-          <span className="md:hidden lg:hidden">{plan.name}</span>
-          <span className="max-md:hidden">{isActive ? `${plan.name} 구독중` : plan.name}</span>
+          {isActive ? `${plan.name} 구독중` : plan.name}
         </Text>
 
         <Text
@@ -460,8 +459,8 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
 
   return (
     <div className="relative min-h-screen bg-white">
-      {/* Upper solid color band — 258px tall */}
-      <div className="absolute left-0 right-0 top-0 h-[258px] bg-[var(--color-surface-warm)]" />
+      {/* Upper solid color band — mobile 367px / desktop 258px */}
+      <div className="absolute left-0 right-0 top-0 max-md:h-[367px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
       {/* Hero content — overlaps the 258px boundary */}
       <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-6 md:pt-10 lg:pt-10">
@@ -469,14 +468,14 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
         <button
           type="button"
           onClick={() => router.back()}
-          className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
+          className="mb-6 flex items-center gap-1 text-subtitle-18-b text-[var(--color-text)] hover:opacity-70"
         >
           <ChevronLeftIcon />
           구독관리
         </button>
 
         {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
-        <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_24px_rgba(0,0,0,0.08)] lg:shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
+        <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white max-md:shadow-[0px_4px_12px_0px_#00000014] md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_12px_0px_#00000014] lg:shadow-[0px_4px_12px_0px_#00000014]">
           <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
           {/* Mobile: horizontal divider */}
           <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
@@ -489,19 +488,28 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
       {/* Subscription list — 구독 전체보기 */}
       <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-8 pb-10">
         <div className="md:px-0 lg:px-0">
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Text as="h2" variant="subtitle-20-b" className="text-[var(--color-text)]">
-                구독 전체보기
-              </Text>
-              <Link
-                href="/mypage/subscription/change"
-                className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-text)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-80"
-              >
-                구독추가
-              </Link>
+          <div className="mb-6">
+            <div className="flex items-center justify-between gap-3 max-md:mb-3">
+              <div className="flex items-center gap-3">
+                <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
+                  구독 전체보기
+                </Text>
+                <Link
+                  href="/mypage/subscription/change"
+                  className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-text)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-80"
+                >
+                  구독추가
+                </Link>
+              </div>
+              {/* 태블릿·데스크탑: 타이틀 행 우측 */}
+              <div className="max-md:hidden">
+                <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
+              </div>
             </div>
-            <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
+            {/* 모바일: 별도 행 우측 정렬 */}
+            <div className="max-md:flex max-md:justify-end md:hidden">
+              <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
+            </div>
           </div>
 
           {!hasPlans ? (

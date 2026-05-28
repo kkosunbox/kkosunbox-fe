@@ -64,11 +64,12 @@ function OptionButton({
       type="button"
       onClick={onClick}
       className={[
-        "flex w-full items-center justify-center border-2 max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m transition-colors md:h-[40px] lg:h-[40px] md:rounded-[8px] lg:rounded-[8px]",
-        "max-md:min-h-[52px] max-md:rounded-[14px] max-md:px-4 max-md:py-3.5",
+        "flex w-full items-center rounded-[8px] border transition-colors",
+        "max-md:min-h-[52px] max-md:px-5 max-md:py-3.5 max-md:justify-start max-md:text-body-14-m",
+        "md:h-[40px] md:justify-center md:text-body-15-m lg:h-[40px] lg:justify-center lg:text-body-15-m",
         selected
-          ? "max-md:border-[var(--color-accent)] max-md:bg-[var(--color-accent-soft)] max-md:text-[var(--color-text)] md:border-[var(--color-accent)] lg:border-[var(--color-accent)] md:bg-white lg:bg-white md:text-[var(--color-accent)] lg:text-[var(--color-accent)]"
-          : "max-md:border-transparent max-md:bg-[var(--color-surface-light)] max-md:text-[var(--color-text)] md:border-transparent lg:border-transparent md:bg-[var(--color-surface-light)] lg:bg-[var(--color-surface-light)] md:text-[var(--color-text)] lg:text-[var(--color-text)]",
+          ? "border-[var(--color-primary)] bg-[var(--color-secondary)] text-[var(--color-text)]"
+          : "border-transparent bg-[var(--color-surface-light)] text-[var(--color-text)]",
       ].join(" ")}
     >
       {label}

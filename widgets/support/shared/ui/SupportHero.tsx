@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import SupportHeroBg from "../assets/support-hero-bg.png";
+import InquiryHeroBannerMobile from "../../../../.claude/assets/designs/inquiry-hero-banner.png";
 
 export function SupportHero({ showButton = true }: { showButton?: boolean }) {
   const heroMinHeightClass =
@@ -8,8 +9,25 @@ export function SupportHero({ showButton = true }: { showButton?: boolean }) {
 
   return (
     <section className="relative w-full overflow-hidden" aria-label="1:1 문의 안내">
+      {/* 모바일 (< 910px): 단일 배너(111px 고정, 가로 중앙 정렬) */}
+      <div className="relative h-[111px] w-full overflow-hidden md2:hidden">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- 정적 배너 원본 품질 유지 */}
+          <img
+            src={InquiryHeroBannerMobile.src}
+            alt="꼬순박스에 궁금한 점을 작성해주세요. 1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다."
+            width={InquiryHeroBannerMobile.width}
+            height={InquiryHeroBannerMobile.height}
+            className="h-[111px] w-auto max-w-none shrink-0"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      {/* 데스크톱 (≥ 910px): 기존 배너 + 문의하기 버튼 */}
       {/* xl+: 배너 비율(1920×118)에 맞춰 높이 확장 → 와이드에서도 가로·세로 비율 유지 */}
-      <div className={`relative w-full overflow-hidden ${heroMinHeightClass}`}>
+      <div className={`relative max-md2:hidden w-full overflow-hidden ${heroMinHeightClass}`}>
         {/* 좁은 뷰포트: 1920px 원본을 높이 기준으로 맞추고 가로 중앙 크롭 */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element -- 초광폭 배너 PNG, next/image 재인코딩·다운스케일 시 엣지 노이즈 방지 */}

@@ -6,7 +6,6 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import orderMobileHeroImage from "@/widgets/order/assets/order-mobile-hero.png";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
@@ -19,7 +18,7 @@ import {
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 const inputCls =
-  "h-10 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
+  "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
 function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -106,6 +105,34 @@ function CheckIcon() {
   );
 }
 
+function RadioCheckedIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <rect x="0.5" y="0.5" width="19" height="19" rx="9.5" stroke="var(--color-accent)" />
+      <rect x="5" y="5" width="10" height="10" rx="5" fill="var(--color-accent)" />
+    </svg>
+  );
+}
+
+function QuantityMinusIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" fill="var(--color-text-muted)" fillOpacity="0.3" />
+      <path d="M8 12H16" stroke="var(--color-text)" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function QuantityPlusIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" fill="var(--color-text-muted)" fillOpacity="0.3" />
+      <path d="M12 15L12 9" stroke="var(--color-text)" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M15 12L9 12" stroke="var(--color-text)" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function CollapsiblePanel({
   open,
   id,
@@ -166,18 +193,18 @@ function SectionCard({
   const contentId = useId();
 
   return (
-    <div className="rounded-[20px] bg-white px-3">
+    <div className="max-[768px]:rounded-none max-[768px]:px-0 min-[769px]:rounded-[20px] min-[769px]:bg-white min-[769px]:px-3">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
         aria-controls={contentId}
-        className="w-full flex items-center justify-between pt-7 pb-5 text-left border-b border-[var(--color-text-muted)]"
+        className="flex w-full items-center justify-between border-b border-[var(--color-text-muted)] text-left max-[768px]:pb-3 min-[769px]:pt-7 min-[769px]:pb-5"
       >
-        <span className="max-md:text-subtitle-16-b md:text-subtitle-18-b lg:text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text)]">{title}</span>
+        <span className="tracking-[-0.04em] text-[var(--color-text)] max-[768px]:text-subtitle-16-b min-[769px]:text-subtitle-18-b">{title}</span>
         <ChevronIcon open={open} />
       </button>
-      <CollapsiblePanel id={contentId} open={open} innerClassName="pt-5 pb-5">
+      <CollapsiblePanel id={contentId} open={open} innerClassName="max-[768px]:pt-5 min-[769px]:pt-5 min-[769px]:pb-5">
         {children}
       </CollapsiblePanel>
     </div>
@@ -225,11 +252,11 @@ function RadioButton({
         type="button"
         onClick={onChange}
         className={[
-          "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
-          checked ? "border-2 border-[var(--color-accent)]" : "border border-[var(--color-border)]",
+          "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
+          checked ? "" : "border border-[var(--color-border)]",
         ].join(" ")}
       >
-        {checked && <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]" />}
+        {checked && <RadioCheckedIcon />}
       </button>
       <span className="text-body-14-m leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
         {label}
@@ -240,8 +267,8 @@ function RadioButton({
 
 function FormRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex items-center gap-0">
-      <span className="w-[70px] shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)]">
+    <div className="flex items-start gap-0">
+      <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-[768px]:w-[82px] min-[769px]:w-[70px]">
         {label}
       </span>
       <div className="flex-1 min-w-0">{children}</div>
@@ -502,15 +529,15 @@ export default function OrderSection({
   const orderPlanTheme = packageThemeForPlan(plan);
 
   const leftSections = (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col max-[768px]:gap-9 min-[769px]:gap-4">
       <SectionCard
         title="제품 정보"
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
         <div>
-          <div className="max-[585px]:mx-auto max-[585px]:flex max-[585px]:w-full max-[585px]:max-w-[170px] max-[585px]:flex-col max-[585px]:items-center max-[585px]:gap-5 min-[586px]:flex min-[586px]:items-center min-[586px]:gap-6">
-            <div className="max-[585px]:w-[132px] max-[585px]:h-[132px] min-[586px]:w-[117px] min-[586px]:h-[117px] shrink-0 flex items-center justify-center rounded-[16px] overflow-hidden">
+          <div className="flex w-full items-center max-[359px]:gap-4 min-[360px]:gap-6">
+            <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-[359px]:h-[104px] max-[359px]:w-[112px] min-[360px]:h-[122px] min-[360px]:w-[132px] min-[769px]:h-[117px] min-[769px]:w-[117px] min-[769px]:rounded-[16px]">
               <Image
                 src={TIER_THUMBNAILS[orderPlanTheme.tier]}
                 alt={plan.name}
@@ -519,9 +546,9 @@ export default function OrderSection({
                 className="h-full w-auto max-w-none object-contain object-center"
               />
             </div>
-            <div className="flex flex-col gap-3 max-[585px]:w-full max-[585px]:px-2">
+            <div className="flex min-w-0 flex-1 flex-col gap-3">
               <span
-                className="inline-flex items-center justify-center px-3 py-1 rounded-[30px] text-body-14-sb leading-[17px] text-white w-fit"
+                className="inline-flex w-fit items-center justify-center rounded-[30px] px-3 py-1 text-body-14-sb leading-[17px] text-white"
                 style={{ background: orderPlanTheme.colorVar }}
               >
                 {orderPlanTheme.tierLabel}
@@ -529,7 +556,7 @@ export default function OrderSection({
               <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">
                 {plan.name}
               </span>
-              <span className="max-[585px]:text-price-14-eb min-[586px]:text-price-16-eb text-[var(--color-surface-dark)]">
+              <span className="text-price-16-eb text-[var(--color-surface-dark)]">
                 월 요금제 {formatPrice(unitPrice)}
               </span>
               <div className="flex items-center gap-3 mt-1">
@@ -537,9 +564,12 @@ export default function OrderSection({
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className="w-7 h-7 rounded-[5px] border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+                  className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-[768px]:h-6 max-[768px]:w-6 min-[769px]:h-7 min-[769px]:w-7 min-[769px]:rounded-[5px] min-[769px]:border min-[769px]:border-[var(--color-border)]"
                 >
-                  −
+                  <span className="max-[768px]:hidden">−</span>
+                  <span className="min-[769px]:hidden">
+                    <QuantityMinusIcon />
+                  </span>
                 </button>
                 <span className="text-body-14-sb text-[var(--color-text)] min-w-[20px] text-center">
                   {quantity}
@@ -548,9 +578,12 @@ export default function OrderSection({
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                   disabled={quantity >= 99}
-                  className="w-7 h-7 rounded-[5px] border border-[var(--color-border)] flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+                  className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-[768px]:h-6 max-[768px]:w-6 min-[769px]:h-7 min-[769px]:w-7 min-[769px]:rounded-[5px] min-[769px]:border min-[769px]:border-[var(--color-border)]"
                 >
-                  +
+                  <span className="max-[768px]:hidden">+</span>
+                  <span className="min-[769px]:hidden">
+                    <QuantityPlusIcon />
+                  </span>
                 </button>
               </div>
             </div>
@@ -603,12 +636,12 @@ export default function OrderSection({
           /* ── 새 배송지 입력 폼 ── */
           <div className="flex flex-col gap-4">
             {/* 받는분 / 휴대폰 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 min-[769px]:grid-cols-2">
               <FormRow label="받는분">
                 <input
                   value={newAddr.receiverName}
                   onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
-                  className={`${inputCls} max-w-[220px]`}
+                  className={`${inputCls} min-[769px]:max-w-[220px]`}
                   placeholder="이름"
                 />
               </FormRow>
@@ -629,7 +662,7 @@ export default function OrderSection({
                         setPhoneError("올바른 전화번호 형식이 아닙니다.");
                       }
                     }}
-                    className={`${inputCls} max-w-[220px]`}
+                    className={`${inputCls} min-[769px]:max-w-[220px]`}
                     placeholder="010-0000-0000"
                     inputMode="numeric"
                   />
@@ -641,16 +674,16 @@ export default function OrderSection({
             </div>
             {/* 우편번호 + 주소찾기 */}
             <FormRow label="우편번호">
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <input
                   value={newAddr.zipCode}
                   readOnly
-                  className={`${inputCls} max-w-[220px] cursor-default bg-[var(--color-surface-light)]`}
+                  className={`${inputCls} min-w-0 cursor-default bg-[var(--color-surface-light)] min-[769px]:max-w-[220px]`}
                 />
                 <button
                   type="button"
                   onClick={handleSearchAddress}
-                  className="h-8 shrink-0 rounded-[5px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                  className="h-10 shrink-0 rounded-[8px] bg-[var(--color-why-bg)] px-3 text-body-13-m text-white"
                 >
                   주소찾기
                 </button>
@@ -688,7 +721,7 @@ export default function OrderSection({
               <input
                 value={newAddr.memo}
                 onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
-                className={`${inputCls} max-w-[220px]`}
+                className={`${inputCls} min-[769px]:max-w-[220px]`}
                 placeholder="배송 시 요청사항을 입력해주세요"
               />
             </FormRow>
@@ -754,11 +787,11 @@ export default function OrderSection({
             />
             {couponEnabled && (
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-4">
-                  <span className="w-[70px] shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)]">
+                <div className="flex items-start gap-0 min-[769px]:items-center min-[769px]:gap-4">
+                  <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-[768px]:w-[82px] min-[769px]:w-[70px] min-[769px]:pt-0">
                     쿠폰입력
                   </span>
-                  <div className="flex gap-2 flex-1 min-w-0">
+                  <div className="flex flex-1 gap-3 min-w-0">
                     <input
                       value={couponCodeInput}
                       onChange={(e) => setCouponCodeInput(e.target.value)}
@@ -768,7 +801,7 @@ export default function OrderSection({
                     <button
                       type="button"
                       onClick={() => void handleApplyCoupon()}
-                      className="h-8 shrink-0 rounded-[5px] bg-[var(--color-accent)] px-3 text-body-13-m text-white"
+                      className="h-10 shrink-0 rounded-[8px] bg-[var(--color-why-bg)] px-3 text-body-13-m text-white"
                     >
                       쿠폰적용
                     </button>
@@ -780,7 +813,7 @@ export default function OrderSection({
                   ) : null}
                 </div>
                 {couponError ? (
-                  <p className="text-body-12-m text-red-600 pl-[70px]">{couponError}</p>
+                  <p className="text-body-12-m text-red-600 max-[768px]:pl-[82px] min-[769px]:pl-[70px]">{couponError}</p>
                 ) : null}
               </div>
             )}
@@ -793,7 +826,7 @@ export default function OrderSection({
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
-        <div className="flex items-center gap-6 flex-wrap">
+        <div className="flex flex-col gap-3 min-[769px]:flex-row min-[769px]:items-center min-[769px]:gap-6 min-[769px]:flex-wrap">
           <span className="text-body-14-sb leading-[17px] text-[var(--color-text)]">
             우체국택배
           </span>
@@ -806,14 +839,14 @@ export default function OrderSection({
   );
 
   const rightColumn = (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col max-[768px]:gap-9 min-[769px]:gap-4">
       <SectionCard
         title="결제정보"
         open={openSections.summary}
         onToggle={() => toggleSection("summary")}
       >
-        <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
+        <div className="flex flex-col max-[768px]:gap-4 min-[769px]:gap-8">
+            <div className="flex flex-col max-[768px]:gap-4 min-[769px]:gap-4">
               <div className="flex justify-between items-center">
                 <span className="text-body-13-m text-[var(--color-text)]">
                   주문상품금액{quantity > 1 ? ` ×${quantity}` : ""}
@@ -902,14 +935,61 @@ export default function OrderSection({
         </div>
       </SectionCard>
 
-      <div className="overflow-hidden rounded-[8px]">
+      <div className="overflow-hidden max-[768px]:mx-[calc(50%_-_50vw)] max-[768px]:rounded-none min-[769px]:rounded-[8px]">
         <Image
           src="/images/sidebar-banner-001.png"
           alt="꼬순박스 배너"
           width={375}
           height={126}
-          className="w-full h-auto"
+          className="h-auto w-full"
         />
+      </div>
+    </div>
+  );
+
+  const priceSummaryItems = [
+    { label: "주문상품금액", value: formatPrice(basePrice), emphasis: false },
+    { label: "총 할인금액", value: formatPrice(couponDiscount), emphasis: false },
+    { label: "총 배송비", value: "0원", emphasis: false },
+    { label: "총 주문금액", value: formatPrice(total), emphasis: true },
+  ] as const;
+
+  const priceSummaryBar = (
+    <div className="w-full bg-[var(--color-why-bg)]">
+      <div className="mx-auto flex w-full items-center justify-center px-4 max-[768px]:h-[81px] min-[769px]:h-[58px] min-[769px]:max-w-[var(--max-width-content)] min-[769px]:gap-10 min-[769px]:px-4">
+        <div className="flex w-full max-w-[327px] items-center justify-between min-[769px]:max-w-none min-[769px]:justify-center min-[769px]:gap-10">
+          {priceSummaryItems.map((item, index) => (
+            <div key={item.label} className="flex items-center max-[768px]:gap-2 min-[769px]:gap-10">
+              {index > 0 ? (
+                <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
+                  {index === 3 ? "=" : index === 2 ? "-" : "+"}
+                </span>
+              ) : null}
+              <div className={item.emphasis ? "flex flex-col items-center min-[769px]:flex-row min-[769px]:gap-3" : "flex flex-col items-center min-[769px]:flex-row min-[769px]:gap-2"}>
+                <span
+                  className={[
+                    "whitespace-nowrap tracking-[-0.04em]",
+                    item.emphasis
+                      ? "text-body-13-m text-[var(--color-accent-orange)] min-[769px]:text-subtitle-16-b"
+                      : "text-body-13-m text-white min-[769px]:text-subtitle-16-sb",
+                  ].join(" ")}
+                >
+                  {item.label}
+                </span>
+                <span
+                  className={[
+                    "whitespace-nowrap tracking-[-0.04em]",
+                    item.emphasis
+                      ? "text-body-14-sb text-[var(--color-accent-orange)] min-[769px]:text-subtitle-20-b"
+                      : "text-body-14-sb text-white min-[769px]:text-subtitle-16-sb",
+                  ].join(" ")}
+                >
+                  {item.value}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -920,52 +1000,20 @@ export default function OrderSection({
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
         strategy="afterInteractive"
       />
-      <div className="flex h-[128px] justify-center overflow-hidden md:hidden lg:hidden">
-        <Image
-          src={orderMobileHeroImage}
-          alt="주문을 완료해주세요! 입력하신 정보가 맞는지 확인 후 결제하기 버튼을 눌러주세요."
-          height={128}
-          className="h-[128px] w-auto max-w-none shrink-0 object-contain object-center"
-          priority
-        />
-      </div>
-
-      <div className="max-md:hidden w-full" style={{ background: "var(--color-why-bg)" }}>
-        <div className="mx-auto flex h-[58px] w-full max-w-[var(--max-width-content)] items-center justify-center gap-10 px-4">
-          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
-            주문상품금액&nbsp;&nbsp;{formatPrice(basePrice)}
-          </span>
-          <span className="text-subtitle-16-sb text-white">+</span>
-          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
-            총 할인금액&nbsp;&nbsp;
-            <span className={couponDiscount > 0 ? "text-[var(--color-accent-orange)]" : ""}>
-              {formatPrice(couponDiscount)}
-            </span>
-          </span>
-          <span className="text-subtitle-16-sb text-white">-</span>
-          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
-            총 배송비&nbsp;&nbsp;0원
-          </span>
-          <span className="text-subtitle-16-sb text-white">=</span>
-          <div className="flex items-center gap-3">
-            <span className="text-subtitle-16-b tracking-[-0.04em] text-[var(--color-accent-orange)]">총 주문금액</span>
-            <span className="text-subtitle-20-b tracking-[-0.04em] text-[var(--color-accent-orange)]">{formatPrice(total)}</span>
-          </div>
-        </div>
-      </div>
+      {priceSummaryBar}
 
       <div className="bg-white md:overflow-x-auto lg:overflow-x-auto">
         <div
-          className="mx-auto px-4 md:px-0 lg:px-0 py-6 md:py-8 lg:py-8 md:min-w-[900px] lg:min-w-[900px]"
+          className="mx-auto max-[768px]:px-6 max-[768px]:pt-6 min-[769px]:min-w-[900px] min-[769px]:px-0 min-[769px]:py-8"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
-          <div className="max-md:hidden md:grid lg:grid md:grid-cols-[1fr_1px_327px] lg:grid-cols-[1fr_1px_327px] md:gap-x-8 lg:gap-x-8 items-start">
+          <div className="max-[768px]:hidden min-[769px]:grid min-[769px]:grid-cols-[1fr_1px_327px] min-[769px]:gap-x-8 items-start">
             {leftSections}
             <div className="self-stretch bg-[var(--color-text-muted)]" />
             {rightColumn}
           </div>
 
-          <div className="max-md:flex max-md:flex-col md:hidden lg:hidden gap-4">
+          <div className="flex flex-col gap-9 min-[769px]:hidden">
             {leftSections}
             {rightColumn}
           </div>

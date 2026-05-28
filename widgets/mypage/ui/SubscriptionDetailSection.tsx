@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -401,21 +400,13 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-body-14-m text-[var(--color-text)]">{pkgName}</span>
               <StatusBadge status={displayStatus} />
-              {displayStatus === "예정" && (
-                <Link
-                  href={`/mypage/subscription/change?subscriptionId=${subscription.id}`}
-                  className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
-                >
-                  플랜 변경하기
-                </Link>
-              )}
-              {canCancelPayment && (
+              {(displayStatus === "예정" || canCancelPayment) && (
                 <button
                   type="button"
                   onClick={() => handleCancelPayment(record.id)}
                   className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
                 >
-                  결제 취소
+                  구매취소
                 </button>
               )}
               <button
@@ -460,21 +451,13 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
           <div className="flex items-center gap-3 min-w-0">
             <span className="text-body-14-m text-[var(--color-text)] truncate">{pkgName}</span>
             <StatusBadge status={displayStatus} />
-            {displayStatus === "예정" && (
-              <Link
-                href={`/mypage/subscription/change?subscriptionId=${subscription.id}`}
-                className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
-              >
-                플랜 변경하기
-              </Link>
-            )}
-            {canCancelPayment && (
+            {(displayStatus === "예정" || canCancelPayment) && (
               <button
                 type="button"
                 onClick={() => handleCancelPayment(record.id)}
                 className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
               >
-                결제 취소
+                구매취소
               </button>
             )}
           </div>
@@ -517,24 +500,24 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
   return (
     <div className="relative min-h-screen bg-white">
-      {/* Upper solid color band — 258px tall */}
-      <div className="absolute left-0 right-0 top-0 h-[258px] bg-[var(--color-surface-warm)]" />
+      {/* Upper solid color band — mobile 367px / desktop 258px */}
+      <div className="absolute left-0 right-0 top-0 max-md:h-[296px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
       {/* Hero — plan card fits entirely within the 258px band */}
-      <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-8 pb-6">
+      <div className="relative mx-auto max-w-content max-md:px-6 md:px-0 lg:px-0 pt-8 pb-6">
         {/* Back + title */}
         <button
           type="button"
           onClick={() => router.back()}
-          className="mb-6 flex items-center gap-1 text-subtitle-20-b text-[var(--color-text)] hover:opacity-70"
+          className="mb-6 flex items-center gap-1 text-subtitle-18-b text-[var(--color-text)] hover:opacity-70"
         >
           <ChevronLeftIcon />
           구독중인 플랜
         </button>
 
         {/* Plan summary card — 154px tall, no shadow (colored band provides contrast) */}
-        <div className="flex overflow-hidden rounded-[20px] bg-white max-md:flex-col md:h-[154px] lg:h-[154px]">
-          <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-full md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
+        <div className="flex overflow-hidden rounded-[20px] bg-white shadow-[0px_4px_12px_0px_#00000014] max-md:h-[150px] md:h-[154px] lg:h-[154px]">
+          <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
             <Image
               src={TIER_THUMBNAILS[theme.tier]}
               alt={`${subscription.plan.name} 이미지`}
@@ -545,13 +528,6 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
           <div className="flex flex-1 flex-col justify-center gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8 md:py-5 lg:py-5">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <span
-                className="inline-flex w-fit items-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
-                style={{ background: theme.colorVar }}
-              >
-                {theme.tierLabel}
-              </span>
-
               <Text variant="subtitle-16-sb" mobileVariant="body-14-sb" className="tracking-[-0.04em] text-[var(--color-text)]">
                 {subscription.plan.name}{isActive ? " 구독중" : ""}
               </Text>
@@ -561,18 +537,16 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                   <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                     {formatDate(startDate)} ~
                   </Text>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                      결제일 : {billingDayLabel(subscription.nextBillingDate)}
-                    </Text>
-                    <button
-                      type="button"
-                      onClick={handleTogglePause}
-                      className="inline-flex h-6 items-center rounded-[4px] bg-[var(--color-text)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-80"
-                    >
-                      {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
-                    </button>
-                  </div>
+                  <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                    결제일 : {billingDayLabel(subscription.nextBillingDate)}
+                  </Text>
+                  <button
+                    type="button"
+                    onClick={handleTogglePause}
+                    className="self-start text-body-13-r text-[var(--color-primary)] underline hover:opacity-80 transition-opacity"
+                  >
+                    {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
+                  </button>
                 </>
               ) : (
                 <>
@@ -636,14 +610,14 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex h-8 items-center justify-center rounded-[4px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 취소
               </button>
               <button
                 type="button"
                 onClick={handleChangeSubscription}
-                className="flex h-8 items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 변경
               </button>
@@ -653,14 +627,14 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
               <button
                 type="button"
                 onClick={handleDeleteRecord}
-                className="flex h-8 items-center justify-center rounded-[4px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 삭제
               </button>
               <button
                 type="button"
                 onClick={handleResubscribe}
-                className="flex h-8 items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 재시작
               </button>
@@ -670,8 +644,8 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
       </div>
 
       {/* Payment history — flat on white background, 24px gap from band end */}
-      <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-6 pb-12">
-        <Text as="h2" variant="subtitle-20-b" className="mb-5 text-[var(--color-text)]">
+      <div className="relative mx-auto max-w-content max-md:px-6 md:px-0 lg:px-0 max-md:pt-6 md:pt-6 pb-12">
+        <Text as="h2" variant="subtitle-18-b" className="mb-5 text-[var(--color-text)]">
           구독 상세내역
         </Text>
 

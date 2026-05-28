@@ -222,7 +222,7 @@ function CardBody({
                 <p className="mb-[6px] text-[16px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-primary)]">
                   <span className="font-semibold text-black">✔</span> {reason.title}
                 </p>
-                <p className="indent-[1em] text-[16px] font-medium leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+                <p className="indent-[1em] text-[14px] font-medium leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
                   {reason.description}
                 </p>
               </div>
@@ -480,7 +480,7 @@ export default function ChecklistResult({
                     className="group flex w-full bg-white transition-opacity hover:opacity-90 active:opacity-80 max-md:h-[120px] max-md:flex-row md:max-w-[272px] md:flex-col md:overflow-hidden md:rounded-[16px]"
                   >
                     {/* 패키지 이미지 */}
-                    <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:h-[252px] md:w-full">
+                    <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:h-[252px] md:w-full md:rounded-[16px]">
                       <Image
                         src={img}
                         alt={pkg.name}

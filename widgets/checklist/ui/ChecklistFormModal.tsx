@@ -593,7 +593,7 @@ function ChecklistFormModalInner({
         </div>
 
         {/* 본문 */}
-        <div className="flex-1 overflow-y-auto max-md:px-5 md:px-10 lg:px-[94px] pt-8 md:pt-16 pb-4">
+        <div className="flex-1 overflow-y-auto max-md:px-5 md:px-10 lg:px-[94px] pt-8 md:pt-14 pb-4">
           {isAnalyzing ? (
             <AnalyzingSpinner />
           ) : questionsError ? (

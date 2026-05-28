@@ -33,7 +33,7 @@ function ProgressBar({
             onClick={() => onStepClick(n)}
             className="h-[5px] rounded-full transition-colors duration-300 hover:opacity-70 max-md:min-w-0 max-md:flex-1 md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none"
             style={{
-              background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)",
+              background: n <= current ? "var(--color-primary)" : "var(--color-text-muted)",
               cursor: "pointer",
             }}
             aria-label={`${n}단계로 이동`}
@@ -42,7 +42,7 @@ function ProgressBar({
           <div
             key={n}
             className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none"
-            style={{ background: n <= current ? "var(--color-accent)" : "var(--color-text-muted)" }}
+            style={{ background: n <= current ? "var(--color-primary)" : "var(--color-text-muted)" }}
           />
         );
       })}

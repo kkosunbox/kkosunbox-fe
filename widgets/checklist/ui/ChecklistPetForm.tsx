@@ -183,7 +183,7 @@ export default function ChecklistPetForm({
                     className={[
                       "flex h-10 min-w-0 flex-1 items-center justify-center rounded-[8px] px-[10px] leading-[17px] transition-colors",
                       selected
-                        ? "bg-[var(--color-accent-soft)] text-[var(--color-brown-dark)] text-body-14-sb"
+                        ? "bg-[var(--color-secondary)] text-[var(--color-brown-dark)] text-body-14-sb"
                         : "bg-[var(--color-surface-light)] text-[var(--color-text)] text-body-14-m",
                     ].join(" ")}
                   >

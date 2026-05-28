@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import SupportHeroBg from "../assets/support-hero-bg.png";
-import InquiryHeroBannerMobile from "../../../../.claude/assets/designs/inquiry-hero-banner.png";
+import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.png";
 
 export function SupportHero({ showButton = true }: { showButton?: boolean }) {
   const heroMinHeightClass =

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
-import { ChecklistRecommendModal, ScrollReveal, Button, CheckCircleIcon } from "@/shared/ui";
+import { ChecklistRecommendModal, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
@@ -222,16 +222,14 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                         />
                       ) : null}
                     </div>
-                    <Button
+                    <button
                       type="button"
                       onClick={handleDetailClick}
-                      variant="primary"
-                      size="lg"
                       disabled={!activePlan}
-                      className="absolute bottom-4 right-4 h-10 w-[180px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] shadow-md max-md:bottom-3 max-md:right-3 max-md:w-[150px] max-md:px-4 lg:bottom-11 lg:right-11"
+                      className="absolute bottom-4 right-4 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-11 lg:right-11"
                     >
                       제품 상세보기
-                    </Button>
+                    </button>
                     <PackageNutritionGuide initialTier={activePackage.tier} />
                   </div>
 

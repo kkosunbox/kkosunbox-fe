@@ -82,15 +82,16 @@ function PasswordField({ id, value, onChange, placeholder, autoComplete, visible
 }
 
 /* 두 뷰에서 공통으로 쓰는 바닥 버튼 쌍 */
-function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }: {
+function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled, className = "mt-7" }: {
   leftLabel: string;
   rightLabel: string;
   onLeft: () => void;
   onRight: () => void;
   rightDisabled?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="mt-7 flex gap-3">
+    <div className={`${className} flex gap-3`}>
       <button
         type="button"
         onClick={onLeft}
@@ -102,7 +103,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled }
         type="button"
         onClick={onRight}
         disabled={rightDisabled}
-        className="h-10 md:h-12 lg:h-12 flex-1 rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="h-10 md:h-12 lg:h-12 flex-1 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {rightLabel}
       </button>
@@ -181,7 +182,7 @@ export default function AccountInfoModal({ onClose }: Props) {
           </div>
 
           {/* 콘텐츠 박스 */}
-          <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6 md:min-h-[246px] lg:min-h-[246px] flex flex-col">
+          <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6">
             <div className="flex flex-col gap-4">
               {/* 이메일 행 */}
               <div className="flex items-center">
@@ -197,30 +198,30 @@ export default function AccountInfoModal({ onClose }: Props) {
                 <button
                   type="button"
                   onClick={() => setView("password-change")}
-                  className="h-8 w-[87px] rounded-[4px] bg-[var(--color-accent)] text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-90"
+                  className="h-8 w-[87px] rounded-[4px] bg-[var(--color-btn-dark-warm)] text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-90"
                 >
                   비밀번호 변경
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* 계정 탈퇴 링크 — 모바일은 min-height 없어 mt-auto가 0이 되므로 간격을 명시 */}
-            <div className="mt-6 flex justify-center md:mt-auto lg:mt-auto">
-              <button
-                type="button"
-                onClick={() => {
-                  openModal("member-withdraw", () => {
-                    router.push("/mypage/withdraw");
-                  });
-                }}
-                className="text-[14px] font-medium leading-[140%] tracking-[-0.02em] text-[var(--color-accent)] underline hover:opacity-70 transition-opacity"
-              >
-                계정 탈퇴
-              </button>
-            </div>
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => {
+                openModal("member-withdraw", () => {
+                  router.push("/mypage/withdraw");
+                });
+              }}
+              className="text-[14px] font-medium leading-[140%] tracking-[-0.02em] text-[var(--color-text-secondary)] underline transition-opacity hover:opacity-70"
+            >
+              계정 탈퇴
+            </button>
           </div>
 
           <FooterButtons
+            className="mt-4"
             leftLabel="취소"
             rightLabel="확인"
             onLeft={onClose}

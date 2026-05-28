@@ -167,7 +167,7 @@ export default function HeroSection() {
 
             <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 md:max-lg:py-10 max-md:pt-[58px] h-full lg:min-h-[537px]">
               {/* 좌측: 텍스트 */}
-              <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left max-lg:order-2 max-md:order-1 lg:order-1 lg:pl-4.5">
+              <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left max-lg:order-2 max-md:order-1 lg:order-1 lg:pl-0">
                 <h1 className="max-lg:mb-4 lg:mb-6">
                   {/* 모바일 제목 이미지 (< 768px) */}
                   <img

@@ -35,7 +35,7 @@ function PencilIcon({ className }: { className?: string }) {
 
 function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
   return (
-    <div className="relative shrink-0">
+    <div className="relative shrink-0 lg:self-center">
       <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] lg:h-[124px] lg:w-[124px]">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
@@ -235,7 +235,7 @@ export function ProfileSection({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-0">
 
             {/* 프로필 정보 (좌) */}
-            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-center lg:gap-8 lg:self-stretch">
+            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-end lg:gap-8 lg:self-stretch">
               <Link
                 href="/mypage/dog-profile"
                 className="max-lg:hidden absolute top-0 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
@@ -294,7 +294,7 @@ export function ProfileSection({
                         variant="body-16-m"
                         mobileVariant="body-13-r"
                         className={[
-                          "leading-[140%] tracking-[-0.02em]",
+                          "font-semibold leading-[140%] tracking-[-0.02em]",
                           birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
                         ].join(" ")}
                       >
@@ -305,7 +305,7 @@ export function ProfileSection({
                         variant="body-16-m"
                         mobileVariant="body-13-r"
                         className={[
-                          "leading-[140%]",
+                          "font-semibold leading-[140%]",
                           genderEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
                         ].join(" ")}
                       >
@@ -316,7 +316,7 @@ export function ProfileSection({
                         variant="body-16-m"
                         mobileVariant="body-13-r"
                         className={[
-                          "leading-[140%]",
+                          "font-semibold leading-[140%]",
                           weightEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
                         ].join(" ")}
                       >
@@ -327,7 +327,7 @@ export function ProfileSection({
                       variant="body-16-m"
                       mobileVariant="body-13-r"
                       className={[
-                        "mt-1 line-clamp-2 leading-[140%] md:mt-1 lg:mt-1",
+                        "mt-3 line-clamp-2 font-semibold leading-[140%]",
                         specialNotes ? "text-[var(--color-text)]" : "text-[var(--color-profile-meta-empty)]",
                       ].join(" ")}
                     >
@@ -361,7 +361,7 @@ export function ProfileSection({
             <div className="max-lg:hidden mx-[20px] w-px self-stretch bg-[var(--color-text-muted)]" />
 
             {/* 체크리스트 패널 (데스크톱) */}
-            <div className="max-lg:hidden lg:w-[358px] lg:flex-none lg:self-center">
+            <div className="max-lg:hidden lg:w-[358px] lg:flex-none lg:self-end">
               <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} />
             </div>
           </div>

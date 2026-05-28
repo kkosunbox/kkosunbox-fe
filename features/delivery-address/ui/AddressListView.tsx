@@ -146,14 +146,14 @@ export default function AddressListView({
 
                 {/* Select button */}
                 {isSelected ? (
-                  <span className="shrink-0 text-body-13-m text-[var(--color-accent)]">
+                  <span className="shrink-0 text-body-13-m text-[var(--color-text)]">
                     선택됨
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => onSelect(addr.id)}
-                    className="shrink-0 rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-body-13-sb text-white transition-opacity hover:opacity-90"
+                    className="shrink-0 rounded-md bg-[var(--color-secondary)] px-3 py-1.5 text-body-13-sb text-[var(--color-btn-dark-warm)] transition-opacity hover:opacity-90"
                   >
                     선택
                   </button>
@@ -165,7 +165,7 @@ export default function AddressListView({
                 <button
                   type="button"
                   onClick={() => onEdit(addr)}
-                  className="rounded-md border border-[var(--color-accent)] px-3 py-1 text-body-13-m text-[var(--color-accent)] transition-opacity hover:opacity-80"
+                  className="rounded-md border border-[var(--color-border)] px-3 py-1 text-body-13-m text-[var(--color-text)] transition-opacity hover:opacity-80"
                 >
                   수정
                 </button>
@@ -173,7 +173,7 @@ export default function AddressListView({
                   type="button"
                   onClick={() => handleDelete(addr.id)}
                   disabled={deletingId === addr.id}
-                  className="rounded-md border border-[var(--color-accent)] px-3 py-1 text-body-13-m text-[var(--color-accent)] transition-opacity hover:opacity-80 disabled:opacity-50"
+                  className="rounded-md border border-[var(--color-border)] px-3 py-1 text-body-13-m text-[var(--color-text)] transition-opacity hover:opacity-80 disabled:opacity-50"
                 >
                   {deletingId === addr.id ? "삭제 중..." : "삭제"}
                 </button>

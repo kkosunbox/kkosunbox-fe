@@ -4,6 +4,14 @@
 @source inline("text-title-24-sb-lh42");
 
 @font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "GangwonEduAll Light";
   src: url("/fonts/GangwonEduAll-Light.ttf") format("truetype");
   font-style: normal;
@@ -378,6 +386,7 @@
 
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+  --font-weight-semibold: 550;
 
   /* Tracking */
   --tracking-tightest: -0.04em;
@@ -422,9 +431,9 @@ button:disabled {
 @utility text-title-32-b  { font-size: 32px; line-height: 40px; font-weight: 700; }
 @utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
 @utility text-title-28-b  { font-size: 28px; line-height: 150%; font-weight: 700; letter-spacing: -0.04em; }
-@utility text-title-28-sb { font-size: 28px; line-height: 150%; font-weight: 600; letter-spacing: -0.04em; }
+@utility text-title-28-sb { font-size: 28px; line-height: 150%; font-weight: 550; letter-spacing: -0.04em; }
 @utility text-title-20-b  { font-size: 20px; line-height: 30px; font-weight: 700; letter-spacing: -0.04em; }
-@utility text-title-20-sb { font-size: 20px; line-height: 30px; font-weight: 600; letter-spacing: -0.04em; }
+@utility text-title-20-sb { font-size: 20px; line-height: 30px; font-weight: 550; letter-spacing: -0.04em; }
 @utility text-title-28-r-griun {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 28px;
@@ -447,8 +456,8 @@ button:disabled {
   letter-spacing: -0.04em;
 }
 @utility text-title-24-b  { font-size: 24px; line-height: 36px; font-weight: 700; }
-@utility text-title-24-sb     { font-size: 24px; line-height: 36px; font-weight: 600; }
-@utility text-title-24-sb-lh42 { font-size: 24px; line-height: 42px; font-weight: 600; letter-spacing: -0.04em; }
+@utility text-title-24-sb     { font-size: 24px; line-height: 36px; font-weight: 550; }
+@utility text-title-24-sb-lh42 { font-size: 24px; line-height: 42px; font-weight: 550; letter-spacing: -0.04em; }
 @utility text-title-24-m  { font-size: 24px; line-height: 36px; font-weight: 500; }
 
 /* Section intros — Figma How it works: Griun PolFairness 24 / 28, -0.04em */
@@ -472,24 +481,24 @@ button:disabled {
 @utility text-subtitle-24-b  { font-size: 24px; line-height: 32px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-subtitle-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; }
 @utility text-subtitle-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
-@utility text-subtitle-20-sb { font-size: 20px; line-height: 24px; font-weight: 600; }
+@utility text-subtitle-20-sb { font-size: 20px; line-height: 24px; font-weight: 550; }
 @utility text-subtitle-18-b  { font-size: 18px; line-height: 22px; font-weight: 700; }
-@utility text-subtitle-18-sb { font-size: 18px; line-height: 22px; font-weight: 600; }
+@utility text-subtitle-18-sb { font-size: 18px; line-height: 22px; font-weight: 550; }
 @utility text-subtitle-18-m  { font-size: 18px; line-height: 22px; font-weight: 500; }
 @utility text-subtitle-18-eb { font-size: 18px; line-height: 22px; font-weight: 800; letter-spacing: -0.03em; }
 @utility text-subtitle-17-b  { font-size: 17px; line-height: 1.4;  font-weight: 700; letter-spacing: -0.02em; }
-@utility text-subtitle-17-sb { font-size: 17px; line-height: 1.2;  font-weight: 600; }
+@utility text-subtitle-17-sb { font-size: 17px; line-height: 1.2;  font-weight: 550; }
 @utility text-subtitle-16-b  { font-size: 16px; line-height: 22px; font-weight: 700; }
 @utility text-subtitle-16-b-tight { font-size: 16px; line-height: 19px; font-weight: 700; letter-spacing: -0.05em; }
 @utility text-subtitle-16-r  { font-size: 16px; line-height: 22px; font-weight: 400; }
-@utility text-subtitle-16-sb { font-size: 16px; line-height: 20px; font-weight: 600; }
+@utility text-subtitle-16-sb { font-size: 16px; line-height: 20px; font-weight: 550; }
 
 /* Body */
-@utility text-body-20-sb { font-size: 20px; line-height: 24px; font-weight: 600; }
+@utility text-body-20-sb { font-size: 20px; line-height: 24px; font-weight: 550; }
 @utility text-body-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
 @utility text-body-16-b  { font-size: 16px; line-height: 24px; font-weight: 700; }
-@utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 600; }
+@utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 550; }
 @utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }
 @utility text-body-16-r  { font-size: 16px; line-height: 24px; font-weight: 400; }
 /* Body + Griun PolFairness (About 등 인용·강조 문장) */
@@ -530,26 +539,26 @@ button:disabled {
   letter-spacing: -0.04em;
 }
 @utility text-body-15-m  { font-size: 15px; line-height: 20px; font-weight: 500; }
-@utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 600; }
-@utility text-body-14-sb-tight { font-size: 14px; line-height: 17px; font-weight: 600; letter-spacing: -0.02em; }
+@utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 550; }
+@utility text-body-14-sb-tight { font-size: 14px; line-height: 17px; font-weight: 550; letter-spacing: -0.02em; }
 @utility text-body-14-b  { font-size: 14px; line-height: 22px; font-weight: 700; }
 @utility text-body-14-m  { font-size: 14px; line-height: 22px; font-weight: 500; }
 @utility text-body-14-r  { font-size: 14px; line-height: 22px; font-weight: 400; }
 @utility text-body-13-r  { font-size: 13px; line-height: 20px; font-weight: 400; }
 @utility text-body-13-m  { font-size: 13px; line-height: 18px; font-weight: 500; }
 @utility text-body-13-m-tight { font-size: 13px; line-height: 130%; font-weight: 500; }
-@utility text-body-13-sb { font-size: 13px; line-height: 18px; font-weight: 600; }
+@utility text-body-13-sb { font-size: 13px; line-height: 18px; font-weight: 550; }
 @utility text-body-13-b  { font-size: 13px; line-height: 18px; font-weight: 700; }
 /* Stats bar 등 360px 미만 초소형 뷰포트 */
-@utility text-body-11-sb { font-size: 11px; line-height: 16px; font-weight: 600; }
+@utility text-body-11-sb { font-size: 11px; line-height: 16px; font-weight: 550; }
 
 /* Footer nav (Figma: Pretendard 500, 14px / 24px line-height) */
 @utility text-footer-nav { font-size: 14px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
 
 /* Captions */
 @utility text-caption-11-r  { font-size: 11px; line-height: 1;    font-weight: 400; }
-@utility text-caption-12-sb { font-size: 12px; line-height: 20px; font-weight: 600; }
-@utility text-caption-12-sb-tight { font-size: 12px; line-height: 14px; font-weight: 600; }
+@utility text-caption-12-sb { font-size: 12px; line-height: 20px; font-weight: 550; }
+@utility text-caption-12-sb-tight { font-size: 12px; line-height: 14px; font-weight: 550; }
 @utility text-caption-12-b  { font-size: 12px; line-height: 20px; font-weight: 700; }
 @utility text-caption-12-r  { font-size: 12px; line-height: 20px; font-weight: 400; }
 @utility text-caption-12-m  { font-size: 12px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }
@@ -586,8 +595,8 @@ button:disabled {
 
 /* Action */
 @utility text-btn-14-m   { font-size: 14px; line-height: 18px; font-weight: 500; }
-@utility text-btn-15-sb  { font-size: 15px; line-height: 20px; font-weight: 600; }
-@utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 600; }
+@utility text-btn-15-sb  { font-size: 15px; line-height: 20px; font-weight: 550; }
+@utility text-link-14-sb { font-size: 14px; line-height: 18px; font-weight: 550; }
 @utility text-btn-12-m   { font-size: 12px; line-height: 16px; font-weight: 500; }
 
 /* ─── Gallery auto-roll (GPU compositor, no JS) ──────────────────────────── */

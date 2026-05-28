@@ -182,7 +182,7 @@ function DeliveryItemCard({
             <button
               type="button"
               onClick={() => onCancelRequest(payment.id)}
-              className="inline-flex h-[32px] items-center rounded-[8px] border border-[var(--color-accent)] px-3 text-body-13-m text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition-colors"
+              className="inline-flex h-[32px] items-center rounded-[8px] bg-[var(--color-text)] px-3 text-body-13-m text-white hover:opacity-90 transition-opacity"
             >
               주문취소
             </button>
@@ -191,7 +191,7 @@ function DeliveryItemCard({
               type="button"
               onClick={handleTrack}
               disabled={!payment.trackingNumber}
-              className="inline-flex h-[32px] items-center rounded-[8px] bg-[var(--color-accent)] px-3 text-body-13-m text-white hover:opacity-90 transition-opacity disabled:opacity-40"
+              className="inline-flex h-[32px] items-center rounded-[8px] bg-[var(--color-accent-orange)] px-3 text-body-13-m text-white hover:opacity-90 transition-opacity disabled:opacity-40"
             >
               배송추적
             </button>

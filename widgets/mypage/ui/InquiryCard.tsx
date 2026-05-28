@@ -17,7 +17,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
 
   return (
     <>
-      <DashboardCard className="max-lg:min-h-0 max-lg:h-auto">
+      <DashboardCard className="max-lg:min-h-0 max-lg:h-auto lg:h-[208px]">
         <SectionHeader title="문의관리" href="/support" linkLabel="문의관리" spacing="tight" />
 
         <div className="flex min-h-0 flex-1 flex-col">

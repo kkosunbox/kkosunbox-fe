@@ -35,7 +35,7 @@ export default function MypageSection({
               마이페이지
             </Text>
 
-            <div className="grid grid-cols-1 gap-4 max-lg:auto-rows-auto lg:grid-cols-2 lg:auto-rows-[173px] lg:gap-5">
+            <div className="grid grid-cols-1 gap-4 max-lg:auto-rows-auto lg:grid-cols-2 lg:auto-rows-[173px] lg:gap-8">
               {subscriptionCard}
               {paymentCard}
               {deliveryCard}

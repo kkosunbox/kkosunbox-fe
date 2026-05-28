@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
 import { Ms_Madi, Give_You_Glory } from "next/font/google";
-import "@fontsource/pretendard";
-import "@fontsource/pretendard/700.css";
-import "@fontsource/pretendard/800.css";
-import "@fontsource/pretendard/900.css";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
@@ -55,6 +51,13 @@ export default async function RootLayout({
     <html lang="ko">
       <head>
         {/* 로그인·랜딩 등 Griun PolFairness 헤드라인의 FOUT(줄바꿈 깜빡임) 완화 */}
+        <link
+          rel="preload"
+          href="/fonts/PretendardVariable.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <link
           rel="preload"
           href="/fonts/Griun_PolFairness-Rg.ttf"

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import logoMain from "@/shared/assets/logo-main.svg";
+import logoMain from "@/shared/assets/logo-main@2x.png";
 import { Button, DefaultPetIcon, useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { useAuth } from "@/features/auth";
@@ -529,8 +529,8 @@ export default function Header() {
                 <path d="M4 6H20M4 12H20M4 18H20" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <Link href="/" aria-label="꼬순박스 홈">
-              <Image src={logoMain} alt="꼬순박스 로고" priority />
+            <Link href="/" aria-label="꼬순박스 홈" className="inline-flex items-center">
+              <Image src={logoMain} alt="꼬순박스 로고" className="h-auto max-h-[28px] w-auto object-contain" priority />
             </Link>
           </div>
           <div className="flex items-center gap-[46px]">

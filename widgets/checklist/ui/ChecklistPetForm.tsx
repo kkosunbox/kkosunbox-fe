@@ -183,7 +183,7 @@ export default function ChecklistPetForm({
                     className={[
                       "flex h-10 min-w-0 flex-1 items-center justify-center rounded-[8px] px-[10px] leading-[17px] transition-colors",
                       selected
-                        ? "bg-[var(--color-accent-soft)] text-[var(--color-brown-dark)] text-body-14-sb"
+                        ? "bg-[var(--color-secondary)] text-[var(--color-brown-dark)] text-body-14-sb"
                         : "bg-[var(--color-surface-light)] text-[var(--color-text)] text-body-14-m",
                     ].join(" ")}
                   >
@@ -198,13 +198,14 @@ export default function ChecklistPetForm({
             <label htmlFor="checklist-pet-special" className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">
               특징
             </label>
-            <textarea
+            <input
               id="checklist-pet-special"
+              type="text"
               placeholder={SPECIAL_NOTES_PLACEHOLDER}
               value={petInfo.specialNotes}
               maxLength={SPECIAL_NOTES_MAX_LENGTH}
               onChange={(e) => setPetInfo((p) => ({ ...p, specialNotes: e.target.value }))}
-              className="max-md:h-14 md:h-10 resize-none rounded-[8px] bg-[var(--color-surface-light)] px-5 py-2.5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+              className="h-10 rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
             />
           </div>
         </div>

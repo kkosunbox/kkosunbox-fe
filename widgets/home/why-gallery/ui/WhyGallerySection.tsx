@@ -206,19 +206,25 @@ export default function WhyGallerySection() {
   return (
     <section className="overflow-hidden pb-10 md:pb-14 lg:pb-16" style={{ background: "var(--color-why-bg)" }}>
       <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
-        <Image
-          src={whyGalleryTitle}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={whyGalleryTitle.src}
           alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
+          width={whyGalleryTitle.width}
+          height={whyGalleryTitle.height}
           className="mb-8 hidden h-auto w-full md:block md:mb-10 md:max-w-[466px] lg:mb-[64px]"
-          sizes="466px"
-          priority
+          loading="eager"
+          decoding="async"
         />
-        <Image
-          src={whyGalleryTitleMobile}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={whyGalleryTitleMobile.src}
           alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
+          width={whyGalleryTitleMobile.width}
+          height={whyGalleryTitleMobile.height}
           className="mb-7 block h-auto max-h-[96px] w-full max-w-[320px] object-contain md:hidden"
-          sizes="320px"
-          priority
+          loading="eager"
+          decoding="async"
         />
         {/* 모바일 — Figma Group 1000005556 */}
         <p className="mb-11 max-w-[271px] text-center text-[14px] leading-[20px] tracking-[-0.02em] text-white md:hidden">

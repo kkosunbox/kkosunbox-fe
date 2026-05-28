@@ -289,19 +289,25 @@ export default function ReviewsSection() {
       />
       <div className="relative z-10 mx-auto max-w-[1107px] max-md:px-6 md:px-6 lg:px-0 lg:pt-[100px]">
         <ScrollReveal variant="fade-up">
-          <Image
-            src={reviewsTitle}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={reviewsTitle.src}
             alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
+            width={reviewsTitle.width}
+            height={reviewsTitle.height}
             className="mx-auto hidden h-auto w-full md:block md:max-w-[760px] lg:max-w-[845px]"
-            sizes="(min-width: 1200px) 845px, 760px"
-            priority
+            loading="eager"
+            decoding="async"
           />
-          <Image
-            src={reviewsTitleMobile}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={reviewsTitleMobile.src}
             alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
+            width={reviewsTitleMobile.width}
+            height={reviewsTitleMobile.height}
             className="mx-auto block h-auto max-h-[96px] w-full max-w-[486px] object-contain md:hidden"
-            sizes="486px"
-            priority
+            loading="eager"
+            decoding="async"
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>

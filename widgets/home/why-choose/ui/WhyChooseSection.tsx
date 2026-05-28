@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
@@ -28,12 +27,14 @@ export default function WhyChooseSection() {
     >
       <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0 flex flex-col items-center text-center">
         <ScrollReveal variant="fade-up">
-          <Image
-            src={whyGalleryTitle}
+          <img
+            src={whyGalleryTitle.src}
             alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
+            width={whyGalleryTitle.width}
+            height={whyGalleryTitle.height}
             className="mb-5 h-auto w-full max-w-[320px] md:max-w-[466px] lg:mb-8"
-            sizes="(min-width: 768px) 466px, 320px"
-            priority
+            loading="eager"
+            decoding="async"
           />
         </ScrollReveal>
 

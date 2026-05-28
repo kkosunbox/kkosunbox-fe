@@ -261,20 +261,14 @@ export default function SupportSection({
       {showBanner && <SupportHero />}
       <div className={`max-md:py-6 md:py-10 lg:py-10${fillViewport ? " flex flex-1 flex-col" : ""}`}>
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
-        {/* ── 모바일 전용 (< 910px): 문의하기 CTA + 내 문의내역 (히어로 아래) ── */}
+        {/* ── 모바일 전용 (< 910px): 문의하기 CTA (히어로 아래) ── */}
         {showBanner && (
-          <ScrollReveal variant="fade-in" delay={200} className="flex flex-col items-center gap-3 md2:hidden">
+          <ScrollReveal variant="fade-in" delay={200} className="flex flex-col items-center md2:hidden">
             <Link
               href="/inquiry"
               className="flex h-12 w-full items-center justify-center rounded-lg bg-[var(--color-cta-button)] text-body-16-sb leading-[1.5] tracking-[-0.02em] text-white"
             >
               문의하기
-            </Link>
-            <Link
-              href="/support/history"
-              className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
-            >
-              내 문의내역
             </Link>
           </ScrollReveal>
         )}
@@ -285,6 +279,18 @@ export default function SupportSection({
             className={`rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-6 lg:pt-6${fillViewport ? " flex min-h-0 flex-1 flex-col" : ""}`}
             aria-label="자주 묻는 질문"
           >
+          <div className="mb-3 flex items-center justify-between gap-2 md:hidden">
+            <h2 className="whitespace-nowrap text-body-13-sb tracking-[-0.04em] text-[var(--color-text)]">
+              자주 묻는 질문(FAQ)
+            </h2>
+            <Link
+              href="/support/history"
+              className="shrink-0 text-body-11-sb tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
+            >
+              내 문의내역
+            </Link>
+          </div>
+
           {/* 검색 + 내 문의내역 */}
           <div className="mb-6 grid w-full grid-cols-1 gap-3 md:mb-8 lg:mb-8 md:grid-cols-[1fr_auto_1fr] lg:grid-cols-[1fr_auto_1fr] md:items-center lg:items-center">
             <div aria-hidden="true" className="max-md:hidden" />

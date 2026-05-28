@@ -471,7 +471,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   key={plan.id}
                   type="button"
                   onClick={() => handleSelectPlan(plan)}
-                  className="rounded-full px-3 py-1 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                  className="rounded-full px-3 h-[24px] text-body-14-sb text-white transition-opacity hover:opacity-90"
                   style={{ background: isActive ? theme.colorVar : "var(--color-text-muted)" }}
                 >
                   {theme.tierLabel}
@@ -906,7 +906,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
         {/* Plan selector — full-width dark tab bar */}
         <div className="mb-[44px] w-full" style={{ background: "var(--color-why-bg)" }}>
           <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3">
-            <span className="text-body-14-sb text-[var(--color-text-muted)]">구독선택</span>
+            <span className="text-body-14-sb text-[var(--color-text-muted)] mr-6">구독선택</span>
             <div className="flex flex-wrap gap-2">
               {sortedPlans.map((plan) => {
                 const theme = packageThemeForPlan(plan);
@@ -916,7 +916,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                     key={plan.id}
                     type="button"
                     onClick={() => handleSelectPlan(plan)}
-                    className="rounded-full px-3 py-1 text-body-14-sb text-white transition-opacity hover:opacity-90"
+                    className="rounded-full px-3 h-[24px] text-body-14-sb text-white transition-opacity hover:opacity-90"
                     style={{
                       background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
                     }}
@@ -963,7 +963,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             </div>
 
             <div className="mx-auto min-w-0 w-full max-w-[438px] lg:mx-0">
-              <h2 className="mb-2 text-[28px] font-semibold tracking-[-0.04em] text-[var(--color-text-emphasis)]">
+              <h2 className="mb-2 text-[28px] font-extrabold tracking-[-0.04em] text-[var(--color-text-emphasis)]">
                 {selectedPlan.name}
               </h2>
               <div className="mb-4 flex items-center gap-3">

@@ -13,7 +13,9 @@ import {
   type PackageData,
   type PackageTier,
 } from "@/widgets/subscribe/plans/ui/packageData";
-import { PackageCompareTable } from "@/widgets/subscribe/plans/ui/PackageDetailView";
+import PackageNutritionGuide from "@/widgets/subscribe/plans/ui/PackageNutritionGuide";
+import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { CheckCircleIcon } from "@/shared/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
@@ -110,18 +112,7 @@ const RECOMMENDATION_REASONS: Record<RecommendedTier, RecommendReason[]> = {
 };
 
 
-/* ── Info 아이콘 ─── */
-function InfoIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" className="shrink-0" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2" fill="none" />
-      <path d="M12 11V17" stroke="white" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="12" cy="8" r="1.2" fill="white" />
-    </svg>
-  );
-}
-
-/* ── 추천 카드 내부 ─── */
+/* ── 추천 카드 내부 (데스크탑·태블릿 전용) ─── */
 
 interface CardBodyProps {
   petName: string;
@@ -132,7 +123,6 @@ interface CardBodyProps {
   pkg: PackageData;
   explainImage: StaticImageData;
   reasons: RecommendReason[];
-  onNutritionClick: () => void;
   onDetailClick: () => void;
 }
 
@@ -145,24 +135,23 @@ function CardBody({
   pkg,
   explainImage,
   reasons,
-  onNutritionClick,
   onDetailClick,
 }: CardBodyProps) {
   return (
-    <div className="p-[36px] max-md:p-5">
+    <div className="p-[36px]">
 
       {/* 상단: 아바타 + 뱃지 + 설명 */}
-      <div className="mb-[39px] flex items-center gap-8 max-md:mb-5 max-md:gap-4">
+      <div className="mb-[39px] flex items-center gap-8">
         {/* 아바타 */}
         <div
-          className="flex h-[78px] w-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)] max-md:h-[56px] max-md:w-[56px]"
+          className="flex h-[78px] w-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)]"
           style={{ background: "var(--color-secondary)" }}
         >
           {avatarSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
           ) : (
-            <span className="text-emoji-34 max-md:text-emoji-28">🐶</span>
+            <span className="text-emoji-34">🐶</span>
           )}
         </div>
 
@@ -175,7 +164,7 @@ function CardBody({
             {tierLabel}
           </span>
           <p
-            className="text-[16px] leading-[150%] tracking-[-0.02em] text-black max-md:text-[13px]"
+            className="text-[16px] leading-[150%] tracking-[-0.02em] text-black"
             style={{ fontFamily: GRIUN_FONT }}
           >
             체크리스트 분석 완료!{" "}
@@ -204,33 +193,14 @@ function CardBody({
             <button
               type="button"
               onClick={onDetailClick}
-              className="absolute bottom-[26px] right-[26px] flex h-[40px] w-[180px] items-center justify-center rounded-[8px] text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white shadow-md transition-opacity hover:opacity-90 active:opacity-80 max-md:bottom-4 max-md:right-4"
+              className="absolute bottom-[26px] right-[26px] flex h-[40px] w-[180px] items-center justify-center rounded-[8px] text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white shadow-md transition-opacity hover:opacity-90 active:opacity-80"
               style={{ background: "var(--color-brown-dark)" }}
             >
               제품 상세보기
             </button>
           </div>
 
-          {/* ℹ 버튼 — 기존 위치 right-3 top-3 */}
-          <button
-            type="button"
-            onClick={onNutritionClick}
-            aria-label="영양정보 확인"
-            className="absolute right-3 top-3 z-10 flex items-center justify-center transition-opacity hover:opacity-80 active:opacity-70"
-          >
-            <InfoIcon />
-          </button>
-
-          {/* 말풍선 — ℹ 버튼 기준 65px 오른쪽, 위로 올려 이미지 바깥 표시 */}
-          <div className="pointer-events-none absolute right-3 top-3 z-20 -translate-y-full translate-x-[65px]">
-            <Image
-              src="/images/please-info-check.png"
-              alt="영양정보 확인"
-              width={130}
-              height={55}
-              className="h-auto w-[130px] max-md:w-[100px]"
-            />
-          </div>
+          <PackageNutritionGuide initialTier={pkg.tier} />
         </div>
 
         {/* 추천이유 영역 */}
@@ -240,7 +210,7 @@ function CardBody({
         >
           {/* 제목 */}
           <h3
-            className="mb-[28px] text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)] max-md:mb-4 max-md:text-[18px]"
+            className="mb-[28px] text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]"
           >
             추천이유
           </h3>
@@ -287,7 +257,6 @@ export default function ChecklistResult({
   profileId,
 }: Props) {
   const router = useRouter();
-  const [showNutritionOverlay, setShowNutritionOverlay] = useState(false);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
 
@@ -341,7 +310,7 @@ export default function ChecklistResult({
     recommendedApiPlan &&
     router.push(`/subscribe/detail?planId=${recommendedApiPlan.id}`);
 
-  const sharedCardProps: Omit<CardBodyProps, "onNutritionClick" | "onDetailClick"> = {
+  const sharedCardProps: Omit<CardBodyProps, "onDetailClick"> = {
     petName,
     avatarSrc,
     effectiveRecommendedTier,
@@ -353,51 +322,139 @@ export default function ChecklistResult({
   };
 
   return (
-    <section className="relative bg-white max-md:py-9 md:py-[64px] lg:py-[64px]">
-      {/* 상단 웜 배경 밴드 */}
+    <section className="relative bg-white max-md:pt-0 max-md:pb-9 md:py-[64px] lg:py-[64px]">
+      {/* 데스크탑·태블릿 상단 웜 배경 밴드 */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[200px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[200px] max-md:hidden"
         style={{ background: "var(--color-support-faq-surface)" }}
         aria-hidden
       />
 
-      <div className="relative mx-auto w-full px-4 max-md:max-w-[640px] md:max-w-[1013px] lg:max-w-[1013px] md:px-0 lg:px-0">
+      {/* 모바일 전용: FFF7EF 배너 — 아바타 + 분석 결과 텍스트 */}
+      <div
+        className="md:hidden flex items-center gap-4 px-6 py-[21px]"
+        style={{ background: "var(--color-support-faq-surface)" }}
+      >
+        <div
+          className="flex h-[48px] w-[48px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)]"
+          style={{ background: "var(--color-secondary)" }}
+        >
+          {avatarSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
+          ) : (
+            <span className="text-emoji-28">🐶</span>
+          )}
+        </div>
+        <p
+          className="text-[14px] leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
+          style={{ fontFamily: GRIUN_FONT }}
+        >
+          체크리스트 분석 완료!{" "}
+          <strong className="font-semibold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+          <strong className="font-semibold">{tierLabel} 패키지</strong>입니다.
+        </p>
+      </div>
 
-        {/* 페이지 제목 */}
+      <div className="relative mx-auto w-full max-md:px-6 md:max-w-[1013px] md:px-0 lg:px-0">
+
+        {/* 페이지 제목 — 데스크탑·태블릿만 */}
         <Image
           src={checklistHeroTitle}
           alt="체크리스트 기반 맞춤 추천이 완료되었어요!"
-          className="relative mx-auto mb-10 h-auto w-full max-w-[462px] max-md:mb-7 max-md:max-w-[300px]"
+          className="relative mx-auto mb-10 h-auto w-full max-w-[462px] max-md:hidden"
           sizes="(min-width: 768px) 462px, 300px"
           priority
         />
 
-        {/* 메인 추천 카드 */}
-        <div className="relative mb-14 rounded-[20px] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] max-md:mb-10">
+        {/* 데스크탑·태블릿: 흰색 추천 카드 */}
+        <div className="relative mb-14 rounded-[20px] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] max-md:hidden">
           <CardBody
             {...sharedCardProps}
-            onNutritionClick={() => setShowNutritionOverlay(true)}
             onDetailClick={navigateToDetail}
           />
         </div>
 
-        {/* 영양정보 오버레이 — 비교 표만 표시 */}
-        {showNutritionOverlay && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-            onClick={() => setShowNutritionOverlay(false)}
-          >
+        {/* 모바일 전용: 이미지 + 패키지 정보 + 추천이유 */}
+        <div className="md:hidden pt-6 mb-9">
+
+          {/* 패키지 아이템 이미지 (모바일 전용 — 제품 상세와 동일한 hero 이미지) */}
+          <div className="relative mb-5 aspect-square w-full">
             <div
-              className="max-h-[90vh] w-full max-w-[520px] overflow-auto rounded-[20px] shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              className="absolute inset-0 overflow-hidden rounded-[20px]"
+              style={{ filter: "drop-shadow(0px 4px 12px rgba(0,0,0,0.12))" }}
             >
-              <PackageCompareTable
-                initialTier={recommendedPlanTier}
-                onClose={() => setShowNutritionOverlay(false)}
+              <Image
+                src={TIER_DETAIL_HERO_IMAGES[recommendedPlanTier]}
+                alt={`${recommendedPkg.name} 상품 이미지`}
+                fill
+                className="object-cover"
+                sizes="calc(100vw - 48px)"
+                priority
               />
             </div>
+
+            <PackageNutritionGuide initialTier={recommendedPlanTier} bubbleClassName="h-auto w-[100px]" />
           </div>
-        )}
+
+          {/* 패키지명 */}
+          <p
+            className="mb-3 text-[16px] font-extrabold leading-[19px] tracking-[-0.04em]"
+            style={{ color: tierColorVar }}
+          >
+            {recommendedPkg.name}
+          </p>
+
+          {/* 특징 목록 + 제품 상세보기 버튼 */}
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <ul className="flex flex-col gap-[18px]">
+              {recommendedPkg.items.map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <CheckCircleIcon color={tierColorVar} className="shrink-0" />
+                  <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={navigateToDetail}
+              disabled={!recommendedApiPlan}
+              className="flex h-10 w-[108px] shrink-0 items-center justify-center rounded-[8px] text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+              style={{ background: "var(--color-brown-dark)" }}
+            >
+              제품 상세보기
+            </button>
+          </div>
+
+          {/* 추천이유 박스 */}
+          <div
+            className="rounded-[20px] px-5 py-5"
+            style={{ background: "var(--color-recommend-reason-bg)" }}
+          >
+            <h3 className="mb-4 text-[16px] font-semibold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
+              추천이유
+            </h3>
+            <div className="flex flex-col gap-[18px]">
+              {reasons.map((reason) => (
+                <div key={reason.title}>
+                  <p className="mb-[6px] text-[14px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-primary)]">
+                    <span className="font-semibold text-black">✔</span> {reason.title}
+                  </p>
+                  <p className="indent-[1em] text-[14px] font-medium leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+                    {reason.description}
+                  </p>
+                </div>
+              ))}
+              <p className="text-[14px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+                {"→ 그래서 우리 아이에게는 "}
+                <span style={{ color: tierColorVar }}>{`'${tierLabel} 패키지'`}</span>
+                {"를 추천드려요!"}
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* 하단: 전체 패키지 구독 섹션 */}
         {!plansLoading && sortedPlans.length > 0 && (
@@ -409,7 +466,7 @@ export default function ChecklistResult({
               sizes="(min-width: 768px) 380px, 260px"
             />
 
-            <div className="flex justify-between max-md:flex-col max-md:gap-5">
+            <div className="flex justify-between max-md:flex-col max-md:gap-6">
               {sortedPlans.map((plan) => {
                 const tier = tierFromSubscriptionPlan(plan);
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
@@ -420,19 +477,19 @@ export default function ChecklistResult({
                   <Link
                     key={plan.id}
                     href={`/subscribe/detail?planId=${plan.id}`}
-                    className="group flex w-full max-w-[272px] flex-col overflow-hidden rounded-[16px] bg-white max-md:max-w-full"
+                    className="group flex w-full bg-white transition-opacity hover:opacity-90 active:opacity-80 max-md:h-[120px] max-md:flex-row md:max-w-[272px] md:flex-col md:overflow-hidden md:rounded-[16px]"
                   >
                     {/* 패키지 이미지 */}
-                    <div className="relative h-[252px] w-full overflow-hidden max-md:h-[180px]">
+                    <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:h-[252px] md:w-full">
                       <Image
                         src={img}
                         alt={pkg.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(min-width: 768px) 272px, calc(100vw - 32px)"
+                        sizes="(min-width: 768px) 272px, 128px"
                       />
                       {tier === recommendedPlanTier && (
-                        <div className="absolute bottom-3 right-3 h-[144px] w-[144px]">
+                        <div className="absolute bottom-3 right-3 max-md:h-[52px] max-md:w-[52px] md:h-[144px] md:w-[144px]">
                           <Image
                             src={stamp}
                             alt="추천 도장"
@@ -444,30 +501,29 @@ export default function ChecklistResult({
                     </div>
 
                     {/* 텍스트 영역 */}
-                    <div className="px-[18px] pb-[22px] pt-[20px]">
-                      {/* 패키지명 */}
-                      <p className="mb-[12px] text-[20px] font-bold leading-[24px] tracking-[-0.04em] text-[var(--color-surface-dark)]">
+                    <div className="max-md:flex max-md:flex-col max-md:justify-center max-md:py-[6px] max-md:pl-4 max-md:pr-0 md:block md:px-[18px] md:pb-[22px] md:pt-[20px]">
+                      <p className="text-[var(--color-surface-dark)] max-md:mb-[6px] max-md:text-[16px] max-md:font-semibold max-md:leading-[19px] max-md:tracking-[-0.04em] md:mb-[12px] md:text-[20px] md:font-bold md:leading-[24px] md:tracking-[-0.04em]">
                         {pkg.name}
                       </p>
-
-                      {/* 월 요금제 */}
-                      <p className="mb-[6px] text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
+                      <p className="text-[var(--color-text-body-warm)] max-md:mb-[4px] max-md:text-[16px] max-md:font-bold max-md:leading-[19px] max-md:tracking-[-0.05em] md:mb-[6px] md:text-[16px] md:font-bold md:leading-[19px] md:tracking-[-0.05em]">
                         월 요금제
                       </p>
-
-                      {/* 가격 행 */}
-                      <div className="mb-[4px] flex items-baseline gap-[8px]">
-                        <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)]">
+                      <div className="flex items-baseline gap-[8px] max-md:mb-[2px] md:mb-[4px]">
+                        <span
+                          className="max-md:text-[16px] max-md:font-semibold max-md:leading-[19px] max-md:tracking-[-0.05em] md:text-[16px] md:font-semibold md:leading-[19px] md:tracking-[-0.05em]"
+                          style={{ color: pkg.colorVar }}
+                        >
                           {plan.discountRate}%
                         </span>
-                        <span className="text-[20px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+                        <span className="text-[var(--color-surface-dark)] max-md:text-[20px] max-md:font-extrabold max-md:leading-[24px] max-md:tracking-[-0.05em] md:text-[20px] md:font-extrabold md:leading-[24px] md:tracking-[-0.05em]">
                           {formatMonthlyPrice(plan.monthlyPrice)}
                         </span>
                       </div>
-
-                      {/* 할인 문구 */}
-                      <p className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-text-secondary)]">
-                        최대 2천원 할인
+                      <p
+                        className="max-md:text-[14px] max-md:font-semibold max-md:leading-[17px] max-md:tracking-[-0.05em] md:text-[14px] md:font-semibold md:leading-[17px] md:tracking-[-0.05em]"
+                        style={{ color: pkg.colorVar }}
+                      >
+                        첫 구독 할인
                       </p>
                     </div>
                   </Link>

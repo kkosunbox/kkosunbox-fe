@@ -1,17 +1,14 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useState, useMemo, useTransition } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
-import { ScrollReveal } from "@/shared/ui";
+import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import { getErrorMessage } from "@/shared/lib/api";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import SubscriptionChangeHero from "@/widgets/mypage/assets/subscribe-change-hero.png";
-import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
-import packageExplainWithPremium from "@/widgets/home/package-plans/assets/package-explain-with-premium.png";
-import packageExplainWithStandard from "@/widgets/home/package-plans/assets/package-explain-with-standard.png";
 import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
 import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
 import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
@@ -21,20 +18,21 @@ import {
   tierFromSubscriptionPlan,
   type PackageTier,
 } from "@/widgets/subscribe/plans/ui/packageData";
+import { PackageCompareTable } from "@/widgets/subscribe/plans/ui/PackageDetailView";
 
-const PACKAGE_EXPLAIN_IMAGES: Record<PackageTier, StaticImageData> = {
-  Basic: packageExplainWithBasic,
-  Standard: packageExplainWithStandard,
-  Premium: packageExplainWithPremium,
+const PLAN_DISPLAY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
+
+const PLAN_FEATURES: Record<PackageTier, readonly string[]> = {
+  Basic: ["100% 원물 프리미엄 져키", "인공 첨가물 0%", "이중 안심 포장"],
+  Standard: ["베이직의 모든 구성 포함", "영양 강화 플러스 져키", "균형 잡힌 영양 설계"],
+  Premium: ["휴먼그레이드 프리미엄 져키", "1:1 맞춤 큐레이션", "최상의 재료로 만든 패키지"],
 };
 
-const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
+const PACKAGE_IMAGES: Record<PackageTier, StaticImageData> = {
   Basic: packageImageBasic,
   Standard: packageImageStandard,
   Premium: packageImagePremium,
 };
-
-const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -44,13 +42,125 @@ function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
   return plans.find((p) => tierFromSubscriptionPlan(p) === tier);
 }
 
-function initialSelectedTier(plans: SubscriptionPlanDto[]): PackageTier {
-  for (const tier of PACKAGE_SUMMARY_ORDER) {
-    if (planForTier(plans, tier)) return tier;
-  }
-  const sorted = [...plans].sort(comparePlansForDisplayOrder);
-  const first = sorted[0];
-  return first ? tierFromSubscriptionPlan(first) : "Premium";
+function InfoIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" className="shrink-0" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" stroke="var(--color-text-secondary)" strokeWidth="2" fill="none" />
+      <path d="M12 11V17" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="8" r="1.2" fill="var(--color-text-secondary)" />
+    </svg>
+  );
+}
+
+interface PlanCardProps {
+  tier: PackageTier;
+  plan: SubscriptionPlanDto;
+  isCurrentPlan: boolean;
+  isPending: boolean;
+  btnLabel: string;
+  onAction: () => void;
+}
+
+function PlanCard({ tier, plan, isCurrentPlan, isPending, btnLabel, onAction }: PlanCardProps) {
+  const [infoOpen, setInfoOpen] = useState(false);
+  const pkg = PACKAGES.find((p) => p.tier === tier)!;
+  const img = PACKAGE_IMAGES[tier];
+  const isPremium = tier === "Premium";
+
+  return (
+    <div
+      className={[
+        "relative flex w-full max-w-[327px] flex-col overflow-hidden rounded-[20px] bg-[var(--color-background)]",
+        isPremium ? "border-[3px] border-[var(--color-premium)]" : "",
+      ].join(" ")}
+    >
+      {/* Image area */}
+      <div className="relative aspect-[327/252] w-full overflow-hidden rounded-t-[17px]">
+        <Image src={img} alt={pkg.name} fill className="object-cover" sizes="327px" />
+
+        {isCurrentPlan && (
+          <div className="absolute left-5 top-5 z-10">
+            <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
+              이용중
+            </span>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => setInfoOpen(true)}
+          aria-label="영양정보 확인"
+          className="absolute right-5 top-5 z-10 transition-opacity hover:opacity-70 active:opacity-50"
+        >
+          <InfoIcon />
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-1 flex-col px-7 pb-7 pt-6">
+        <p className="mb-3 text-[20px] font-bold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)]">
+          {pkg.name}
+        </p>
+
+        <div className="mb-[30px] flex flex-col gap-[10px]">
+          {PLAN_FEATURES[tier].map((feature) => (
+            <div key={feature} className="flex items-center gap-3">
+              <CheckCircleIcon color={pkg.colorVar} />
+              <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                {feature}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-4 flex flex-col gap-1">
+          <p className="text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
+            월 요금제
+          </p>
+          <div className="flex flex-wrap items-baseline gap-x-[6px] gap-y-0.5">
+            <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-text-on-warm)]">
+              {plan.discountRate}%
+            </span>
+            <span className="text-[20px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)]">
+              {formatMonthlyPrice(plan.monthlyPrice)}
+            </span>
+            <span className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-text-on-warm)]">
+              최대 2천원 할인
+            </span>
+          </div>
+        </div>
+
+        {isCurrentPlan ? (
+          <div className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-text-secondary)] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white">
+            현재 구독중
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={onAction}
+            className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-[16px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {btnLabel}
+          </button>
+        )}
+      </div>
+
+      {infoOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          onClick={() => setInfoOpen(false)}
+        >
+          <div
+            className="max-h-[90vh] w-full max-w-[520px] overflow-auto rounded-[20px] shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <PackageCompareTable initialTier={tier} onClose={() => setInfoOpen(false)} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 /* ─── Props ─── */
@@ -69,14 +179,7 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, startTransition] = useTransition();
 
-  const sortedPlans = useMemo(
-    () => [...plans].sort(comparePlansForDisplayOrder),
-    [plans],
-  );
-
-  const [selectedTier, setSelectedTier] = useState<PackageTier>(() =>
-    initialSelectedTier(plans),
-  );
+  const sortedPlans = useMemo(() => [...plans].sort(comparePlansForDisplayOrder), [plans]);
 
   const isAddMode = !targetSubscriptionId;
 
@@ -85,32 +188,24 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
     [subscriptions, targetSubscriptionId],
   );
 
-  const activePlan = planForTier(sortedPlans, selectedTier);
-  const activePkg = PACKAGES.find((p) => p.tier === selectedTier);
-
-  function hasActiveSub(tier: PackageTier): boolean {
-    return subscriptions.some((s) => tierFromSubscriptionPlan(s.plan) === tier);
-  }
-
-  function isDisabledPlan(tier: PackageTier): boolean {
+  function isCurrentPlan(tier: PackageTier): boolean {
     if (isAddMode) return false;
-    return targetSubscription
-      ? tierFromSubscriptionPlan(targetSubscription.plan) === tier
-      : false;
+    return targetSubscription ? tierFromSubscriptionPlan(targetSubscription.plan) === tier : false;
   }
 
-  function handlePurchase() {
-    if (!activePlan) return;
+  function handleAction(tier: PackageTier) {
+    const plan = planForTier(sortedPlans, tier);
+    if (!plan) return;
 
     if (isAddMode || !targetSubscription) {
-      router.push(`/order?planId=${activePlan.id}&quantity=1`);
+      router.push(`/order?planId=${plan.id}&quantity=1`);
       return;
     }
 
     showLoading("플랜 변경을 처리하고 있습니다...");
     startTransition(async () => {
       try {
-        await changePlan(targetSubscription.id, { newPlanId: activePlan.id });
+        await changePlan(targetSubscription.id, { newPlanId: plan.id });
         openAlert({
           type: "success",
           title: "플랜이 변경되었습니다.",
@@ -119,21 +214,17 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
         router.push("/mypage/subscription");
         router.refresh();
       } catch (err) {
-        openAlert({
-          title: getErrorMessage(err, "플랜 변경 처리 중 오류가 발생했습니다."),
-        });
+        openAlert({ title: getErrorMessage(err, "플랜 변경 처리 중 오류가 발생했습니다.") });
       } finally {
         hideLoading();
       }
     });
   }
 
-  function buttonLabel(): string {
+  function btnLabel(): string {
     if (isAddMode) return "구독하기";
     return subscriptions.length > 0 ? "변경하기" : "구매하기";
   }
-
-  const selectedDisabled = isDisabledPlan(selectedTier);
 
   return (
     <section className="flex min-h-full flex-1 flex-col bg-white pb-16 md:pb-20">
@@ -161,103 +252,23 @@ export default function SubscriptionChangePlansSection({ subscriptions, plans, t
             </p>
           ) : (
             <ScrollReveal variant="fade-up" delay={150}>
-              <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center lg:gap-7">
-                {/* 좌측 — 선택된 패키지 설명 이미지 + 액션 버튼 */}
-                <div
-                  className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] md:rounded-[28px]"
-                  style={{ boxShadow: "var(--shadow-card-soft)" }}
-                >
-                  {activePkg ? (
-                    <Image
-                      key={selectedTier}
-                      src={PACKAGE_EXPLAIN_IMAGES[selectedTier]}
-                      alt={`${activePkg.name} 설명`}
-                      className="h-auto w-full transition-opacity duration-300"
-                      sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
-                      priority
+              <div className="flex items-start justify-center gap-4 max-lg:flex-col max-lg:items-center">
+                {PLAN_DISPLAY_ORDER.map((tier) => {
+                  const plan = planForTier(sortedPlans, tier);
+                  if (!plan) return null;
+
+                  return (
+                    <PlanCard
+                      key={tier}
+                      tier={tier}
+                      plan={plan}
+                      isCurrentPlan={isCurrentPlan(tier)}
+                      isPending={isPending}
+                      btnLabel={btnLabel()}
+                      onAction={() => handleAction(tier)}
                     />
-                  ) : null}
-                  {selectedDisabled ? (
-                    <div className="absolute bottom-4 right-4 flex h-10 w-[180px] items-center justify-center rounded-full text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white opacity-70 shadow-md max-md:bottom-3 max-md:right-3 max-md:w-[150px] lg:bottom-11 lg:right-11"
-                      style={{ background: activePkg?.colorVar ?? "var(--color-brown-dark)" }}>
-                      현재 구독중
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled={isPending || !activePlan}
-                      onClick={handlePurchase}
-                      className="absolute bottom-4 right-4 flex h-10 w-[180px] items-center justify-center rounded-[8px] bg-[var(--color-brown-dark)] px-6 text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white shadow-md transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 max-md:bottom-3 max-md:right-3 max-md:w-[150px] max-md:px-4 lg:bottom-11 lg:right-11"
-                    >
-                      {buttonLabel()}
-                    </button>
-                  )}
-                </div>
-
-                {/* 우측 — 패키지 요약 카드 목록 */}
-                <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
-                  {PACKAGE_SUMMARY_ORDER.map((tier) => {
-                    const pkg = PACKAGES.find((p) => p.tier === tier)!;
-                    const plan = planForTier(sortedPlans, tier);
-                    const img = PACKAGE_SUMMARY_IMAGES[tier];
-                    const isActive = hasActiveSub(tier);
-
-                    if (!plan) return null;
-
-                    return (
-                      <button
-                        key={tier}
-                        type="button"
-                        onClick={() => setSelectedTier(tier)}
-                        className="group flex h-[132px] w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm md:h-[167px] lg:shadow-none"
-                      >
-                        <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
-                          <Image
-                            src={img}
-                            alt={pkg.name}
-                            fill
-                            className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            sizes="180px"
-                          />
-                          {isActive && (
-                            <>
-                              <div
-                                className="pointer-events-none absolute inset-0 z-10 rounded-2xl"
-                                style={{ boxShadow: `inset 0 0 0 1px ${pkg.colorVar}` }}
-                              />
-                              <div className="absolute left-3 top-3 z-20">
-                                <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
-                                  이용중
-                                </span>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
-                          <div className="mb-4 md:mb-6">
-                            <p className="truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:text-[20px]">
-                              {pkg.name}
-                            </p>
-                          </div>
-                          <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
-                            월 요금제
-                          </p>
-                          <div className="mb-0.5 flex items-baseline gap-2">
-                            <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[16px]">
-                              {plan.discountRate}%
-                            </span>
-                            <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
-                              {formatMonthlyPrice(plan.monthlyPrice)}
-                            </span>
-                          </div>
-                          <span className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-accent-orange)] md:text-[14px]">
-                            첫 구독 할인
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                  );
+                })}
               </div>
             </ScrollReveal>
           )}

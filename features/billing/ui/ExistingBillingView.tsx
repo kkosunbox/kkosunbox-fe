@@ -89,7 +89,7 @@ export default function ExistingBillingView({
             fill="none"
             className="ml-auto shrink-0"
           >
-            <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
+            <circle cx="8" cy="8" r="8" fill="var(--color-btn-dark-warm)" />
             <path
               d="M5 8l2 2 4-4"
               stroke="white"
@@ -115,7 +115,7 @@ export default function ExistingBillingView({
         <button
           type="button"
           onClick={() => onConfirm(billing)}
-          className="w-full h-12 rounded-[8px] bg-[var(--color-accent)] text-white text-body-14-sb transition-opacity hover:opacity-90"
+          className="w-full h-12 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-white text-body-14-sb transition-opacity hover:opacity-90"
         >
           이 카드로 결제
         </button>

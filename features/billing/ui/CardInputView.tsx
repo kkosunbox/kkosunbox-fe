@@ -6,7 +6,7 @@ import type { BillingInfo } from "../api/types";
 import { getErrorMessage } from "@/shared/lib/api";
 import { LoadingOverlay } from "@/shared/ui";
 const inputCls =
-  "h-10 w-full rounded-[4px] bg-white px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none border border-[var(--color-border)]";
+  "h-10 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none border border-[var(--color-border)]";
 
 function digitsOnly(s: string) {
   return s.replace(/\D/g, "");
@@ -211,7 +211,7 @@ export default function CardInputView({ existingBilling, onConfirm, onBack, onCl
           type="button"
           onClick={handleConfirm}
           disabled={isPending}
-          className="w-full h-12 rounded-[8px] bg-[var(--color-accent)] text-white text-body-14-sb transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="w-full h-12 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-white text-body-14-sb transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중…" : "확인"}
         </button>

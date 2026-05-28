@@ -40,7 +40,7 @@ export function SectionHeader({
   spacing?: "default" | "tight";
 }) {
   const linkCls =
-    "max-lg:text-body-13-sb lg:text-body-14-sb text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
+    "max-lg:text-body-13-sb lg:text-body-14-sb text-[var(--color-text-label)] underline transition-opacity hover:opacity-80";
 
   return (
     <div

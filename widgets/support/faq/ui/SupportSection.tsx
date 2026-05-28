@@ -294,7 +294,7 @@ export default function SupportSection({
           {/* 검색 + 내 문의내역 */}
           <div className="mb-6 grid w-full grid-cols-1 gap-3 md:mb-8 lg:mb-8 md:grid-cols-[1fr_auto_1fr] lg:grid-cols-[1fr_auto_1fr] md:items-center lg:items-center">
             <div aria-hidden="true" className="max-md:hidden" />
-            <label className="mx-auto flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-full bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:mx-0 lg:mx-0 md:w-[320px] lg:w-[320px] md:shrink-0 lg:shrink-0">
+            <label className="mx-auto flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-[8px] bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:mx-0 lg:mx-0 md:w-[320px] lg:w-[320px] md:shrink-0 lg:shrink-0">
               <span className="sr-only">질문 검색</span>
               <SearchIcon />
               <input
@@ -308,7 +308,7 @@ export default function SupportSection({
             <div className="max-md:hidden flex justify-end">
               <Link
                 href="/support/history"
-                className="text-right text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-accent)] underline underline-offset-2"
+                className="text-right text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)] underline underline-offset-2"
               >
                 내 문의내역
               </Link>

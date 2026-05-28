@@ -74,11 +74,11 @@ export function ProfileSectionSkeleton() {
   );
 }
 
-/** SubscriptionCard — 오렌지 카드 / lg 173px / 모바일 하단 여백 */
+/** SubscriptionCard — 오렌지 카드 / lg 186px / 모바일 하단 여백 */
 export function SubscriptionCardSkeleton() {
   return (
-    <div className="relative max-lg:mb-5 lg:h-[173px]">
-      <Bone className="h-full min-h-[140px] w-full rounded-[20px] max-lg:min-h-[140px] lg:h-[173px]" />
+    <div className="relative max-lg:mb-5 lg:h-[186px]">
+      <Bone className="h-full min-h-[140px] w-full rounded-[20px] max-lg:min-h-[140px] lg:h-[186px]" />
     </div>
   );
 }
@@ -86,7 +86,7 @@ export function SubscriptionCardSkeleton() {
 /** PaymentCard — DashboardCard + 3행 */
 export function PaymentCardSkeleton() {
   return (
-    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} gap-0`}>
+    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} gap-0 lg:h-[186px]`}>
       <SectionHeaderSkeleton />
       <div className="flex min-h-0 flex-1 flex-col max-lg:gap-4 lg:gap-2">
         {[0, 1, 2].map((i) => (
@@ -103,7 +103,7 @@ export function PaymentCardSkeleton() {
 /** DeliveryCard — 3열 아이콘 + 라벨 + 숫자 */
 export function DeliveryCardSkeleton() {
   return (
-    <div className={`${DASHBOARD_CARD_SURFACE_CLASS}`}>
+    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} lg:h-[208px]`}>
       <SectionHeaderSkeleton tight />
       <div className="grid min-h-0 flex-1 grid-cols-3 gap-4 pt-1 max-lg:-mx-3 max-lg:px-[24px] lg:px-2">
         {[0, 1, 2].map((i) => (
@@ -121,7 +121,7 @@ export function DeliveryCardSkeleton() {
 /** InquiryCard — 헤더 + 목록 3줄 + 페이지네이션 */
 export function InquiryCardSkeleton() {
   return (
-    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} max-lg:min-h-0 max-lg:h-auto`}>
+    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} max-lg:min-h-0 max-lg:h-auto lg:h-[208px]`}>
       <SectionHeaderSkeleton tight />
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 space-y-0">

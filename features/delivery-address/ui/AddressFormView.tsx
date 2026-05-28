@@ -19,7 +19,7 @@ interface Props {
 const LABEL_CLS = "w-[72px] shrink-0 text-body-14-sb text-[var(--color-text)]";
 /** Text input height: 40px — see `shared/config/input.ts` */
 const INPUT_CLS =
-  "h-10 flex-1 min-w-0 rounded-md border border-[var(--color-text-muted)] bg-white px-3 text-body-14-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-accent)]";
+  "h-10 flex-1 min-w-0 rounded-md border border-[var(--color-text-muted)] bg-white px-3 text-body-14-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-btn-dark-warm)]";
 const PHONE_NUMBER_PATTERN = /^01[0-9]\d{7,8}$/;
 
 function toPhoneDigits(value: string) {
@@ -191,7 +191,7 @@ export default function AddressFormView({
             <button
               type="button"
               onClick={onSearchAddress}
-              className="shrink-0 rounded-md bg-[var(--color-accent)] px-4 py-2.5 text-body-13-sb text-white transition-opacity hover:opacity-90"
+              className="shrink-0 rounded-md bg-[var(--color-btn-dark-warm)] px-4 py-2.5 text-body-13-sb text-white transition-opacity hover:opacity-90"
             >
               주소찾기
             </button>
@@ -302,7 +302,7 @@ export default function AddressFormView({
           type="button"
           onClick={handleSubmit}
           disabled={saving}
-          className="h-12 w-full rounded-[8px] bg-[var(--color-accent)] text-btn-15-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="h-12 w-full rounded-[8px] bg-[var(--color-btn-dark-warm)] text-btn-15-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "저장 중..." : "저장하기"}
         </button>

@@ -78,8 +78,8 @@ interface DeliveryCardProps {
 
 export function DeliveryCard({ summary }: DeliveryCardProps) {
   return (
-    <DashboardCard>
-      <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지관리" spacing="tight" />
+    <DashboardCard className="lg:h-[208px]">
+      <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지 관리" spacing="tight" />
       <div className="grid min-h-0 flex-1 grid-cols-3 gap-4 pt-1 max-lg:-mx-3 max-lg:px-[24px] lg:px-2">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];

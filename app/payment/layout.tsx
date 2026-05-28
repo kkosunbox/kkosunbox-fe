@@ -4,8 +4,8 @@ export default function PaymentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[var(--color-background)]">
-      {children}
+    <div className="flex min-h-screen justify-center bg-white">
+      <div className="w-full max-w-[400px]">{children}</div>
     </div>
   );
 }

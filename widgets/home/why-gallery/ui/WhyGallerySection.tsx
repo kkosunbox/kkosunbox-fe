@@ -258,18 +258,9 @@ export default function WhyGallerySection() {
         </button>
       </div>
 
-      <div className="max-md:hidden flex flex-col gap-4 lg:gap-6 xl:gap-8">
+      <div className="flex flex-col gap-8 md:gap-4 lg:gap-6 xl:gap-8">
         {renderRollingRow(ROW_1_BASE, "r1", "right")}
         {renderRollingRow(ROW_2_BASE, "r2", "left")}
-      </div>
-
-      <div className="flex flex-col gap-8 overflow-x-auto pb-2 md:hidden">
-        <div className="flex gap-4 pl-5" style={{ width: "max-content" }}>
-          {ROW_1_BASE.map((item, i) => renderItem(item, `m1-${i}`))}
-        </div>
-        <div className="flex gap-4 pl-5" style={{ width: "max-content" }}>
-          {ROW_2_BASE.map((item, i) => renderItem(item, `m2-${i}`))}
-        </div>
       </div>
     </section>
   );

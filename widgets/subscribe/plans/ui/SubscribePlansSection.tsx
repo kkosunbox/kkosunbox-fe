@@ -23,6 +23,7 @@ import {
   type PackageTier,
 } from "./packageData";
 import { TIER_DETAIL_HERO_IMAGES } from "./packageThumbnails";
+import PackageNutritionGuide from "./PackageNutritionGuide";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
 
@@ -149,10 +150,10 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                   {/* 모바일 — 대표 이미지와 핵심 정보만 분리 표시 */}
                   <div className="w-full max-w-[600px] max-md:block md:hidden lg:hidden">
                     <div
-                      className="relative w-full overflow-hidden rounded-[22px]"
+                      className="relative w-full rounded-[22px]"
                       style={{ boxShadow: "var(--shadow-card-soft)" }}
                     >
-                      <div className="relative aspect-square w-full bg-[var(--color-surface-warm)]">
+                      <div className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-[var(--color-surface-warm)]">
                         {activePkg ? (
                           <Image
                             key={activePackage.tier}
@@ -165,6 +166,10 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                           />
                         ) : null}
                       </div>
+                      <PackageNutritionGuide
+                        initialTier={activePackage.tier}
+                        bubbleClassName="h-auto w-[100px]"
+                      />
                     </div>
 
                     {activePkg ? (
@@ -202,19 +207,21 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
 
                   {/* 태블릿·데스크톱 — 선택된 패키지 설명 (메인 PackagePlansSection 패턴) */}
                   <div
-                    className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] max-md:hidden md:rounded-[28px]"
+                    className="relative w-full max-w-[600px] rounded-[22px] max-md:hidden md:rounded-[28px]"
                     style={{ boxShadow: "var(--shadow-card-soft)" }}
                   >
-                    {activePkg ? (
-                      <Image
-                        key={activePackage.tier}
-                        src={activePackage.src}
-                        alt={activePackage.alt}
-                        className="h-auto w-full transition-opacity duration-500"
-                        sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
-                        priority
-                      />
-                    ) : null}
+                    <div className="overflow-hidden rounded-[22px] md:rounded-[28px]">
+                      {activePkg ? (
+                        <Image
+                          key={activePackage.tier}
+                          src={activePackage.src}
+                          alt={activePackage.alt}
+                          className="h-auto w-full transition-opacity duration-500"
+                          sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
+                          priority
+                        />
+                      ) : null}
+                    </div>
                     <Button
                       type="button"
                       onClick={handleDetailClick}
@@ -225,6 +232,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                     >
                       제품 상세보기
                     </Button>
+                    <PackageNutritionGuide initialTier={activePackage.tier} />
                   </div>
 
                   {/* 우측 — 패키지 요약 카드 목록 */}

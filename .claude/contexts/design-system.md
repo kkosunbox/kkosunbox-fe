@@ -114,6 +114,8 @@
 | `--color-text-warm` | `#917F71` | Warm Gray — 웜 섹션 서브텍스트 |
 | `--color-text-on-warm` | `#555555` | 웜 섹션 헤딩 |
 | `--color-text-body-warm` | `#5B5B5B` | 웜 섹션 본문 |
+| `--color-text-price` | `#171713` | 강조 가격 텍스트 |
+| `--color-text-discount` | `#EC7700` | 할인율 텍스트 (오렌지) |
 
 ### Decoration
 

@@ -37,24 +37,25 @@ export function SectionHeader({
   href?: string;
   linkLabel?: string;
   onLinkClick?: () => void;
-  spacing?: "default" | "tight";
+  spacing?: "default" | "tight" | "wide";
 }) {
   const linkCls =
     "max-lg:text-body-13-sb lg:text-body-14-sb text-[var(--color-text-label)] underline transition-opacity hover:opacity-80";
 
+  const spacingCls =
+    spacing === "wide"
+      ? "max-lg:mb-6 lg:mb-6"
+      : spacing === "tight"
+        ? "mb-4 lg:mb-3"
+        : "max-lg:mb-6 lg:mb-4";
+
   return (
     <div
-      className={[
-        "flex items-center justify-between gap-3",
-        spacing === "tight"
-          ? "mb-4 lg:mb-3"
-          : "max-lg:mb-6 lg:mb-4",
-      ].join(" ")}
+      className={["flex items-center justify-between gap-3", spacingCls].join(" ")}
     >
       <Text
         as="h3"
-        variant="subtitle-16-sb"
-        mobileVariant="subtitle-16-b"
+        variant="subtitle-16-b"
         className="text-[var(--color-text)]"
       >
         {title}

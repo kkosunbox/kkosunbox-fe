@@ -268,7 +268,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                               <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)] md:text-[16px]">
                                 {plan.discountRate}%
                               </span>
-                              <span className="text-[14px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-muted)] line-through md:text-[16px]">
+                              <span className="text-[14px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through md:text-[16px]">
                                 {formatMonthlyPrice(plan.originalPrice)}
                               </span>
                             </div>

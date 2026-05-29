@@ -148,11 +148,11 @@ function PlanCard({ tier, plan, isCurrentPlan, isPending, btnLabel, onAction }: 
 
       {infoOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
           onClick={() => setInfoOpen(false)}
         >
           <div
-            className="max-h-[90vh] w-full max-w-[520px] overflow-auto rounded-[20px] shadow-2xl"
+            className="max-h-[90vh] w-full max-w-[400px] overflow-auto rounded-[20px] md:max-w-[680px]"
             onClick={(e) => e.stopPropagation()}
           >
             <PackageCompareTable initialTier={tier} onClose={() => setInfoOpen(false)} />

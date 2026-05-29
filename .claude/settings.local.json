@@ -132,7 +132,8 @@
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Filter \"*support*\" -Directory)",
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\support\" -Recurse)",
       "PowerShell(git commit -m $msg)",
-      "Bash(npm info *)"
+      "Bash(npm info *)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-third-mobile-expanded.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))"
     ]
   }
 }

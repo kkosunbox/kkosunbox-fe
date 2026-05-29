@@ -6,7 +6,26 @@ import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
 import { createProfile, updateProfile } from "@/features/profile/api/profileApi";
-import { BreedCombobox, DatePicker } from "@/shared/ui";
+import {
+  BreedCombobox,
+  DatePicker,
+  ProfileStepPawLeft,
+  ProfileStepPawRight,
+  PROFILE_PET_BREED_INPUT_CLASS,
+  PROFILE_PET_DATE_TRIGGER_CLASS,
+  PROFILE_PET_FIELD,
+  PROFILE_PET_FORM_STACK,
+  PROFILE_PET_INPUT,
+  PROFILE_PET_INPUT_SUFFIX,
+  PROFILE_PET_LABEL,
+  PROFILE_PET_GENDER_ROW,
+  PROFILE_PET_SUBMIT_BTN,
+  PROFILE_PET_MODAL_SUBTITLE,
+  PROFILE_PET_MODAL_TITLE,
+  PROFILE_PET_WIDGET_CARD,
+  PROFILE_PET_WIDGET_HEADER,
+  profilePetGenderBtnClass,
+} from "@/shared/ui";
 import type { DogGender } from "@/features/profile/api/types";
 
 const DISMISS_KEY = "profile-widget-dismissed-date";
@@ -29,14 +48,41 @@ function dismissToday() {
   }
 }
 
+function CloseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+      <path
+        d="M16 2L2 16M2 2L16 16"
+        stroke="white"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function BreedSearchGlyph() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" stroke="var(--color-text-secondary)" strokeWidth="2" />
+      <path
+        d="m20 20-3.65-3.65"
+        stroke="var(--color-text-secondary)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export default function ProfileFloatWidget() {
   const { isLoggedIn, isAuthLoading } = useAuth();
   const { profiles, profile, refreshProfile, isProfilesReady } = useProfile();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [visible, setVisible] = useState(false);      // 조건 기반 자동 표시
-  const [forceVisible, setForceVisible] = useState(false); // CTA 등 명시적 표시
+  const [visible, setVisible] = useState(false);
+  const [forceVisible, setForceVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [dogName, setDogName] = useState("");
@@ -46,7 +92,6 @@ export default function ProfileFloatWidget() {
   const [gender, setGender] = useState<DogGender | null>(null);
   const [note, setNote] = useState("");
 
-  // 활성 프로필이 바뀔 때마다 폼을 해당 프로필 데이터로 갱신
   const lastPrefillId = useRef<number | null>(null);
   useEffect(() => {
     if (!profile) return;
@@ -65,7 +110,6 @@ export default function ProfileFloatWidget() {
     setNote(profile.specialNotes ?? "");
   }, [profile]);
 
-  // 표시 조건 판단: 인증·프로필 fetch 완료 후에만 평가 (fetch 전 빈 배열로 잠깐 뜨는 것 방지)
   useEffect(() => {
     if (isAuthLoading || !isProfilesReady) {
       setVisible(false);
@@ -84,12 +128,23 @@ export default function ProfileFloatWidget() {
     setVisible(needsProfile || needsChecklist);
   }, [isLoggedIn, isAuthLoading, isProfilesReady, profiles, profile]);
 
-  // CTA 버튼 등 외부에서 명시적으로 표시 요청 시 강제 오픈 (로그인 여부 무관)
   useEffect(() => {
     const handler = () => setForceVisible(true);
     window.addEventListener("ggosoon:show-profile-widget", handler);
     return () => window.removeEventListener("ggosoon:show-profile-widget", handler);
   }, []);
+
+  const isOpen = visible || forceVisible;
+
+  useEffect(() => {
+    if (!isOpen || pathname !== "/") return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (!mq.matches) return;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, pathname]);
 
   function handleClose() {
     dismissToday();
@@ -99,7 +154,6 @@ export default function ProfileFloatWidget() {
 
   async function handleSubmit() {
     if (submitting) return;
-    // 비로그인 상태에서 제출 시 로그인 페이지로
     if (!isLoggedIn) {
       router.push("/login?next=/");
       return;
@@ -133,60 +187,83 @@ export default function ProfileFloatWidget() {
   }
 
   if (pathname !== "/") return null;
-  if (!visible && !forceVisible) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed z-[200] overflow-hidden shadow-2xl max-md:bottom-0 max-md:right-0 max-md:w-full max-md:rounded-t-2xl md:top-20 md:right-4 md:w-[300px] md:rounded-2xl">
-      {/* 헤더 */}
+    <div
+      className={[
+        "fixed z-[200] flex flex-col overflow-hidden bg-white max-md:inset-0 max-md:min-h-[100dvh] md:top-20 md:right-4 md:h-auto",
+        PROFILE_PET_WIDGET_CARD,
+      ].join(" ")}
+      role="dialog"
+      aria-modal="true"
+      aria-label="프로필 작성"
+    >
       <div
-        className="relative flex flex-col items-center justify-center px-10 py-4 gap-1"
-        style={{ background: "var(--color-accent-orange)" }}
+        className={PROFILE_PET_WIDGET_HEADER}
+        style={{ background: "var(--color-cta-button)" }}
       >
-        <button
-          type="button"
-          aria-label="닫기"
-          onClick={handleClose}
-          className="absolute top-3 right-4 text-white opacity-80 hover:opacity-100 transition-opacity text-[20px] leading-none"
-        >
-          ×
-        </button>
-        <div className="flex items-center gap-2">
-          <span className="text-white text-[18px]">🐾</span>
-          <span className="text-white text-[17px] font-bold">프로필 작성</span>
-          <span className="text-white text-[18px]">🐾</span>
+        <div className="relative flex flex-col items-center gap-1 py-3">
+          <div className="relative flex h-7 w-full items-center justify-center">
+            <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2">
+              <ProfileStepPawLeft />
+            </span>
+            <span className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2">
+              <ProfileStepPawRight />
+            </span>
+            <span className={`${PROFILE_PET_MODAL_TITLE} text-white`}>프로필 작성</span>
+            <button
+              type="button"
+              aria-label="닫기"
+              onClick={handleClose}
+              className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-70"
+            >
+              <CloseIcon />
+            </button>
+          </div>
+          <p className={PROFILE_PET_MODAL_SUBTITLE}>강아지 프로필을 작성해주세요.</p>
         </div>
-        <p className="text-white text-[12px] opacity-90">강아지 프로필을 작성해주세요.</p>
       </div>
 
-      {/* 폼 */}
-      <div className="bg-white px-5 py-5 flex flex-col gap-4">
-        {/* 강아지 이름 */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-[var(--color-text-label)]">강아지 이름</label>
+      <div
+        className={[
+          "flex min-h-0 flex-1 flex-col overflow-y-auto bg-white px-6 py-5 max-md:pb-[env(safe-area-inset-bottom,0px)]",
+          PROFILE_PET_FORM_STACK,
+        ].join(" ")}
+      >
+        <div className={PROFILE_PET_FIELD}>
+          <label className={PROFILE_PET_LABEL}>강아지 이름</label>
           <input
             type="text"
             value={dogName}
             onChange={(e) => setDogName(e.target.value)}
             placeholder="이름"
-            className="h-10 w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors"
+            className={PROFILE_PET_INPUT}
           />
         </div>
 
-        {/* 강아지 품종 */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-[var(--color-text-label)]">강아지 품종</label>
-          <BreedCombobox
-            id="float-widget-breed"
-            value={breed}
-            onChange={setBreed}
-            placeholder="ex) 웰시코기"
-            className="text-[13px] rounded-xl bg-[var(--color-surface-warm)]"
-          />
+        <div className={PROFILE_PET_FIELD}>
+          <label htmlFor="float-widget-breed" className={PROFILE_PET_LABEL}>
+            강아지 품종
+          </label>
+          <div className="relative w-full">
+            <BreedCombobox
+              id="float-widget-breed"
+              value={breed}
+              onChange={setBreed}
+              placeholder="ex) 웰시코기"
+              className="w-full"
+              inputClassName={PROFILE_PET_BREED_INPUT_CLASS}
+              clearButtonRight="right-[40px]"
+            />
+            <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2">
+              <BreedSearchGlyph />
+            </span>
+          </div>
         </div>
 
-        {/* 몸무게 */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-[var(--color-text-label)]">몸무게</label>
+        <div className={PROFILE_PET_FIELD}>
+          <label className={PROFILE_PET_LABEL}>몸무게</label>
           <div className="relative">
             <input
               type="number"
@@ -194,15 +271,16 @@ export default function ProfileFloatWidget() {
               onChange={(e) => setWeight(e.target.value)}
               min="0"
               step="0.1"
-              className="h-10 w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 pr-10 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors"
+              className={PROFILE_PET_INPUT}
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-[var(--color-text-label)]">kg</span>
+            <span className={PROFILE_PET_INPUT_SUFFIX}>kg</span>
           </div>
         </div>
 
-        {/* 생년월일 */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-[var(--color-text-label)]">생년월일</label>
+        <div className={PROFILE_PET_FIELD}>
+          <label htmlFor="float-widget-birth" className={PROFILE_PET_LABEL}>
+            생년월일
+          </label>
           <DatePicker
             id="float-widget-birth"
             value={birthDate}
@@ -213,33 +291,19 @@ export default function ProfileFloatWidget() {
             }
             maxDate={new Date()}
             minDate={new Date(new Date().getFullYear() - 40, 0, 1)}
-            triggerClassName="!h-10 !rounded-xl !bg-[var(--color-surface-warm)] !border-[var(--color-border-light)] hover:!border-[var(--color-accent-orange)] [&_span:first-child]:!text-[13px]"
+            triggerClassName={PROFILE_PET_DATE_TRIGGER_CLASS}
           />
         </div>
 
-        {/* 성별 */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-[var(--color-text-label)]">성별</label>
-          <div className="flex gap-2">
+        <div className={PROFILE_PET_FIELD}>
+          <label className={PROFILE_PET_LABEL}>성별</label>
+          <div className={PROFILE_PET_GENDER_ROW}>
             {(["male", "female"] as const).map((g) => (
               <button
                 key={g}
                 type="button"
                 onClick={() => setGender(g)}
-                className="flex h-10 flex-1 items-center justify-center rounded-[8px] text-[14px] font-medium transition-colors border"
-                style={
-                  gender === g
-                    ? {
-                        background: "var(--color-accent-orange-light)",
-                        color: "var(--color-accent-orange)",
-                        borderColor: "var(--color-accent-orange)",
-                      }
-                    : {
-                        background: "white",
-                        color: "var(--color-text-label)",
-                        borderColor: "var(--color-border-light)",
-                      }
-                }
+                className={profilePetGenderBtnClass(gender === g)}
               >
                 {g === "male" ? "남" : "여"}
               </button>
@@ -247,25 +311,25 @@ export default function ProfileFloatWidget() {
           </div>
         </div>
 
-        {/* 특징 */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[12px] font-medium text-[var(--color-text-label)]">특징</label>
-          <textarea
+        <div className={PROFILE_PET_FIELD}>
+          <label htmlFor="float-widget-note" className={PROFILE_PET_LABEL}>
+            특징
+          </label>
+          <input
+            id="float-widget-note"
+            type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="알러지, 건강 상태 등"
-            rows={3}
-            className="w-full rounded-xl border border-[var(--color-border-light)] bg-[var(--color-surface-warm)] px-4 py-3 text-[13px] outline-none focus:border-[var(--color-accent-orange)] transition-colors resize-none"
+            className={PROFILE_PET_INPUT}
           />
         </div>
 
-        {/* 제출 버튼 */}
         <button
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
-          className="mt-1 w-full rounded-[8px] py-4 text-[15px] font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-          style={{ background: "var(--color-brown-dark)" }}
+          className={PROFILE_PET_SUBMIT_BTN}
         >
           간식박스 추천받기
         </button>

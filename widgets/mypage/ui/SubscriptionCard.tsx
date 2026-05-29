@@ -11,6 +11,7 @@ const DOT_PITCH = 16; // 점 사이 간격(px)
 const DOT_WINDOW = 4; // 활성 기준 좌우로 렌더링할 슬롯 수(가장자리는 페이드/클립)
 const DOT_VIEW_WIDTH = 7 * DOT_PITCH; // 뷰포트 너비 — 가운데 기준 ±3.5칸 노출
 const SLIDE_MS = 320;
+const DOT_STATIC_MAX = 19; // 이 개수 이하는 전통적 dot 표시, 초과 시 무한 슬라이딩 방식
 
 function billingDayLabel(nextBillingDate: string): string {
   const day = parseInt(nextBillingDate.slice(8, 10), 10);
@@ -81,9 +82,9 @@ function SubscriptionEmpty() {
 }
 
 /**
- * 슬라이딩 도트 인디케이터.
- * `position`(연속값)을 기준으로 점들을 좌우에 배치하며, 활성 점은 항상 가운데에 온다.
- * 부모에서 position을 애니메이션하면 점들이 하나의 줄처럼 균일하게 미끄러진다.
+ * 구독 개수에 따라 인디케이터 방식을 자동 선택.
+ * ≤ DOT_STATIC_MAX: 전체 dot를 나열하고 활성 dot를 강조 표시.
+ * > DOT_STATIC_MAX: position 기준 슬라이딩 가상화 방식(양쪽 페이드).
  */
 function SubscriptionCarouselIndicator({
   position,
@@ -98,6 +99,37 @@ function SubscriptionCarouselIndicator({
 }) {
   if (total <= 1) return null;
 
+  /* ── 전통적 dot (≤ 19개) ── */
+  if (total <= DOT_STATIC_MAX) {
+    const activeIndex = wrapIndex(Math.round(position), total);
+    return (
+      <nav
+        className={["z-10 flex items-center justify-center gap-[6px]", className].join(" ")}
+        aria-label="구독 목록 탐색"
+      >
+        {Array.from({ length: total }, (_, i) => {
+          const isActive = i === activeIndex;
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onSelectSlot(i)}
+              aria-label={`${i + 1}번째 구독`}
+              aria-current={isActive ? "page" : undefined}
+              className="rounded-full bg-white transition-all duration-200"
+              style={{
+                width: isActive ? 10 : 9,
+                height: isActive ? 10 : 9,
+                opacity: isActive ? 1 : 0.45,
+              }}
+            />
+          );
+        })}
+      </nav>
+    );
+  }
+
+  /* ── 슬라이딩 가상화 dot (20개 이상) ── */
   const centerSlot = Math.round(position);
   const fadeMask =
     "linear-gradient(to right, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%)";

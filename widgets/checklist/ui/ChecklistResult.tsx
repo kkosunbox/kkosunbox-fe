@@ -32,6 +32,44 @@ function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
+const TIER_RATINGS: Record<PackageTier, number> = {
+  Premium: 4.7,
+  Standard: 4.6,
+  Basic: 4.9,
+};
+
+const STAR_PATH =
+  "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+
+function PlanStarRating({ score }: { score: number }) {
+  const full = Math.floor(score);
+  const hasHalf = score - full >= 0.25;
+
+  return (
+    <div className="flex items-center">
+      {Array.from({ length: 5 }, (_, i) => {
+        const isFull = i < full;
+        const isHalf = !isFull && i === full && hasHalf;
+        return (
+          <svg key={i} width="20" height="20" viewBox="0 0 24 24" aria-hidden>
+            <path
+              d={STAR_PATH}
+              fill={isFull || isHalf ? "var(--color-star)" : "var(--color-text-muted)"}
+            />
+            {isHalf && (
+              <path
+                d={STAR_PATH}
+                fill="var(--color-text-muted)"
+                style={{ clipPath: "inset(0 0 0 50%)" }}
+              />
+            )}
+          </svg>
+        );
+      })}
+    </div>
+  );
+}
+
 const TIER_LABEL: Record<RecommendedTier, string> = {
   basic: "베이직",
   standard: "스탠다드",
@@ -502,29 +540,41 @@ export default function ChecklistResult({
 
                     {/* 텍스트 영역 */}
                     <div className="max-md:flex max-md:flex-col max-md:justify-center max-md:py-[6px] max-md:pl-4 max-md:pr-0 md:block md:px-[18px] md:pb-[22px] md:pt-[20px]">
-                      <p className="text-[var(--color-surface-dark)] max-md:mb-[6px] max-md:text-[16px] max-md:font-semibold max-md:leading-[19px] max-md:tracking-[-0.04em] md:mb-[12px] md:text-[20px] md:font-bold md:leading-[24px] md:tracking-[-0.04em]">
+                      {/* 패키지명 */}
+                      <p className="text-[var(--color-surface-dark)] max-md:mb-[4px] max-md:text-[16px] max-md:font-semibold max-md:leading-[19px] max-md:tracking-[-0.04em] md:mb-[12px] md:text-[20px] md:font-semibold md:leading-[24px] md:tracking-[-0.04em]">
                         {pkg.name}
                       </p>
-                      <p className="text-[var(--color-text-body-warm)] max-md:mb-[4px] max-md:text-[16px] max-md:font-bold max-md:leading-[19px] max-md:tracking-[-0.05em] md:mb-[6px] md:text-[16px] md:font-bold md:leading-[19px] md:tracking-[-0.05em]">
-                        월 요금제
-                      </p>
-                      <div className="flex items-baseline gap-[8px] max-md:mb-[2px] md:mb-[4px]">
+                      {/* 할인율 + 정가(취소선) */}
+                      <div className="flex items-center gap-[6px] max-md:mb-[2px] md:mb-[2px]">
                         <span
-                          className="max-md:text-[16px] max-md:font-semibold max-md:leading-[19px] max-md:tracking-[-0.05em] md:text-[16px] md:font-semibold md:leading-[19px] md:tracking-[-0.05em]"
-                          style={{ color: pkg.colorVar }}
+                          className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] max-md:text-[12px] max-md:leading-[15px]"
+                          style={{ color: "var(--color-cta-button)" }}
                         >
                           {plan.discountRate}%
                         </span>
-                        <span className="text-[var(--color-surface-dark)] max-md:text-[20px] max-md:font-extrabold max-md:leading-[24px] max-md:tracking-[-0.05em] md:text-[20px] md:font-extrabold md:leading-[24px] md:tracking-[-0.05em]">
+                        <span className="text-[var(--color-text-secondary)] line-through max-md:text-[12px] max-md:font-semibold max-md:leading-[15px] max-md:tracking-[-0.05em] md:text-[14px] md:font-semibold md:leading-[17px] md:tracking-[-0.05em]">
+                          {formatMonthlyPrice(plan.originalPrice)}
+                        </span>
+                      </div>
+                      {/* 월 요금제 + 할인가 */}
+                      <div className="flex items-baseline gap-[8px] max-md:mb-[2px] md:mb-[6px]">
+                        <span className="text-[var(--color-text-body-warm)] max-md:text-[13px] max-md:font-bold max-md:leading-[16px] max-md:tracking-[-0.05em] md:text-[16px] md:font-bold md:leading-[19px] md:tracking-[-0.05em]">
+                          월 요금제
+                        </span>
+                        <span className="text-[var(--color-surface-dark)] max-md:text-[16px] max-md:font-extrabold max-md:leading-[19px] max-md:tracking-[-0.05em] md:text-[20px] md:font-extrabold md:leading-[24px] md:tracking-[-0.05em]">
                           {formatMonthlyPrice(plan.monthlyPrice)}
                         </span>
                       </div>
-                      <p
-                        className="max-md:text-[14px] max-md:font-semibold max-md:leading-[17px] max-md:tracking-[-0.05em] md:text-[14px] md:font-semibold md:leading-[17px] md:tracking-[-0.05em]"
-                        style={{ color: pkg.colorVar }}
-                      >
-                        첫 구독 할인
-                      </p>
+                      {/* 별점 */}
+                      <div className="flex items-center gap-[8px]">
+                        <PlanStarRating score={TIER_RATINGS[tier]} />
+                        <span
+                          className="text-[16px] font-semibold leading-[21px] tracking-[-0.02em] max-md:text-[13px] max-md:leading-[16px]"
+                          style={{ color: "var(--color-cta-button)" }}
+                        >
+                          {TIER_RATINGS[tier]}
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 );

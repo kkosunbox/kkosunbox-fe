@@ -8,6 +8,7 @@ import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subsc
 import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import PlanRatingStars from "@/widgets/subscribe/plans/ui/PlanRatingStars";
+import PackageNutritionGuide from "@/widgets/subscribe/plans/ui/PackageNutritionGuide";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
@@ -106,21 +107,27 @@ export default function PackagePlansSection() {
           <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center max-md:gap-[46px] lg:gap-7">
             {/* 모바일 — detail 대표 이미지 + 패키지명·설명·상세보기 버튼 분리 */}
             <div className="w-full max-w-[600px] max-md:block md:hidden lg:hidden">
-              <div
-                className="relative w-full overflow-hidden rounded-[22px]"
-                style={{ boxShadow: "var(--shadow-card-soft)" }}
-              >
-                <div className="relative aspect-square w-full bg-[var(--color-surface-warm)]">
-                  <Image
-                    key={activePackage.tier}
-                    src={TIER_DETAIL_HERO_IMAGES[activePackage.tier]}
-                    alt={`${activePkg?.name ?? activePackage.tier} 대표 이미지`}
-                    fill
-                    className="object-cover transition-opacity duration-500"
-                    sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
-                    priority
-                  />
+              <div className="relative w-full">
+                <div
+                  className="overflow-hidden rounded-[22px]"
+                  style={{ boxShadow: "var(--shadow-card-soft)" }}
+                >
+                  <div className="relative aspect-square w-full bg-[var(--color-surface-warm)]">
+                    <Image
+                      key={activePackage.tier}
+                      src={TIER_DETAIL_HERO_IMAGES[activePackage.tier]}
+                      alt={`${activePkg?.name ?? activePackage.tier} 대표 이미지`}
+                      fill
+                      className="object-cover transition-opacity duration-500"
+                      sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
+                      priority
+                    />
+                  </div>
                 </div>
+                <PackageNutritionGuide
+                  initialTier={activePackage.tier}
+                  bubbleClassName="h-auto w-[100px]"
+                />
               </div>
 
               {activePkg ? (
@@ -157,26 +164,29 @@ export default function PackagePlansSection() {
             </div>
 
             {/* 태블릿·데스크탑 — 합성 설명 이미지 + 버튼 오버레이 */}
-            <div
-              className="relative w-full max-w-[600px] overflow-hidden rounded-[22px] max-md:hidden md:rounded-[28px]"
-              style={{ boxShadow: "var(--shadow-card-soft)" }}
-            >
-              <Image
-                key={activePackage.tier}
-                src={activePackage.src}
-                alt={activePackage.alt}
-                className="h-auto w-full transition-opacity duration-500"
-                sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
-                priority
-              />
-              <button
-                type="button"
-                onClick={handleDetailClick}
-                disabled={!activePlan}
-                className="absolute bottom-4 right-4 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-11 lg:right-11"
+            <div className="relative w-full max-w-[600px] max-md:hidden">
+              <div
+                className="relative overflow-hidden rounded-[22px] md:rounded-[28px]"
+                style={{ boxShadow: "var(--shadow-card-soft)" }}
               >
-                제품 상세보기
-              </button>
+                <Image
+                  key={activePackage.tier}
+                  src={activePackage.src}
+                  alt={activePackage.alt}
+                  className="h-auto w-full transition-opacity duration-500"
+                  sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
+                  priority
+                />
+                <button
+                  type="button"
+                  onClick={handleDetailClick}
+                  disabled={!activePlan}
+                  className="absolute bottom-4 right-4 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-11 lg:right-11"
+                >
+                  제품 상세보기
+                </button>
+              </div>
+              <PackageNutritionGuide initialTier={activePackage.tier} />
             </div>
 
             <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">

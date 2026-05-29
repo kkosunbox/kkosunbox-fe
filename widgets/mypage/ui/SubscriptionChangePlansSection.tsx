@@ -118,14 +118,14 @@ function PlanCard({ tier, plan, isCurrentPlan, isPending, btnLabel, onAction }: 
             월 요금제
           </p>
           <div className="flex flex-wrap items-baseline gap-x-[6px] gap-y-0.5">
-            <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-text-on-warm)]">
+            <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-text-discount)]">
               {plan.discountRate}%
             </span>
-            <span className="text-[20px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)]">
+            <span className="text-[20px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-price)]">
               {formatMonthlyPrice(plan.monthlyPrice)}
             </span>
-            <span className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] text-[var(--color-text-on-warm)]">
-              최대 2천원 할인
+            <span className="text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
+              {formatMonthlyPrice(plan.originalPrice)}
             </span>
           </div>
         </div>

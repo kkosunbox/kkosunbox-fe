@@ -24,6 +24,8 @@ import {
 } from "./packageData";
 import { TIER_DETAIL_HERO_IMAGES } from "./packageThumbnails";
 import PackageNutritionGuide from "./PackageNutritionGuide";
+import { usePlanRatings } from "./usePlanRatings";
+import PlanRatingStars from "./PlanRatingStars";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
 
@@ -74,6 +76,7 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
     () => [...plans].sort(comparePlansForDisplayOrder),
     [plans],
   );
+  const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
 
   const [activePackageIndex, setActivePackageIndex] = useState(2);
   const activePackage = PACKAGE_EXPLAIN_ROTATION[activePackageIndex];
@@ -126,15 +129,14 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                   priority
                 />
               </div>
-              <div className="relative max-md2:hidden h-[118px] w-full overflow-hidden">
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-                  <Image
-                    src={SubscribePlansHeroImage}
-                    alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                    className="h-[118px] w-auto max-w-none shrink-0"
-                    priority
-                  />
-                </div>
+              {/* lg+(≥1200px): max-w-content(1012px)로 제한 — 헤더·컨테이너와 통일감 */}
+              <div className="relative max-md2:hidden h-[118px] w-full overflow-hidden lg:mx-auto lg:max-w-content">
+                <Image
+                  src={SubscribePlansHeroImage}
+                  alt="이제 수제 간식도 맞춤형으로 구독하세요"
+                  className="absolute top-0 left-1/2 h-full w-auto max-w-none shrink-0 -translate-x-1/2"
+                  priority
+                />
               </div>
             </div>
           </ScrollReveal>
@@ -259,32 +261,28 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                             />
                           </div>
                           <div className="min-w-0 flex-1 py-[6px] pl-5 pr-0 md:py-[25px] md:pl-7 md:pr-4 lg:pl-6 lg:pr-0">
-                            <p className="mb-1 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
-                              {pkg.name}
+                            <p className="mb-2 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                              {plan.name || pkg.name}
                             </p>
-                            <p className="mb-3 line-clamp-1 text-[13px] font-medium leading-[18px] tracking-[-0.04em] text-[var(--color-text-secondary)] md:hidden">
-                              {pkg.items[0]}
-                            </p>
-                            <p className="mb-1.5 text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
-                              월 요금제
-                            </p>
-                            <div className="mb-0.5 flex items-baseline gap-2">
-                              <span
-                                className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] md:text-[16px]"
-                                style={{ color: pkg.colorVar }}
-                              >
+                            <div className="mb-1.5 flex items-baseline gap-2">
+                              <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)] md:text-[16px]">
                                 {plan.discountRate}%
+                              </span>
+                              <span className="text-[14px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-muted)] line-through md:text-[16px]">
+                                {formatMonthlyPrice(plan.originalPrice)}
+                              </span>
+                            </div>
+                            <div className="mb-2 flex items-baseline gap-2">
+                              <span className="text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
+                                월 요금제
                               </span>
                               <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
                                 {formatMonthlyPrice(plan.monthlyPrice)}
                               </span>
                             </div>
-                            <span
-                              className="text-[13px] font-semibold leading-[17px] tracking-[-0.05em] md:text-[14px]"
-                              style={{ color: pkg.colorVar }}
-                            >
-                              첫 구독 할인
-                            </span>
+                            {planRatings[plan.id] > 0 ? (
+                              <PlanRatingStars rating={planRatings[plan.id]} size={16} />
+                            ) : null}
                           </div>
                         </button>
                       );

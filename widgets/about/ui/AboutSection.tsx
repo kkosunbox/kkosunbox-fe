@@ -223,10 +223,10 @@ export default function AboutSection() {
             </Text>
           </ScrollReveal>
 
-          <div className="flex flex-col items-stretch gap-5 lg:flex-row lg:gap-[25px]">
+          <div className="flex flex-col items-stretch gap-5 lg:flex-row lg:items-stretch lg:gap-[25px]">
             <div className="flex flex-col gap-5 max-lg:order-2 lg:w-[403px] lg:shrink-0">
               <ScrollReveal variant="fade-up" delay={150}>
-                <div className="flex items-center justify-center rounded-[20px] bg-[var(--color-cta-logo-bg)] px-6 py-5 min-h-[108px] max-lg:min-h-[108px] lg:min-h-[135px] lg:rounded-2xl lg:py-0">
+                <div className="flex items-center justify-center rounded-[24px] bg-[var(--color-cta-logo-bg)] px-6 py-5 min-h-[108px] max-lg:min-h-[108px] lg:min-h-[135px] lg:rounded-2xl lg:py-0">
                   <Image
                     src={aboutCtaLogo}
                     alt="꼬순박스"
@@ -259,16 +259,21 @@ export default function AboutSection() {
               </ScrollReveal>
             </div>
 
-            <ScrollReveal variant="scale-in" delay={200} className="w-full max-lg:order-1 lg:flex-1">
+            <ScrollReveal
+              variant="scale-in"
+              delay={200}
+              className="w-full max-lg:order-1 lg:flex-1 lg:min-h-0 lg:self-stretch"
+            >
               <div
-                className="relative w-full overflow-hidden rounded-[20px] max-lg:aspect-[586/469] max-lg:min-h-[300px] lg:aspect-auto lg:h-full lg:min-h-[469px] lg:rounded-2xl"
+                className="relative flex h-[300px] w-full items-center justify-center overflow-hidden rounded-[20px] lg:h-full lg:min-h-[469px] lg:rounded-2xl"
                 style={{ background: "var(--gradient-cta-product)" }}
               >
                 <Image
                   src={aboutCtaProduct}
                   alt="꼬순박스 상품"
-                  fill
-                  className="object-contain lg:object-top"
+                  width={aboutCtaProduct.width}
+                  height={aboutCtaProduct.height}
+                  className="h-full w-auto max-w-none"
                   sizes={`${MEDIA_MAX_MD_SIZES} calc(100vw - 48px), ${MEDIA_MAX_LG_SIZES} calc(100vw - 48px), 585px`}
                 />
               </div>

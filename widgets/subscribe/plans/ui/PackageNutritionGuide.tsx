@@ -31,12 +31,12 @@ export default function PackageNutritionGuide({
         type="button"
         onClick={() => setIsOpen(true)}
         aria-label="영양정보 확인"
-        className="absolute right-3 top-3 z-10 flex items-center justify-center transition-opacity hover:opacity-80 active:opacity-70"
+        className="absolute right-[25px] top-6 z-10 flex items-center justify-center transition-opacity hover:opacity-80 active:opacity-70"
       >
         <InfoIcon />
       </button>
 
-      <div className="pointer-events-none absolute right-3 top-3 z-20 -translate-y-full max-md:translate-x-[41px] md:translate-x-[57px]">
+      <div className="pointer-events-none absolute right-[25px] top-8 z-20 -translate-y-full max-md:translate-x-[41px] md:translate-x-[57px]">
         <div className="animate-float" style={{ "--float-distance": "-5px" } as CSSProperties}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

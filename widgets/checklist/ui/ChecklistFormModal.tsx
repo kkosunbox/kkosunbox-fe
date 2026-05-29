@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, useModal } from "@/shared/ui";
+import {
+  Button,
+  ProfileStepPawLeft,
+  ProfileStepPawRight,
+  PROFILE_PET_MODAL_SUBTITLE,
+  PROFILE_PET_MODAL_TITLE,
+  PROFILE_PET_SUBMIT_BTN,
+  useModal,
+} from "@/shared/ui";
 import { unsavedCloseAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { useAuth } from "@/features/auth";
 import {
@@ -114,8 +122,7 @@ interface Baseline {
   answers: Record<number, number[]>;
 }
 
-const CTA_CLASS =
-  "!h-[48px] !w-full !rounded-[8px] !text-subtitle-16-sb transition-opacity hover:opacity-90 active:opacity-80 disabled:!cursor-not-allowed disabled:!opacity-50 disabled:hover:!opacity-50";
+const CTA_CLASS = `${PROFILE_PET_SUBMIT_BTN} disabled:hover:!opacity-50`;
 
 /* ── X 아이콘 ── */
 function CloseIcon() {
@@ -514,11 +521,12 @@ function ChecklistFormModalInner({
     else handleNext();
   }
 
-  const headerTitle = "체크리스트 작성";
+  const headerTitle = step === 0 ? "프로필 작성" : "체크리스트 작성";
+  const isProfileStep = step === 0;
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 max-md:top-[54px] md:inset-0 z-[200] md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
+      className="fixed inset-0 z-[200] md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
       role="dialog"
       aria-modal="true"
       aria-label={headerTitle}
@@ -530,22 +538,51 @@ function ChecklistFormModalInner({
         aria-hidden="true"
       />
 
-      {/* 모달 카드 */}
-      <div className="max-md:absolute max-md:inset-0 md:relative z-10 flex flex-col overflow-hidden bg-white md:w-full md:max-w-[908px] md:h-[610px] md:rounded-[20px] md:shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
+      {/* 모달 카드 — 모바일: 뷰포트 전체(상단 safe-area 포함) */}
+      <div className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden bg-white max-md:min-h-[100dvh] md:h-[610px] md:w-full md:max-w-[908px] md:rounded-[20px] md:shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
         {/* 헤더 */}
         <div
-          className="flex h-[48px] shrink-0 items-center justify-between px-6"
+          className="shrink-0 px-6 max-md:pt-[env(safe-area-inset-top,0px)]"
           style={{ background: "var(--color-cta-button)" }}
         >
-          <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">{headerTitle}</span>
-          <button
-            type="button"
-            onClick={handleCloseRequest}
-            aria-label="닫기"
-            className="flex h-8 w-8 items-center justify-center transition-opacity hover:opacity-70"
-          >
-            <CloseIcon />
-          </button>
+          {isProfileStep ? (
+            <div className="relative flex flex-col items-center gap-1 py-3">
+              <div className="relative flex h-7 w-full items-center justify-center">
+                <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 max-md:-left-0.5">
+                  <ProfileStepPawLeft />
+                </span>
+                <span className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2">
+                  <ProfileStepPawRight />
+                </span>
+                <span className={`${PROFILE_PET_MODAL_TITLE} text-white`}>
+                  {headerTitle}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCloseRequest}
+                  aria-label="닫기"
+                  className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-70"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+              <p className={PROFILE_PET_MODAL_SUBTITLE}>강아지 프로필을 작성해주세요.</p>
+            </div>
+          ) : (
+            <div className="relative flex h-[48px] items-center justify-center">
+              <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
+                {headerTitle}
+              </span>
+              <button
+                type="button"
+                onClick={handleCloseRequest}
+                aria-label="닫기"
+                className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-70"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 본문 */}
@@ -605,7 +642,6 @@ function ChecklistFormModalInner({
                 variant="primary"
                 size="lg"
                 className={CTA_CLASS}
-                style={{ background: "var(--color-brown-dark)" }}
               >
                 {ctaLabel}
               </Button>

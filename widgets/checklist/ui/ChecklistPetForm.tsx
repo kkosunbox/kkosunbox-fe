@@ -1,7 +1,18 @@
 "use client";
 
 import { useRef } from "react";
-import { BreedCombobox, DatePicker } from "@/shared/ui";
+import {
+  BreedCombobox,
+  DatePicker,
+  PROFILE_PET_BREED_INPUT_CLASS,
+  PROFILE_PET_DATE_TRIGGER_CLASS,
+  PROFILE_PET_FIELD,
+  PROFILE_PET_INPUT,
+  PROFILE_PET_INPUT_SUFFIX,
+  PROFILE_PET_LABEL,
+  PROFILE_PET_GENDER_ROW,
+  profilePetGenderBtnClass,
+} from "@/shared/ui";
 import type { PetInfo } from "./types";
 
 const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
@@ -16,7 +27,7 @@ function formatBirthDateDisplay(date: Date): string {
 
 function BreedSearchGlyph() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="11" cy="11" r="7" stroke="var(--color-text-secondary)" strokeWidth="2" />
       <path d="m20 20-3.65-3.65" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
     </svg>
@@ -102,9 +113,9 @@ export default function ChecklistPetForm({
       />
 
       <div className="mx-auto w-full max-w-[720px]">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2 md:gap-4 lg:gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+          <div className={PROFILE_PET_FIELD}>
+            <label className={PROFILE_PET_LABEL}>
               강아지 이름 <span className="text-[var(--color-accent)]">*</span>
             </label>
             <input
@@ -112,12 +123,12 @@ export default function ChecklistPetForm({
               placeholder="이름"
               value={petInfo.name}
               onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
-              className="h-10 rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+              className={PROFILE_PET_INPUT}
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="checklist-pet-breed" className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">
+          <div className={PROFILE_PET_FIELD}>
+            <label htmlFor="checklist-pet-breed" className={PROFILE_PET_LABEL}>
               강아지 품종
             </label>
             <div className="relative w-full">
@@ -127,20 +138,17 @@ export default function ChecklistPetForm({
                 onChange={(breed) => setPetInfo((p) => ({ ...p, breed }))}
                 placeholder="ex) 웰시코기"
                 className="w-full"
-                inputClassName="!h-10 !rounded-[8px] !border-0 !bg-[var(--color-surface-light)] !px-5 !pr-[56px] !text-body-14-r !font-normal !tracking-normal placeholder:text-[var(--color-text-secondary)] focus:!border-0 focus:!ring-0"
-                clearButtonRight="right-[38px]"
+                inputClassName={PROFILE_PET_BREED_INPUT_CLASS}
+                clearButtonRight="right-[40px]"
               />
-              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+              <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2">
                 <BreedSearchGlyph />
               </span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 max-md:order-4">
-            <label
-              htmlFor="checklist-pet-birth"
-              className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]"
-            >
+          <div className={`${PROFILE_PET_FIELD} max-md:order-4`}>
+            <label htmlFor="checklist-pet-birth" className={PROFILE_PET_LABEL}>
               생년월일
             </label>
             <DatePicker
@@ -151,51 +159,41 @@ export default function ChecklistPetForm({
               formatDisplay={formatBirthDateDisplay}
               minDate={birthMinDate}
               maxDate={birthMaxDate}
-              triggerClassName="!h-10 !rounded-[8px] !border-0 !bg-[var(--color-surface-light)] !px-5 hover:!border-0 [&_span]:!text-body-14-r [&_span]:!font-normal [&_span]:!tracking-normal"
+              triggerClassName={PROFILE_PET_DATE_TRIGGER_CLASS}
             />
           </div>
 
-          <div className="flex flex-col gap-2 max-md:order-3">
-            <label className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">몸무게</label>
+          <div className={`${PROFILE_PET_FIELD} max-md:order-3`}>
+            <label className={PROFILE_PET_LABEL}>몸무게</label>
             <div className="relative">
               <input
                 type="number"
                 value={petInfo.weight}
                 onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
-                className="h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-5 pr-12 text-body-14-r text-[var(--color-text)] outline-none"
+                className={PROFILE_PET_INPUT}
               />
-              <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-body-13-r text-[var(--color-text-secondary)]">
-                kg
-              </span>
+              <span className={PROFILE_PET_INPUT_SUFFIX}>kg</span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">성별</label>
-            <div className="flex gap-3">
-              {(["male", "female"] as const).map((g) => {
-                const selected = petInfo.gender === g;
-                return (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => setPetInfo((p) => ({ ...p, gender: g }))}
-                    className={[
-                      "flex h-10 min-w-0 flex-1 items-center justify-center rounded-[8px] px-[10px] leading-[17px] transition-colors",
-                      selected
-                        ? "bg-[var(--color-secondary)] text-[var(--color-brown-dark)] text-body-14-sb"
-                        : "bg-[var(--color-surface-light)] text-[var(--color-text)] text-body-14-m",
-                    ].join(" ")}
-                  >
-                    {g === "male" ? "남" : "여"}
-                  </button>
-                );
-              })}
+          <div className={PROFILE_PET_FIELD}>
+            <label className={PROFILE_PET_LABEL}>성별</label>
+            <div className={PROFILE_PET_GENDER_ROW}>
+              {(["male", "female"] as const).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setPetInfo((p) => ({ ...p, gender: g }))}
+                  className={profilePetGenderBtnClass(petInfo.gender === g)}
+                >
+                  {g === "male" ? "남" : "여"}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="checklist-pet-special" className="text-body-13-m opacity-80 text-[var(--color-text-secondary)]">
+          <div className={PROFILE_PET_FIELD}>
+            <label htmlFor="checklist-pet-special" className={PROFILE_PET_LABEL}>
               특징
             </label>
             <input
@@ -205,7 +203,7 @@ export default function ChecklistPetForm({
               value={petInfo.specialNotes}
               maxLength={SPECIAL_NOTES_MAX_LENGTH}
               onChange={(e) => setPetInfo((p) => ({ ...p, specialNotes: e.target.value }))}
-              className="h-10 rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-r text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+              className={PROFILE_PET_INPUT}
             />
           </div>
         </div>

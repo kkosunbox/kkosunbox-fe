@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import notFoundImage from "@/public/images/404-not-found.webp";
+import notFoundImage from "@/public/images/404-not-found.png";
 
 export default function NotFoundSection() {
   return (
@@ -16,19 +16,15 @@ export default function NotFoundSection() {
           priority
         />
 
-        {/* 서브텍스트 — image 하단과 11px 간격 */}
-        <p
-          className="mt-3 text-[var(--color-text-secondary)] text-center"
-          style={{ fontSize: "16px", fontWeight: 500, lineHeight: "19px", letterSpacing: "-0.114286px" }}
-        >
-          찾으시는 페이지를 발견할 수 없습니다.
+        {/* 서브텍스트 — 이미지 하단 11px, Figma Sub test #999999 */}
+        <p className="mt-[11px] text-center text-[16px] font-medium leading-[19px] tracking-[-0.114286px] text-[var(--color-text-secondary)]">
+          요청하신 페이지를 찾을 수 없습니다.
         </p>
 
-        {/* 버튼 — 서브텍스트 하단과 142px 간격 */}
+        {/* 버튼 — 서브텍스트 하단 44px, Brown #584B40 */}
         <Link
           href="/"
-          className="mt-[142px] max-md:mt-16 w-[400px] max-md:w-[312px] h-[48px] flex items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-white"
-          style={{ fontWeight: 600, fontSize: "16px", lineHeight: "140%", letterSpacing: "0.2px" }}
+          className="mt-11 flex h-12 w-[360px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-[10px] text-[16px] font-semibold leading-[140%] tracking-[0.2px] text-white transition-opacity hover:opacity-90 active:opacity-80"
         >
           처음으로 돌아가기
         </Link>

@@ -184,7 +184,7 @@ export function PackageCompareTable({
   return (
     <>
       {/* ══ MOBILE (< md) — 단일 패키지 세로 카드 ════════════════════ */}
-      <div className="md:hidden relative overflow-hidden rounded-[20px] bg-white shadow-[4px_4px_24px_rgba(0,0,0,0.25)]">
+      <div className="md:hidden relative overflow-hidden rounded-[20px] bg-white shadow-[4px_4px_24px_0px_rgba(0,0,0,0.25)]">
         <div className="absolute right-5 top-4 z-10">
           <CloseButton onClick={onClose} />
         </div>
@@ -255,7 +255,7 @@ export function PackageCompareTable({
       </div>
 
       {/* ══ TABLET·DESKTOP (md+) — 3컬럼 비교 표, 680px 고정 ════════════ */}
-      <div className="max-md:hidden relative overflow-hidden rounded-[20px] bg-white shadow-[4px_4px_24px_rgba(0,0,0,0.25)] md:w-[680px]">
+      <div className="max-md:hidden relative overflow-hidden rounded-[20px] bg-white shadow-[4px_4px_24px_0px_rgba(0,0,0,0.25)] md:w-[680px]">
         <div className="absolute right-6 top-5 z-10">
           <CloseButton onClick={onClose} />
         </div>

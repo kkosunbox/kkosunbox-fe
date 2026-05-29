@@ -56,10 +56,13 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const [alertOptions, setAlertOptions] = useState<AlertModalOptions | null>(null);
 
   const closeModal = useCallback(() => {
+    setAlertOptions((prev) => {
+      prev?.onDismiss?.();
+      return null;
+    });
     setActive(null);
     setActiveConfirm(null);
     setActiveConfirm2(null);
-    setAlertOptions(null);
   }, []);
 
   const openModal = useCallback((type: ModalType, onConfirm?: () => void, onConfirm2?: () => void) => {

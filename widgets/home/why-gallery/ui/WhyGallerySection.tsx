@@ -1,13 +1,13 @@
 ﻿"use client";
 
-import Image, { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import logoMain from "@/shared/assets/logo-main.svg";
+import { GalleryLogoMark } from "./GalleryLogoMark";
 import whyGalleryTitle from "../assets/why-gallery-title.png";
 import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.png";
-import pawsPattern from "../assets/paws-patterns.png";
+import pawsPatternWithBg from "../assets/paws-patterns-with-bg.png";
 import galleryDogsUpper001 from "./gallery-dogs-upper-001.png";
 import galleryDogsUpper002 from "./gallery-dogs-upper-002.png";
 import galleryDogsUpper003 from "./gallery-dogs-upper-003.jpg";
@@ -18,7 +18,7 @@ import galleryDogsDowner003 from "./gallery-dogs-downer-003.png";
 type GalleryItem =
   | { type: "image"; src: StaticImageData; alt: string }
   | { type: "logo"; bg: string; tone?: "white" }
-  | { type: "paws"; bg: string }
+  | { type: "paws" }
   | { type: "cta"; bg: string; text: string; wide: boolean };
 
 function ArrowButton() {
@@ -90,11 +90,7 @@ function GalleryCTACard({
     >
       <PawDeco />
       <div className="flex min-w-0 flex-1 flex-col gap-4 max-md:gap-0">
-        <Image
-          src={logoMain}
-          alt="꼬순박스"
-          className="max-md:hidden h-auto w-[64px] lg:w-[76px] xl:w-[90px]"
-        />
+        <GalleryLogoMark className="max-md:hidden h-auto w-[64px] lg:w-[76px] xl:w-[90px]" />
         <p
           className="max-md:text-[14px] max-md:font-bold max-md:leading-[17px] font-bold text-[14px] capitalize leading-[1.35] tracking-[-0.04em] whitespace-pre-line lg:text-[18px] xl:text-[22px]"
           style={{ color: "var(--color-gallery-text)" }}
@@ -113,13 +109,36 @@ const TILE_SIZE =
 function GalleryTile({ item }: { item: GalleryItem }) {
   if (item.type === "image") {
     return (
-      <div className={`relative overflow-hidden rounded-[20px] ${TILE_SIZE}`}>
-        <Image
-          src={item.src}
+      <div className={`overflow-hidden rounded-[20px] ${TILE_SIZE}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={item.src.src}
           alt={item.alt}
-          fill
-          className="object-cover"
-          sizes="(min-width: 1440px) 289px, (min-width: 1200px) 240px, (min-width: 768px) 190px, 129px"
+          width={item.src.width}
+          height={item.src.height}
+          className="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    );
+  }
+
+  if (item.type === "paws") {
+    return (
+      <div
+        className={`overflow-hidden rounded-[20px] ${TILE_SIZE}`}
+        aria-hidden="true"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={pawsPatternWithBg.src}
+          alt=""
+          width={pawsPatternWithBg.width}
+          height={pawsPatternWithBg.height}
+          className="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
       </div>
     );
@@ -131,19 +150,7 @@ function GalleryTile({ item }: { item: GalleryItem }) {
       style={{ background: item.bg }}
       aria-hidden="true"
     >
-      {item.type === "paws" ? (
-        <Image src={pawsPattern} alt="" fill className="object-cover opacity-50" />
-      ) : (
-        <Image
-          src={logoMain}
-          alt=""
-          className={
-            item.type === "logo" && item.tone === "white"
-              ? "h-auto w-[43%] opacity-40 [filter:brightness(0)_invert(1)]"
-              : "h-auto w-[43%] opacity-30"
-          }
-        />
-      )}
+      <GalleryLogoMark className="h-auto w-[43%]" />
     </div>
   );
 }
@@ -159,7 +166,7 @@ const ROW_1_BASE: GalleryItem[] = [
     wide: true,
   },
   { type: "logo", bg: "var(--color-gallery-peach-soft)" },
-  { type: "paws", bg: "var(--color-gallery-peach-warm)" },
+  { type: "paws" },
 ];
 
 const ROW_2_BASE: GalleryItem[] = [

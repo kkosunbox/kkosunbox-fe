@@ -193,18 +193,18 @@ function SectionCard({
   const contentId = useId();
 
   return (
-    <div className="max-[768px]:rounded-none max-[768px]:px-0 min-[769px]:rounded-[20px] min-[769px]:bg-white min-[769px]:px-3">
+    <div className="max-md:rounded-none max-md:px-0 md:rounded-[20px] md:bg-white md:px-3">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
         aria-controls={contentId}
-        className="flex w-full items-center justify-between border-b border-[var(--color-text-muted)] text-left max-[768px]:pb-3 min-[769px]:pt-7 min-[769px]:pb-5"
+        className="flex w-full items-center justify-between border-b border-[var(--color-text-muted)] text-left max-md:pb-3 md:pt-7 md:pb-5"
       >
-        <span className="tracking-[-0.04em] text-[var(--color-text)] max-[768px]:text-subtitle-16-b min-[769px]:text-subtitle-18-b">{title}</span>
+        <span className="tracking-[-0.04em] text-[var(--color-text)] max-md:text-subtitle-16-b md:text-subtitle-18-b">{title}</span>
         <ChevronIcon open={open} />
       </button>
-      <CollapsiblePanel id={contentId} open={open} innerClassName="max-[768px]:pt-5 min-[769px]:pt-5 min-[769px]:pb-5">
+      <CollapsiblePanel id={contentId} open={open} innerClassName="max-md:pt-5 md:pt-5 md:pb-5">
         {children}
       </CollapsiblePanel>
     </div>
@@ -268,7 +268,7 @@ function RadioButton({
 function FormRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex items-start gap-0">
-      <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-[768px]:w-[82px] min-[769px]:w-[70px]">
+      <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px]">
         {label}
       </span>
       <div className="flex-1 min-w-0">{children}</div>
@@ -529,15 +529,15 @@ export default function OrderSection({
   const orderPlanTheme = packageThemeForPlan(plan);
 
   const leftSections = (
-    <div className="flex flex-col max-[768px]:gap-9 min-[769px]:gap-4">
+    <div className="flex flex-col max-md:gap-9 md:gap-4">
       <SectionCard
         title="제품 정보"
         open={openSections.product}
         onToggle={() => toggleSection("product")}
       >
         <div>
-          <div className="flex w-full items-center max-[359px]:gap-4 min-[360px]:gap-6">
-            <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-[359px]:h-[104px] max-[359px]:w-[112px] min-[360px]:h-[122px] min-[360px]:w-[132px] min-[769px]:h-[117px] min-[769px]:w-[117px] min-[769px]:rounded-[16px]">
+          <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
+            <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
               <Image
                 src={TIER_THUMBNAILS[orderPlanTheme.tier]}
                 alt={plan.name}
@@ -564,10 +564,10 @@ export default function OrderSection({
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-[768px]:h-6 max-[768px]:w-6 min-[769px]:h-7 min-[769px]:w-7 min-[769px]:rounded-[5px] min-[769px]:border min-[769px]:border-[var(--color-border)]"
+                  className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
                 >
-                  <span className="max-[768px]:hidden">−</span>
-                  <span className="min-[769px]:hidden">
+                  <span className="max-md:hidden">−</span>
+                  <span className="md:hidden">
                     <QuantityMinusIcon />
                   </span>
                 </button>
@@ -578,10 +578,10 @@ export default function OrderSection({
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                   disabled={quantity >= 99}
-                  className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-[768px]:h-6 max-[768px]:w-6 min-[769px]:h-7 min-[769px]:w-7 min-[769px]:rounded-[5px] min-[769px]:border min-[769px]:border-[var(--color-border)]"
+                  className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
                 >
-                  <span className="max-[768px]:hidden">+</span>
-                  <span className="min-[769px]:hidden">
+                  <span className="max-md:hidden">+</span>
+                  <span className="md:hidden">
                     <QuantityPlusIcon />
                   </span>
                 </button>
@@ -620,7 +620,7 @@ export default function OrderSection({
               <button
                 type="button"
                 onClick={handleChangeAddress}
-                className="shrink-0 rounded-[5px] bg-[var(--color-accent)] px-3 py-1.5 text-body-13-m text-white"
+                className="flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-2 py-1 text-body-13-m text-[var(--color-surface-light)] transition-opacity hover:opacity-90"
               >
                 배송지 변경
               </button>
@@ -636,12 +636,12 @@ export default function OrderSection({
           /* ── 새 배송지 입력 폼 ── */
           <div className="flex flex-col gap-4">
             {/* 받는분 / 휴대폰 */}
-            <div className="grid grid-cols-1 gap-4 min-[769px]:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormRow label="받는분">
                 <input
                   value={newAddr.receiverName}
                   onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
-                  className={`${inputCls} min-[769px]:max-w-[220px]`}
+                  className={`${inputCls} md:max-w-[220px]`}
                   placeholder="이름"
                 />
               </FormRow>
@@ -662,7 +662,7 @@ export default function OrderSection({
                         setPhoneError("올바른 전화번호 형식이 아닙니다.");
                       }
                     }}
-                    className={`${inputCls} min-[769px]:max-w-[220px]`}
+                    className={`${inputCls} md:max-w-[220px]`}
                     placeholder="010-0000-0000"
                     inputMode="numeric"
                   />
@@ -678,12 +678,12 @@ export default function OrderSection({
                 <input
                   value={newAddr.zipCode}
                   readOnly
-                  className={`${inputCls} min-w-0 cursor-default bg-[var(--color-surface-light)] min-[769px]:max-w-[220px]`}
+                  className={`${inputCls} min-w-0 cursor-default bg-[var(--color-surface-light)] md:max-w-[220px]`}
                 />
                 <button
                   type="button"
                   onClick={handleSearchAddress}
-                  className="h-10 shrink-0 rounded-[8px] bg-[var(--color-why-bg)] px-3 text-body-13-m text-white"
+                  className="flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-2 py-1 text-body-13-m text-[var(--color-surface-light)] transition-opacity hover:opacity-90"
                 >
                   주소찾기
                 </button>
@@ -721,7 +721,7 @@ export default function OrderSection({
               <input
                 value={newAddr.memo}
                 onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
-                className={`${inputCls} min-[769px]:max-w-[220px]`}
+                className={`${inputCls} md:max-w-[220px]`}
                 placeholder="배송 시 요청사항을 입력해주세요"
               />
             </FormRow>
@@ -787,8 +787,8 @@ export default function OrderSection({
             />
             {couponEnabled && (
               <div className="flex flex-col gap-2">
-                <div className="flex items-start gap-0 min-[769px]:items-center min-[769px]:gap-4">
-                  <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-[768px]:w-[82px] min-[769px]:w-[70px] min-[769px]:pt-0">
+                <div className="flex items-start gap-0 md:items-center md:gap-4">
+                  <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px] md:pt-0">
                     쿠폰입력
                   </span>
                   <div className="flex flex-1 gap-3 min-w-0">
@@ -813,7 +813,7 @@ export default function OrderSection({
                   ) : null}
                 </div>
                 {couponError ? (
-                  <p className="text-body-12-m text-red-600 max-[768px]:pl-[82px] min-[769px]:pl-[70px]">{couponError}</p>
+                  <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">{couponError}</p>
                 ) : null}
               </div>
             )}
@@ -826,7 +826,7 @@ export default function OrderSection({
         open={openSections.date}
         onToggle={() => toggleSection("date")}
       >
-        <div className="flex flex-col gap-3 min-[769px]:flex-row min-[769px]:items-center min-[769px]:gap-6 min-[769px]:flex-wrap">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6 md:flex-wrap">
           <span className="text-body-14-sb leading-[17px] text-[var(--color-text)]">
             우체국택배
           </span>
@@ -839,14 +839,14 @@ export default function OrderSection({
   );
 
   const rightColumn = (
-    <div className="flex flex-col max-[768px]:gap-9 min-[769px]:gap-4">
+    <div className="flex flex-col max-md:gap-9 md:gap-4">
       <SectionCard
         title="결제정보"
         open={openSections.summary}
         onToggle={() => toggleSection("summary")}
       >
-        <div className="flex flex-col max-[768px]:gap-4 min-[769px]:gap-8">
-            <div className="flex flex-col max-[768px]:gap-4 min-[769px]:gap-4">
+        <div className="flex flex-col max-md:gap-4 md:gap-8">
+            <div className="flex flex-col max-md:gap-4 md:gap-4">
               <div className="flex justify-between items-center">
                 <span className="text-body-13-m text-[var(--color-text)]">
                   주문상품금액{quantity > 1 ? ` ×${quantity}` : ""}
@@ -935,7 +935,7 @@ export default function OrderSection({
         </div>
       </SectionCard>
 
-      <div className="overflow-hidden max-[768px]:mx-[calc(50%_-_50vw)] max-[768px]:rounded-none min-[769px]:rounded-[8px]">
+      <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
         <Image
           src="/images/sidebar-banner-001.png"
           alt="꼬순박스 배너"
@@ -956,22 +956,22 @@ export default function OrderSection({
 
   const priceSummaryBar = (
     <div className="w-full bg-[var(--color-why-bg)]">
-      <div className="mx-auto flex w-full items-center justify-center px-4 max-[768px]:h-[81px] min-[769px]:h-[58px] min-[769px]:max-w-[var(--max-width-content)] min-[769px]:gap-10 min-[769px]:px-4">
-        <div className="flex w-full max-w-[327px] items-center justify-between min-[769px]:max-w-none min-[769px]:justify-center min-[769px]:gap-10">
+      <div className="mx-auto flex w-full items-center justify-center px-4 max-md:h-[81px] md:h-[58px] md:max-w-[var(--max-width-content)] md:gap-10 md:px-4">
+        <div className="flex w-full max-w-[327px] items-center justify-between md:max-w-none md:justify-center md:gap-10">
           {priceSummaryItems.map((item, index) => (
-            <div key={item.label} className="flex items-center max-[768px]:gap-2 min-[769px]:gap-10">
+            <div key={item.label} className="flex items-center max-md:gap-2 md:gap-10">
               {index > 0 ? (
                 <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
                   {index === 3 ? "=" : index === 2 ? "-" : "+"}
                 </span>
               ) : null}
-              <div className={item.emphasis ? "flex flex-col items-center min-[769px]:flex-row min-[769px]:gap-3" : "flex flex-col items-center min-[769px]:flex-row min-[769px]:gap-2"}>
+              <div className={item.emphasis ? "flex flex-col items-center md:flex-row md:gap-3" : "flex flex-col items-center md:flex-row md:gap-2"}>
                 <span
                   className={[
                     "whitespace-nowrap tracking-[-0.04em]",
                     item.emphasis
-                      ? "text-body-13-m text-[var(--color-accent-orange)] min-[769px]:text-subtitle-16-b"
-                      : "text-body-13-m text-white min-[769px]:text-subtitle-16-sb",
+                      ? "text-body-13-m text-[var(--color-accent-orange)] md:text-subtitle-16-b"
+                      : "text-body-13-m text-white md:text-subtitle-16-sb",
                   ].join(" ")}
                 >
                   {item.label}
@@ -980,8 +980,8 @@ export default function OrderSection({
                   className={[
                     "whitespace-nowrap tracking-[-0.04em]",
                     item.emphasis
-                      ? "text-body-14-sb text-[var(--color-accent-orange)] min-[769px]:text-subtitle-20-b"
-                      : "text-body-14-sb text-white min-[769px]:text-subtitle-16-sb",
+                      ? "text-body-14-sb text-[var(--color-accent-orange)] md:text-subtitle-20-b"
+                      : "text-body-14-sb text-white md:text-subtitle-16-sb",
                   ].join(" ")}
                 >
                   {item.value}
@@ -1004,16 +1004,16 @@ export default function OrderSection({
 
       <div className="bg-white md:overflow-x-auto lg:overflow-x-auto">
         <div
-          className="mx-auto max-[768px]:px-6 max-[768px]:pt-6 min-[769px]:min-w-[900px] min-[769px]:px-0 min-[769px]:py-8"
+          className="mx-auto max-md:px-6 max-md:pt-6 md:min-w-[900px] md:px-0 md:py-8"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
-          <div className="max-[768px]:hidden min-[769px]:grid min-[769px]:grid-cols-[1fr_1px_327px] min-[769px]:gap-x-8 items-start">
+          <div className="max-md:hidden md:grid md:grid-cols-[1fr_1px_327px] md:gap-x-8 items-start">
             {leftSections}
             <div className="self-stretch bg-[var(--color-text-muted)]" />
             {rightColumn}
           </div>
 
-          <div className="flex flex-col gap-9 min-[769px]:hidden">
+          <div className="flex flex-col gap-9 md:hidden">
             {leftSections}
             {rightColumn}
           </div>

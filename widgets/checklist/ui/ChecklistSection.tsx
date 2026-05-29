@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/shared/ui";
+import { Button, useModal } from "@/shared/ui";
+import { unsavedLeaveAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { useAuth } from "@/features/auth";
 import {
   createProfile,
@@ -108,57 +109,6 @@ const EMPTY_PET_INFO: PetInfo = {
   gender: null,
 };
 
-/* ─── Leave confirm modal ─── */
-function LeaveConfirmModal({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="leave-modal-title"
-    >
-      <div className="absolute inset-0 bg-black/50" onClick={onCancel} aria-hidden="true" />
-      <div className="relative z-10 w-full max-w-[320px] rounded-[24px] bg-white px-6 py-8 shadow-[0px_8px_32px_rgba(0,0,0,0.12)] md:max-w-[360px] lg:max-w-[360px]">
-        <p
-          id="leave-modal-title"
-          className="text-center max-md:text-subtitle-17-b md:text-subtitle-18-b lg:text-subtitle-18-b tracking-[-0.02em] text-[var(--color-text)]"
-        >
-          작성 중인 내용이 있어요
-        </p>
-        <p className="mt-3 text-center max-md:text-body-13-m md:text-body-14-m lg:text-body-14-m leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)]">
-          페이지를 나가면 지금까지 작성한
-          <br />
-          내용이 저장되지 않아요.
-        </p>
-        <div className="mt-7 flex flex-col gap-2.5">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="h-[48px] w-full rounded-[8px] max-md:text-body-14-sb md:text-btn-15-sb lg:text-btn-15-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-            style={{ background: "var(--color-accent)" }}
-          >
-            계속 작성하기
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="h-[48px] w-full rounded-[8px] bg-[var(--color-surface-light)] max-md:text-body-14-m md:text-body-15-m lg:text-body-15-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
-          >
-            나가기
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
 /* ─── Widget ─── */
 export default function ChecklistSection() {
   const router = useRouter();
@@ -191,7 +141,7 @@ export default function ChecklistSection() {
   const [recommendedTier, setRecommendedTier] = useState<RecommendedTier | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [recommendedProfileId, setRecommendedProfileId] = useState<number | null>(null);
-  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const { openAlert } = useModal();
   const pendingNavigateRef = useRef<(() => void) | null>(null);
   const viewResultDone = useRef(false);
 
@@ -349,6 +299,21 @@ export default function ChecklistSection() {
     });
   }
 
+  const clearPendingLeave = useCallback(() => {
+    pendingNavigateRef.current = null;
+  }, []);
+
+  const promptLeaveConfirm = useCallback(() => {
+    openAlert({
+      ...unsavedLeaveAlertOptions(() => {
+        const navigate = pendingNavigateRef.current;
+        pendingNavigateRef.current = null;
+        navigate?.();
+      }),
+      onDismiss: clearPendingLeave,
+    });
+  }, [openAlert, clearPendingLeave]);
+
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       if (!isDirtyRef.current) return;
@@ -378,11 +343,11 @@ export default function ChecklistSection() {
         isConfirmedLeaveRef.current = true;
         router.push(targetHref);
       };
-      setShowLeaveModal(true);
+      promptLeaveConfirm();
     };
     document.addEventListener("click", handler, true);
     return () => document.removeEventListener("click", handler, true);
-  }, [router]);
+  }, [router, promptLeaveConfirm]);
 
   useEffect(() => {
     const original = window.history.pushState.bind(window.history);
@@ -400,7 +365,7 @@ export default function ChecklistSection() {
               isConfirmedLeaveRef.current = true;
               router.push(targetUrl);
             };
-            setShowLeaveModal(true);
+            promptLeaveConfirm();
             return;
           }
         } catch {
@@ -412,7 +377,7 @@ export default function ChecklistSection() {
     return () => {
       window.history.pushState = original;
     };
-  }, [router]);
+  }, [router, promptLeaveConfirm]);
 
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
@@ -423,23 +388,11 @@ export default function ChecklistSection() {
         isConfirmedLeaveRef.current = true;
         window.history.go(-2);
       };
-      setShowLeaveModal(true);
+      promptLeaveConfirm();
     };
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
-  }, []);
-
-  function handleLeaveConfirm() {
-    setShowLeaveModal(false);
-    const navigate = pendingNavigateRef.current;
-    pendingNavigateRef.current = null;
-    navigate?.();
-  }
-
-  function handleLeaveCancel() {
-    setShowLeaveModal(false);
-    pendingNavigateRef.current = null;
-  }
+  }, [promptLeaveConfirm]);
 
   function toggleOptionForQuestion(question: ChecklistQuestion, optionId: number) {
     const { id: questionId, isMultiSelect, options } = question;
@@ -719,9 +672,6 @@ export default function ChecklistSection() {
         </div>
       </div>
 
-      {showLeaveModal && (
-        <LeaveConfirmModal onConfirm={handleLeaveConfirm} onCancel={handleLeaveCancel} />
-      )}
     </>
   );
 }

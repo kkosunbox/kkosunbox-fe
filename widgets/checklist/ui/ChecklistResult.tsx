@@ -16,12 +16,13 @@ import {
 import PackageNutritionGuide from "@/widgets/subscribe/plans/ui/PackageNutritionGuide";
 import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { CheckCircleIcon } from "@/shared/ui";
-import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
 import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
 import stamp from "@/widgets/subscribe/recommend/assets/stamp.webp";
 import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.png";
+import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
 import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
 import packageExplainWithPremium from "@/widgets/home/package-plans/assets/package-explain-with-premium.png";
 import packageExplainWithStandard from "@/widgets/home/package-plans/assets/package-explain-with-standard.png";
@@ -85,65 +86,7 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 
 const GRIUN_FONT = '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif';
 
-interface RecommendReason {
-  title: string;
-  description: string;
-}
-
-const RECOMMENDATION_REASONS: Record<RecommendedTier, RecommendReason[]> = {
-  premium: [
-    {
-      title: "다양한 간식을 좋아해요",
-      description:
-        "우리 아이는 한 가지 간식보다 다양한 맛과 식감을 경험하는 것을 좋아하는 타입이에요. 매달 새로운 수제 간식을 통해 즐거운 간식 시간을 만들어줄 수 있어요.",
-    },
-    {
-      title: "새로운 맛에 대한 호기심이 높아요",
-      description:
-        "새로운 간식에도 거부감 없이 잘 적응하는 편이라, 여러 종류의 간식을 경험할수록 만족도가 높아질 가능성이 커요.",
-    },
-    {
-      title: "건강 관리가 필요한 시기예요",
-      description:
-        "지금 우리 아이에게는 맛뿐 아니라 건강까지 함께 챙기는 것이 중요해요. 꼬순박스의 수제 간식은 건강한 원재료를 바탕으로 더욱 안심하고 급여할 수 있어요.",
-    },
-  ],
-  standard: [
-    {
-      title: "균형 잡힌 영양을 원해요",
-      description:
-        "우리 아이에게 맛있으면서도 영양까지 챙긴 간식이 필요해요. 스탠다드 패키지는 인기 간식과 특별 간식이 균형 있게 구성되어 있어요.",
-    },
-    {
-      title: "다양한 구성을 선호해요",
-      description:
-        "매달 새로운 조합으로 아이의 입맛을 자극해줄 수 있어요. 가장 많이 선택되는 베스트 구성으로 만족도가 높아요.",
-    },
-    {
-      title: "건강한 원료를 원해요",
-      description:
-        "휴먼그레이드 재료에 슈퍼푸드까지 추가된 구성으로 건강까지 챙길 수 있어요. 알러지 제외와 기호성 반영도 가능해요.",
-    },
-  ],
-  basic: [
-    {
-      title: "처음 시작하기에 딱 좋아요",
-      description:
-        "간식을 처음 접하거나 새로운 브랜드를 가볍게 시작하고 싶을 때 베이직 패키지가 안성맞춤이에요.",
-    },
-    {
-      title: "기본 인기 간식으로 구성되어 있어요",
-      description:
-        "많은 반려견이 좋아하는 기본 인기 간식들로 구성되어 처음에도 거부감 없이 즐길 수 있어요.",
-    },
-    {
-      title: "알러지 걱정 없이 안심해요",
-      description:
-        "알러지를 고려한 선택이 가능해서 민감한 아이도 안전하게 즐길 수 있어요.",
-    },
-  ],
-};
-
+type RecommendReason = RecommendReasonDto;
 
 /* ── 추천 카드 내부 (데스크탑·태블릿 전용) ─── */
 
@@ -243,28 +186,40 @@ function CardBody({
         >
           {/* 제목 */}
           <h3
-            className="mb-[28px] text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]"
+            className="mb-6 text-[20px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text)]"
           >
             추천이유
           </h3>
 
           {/* 이유 목록 */}
-          <div className="flex flex-col gap-[18px]">
+          <div className="flex flex-col gap-[24px]">
             {reasons.map((reason) => (
               <div key={reason.title}>
-                <p className="mb-[6px] text-[16px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-primary)]">
-                  <span className="font-semibold text-black">✔</span> {reason.title}
-                </p>
-                <p className="indent-[1em] text-[14px] font-medium leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
-                  {reason.description}
+                <div className="mb-1 flex items-start gap-1">
+                  <Image
+                    src={reasonCheckIcon}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="mt-[3px] shrink-0"
+                    aria-hidden
+                  />
+                  <span className="text-[16px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-recommend-reason-title)]">
+                    {reason.title}
+                  </span>
+                </div>
+                <p className="text-body-14-m tracking-[-0.04em] text-[var(--color-text)]">
+                  {reason.content}
                 </p>
               </div>
             ))}
 
             {/* 결론 */}
-            <p className="text-[16px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+            <p className="text-body-16-sb tracking-[-0.04em] text-[var(--color-text)]">
               {"→ 그래서 우리 아이에게는 "}
-              <span className="text-[18px]" style={{ color: tierColorVar }}>{`'${tierLabel} 패키지'`}</span>
+              <span className="text-display-20-eb" style={{ color: tierColorVar }}>
+                {`'${tierLabel} 패키지'`}
+              </span>
               {"를 추천드려요!"}
             </p>
           </div>
@@ -291,6 +246,7 @@ export default function ChecklistResult({
 }: Props) {
   const router = useRouter();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const [recommendReasons, setRecommendReasons] = useState<RecommendReason[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
 
   const sortedPlans = useMemo(
@@ -302,7 +258,10 @@ export default function ChecklistResult({
     let cancelled = false;
     getSubscriptionPlans(profileId ?? undefined)
       .then((res) => {
-        if (!cancelled) setApiPlans(res.plans);
+        if (!cancelled) {
+          setApiPlans(res.plans);
+          setRecommendReasons(res.recommendReasons ?? []);
+        }
       })
       .catch(() => {
         if (!cancelled) setApiPlans([]);
@@ -338,7 +297,7 @@ export default function ChecklistResult({
     ? packageThemeForPlan(recommendedApiPlan).tierLabel
     : TIER_LABEL[effectiveRecommendedTier];
 
-  const reasons = RECOMMENDATION_REASONS[effectiveRecommendedTier];
+  const reasons = recommendReasons;
   const explainImage = PACKAGE_EXPLAIN_IMAGES[recommendedPlanTier];
 
   const navigateToDetail = () =>
@@ -471,20 +430,32 @@ export default function ChecklistResult({
             <h3 className="mb-4 text-[16px] font-semibold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
               추천이유
             </h3>
-            <div className="flex flex-col gap-[18px]">
+            <div className="flex flex-col gap-[20px]">
               {reasons.map((reason) => (
                 <div key={reason.title}>
-                  <p className="mb-[6px] text-[14px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-primary)]">
-                    <span className="font-semibold text-black">✔</span> {reason.title}
-                  </p>
-                  <p className="indent-[1em] text-[14px] font-medium leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
-                    {reason.description}
+                  <div className="mb-1 flex items-start gap-1">
+                    <Image
+                      src={reasonCheckIcon}
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="mt-[3px] shrink-0"
+                      aria-hidden
+                    />
+                    <span className="text-[14px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-recommend-reason-title)]">
+                      {reason.title}
+                    </span>
+                  </div>
+                  <p className="text-body-14-m tracking-[-0.04em] text-[var(--color-text)]">
+                    {reason.content}
                   </p>
                 </div>
               ))}
-              <p className="text-[14px] font-semibold leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
+              <p className="text-body-16-sb tracking-[-0.04em] text-[var(--color-text)]">
                 {"→ 그래서 우리 아이에게는 "}
-                <span style={{ color: tierColorVar }}>{`'${tierLabel} 패키지'`}</span>
+                <span className="text-display-20-eb" style={{ color: tierColorVar }}>
+                  {`'${tierLabel} 패키지'`}
+                </span>
                 {"를 추천드려요!"}
               </p>
             </div>

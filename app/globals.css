@@ -75,6 +75,7 @@
   --color-surface-warm: #FFF8F2;  /* Warm Light — 따뜻한 섹션 배경 */
   --color-checklist-bg: #FFFDF3;  /* 마이페이지 체크리스트 패널 배경 (Figma Rectangle 974) */
   --color-recommend-reason-bg: #FFFBE9; /* 체크리스트 결과 추천이유 패널 배경 (Figma Rectangle 974) */
+  --color-recommend-reason-title: #AB4B00; /* 체크리스트 추천이유 ✔ 제목 색상 (Figma) */
   --color-checklist-fallback-bg: #F5F3EC; /* 마이페이지 체크리스트 미작성 폴백 오버레이 배경 */
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-subscription-header-bg: #FEF6EE; /* 구독관리 페이지 상단 배경 밴드 */
@@ -273,6 +274,7 @@
   --color-surface-warm: var(--color-surface-warm);
   --color-checklist-bg: var(--color-checklist-bg);
   --color-recommend-reason-bg: var(--color-recommend-reason-bg);
+  --color-recommend-reason-title: var(--color-recommend-reason-title);
   --color-checklist-fallback-bg: var(--color-checklist-fallback-bg);
   --color-surface-peach: var(--color-surface-peach);
   --color-subscription-header-bg: var(--color-subscription-header-bg);

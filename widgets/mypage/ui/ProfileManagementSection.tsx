@@ -10,6 +10,7 @@ import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { BreedCombobox, DatePicker, DefaultPetIcon, useLoadingOverlay, useModal } from "@/shared/ui";
+import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
@@ -244,15 +245,15 @@ export default function ProfileManagementSection({
   function handleDeleteProfile() {
     if (!profile || isCreating) return;
 
-    openAlert({
-      title: "프로필을 삭제하시겠습니까?",
-      description: "프로필을 삭제하시겠습니까?\n작성된 내용은 복구되지 않습니다.",
-      primaryLabel: "삭제하기",
-      secondaryLabel: "취소하기",
-      onPrimary: () => {
-        void handleConfirmDeleteProfile();
-      },
-    });
+    openAlert(
+      deleteConfirmAlertOptions(
+        "프로필을 삭제하시겠습니까?",
+        () => {
+          void handleConfirmDeleteProfile();
+        },
+        "작성된 내용은 복구되지 않습니다.",
+      ),
+    );
   }
 
   async function handleConfirmDeleteProfile() {

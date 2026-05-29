@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useModal } from "@/shared/ui";
+import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import type { DeliveryAddress } from "../api/types";
 import { deleteDeliveryAddress } from "../api/deliveryAddressApi";
@@ -28,8 +29,15 @@ export default function AddressListView({
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const { openAlert } = useModal();
 
-  async function handleDelete(id: number) {
-    if (!confirm("이 배송지를 삭제하시겠습니까?")) return;
+  function handleDelete(id: number) {
+    openAlert(
+      deleteConfirmAlertOptions("이 배송지를 삭제하시겠습니까?", () => {
+        void performDelete(id);
+      }),
+    );
+  }
+
+  async function performDelete(id: number) {
     setDeletingId(id);
     try {
       await deleteDeliveryAddress(id);

@@ -116,8 +116,14 @@ export interface CancelPaymentRequest {
 
 // ── 응답 ──────────────────────────────────────────────────────────
 
+export interface RecommendReasonDto {
+  title: string;
+  content: string;
+}
+
 export interface SubscriptionPlanListResponse {
   plans: SubscriptionPlanDto[];
+  recommendReasons?: RecommendReasonDto[];
 }
 
 export interface SubscriptionListResponse {

@@ -91,7 +91,6 @@ function meetsMinPasswordLength(password: string) {
 function meetsPasswordComplexity(password: string) {
   if (!password) return false;
   return (
-    /[A-Z]/.test(password) &&
     /[a-z]/.test(password) &&
     /\d/.test(password) &&
     /[^A-Za-z0-9]/.test(password)
@@ -250,7 +249,7 @@ export default function RegisterSection() {
     if (!agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
     if (!meetsMinPasswordLength(password)) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
     if (!meetsPasswordComplexity(password)) {
-      showError("대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.");
+      showError("영문자, 숫자, 특수문자를 포함하여 입력해 주세요.");
       return;
     }
     if (password !== passwordConfirm) { showError("비밀번호가 일치하지 않습니다."); return; }
@@ -481,7 +480,7 @@ export default function RegisterSection() {
                     : "text-[var(--color-text-secondary)]"
                 }
               >
-                * 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.
+                * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
               </p>
             </div>
 

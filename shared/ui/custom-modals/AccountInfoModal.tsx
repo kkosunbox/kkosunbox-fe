@@ -95,7 +95,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled, 
       <button
         type="button"
         onClick={onLeft}
-        className="h-10 md:h-12 lg:h-12 flex-1 rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
+        className="h-10 flex-1 rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
       >
         {leftLabel}
       </button>
@@ -103,7 +103,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled, 
         type="button"
         onClick={onRight}
         disabled={rightDisabled}
-        className="h-10 md:h-12 lg:h-12 flex-1 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="h-10 flex-1 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {rightLabel}
       </button>
@@ -284,7 +284,7 @@ export default function AccountInfoModal({ onClose }: Props) {
             <div className="pl-[91px]">
               <p className="text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
                 * 비밀번호는 최소 8자 이상이어야 합니다.<br />
-                * 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.
+                * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
               </p>
             </div>
 

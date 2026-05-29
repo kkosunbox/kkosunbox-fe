@@ -13,6 +13,8 @@ export interface AlertModalOptions {
   onPrimary?: () => void;
   secondaryLabel?: string;
   onSecondary?: () => void;
+  /** 배경 클릭·ESC·확인 등으로 닫힐 때 (이탈 취소 등) */
+  onDismiss?: () => void;
 }
 
 interface Props extends AlertModalOptions {
@@ -48,6 +50,7 @@ export default function AlertModal({
   onPrimary,
   secondaryLabel,
   onSecondary,
+  onDismiss,
   onClose,
 }: Props) {
   const primaryRef = useRef<HTMLButtonElement>(null);
@@ -56,9 +59,14 @@ export default function AlertModal({
     primaryRef.current?.focus();
   }, []);
 
+  function dismiss() {
+    onDismiss?.();
+    onClose();
+  }
+
   function handlePrimary() {
     onPrimary?.();
-    onClose();
+    dismiss();
   }
 
   function handleSecondary() {
@@ -78,7 +86,7 @@ export default function AlertModal({
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50"
-        onClick={onClose}
+        onClick={dismiss}
         aria-hidden="true"
       />
 

@@ -197,7 +197,7 @@ export default function PasswordManagementSection() {
                 <p className="-mt-1 w-[302px] text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
                   * 비밀번호는 최소 8자 이상이어야 합니다.
                   <br />
-                  * 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.
+                  * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
                 </p>
 
                 <label htmlFor="confirm-password" className="text-body-13-m text-[var(--color-text)]">
@@ -297,7 +297,7 @@ export default function PasswordManagementSection() {
           <p className="text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
             * 비밀번호는 최소 8자 이상이어야 합니다.
             <br />
-            * 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.
+            * 대문자, 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
           </p>
 
           <label

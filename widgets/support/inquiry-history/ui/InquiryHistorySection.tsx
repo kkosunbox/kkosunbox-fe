@@ -9,6 +9,7 @@ import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { ApiError } from "@/shared/lib/api/types";
 import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { PawCircleIcon, useModal } from "@/shared/ui";
+import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import { SupportHero } from "@/widgets/support/shared";
 import InquiryPaw from "../assets/inquiry-paw.png";
@@ -122,12 +123,8 @@ export default function InquiryHistorySection() {
 
   const handleDeleteInquiry = (inquiry: InquiryDto) => {
     if (deletingId !== null) return;
-    openAlert({
-      title: "문의를 삭제하시겠습니까?",
-      description: "삭제한 문의는 복구할 수 없습니다.",
-      primaryLabel: "삭제하기",
-      secondaryLabel: "취소",
-      onPrimary: async () => {
+    openAlert(
+      deleteConfirmAlertOptions("문의를 삭제하시겠습니까?", async () => {
         setDeletingId(inquiry.id);
         try {
           await deleteInquiry(inquiry.id);
@@ -140,8 +137,8 @@ export default function InquiryHistorySection() {
         } finally {
           setDeletingId(null);
         }
-      },
-    });
+      }, "삭제한 문의는 복구할 수 없습니다."),
+    );
   };
 
   return (

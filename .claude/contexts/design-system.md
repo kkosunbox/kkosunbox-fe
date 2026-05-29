@@ -40,6 +40,8 @@
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
+| `--color-recommend-reason-bg` | `#FFFBE9` | 체크리스트 추천이유 패널 배경 |
+| `--color-recommend-reason-title` | `#AB4B00` | 체크리스트 추천이유 ✔ 제목 색상 |
 | `--color-stats-bar-bg` | `#101010` | 메인 StatsBar 배경 |
 | `--color-footer-bg` | `#4A4440` | 사이트 푸터 배경 |
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |

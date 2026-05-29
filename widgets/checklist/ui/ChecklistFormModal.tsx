@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/shared/ui";
+import { Button, useModal } from "@/shared/ui";
+import { unsavedCloseAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { useAuth } from "@/features/auth";
 import {
   createProfile,
@@ -136,55 +137,6 @@ function CloseIcon() {
   );
 }
 
-/* ── 이탈 확인 다이얼로그 ── */
-function LeaveConfirmDialog({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div
-      className="absolute inset-0 z-10 flex items-center justify-center rounded-[20px] bg-black/40 px-6"
-      role="alertdialog"
-      aria-modal="true"
-      aria-labelledby="leave-dlg-title"
-    >
-      <div className="w-full max-w-[320px] rounded-[20px] bg-white px-6 py-8 shadow-xl">
-        <p
-          id="leave-dlg-title"
-          className="text-center text-subtitle-17-b tracking-[-0.02em] text-[var(--color-text)]"
-        >
-          작성 중인 내용이 있어요
-        </p>
-        <p className="mt-3 text-center text-body-13-m leading-[1.6] tracking-[-0.02em] text-[var(--color-text-secondary)]">
-          닫으면 지금까지 작성한
-          <br />
-          내용이 저장되지 않아요.
-        </p>
-        <div className="mt-7 flex flex-col gap-2.5">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="h-[48px] w-full rounded-[8px] text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-            style={{ background: "var(--color-accent)" }}
-          >
-            계속 작성하기
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="h-[48px] w-full rounded-[8px] bg-[var(--color-surface-light)] text-body-14-m tracking-[-0.02em] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80 active:opacity-70"
-          >
-            닫기
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ── 분석 스피너 ── */
 function AnalyzingSpinner() {
   return (
@@ -249,7 +201,7 @@ function ChecklistFormModalInner({
     Record<number, number[]>
   >({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
+  const { openAlert } = useModal();
 
   /* body 스크롤 잠금 */
   useEffect(() => {
@@ -368,24 +320,28 @@ function ChecklistFormModalInner({
     isDirtyRef.current = isDirty;
   });
 
+  const promptCloseConfirm = useCallback(() => {
+    openAlert(unsavedCloseAlertOptions(onClose));
+  }, [openAlert, onClose]);
+
   /* ESC 처리 — 캡처 단계에서 가로채 ModalProvider보다 먼저 실행 */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       e.stopImmediatePropagation();
       if (isDirtyRef.current) {
-        setShowLeaveDialog(true);
+        promptCloseConfirm();
       } else {
         onClose();
       }
     };
     window.addEventListener("keydown", handler, true);
     return () => window.removeEventListener("keydown", handler, true);
-  }, [onClose]);
+  }, [onClose, promptCloseConfirm]);
 
   function handleCloseRequest() {
     if (isDirtyRef.current) {
-      setShowLeaveDialog(true);
+      promptCloseConfirm();
     } else {
       onClose();
     }
@@ -657,13 +613,6 @@ function ChecklistFormModalInner({
           </div>
         )}
 
-        {/* 이탈 확인 */}
-        {showLeaveDialog && (
-          <LeaveConfirmDialog
-            onConfirm={onClose}
-            onCancel={() => setShowLeaveDialog(false)}
-          />
-        )}
       </div>
     </div>
   );

@@ -225,7 +225,7 @@ export default function PackagePlansSection() {
                             <span className="text-left text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)]">
                               {plan.discountRate}%
                             </span>
-                            <span className="text-left text-[16px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-muted)] line-through">
+                            <span className="text-left text-[16px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
                               {plan.originalPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>

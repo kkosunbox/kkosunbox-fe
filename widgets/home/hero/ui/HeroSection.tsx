@@ -218,7 +218,7 @@ export default function HeroSection() {
             <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 md:max-lg:py-10 max-md:pt-[58px] h-full lg:min-h-[537px]">
               {/* 좌측: 텍스트 */}
               <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left max-lg:order-2 max-md:order-1 lg:order-1 lg:pl-0">
-                <h1 className="max-lg:mb-4 lg:mb-6">
+                <h1 className="max-lg:mb-4 lg:mb-6 lg:h-[110px] lg:overflow-hidden">
                   {/* 모바일 제목 이미지 (< 768px) */}
                   <img
                     src={slide.mobileHeadingImg}
@@ -239,7 +239,7 @@ export default function HeroSection() {
                   />
                 </h1>
                 <p
-                  className={`max-lg:mb-2 lg:mb-3 max-md:h-[20px] max-md:overflow-hidden max-md:text-[14px] max-md:leading-[20px] ${
+                  className={`max-lg:mb-2 lg:mb-3 lg:h-[30px] lg:overflow-hidden max-md:h-[20px] max-md:overflow-hidden max-md:text-[14px] max-md:leading-[20px] ${
                     slide.subtextClass ??
                     "max-lg:text-[14px] max-lg:font-medium lg:text-[20px] lg:font-medium text-[var(--color-hero-subtext)]"
                   }`}
@@ -247,7 +247,7 @@ export default function HeroSection() {
                   {slide.subtext}
                 </p>
                 <p
-                  className={`max-lg:mb-6 lg:mb-[52px] max-md:h-[40px] max-md:overflow-hidden max-md:text-[13px] max-md:leading-[20px] ${
+                  className={`max-lg:mb-6 lg:mb-[52px] lg:h-[24px] lg:overflow-hidden max-md:h-[40px] max-md:overflow-hidden max-md:text-[13px] max-md:leading-[20px] ${
                     slide.tagsClass ??
                     "text-[var(--color-hero-tagline)] max-lg:text-body-13-r lg:text-body-14-m"
                   }`}

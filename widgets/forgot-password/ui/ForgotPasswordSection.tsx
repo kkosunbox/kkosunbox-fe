@@ -311,7 +311,7 @@ export default function ForgotPasswordSection() {
             {/* 비밀번호 힌트 */}
             <div className="md:pl-[94px] lg:pl-[94px] text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
               <p>* 비밀번호는 최소 8자 이상이어야 합니다.</p>
-              <p>* 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.</p>
+              <p>* 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.</p>
             </div>
           </div>
 

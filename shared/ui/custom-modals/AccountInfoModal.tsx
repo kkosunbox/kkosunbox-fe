@@ -284,7 +284,7 @@ export default function AccountInfoModal({ onClose }: Props) {
             <div className="pl-[91px]">
               <p className="text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
                 * 비밀번호는 최소 8자 이상이어야 합니다.<br />
-                * 대문자, 소문자, 숫자, 특수문자를 모두 포함하여 입력해 주세요.
+                * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
               </p>
             </div>
 

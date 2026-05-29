@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import Image from "next/image";
 import { PackageCompareTable } from "./PackageDetailView";
 import type { PackageTier } from "./packageData";
 
@@ -39,12 +38,14 @@ export default function PackageNutritionGuide({
 
       <div className="pointer-events-none absolute right-3 top-3 z-20 -translate-y-full max-md:translate-x-[41px] md:translate-x-[57px]">
         <div className="animate-float" style={{ "--float-distance": "-5px" } as CSSProperties}>
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/images/please-info-check.png"
             alt="영양정보 확인"
             width={130}
             height={55}
             className={bubbleClassName}
+            decoding="async"
           />
         </div>
       </div>

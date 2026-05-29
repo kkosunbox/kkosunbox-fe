@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element -- Hero는 대형 원본 해상도 유지가 필요해 Next/Image 미사용 */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
@@ -16,6 +16,7 @@ import heroDogTitleMobile02 from "../assets/hero-dog-title-mobile-02.png";
 import heroDogTitleMobile03 from "../assets/hero-dog-title-mobile-03.png";
 
 const SLIDE_INTERVAL = 8000;
+const DRAG_THRESHOLD = 50;
 
 type HeroSlide = {
   id: string;
@@ -90,15 +91,58 @@ export default function HeroSection() {
   const { profile, profiles } = useProfile();
   const router = useRouter();
   const [current, setCurrent] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const dragRef = useRef({ startX: 0, isDrag: false });
 
   const advance = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
   }, []);
 
-  useEffect(() => {
-    const id = setInterval(advance, SLIDE_INTERVAL);
-    return () => clearInterval(id);
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(advance, SLIDE_INTERVAL);
   }, [advance]);
+
+  useEffect(() => {
+    startTimer();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [startTimer]);
+
+  const goNext = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % slides.length);
+    startTimer();
+  }, [startTimer]);
+
+  const goPrev = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+    startTimer();
+  }, [startTimer]);
+
+  function handlePointerDown(e: React.PointerEvent) {
+    dragRef.current = { startX: e.clientX, isDrag: false };
+    (e.currentTarget as Element).setPointerCapture(e.pointerId);
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (Math.abs(e.clientX - dragRef.current.startX) > 5) {
+      dragRef.current.isDrag = true;
+    }
+  }
+
+  function handlePointerUp(e: React.PointerEvent) {
+    if (!dragRef.current.isDrag) return;
+    const delta = e.clientX - dragRef.current.startX;
+    if (delta < -DRAG_THRESHOLD) goNext();
+    else if (delta > DRAG_THRESHOLD) goPrev();
+  }
+
+  // 드래그 후 click 이벤트가 버블링되어 CTA 버튼 등이 실행되는 것을 방지
+  function handleClickCapture(e: React.MouseEvent) {
+    if (dragRef.current.isDrag) {
+      e.stopPropagation();
+      dragRef.current.isDrag = false;
+    }
+  }
 
   function handleCta() {
     if (isLoggedIn && profiles.length > 0) {
@@ -114,7 +158,13 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="overflow-hidden relative max-md:h-[585px] md:max-lg:min-h-[420px] lg:min-h-[537px]">
+    <section
+      className="overflow-hidden relative max-md:h-[585px] md:max-lg:min-h-[420px] lg:min-h-[537px] cursor-grab active:cursor-grabbing select-none"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onClickCapture={handleClickCapture}
+    >
       {slides.map((slide, index) => {
         const isActive = index === current;
         return (

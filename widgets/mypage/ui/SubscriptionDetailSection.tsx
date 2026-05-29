@@ -146,9 +146,8 @@ function Pagination({
   onNext: () => void;
   onSelect: (p: number) => void;
 }) {
-  if (totalPages <= 1) return null;
   return (
-    <nav className="flex items-center max-md:justify-center md:justify-end lg:justify-end gap-2 pt-6" aria-label="결제내역 페이지 탐색">
+    <nav className="flex items-center justify-center gap-2 pt-6" aria-label="결제내역 페이지 탐색">
       <button
         onClick={onPrev}
         disabled={page === 1}
@@ -384,7 +383,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     "grid grid-cols-[1fr_120px_130px_152px_140px] items-center";
   const ROW_HEIGHT = "h-[49px]";
 
-  function RecordRow({ record, desktop }: { record: SubscriptionPaymentDto; desktop: boolean }) {
+  function RecordRow({ record, desktop, isOnly }: { record: SubscriptionPaymentDto; desktop: boolean; isOnly?: boolean }) {
     const displayStatus = toDisplayStatus(record.status);
     const dateStr = formatDate(record.approvedAt ?? record.createdAt);
     const pkgName = record.planName ?? subscription.plan.name;
@@ -395,7 +394,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
 
     if (!desktop) {
       return (
-        <li className="border-b border-[var(--color-text-muted)] last:border-b-0">
+        <li className={`border-b border-[var(--color-text-muted)] ${isOnly ? "" : "last:border-b-0"}`}>
           <div className="py-4 flex flex-col gap-1.5">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-body-14-m text-[var(--color-text)]">{pkgName}</span>
@@ -446,7 +445,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     }
 
     return (
-      <li className="border-b border-[var(--color-text-muted)] last:border-b-0">
+      <li className={`border-b border-[var(--color-text-muted)] ${isOnly ? "" : "last:border-b-0"}`}>
         <div className={`${ROW_GRID} ${ROW_HEIGHT} pl-[30px] pr-2`}>
           <div className="flex items-center gap-3 min-w-0">
             <span className="text-body-14-m text-[var(--color-text)] truncate">{pkgName}</span>
@@ -665,9 +664,9 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
             </p>
           ) : (
             <>
-              <ul className="mt-2">
+              <ul className="mt-2 min-h-[540px]">
                 {records.map((record) => (
-                  <RecordRow key={record.id} record={record} desktop />
+                  <RecordRow key={record.id} record={record} desktop isOnly={records.length === 1} />
                 ))}
               </ul>
               <Pagination
@@ -689,9 +688,9 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
             </p>
           ) : (
             <>
-              <ul>
+              <ul className="min-h-[540px]">
                 {records.map((record) => (
-                  <RecordRow key={record.id} record={record} desktop={false} />
+                  <RecordRow key={record.id} record={record} desktop={false} isOnly={records.length === 1} />
                 ))}
               </ul>
               <Pagination

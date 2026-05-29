@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
+import PlanRatingStars from "@/widgets/subscribe/plans/ui/PlanRatingStars";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
@@ -53,6 +55,7 @@ export default function PackagePlansSection() {
   const router = useRouter();
   const [activePackageIndex, setActivePackageIndex] = useState(0);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const planRatings = usePlanRatings(apiPlans.map((plan) => plan.id));
   const activePackage = PACKAGE_EXPLAIN_IMAGES[activePackageIndex];
   const activePkg = PACKAGES.find((packageItem) => packageItem.tier === activePackage.tier);
   const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === activePackage.tier);
@@ -204,25 +207,29 @@ export default function PackagePlansSection() {
                     </div>
                     <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
                       <p className="mb-[14px] truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
-                        {pkg.name}
-                      </p>
-                      {/* Figma Group 1000005477 — 월 요금제 / n% + 금액 / 첫 구독 할인 */}
-                      <p className="mb-[7px] text-left text-[16px] font-bold capitalize leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
-                        월 요금제
+                        {plan?.name || pkg.name}
                       </p>
                       {plan ? (
                         <>
-                          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                            <span className="relative top-[-2px] text-left text-[16px] font-semibold capitalize leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)]">
+                          <div className="mb-[6px] flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                            <span className="text-left text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)]">
                               {plan.discountRate}%
                             </span>
-                            <span className="text-left text-[20px] font-extrabold capitalize leading-[24px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+                            <span className="text-left text-[16px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-muted)] line-through">
+                              {plan.originalPrice.toLocaleString("ko-KR")}원
+                            </span>
+                          </div>
+                          <div className="mb-[8px] flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                            <span className="text-left text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
+                              월 요금제
+                            </span>
+                            <span className="text-left text-[20px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
                               {plan.monthlyPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>
-                          <p className="mt-[6px] text-left text-[14px] font-semibold capitalize leading-[17px] tracking-[-0.05em] text-[var(--color-cta-button)]">
-                            첫 구독 할인
-                          </p>
+                          {planRatings[plan.id] > 0 ? (
+                            <PlanRatingStars rating={planRatings[plan.id]} size={16} />
+                          ) : null}
                         </>
                       ) : (
                         <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />

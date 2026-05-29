@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import SupportHeroBg from "../assets/support-hero-bg.png";
 import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.png";
 
 export function SupportHero({ showButton = true }: { showButton?: boolean }) {
-  const heroMinHeightClass =
-    "min-h-[118px] xl:min-h-[max(118px,calc(100vw*118/1920))]";
-
   return (
     <section className="relative w-full overflow-hidden" aria-label="1:1 문의 안내">
       {/* 모바일 (< 910px): 단일 배너(111px 고정, 가로 중앙 정렬) */}
@@ -25,32 +21,29 @@ export function SupportHero({ showButton = true }: { showButton?: boolean }) {
         </div>
       </div>
 
-      {/* 데스크톱 (≥ 910px): 기존 배너 + 문의하기 버튼 */}
-      {/* xl+: 배너 비율(1920×118)에 맞춰 높이 확장 → 와이드에서도 가로·세로 비율 유지 */}
-      <div className={`relative max-md2:hidden w-full overflow-hidden ${heroMinHeightClass}`}>
-        {/* 좁은 뷰포트: 1920px 원본을 높이 기준으로 맞추고 가로 중앙 크롭 */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+      {/* 데스크톱 (≥ 910px): 배너 + 문의하기 버튼 */}
+      {/* lg+(≥1200px): max-w-content(1012px)로 제한 — 헤더·컨테이너와 통일감 */}
+      <div className="max-md2:hidden lg:mx-auto lg:max-w-content">
+        <div className="relative h-[118px] w-full overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element -- 초광폭 배너 PNG, next/image 재인코딩·다운스케일 시 엣지 노이즈 방지 */}
           <img
             src={SupportHeroBg.src}
             alt="꼬순박스에 궁금한 점이 있으신가요? 1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다."
             width={SupportHeroBg.width}
             height={SupportHeroBg.height}
-            className="h-full w-auto max-w-none shrink-0"
+            className="pointer-events-none absolute top-0 left-1/2 h-full w-auto max-w-none shrink-0 -translate-x-1/2"
             fetchPriority="high"
             decoding="async"
           />
-        </div>
-        <div
-          className={`relative z-10 ${PAGE_CONTENT_WRAPPER_CLASS} flex ${heroMinHeightClass} items-center justify-end py-5 md:py-0 lg:py-0 xl:py-0`}
-        >
           {showButton && (
-            <Link
-              href="/inquiry"
-              className="inline-flex h-10 w-[148px] shrink-0 items-center justify-center rounded-lg bg-[var(--color-cta-button)] px-6 text-center text-body-14-sb leading-[1.5] tracking-[-0.02em] text-white"
-            >
-              문의하기
-            </Link>
+            <div className="absolute inset-0 z-10 flex items-center justify-end max-lg:px-8 lg:pr-[44px]">
+              <Link
+                href="/inquiry"
+                className="inline-flex h-10 w-[148px] shrink-0 items-center justify-center rounded-lg bg-[var(--color-cta-button)] px-6 text-center text-body-14-sb leading-[1.5] tracking-[-0.02em] text-white"
+              >
+                문의하기
+              </Link>
+            </div>
           )}
         </div>
       </div>

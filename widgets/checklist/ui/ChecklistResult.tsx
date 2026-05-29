@@ -18,6 +18,7 @@ import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThu
 import { CheckCircleIcon } from "@/shared/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
+import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
 import stamp from "@/widgets/subscribe/recommend/assets/stamp.webp";
 import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.png";
@@ -31,12 +32,6 @@ import packageImageStandard from "@/widgets/home/package-plans/assets/package-im
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
-
-const TIER_RATINGS: Record<PackageTier, number> = {
-  Premium: 4.7,
-  Standard: 4.6,
-  Basic: 4.9,
-};
 
 const STAR_PATH =
   "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
@@ -320,6 +315,8 @@ export default function ChecklistResult({
     };
   }, [profileId]);
 
+  const planRatings = usePlanRatings(sortedPlans.map((p) => p.id));
+
   const apiRecommendedPlan = sortedPlans.find((plan) => plan.isRecommended);
   const apiRecommendedTier = apiRecommendedPlan
     ? (packageThemeForPlan(apiRecommendedPlan).tier.toLowerCase() as RecommendedTier)
@@ -567,12 +564,12 @@ export default function ChecklistResult({
                       </div>
                       {/* 별점 */}
                       <div className="flex items-center gap-[8px]">
-                        <PlanStarRating score={TIER_RATINGS[tier]} />
+                        <PlanStarRating score={planRatings[plan.id] ?? 0} />
                         <span
                           className="text-[16px] font-semibold leading-[21px] tracking-[-0.02em] max-md:text-[13px] max-md:leading-[16px]"
                           style={{ color: "var(--color-cta-button)" }}
                         >
-                          {TIER_RATINGS[tier]}
+                          {(planRatings[plan.id] ?? 0).toFixed(1)}
                         </span>
                       </div>
                     </div>

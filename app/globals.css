@@ -180,6 +180,7 @@
   --color-gallery-cta-peach: #FFE2C8;   /* Gallery CTA 카드 A 배경 (피치) */
   --color-gallery-peach-soft: #FFD6B0;  /* WhyGallery upper 단색 타일 */
   --color-gallery-peach-warm: #FFC086;  /* WhyGallery upper 단색 타일 */
+  --color-gallery-peach-light: #FFEBD9; /* WhyGallery 단색 타일 (로고 데코) */
   --color-gallery-sage-muted: #8C9075;  /* WhyGallery downer 단색 타일 */
   --color-gallery-text: #3E3021;        /* Gallery CTA 카드 헤딩 텍스트 (딥 브라운) */
 
@@ -285,6 +286,7 @@
   --color-gallery-cta-peach: var(--color-gallery-cta-peach);
   --color-gallery-peach-soft: var(--color-gallery-peach-soft);
   --color-gallery-peach-warm: var(--color-gallery-peach-warm);
+  --color-gallery-peach-light: var(--color-gallery-peach-light);
   --color-gallery-sage-muted: var(--color-gallery-sage-muted);
   --color-gallery-text: var(--color-gallery-text);
   --color-hero-shape: var(--color-hero-shape);

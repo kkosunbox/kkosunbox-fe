@@ -7,6 +7,7 @@ import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import logoMain from "@/shared/assets/logo-main.svg";
 import whyGalleryTitle from "../assets/why-gallery-title.png";
 import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.png";
+import pawsPattern from "../assets/paws-patterns.png";
 import galleryDogsUpper001 from "./gallery-dogs-upper-001.png";
 import galleryDogsUpper002 from "./gallery-dogs-upper-002.png";
 import galleryDogsUpper003 from "./gallery-dogs-upper-003.jpg";
@@ -16,7 +17,8 @@ import galleryDogsDowner003 from "./gallery-dogs-downer-003.png";
 
 type GalleryItem =
   | { type: "image"; src: StaticImageData; alt: string }
-  | { type: "solid"; bg: string }
+  | { type: "logo"; bg: string; tone?: "white" }
+  | { type: "paws"; bg: string }
   | { type: "cta"; bg: string; text: string; wide: boolean };
 
 function ArrowButton() {
@@ -105,20 +107,41 @@ function GalleryCTACard({
   );
 }
 
+const TILE_SIZE =
+  "h-[120px] w-[129px] shrink-0 md:h-[190px] md:w-[190px] lg:h-[220px] lg:w-[240px] xl:h-[268px] xl:w-[289px]";
+
 function GalleryTile({ item }: { item: GalleryItem }) {
-  return (
-    <div
-      className="relative h-[120px] w-[129px] shrink-0 overflow-hidden rounded-[20px] md:h-[190px] md:w-[190px] lg:h-[220px] lg:w-[240px] xl:h-[268px] xl:w-[289px]"
-      style={item.type === "solid" ? { background: item.bg } : undefined}
-      aria-hidden={item.type === "solid" ? "true" : undefined}
-    >
-      {item.type === "image" && (
+  if (item.type === "image") {
+    return (
+      <div className={`relative overflow-hidden rounded-[20px] ${TILE_SIZE}`}>
         <Image
           src={item.src}
           alt={item.alt}
           fill
           className="object-cover"
           sizes="(min-width: 1440px) 289px, (min-width: 1200px) 240px, (min-width: 768px) 190px, 129px"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`relative flex items-center justify-center overflow-hidden rounded-[20px] ${TILE_SIZE}`}
+      style={{ background: item.bg }}
+      aria-hidden="true"
+    >
+      {item.type === "paws" ? (
+        <Image src={pawsPattern} alt="" fill className="object-cover opacity-50" />
+      ) : (
+        <Image
+          src={logoMain}
+          alt=""
+          className={
+            item.type === "logo" && item.tone === "white"
+              ? "h-auto w-[43%] opacity-40 [filter:brightness(0)_invert(1)]"
+              : "h-auto w-[43%] opacity-30"
+          }
         />
       )}
     </div>
@@ -127,30 +150,30 @@ function GalleryTile({ item }: { item: GalleryItem }) {
 
 const ROW_1_BASE: GalleryItem[] = [
   { type: "image", src: galleryDogsUpper001, alt: "노란 배경에서 간식을 먹는 강아지" },
-  { type: "solid", bg: "var(--color-gallery-peach-soft)" },
+  { type: "image", src: galleryDogsUpper002, alt: "간식을 기다리는 골든 리트리버" },
+  { type: "image", src: galleryDogsUpper003, alt: "주황 배경에서 간식을 먹는 강아지" },
   {
     type: "cta",
     bg: "var(--color-gallery-cta-peach)",
     text: "우리 아이를 위한\n맞춤 패키지 박스 찾기",
     wide: true,
   },
-  { type: "image", src: galleryDogsUpper002, alt: "간식을 기다리는 골든 리트리버" },
-  { type: "solid", bg: "var(--color-gallery-peach-warm)" },
-  { type: "image", src: galleryDogsUpper003, alt: "주황 배경에서 간식을 먹는 강아지" },
+  { type: "logo", bg: "var(--color-gallery-peach-soft)" },
+  { type: "paws", bg: "var(--color-gallery-peach-warm)" },
 ];
 
 const ROW_2_BASE: GalleryItem[] = [
-  { type: "image", src: galleryDogsDowner001, alt: "길 위에서 뛰는 강아지들" },
-  { type: "solid", bg: "var(--color-gallery-sage-muted)" },
-  { type: "image", src: galleryDogsDowner002, alt: "꼬순박스 간식과 패키지" },
+  { type: "logo", bg: "var(--color-gallery-sage-muted)", tone: "white" },
   {
     type: "cta",
     bg: "var(--color-cta-sage-bg)",
     text: "우리 아이 수제 간식 구독 패키지,\n간편하게 시작하기",
     wide: true,
   },
-  { type: "solid", bg: "var(--color-gallery-cta-peach)" },
+  { type: "image", src: galleryDogsDowner001, alt: "길 위에서 뛰는 강아지들" },
+  { type: "image", src: galleryDogsDowner002, alt: "꼬순박스 간식과 패키지" },
   { type: "image", src: galleryDogsDowner003, alt: "간식 재료 앞에 앉은 강아지" },
+  { type: "logo", bg: "var(--color-gallery-peach-light)" },
 ];
 
 export default function WhyGallerySection() {

@@ -17,13 +17,16 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
 
   return (
     <>
-      <DashboardCard className="max-lg:min-h-0 max-lg:h-auto lg:h-[208px]">
+      <DashboardCard className="lg:h-[208px]">
         <SectionHeader title="문의관리" href="/support" linkLabel="문의관리" spacing="tight" />
 
         <div className="flex min-h-0 flex-1 flex-col">
         {inquiries.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center py-6">
-            <Text variant="body-13-r" className="text-[var(--color-text-secondary)]">
+          <div className="flex flex-1 items-center justify-center">
+            <Text
+              variant="body-13-m"
+              className="leading-4 text-[var(--color-text-secondary)]"
+            >
               문의 내역이 없습니다.
             </Text>
           </div>
@@ -50,7 +53,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
         )}
 
         <nav
-          className="mt-auto flex shrink-0 items-center justify-center gap-1 max-lg:pt-4 lg:pt-2 text-[var(--color-text-secondary)]"
+          className="mt-auto flex shrink-0 items-center justify-center max-lg:gap-2 max-lg:pt-4 lg:gap-1 lg:pt-2 text-[var(--color-text-secondary)]"
           aria-label="문의 페이지 탐색"
         >
           <button
@@ -58,9 +61,9 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             aria-label="이전 페이지"
-            className="flex h-5 w-5 items-center justify-center rounded-[8px] transition-opacity disabled:opacity-30 hover:opacity-70"
+            className="flex h-5 w-5 items-center justify-center rounded-[8px] transition-opacity disabled:text-[var(--color-ui-disabled)] disabled:opacity-100 hover:opacity-70"
           >
-            <ChevronLeftIcon />
+            <ChevronLeftIcon className="max-lg:h-5 max-lg:w-5" />
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
             <button
@@ -69,9 +72,10 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
               onClick={() => setPage(n)}
               aria-current={page === n ? "page" : undefined}
               className={[
-                "min-w-[16px] max-lg:text-caption-11-r lg:text-caption-12-r leading-none transition-colors",
+                "flex h-5 w-5 items-center justify-center leading-4 transition-colors",
+                "max-lg:text-body-13-r lg:min-w-[16px] lg:text-caption-12-r lg:leading-none",
                 page === n
-                  ? "font-semibold text-[var(--color-text)]"
+                  ? "text-[var(--color-text)] max-lg:font-normal lg:font-semibold"
                   : "text-[var(--color-text-secondary)]",
               ]
                 .filter(Boolean)
@@ -85,9 +89,9 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             aria-label="다음 페이지"
-            className="flex h-5 w-5 items-center justify-center rounded-[8px] transition-opacity disabled:opacity-30 hover:opacity-70"
+            className="flex h-5 w-5 items-center justify-center rounded-[8px] transition-opacity disabled:text-[var(--color-ui-disabled)] disabled:opacity-100 hover:opacity-70"
           >
-            <ChevronRightIcon />
+            <ChevronRightIcon className="max-lg:h-5 max-lg:w-5" />
           </button>
         </nav>
         </div>

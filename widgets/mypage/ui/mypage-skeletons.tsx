@@ -77,8 +77,8 @@ export function ProfileSectionSkeleton() {
 /** SubscriptionCard — 오렌지 카드 / lg 186px / 모바일 하단 여백 */
 export function SubscriptionCardSkeleton() {
   return (
-    <div className="relative max-lg:mb-5 lg:h-[186px]">
-      <Bone className="h-full min-h-[140px] w-full rounded-[20px] max-lg:min-h-[140px] lg:h-[186px]" />
+    <div className="relative max-lg:mb-5 max-lg:min-h-[199px] lg:h-[186px]">
+      <Bone className="h-full min-h-[199px] w-full rounded-[16px] max-lg:min-h-[199px] lg:h-[186px] lg:rounded-[20px]" />
     </div>
   );
 }
@@ -121,7 +121,7 @@ export function DeliveryCardSkeleton() {
 /** InquiryCard — 헤더 + 목록 3줄 + 페이지네이션 */
 export function InquiryCardSkeleton() {
   return (
-    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} max-lg:min-h-0 max-lg:h-auto lg:h-[208px]`}>
+    <div className={`${DASHBOARD_CARD_SURFACE_CLASS} lg:h-[208px]`}>
       <SectionHeaderSkeleton tight />
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="min-h-0 flex-1 space-y-0">
@@ -138,7 +138,7 @@ export function InquiryCardSkeleton() {
             </div>
           ))}
         </div>
-        <div className="mt-auto flex shrink-0 items-center justify-center gap-1 max-lg:pt-4 lg:pt-2">
+        <div className="mt-auto flex shrink-0 items-center justify-center max-lg:gap-2 max-lg:pt-4 lg:gap-1 lg:pt-2">
           <Bone className="h-5 w-5 rounded-full" />
           <Bone className="h-4 w-4" />
           <Bone className="h-4 w-4" />

@@ -142,7 +142,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
 
   if (subscriptions.length === 0) {
     return (
-      <div className="flex rounded-[20px] bg-[var(--color-surface-light)] px-6 py-5 max-lg:min-h-[140px] lg:h-[186px]">
+      <div className="flex max-lg:min-h-[199px] rounded-[20px] bg-[var(--color-surface-light)] px-6 py-5 max-lg:rounded-[16px] lg:h-[186px]">
         <SubscriptionEmpty />
       </div>
     );
@@ -193,7 +193,7 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
     <div className="relative max-lg:mb-5 lg:h-[186px]">
       {/* 오렌지 카드 */}
       <div
-        className="relative z-0 flex h-full rounded-[20px] max-lg:min-h-0 lg:h-[186px]"
+        className="relative z-0 flex h-full max-lg:min-h-[199px] rounded-[20px] max-lg:rounded-[16px] lg:h-[186px]"
         style={{ background: planTheme.colorVar }}
         onClickCapture={handleClickCapture}
         onTouchStart={handleTouchStart}

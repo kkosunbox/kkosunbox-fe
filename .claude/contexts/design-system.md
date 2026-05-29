@@ -26,6 +26,7 @@
 | `--color-accent` | `#7FB3FF` | Soft Sky Blue — 링크, 강조 요소, CTA |
 | `--color-accent-soft` | `#E5F0FF` | Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) |
 | `--color-accent-orange` | `#EE681A` | Warm Orange — 데코 강조 ("for you" 등) |
+| `--color-profile-gender-selected-bg` | `#FFE8DC` | 프로필 작성 모달 성별 선택 배경 |
 
 ### Surface
 

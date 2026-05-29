@@ -14,6 +14,23 @@ export { default as CursorPaw } from "./CursorPaw";
 export { default as LoadingOverlay, LoadingOverlayProvider, useLoadingOverlay } from "./LoadingOverlay";
 export { default as ScrollReveal } from "./ScrollReveal";
 export { default as PawCircleIcon } from "./PawCircleIcon";
+export { ProfileStepPawLeft, ProfileStepPawRight } from "./ProfileStepPawDecor";
+export {
+  PROFILE_PET_FORM_STACK,
+  PROFILE_PET_FIELD,
+  PROFILE_PET_LABEL,
+  PROFILE_PET_INPUT,
+  PROFILE_PET_INPUT_SUFFIX,
+  PROFILE_PET_GENDER_ROW,
+  profilePetGenderBtnClass,
+  PROFILE_PET_SUBMIT_BTN,
+  PROFILE_PET_BREED_INPUT_CLASS,
+  PROFILE_PET_DATE_TRIGGER_CLASS,
+  PROFILE_PET_WIDGET_CARD,
+  PROFILE_PET_WIDGET_HEADER,
+  PROFILE_PET_MODAL_TITLE,
+  PROFILE_PET_MODAL_SUBTITLE,
+} from "./profilePetFormStyles";
 export { default as DefaultPetIcon } from "./DefaultPetIcon";
 export { default as CheckCircleIcon } from "./CheckCircleIcon";
 export { default as ScrollToTopButton } from "./ScrollToTopButton";

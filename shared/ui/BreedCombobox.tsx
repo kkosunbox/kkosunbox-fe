@@ -123,6 +123,7 @@ export interface BreedComboboxProps {
   className?: string;
   inputClassName?: string;
   clearButtonRight?: string;
+  showSearchIcon?: boolean;
 }
 
 export default function BreedCombobox({
@@ -133,6 +134,7 @@ export default function BreedCombobox({
   className = "",
   inputClassName = "",
   clearButtonRight = "right-2",
+  showSearchIcon = false,
 }: BreedComboboxProps) {
   const isMix = isMixBreedValue(value);
   const [query, setQuery] = useState(isMix ? getMixCustomPart(value) : value);
@@ -267,7 +269,7 @@ export default function BreedCombobox({
           placeholder={isMixMode ? "기타" : placeholder}
           className={[
             "h-10 w-full min-w-0 truncate rounded-[4px] border border-[var(--color-divider-warm)] bg-white px-3 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-accent)]",
-            query ? "pr-8" : "",
+            (query || (showSearchIcon && !isMixMode)) ? "pr-8" : "",
             inputClassName,
           ].join(" ")}
         />
@@ -285,6 +287,17 @@ export default function BreedCombobox({
               <path d="M1 1l6 6M7 1L1 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
+        )}
+        {showSearchIcon && !query && !isMixMode && (
+          <span
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+            aria-hidden="true"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8.5" cy="8.5" r="5" stroke="#999999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M13 13L16.5 16.5" stroke="#999999" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </span>
         )}
       </div>
 

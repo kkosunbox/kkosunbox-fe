@@ -1,6 +1,6 @@
-export function ChevronLeftIcon() {
+export function ChevronLeftIcon({ className }: { className?: string }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+    <svg className={className} width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
       <path
         d="M9 11L5 7l4-4"
         stroke="currentColor"

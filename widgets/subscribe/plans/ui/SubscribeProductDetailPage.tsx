@@ -593,8 +593,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6">
             <div className="mb-6 flex items-center justify-between">
-              <span className="text-subtitle-16-b-tight capitalize text-[var(--color-surface-dark)]">총 합계</span>
-              <span className="text-[20px] font-bold leading-6 tracking-[-0.05em] capitalize text-[var(--color-surface-dark)]">
+              <span className="text-body-20-b capitalize tracking-[-0.05em] text-[var(--color-surface-dark)]">총 합계</span>
+              <span className="text-body-20-b capitalize tracking-[-0.05em] text-[var(--color-surface-dark)]">
                 {formatWon(salePrice)}
               </span>
             </div>
@@ -1038,8 +1038,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
               <div className="mt-6 border-t border-[var(--color-text-muted)] pt-5">
                 <div className="mb-4 flex items-center justify-between">
-                  <span className="text-body-20-sb text-[var(--color-text)]">총 합계</span>
-                  <span className="text-body-20-sb text-[var(--color-text)]">{formatWon(salePrice)}</span>
+                  <span className="text-body-20-b tracking-[-0.05em] text-[var(--color-text)]">총 합계</span>
+                  <span className="text-body-20-b tracking-[-0.05em] text-[var(--color-text)]">{formatWon(salePrice)}</span>
                 </div>
                 <button
                   type="button"

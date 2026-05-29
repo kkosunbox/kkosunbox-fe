@@ -28,10 +28,16 @@ interface FormState {
 }
 
 const fieldClass =
-  "h-10 w-full rounded-full bg-[var(--color-surface-light)] px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0";
+  "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]";
 
 const labelClass =
   "text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80";
+
+const textareaClass =
+  "min-h-[124px] w-full resize-none rounded-[8px] bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]";
+
+const submitButtonClass =
+  "inline-flex h-12 w-full max-w-[320px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-body-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:opacity-50";
 
 function PaperclipIcon() {
   return (
@@ -186,13 +192,12 @@ export default function InquirySection() {
       {/* 폼 영역 */}
       <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:py-10 lg:py-10`}>
         <form onSubmit={handleSubmit}>
-          <div className="rounded-[20px] bg-white px-5 py-10 shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:py-8 md:px-8 lg:px-8 md:py-12 lg:py-12">
-          <div className="mx-auto flex w-full max-w-[718px] flex-col gap-1 lg:gap-3">
-            {/* 뒤로가기 + 제목 */}
-            <div className="mb-6 max-md:mb-4">
+          <div className="rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
+            {/* 뒤로가기 — 카드 상단 여백 왼쪽, 세로 중앙 */}
+            <div className="flex items-center px-5 py-6 max-md:min-h-[56px] md:min-h-[94px] md:px-11 md:py-0 lg:px-11">
               <Link
                 href="/support"
-                className="inline-flex items-center gap-1 text-body-20-sb text-[var(--color-text)]"
+                className="inline-flex items-center gap-1 text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M15 6L9 12L15 18" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
@@ -200,6 +205,8 @@ export default function InquirySection() {
                 <span>문의하기</span>
               </Link>
             </div>
+
+          <div className="mx-auto flex w-full max-w-[718px] flex-col gap-3 px-5 pb-10 max-md:pb-8 md:px-8 md:pb-12 lg:px-8 lg:pb-12">
             {/* 제목 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="title" className={labelClass}>
@@ -215,7 +222,7 @@ export default function InquirySection() {
                 maxLength={MAX_TITLE_LENGTH}
                 className={fieldClass}
               />
-              <p className="self-end text-body-13-r leading-4 text-[var(--color-text-secondary)]">
+              <p className="self-end text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80">
                 {form.title.length}/{MAX_TITLE_LENGTH}
               </p>
             </div>
@@ -233,9 +240,9 @@ export default function InquirySection() {
                 onChange={handleChange}
                 rows={7}
                 maxLength={MAX_CONTENT_LENGTH}
-                className="min-h-[160px] w-full resize-none rounded-2xl bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-0"
+                className={textareaClass}
               />
-              <p className="self-end text-body-13-r leading-4 text-[var(--color-text-secondary)]">
+              <p className="self-end text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80">
                 {form.content.length}/{MAX_CONTENT_LENGTH}
               </p>
             </div>
@@ -273,7 +280,7 @@ export default function InquirySection() {
                   >
                     <PaperclipIcon />
                     <span className="truncate text-[var(--color-text-secondary)]">
-                      {`5MB 이하 파일 (최대 ${MAX_ATTACHMENTS}개)`}
+                      5MB 이하 파일
                     </span>
                   </button>
                 )}
@@ -305,7 +312,7 @@ export default function InquirySection() {
 
             {/* 동의 + 제출 — 태블릿·데스크탑 전용 */}
             <div className="max-md:hidden">
-              <div className="flex flex-col gap-4 lg:mt-8">
+              <div className="flex flex-col gap-3 lg:mt-8">
                 <label
                   htmlFor="inquiry-agree-terms"
                   className="flex cursor-pointer flex-wrap items-center gap-2"
@@ -320,7 +327,7 @@ export default function InquirySection() {
                   <span className="shrink-0" aria-hidden>
                     {form.agreeTerms ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
                   </span>
-                  <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+                  <span className="text-body-13-m leading-4 text-[var(--color-text-emphasis)]">
                     이용약관에 동의합니다.
                   </span>
                   <button
@@ -346,7 +353,7 @@ export default function InquirySection() {
                   <span className="shrink-0" aria-hidden>
                     {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
                   </span>
-                  <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+                  <span className="text-body-13-m leading-4 text-[var(--color-text-emphasis)]">
                     개인정보 제공 및 활용에 동의합니다.
                   </span>
                   <button
@@ -362,18 +369,18 @@ export default function InquirySection() {
                 <button
                   type="submit"
                   disabled={!isSubmittable || isPending}
-                  className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+                  className={submitButtonClass}
                 >
                   {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
                 </button>
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
         {/* 동의 + 제출 — 모바일 전용 (카드 바깥) */}
         <div className="md:hidden px-5 pt-6 pb-4">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8">
             <label
               htmlFor="mobile-inquiry-agree-terms"
               className="flex cursor-pointer flex-wrap items-center gap-2"
@@ -388,7 +395,7 @@ export default function InquirySection() {
               <span className="shrink-0" aria-hidden>
                 {form.agreeTerms ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
               </span>
-              <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+              <span className="text-body-13-m leading-4 text-[var(--color-text-emphasis)]">
                 이용약관에 동의합니다.
               </span>
               <button
@@ -414,7 +421,7 @@ export default function InquirySection() {
               <span className="shrink-0" aria-hidden>
                 {form.agreePrivacy ? <ConsentCheckboxChecked /> : <ConsentCheckboxUnchecked />}
               </span>
-              <span className="text-body-13-m leading-4 text-[var(--color-text)]">
+              <span className="text-body-13-m leading-4 text-[var(--color-text-emphasis)]">
                 개인정보 제공 및 활용에 동의합니다.
               </span>
               <button
@@ -430,7 +437,7 @@ export default function InquirySection() {
             <button
               type="submit"
               disabled={!isSubmittable || isPending}
-              className="inline-flex h-12 w-full max-w-[380px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] px-6 py-[13px] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white disabled:opacity-50"
+              className={submitButtonClass}
             >
               {isPending ? (attachedFiles.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
             </button>

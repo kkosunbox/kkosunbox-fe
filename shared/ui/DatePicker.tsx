@@ -18,6 +18,8 @@ export interface DatePickerProps {
   disabled?: boolean;
   /** form의 label htmlFor 연결용 */
   id?: string;
+  /** 캘린더 아이콘 색상 고정 (미지정 시 active/inactive에 따라 자동 변경) */
+  iconColor?: string;
 }
 
 /* ─────────────────────────────
@@ -53,7 +55,7 @@ function startOfDay(d: Date): Date {
    Inline SVG icons
 ───────────────────────────── */
 
-function CalendarTriggerIcon({ active }: { active: boolean }) {
+function CalendarTriggerIcon({ active, iconColor }: { active: boolean; iconColor?: string }) {
   return (
     <svg
       width="20"
@@ -63,7 +65,7 @@ function CalendarTriggerIcon({ active }: { active: boolean }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       className="shrink-0 transition-colors"
-      style={{ color: active ? "var(--color-accent)" : "var(--color-text-secondary)" }}
+      style={{ color: iconColor ?? (active ? "var(--color-accent)" : "var(--color-text-secondary)") }}
     >
       <path
         d="M6.66667 5.83333V2.5M13.3333 5.83333V2.5M5.83333 9.16667H14.1667M4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V5.83333C17.5 4.91286 16.7538 4.16667 15.8333 4.16667H4.16667C3.24619 4.16667 2.5 4.91286 2.5 5.83333V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5Z"
@@ -136,6 +138,7 @@ export default function DatePicker({
   maxDate,
   disabled = false,
   id,
+  iconColor,
 }: DatePickerProps) {
   const today = startOfDay(new Date());
 
@@ -367,7 +370,7 @@ export default function DatePicker({
         >
           {displayLabel ?? placeholder}
         </span>
-        <CalendarTriggerIcon active={isOpen || !!value} />
+        <CalendarTriggerIcon active={isOpen || !!value} iconColor={iconColor} />
       </button>
 
       {isOpen &&

@@ -191,7 +191,7 @@ export default function AddressFormView({
             <button
               type="button"
               onClick={onSearchAddress}
-              className="shrink-0 rounded-md bg-[var(--color-btn-dark-warm)] px-4 py-2.5 text-body-13-sb text-white transition-opacity hover:opacity-90"
+              className="flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-2 py-1 text-body-13-m text-[var(--color-surface-light)] transition-opacity hover:opacity-90"
             >
               주소찾기
             </button>

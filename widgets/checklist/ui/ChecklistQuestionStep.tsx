@@ -18,11 +18,24 @@ function ProgressBar({
   maxVisited: number;
   onStepClick?: (step: number) => void;
 }) {
+  // 질문이 5개 이상이면 진행 바 영역을 256px로 제한하고 간격을 3px로 좁혀
+  // 막대가 영역에 맞게 줄어들도록 한다. 4개 이하면 기존 고정 너비/간격을 유지한다.
+  const isMany = total > 4;
+  const containerClassName = [
+    "flex max-md:min-w-0 max-md:flex-1",
+    isMany
+      ? "gap-[3px] md:max-w-[256px] lg:max-w-[256px] md:flex-1 lg:flex-1"
+      : "gap-1 md:gap-2 lg:gap-2 md:flex-none lg:flex-none",
+  ].join(" ");
+  const barClassName = [
+    "h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1",
+    isMany
+      ? "md:flex-1 lg:flex-1 md:min-w-0 lg:min-w-0"
+      : "md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none",
+  ].join(" ");
+
   return (
-    <div
-      className="flex gap-1 max-md:min-w-0 max-md:flex-1 md:flex-none lg:flex-none md:gap-2 lg:gap-2"
-      aria-label={`${current} / ${total} 단계`}
-    >
+    <div className={containerClassName} aria-label={`${current} / ${total} 단계`}>
       {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
         const visited = n <= maxVisited;
         const clickable = visited && n !== current && onStepClick != null;
@@ -31,7 +44,7 @@ function ProgressBar({
             key={n}
             type="button"
             onClick={() => onStepClick(n)}
-            className="h-[5px] rounded-full transition-colors duration-300 hover:opacity-70 max-md:min-w-0 max-md:flex-1 md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none"
+            className={`${barClassName} hover:opacity-70`}
             style={{
               background: n <= current ? "var(--color-primary)" : "var(--color-text-muted)",
               cursor: "pointer",
@@ -41,7 +54,7 @@ function ProgressBar({
         ) : (
           <div
             key={n}
-            className="h-[5px] rounded-full transition-colors duration-300 max-md:min-w-0 max-md:flex-1 md:w-[60px] lg:w-[60px] md:flex-none lg:flex-none"
+            className={barClassName}
             style={{ background: n <= current ? "var(--color-primary)" : "var(--color-text-muted)" }}
           />
         );

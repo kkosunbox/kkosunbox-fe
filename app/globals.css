@@ -141,6 +141,8 @@
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
   --color-text-body-warm: #5B5B5B; /* 웜 섹션 본문 */
+  --color-text-price: #171713;     /* 강조 가격 텍스트 */
+  --color-text-discount: #EC7700;  /* 할인율 텍스트 (오렌지) */
   --color-modal-desc: rgba(34, 34, 38, 0.82); /* 범용 모달 설명 텍스트 */
 
   /* Status */
@@ -358,6 +360,8 @@
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);
   --color-text-body-warm: var(--color-text-body-warm);
+  --color-text-price: var(--color-text-price);
+  --color-text-discount: var(--color-text-discount);
   --color-modal-desc: var(--color-modal-desc);
 
   /* Status */
@@ -552,6 +556,8 @@ button:disabled {
 @utility text-body-13-m-tight { font-size: 13px; line-height: 130%; font-weight: 500; }
 @utility text-body-13-sb { font-size: 13px; line-height: 18px; font-weight: 550; }
 @utility text-body-13-b  { font-size: 13px; line-height: 18px; font-weight: 700; }
+@utility text-body-12-m  { font-size: 12px; line-height: 18px; font-weight: 500; }
+@utility text-body-12-r  { font-size: 12px; line-height: 18px; font-weight: 400; }
 /* Stats bar 등 360px 미만 초소형 뷰포트 */
 @utility text-body-11-sb { font-size: 11px; line-height: 16px; font-weight: 550; }
 

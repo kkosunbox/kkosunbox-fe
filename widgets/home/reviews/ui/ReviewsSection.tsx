@@ -8,7 +8,7 @@ import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import reviewsBg from "../assets/reviews-bg.png";
-import reviewsTitle from "../assets/reviews-title-new.png";
+import reviewsTitle from "../assets/reviews-title-new.svg";
 import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.jpg";
 import reviewsProfile02 from "../assets/reviews-profile-02.jpg";

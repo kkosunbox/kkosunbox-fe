@@ -8,7 +8,7 @@ import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import heroThirdBg from "../assets/hero-main-background-third-ver.png";
-import heroThirdHeading from "../assets/hero-catch-phrase-third-web.png";
+import heroThirdHeading from "../assets/hero-catch-phrase-third-web.svg";
 import heroThirdMobileBg from "../assets/hero-main-background-third-mobile-expanded.png";
 import heroThirdTabletBg from "../assets/hero-main-background-third-tablet-expanded.png";
 import heroMainMobileBg from "../assets/hero-main-background-mobile-expanded.png";

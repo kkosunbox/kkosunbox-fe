@@ -133,7 +133,11 @@
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\support\" -Recurse)",
       "PowerShell(git commit -m $msg)",
       "Bash(npm info *)",
-      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-third-mobile-expanded.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))"
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\2026\\\\ggosoonbox\\\\widgets\\\\home\\\\hero\\\\assets\\\\hero-main-background-third-mobile-expanded.png\"\\); \"$\\($img.Width\\) x $\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "Bash(awk '/heroDesktopImage|hero-|Hero|object-cover|max-w-\\\\[1920/{print NR\": \"$0}' widgets/subscribe/plans/ui/SubscribePlansSection.tsx)",
+      "PowerShell($env:NODE_OPTIONS=\"\"; npx tsc --noEmit -p tsconfig.json 2>&1 | Select-String -Pattern \"review|ReviewWrite|mypage/review\" -SimpleMatch; if \\($LASTEXITCODE -eq 0\\) { \"TSC_OK_NO_ERRORS_AT_ALL\" } else { \"TSC done \\(see any matches above; empty = no review-related errors\\)\" })",
+      "PowerShell(npx eslint \"widgets/mypage/ui/ReviewWriteSection.tsx\" \"app/\\(main\\)/mypage/review/page.tsx\" 2>&1 | Select-Object -First 40)",
+      "PowerShell($env:NODE_OPTIONS=\"\"; npx tsc --noEmit -p tsconfig.json 2>&1 | Select-String -Pattern \"review\" -SimpleMatch; \"tsc-exit=$LASTEXITCODE\"; npx eslint \"widgets/mypage/ui/ReviewWriteSection.tsx\" \"app/\\(main\\)/mypage/review/write/page.tsx\" 2>&1 | Select-Object -First 30; \"eslint-exit=$LASTEXITCODE\")"
     ]
   }
 }

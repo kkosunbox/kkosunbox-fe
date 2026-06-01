@@ -388,14 +388,14 @@ export function SubscriptionCard({
             className="flex flex-col rounded-[8px] outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white"
           >
             {/* 티어 뱃지 */}
-            <div className="mb-1.5">
+            {/* <div className="mb-1.5">
               <span
                 className="inline-flex h-[24px] items-center rounded-full bg-white px-3 text-body-14-sb leading-[1]"
                 style={{ color: planTheme.colorVar }}
               >
                 {planTheme.tierLabel}
               </span>
-            </div>
+            </div> */}
 
             {/* 텍스트 정보 */}
             <div className="flex flex-col gap-1.5">

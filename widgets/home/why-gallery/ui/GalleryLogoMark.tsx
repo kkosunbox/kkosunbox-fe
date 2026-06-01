@@ -2,6 +2,7 @@ type GalleryLogoMarkProps = {
   className?: string;
 };
 
+/** 단색 배경 타일(세이지 등 어두운 톤)용 흰색 워터마크 로고 — viewBox 124×40 */
 export function GalleryLogoMark({ className }: GalleryLogoMarkProps) {
   return (
     <svg

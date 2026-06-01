@@ -19,6 +19,7 @@ import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
 import packageImagePremium from "../assets/package-image-premium.png";
 import packageImageStandard from "../assets/package-image-standard.png";
+import { packageSummaryImageClassName } from "../lib/packageSummaryImageClassName";
 
 const ROTATION_INTERVAL_MS = 8000;
 
@@ -211,7 +212,7 @@ export default function PackagePlansSection() {
                         src={img}
                         alt={pkg.name}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        className={packageSummaryImageClassName(tier)}
                         sizes="180px"
                       />
                     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { ChecklistRecommendModal, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
@@ -16,6 +16,7 @@ import packageExplainWithStandard from "@/widgets/home/package-plans/assets/pack
 import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
 import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
 import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
+import { packageSummaryImageClassName } from "@/widgets/home/package-plans/lib/packageSummaryImageClassName";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
@@ -38,18 +39,13 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 /** /subscribe 플랜 목록 노출 순서 */
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
-const ROTATION_INTERVAL_MS = 8000;
+const DEFAULT_SELECTED_TIER: PackageTier = "Premium";
 
-/** 메인 PackagePlansSection 과 동일한 좌측 롤링 순서 */
-const PACKAGE_EXPLAIN_ROTATION: Array<{
-  tier: PackageTier;
-  src: StaticImageData;
-  alt: string;
-}> = [
-  { tier: "Basic", src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
-  { tier: "Standard", src: packageExplainWithStandard, alt: "스탠다드 패키지 BOX 설명" },
-  { tier: "Premium", src: packageExplainWithPremium, alt: "프리미엄 패키지 BOX 설명" },
-];
+const PACKAGE_EXPLAIN: Record<PackageTier, { src: StaticImageData; alt: string }> = {
+  Basic: { src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
+  Standard: { src: packageExplainWithStandard, alt: "스탠다드 패키지 BOX 설명" },
+  Premium: { src: packageExplainWithPremium, alt: "프리미엄 패키지 BOX 설명" },
+};
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -61,12 +57,38 @@ function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
 
 /* ── Main Section ───────────────────────────────────────────────── */
 
-interface Props {
-  plans: SubscriptionPlanDto[];
-  initialProfile: Profile | null;
+interface PrimaryButtonConfig {
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
 }
 
-export default function SubscribePlansSection({ plans, initialProfile }: Props) {
+interface Props {
+  plans: SubscriptionPlanDto[];
+  initialProfile?: Profile | null;
+  showChecklistRecommend?: boolean;
+  initialSelectedTier?: PackageTier;
+  heroDesktopImage?: StaticImageData;
+  heroMobileImage?: StaticImageData;
+  heroAlt?: string;
+  isCurrentPlan?: (plan: SubscriptionPlanDto) => boolean;
+  /** false면 우측 카드 선택 테두리 미표시 (구독 추가 모드 등) */
+  showSelectedCardHighlight?: boolean;
+  getPrimaryButton?: (plan: SubscriptionPlanDto) => PrimaryButtonConfig;
+}
+
+export default function SubscribePlansSection({
+  plans,
+  initialProfile = null,
+  showChecklistRecommend = true,
+  initialSelectedTier = DEFAULT_SELECTED_TIER,
+  heroDesktopImage,
+  heroMobileImage,
+  heroAlt = "이제 수제 간식도 맞춤형으로 구독하세요",
+  isCurrentPlan,
+  showSelectedCardHighlight = true,
+  getPrimaryButton,
+}: Props) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { profile: clientProfile } = useProfile();
@@ -78,25 +100,16 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
   );
   const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
 
-  const [activePackageIndex, setActivePackageIndex] = useState(2);
-  const activePackage = PACKAGE_EXPLAIN_ROTATION[activePackageIndex];
+  const [selectedTier, setSelectedTier] = useState<PackageTier>(initialSelectedTier);
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setActivePackageIndex(
-        (currentIndex) => (currentIndex + 1) % PACKAGE_EXPLAIN_ROTATION.length,
-      );
-    }, ROTATION_INTERVAL_MS);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
-  const activePlan = planForTier(sortedPlans, activePackage.tier);
-  const activePkg = PACKAGES.find((p) => p.tier === activePackage.tier);
+  const activeExplain = PACKAGE_EXPLAIN[selectedTier];
+  const activePlan = planForTier(sortedPlans, selectedTier);
+  const activePkg = PACKAGES.find((p) => p.tier === selectedTier);
+  const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
 
   const profile = clientProfile ?? initialProfile;
   const isChecklistDone = hasChecklistAnswers(profile);
-  const showModal = isLoggedIn && !isChecklistDone && !isDismissed;
+  const showModal = showChecklistRecommend && isLoggedIn && !isChecklistDone && !isDismissed;
 
   function handleClose() {
     setIsDismissed(true);
@@ -107,9 +120,48 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
     router.push("/checklist");
   }
 
-  function handleDetailClick() {
+  function primaryButtonFor(plan: SubscriptionPlanDto): PrimaryButtonConfig {
+    return getPrimaryButton?.(plan) ?? {
+      label: "제품 상세보기",
+      onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
+    };
+  }
+
+  function handlePrimaryClick() {
     if (!activePlan) return;
-    router.push(`/subscribe/detail?planId=${activePlan.id}`);
+    const primaryButton = primaryButtonFor(activePlan);
+    if (primaryButton.disabled) return;
+    primaryButton.onClick();
+  }
+
+  const activePrimaryButton = activePlan ? primaryButtonFor(activePlan) : null;
+  const mobileHero = heroMobileImage ?? SubscribePlansHeroImageMobile;
+  const desktopHero = heroDesktopImage ?? SubscribePlansHeroImage;
+
+  function renderPrimaryAction(className: string) {
+    if (!activePrimaryButton) return null;
+
+    if (activePrimaryButton.disabled && activePrimaryButton.label === "현재 구독중") {
+      return (
+        <div
+          className={`${className} bg-[var(--color-text-secondary)] text-white disabled:cursor-not-allowed`}
+          aria-disabled="true"
+        >
+          {activePrimaryButton.label}
+        </div>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={handlePrimaryClick}
+        disabled={!activePlan || activePrimaryButton.disabled}
+        className={`${className} bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
+      >
+        {activePrimaryButton.label}
+      </button>
+    );
   }
 
   return (
@@ -123,20 +175,22 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
             <div className="mb-6 md:mb-10 lg:mb-10">
               <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
                 <Image
-                  src={SubscribePlansHeroImageMobile}
-                  alt="이제 수제 간식도 맞춤형으로 구독하세요"
+                  src={mobileHero}
+                  alt={heroAlt}
                   className="h-[111px] w-full shrink-0 object-cover object-center"
                   priority
                 />
               </div>
-              {/* lg+(≥1200px): max-w-content(1012px)로 제한 — 헤더·컨테이너와 통일감 */}
-              <div className="relative max-md2:hidden h-[118px] w-full overflow-hidden lg:mx-auto lg:max-w-content">
-                <Image
-                  src={SubscribePlansHeroImage}
-                  alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                  className="absolute top-0 left-1/2 h-full w-auto max-w-none shrink-0 -translate-x-1/2"
-                  priority
-                />
+              {/* 데스크톱: 1920px 이내는 이미지로 채우고, 초광폭은 좌우를 support hero와 동일 톤으로 보완 */}
+              <div className="max-md2:hidden w-full bg-support-hero-side-bg">
+                <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
+                  <Image
+                    src={desktopHero}
+                    alt={heroAlt}
+                    className="absolute inset-0 h-full w-full object-cover object-center"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </ScrollReveal>
@@ -158,8 +212,8 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                       <div className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-[var(--color-surface-warm)]">
                         {activePkg ? (
                           <Image
-                            key={activePackage.tier}
-                            src={TIER_DETAIL_HERO_IMAGES[activePackage.tier]}
+                            key={selectedTier}
+                            src={TIER_DETAIL_HERO_IMAGES[selectedTier]}
                             alt={`${activePkg.name} 대표 이미지`}
                             fill
                             className="object-cover transition-opacity duration-500"
@@ -167,9 +221,16 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                             priority
                           />
                         ) : null}
+                        {activeIsCurrentPlan ? (
+                          <div className="absolute left-4 top-4 z-10">
+                            <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
+                              이용중
+                            </span>
+                          </div>
+                        ) : null}
                       </div>
                       <PackageNutritionGuide
-                        initialTier={activePackage.tier}
+                        initialTier={selectedTier}
                         bubbleClassName="h-auto w-[100px]"
                       />
                     </div>
@@ -194,14 +255,9 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                               </li>
                             ))}
                           </ul>
-                          <button
-                            type="button"
-                            onClick={handleDetailClick}
-                            disabled={!activePlan}
-                            className="flex h-10 w-[108px] shrink-0 items-center justify-center self-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
-                          >
-                            제품 상세보기
-                          </button>
+                          {renderPrimaryAction(
+                            "flex h-10 w-[108px] shrink-0 items-center justify-center self-center rounded-[8px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
+                          )}
                         </div>
                       </div>
                     ) : null}
@@ -212,27 +268,31 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                     className="relative w-full max-w-[600px] rounded-[22px] max-md:hidden md:rounded-[28px]"
                     style={{ boxShadow: "var(--shadow-card-soft)" }}
                   >
-                    <div className="overflow-hidden rounded-[22px] md:rounded-[28px]">
+                    <div className="relative overflow-hidden rounded-[22px] md:rounded-[28px]">
                       {activePkg ? (
                         <Image
-                          key={activePackage.tier}
-                          src={activePackage.src}
-                          alt={activePackage.alt}
+                          key={selectedTier}
+                          src={activeExplain.src}
+                          alt={activeExplain.alt}
                           className="h-auto w-full transition-opacity duration-500"
                           sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
                           priority
                         />
                       ) : null}
+                      {activeIsCurrentPlan ? (
+                        <div className="absolute left-5 top-5 z-10 lg:left-11 lg:top-11">
+                          <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
+                            이용중
+                          </span>
+                        </div>
+                      ) : null}
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleDetailClick}
-                      disabled={!activePlan}
-                      className="absolute bottom-4 right-4 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-11 lg:right-11"
-                    >
-                      제품 상세보기
-                    </button>
-                    <PackageNutritionGuide initialTier={activePackage.tier} />
+                    <div className="absolute bottom-4 right-4 lg:bottom-11 lg:right-11">
+                      {renderPrimaryAction(
+                        "flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
+                      )}
+                    </div>
+                    <PackageNutritionGuide initialTier={selectedTier} />
                   </div>
 
                   {/* 우측 — 패키지 요약 카드 목록 */}
@@ -241,24 +301,41 @@ export default function SubscribePlansSection({ plans, initialProfile }: Props) 
                       const pkg = PACKAGES.find((p) => p.tier === tier)!;
                       const plan = planForTier(sortedPlans, tier);
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
+                      const isSelected = selectedTier === tier;
+                      const showSelectionRing = showSelectedCardHighlight && isSelected;
 
                       if (!plan) return null;
+
+                      const isPlanCurrent = isCurrentPlan?.(plan) ?? false;
 
                       return (
                         <button
                           key={tier}
                           type="button"
-                          onClick={() => router.push(`/subscribe/detail?planId=${plan.id}`)}
-                          className="group flex h-[132px] w-full overflow-visible bg-white text-left transition-opacity hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl md:shadow-sm lg:shadow-none"
+                          aria-pressed={showSelectionRing}
+                          onClick={() => setSelectedTier(tier)}
+                          className={[
+                            "group relative flex h-[132px] w-full overflow-visible bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl lg:shadow-none",
+                            showSelectionRing
+                              ? "rounded-2xl ring-2 ring-primary md:shadow-md"
+                              : "md:shadow-sm",
+                          ].join(" ")}
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">
                             <Image
                               src={img}
                               alt={pkg.name}
                               fill
-                              className="object-cover transition-transform duration-300 group-hover:scale-105"
+                              className={packageSummaryImageClassName(tier)}
                               sizes="180px"
                             />
+                            {isPlanCurrent ? (
+                              <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
+                                <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
+                                  이용중
+                                </span>
+                              </div>
+                            ) : null}
                           </div>
                           <div className="min-w-0 flex-1 py-[6px] pl-5 pr-0 md:py-[25px] md:pl-7 md:pr-4 lg:pl-6 lg:pr-0">
                             <p className="mb-2 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">

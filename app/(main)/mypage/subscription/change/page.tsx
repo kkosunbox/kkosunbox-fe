@@ -1,5 +1,4 @@
 import { getServerToken } from "@/features/auth/lib/session";
-import { fetchProfile } from "@/features/profile/api/queries";
 import { fetchSubscriptions, fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { SubscriptionChangePlansSection } from "@/widgets/mypage";
 
@@ -13,20 +12,25 @@ export default async function SubscriptionChangePage({
   const token = await getServerToken();
   const { subscriptionId } = await searchParams;
 
-  const [profile, allSubscriptions, plans] = await Promise.all([
-    fetchProfile(token),
+  const [allSubscriptions, plans] = await Promise.all([
     fetchSubscriptions(token),
     fetchSubscriptionPlans(token),
   ]);
 
-  const subscriptions = allSubscriptions.filter((s) => s.isActive);
-  const targetSubscriptionId = subscriptionId ? Number(subscriptionId) : undefined;
+  const parsedSubscriptionId = subscriptionId ? Number(subscriptionId) : NaN;
+  const targetSubscriptionId = Number.isFinite(parsedSubscriptionId)
+    ? parsedSubscriptionId
+    : undefined;
+
+  const targetSubscription =
+    targetSubscriptionId !== undefined
+      ? (allSubscriptions.find((s) => Number(s.id) === targetSubscriptionId) ?? null)
+      : null;
 
   return (
     <SubscriptionChangePlansSection
-      subscriptions={subscriptions}
       plans={plans}
-      targetSubscriptionId={targetSubscriptionId}
+      targetSubscription={targetSubscription}
     />
   );
 }

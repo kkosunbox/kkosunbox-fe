@@ -4,7 +4,9 @@ import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { GalleryCTALogo } from "./GalleryCTALogo";
 import { GalleryLogoMark } from "./GalleryLogoMark";
+import { GalleryMutedLogo } from "./GalleryMutedLogo";
 import whyGalleryTitle from "../assets/why-gallery-title.png";
 import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.png";
 import pawsPatternWithBg from "../assets/paws-patterns-with-bg.png";
@@ -90,7 +92,7 @@ function GalleryCTACard({
     >
       <PawDeco />
       <div className="flex min-w-0 flex-1 flex-col gap-4 max-md:gap-0">
-        <GalleryLogoMark className="max-md:hidden h-auto w-[64px] lg:w-[76px] xl:w-[90px]" />
+        <GalleryCTALogo className="h-auto w-[52px] md:w-[64px] lg:w-[76px] xl:w-[90px]" />
         <p
           className="max-md:text-[14px] max-md:font-bold max-md:leading-[17px] font-bold text-[14px] capitalize leading-[1.35] tracking-[-0.04em] whitespace-pre-line lg:text-[18px] xl:text-[22px]"
           style={{ color: "var(--color-gallery-text)" }}
@@ -150,7 +152,11 @@ function GalleryTile({ item }: { item: GalleryItem }) {
       style={{ background: item.bg }}
       aria-hidden="true"
     >
-      <GalleryLogoMark className="h-auto w-[43%]" />
+      {item.tone === "white" ? (
+        <GalleryLogoMark className="h-auto w-[43%]" />
+      ) : (
+        <GalleryMutedLogo className="h-auto w-[43%]" />
+      )}
     </div>
   );
 }

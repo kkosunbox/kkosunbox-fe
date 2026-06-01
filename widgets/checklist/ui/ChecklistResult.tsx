@@ -29,6 +29,7 @@ import packageExplainWithStandard from "@/widgets/home/package-plans/assets/pack
 import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
 import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
 import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
+import { packageSummaryImageClassName } from "@/widgets/home/package-plans/lib/packageSummaryImageClassName";
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -491,7 +492,7 @@ export default function ChecklistResult({
                         src={img}
                         alt={pkg.name}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        className={packageSummaryImageClassName(tier)}
                         sizes="(min-width: 768px) 272px, 128px"
                       />
                       {tier === recommendedPlanTier && (

@@ -88,7 +88,7 @@ function buildChecklistSummary(
   checklistQuestions: ChecklistQuestion[],
 ): ChecklistSummaryItem[] {
   const sourceQuestions = checklistQuestions.length
-    ? checklistQuestions.slice(0, 4)
+    ? checklistQuestions
     : [
         { id: 0, text: "체크리스트 항목 1", shortText: null, description: null, isMultiSelect: false, sortOrder: 0, options: [] },
         { id: -1, text: "체크리스트 항목 2", shortText: null, description: null, isMultiSelect: false, sortOrder: 1, options: [] },
@@ -143,10 +143,11 @@ function ChecklistPanel({
         )}
       </div>
 
-      <div className="relative rounded-[12px] bg-white px-6 py-5">
+      <div className="relative rounded-[12px] bg-white px-6 py-5 lg:h-[138px]">
         <div
           className={[
             "flex flex-col gap-[14px]",
+            mobile ? "" : "max-h-[98px] overflow-y-auto pr-2",
             hasChecklist ? "" : "pointer-events-none select-none opacity-0",
           ].join(" ")}
           aria-hidden={!hasChecklist}
@@ -222,9 +223,9 @@ export function ProfileSection({
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
-    <section className="pt-6 pb-6 lg:pt-3 lg:pb-3">
-      <div className="mx-auto w-full max-w-content max-lg:px-6 lg:px-0">
-        <div className="relative max-lg:px-7 max-lg:py-7 lg:px-7 lg:py-[26px]">
+    <section className="max-lg:pt-6 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
+      <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
+        <div className="relative max-lg:px-7 max-lg:py-7 lg:pl-10 lg:flex lg:h-full lg:items-center lg:px-7 lg:py-[26px]">
           <Link
             href="/mypage/dog-profile"
             className="lg:hidden absolute top-4 right-7 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
@@ -232,10 +233,10 @@ export function ProfileSection({
             <span>정보변경</span>
             <ChevronRightIcon />
           </Link>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-0">
+          <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-0">
 
             {/* 프로필 정보 (좌) */}
-            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-end lg:gap-8 lg:self-stretch">
+            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-center lg:gap-8">
               <Link
                 href="/mypage/dog-profile"
                 className="max-lg:hidden absolute top-0 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
@@ -358,10 +359,10 @@ export function ProfileSection({
             </div>
 
             {/* 구분선 (데스크톱) */}
-            <div className="max-lg:hidden mx-[20px] w-px self-stretch bg-[var(--color-text-muted)]" />
+            <div className="max-lg:hidden mx-[20px] h-[148px] w-px bg-[var(--color-text-muted)]" />
 
             {/* 체크리스트 패널 (데스크톱) */}
-            <div className="max-lg:hidden lg:w-[358px] lg:flex-none lg:self-end">
+            <div className="max-lg:hidden lg:w-[358px] lg:flex-none">
               <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} />
             </div>
           </div>

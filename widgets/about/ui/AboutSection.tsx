@@ -48,9 +48,9 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 */}
-      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-md:pt-[52px] max-md:pb-9 md:pb-14 max-lg:pb-14 lg:py-0 lg:max-h-[578px]">
+      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-md:pt-[52px] max-md:pb-9 md:pt-[52px] md:pb-14 max-lg:pt-[52px] max-lg:pb-14 lg:py-0 lg:max-h-[578px]">
         <div className="mx-auto max-w-[var(--max-width-content)] px-6 lg:px-0">
-          <h1 className="flex justify-center max-md:mb-10 lg:hidden">
+          <h1 className="flex justify-center max-lg:mb-10 lg:hidden">
             <Image
               src={aboutHeroTitle}
               alt="About Us"
@@ -92,7 +92,7 @@ export default function AboutSection() {
               </div>
             </ScrollReveal>
 
-            <div className="flex w-full flex-1 flex-col max-lg:items-center lg:items-start lg:min-w-[426px]">
+            <div className="flex w-full flex-1 flex-col max-lg:mt-[44px] max-lg:items-center lg:items-start lg:min-w-[426px]">
               <ScrollReveal variant="fade-up" delay={100}>
                 <h1 className="max-lg:hidden mb-10 w-fit max-w-full">
                   <Image

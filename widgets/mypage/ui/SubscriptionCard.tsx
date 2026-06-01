@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Text } from "@/shared/ui";
+import { useModal } from "@/shared/ui/modal/ModalProvider";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
+import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import MyReviewModal from "./MyReviewModal";
 
 /* 도트 인디케이터 슬라이드 설정 */
 const DOT_PITCH = 16; // 점 사이 간격(px)
@@ -56,6 +61,15 @@ function NextArrowIcon() {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
       <path d="M12 8L18 14L12 20" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/* 리뷰 버튼 우측 화살표 — currentColor로 텍스트 색 상속 */
+function ReviewArrowIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -180,8 +194,40 @@ function SubscriptionCarouselIndicator({
   );
 }
 
-export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscriptionDto[] }) {
+interface ReviewState {
+  review: ReviewResponse;
+  plan: UserSubscriptionDto["plan"];
+  isEditable: boolean;
+}
+
+export function SubscriptionCard({
+  subscriptions,
+  eligiblePlans = [],
+  myReviews = [],
+}: {
+  subscriptions: UserSubscriptionDto[];
+  eligiblePlans?: PlanReviewEligibility[];
+  myReviews?: ReviewResponse[];
+}) {
   const total = subscriptions.length;
+  const router = useRouter();
+  const { openAlert } = useModal();
+
+  // 리뷰 자격·내 리뷰를 plan.id 기준으로 조회 가능하게 맵으로 변환
+  const eligibilityByPlan = useMemo(() => {
+    const map = new Map<number, PlanReviewEligibility>();
+    for (const p of eligiblePlans) map.set(p.planId, p);
+    return map;
+  }, [eligiblePlans]);
+
+  const reviewByPlan = useMemo(() => {
+    const map = new Map<number, ReviewResponse>();
+    for (const r of myReviews) map.set(r.planId, r);
+    return map;
+  }, [myReviews]);
+
+  // "내 리뷰보러가기"로 띄우는 모달 상태
+  const [reviewModal, setReviewModal] = useState<ReviewState | null>(null);
 
   // 활성 구독 인덱스(0..total-1) — 카드 내용의 단일 소스
   const [activeIndex, setActiveIndex] = useState(0);
@@ -214,6 +260,33 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
   const planTheme = packageThemeForPlan(current.plan);
   const detailHref = `/mypage/subscription/detail?subscriptionId=${current.id}`;
   const paymentAmount = subscriptionPaymentAmount(current);
+
+  // 현재 카드 플랜의 리뷰 상태 (리뷰는 플랜당 1개 단위)
+  const currentPlanId = current.plan.id;
+  const eligibility = eligibilityByPlan.get(currentPlanId);
+  const myReview = reviewByPlan.get(currentPlanId) ?? null;
+  const canReview = eligibility?.canReview ?? false;
+  const isEditable = eligibility?.isEditable ?? false;
+
+  function handleWrittenReviewClick() {
+    if (!myReview) return;
+    setReviewModal({ review: myReview, plan: current.plan, isEditable });
+  }
+
+  function handleUnavailableReviewClick() {
+    openAlert({
+      type: "info",
+      title: "아직 리뷰를 작성할 수 없어요.",
+      description: "배송이 완료된 이후에 리뷰를 작성하실 수 있습니다.",
+    });
+  }
+
+  function handleEditReview() {
+    if (!reviewModal) return;
+    const { plan, review } = reviewModal;
+    setReviewModal(null);
+    router.push(`/mypage/review/write?planId=${plan.id}&reviewId=${review.id}`);
+  }
 
   /* 연속 위치를 target까지 부드럽게 보간 (rAF) */
   function animateTo(target: number) {
@@ -288,7 +361,10 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
     e.stopPropagation();
   }
 
+  const reviewTheme = reviewModal ? packageThemeForPlan(reviewModal.plan) : null;
+
   return (
+    <>
     <div className="relative max-lg:mb-5 lg:h-[186px]">
       {/* 오렌지 카드 */}
       <div
@@ -298,50 +374,88 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* 카드 전체 클릭 — 구독 상세 */}
-        <Link
-          href={detailHref}
-          aria-label={`${current.plan.name} 구독 상세 보기`}
+        {/* 좌측 본문 — 텍스트 영역(상세 이동) + 리뷰 버튼 */}
+        <div
           className={[
-            "relative z-0 flex min-w-0 flex-1 flex-col justify-center outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+            "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
             "max-lg:px-6 max-lg:py-6 lg:pl-12 lg:pr-6 lg:py-5",
           ].join(" ")}
         >
-          {/* 티어 뱃지 */}
-          <div className="mb-2">
-            <span
-              className="inline-flex h-[24px] items-center rounded-full bg-white px-3 text-body-14-sb leading-[1]"
-              style={{ color: planTheme.colorVar }}
-            >
-              {planTheme.tierLabel}
-            </span>
-          </div>
+          {/* 카드 본문 클릭 — 구독 상세 */}
+          <Link
+            href={detailHref}
+            aria-label={`${current.plan.name} 구독 상세 보기`}
+            className="flex flex-col rounded-[8px] outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white"
+          >
+            {/* 티어 뱃지 */}
+            {/* <div className="mb-1.5">
+              <span
+                className="inline-flex h-[24px] items-center rounded-full bg-white px-3 text-body-14-sb leading-[1]"
+                style={{ color: planTheme.colorVar }}
+              >
+                {planTheme.tierLabel}
+              </span>
+            </div> */}
 
-          {/* 텍스트 정보 */}
-          <div className="flex flex-col gap-2">
-            <Text
-              variant="subtitle-16-sb"
-              mobileVariant="body-14-sb"
-              className="leading-tight tracking-[-0.04em] text-white"
-            >
-              {current.plan.name} 구독중
-            </Text>
-            <Text
-              variant="body-16-m"
-              mobileVariant="body-14-m"
-              className="leading-tight text-white/80"
-            >
-              결제일 : {billingDayLabel(current.nextBillingDate)}
-            </Text>
-            <Text
-              variant="body-16-m"
-              mobileVariant="body-14-m"
-              className="leading-tight text-white/80"
-            >
-              결제금액 : {paymentAmount.toLocaleString("ko-KR")}원
-            </Text>
+            {/* 텍스트 정보 */}
+            <div className="flex flex-col gap-1.5">
+              <Text
+                variant="subtitle-16-sb"
+                mobileVariant="body-14-sb"
+                className="leading-tight tracking-[-0.04em] text-white"
+              >
+                {current.plan.name} 구독중
+              </Text>
+              <Text
+                variant="body-16-m"
+                mobileVariant="body-14-m"
+                className="leading-tight text-white/80"
+              >
+                결제일 : {billingDayLabel(current.nextBillingDate)}
+              </Text>
+              <Text
+                variant="body-16-m"
+                mobileVariant="body-14-m"
+                className="leading-tight text-white/80"
+              >
+                결제금액 : {paymentAmount.toLocaleString("ko-KR")}원
+              </Text>
+            </div>
+          </Link>
+
+          {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성 */}
+          <div className="mt-2.5">
+            {myReview ? (
+              <button
+                type="button"
+                onClick={handleWrittenReviewClick}
+                className="inline-flex h-7 items-center gap-1 rounded-full bg-white px-3 text-body-13-sb leading-[1] transition-opacity hover:opacity-90"
+                style={{ color: planTheme.colorVar }}
+              >
+                내 리뷰보러가기
+                <ReviewArrowIcon />
+              </button>
+            ) : canReview ? (
+              <Link
+                href={`/mypage/review/write?planId=${currentPlanId}`}
+                className="inline-flex h-7 items-center gap-1 rounded-full bg-white px-3 text-body-13-sb leading-[1] transition-opacity hover:opacity-90"
+                style={{ color: planTheme.colorVar }}
+              >
+                리뷰쓰러가기
+                <ReviewArrowIcon />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleUnavailableReviewClick}
+                className="inline-flex h-7 items-center gap-1 rounded-full bg-white/40 px-3 text-body-13-sb leading-[1] text-white/80 transition-opacity hover:opacity-90"
+                aria-label="리뷰쓰러가기 — 배송 완료 후 작성 가능"
+              >
+                리뷰쓰러가기
+              </button>
+            )}
           </div>
-        </Link>
+        </div>
 
         {/* 구독관리 */}
         <Link
@@ -397,5 +511,19 @@ export function SubscriptionCard({ subscriptions }: { subscriptions: UserSubscri
         className="pt-3 lg:hidden"
       />
     </div>
+
+      {reviewModal && reviewTheme && (
+        <MyReviewModal
+          review={reviewModal.review}
+          planName={reviewModal.plan.name}
+          tierLabel={reviewTheme.tierLabel}
+          tierColorVar={reviewTheme.colorVar}
+          thumbnail={TIER_THUMBNAILS[reviewTheme.tier]}
+          isEditable={reviewModal.isEditable}
+          onEdit={handleEditReview}
+          onClose={() => setReviewModal(null)}
+        />
+      )}
+    </>
   );
 }

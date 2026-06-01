@@ -2,14 +2,19 @@ import { ReviewWriteSection } from "@/widgets/mypage";
 
 export const metadata = { title: "리뷰쓰기 | 꼬순박스" };
 
+function toPositiveInt(value: string | undefined): number | null {
+  const parsed = value ? Number(value) : NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
 export default async function ReviewWritePage({
   searchParams,
 }: {
-  searchParams: Promise<{ planId?: string }>;
+  searchParams: Promise<{ planId?: string; reviewId?: string }>;
 }) {
-  const { planId: planIdStr } = await searchParams;
-  const parsed = planIdStr ? Number(planIdStr) : NaN;
-  const planId = Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  const { planId: planIdStr, reviewId: reviewIdStr } = await searchParams;
+  const planId = toPositiveInt(planIdStr);
+  const reviewId = toPositiveInt(reviewIdStr);
 
-  return <ReviewWriteSection planId={planId} />;
+  return <ReviewWriteSection planId={planId} reviewId={reviewId} />;
 }

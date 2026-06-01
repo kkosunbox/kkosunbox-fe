@@ -146,6 +146,8 @@ function GalleryTile({ item }: { item: GalleryItem }) {
     );
   }
 
+  if (item.type !== "logo") return null;
+
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden rounded-[20px] ${TILE_SIZE}`}

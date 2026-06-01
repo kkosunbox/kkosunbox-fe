@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { createReview } from "@/features/review/api";
+import { createReview, getMyReviews, updateReview } from "@/features/review/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
@@ -92,7 +92,13 @@ function StarRating({
   );
 }
 
-export default function ReviewWriteSection({ planId }: { planId: number | null }) {
+export default function ReviewWriteSection({
+  planId,
+  reviewId = null,
+}: {
+  planId: number | null;
+  reviewId?: number | null;
+}) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { openAlert } = useModal();
@@ -101,15 +107,55 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  /** 수정 모드에서 기존에 저장된 첨부 이미지 URL (새 파일 첨부 시 교체, 삭제 시 null) */
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+
+  const isEditMode = reviewId != null;
+  const [isLoadingReview, setIsLoadingReview] = useState(isEditMode);
+
+  const reviewWriteHref = planId
+    ? `/mypage/review/write?planId=${planId}${isEditMode ? `&reviewId=${reviewId}` : ""}`
+    : "/mypage/review/write";
 
   useEffect(() => {
     if (!isLoggedIn) {
-      const next = planId
-        ? `/mypage/review/write?planId=${planId}`
-        : "/mypage/review/write";
-      router.replace(`/login?next=${encodeURIComponent(next)}`);
+      router.replace(`/login?next=${encodeURIComponent(reviewWriteHref)}`);
     }
-  }, [isLoggedIn, planId, router]);
+  }, [isLoggedIn, reviewWriteHref, router]);
+
+  // 수정 모드 — 기존 리뷰 내용 프리필
+  useEffect(() => {
+    if (!isLoggedIn || !isEditMode) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { items } = await getMyReviews();
+        const target = items.find((r) => r.id === reviewId);
+        if (cancelled) return;
+        if (!target) {
+          openAlert({ title: "수정할 리뷰를 찾을 수 없습니다." });
+          router.replace("/mypage");
+          return;
+        }
+        setContent(target.content);
+        setRating(Math.round(target.rating));
+        setExistingImageUrl(target.imageUrls?.[0] ?? null);
+      } catch (err) {
+        if (cancelled) return;
+        openAlert({ title: getErrorMessage(err, "리뷰 정보를 불러오지 못했습니다.") });
+        router.replace("/mypage");
+      } finally {
+        if (!cancelled) setIsLoadingReview(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // reviewId/로그인 변경 시에만 재실행
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, isEditMode, reviewId]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -126,13 +172,20 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
     }
 
     setAttachedFile(file);
+    // 새 파일을 첨부하면 기존 이미지는 교체된 것으로 간주
+    setExistingImageUrl(null);
+  };
+
+  const handleRemoveAttachment = () => {
+    setAttachedFile(null);
+    setExistingImageUrl(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = content.trim();
 
-    if (!planId) {
+    if (isEditMode ? reviewId == null : !planId) {
       openAlert({ title: "리뷰를 작성할 구독 정보를 찾을 수 없습니다." });
       return;
     }
@@ -147,7 +200,8 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
 
     startTransition(async () => {
       try {
-        let imageUrls: string[] | undefined;
+        // 첨부 이미지 결정: 새 파일 업로드 > 기존 이미지 유지 > (수정 모드) 삭제
+        let imageUrls: string[] | null | undefined;
         if (attachedFile) {
           const { uploadUrl, fileUrl } = await getAttachmentPresignedUrl({
             fileName: attachedFile.name,
@@ -155,25 +209,61 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
           });
           await uploadToS3(uploadUrl, attachedFile, attachedFile.type || "application/octet-stream");
           imageUrls = [fileUrl];
+        } else if (existingImageUrl) {
+          imageUrls = [existingImageUrl];
+        } else {
+          imageUrls = isEditMode ? null : undefined;
         }
 
-        await createReview({ planId, rating, content: trimmed, imageUrls });
-        openAlert({
-          type: "success",
-          title: "리뷰가 등록되었습니다.",
-          description: "소중한 리뷰를 남겨주셔서 감사합니다.",
-        });
+        if (isEditMode && reviewId != null) {
+          await updateReview(reviewId, { rating, content: trimmed, imageUrls });
+          openAlert({
+            type: "success",
+            title: "리뷰가 수정되었습니다.",
+            description: "소중한 리뷰를 남겨주셔서 감사합니다.",
+          });
+        } else if (planId) {
+          await createReview({
+            planId,
+            rating,
+            content: trimmed,
+            imageUrls: imageUrls ?? undefined,
+          });
+          openAlert({
+            type: "success",
+            title: "리뷰가 등록되었습니다.",
+            description: "소중한 리뷰를 남겨주셔서 감사합니다.",
+          });
+        }
+
         router.push("/mypage");
         router.refresh();
       } catch (err) {
         openAlert({
-          title: getErrorMessage(err, "리뷰 등록에 실패했습니다. 잠시 후 다시 시도해 주세요."),
+          title: getErrorMessage(
+            err,
+            isEditMode
+              ? "리뷰 수정에 실패했습니다. 잠시 후 다시 시도해 주세요."
+              : "리뷰 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+          ),
         });
       }
     });
   };
 
-  const isSubmittable = !!planId && rating >= 1 && content.trim().length > 0;
+  const attachmentName =
+    attachedFile?.name ??
+    (existingImageUrl
+      ? decodeURIComponent(existingImageUrl.split("/").pop()?.split("?")[0] ?? "첨부 이미지")
+      : null);
+
+  const isSubmittable =
+    (isEditMode ? reviewId != null : !!planId) &&
+    rating >= 1 &&
+    content.trim().length > 0;
+
+  const pageTitle = isEditMode ? "리뷰 수정" : "리뷰쓰기";
+  const submitLabel = isEditMode ? "수정하기" : "제출하기";
 
   if (!isLoggedIn) return null;
 
@@ -204,6 +294,13 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
 
       {/* 폼 영역 */}
       <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:py-10 lg:py-10`}>
+        {isLoadingReview ? (
+          <div className="flex min-h-[300px] items-center justify-center">
+            <p className="text-body-14-m text-[var(--color-text-secondary)]">
+              리뷰 정보를 불러오는 중…
+            </p>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit}>
           <div className="rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
             {/* 뒤로가기 — 카드 상단 */}
@@ -215,7 +312,7 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M15 6L9 12L15 18" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
                 </svg>
-                <span>리뷰쓰기</span>
+                <span>{pageTitle}</span>
               </Link>
             </div>
 
@@ -245,17 +342,17 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
                   <span id="review-file-label" className={labelClass}>
                     첨부파일
                   </span>
-                  {attachedFile ? (
+                  {attachmentName ? (
                     <div className={`${fieldClass} flex items-center gap-1`}>
                       <PaperclipIcon />
                       <span className="min-w-0 flex-1 truncate text-[var(--color-text)]">
-                        {attachedFile.name}
+                        {attachmentName}
                       </span>
                       <button
                         type="button"
-                        onClick={() => setAttachedFile(null)}
+                        onClick={handleRemoveAttachment}
                         disabled={isPending}
-                        aria-label={`${attachedFile.name} 삭제`}
+                        aria-label={`${attachmentName} 삭제`}
                         className="ml-1 shrink-0 text-body-13-m text-[var(--color-text-secondary)] hover:text-[var(--color-text)] disabled:opacity-50"
                       >
                         삭제
@@ -316,12 +413,19 @@ export default function ReviewWriteSection({ planId }: { planId: number | null }
                   disabled={!isSubmittable || isPending}
                   className={submitButtonClass}
                 >
-                  {isPending ? (attachedFile ? "업로드 중…" : "등록 중…") : "제출하기"}
+                  {isPending
+                    ? attachedFile
+                      ? "업로드 중…"
+                      : isEditMode
+                        ? "수정 중…"
+                        : "등록 중…"
+                    : submitLabel}
                 </button>
               </div>
             </div>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

@@ -90,6 +90,7 @@
   --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
+  --color-support-hero-side-bg: #88745F; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
   --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 */
   --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
   --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
@@ -304,6 +305,7 @@
   --color-hero-subtext: var(--color-hero-subtext);
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-banner-heading: var(--color-support-banner-heading);
+  --color-support-hero-side-bg: var(--color-support-hero-side-bg);
   --color-stats-bar-bg: var(--color-stats-bar-bg);
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);

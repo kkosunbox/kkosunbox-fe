@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { DefaultPetIcon, Text, useModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
@@ -35,7 +36,7 @@ function PencilIcon({ className }: { className?: string }) {
 
 function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
   return (
-    <div className="relative shrink-0 lg:self-center">
+    <div className="relative shrink-0">
       <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] lg:h-[124px] lg:w-[124px]">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
@@ -83,6 +84,31 @@ interface ChecklistSummaryItem {
   value: string;
 }
 
+/** 모바일·태블릿: 이 개수 이상이면 더보기/숨김 (스크롤 없음) */
+const CHECKLIST_MOBILE_EXPAND_THRESHOLD = 9;
+const CHECKLIST_MOBILE_COLLAPSED_COUNT = CHECKLIST_MOBILE_EXPAND_THRESHOLD - 1;
+
+function ChecklistExpandChevron({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      className={expanded ? "rotate-180" : ""}
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M3.5 5.25L7 8.75L10.5 5.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function buildChecklistSummary(
   profile: Profile | null,
   checklistQuestions: ChecklistQuestion[],
@@ -105,16 +131,27 @@ function buildChecklistSummary(
 function ChecklistPanel({
   items,
   hasChecklist,
-  mobile = false,
+  variant,
 }: {
   items: ChecklistSummaryItem[];
   hasChecklist: boolean;
-  mobile?: boolean;
+  variant: "mobile" | "desktop";
 }) {
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+  const isMobile = variant === "mobile";
+  const canCollapseOnMobile = isMobile && items.length >= CHECKLIST_MOBILE_EXPAND_THRESHOLD;
+  const isMobileExpanded = canCollapseOnMobile && mobileExpanded;
+  const displayItems =
+    canCollapseOnMobile && !isMobileExpanded
+      ? items.slice(0, CHECKLIST_MOBILE_COLLAPSED_COUNT)
+      : items;
+
   return (
     <div
       className={
-        mobile ? "mt-4 pt-4 border-t border-[var(--color-divider-neutral)]" : "flex flex-col justify-center"
+        isMobile
+          ? "border-t border-[var(--color-divider-neutral)] pt-4"
+          : "flex flex-col justify-center"
       }
     >
       <div className="mb-2.5 flex items-center justify-between">
@@ -147,13 +184,13 @@ function ChecklistPanel({
         <div
           className={[
             "flex flex-col gap-[14px]",
-            mobile ? "" : "scrollbar-checklist-summary max-h-[98px] overflow-y-auto",
+            isMobile ? "" : "scrollbar-checklist-summary max-h-[98px] overflow-y-auto",
             hasChecklist ? "" : "pointer-events-none select-none opacity-0",
           ].join(" ")}
           aria-hidden={!hasChecklist}
         >
-          {items.map((item, i) => (
-            <div key={i} className="flex items-center justify-between gap-3">
+          {displayItems.map((item, i) => (
+            <div key={`${item.label}-${i}`} className="flex items-center justify-between gap-3">
               <Text as="span" variant="caption-12-m-tight" className="min-w-0 shrink-0 truncate text-[var(--color-text-label)]">
                 {item.label}
               </Text>
@@ -164,16 +201,23 @@ function ChecklistPanel({
           ))}
         </div>
 
+        {canCollapseOnMobile && hasChecklist && (
+          <button
+            type="button"
+            aria-expanded={isMobileExpanded}
+            onClick={() => setMobileExpanded((prev) => !prev)}
+            className="mt-3 flex w-full items-center justify-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+          >
+            <span>{isMobileExpanded ? "숨김" : "질문 더보기"}</span>
+            <ChecklistExpandChevron expanded={isMobileExpanded} />
+          </button>
+        )}
+
         {!hasChecklist && (
           <>
-            <div
-              className="absolute inset-0 rounded-[12px] bg-[var(--color-checklist-fallback-bg)] backdrop-blur-[3px]"
-            />
+            <div className="absolute inset-0 rounded-[12px] bg-[var(--color-checklist-fallback-bg)] backdrop-blur-[3px]" />
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-3 text-center">
-              <Text
-                variant="body-14-m"
-                className="font-semibold leading-[1.5] text-[var(--color-text-emphasis)]"
-              >
+              <Text variant="body-14-m" className="font-semibold leading-[1.5] text-[var(--color-text-emphasis)]">
                 우리 아이 맞춤 간식을 위해
                 <br />
                 체크리스트를 작성해주세요.
@@ -188,6 +232,326 @@ function ChecklistPanel({
             </div>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+interface ProfileViewModel {
+  imageUrl: string | null;
+  displayName: string;
+  hasProfile: boolean;
+  hasNamedProfile: boolean;
+  breedDisplay: string;
+  breedEmpty: boolean;
+  birth: string;
+  gender: string;
+  weight: string;
+  birthEmpty: boolean;
+  genderEmpty: boolean;
+  weightEmpty: boolean;
+  specialNotes: string;
+  onOpenProfileSwitch: () => void;
+}
+
+function ProfileSwitchButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label="프로필 변경"
+      onClick={onClick}
+      className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-border)] transition-opacity hover:opacity-80"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M8.39922 7.33331L19.1992 7.33331M15.5992 11.0666L19.1992 7.33331L15.5992 3.59998M15.5992 16.6666L4.79922 16.6666M8.39922 12.9333L4.79922 16.6666L8.39922 20.4"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
+function ProfileMetaDivider() {
+  return <span className="h-[8px] w-px shrink-0 bg-[var(--color-text-muted)]" aria-hidden />;
+}
+
+/** 모바일·태블릿 전용 — max-sm: 4줄 / sm~lg: 3줄 */
+function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
+  const specialLine = vm.hasProfile
+    ? vm.specialNotes || "강아지의 특징을 입력해주세요."
+    : "정보를 입력해주세요.";
+
+  const breedMetaClass = [
+    "min-w-0 shrink truncate leading-[140%]",
+    vm.breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
+  ].join(" ");
+
+  const birthMetaClass = [
+    "font-semibold leading-[140%] tracking-[-0.02em]",
+    vm.birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+  ].join(" ");
+
+  const genderMetaClass = [
+    "font-semibold leading-[140%]",
+    vm.genderEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+  ].join(" ");
+
+  const weightMetaClass = [
+    "font-semibold leading-[140%]",
+    vm.weightEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+  ].join(" ");
+
+  return (
+    <div className="relative px-0 pt-7 pb-10 lg:hidden">
+      <Link
+        href="/mypage/dog-profile"
+        className="absolute top-4 right-6 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+      >
+        <span>정보변경</span>
+        <ChevronRightIcon />
+      </Link>
+
+      <div className="flex items-center gap-5">
+        <PetAvatar imageUrl={vm.imageUrl} />
+        <div className="min-w-0 flex flex-1 flex-col gap-2">
+          {/* 1줄: 이름 + 전환 (초소형·일반 공통) */}
+          <div className="flex min-w-0 items-center justify-start gap-2">
+            <Text
+              as="h1"
+              variant="title-24-b"
+              mobileVariant="subtitle-18-b"
+              className="min-w-0 shrink truncate leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
+            >
+              {vm.displayName}
+            </Text>
+            {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
+            {vm.hasProfile && (
+              <Text
+                variant="body-16-m"
+                mobileVariant="body-13-r"
+                className={[breedMetaClass, "max-sm:hidden"].join(" ")}
+              >
+                {vm.breedDisplay}
+              </Text>
+            )}
+          </div>
+
+          {vm.hasProfile ? (
+            <>
+              {/* 초소형 2줄: 견종 | 생년월일 */}
+              <div className="hidden max-sm:flex min-w-0 items-center gap-1">
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={breedMetaClass}>
+                  {vm.breedDisplay}
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={birthMetaClass}>
+                  {vm.birthEmpty ? "생년월일" : vm.birth}
+                </Text>
+              </div>
+              {/* 초소형 3줄: 성별 | 몸무게 */}
+              <div className="hidden max-sm:flex min-w-0 items-center gap-1">
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={genderMetaClass}>
+                  {vm.genderEmpty ? "성별" : vm.gender}
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={weightMetaClass}>
+                  {vm.weightEmpty ? "몸무게" : vm.weight}
+                </Text>
+              </div>
+              {/* sm 이상 2줄: 생년월일 · 성별 · 몸무게 */}
+              <div className="flex min-w-0 items-center gap-1 max-sm:hidden min-[375px]:gap-3">
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={birthMetaClass}>
+                  {vm.birthEmpty ? "생년월일" : vm.birth}
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={genderMetaClass}>
+                  {vm.genderEmpty ? "성별" : vm.gender}
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className={weightMetaClass}>
+                  {vm.weightEmpty ? "몸무게" : vm.weight}
+                </Text>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="hidden max-sm:flex min-w-0 items-center gap-1 text-[var(--color-text-placeholder)]">
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  견종
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  생년월일
+                </Text>
+              </div>
+              <div className="hidden max-sm:flex min-w-0 items-center gap-1 text-[var(--color-text-placeholder)]">
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  성별
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  몸무게
+                </Text>
+              </div>
+              <div className="flex min-w-0 items-center gap-3 text-[var(--color-text-placeholder)] max-sm:hidden">
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  생년월일
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  성별
+                </Text>
+                <ProfileMetaDivider />
+                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
+                  몸무게
+                </Text>
+              </div>
+            </>
+          )}
+
+          {/* 마지막 줄: 특징 */}
+          <Text
+            variant="body-16-m"
+            mobileVariant="body-13-r"
+            className={[
+              "line-clamp-2 font-semibold leading-[140%]",
+              vm.hasProfile
+                ? vm.specialNotes
+                  ? "text-[var(--color-text)]"
+                  : "text-[var(--color-profile-meta-empty)]"
+                : "text-[var(--color-text-label)]",
+            ].join(" ")}
+          >
+            {specialLine}
+          </Text>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 데스크탑·와이드 전용 — 커밋 기준 레이아웃 유지 */
+function ProfileSectionDesktop({
+  vm,
+  checklistItems,
+  hasChecklist,
+}: {
+  vm: ProfileViewModel;
+  checklistItems: ChecklistSummaryItem[];
+  hasChecklist: boolean;
+}) {
+  return (
+    <div className="relative hidden h-full pl-10 lg:flex lg:items-center lg:px-7 lg:py-[26px]">
+      <div className="relative flex w-full items-center gap-0">
+        {/* 구분선(h-148px) 상단과 맞춤 — 행 items-center 유지, 버튼만 절대 위치 */}
+        <Link
+          href="/mypage/dog-profile"
+          className="absolute top-[calc(50%-74px)] right-[calc(358px+40px+0.5rem)] z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
+        >
+          <span>정보변경</span>
+          <ChevronRightIcon />
+        </Link>
+        <div className="flex min-h-0 min-w-0 flex-1 items-center gap-8">
+          <PetAvatar imageUrl={vm.imageUrl} />
+          <div className="min-w-0 flex-1 pr-[84px]">
+            <div className="flex flex-col gap-[12px]">
+              <div className="flex min-w-0 items-center gap-3">
+                <Text
+                  as="h1"
+                  variant="title-24-b"
+                  className="min-w-0 shrink truncate leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
+                >
+                  {vm.displayName}
+                </Text>
+                {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
+              </div>
+              {vm.hasProfile && (
+                <Text
+                  variant="body-16-m"
+                  className={[
+                    "min-w-0 truncate leading-[140%]",
+                    vm.breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
+                  ].join(" ")}
+                >
+                  {vm.breedDisplay}
+                </Text>
+              )}
+            </div>
+            {vm.hasProfile ? (
+              <>
+                <div className="mt-[10px] flex items-center gap-3">
+                  <Text
+                    variant="body-16-m"
+                    className={[
+                      "font-semibold leading-[140%] tracking-[-0.02em]",
+                      vm.birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+                    ].join(" ")}
+                  >
+                    {vm.birthEmpty ? "생년월일" : vm.birth}
+                  </Text>
+                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
+                  <Text
+                    variant="body-16-m"
+                    className={[
+                      "font-semibold leading-[140%]",
+                      vm.genderEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+                    ].join(" ")}
+                  >
+                    {vm.genderEmpty ? "성별" : vm.gender}
+                  </Text>
+                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
+                  <Text
+                    variant="body-16-m"
+                    className={[
+                      "font-semibold leading-[140%]",
+                      vm.weightEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
+                    ].join(" ")}
+                  >
+                    {vm.weightEmpty ? "몸무게" : vm.weight}
+                  </Text>
+                </div>
+                <Text
+                  variant="body-16-m"
+                  className={[
+                    "mt-3 line-clamp-2 font-semibold leading-[140%]",
+                    vm.specialNotes ? "text-[var(--color-text)]" : "text-[var(--color-profile-meta-empty)]",
+                  ].join(" ")}
+                >
+                  {vm.specialNotes || "강아지의 특징을 입력해주세요."}
+                </Text>
+              </>
+            ) : (
+              <>
+                <div className="mt-[10px] flex items-center gap-3 text-[var(--color-text-placeholder)]">
+                  <Text variant="body-16-m" className="leading-[140%]">
+                    생년월일
+                  </Text>
+                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
+                  <Text variant="body-16-m" className="leading-[140%]">
+                    성별
+                  </Text>
+                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
+                  <Text variant="body-16-m" className="leading-[140%]">
+                    몸무게
+                  </Text>
+                </div>
+                <Text variant="body-16-m" className="mt-2 text-[var(--color-text-label)]">
+                  정보를 입력해주세요.
+                </Text>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="mx-[20px] h-[148px] w-px bg-[var(--color-text-muted)]" />
+
+        <div className="w-[358px] flex-none">
+          <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} variant="desktop" />
+        </div>
       </div>
     </div>
   );
@@ -208,169 +572,37 @@ export function ProfileSection({
   const hasNamedProfile = profiles.some((item) => Boolean(item.name?.trim())) || Boolean(profile?.name?.trim());
   const hasChecklist = hasChecklistAnswers(profile);
 
-  const displayName = getProfileDisplayName(profile?.name);
   const birth = fmtDate(profile?.birthDate);
   const gender = fmtGender(profile?.gender);
   const weight = profile?.weight ? `${profile.weight}kg` : "-";
-  const birthEmpty = birth === "-";
-  const genderEmpty = gender === "-";
-  const weightEmpty = weight === "-";
-  const specialNotes = profile?.specialNotes?.trim() ?? "";
   const breedTrimmed = profile?.breed?.trim() ?? "";
-  const breedEmpty = !breedTrimmed;
-  const breedDisplay = breedEmpty ? "견종" : breedTrimmed;
+
+  const vm: ProfileViewModel = {
+    imageUrl: profile?.profileImageUrl ?? null,
+    displayName: getProfileDisplayName(profile?.name),
+    hasProfile,
+    hasNamedProfile,
+    breedDisplay: breedTrimmed || "견종",
+    breedEmpty: !breedTrimmed,
+    birth,
+    gender,
+    weight,
+    birthEmpty: birth === "-",
+    genderEmpty: gender === "-",
+    weightEmpty: weight === "-",
+    specialNotes: profile?.specialNotes?.trim() ?? "",
+    onOpenProfileSwitch: () => openModal("profile-switch"),
+  };
 
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
     <section className="max-lg:pt-6 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
       <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
-        <div className="relative max-lg:px-7 max-lg:py-7 lg:pl-10 lg:flex lg:h-full lg:items-center lg:px-7 lg:py-[26px]">
-          <Link
-            href="/mypage/dog-profile"
-            className="lg:hidden absolute top-4 right-7 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
-          >
-            <span>정보변경</span>
-            <ChevronRightIcon />
-          </Link>
-          <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-0">
-
-            {/* 프로필 정보 (좌) */}
-            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-center lg:gap-8">
-              <Link
-                href="/mypage/dog-profile"
-                className="max-lg:hidden absolute top-0 right-2 z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
-              >
-                <span>정보변경</span>
-                <ChevronRightIcon />
-              </Link>
-              <PetAvatar imageUrl={profile?.profileImageUrl ?? null} />
-              <div className="min-w-0 flex-1 lg:pr-[84px]">
-                <div className="flex flex-col gap-[12px]">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <Text
-                      as="h1"
-                      variant="title-24-b"
-                      mobileVariant="subtitle-18-b"
-                      className="min-w-0 shrink truncate leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
-                    >
-                      {displayName}
-                    </Text>
-                    {hasNamedProfile && (
-                      <button
-                        type="button"
-                        aria-label="프로필 변경"
-                        onClick={() => openModal("profile-switch")}
-                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-border)] transition-opacity hover:opacity-80"
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M8.39922 7.33331L19.1992 7.33331M15.5992 11.0666L19.1992 7.33331L15.5992 3.59998M15.5992 16.6666L4.79922 16.6666M8.39922 12.9333L4.79922 16.6666L8.39922 20.4"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                  {hasProfile && (
-                    <Text
-                      variant="body-16-m"
-                      mobileVariant="body-13-r"
-                      className={[
-                        "min-w-0 truncate leading-[140%]",
-                        breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
-                      ].join(" ")}
-                    >
-                      {breedDisplay}
-                    </Text>
-                  )}
-                </div>
-                {hasProfile ? (
-                  <>
-                    <div className="mt-3 flex items-center max-[374px]:gap-1 min-[375px]:gap-3 lg:mt-[10px]">
-                      <Text
-                        variant="body-16-m"
-                        mobileVariant="body-13-r"
-                        className={[
-                          "font-semibold leading-[140%] tracking-[-0.02em]",
-                          birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
-                        ].join(" ")}
-                      >
-                        {birthEmpty ? "생년월일" : birth}
-                      </Text>
-                      <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                      <Text
-                        variant="body-16-m"
-                        mobileVariant="body-13-r"
-                        className={[
-                          "font-semibold leading-[140%]",
-                          genderEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
-                        ].join(" ")}
-                      >
-                        {genderEmpty ? "성별" : gender}
-                      </Text>
-                      <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                      <Text
-                        variant="body-16-m"
-                        mobileVariant="body-13-r"
-                        className={[
-                          "font-semibold leading-[140%]",
-                          weightEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
-                        ].join(" ")}
-                      >
-                        {weightEmpty ? "몸무게" : weight}
-                      </Text>
-                    </div>
-                    <Text
-                      variant="body-16-m"
-                      mobileVariant="body-13-r"
-                      className={[
-                        "mt-3 line-clamp-2 font-semibold leading-[140%]",
-                        specialNotes ? "text-[var(--color-text)]" : "text-[var(--color-profile-meta-empty)]",
-                      ].join(" ")}
-                    >
-                      {specialNotes || "강아지의 특징을 입력해주세요."}
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <div className="mt-2.5 flex items-center gap-3 text-[var(--color-text-placeholder)] lg:mt-[10px]">
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                        생년월일
-                      </Text>
-                      <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                        성별
-                      </Text>
-                      <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                        몸무게
-                      </Text>
-                    </div>
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="mt-2 text-[var(--color-text-label)]">
-                      정보를 입력해주세요.
-                    </Text>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* 구분선 (데스크톱) */}
-            <div className="max-lg:hidden mx-[20px] h-[148px] w-px bg-[var(--color-text-muted)]" />
-
-            {/* 체크리스트 패널 (데스크톱) */}
-            <div className="max-lg:hidden lg:w-[358px] lg:flex-none">
-              <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} />
-            </div>
-          </div>
-
-          {/* 체크리스트 패널 (모바일) */}
-          <div className="lg:hidden">
-            <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} mobile />
-          </div>
+        <ProfileSectionMobile vm={vm} />
+        <ProfileSectionDesktop vm={vm} checklistItems={checklistItems} hasChecklist={hasChecklist} />
+        <div className="lg:hidden">
+          <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} variant="mobile" />
         </div>
       </div>
     </section>

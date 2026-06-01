@@ -260,6 +260,7 @@ export function SubscriptionCard({
   const planTheme = packageThemeForPlan(current.plan);
   const detailHref = `/mypage/subscription/detail?subscriptionId=${current.id}`;
   const paymentAmount = subscriptionPaymentAmount(current);
+  const boxQuantity = current.quantity > 1 ? current.quantity : null;
 
   // 현재 카드 플랜의 리뷰 상태 (리뷰는 플랜당 1개 단위)
   const currentPlanId = current.plan.id;
@@ -399,13 +400,20 @@ export function SubscriptionCard({
 
             {/* 텍스트 정보 */}
             <div className="flex flex-col gap-1.5">
-              <Text
-                variant="subtitle-16-sb"
-                mobileVariant="body-14-sb"
-                className="leading-tight tracking-[-0.04em] text-white"
-              >
-                {current.plan.name} 구독중
-              </Text>
+              <div className="flex flex-wrap items-center gap-[10px]">
+                <Text
+                  variant="subtitle-16-sb"
+                  mobileVariant="body-14-sb"
+                  className="leading-tight tracking-[-0.04em] text-white"
+                >
+                  {current.plan.name} 구독중
+                </Text>
+                {boxQuantity !== null && (
+                  <span className="inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-b capitalize leading-[19px] tracking-[-0.04em] text-white">
+                    {boxQuantity}BOX
+                  </span>
+                )}
+              </div>
               <Text
                 variant="body-16-m"
                 mobileVariant="body-14-m"

@@ -17,6 +17,7 @@ export {
 } from "./subscriptionApi";
 
 export type {
+  SubscriptionPlanTagDto,
   SubscriptionPlanDto,
   UserSubscriptionDto,
   SubscriptionPaymentDto,

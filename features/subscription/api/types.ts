@@ -1,5 +1,12 @@
 // ── SubscriptionPlan ──────────────────────────────────────────────
 
+export interface SubscriptionPlanTagDto {
+  id: number;
+  name: string;
+  bgColor: string;
+  textColor: string;
+}
+
 export interface SubscriptionPlanDto {
   id: number;
   name: string;
@@ -14,7 +21,7 @@ export interface SubscriptionPlanDto {
   sortOrder: number;
   isRecommended: boolean;
   description?: string | null;
-  tags: string[];
+  tags: SubscriptionPlanTagDto[];
 }
 
 // ── Subscription ──────────────────────────────────────────────────

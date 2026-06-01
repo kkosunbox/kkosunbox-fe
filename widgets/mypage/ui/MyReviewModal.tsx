@@ -86,7 +86,7 @@ export default function MyReviewModal({
     >
       <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
 
-      <div className="relative z-10 flex max-h-full w-full max-w-[900px] flex-col overflow-hidden rounded-[16px] bg-white shadow-[0px_8px_32px_rgba(0,0,0,0.24)]">
+      <div className="relative z-10 flex max-h-full w-full max-w-[900px] flex-col overflow-hidden rounded-[16px] bg-white shadow-[0px_8px_32px_rgba(0,0,0,0.24)] md:min-h-[610px]">
         {/* 헤더 */}
         <div className="flex shrink-0 items-center justify-between bg-[var(--color-accent-orange)] px-6 py-4">
           <Text variant="subtitle-16-b" className="text-white">

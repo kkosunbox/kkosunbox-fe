@@ -29,7 +29,7 @@ import {
   tierFromSubscriptionPlan,
   type PackageTier,
 } from "./packageData";
-import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
 import { getReviews } from "@/features/review/api";
 import type { ReviewResponse } from "@/features/review/api";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
@@ -43,6 +43,30 @@ function formatWon(value: number) {
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
+function PlanImageBadges({
+  tags,
+  className,
+}: {
+  tags: SubscriptionPlanTagDto[] | null | undefined;
+  className: string;
+}) {
+  const visibleTags = (tags ?? []).filter((tag) => tag.name.trim().length > 0);
+  if (visibleTags.length === 0) return null;
+
+  return (
+    <div className={className}>
+      {visibleTags.map((tag) => (
+        <span
+          key={tag.id}
+          className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
+          style={{ background: tag.bgColor, color: tag.textColor }}
+        >
+          {tag.name}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 const DETAIL_ASSET_IMAGES: Record<
   PackageTier,
@@ -491,20 +515,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               className="object-cover"
               priority
             />
-            <div className="absolute right-3 top-3 z-10 flex items-center gap-1.5">
-              <span
-                className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
-                style={{ background: "var(--color-badge-warm-bg)", color: "var(--color-badge-warm-text)" }}
-              >
-                가장 리뷰 많은
-              </span>
-              <span
-                className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
-                style={{ background: "var(--color-badge-best-bg)", color: "var(--color-plus)" }}
-              >
-                BEST
-              </span>
-            </div>
+            <PlanImageBadges
+              tags={selectedPlan.tags}
+              className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
+            />
           </div>
           <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -944,20 +958,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   className="object-cover"
                   priority
                 />
-                <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
-                  <span
-                    className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
-                    style={{ background: "var(--color-badge-warm-bg)", color: "var(--color-badge-warm-text)" }}
-                  >
-                    가장 리뷰 많은
-                  </span>
-                  <span
-                    className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
-                    style={{ background: "var(--color-badge-best-bg)", color: "var(--color-plus)" }}
-                  >
-                    BEST
-                  </span>
-                </div>
+                <PlanImageBadges
+                  tags={selectedPlan.tags}
+                  className="absolute right-4 top-4 z-10 flex items-center gap-2"
+                />
               </div>
               <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
                 ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.

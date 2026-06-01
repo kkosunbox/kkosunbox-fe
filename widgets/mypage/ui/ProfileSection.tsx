@@ -147,7 +147,7 @@ function ChecklistPanel({
         <div
           className={[
             "flex flex-col gap-[14px]",
-            mobile ? "" : "max-h-[98px] overflow-y-auto pr-2",
+            mobile ? "" : "scrollbar-checklist-summary max-h-[98px] overflow-y-auto",
             hasChecklist ? "" : "pointer-events-none select-none opacity-0",
           ].join(" ")}
           aria-hidden={!hasChecklist}

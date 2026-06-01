@@ -79,6 +79,7 @@
   --color-recommend-reason-bg: #FFFBE9; /* 체크리스트 결과 추천이유 패널 배경 (Figma Rectangle 974) */
   --color-recommend-reason-title: #AB4B00; /* 체크리스트 추천이유 ✔ 제목 색상 (Figma) */
   --color-checklist-fallback-bg: #F5F3EC; /* 마이페이지 체크리스트 미작성 폴백 오버레이 배경 */
+  --color-checklist-summary-scrollbar-thumb: #C4C4C4; /* 마이페이지 체크리스트 요약 스크롤 thumb */
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-subscription-header-bg: #FEF6EE; /* 구독관리 페이지 상단 배경 밴드 */
   --color-surface-light: #F8F8F8;
@@ -281,6 +282,7 @@
   --color-recommend-reason-bg: var(--color-recommend-reason-bg);
   --color-recommend-reason-title: var(--color-recommend-reason-title);
   --color-checklist-fallback-bg: var(--color-checklist-fallback-bg);
+  --color-checklist-summary-scrollbar-thumb: var(--color-checklist-summary-scrollbar-thumb);
   --color-surface-peach: var(--color-surface-peach);
   --color-subscription-header-bg: var(--color-subscription-header-bg);
   --color-surface-light: var(--color-surface-light);
@@ -682,4 +684,29 @@ button:disabled {
 @utility animate-paw-particle {
   animation: paw-particle-fly var(--dur, 480ms) ease-out var(--delay, 0ms) forwards;
   @media (prefers-reduced-motion: reduce) { animation: none; opacity: 0; }
+}
+
+/* Mypage checklist summary — 4px rounded thumb, transparent track; pr reserves gap before scrollbar */
+.scrollbar-checklist-summary {
+  padding-right: 12px;
+  scrollbar-width: thin;
+  scrollbar-width: 4px;
+  scrollbar-color: var(--color-checklist-summary-scrollbar-thumb) transparent;
+}
+
+.scrollbar-checklist-summary::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-checklist-summary::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-checklist-summary::-webkit-scrollbar-thumb {
+  background-color: var(--color-checklist-summary-scrollbar-thumb);
+  border-radius: 9999px;
+}
+
+.scrollbar-checklist-summary::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-secondary);
 }

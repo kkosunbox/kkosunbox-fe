@@ -30,13 +30,13 @@ function SectionHeaderSkeleton({ tight = false }: { tight?: boolean }) {
 /** ProfileSection 레이아웃과 동일한 구조 (크림 배경, 흰 카드 없음) */
 export function ProfileSectionSkeleton() {
   return (
-    <section className="pt-6 pb-6 lg:pt-3 lg:pb-3">
-      <div className="mx-auto w-full max-w-content max-lg:px-6 lg:px-0">
-        <div className="relative max-lg:px-7 max-lg:py-7 lg:px-7 lg:py-[26px]">
+    <section className="max-lg:pt-6 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
+      <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
+        <div className="relative max-lg:px-7 max-lg:py-7 lg:flex lg:h-full lg:items-center lg:px-7 lg:py-[26px]">
           <Bone className="lg:hidden absolute top-4 right-7 h-4 w-14" />
 
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-0">
-            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-center lg:gap-8 lg:self-stretch">
+          <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-0">
+            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-center lg:gap-8">
               <Bone className="max-lg:hidden absolute top-0 right-2 h-4 w-14" />
               <Bone className="h-[80px] w-[80px] shrink-0 rounded-full lg:h-[124px] lg:w-[124px]" />
               <div className="min-w-0 flex-1 lg:pr-[84px]">
@@ -54,13 +54,13 @@ export function ProfileSectionSkeleton() {
             </div>
 
             <div
-              className="max-lg:hidden mx-[20px] w-px self-stretch bg-[var(--color-text-muted)]"
+              className="max-lg:hidden mx-[20px] h-[148px] w-px bg-[var(--color-text-muted)]"
               aria-hidden
             />
 
-            <div className="max-lg:hidden lg:w-[358px] lg:flex-none lg:self-center">
+            <div className="max-lg:hidden lg:w-[358px] lg:flex-none">
               <Bone className="mb-2.5 h-4 w-16" />
-              <Bone className="h-[120px] w-full rounded-[12px]" />
+              <Bone className="h-[138px] w-full rounded-[12px]" />
             </div>
           </div>
 

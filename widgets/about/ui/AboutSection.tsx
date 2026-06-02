@@ -125,7 +125,7 @@ export default function AboutSection() {
                 </ScrollReveal>
 
                 <ScrollReveal variant="fade-up" delay={650}>
-                  <p className="max-md:text-body-14-r text-body-16-r text-[var(--color-about-hero-accent)]">
+                  <p className="text-body-16-b-lh130 text-[var(--color-about-hero-accent)]">
                     꼬순박스는<br />
                     그 고민을 대신하기 위해 시작되었습니다.
                   </p>

@@ -16,7 +16,7 @@ import packageExplainWithStandard from "@/widgets/home/package-plans/assets/pack
 import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
 import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
 import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
-import { packageSummaryImageClassName } from "@/widgets/home/package-plans/lib/packageSummaryImageClassName";
+import { PackageSummaryThumbnail } from "@/widgets/home/package-plans/ui/PackageSummaryThumbnail";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
@@ -318,13 +318,7 @@ export default function SubscribePlansSection({
                           className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl md:shadow-sm lg:shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">
-                            <Image
-                              src={img}
-                              alt={pkg.name}
-                              fill
-                              className={packageSummaryImageClassName(tier)}
-                              sizes="180px"
-                            />
+                            <PackageSummaryThumbnail src={img} alt={pkg.name} />
                             {isUnselected ? (
                               <div
                                 className="pointer-events-none absolute inset-0 z-[1] bg-white/40"

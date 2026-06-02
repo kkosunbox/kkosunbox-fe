@@ -29,7 +29,7 @@ import packageExplainWithStandard from "@/widgets/home/package-plans/assets/pack
 import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
 import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
 import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
-import { packageSummaryImageClassName } from "@/widgets/home/package-plans/lib/packageSummaryImageClassName";
+import { PackageSummaryThumbnail } from "@/widgets/home/package-plans/ui/PackageSummaryThumbnail";
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -486,13 +486,7 @@ export default function ChecklistResult({
                   >
                     {/* 패키지 이미지 */}
                     <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:h-[252px] md:w-full md:rounded-[16px]">
-                      <Image
-                        src={img}
-                        alt={pkg.name}
-                        fill
-                        className={packageSummaryImageClassName(tier)}
-                        sizes="(min-width: 768px) 272px, 128px"
-                      />
+                      <PackageSummaryThumbnail src={img} alt={pkg.name} />
                       {tier === recommendedPlanTier && (
                         <div className="absolute bottom-3 right-3 max-md:h-[52px] max-md:w-[52px] md:h-[144px] md:w-[144px]">
                           <Image

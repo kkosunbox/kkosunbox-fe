@@ -20,7 +20,7 @@ import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscri
 import type { PetInfo, RecommendedTier } from "./types";
 import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
-import stamp from "@/widgets/subscribe/recommend/assets/stamp.webp";
+import stamp from "@/widgets/checklist/assets/stamp.webp";
 import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.png";
 import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
 import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
@@ -85,8 +85,6 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
   Premium: packageImagePremium,
 };
 
-const GRIUN_FONT = '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif';
-
 type RecommendReason = RecommendReasonDto;
 
 /* ── 추천 카드 내부 (데스크탑·태블릿 전용) ─── */
@@ -140,13 +138,13 @@ function CardBody({
           >
             {tierLabel}
           </span>
-          <p
-            className="text-[16px] leading-[150%] tracking-[-0.02em] text-black"
-            style={{ fontFamily: GRIUN_FONT }}
-          >
+          <p className="text-body-16-m-griun leading-[1.5] tracking-[-0.02em] text-[var(--color-text)]">
             체크리스트 분석 완료!{" "}
-            <strong className="font-semibold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
-            <strong className="font-semibold">{TIER_LABEL[effectiveRecommendedTier]} 패키지</strong>입니다.
+            <strong className="text-title-24-sb">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+            <strong className="text-body-16-sb" style={{ color: tierColorVar }}>
+              {tierLabel} 패키지
+            </strong>
+            입니다.
           </p>
         </div>
       </div>
@@ -341,13 +339,13 @@ export default function ChecklistResult({
             <span className="text-emoji-28">🐶</span>
           )}
         </div>
-        <p
-          className="text-[14px] leading-[150%] tracking-[-0.02em] text-[var(--color-text)]"
-          style={{ fontFamily: GRIUN_FONT }}
-        >
+        <p className="text-body-14-m-griun leading-[1.5] tracking-[-0.02em] text-[var(--color-text)]">
           체크리스트 분석 완료!{" "}
-          <strong className="font-semibold">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
-          <strong className="font-semibold">{tierLabel} 패키지</strong>입니다.
+          <strong className="text-subtitle-18-sb">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+          <strong className="text-body-14-sb" style={{ color: tierColorVar }}>
+            {tierLabel} 패키지
+          </strong>
+          입니다.
         </p>
       </div>
 

@@ -5,12 +5,23 @@ import boxMockupPremium from "../assets/box-mockup-premium.png";
 import packageThumbnailBasic from "../assets/package-thumbnail-basic.png";
 import packageThumbnailPremium from "../assets/package-thumbnail-premium.png";
 import packageThumbnailStandard from "../assets/package-thumbnail-standard.png";
+import packageImageBasic from "../../../home/package-plans/assets/package-image-basic.png";
+import packageImageStandard from "../../../home/package-plans/assets/package-image-standard.png";
+import packageImagePremium from "../../../home/package-plans/assets/package-image-premium.png";
 import type { PackageTier } from "./packageData";
 
+/** @deprecated box-mockup 이미지 — 신규 사용처에는 TIER_BOX_IMAGES 사용 */
 export const TIER_THUMBNAILS: Record<PackageTier, StaticImageData> = {
   Basic: boxMockupBasic,
   Standard: boxMockupStandard,
   Premium: boxMockupPremium,
+};
+
+/** 최신 박스 이미지 — 주문·구독 관리 카드 썸네일용 */
+export const TIER_BOX_IMAGES: Record<PackageTier, StaticImageData> = {
+  Basic: packageImageBasic,
+  Standard: packageImageStandard,
+  Premium: packageImagePremium,
 };
 
 /** /subscribe/detail 상단 대표 상품 이미지 */

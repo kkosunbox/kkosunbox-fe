@@ -727,13 +727,15 @@ export default function Header() {
 
         {/* 하단 배너 */}
         <div className="shrink-0">
-          <Image
-            src="/images/sidebar-banner-001.png"
-            alt="꼬순박스 배너"
-            width={375}
-            height={126}
-            className="w-full"
-          />
+          <Link href="/checklist" onClick={closeMenu} className="block">
+            <Image
+              src="/images/sidebar-banner-001.png"
+              alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
+              width={375}
+              height={126}
+              className="w-full"
+            />
+          </Link>
         </div>
       </div>
     </>

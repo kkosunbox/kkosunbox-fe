@@ -485,23 +485,36 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden lg:hidden">
-        <div className="px-6 pb-2 pt-3">
-          <div className="mb-3 flex items-center justify-center gap-3">
-            {sortedPlans.map((plan) => {
-              const theme = packageThemeForPlan(plan);
-              const isActive = selectedPlan.id === plan.id;
-              return (
-                <button
-                  key={plan.id}
-                  type="button"
-                  onClick={() => handleSelectPlan(plan)}
-                  className="rounded-full px-3 h-[24px] text-body-14-sb text-white transition-opacity hover:opacity-90"
-                  style={{ background: isActive ? theme.colorVar : "var(--color-text-muted)" }}
-                >
-                  {theme.tierLabel}
-                </button>
-              );
-            })}
+        <div className="mb-3 w-full" style={{ background: "var(--color-why-bg)" }}>
+          <div className="flex h-[46px] w-full min-w-0 items-center max-sm:gap-2 max-sm:px-4 sm:gap-3 sm:px-6">
+            <span className="max-sm:mr-1 max-sm:shrink-0 max-sm:text-body-12-m sm:mr-2 sm:shrink-0 sm:text-body-14-sb text-[var(--color-text-muted)]">
+              구독선택
+            </span>
+            <div
+              className="flex min-w-0 flex-1 gap-1.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:overscroll-x-contain max-sm:[-ms-overflow-style:none] max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden sm:flex-wrap sm:gap-2"
+              role="tablist"
+              aria-label="구독 플랜 선택"
+            >
+              {sortedPlans.map((plan) => {
+                const theme = packageThemeForPlan(plan);
+                const isActive = selectedPlan.id === plan.id;
+                return (
+                  <button
+                    key={plan.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => handleSelectPlan(plan)}
+                    className="max-sm:h-[22px] max-sm:shrink-0 max-sm:rounded-full max-sm:px-2 max-sm:text-body-12-m sm:h-[24px] sm:shrink-0 sm:rounded-full sm:px-3 sm:text-body-14-sb text-white transition-opacity hover:opacity-90"
+                    style={{
+                      background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
+                    }}
+                  >
+                    {theme.tierLabel}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

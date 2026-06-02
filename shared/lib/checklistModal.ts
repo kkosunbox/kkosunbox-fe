@@ -3,7 +3,15 @@ export interface ChecklistFormOptions {
   editQuestionId?: number | null;
 }
 
-export function openChecklistForm(opts?: ChecklistFormOptions) {
+export interface OpenChecklistFormDetail extends ChecklistFormOptions {
+  /**
+   * `/checklist` 라우트처럼 모달을 연 직후 `router.replace("/")`로 경로를 바꾸는
+   * 리다이렉트 진입을 표시한다. 모달이 그 1회성 경로 변경 때문에 닫히지 않도록 한다.
+   */
+  viaRedirect?: boolean;
+}
+
+export function openChecklistForm(opts?: OpenChecklistFormDetail) {
   if (typeof window !== "undefined") {
     window.dispatchEvent(
       new CustomEvent("ggosoon:open-checklist-form", { detail: opts ?? {} }),

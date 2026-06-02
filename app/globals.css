@@ -52,6 +52,14 @@
   font-weight: 400;
   font-display: swap;
 }
+/* Regular TTF 1종 — medium/semibold 요청도 동일 파일로 매칭 (미등록 시 Pretendard로 폴백됨) */
+@font-face {
+  font-family: "Griun PolFairness";
+  src: url("/fonts/Griun_PolFairness-Rg.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+}
 
 @font-face {
   font-family: "Griun Yuri Daggu";
@@ -528,6 +536,13 @@ button:disabled {
   font-weight: 400;
   letter-spacing: -0.04em;
 }
+@utility text-body-16-m-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
 /* 홈 pain-points 리스트 (Figma: 16 / 400 / 행간 210%) */
 @utility text-body-16-r-griun-lh210 {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
@@ -555,6 +570,13 @@ button:disabled {
   font-size: 14px;
   line-height: 22px;
   font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-body-14-m-griun {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
   letter-spacing: -0.04em;
 }
 @utility text-body-15-m  { font-size: 15px; line-height: 20px; font-weight: 500; }

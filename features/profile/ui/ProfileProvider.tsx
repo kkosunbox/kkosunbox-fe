@@ -22,10 +22,13 @@ interface ProfileContextValue {
 const ProfileContext = createContext<ProfileContextValue | null>(null);
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isAuthLoading } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isProfilesReady, setIsProfilesReady] = useState(false);
-  const [activeId, setActiveId] = useState<number | null>(() => tokenStore.getActiveProfileId());
+  // 저장된 활성 프로필 id는 refreshProfile에서 tokenStore.getActiveProfileId()를
+  // fallback으로 읽으므로 별도 mount effect로 초기화하지 않는다.
+  // (effect 내 동기 setState는 cascading render + hydration 위험)
+  const [activeId, setActiveId] = useState<number | null>(null);
 
   const refreshProfile = useCallback(async () => {
     try {
@@ -44,10 +47,24 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // 외부 인증 상태(isLoggedIn/isAuthLoading)를 구독해 프로필을 동기화하는 effect.
+  // 로그아웃·인증 미완료 시 캐시를 초기화하고, 준비되면 서버에서 프로필을 가져온다.
+  // 동기 setState는 인증 상태 전환 시점에만 발생하므로(매 렌더 X) cascading render 우려가 없다.
+  /* eslint-disable react-hooks/set-state-in-effect -- 외부 인증 상태 동기화 + 데이터 fetch */
   useEffect(() => {
     if (!isLoggedIn) {
       setProfiles([]);
       setActiveId(null);
+      setIsProfilesReady(false);
+      return;
+    }
+
+    if (isAuthLoading) {
+      setIsProfilesReady(false);
+      return;
+    }
+
+    if (!tokenStore.getAccess()) {
       setIsProfilesReady(false);
       return;
     }
@@ -61,7 +78,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isLoggedIn, refreshProfile]);
+  }, [isLoggedIn, isAuthLoading, refreshProfile]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const profile = profiles.find((p) => p.id === activeId) ?? null;
 

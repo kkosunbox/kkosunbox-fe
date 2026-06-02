@@ -109,7 +109,7 @@
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
   --color-about-hero-bg: #715D4C; /* About Hero 섹션 배경 (웜 브라운) */
-  --color-about-hero-accent: #E97E12; /* About Hero 강조 문구 */
+  --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
   --color-about-feature-heading: #49403B; /* About Feature 섹션 헤딩 */
   --color-btn-dark-warm: #584B40;         /* 구독 변경·재시작 버튼 다크 웜 브라운 */
   --color-profile-gender-selected-bg: #FFE8DC; /* 프로필 작성 모달 성별 선택 배경 (Figma) */
@@ -534,6 +534,7 @@ button:disabled {
 @utility text-body-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
 @utility text-body-16-b  { font-size: 16px; line-height: 24px; font-weight: 700; }
+@utility text-body-16-b-lh130 { font-size: 16px; line-height: 130%; font-weight: 700; letter-spacing: 0; }
 @utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 550; }
 @utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }
 @utility text-body-16-r  { font-size: 16px; line-height: 24px; font-weight: 400; }

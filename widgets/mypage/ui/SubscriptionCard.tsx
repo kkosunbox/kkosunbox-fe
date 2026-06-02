@@ -521,30 +521,30 @@ export function SubscriptionCard({
         />
       </div>
 
-      {/* 노치 원 + 화살표 버튼 — 데스크톱 전용 (구독 1개일 때 비활성화) */}
+      {/* 노치 원 + 화살표 버튼 (구독 1개일 때 비활성화) */}
       <div
-        className="absolute left-0 top-1/2 z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white max-lg:hidden"
+        className="absolute left-0 top-1/2 z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         aria-hidden
       />
       <button
         type="button"
         onClick={() => step(-1)}
         disabled={!hasMultiple}
-        className="absolute left-0 top-1/2 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40 max-lg:hidden"
+        className="absolute left-0 top-1/2 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40"
         aria-label="이전 구독"
       >
         <PrevArrowIcon />
       </button>
 
       <div
-        className="absolute right-0 top-1/2 z-10 h-12 w-12 translate-x-1/2 -translate-y-1/2 rounded-full bg-white max-lg:hidden"
+        className="absolute right-0 top-1/2 z-10 h-12 w-12 translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         aria-hidden
       />
       <button
         type="button"
         onClick={() => step(1)}
         disabled={!hasMultiple}
-        className="absolute right-0 top-1/2 z-20 flex h-7 w-7 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/30 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40 max-lg:hidden"
+        className="absolute right-0 top-1/2 z-20 flex h-7 w-7 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/30 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40"
         aria-label="다음 구독"
       >
         <NextArrowIcon />

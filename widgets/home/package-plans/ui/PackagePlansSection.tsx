@@ -19,7 +19,7 @@ import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
 import packageImageBasic from "../assets/package-image-basic.png";
 import packageImagePremium from "../assets/package-image-premium.png";
 import packageImageStandard from "../assets/package-image-standard.png";
-import { packageSummaryImageClassName } from "../lib/packageSummaryImageClassName";
+import { PackageSummaryThumbnail } from "./PackageSummaryThumbnail";
 
 const ROTATION_INTERVAL_MS = 8000;
 
@@ -208,13 +208,7 @@ export default function PackagePlansSection() {
                     className="group flex h-[132px] w-full overflow-hidden rounded-2xl border-0 bg-white text-left max-md:shadow-none shadow-sm transition-opacity md:h-[167px] lg:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
-                      <Image
-                        src={img}
-                        alt={pkg.name}
-                        fill
-                        className={packageSummaryImageClassName(tier)}
-                        sizes="180px"
-                      />
+                      <PackageSummaryThumbnail src={img} alt={pkg.name} />
                     </div>
                     <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
                       <p className="mb-[14px] truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">

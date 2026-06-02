@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import Image, { type StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 import { Text } from "@/shared/ui";
 import type { ReviewResponse } from "@/features/review/api";
-import { TIER_THUMBNAIL_IMAGE_CLASS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 
 interface Props {
   review: ReviewResponse;
@@ -177,12 +176,13 @@ export default function MyReviewModal({
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-4">
               <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-surface-light)] md:h-[88px] md:w-[88px]">
-                <Image
-                  src={thumbnail}
+                <img
+                  src={thumbnail.src}
                   alt={`${planName} 이미지`}
-                  fill
-                  className={TIER_THUMBNAIL_IMAGE_CLASS}
-                  sizes="88px"
+                  width={thumbnail.width}
+                  height={thumbnail.height}
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover object-center scale-105"
                 />
               </div>
               <div className="flex min-w-0 flex-col gap-2">

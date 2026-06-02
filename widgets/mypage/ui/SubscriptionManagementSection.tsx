@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import pawsImg from "../assets/subscription-management-paws.png";
-import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -227,36 +226,45 @@ function SubscriptionRow({
 }: {
   subscription: UserSubscriptionDto;
 }) {
-  const { plan, isActive } = subscription;
+  const { plan, isActive, isPaused } = subscription;
   const theme = packageThemeForPlan(plan);
-  const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
   const boxQuantity = subscription.quantity || 1;
+  const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
 
   return (
     <div className="flex items-stretch overflow-hidden rounded-[20px] bg-[var(--color-surface-light)] max-md:h-[120px] max-md:rounded-[16px]">
       <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-[129px] md:min-h-[170px] lg:min-h-[170px] md:w-[182px] lg:w-[182px]">
-        <Image
-          src={TIER_THUMBNAILS[theme.tier]}
+        <img
+          src={TIER_BOX_IMAGES[theme.tier].src}
           alt={`${plan.name} 이미지`}
-          fill
-          className="object-cover object-center"
+          width={TIER_BOX_IMAGES[theme.tier].width}
+          height={TIER_BOX_IMAGES[theme.tier].height}
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-center scale-105"
         />
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col max-md:px-4 max-md:py-[15px] md:p-5 lg:p-5">
-        <div className="max-md:mb-0.5 md:mb-3 lg:mb-3 flex items-start justify-between gap-2">
+      <div className="flex min-w-0 flex-1 flex-col justify-center max-md:gap-1 md:gap-2 lg:gap-2 max-md:px-4 md:p-5 lg:p-5">
+        {boxQuantity > 1 && (
           <span
-            className={`text-body-14-sb leading-[17px] max-md:text-[12px] max-md:leading-[14px] ${
-              boxQuantity <= 1 ? "invisible" : ""
-            }`}
+            className="max-md:text-[14px] md:text-[16px] font-semibold leading-tight max-md:mb-1"
             style={{ color: badgeColor }}
-            aria-hidden={boxQuantity <= 1}
           >
             {boxQuantity}BOX
           </span>
+        )}
+
+        <div className="flex items-center justify-between gap-2">
+          <Text
+            variant="subtitle-16-sb"
+            mobileVariant="body-14-sb"
+            className={`truncate ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
+          >
+            {isActive ? `${plan.name} ${isPaused ? "구독 쉬는 중" : "구독중"}` : plan.name}
+          </Text>
           <Link
             href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
-            className="transition-opacity hover:opacity-70"
+            className="shrink-0 transition-opacity hover:opacity-70"
             aria-label="자세히보기"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -266,19 +274,13 @@ function SubscriptionRow({
         </div>
 
         <Text
-          variant="subtitle-16-sb"
-          mobileVariant="body-14-sb"
-          className={`max-md:mb-1 md:mb-1.5 lg:mb-1.5 ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
-        >
-          {isActive ? `${plan.name} 구독중` : plan.name}
-        </Text>
-
-        <Text
           variant="body-16-m"
           mobileVariant="body-13-m"
           className={isActive ? "text-[var(--color-text-label)]" : "text-[var(--color-text-secondary)]"}
         >
-          {isActive ? `${formatDate(subscription.nextBillingDate)} ~` : "-"}
+          {isActive
+            ? `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`
+            : "구독종료"}
         </Text>
         <Text
           variant="body-16-m"
@@ -286,8 +288,8 @@ function SubscriptionRow({
           className="text-[var(--color-text-label)]"
         >
           {isActive
-            ? `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`
-            : "구독종료"}
+            ? `결제금액 : ${formatPrice(plan.monthlyPrice * boxQuantity)}`
+            : "-"}
         </Text>
       </div>
     </div>

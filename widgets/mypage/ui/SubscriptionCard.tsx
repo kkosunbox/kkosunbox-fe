@@ -11,7 +11,7 @@ import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/ap
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
-import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import MyReviewModal from "./MyReviewModal";
 
 /* 도트 인디케이터 슬라이드 설정 */
@@ -603,7 +603,7 @@ export function SubscriptionCard({
           planName={activeReviewState.plan.name}
           tierLabel={reviewTheme.tierLabel}
           tierColorVar={reviewTheme.colorVar}
-          thumbnail={TIER_THUMBNAILS[reviewTheme.tier]}
+          thumbnail={TIER_BOX_IMAGES[reviewTheme.tier]}
           isEditable={activeReviewState.isEditable}
           onEdit={handleEditReview}
           onDelete={handleDeleteReview}

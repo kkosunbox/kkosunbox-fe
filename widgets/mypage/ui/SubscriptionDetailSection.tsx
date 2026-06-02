@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -14,7 +13,7 @@ import {
   reactivateSubscription,
   resumeSubscription,
 } from "@/features/subscription/api/subscriptionApi";
-import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 
@@ -517,11 +516,13 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
         {/* Plan summary card — 154px tall, no shadow (colored band provides contrast) */}
         <div className="flex overflow-hidden rounded-[20px] bg-white shadow-[0px_4px_12px_0px_#00000014] max-md:h-[150px] md:h-[154px] lg:h-[154px]">
           <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
-            <Image
-              src={TIER_THUMBNAILS[theme.tier]}
+            <img
+              src={TIER_BOX_IMAGES[theme.tier].src}
               alt={`${subscription.plan.name} 이미지`}
-              fill
-              className="object-cover object-center"
+              width={TIER_BOX_IMAGES[theme.tier].width}
+              height={TIER_BOX_IMAGES[theme.tier].height}
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover object-center scale-105"
             />
           </div>
 

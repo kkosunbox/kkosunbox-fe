@@ -2,11 +2,12 @@
 
 import { useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -538,12 +539,13 @@ export default function OrderSection({
         <div>
           <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
             <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
-              <Image
-                src={TIER_THUMBNAILS[orderPlanTheme.tier]}
+              <img
+                src={TIER_BOX_IMAGES[orderPlanTheme.tier].src}
                 alt={plan.name}
-                width={180}
-                height={132}
-                className="h-full w-auto max-w-none object-contain object-center"
+                width={TIER_BOX_IMAGES[orderPlanTheme.tier].width}
+                height={TIER_BOX_IMAGES[orderPlanTheme.tier].height}
+                decoding="async"
+                className="h-full w-auto max-w-none object-cover object-center scale-105"
               />
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -935,15 +937,18 @@ export default function OrderSection({
         </div>
       </SectionCard>
 
-      <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
+      <Link
+        href="/checklist"
+        className="block overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]"
+      >
         <Image
           src="/images/sidebar-banner-001.png"
-          alt="꼬순박스 배너"
+          alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
           width={375}
           height={126}
           className="h-auto w-full"
         />
-      </div>
+      </Link>
     </div>
   );
 

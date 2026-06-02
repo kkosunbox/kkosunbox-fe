@@ -27,7 +27,10 @@ import type {
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
-import type { ChecklistFormOptions } from "@/shared/lib/checklistModal";
+import type {
+  ChecklistFormOptions,
+  OpenChecklistFormDetail,
+} from "@/shared/lib/checklistModal";
 import ChecklistPetForm from "./ChecklistPetForm";
 import ChecklistQuestionStep from "./ChecklistQuestionStep";
 import type { PetInfo, RecommendedTier } from "./types";
@@ -657,15 +660,23 @@ export default function ChecklistFormModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<ChecklistFormOptions>({});
   const pathname = usePathname();
+  // 리다이렉트 진입(/checklist → / replace) 직후의 1회성 경로 변경으로
+  // 방금 연 모달이 닫히는 것을 막기 위한 가드.
+  const ignoreNextPathnameRef = useRef(false);
 
   useEffect(() => {
+    if (ignoreNextPathnameRef.current) {
+      ignoreNextPathnameRef.current = false;
+      return;
+    }
     setIsOpen(false);
   }, [pathname]);
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail =
-        (e as CustomEvent<ChecklistFormOptions>).detail ?? {};
+      const { viaRedirect, ...detail } =
+        (e as CustomEvent<OpenChecklistFormDetail>).detail ?? {};
+      if (viaRedirect) ignoreNextPathnameRef.current = true;
       setOptions(detail);
       setIsOpen(true);
     };

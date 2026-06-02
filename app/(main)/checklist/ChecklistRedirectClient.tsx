@@ -14,7 +14,7 @@ export default function ChecklistRedirectClient({
   const router = useRouter();
 
   useEffect(() => {
-    openChecklistForm({ rewrite, editQuestionId });
+    openChecklistForm({ rewrite, editQuestionId, viaRedirect: true });
     router.replace("/");
   }, [router, rewrite, editQuestionId]);
 

@@ -2,11 +2,20 @@
 
 import { useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
+import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
+import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
+
+const ORDER_TIER_IMAGES: Record<PackageTier, typeof packageImageBasic> = {
+  Basic: packageImageBasic,
+  Standard: packageImageStandard,
+  Premium: packageImagePremium,
+};
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -16,7 +25,7 @@ import {
   getCouponInfo,
 } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { packageThemeForPlan, type PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
 const inputCls =
   "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
@@ -539,7 +548,7 @@ export default function OrderSection({
           <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
             <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
               <Image
-                src={TIER_THUMBNAILS[orderPlanTheme.tier]}
+                src={ORDER_TIER_IMAGES[orderPlanTheme.tier]}
                 alt={plan.name}
                 width={180}
                 height={132}
@@ -935,15 +944,18 @@ export default function OrderSection({
         </div>
       </SectionCard>
 
-      <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
+      <Link
+        href="/checklist"
+        className="block overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]"
+      >
         <Image
           src="/images/sidebar-banner-001.png"
-          alt="꼬순박스 배너"
+          alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
           width={375}
           height={126}
           className="h-auto w-full"
         />
-      </div>
+      </Link>
     </div>
   );
 

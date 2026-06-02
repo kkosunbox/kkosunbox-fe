@@ -139,7 +139,8 @@
       "PowerShell(npx eslint \"widgets/mypage/ui/ReviewWriteSection.tsx\" \"app/\\(main\\)/mypage/review/page.tsx\" 2>&1 | Select-Object -First 40)",
       "PowerShell($env:NODE_OPTIONS=\"\"; npx tsc --noEmit -p tsconfig.json 2>&1 | Select-String -Pattern \"review\" -SimpleMatch; \"tsc-exit=$LASTEXITCODE\"; npx eslint \"widgets/mypage/ui/ReviewWriteSection.tsx\" \"app/\\(main\\)/mypage/review/write/page.tsx\" 2>&1 | Select-Object -First 30; \"eslint-exit=$LASTEXITCODE\")",
       "PowerShell($env:NODE_OPTIONS=\"\"; npx tsc --noEmit -p tsconfig.json; \"tsc-exit=$LASTEXITCODE\")",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"EXIT:$?\")"
     ]
   }
 }

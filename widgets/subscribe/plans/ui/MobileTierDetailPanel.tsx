@@ -3,6 +3,7 @@
 import {
   COMPARE_PACKAGES,
   tierFromSubscriptionPlan,
+  tierLabel,
 } from "./packageData";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
@@ -73,7 +74,7 @@ export default function MobileTierDetailPanel({ plan, onClose }: Props) {
             className="inline-flex items-center justify-center rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
             style={{ background: pkg.colorVar }}
           >
-            {pkg.tier}
+            {tierLabel(pkg.tier)}
           </span>
         </div>
 

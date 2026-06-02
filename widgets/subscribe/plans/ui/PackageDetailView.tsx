@@ -9,6 +9,7 @@ import {
   PACKAGES,
   COMPARE_PACKAGES,
   tierFromSubscriptionPlan,
+  tierLabel,
   type PackageTier,
 } from "./packageData";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -93,7 +94,7 @@ function MobileCompareWarmPanel({
           className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
           style={{ background: comparePkg.colorVar }}
         >
-          {comparePkg.tier}
+          {tierLabel(comparePkg.tier)}
         </span>
       </div>
 
@@ -204,7 +205,7 @@ export function PackageCompareTable({
               className="inline-block rounded-full px-3 py-[3px] text-body-14-sb text-white"
               style={{ background: mobilePkg.colorVar }}
             >
-              {mobilePkg.tier}
+              {tierLabel(mobilePkg.tier)}
             </span>
           </div>
 
@@ -297,7 +298,7 @@ export function PackageCompareTable({
                   className="inline-block rounded-full px-3 py-[3px] text-body-14-sb text-white"
                   style={{ background: selectedTier === p.tier ? p.colorVar : "var(--color-text-muted)" }}
                 >
-                  {p.tier}
+                  {tierLabel(p.tier)}
                 </span>
               </div>
             ))}
@@ -448,7 +449,7 @@ export default function PackageDetailView({
                 className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                 style={{ background: pkg.colorVar }}
               >
-                {pkg.tier}
+                {tierLabel(pkg.tier)}
               </span>
             </div>
           </div>
@@ -532,7 +533,7 @@ export default function PackageDetailView({
                   className="rounded-full px-3 py-1 text-body-14-sb leading-[17px] text-white"
                   style={{ background: pkg.colorVar }}
                 >
-                  {pkg.tier}
+                  {tierLabel(pkg.tier)}
                 </span>
               </div>
             </div>
@@ -639,7 +640,7 @@ export default function PackageDetailView({
                               selectedTier === p.tier ? p.colorVar : "var(--color-text-muted)",
                           }}
                         >
-                          {p.tier}
+                          {tierLabel(p.tier)}
                         </span>
                       </div>
                     ))}

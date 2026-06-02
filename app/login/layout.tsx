@@ -15,7 +15,7 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div data-login-mobile-chrome>
       <div className="max-md:hidden">
         <Header />
       </div>
@@ -23,6 +23,6 @@ export default function LoginLayout({
       <div className="max-md:hidden">
         <FooterSection />
       </div>
-    </>
+    </div>
   );
 }

@@ -7,15 +7,7 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
-import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
-import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
-
-const ORDER_TIER_IMAGES: Record<PackageTier, typeof packageImageBasic> = {
-  Basic: packageImageBasic,
-  Standard: packageImageStandard,
-  Premium: packageImagePremium,
-};
+import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -25,7 +17,7 @@ import {
   getCouponInfo,
 } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { packageThemeForPlan, type PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
+import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 const inputCls =
   "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
@@ -547,12 +539,13 @@ export default function OrderSection({
         <div>
           <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
             <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
-              <Image
-                src={ORDER_TIER_IMAGES[orderPlanTheme.tier]}
+              <img
+                src={TIER_BOX_IMAGES[orderPlanTheme.tier].src}
                 alt={plan.name}
-                width={180}
-                height={132}
-                className="h-full w-auto max-w-none object-contain object-center"
+                width={TIER_BOX_IMAGES[orderPlanTheme.tier].width}
+                height={TIER_BOX_IMAGES[orderPlanTheme.tier].height}
+                decoding="async"
+                className="h-full w-auto max-w-none object-cover object-center scale-105"
               />
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-3">

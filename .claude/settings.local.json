@@ -140,7 +140,15 @@
       "PowerShell($env:NODE_OPTIONS=\"\"; npx tsc --noEmit -p tsconfig.json 2>&1 | Select-String -Pattern \"review\" -SimpleMatch; \"tsc-exit=$LASTEXITCODE\"; npx eslint \"widgets/mypage/ui/ReviewWriteSection.tsx\" \"app/\\(main\\)/mypage/review/write/page.tsx\" 2>&1 | Select-Object -First 30; \"eslint-exit=$LASTEXITCODE\")",
       "PowerShell($env:NODE_OPTIONS=\"\"; npx tsc --noEmit -p tsconfig.json; \"tsc-exit=$LASTEXITCODE\")",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(ls features/billing/ui)",
+      "Bash(ls features/billing/api)",
+      "Bash(ls app/api)",
+      "Bash(find node_modules/@tosspayments -maxdepth 2 -name \"*.d.ts\")",
+      "Bash(cat node_modules/@tosspayments/payment-widget-sdk/types/loadPaymentWidget.d.ts)",
+      "Bash(ls node_modules/.pnpm/@tosspayments+payment-widget__types@1.1.0_typescript@5.9.3/node_modules/@tosspayments/payment-widget__types/types)",
+      "Bash(sed -n 1,120p node_modules/.pnpm/@tosspayments+payment-widget__types@1.1.0_typescript@5.9.3/node_modules/@tosspayments/payment-widget__types/types/PaymentWidget.d.ts)",
+      "Bash(echo \"---EXIT $?---\")"
     ]
   }
 }

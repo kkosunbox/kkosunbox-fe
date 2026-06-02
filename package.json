@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fontsource/pretendard": "^5.2.5",
+    "@tosspayments/payment-widget-sdk": "^0.12.1",
     "canvas-confetti": "^1.9.4",
     "next": "16.1.7",
     "react": "19.2.3",

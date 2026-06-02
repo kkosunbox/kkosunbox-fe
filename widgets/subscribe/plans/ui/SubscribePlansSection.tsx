@@ -302,7 +302,8 @@ export default function SubscribePlansSection({
                       const plan = planForTier(sortedPlans, tier);
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
                       const isSelected = selectedTier === tier;
-                      const showSelectionRing = showSelectedCardHighlight && isSelected;
+                      const showSelectionState = showSelectedCardHighlight;
+                      const isUnselected = showSelectionState && !isSelected;
 
                       if (!plan) return null;
 
@@ -312,14 +313,9 @@ export default function SubscribePlansSection({
                         <button
                           key={tier}
                           type="button"
-                          aria-pressed={showSelectionRing}
+                          aria-pressed={showSelectionState ? isSelected : undefined}
                           onClick={() => setSelectedTier(tier)}
-                          className={[
-                            "group relative flex h-[132px] w-full overflow-visible bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl lg:shadow-none",
-                            showSelectionRing
-                              ? "rounded-2xl ring-2 ring-primary md:shadow-md"
-                              : "md:shadow-sm",
-                          ].join(" ")}
+                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl md:shadow-sm lg:shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">
                             <Image
@@ -329,6 +325,12 @@ export default function SubscribePlansSection({
                               className={packageSummaryImageClassName(tier)}
                               sizes="180px"
                             />
+                            {isUnselected ? (
+                              <div
+                                className="pointer-events-none absolute inset-0 z-[1] bg-white/40"
+                                aria-hidden
+                              />
+                            ) : null}
                             {isPlanCurrent ? (
                               <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
                                 <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
@@ -338,7 +340,16 @@ export default function SubscribePlansSection({
                             ) : null}
                           </div>
                           <div className="min-w-0 flex-1 py-[6px] pl-5 pr-0 md:py-[25px] md:pl-7 md:pr-4 lg:pl-6 lg:pr-0">
-                            <p className="mb-2 truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                            <p
+                              className={[
+                                "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
+                                showSelectionState && isSelected
+                                  ? "font-bold text-[var(--color-text-emphasis)]"
+                                  : showSelectionState && isUnselected
+                                    ? "font-semibold text-[var(--color-text-label)]"
+                                    : "font-semibold text-[var(--color-text-emphasis)]",
+                              ].join(" ")}
+                            >
                               {plan.name || pkg.name}
                             </p>
                             <div className="mb-1.5 flex items-baseline gap-2">

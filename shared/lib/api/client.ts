@@ -48,6 +48,13 @@ async function tryRefresh(): Promise<string | null> {
   return refreshingPromise;
 }
 
+/** 메모리에 accessToken이 없을 때 refreshToken으로 복구한다. 이미 있으면 즉시 true. */
+export async function ensureClientAccessToken(): Promise<boolean> {
+  if (tokenStore.getAccess()) return true;
+  const token = await tryRefresh();
+  return Boolean(token);
+}
+
 async function request<T>(
   method: HttpMethod,
   path: string,

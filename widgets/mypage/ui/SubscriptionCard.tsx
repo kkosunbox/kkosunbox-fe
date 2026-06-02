@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Text } from "@/shared/ui";
+import { Text, useLoadingOverlay } from "@/shared/ui";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
+import { deleteReview } from "@/features/review/api";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { TIER_THUMBNAILS } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import MyReviewModal from "./MyReviewModal";
@@ -212,6 +215,8 @@ export function SubscriptionCard({
   const total = subscriptions.length;
   const router = useRouter();
   const { openAlert } = useModal();
+  const { showLoading, hideLoading } = useLoadingOverlay();
+  const [, startTransition] = useTransition();
 
   // 리뷰 자격·내 리뷰를 plan.id 기준으로 조회 가능하게 맵으로 변환
   const eligibilityByPlan = useMemo(() => {
@@ -287,6 +292,40 @@ export function SubscriptionCard({
     const { plan, review } = reviewModal;
     setReviewModal(null);
     router.push(`/mypage/review/write?planId=${plan.id}&reviewId=${review.id}`);
+  }
+
+  function handleDeleteReview() {
+    if (!reviewModal) return;
+    const reviewId = reviewModal.review.id;
+    openAlert(
+      deleteConfirmAlertOptions(
+        "리뷰를 삭제하시겠습니까?",
+        () => {
+          setReviewModal(null);
+          showLoading("리뷰를 삭제하고 있습니다...");
+          startTransition(async () => {
+            try {
+              await deleteReview(reviewId);
+              openAlert({
+                type: "success",
+                title: "리뷰가 삭제되었습니다.",
+              });
+              router.refresh();
+            } catch (err) {
+              openAlert({
+                title: getErrorMessage(
+                  err,
+                  "리뷰 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+                ),
+              });
+            } finally {
+              hideLoading();
+            }
+          });
+        },
+        "삭제하면 작성하신 리뷰 내용이 사라집니다.",
+      ),
+    );
   }
 
   /* 연속 위치를 target까지 부드럽게 보간 (rAF) */
@@ -529,6 +568,7 @@ export function SubscriptionCard({
           thumbnail={TIER_THUMBNAILS[reviewTheme.tier]}
           isEditable={reviewModal.isEditable}
           onEdit={handleEditReview}
+          onDelete={handleDeleteReview}
           onClose={() => setReviewModal(null)}
         />
       )}

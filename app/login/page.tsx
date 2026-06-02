@@ -133,20 +133,32 @@ export default function LoginPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="min-h-screen bg-white flex flex-col md:pt-[54px] lg:pt-[54px]">
+    <form
+      onSubmit={handleSubmit}
+      className="relative flex min-h-screen flex-col bg-white max-md:min-h-dvh max-md:min-h-lvh max-md:bg-[var(--color-login-mobile-chrome)] md:pt-[54px] lg:pt-[54px]"
+    >
 
       {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}
-      <div className="md:hidden lg:hidden absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden max-md:inset-x-0 max-md:bottom-[calc(-1*max(0px,100lvh-100dvh))] md:hidden lg:hidden">
         {/* 그라데이션 둥근 배경 — 뷰포트 전체를 감싸도록 배치 */}
         <div
           className="absolute left-1/2 -translate-x-1/2"
           style={{
             top: 0,
             width: "max(423px, calc(100% + 48px))",
-            bottom: -40,
+            bottom: 0,
             background: "var(--gradient-login-bg)",
             borderRadius: 24,
           }}
+        />
+        {/* 그라데이션 하단과 동일 톤 — 브라우저 동적 하단 UI 영역 */}
+        <div
+          className="absolute inset-x-0 bottom-0"
+          style={{
+            height: "max(120px, calc(100lvh - 100dvh + env(safe-area-inset-bottom, 0px)))",
+            background: "var(--color-login-mobile-chrome)",
+          }}
+          aria-hidden="true"
         />
         {/* 데코 이미지 (꼬랑지) — 상단 장식, 콘텐츠 위에 떠 있음 */}
         <div className="absolute left-1/2 -translate-x-1/2" style={{ top: "2%", width: 423, height: 250 }}>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Button,
   ProfileStepPawLeft,
@@ -498,9 +498,7 @@ function ChecklistFormModalInner({
       localStorage.setItem(`kkosun_checklist_done_${user.id}`, "true");
     }
 
-    setIsAnalyzing(false);
     router.push(`/checklist/result?tier=${tier}`);
-    onClose();
   }
 
   const isStep0NameValid = petInfo.name.trim().length > 0;
@@ -658,6 +656,11 @@ function ChecklistFormModalInner({
 export default function ChecklistFormModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<ChecklistFormOptions>({});
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const handler = (e: Event) => {

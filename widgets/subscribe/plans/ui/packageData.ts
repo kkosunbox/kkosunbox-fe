@@ -102,12 +102,16 @@ export const COMPARE_PACKAGES = COMPARE_ORDER.map(
   (t) => PACKAGES.find((p) => p.tier === t)!
 );
 
-/** 뱃지 표시용 한글 라벨 */
-const TIER_LABEL: Record<PackageTier, string> = {
+/** 뱃지·비교표 등 UI 표시용 한글 라벨 */
+export const TIER_LABEL: Record<PackageTier, string> = {
   Basic: "베이직",
   Standard: "스탠다드",
   Premium: "프리미엄",
 };
+
+export function tierLabel(tier: PackageTier): string {
+  return TIER_LABEL[tier];
+}
 
 export function packageThemeForPlan(plan: SubscriptionPlanLike): {
   colorVar: string;

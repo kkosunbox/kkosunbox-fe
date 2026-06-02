@@ -24,7 +24,15 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  /**
+   * accessToken 메모리 부트스트랩/refresh 완료 전 — 프로필 등 클라이언트 API 호출 대기.
+   *
+   * 초기값은 서버·클라이언트가 동일하게 계산할 수 있는 값(initialUser)만 사용한다.
+   * tokenStore.getRefresh()는 localStorage를 읽어 SSR에서는 항상 null이므로,
+   * 초기화에 포함하면 hydration 불일치(서버=로그인 버튼, 클라=로딩 스피너)가 발생한다.
+   * localStorage refreshToken만 있는 경우의 로딩 상태는 아래 부트스트랩 effect가 처리한다.
+   */
+  const [isAuthLoading, setIsAuthLoading] = useState(() => Boolean(initialUser));
   const router = useRouter();
   const logoutInProgress = useRef(false);
   // user state의 최신값을 이벤트 핸들러에서 읽기 위한 ref.
@@ -40,36 +48,60 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialUser]);
 
-  // 클라이언트 세션 복구:
-  // 1) user가 null + refreshToken 존재 → 페이지 새로고침 후 세션 복구
-  // 2) user는 있지만 accessToken이 메모리에 없음 → 새 탭/새 창에서 열린 경우
-  //    SSR 쿠키로 initialUser는 내려오지만 클라이언트 apiClient에 토큰이 없다.
-  //    refreshToken으로 accessToken을 복구해야 클라이언트 API 호출이 가능하다.
+  // 클라이언트 accessToken 부트스트랩 (메모리는 새로고침마다 비워짐)
+  // 1) refreshToken 있음 → /auth/refresh 로 복구 (401 없이)
+  // 2) SSR initialUser + httpOnly 쿠키 → 서버 액션으로 메모리에 올림
   useEffect(() => {
-    if (!tokenStore.getRefresh()) return;
+    if (tokenStore.getAccess()) {
+      setIsAuthLoading(false);
+      return;
+    }
 
-    // accessToken이 이미 메모리에 있으면 복구 불필요
-    if (tokenStore.getAccess()) return;
+    const hasRefresh = Boolean(tokenStore.getRefresh());
+    if (!hasRefresh && !initialUser) {
+      setIsAuthLoading(false);
+      return;
+    }
 
-    setIsAuthLoading(true);
+    let cancelled = false;
 
-    import("../api/authApi")
-      .then(({ getUser }) => getUser())
-      .then((apiUser) => {
-        if (!user) setUser({ id: apiUser.id, email: apiUser.email });
-        // 클라이언트 refresh로 복구된 accessToken을 SSR 쿠키에도 동기화
+    async function restoreSession() {
+      setIsAuthLoading(true);
+      try {
+        if (hasRefresh) {
+          const { ensureClientAccessToken } = await import("@/shared/lib/api/client");
+          if (!(await ensureClientAccessToken())) throw new Error("refresh failed");
+        } else if (initialUser) {
+          const { bootstrapClientAccessTokenAction } = await import("../lib/actions");
+          const cookieToken = await bootstrapClientAccessTokenAction();
+          if (cancelled) return;
+          if (cookieToken) tokenStore.setAccess(cookieToken);
+        }
+
+        if (!tokenStore.getAccess()) throw new Error("no access token");
+
+        const { getUser } = await import("../api/authApi");
+        const apiUser = await getUser();
+        if (cancelled) return;
+
+        setUser((prev) => prev ?? { id: apiUser.id, email: apiUser.email });
         const newAccess = tokenStore.getAccess();
-        if (newAccess) syncAuthCookieAction(newAccess).catch(() => {});
-      })
-      .catch(async () => {
-        // refreshToken도 만료된 경우: localStorage를 비우고 만료된 ggosoon-auth 쿠키도 제거.
-        // 쿠키를 남기면 이후 SSR이 매번 실패해 영구적으로 비로그인 상태로 보임.
+        if (newAccess) await syncAuthCookieAction(newAccess).catch(() => {});
+      } catch {
+        if (cancelled) return;
         tokenStore.clear();
+        setUser(null);
         await logoutAction().catch(() => {});
-      })
-      .finally(() => setIsAuthLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      } finally {
+        if (!cancelled) setIsAuthLoading(false);
+      }
+    }
+
+    void restoreSession();
+    return () => {
+      cancelled = true;
+    };
+  }, [initialUser]);
 
   const login = useCallback(
     async (email: string, password: string, next?: string) => {

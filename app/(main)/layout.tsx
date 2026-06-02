@@ -10,7 +10,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col" suppressHydrationWarning>
       {/* <CursorPaw /> */}
       <Header />
       <ProfileFloatWidget />

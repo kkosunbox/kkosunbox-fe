@@ -687,10 +687,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
         {activeTab === "review" && (
           <div className="px-6 pt-6 pb-10">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-col gap-2">
               <button
                 type="button"
-                className="flex items-center gap-2 text-[16px] font-bold leading-[19px] text-[var(--color-text-emphasis)]"
+                className="flex shrink-0 items-center gap-2 self-start text-[16px] font-bold leading-[19px] text-[var(--color-text-emphasis)]"
               >
                 꼬순박스 리뷰
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -703,7 +703,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   />
                 </svg>
               </button>
-              <div className="flex items-center gap-2 text-[13px] font-medium text-[var(--color-text)]">
+              <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-[13px] font-medium text-[var(--color-text)]">
                 {SORT_OPTIONS.map((opt, idx) => (
                   <Fragment key={opt}>
                     <button

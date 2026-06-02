@@ -135,11 +135,11 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative flex min-h-screen flex-col bg-white max-md:min-h-dvh max-md:min-h-lvh max-md:bg-[var(--color-login-mobile-chrome)] md:pt-[54px] lg:pt-[54px]"
+      className="relative flex min-h-screen flex-col bg-white max-lg:min-h-dvh max-lg:min-h-lvh max-lg:bg-[var(--color-login-mobile-chrome)] lg:pt-[54px]"
     >
 
       {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden max-md:inset-x-0 max-md:bottom-[calc(-1*max(0px,100lvh-100dvh))] md:hidden lg:hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden max-lg:inset-x-0 max-lg:bottom-[calc(-1*max(0px,100lvh-100dvh))] lg:hidden">
         {/* 그라데이션 둥근 배경 — 뷰포트 전체를 감싸도록 배치 */}
         <div
           className="absolute left-1/2 -translate-x-1/2"
@@ -173,20 +173,20 @@ export default function LoginPage() {
       </div>
 
       {/* ── 콘텐츠: 모바일 세로 중앙 / 데스크톱 2컬럼 ── */}
-      <div className="relative flex flex-1 flex-col max-md:items-center max-md:justify-center md:mx-auto md:flex-row md:w-full md:max-w-none md:px-8 max-lg:overflow-x-auto max-lg:px-8 lg:max-w-content lg:px-0">
+      <div className="relative flex flex-1 flex-col max-lg:items-center max-lg:justify-center lg:mx-auto lg:flex-row lg:w-full max-lg:overflow-x-auto max-lg:px-8 lg:max-w-content lg:px-0">
 
         {/* 좌측 — 폼 */}
-        <div className="flex w-full flex-col px-6 max-md:flex-1 max-md:justify-center md:min-h-[calc(100vh-54px)] md:min-w-[448px] md:flex-1 md:justify-center lg:min-h-[calc(100vh-54px)]">
+        <div className="flex w-full flex-col max-lg:px-0 px-6 max-lg:flex-1 max-lg:justify-center lg:min-h-[calc(100vh-54px)] lg:min-w-[448px] lg:flex-1 lg:justify-center">
           {/* 모바일: 고정 간격 블록, 세로 중앙 정렬 / 데스크톱: 기존 레이아웃 유지 */}
-          <div className="w-full max-w-[400px] px-0 max-md:mx-auto">
+          <div className="w-full max-w-[400px] px-0 max-lg:mx-auto">
 
             {/* 모바일 전용: 로고 영역 */}
-            <div className="max-md:flex md:hidden lg:hidden items-center justify-center pb-[100px]">
+            <div className="max-lg:flex lg:hidden items-center justify-center pb-[100px]">
               <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto relative" priority />
             </div>
 
             {/* 데스크톱 전용 헤딩 */}
-            <div className="max-md:hidden mb-8 text-center">
+            <div className="max-lg:hidden mb-8 text-center">
               <p
                 className="text-primary min-h-[1.4em] text-[20px] leading-[140%] tracking-[-0.02em]"
                 style={{
@@ -212,28 +212,28 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-10 w-full rounded-full bg-white px-6 text-[14px] font-medium text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] md:bg-[var(--color-surface-light)] md:text-body-16-m md:tracking-[0.2px] lg:bg-[var(--color-surface-light)] lg:text-body-16-m lg:tracking-[0.2px]"
+              className="w-full rounded-[12px] bg-white px-6 text-[14px] font-medium text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] max-lg:h-[48px] lg:h-[54px] lg:bg-[var(--color-surface-light)] lg:text-body-14-m lg:tracking-[0.2px]"
             />
 
             {/* 비밀번호 입력 */}
-            <div className="relative max-md:mt-[24px] md:mt-6 lg:mt-6">
+            <div className="relative max-lg:mt-[24px] lg:mt-6">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="비밀번호를 입력하세요"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-10 w-full rounded-full bg-white px-6 pr-12 text-[14px] font-medium text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] md:bg-[var(--color-surface-light)] md:pr-16 md:text-body-16-m md:tracking-[0.2px] lg:bg-[var(--color-surface-light)] lg:pr-16 lg:text-body-16-m lg:tracking-[0.2px]"
+                className="w-full rounded-[12px] bg-white px-6 pr-12 text-[14px] font-medium text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] max-lg:h-[48px] lg:h-[54px] lg:bg-[var(--color-surface-light)] lg:pr-16 lg:text-body-14-m lg:tracking-[0.2px]"
               />
               <button
                 type="button"
-                className="absolute right-5 top-1/2 -translate-y-1/2 opacity-80 md:right-6 lg:right-6"
+                className="absolute right-5 top-1/2 -translate-y-1/2 opacity-80 lg:right-6"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
               >
                 {showPassword
-                  ? <EyeIcon className="w-4 h-4 md:w-6 lg:w-6 md:h-6 lg:h-6" />
-                  : <EyeOffIcon className="w-4 h-4 md:w-6 lg:w-6 md:h-6 lg:h-6" />}
+                  ? <EyeIcon className="w-4 h-4 lg:w-6 lg:h-6" />
+                  : <EyeOffIcon className="w-4 h-4 lg:w-6 lg:h-6" />}
               </button>
             </div>
 
@@ -245,10 +245,10 @@ export default function LoginPage() {
             )}
 
             {/* 비밀번호 찾기 */}
-            <div className="max-md:mt-[24px] md:mt-5 lg:mt-5 text-right">
+            <div className="max-lg:mt-[24px] lg:mt-5 text-right">
               <Link
                 href="/forgot-password"
-                className="text-[var(--color-accent)] underline max-md:text-[13px] md:text-body-14-m lg:text-body-14-m"
+                className="text-[var(--color-accent)] underline max-lg:text-[13px] lg:text-body-14-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 비밀번호를 잃어버리셨나요?
@@ -259,53 +259,53 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-[8px] bg-[var(--color-accent)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
-                max-md:h-[48px] max-md:text-[14px] max-md:font-semibold max-md:tracking-[-0.04em] max-md:mt-[90px]
-                md:h-[54px] lg:h-[54px] md:text-subtitle-16-sb lg:text-subtitle-16-sb md:tracking-[0.2px] lg:tracking-[0.2px] md:mt-[68px] lg:mt-[68px]"
+              className="w-full rounded-[12px] bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
+                max-lg:h-[48px] max-lg:text-[14px] max-lg:font-semibold max-lg:tracking-[-0.04em] max-lg:mt-[90px]
+                lg:h-[54px] lg:text-subtitle-16-sb lg:tracking-[0.2px] lg:mt-[68px]"
             >
               {isPending ? "로그인 중..." : "로그인"}
             </button>
 
             {/* 간편로그인 */}
             <p
-              className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-[18px] md:mt-6 lg:mt-6"
+              className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-[18px] lg:mt-6"
               style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
             >
               - 간편로그인 -
             </p>
 
             {/* 소셜 버튼 */}
-            <div className="flex items-center justify-center gap-[40px] mt-7 md:mt-8 lg:mt-8">
+            <div className="flex items-center justify-center gap-[40px] mt-7 lg:mt-8">
               <button type="button" aria-label="카카오로 로그인"
                 onClick={() => handleSocialLogin("kakao")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-[8px] transition-opacity hover:opacity-85"
+                className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "var(--color-kakao)" }}>
                 <KakaoIcon />
               </button>
               <button type="button" aria-label="네이버로 로그인"
                 onClick={() => handleSocialLogin("naver")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-[8px] transition-opacity hover:opacity-85"
+                className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
                 style={{ backgroundColor: "var(--color-naver)" }}>
                 <NaverIcon />
               </button>
               <button type="button" aria-label="구글로 로그인"
                 onClick={() => handleSocialLogin("google")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-[8px] bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
+                className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
                 <GoogleIcon />
               </button>
             </div>
 
             {/* 회원가입 */}
-            <div className="flex items-center justify-center gap-2 md:gap-1 lg:gap-1 mt-4 md:mt-8 lg:mt-8">
+            <div className="flex items-center justify-center gap-2 lg:gap-5 mt-4 lg:mt-8">
               <span
-                className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m lg:text-body-16-m"
+                className="text-[var(--color-brown-dark)] opacity-40 text-body-14-m"
                 style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 계정이 없으신가요?
               </span>
               <Link
                 href="/register"
-                className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb lg:text-body-16-sb"
+                className="text-[var(--color-link-warm)] text-body-14-sb"
                 style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
               >
                 회원가입하기
@@ -316,7 +316,7 @@ export default function LoginPage() {
         </div>
 
         {/* 우측 — 데스크톱 전용 배너 */}
-        <div className="relative max-md:hidden md:min-w-0 md:max-w-[548px] md:flex-[0_1_548px] md:min-h-[calc(100vh-54px)] lg:w-[548px] lg:flex-none lg:shrink-0">
+        <div className="relative max-lg:hidden lg:min-w-0 lg:max-w-[548px] lg:min-h-[calc(100vh-54px)] lg:w-[548px] lg:flex-none lg:shrink-0">
           <Image
             src={loginBannerHd}
             alt="꼬순박스 배너"

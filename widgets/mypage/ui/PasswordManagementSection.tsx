@@ -232,7 +232,7 @@ export default function PasswordManagementSection() {
               type="button"
               onClick={handleSubmit}
               disabled={isPending}
-              className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {isPending ? "변경 중..." : "변경 완료"}
             </button>
@@ -334,7 +334,7 @@ export default function PasswordManagementSection() {
           type="button"
           onClick={handleSubmit}
           disabled={isPending}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-accent)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {isPending ? "변경 중..." : "변경 완료"}
         </button>

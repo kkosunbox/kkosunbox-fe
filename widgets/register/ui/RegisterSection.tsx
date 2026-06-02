@@ -117,10 +117,10 @@ function FieldRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex max-md:flex-col md:flex-row lg:flex-row md:items-start lg:items-start gap-2 md:gap-0 lg:gap-0">
+    <div className="flex items-center gap-2 md:gap-0 lg:gap-0">
       <label
         htmlFor={htmlFor}
-        className="shrink-0 md:w-[94px] lg:w-[94px] md:h-10 lg:h-10 md:flex lg:flex md:items-center lg:items-center text-[13px] font-medium leading-[16px] text-[var(--color-text)]"
+        className="shrink-0 max-md:w-[72px] md:w-[94px] lg:w-[94px] text-[13px] font-medium leading-[16px] text-[var(--color-text)]"
       >
         {label}
         {required && <span style={{ color: "var(--color-accent-rust)" }}>*</span>}
@@ -325,7 +325,7 @@ export default function RegisterSection() {
 
         {/* ─── 폼 카드 ─── */}
         <div
-          className="relative overflow-hidden rounded-[20px] px-5 py-6 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] md:py-11 lg:py-11"
+          className="relative overflow-hidden rounded-[20px] px-6 py-8 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] max-md:pb-16 md:py-11 lg:py-11"
           style={{ background: "var(--color-surface-warm)" }}
         >
           <div className="flex flex-col gap-4 md:mx-auto lg:mx-auto md:w-[414px] lg:w-[414px]">
@@ -348,7 +348,7 @@ export default function RegisterSection() {
                   type="button"
                   onClick={handleSendCode}
                   disabled={!email.trim() || isPending || emailVerified || dailyLimitReached || (codeSent && countdown > 0)}
-                  className={[actionBtnCls, "bg-[var(--color-accent)]"].join(" ")}
+                  className={[actionBtnCls, "bg-[var(--color-btn-dark-warm)]"].join(" ")}
                 >
                   {isPending && !codeSent
                     ? "발송 중..."
@@ -356,7 +356,12 @@ export default function RegisterSection() {
                       ? "발송 제한"
                       : codeSent
                         ? countdown > 0 ? `재전송 (${countdown}s)` : "재전송"
-                        : "인증번호 전송"}
+                        : (
+                          <>
+                            <span className="max-md:hidden">인증번호 전송</span>
+                            <span className="md:hidden">인증번호</span>
+                          </>
+                        )}
                 </button>
               </div>
               {codeSent && !emailVerified && (
@@ -386,7 +391,7 @@ export default function RegisterSection() {
                   type="button"
                   onClick={handleVerifyOtp}
                   disabled={!otp.trim() || isPending || !codeSent || emailVerified}
-                  className={[actionBtnCls, "bg-[var(--color-accent)]"].join(" ")}
+                  className={[actionBtnCls, "bg-[var(--color-btn-dark-warm)]"].join(" ")}
                 >
                   {isPending && codeSent && !emailVerified ? "확인 중..." : "확인"}
                 </button>
@@ -416,16 +421,14 @@ export default function RegisterSection() {
                   className={[inputBase, "pr-10", !emailVerified ? inputDisabled : ""].join(" ")}
                   autoComplete="new-password"
                 />
-                {emailVerified && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPw((v) => !v)}
-                    aria-label={showPw ? "비밀번호 숨기기" : "비밀번호 보기"}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
-                  >
-                    <RegisterPasswordToggleIcon passwordVisible={showPw} />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setShowPw((v) => !v)}
+                  aria-label={showPw ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
+                >
+                  <RegisterPasswordToggleIcon passwordVisible={showPw} />
+                </button>
               </div>
             </FieldRow>
 
@@ -444,16 +447,14 @@ export default function RegisterSection() {
                   className={[inputBase, "pr-10", !emailVerified ? inputDisabled : ""].join(" ")}
                   autoComplete="new-password"
                 />
-                {emailVerified && (
-                  <button
-                    type="button"
-                    onClick={() => setShowPwConfirm((v) => !v)}
-                    aria-label={showPwConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
-                  >
-                    <RegisterPasswordToggleIcon passwordVisible={showPwConfirm} />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setShowPwConfirm((v) => !v)}
+                  aria-label={showPwConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
+                >
+                  <RegisterPasswordToggleIcon passwordVisible={showPwConfirm} />
+                </button>
               </div>
               {passwordMismatch && (
                 <p className="mt-1.5 text-caption-12-r text-[var(--color-accent-rust)]" role="alert">
@@ -463,7 +464,7 @@ export default function RegisterSection() {
             </FieldRow>
 
             {/* 비밀번호 힌트 */}
-            <div className="md:pl-[94px] lg:pl-[94px] space-y-0.5 text-[12px] font-medium leading-[16px]">
+            <div className="max-md:pl-[80px] md:pl-[94px] lg:pl-[94px] space-y-0.5 text-[12px] font-medium leading-[16px]">
               <p
                 className={
                   ruleMinLenInvalid
@@ -553,7 +554,7 @@ export default function RegisterSection() {
           disabled={!canSubmit}
           onClick={handleSignup}
           className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-[8px] max-md:text-subtitle-16-sb md:text-body-14-sb lg:text-body-14-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14 md:h-[54px] lg:h-[54px]"
-          style={{ background: "var(--color-accent)" }}
+          style={{ background: "var(--color-btn-dark-warm)" }}
         >
           {isPending ? "처리 중..." : "가입하기"}
         </button>

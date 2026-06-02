@@ -27,7 +27,7 @@ const inputBase =
 const inputDisabled = "opacity-50 pointer-events-none bg-[var(--color-surface-light)]";
 
 const actionBtnCls =
-  "h-[32px] shrink-0 rounded-[4px] px-2 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
+  "h-10 shrink-0 rounded-[4px] px-2 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
 
 /* ─── 체크박스 ─── */
 function CheckboxIcon({ checked }: { checked: boolean }) {

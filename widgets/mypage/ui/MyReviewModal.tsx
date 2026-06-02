@@ -15,6 +15,7 @@ interface Props {
   /** 작성 후 24시간 이내 — 수정 버튼 노출 여부 */
   isEditable: boolean;
   onEdit: () => void;
+  onDelete: () => void;
   onClose: () => void;
 }
 
@@ -65,6 +66,7 @@ export default function MyReviewModal({
   thumbnail,
   isEditable,
   onEdit,
+  onDelete,
   onClose,
 }: Props) {
   useEffect(() => {
@@ -131,15 +133,24 @@ export default function MyReviewModal({
               </div>
             </div>
 
-            {isEditable && (
+            <div className="flex shrink-0 items-center gap-2">
+              {isEditable && (
+                <button
+                  type="button"
+                  onClick={onEdit}
+                  className="rounded-[8px] bg-[var(--color-btn-dark-warm)] px-4 py-2.5 text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90 md:px-5 md:py-3"
+                >
+                  리뷰 수정하기
+                </button>
+              )}
               <button
                 type="button"
-                onClick={onEdit}
-                className="shrink-0 rounded-[8px] bg-[var(--color-btn-dark-warm)] px-4 py-2.5 text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90 md:px-5 md:py-3"
+                onClick={onDelete}
+                className="rounded-[8px] border border-[var(--color-btn-dark-warm)] bg-white px-4 py-2.5 text-body-14-sb leading-[1] text-[var(--color-btn-dark-warm)] transition-opacity hover:opacity-90 md:px-5 md:py-3"
               >
-                리뷰 수정하기
+                리뷰 삭제
               </button>
-            )}
+            </div>
           </div>
 
           <div className="my-5 border-t border-[var(--color-border-light)] md:my-6" />

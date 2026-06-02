@@ -130,6 +130,15 @@ export async function socialLoginAction(
   }
 }
 
+/**
+ * 새로고침 직후 클라이언트 메모리에 accessToken을 올린다.
+ * httpOnly 쿠키는 JS에서 읽을 수 없어, SSR 세션(initialUser)이 있을 때만 서버 액션으로 전달한다.
+ */
+export async function bootstrapClientAccessTokenAction(): Promise<string | null> {
+  const cookieStore = await cookies();
+  return cookieStore.get(COOKIE_NAME)?.value ?? null;
+}
+
 /** 클라이언트 세션 복구(refresh) 후 SSR 쿠키도 동기화 */
 export async function syncAuthCookieAction(accessToken: string): Promise<void> {
   const cookieStore = await cookies();

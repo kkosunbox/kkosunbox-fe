@@ -18,7 +18,18 @@ const HERO_ALT =
 
 const MAX_CONTENT_LENGTH = 500;
 const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024; // 5MB
+const MAX_ATTACHMENTS = 5; // 사진 최대 첨부 개수
 const ACCEPT_ATTACHMENT = "image/jpeg,image/png,image/webp,image/gif";
+
+/** 첨부 이미지 — 기존(업로드 완료된 URL) 또는 신규(업로드 대기 File) */
+type Attachment =
+  | { kind: "existing"; url: string }
+  | { kind: "new"; file: File };
+
+function attachmentLabel(att: Attachment): string {
+  if (att.kind === "new") return att.file.name;
+  return decodeURIComponent(att.url.split("/").pop()?.split("?")[0] ?? "첨부 이미지");
+}
 
 const NOTICES = [
   "작성하신 리뷰는 서비스 홍보를 위해 활용될 수 있습니다.",
@@ -106,9 +117,8 @@ export default function ReviewWriteSection({
   const [isPending, startTransition] = useTransition();
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
-  const [attachedFile, setAttachedFile] = useState<File | null>(null);
-  /** 수정 모드에서 기존에 저장된 첨부 이미지 URL (새 파일 첨부 시 교체, 삭제 시 null) */
-  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  /** 첨부 이미지 목록 — 최대 MAX_ATTACHMENTS개 (기존 URL + 신규 파일 혼합) */
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   const isEditMode = reviewId != null;
   const [isLoadingReview, setIsLoadingReview] = useState(isEditMode);
@@ -140,7 +150,9 @@ export default function ReviewWriteSection({
         }
         setContent(target.content);
         setRating(Math.round(target.rating));
-        setExistingImageUrl(target.imageUrls?.[0] ?? null);
+        setAttachments(
+          (target.imageUrls ?? []).map((url) => ({ kind: "existing", url })),
+        );
       } catch (err) {
         if (cancelled) return;
         openAlert({ title: getErrorMessage(err, "리뷰 정보를 불러오지 못했습니다.") });
@@ -158,27 +170,50 @@ export default function ReviewWriteSection({
   }, [isLoggedIn, isEditMode, reviewId]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const files = Array.from(e.target.files ?? []);
     e.target.value = "";
-    if (!file) return;
+    if (files.length === 0) return;
 
-    if (file.size > MAX_ATTACHMENT_BYTES) {
+    const remaining = MAX_ATTACHMENTS - attachments.length;
+    if (remaining <= 0) {
+      openAlert({ type: "info", title: `사진은 최대 ${MAX_ATTACHMENTS}장까지 첨부할 수 있습니다.` });
+      return;
+    }
+
+    const accepted: Attachment[] = [];
+    let rejectedSize = false;
+    let rejectedType = false;
+    const acceptList = ACCEPT_ATTACHMENT.split(",");
+
+    for (const file of files) {
+      if (accepted.length >= remaining) break;
+      if (file.size > MAX_ATTACHMENT_BYTES) {
+        rejectedSize = true;
+        continue;
+      }
+      if (file.type && !acceptList.includes(file.type)) {
+        rejectedType = true;
+        continue;
+      }
+      accepted.push({ kind: "new", file });
+    }
+
+    if (accepted.length > 0) {
+      setAttachments((prev) => [...prev, ...accepted]);
+    }
+
+    // 거절 사유 안내 (한 번에 하나만 노출)
+    if (files.length > remaining) {
+      openAlert({ type: "info", title: `사진은 최대 ${MAX_ATTACHMENTS}장까지 첨부할 수 있습니다.` });
+    } else if (rejectedSize) {
       openAlert({ type: "info", title: "사진은 5MB 이하만 업로드할 수 있습니다." });
-      return;
-    }
-    if (file.type && !ACCEPT_ATTACHMENT.split(",").includes(file.type)) {
+    } else if (rejectedType) {
       openAlert({ type: "info", title: "이미지(JPG, PNG, WebP, GIF) 파일만 첨부할 수 있습니다." });
-      return;
     }
-
-    setAttachedFile(file);
-    // 새 파일을 첨부하면 기존 이미지는 교체된 것으로 간주
-    setExistingImageUrl(null);
   };
 
-  const handleRemoveAttachment = () => {
-    setAttachedFile(null);
-    setExistingImageUrl(null);
+  const handleRemoveAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -200,17 +235,24 @@ export default function ReviewWriteSection({
 
     startTransition(async () => {
       try {
-        // 첨부 이미지 결정: 새 파일 업로드 > 기존 이미지 유지 > (수정 모드) 삭제
+        // 첨부 이미지 결정: 신규 파일은 업로드 후 URL로, 기존 URL은 그대로 — 순서 유지
         let imageUrls: string[] | null | undefined;
-        if (attachedFile) {
-          const { uploadUrl, fileUrl } = await getAttachmentPresignedUrl({
-            fileName: attachedFile.name,
-            fileType: attachedFile.type || "application/octet-stream",
-          });
-          await uploadToS3(uploadUrl, attachedFile, attachedFile.type || "application/octet-stream");
-          imageUrls = [fileUrl];
-        } else if (existingImageUrl) {
-          imageUrls = [existingImageUrl];
+        if (attachments.length > 0) {
+          const urls: string[] = [];
+          for (const att of attachments) {
+            if (att.kind === "existing") {
+              urls.push(att.url);
+              continue;
+            }
+            const fileType = att.file.type || "application/octet-stream";
+            const { uploadUrl, fileUrl } = await getAttachmentPresignedUrl({
+              fileName: att.file.name,
+              fileType,
+            });
+            await uploadToS3(uploadUrl, att.file, fileType);
+            urls.push(fileUrl);
+          }
+          imageUrls = urls;
         } else {
           imageUrls = isEditMode ? null : undefined;
         }
@@ -251,11 +293,8 @@ export default function ReviewWriteSection({
     });
   };
 
-  const attachmentName =
-    attachedFile?.name ??
-    (existingImageUrl
-      ? decodeURIComponent(existingImageUrl.split("/").pop()?.split("?")[0] ?? "첨부 이미지")
-      : null);
+  const canAddMore = attachments.length < MAX_ATTACHMENTS;
+  const hasNewUpload = attachments.some((att) => att.kind === "new");
 
   const isSubmittable =
     (isEditMode ? reviewId != null : !!planId) &&
@@ -340,25 +379,34 @@ export default function ReviewWriteSection({
               <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 lg:grid-cols-2 md:gap-x-[26px] lg:gap-x-[26px]">
                 <div className="flex min-w-0 flex-col gap-2">
                   <span id="review-file-label" className={labelClass}>
-                    첨부파일
+                    첨부파일 ({attachments.length}/{MAX_ATTACHMENTS})
                   </span>
-                  {attachmentName ? (
-                    <div className={`${fieldClass} flex items-center gap-1`}>
-                      <PaperclipIcon />
-                      <span className="min-w-0 flex-1 truncate text-[var(--color-text)]">
-                        {attachmentName}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleRemoveAttachment}
-                        disabled={isPending}
-                        aria-label={`${attachmentName} 삭제`}
-                        className="ml-1 shrink-0 text-body-13-m text-[var(--color-text-secondary)] hover:text-[var(--color-text)] disabled:opacity-50"
+
+                  {attachments.map((att, index) => {
+                    const name = attachmentLabel(att);
+                    return (
+                      <div
+                        key={att.kind === "existing" ? att.url : `${att.file.name}-${index}`}
+                        className={`${fieldClass} flex items-center gap-1`}
                       >
-                        삭제
-                      </button>
-                    </div>
-                  ) : (
+                        <PaperclipIcon />
+                        <span className="min-w-0 flex-1 truncate text-[var(--color-text)]">
+                          {name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveAttachment(index)}
+                          disabled={isPending}
+                          aria-label={`${name} 삭제`}
+                          className="ml-1 shrink-0 text-body-13-m text-[var(--color-text-secondary)] hover:text-[var(--color-text)] disabled:opacity-50"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  {canAddMore && (
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
@@ -368,14 +416,16 @@ export default function ReviewWriteSection({
                     >
                       <PaperclipIcon />
                       <span className="truncate text-[var(--color-text-secondary)]">
-                        사진을 첨부해주세요 (5MB 이하)
+                        사진을 첨부해주세요 (최대 {MAX_ATTACHMENTS}장, 각 5MB 이하)
                       </span>
                     </button>
                   )}
+
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept={ACCEPT_ATTACHMENT}
+                    multiple
                     className="sr-only"
                     onChange={handleFileChange}
                     aria-label="사진 첨부"
@@ -414,7 +464,7 @@ export default function ReviewWriteSection({
                   className={submitButtonClass}
                 >
                   {isPending
-                    ? attachedFile
+                    ? hasNewUpload
                       ? "업로드 중…"
                       : isEditMode
                         ? "수정 중…"

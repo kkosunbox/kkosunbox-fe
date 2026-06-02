@@ -231,8 +231,30 @@ export function SubscriptionCard({
     return map;
   }, [myReviews]);
 
-  // "내 리뷰보러가기"로 띄우는 모달 상태
-  const [reviewModal, setReviewModal] = useState<ReviewState | null>(null);
+  // planId → plan (리뷰 모달에서 플랜 정보를 조회)
+  const planById = useMemo(() => {
+    const map = new Map<number, UserSubscriptionDto["plan"]>();
+    for (const s of subscriptions) map.set(s.plan.id, s.plan);
+    return map;
+  }, [subscriptions]);
+
+  // 모달에서 이전/다음으로 순회할 수 있는 내 리뷰 목록
+  const reviewStates = useMemo<ReviewState[]>(() => {
+    const states: ReviewState[] = [];
+    for (const r of myReviews) {
+      const plan = planById.get(r.planId);
+      if (!plan) continue;
+      states.push({
+        review: r,
+        plan,
+        isEditable: eligibilityByPlan.get(r.planId)?.isEditable ?? false,
+      });
+    }
+    return states;
+  }, [myReviews, planById, eligibilityByPlan]);
+
+  // "내 리뷰보러가기"로 띄우는 모달 — reviewStates 내 활성 인덱스
+  const [reviewIndex, setReviewIndex] = useState<number | null>(null);
 
   // 활성 구독 인덱스(0..total-1) — 카드 내용의 단일 소스
   const [activeIndex, setActiveIndex] = useState(0);
@@ -272,11 +294,11 @@ export function SubscriptionCard({
   const eligibility = eligibilityByPlan.get(currentPlanId);
   const myReview = reviewByPlan.get(currentPlanId) ?? null;
   const canReview = eligibility?.canReview ?? false;
-  const isEditable = eligibility?.isEditable ?? false;
 
   function handleWrittenReviewClick() {
     if (!myReview) return;
-    setReviewModal({ review: myReview, plan: current.plan, isEditable });
+    const idx = reviewStates.findIndex((s) => s.review.id === myReview.id);
+    if (idx >= 0) setReviewIndex(idx);
   }
 
   function handleUnavailableReviewClick() {
@@ -287,21 +309,36 @@ export function SubscriptionCard({
     });
   }
 
+  const activeReviewState = reviewIndex !== null ? reviewStates[reviewIndex] ?? null : null;
+  const canNavigateReviews = reviewStates.length > 1;
+
   function handleEditReview() {
-    if (!reviewModal) return;
-    const { plan, review } = reviewModal;
-    setReviewModal(null);
+    if (!activeReviewState) return;
+    const { plan, review } = activeReviewState;
+    setReviewIndex(null);
     router.push(`/mypage/review/write?planId=${plan.id}&reviewId=${review.id}`);
   }
 
+  function handlePrevReview() {
+    setReviewIndex((i) =>
+      i === null ? i : wrapIndex(i - 1, reviewStates.length),
+    );
+  }
+
+  function handleNextReview() {
+    setReviewIndex((i) =>
+      i === null ? i : wrapIndex(i + 1, reviewStates.length),
+    );
+  }
+
   function handleDeleteReview() {
-    if (!reviewModal) return;
-    const reviewId = reviewModal.review.id;
+    if (!activeReviewState) return;
+    const reviewId = activeReviewState.review.id;
     openAlert(
       deleteConfirmAlertOptions(
         "리뷰를 삭제하시겠습니까?",
         () => {
-          setReviewModal(null);
+          setReviewIndex(null);
           showLoading("리뷰를 삭제하고 있습니다...");
           startTransition(async () => {
             try {
@@ -401,7 +438,7 @@ export function SubscriptionCard({
     e.stopPropagation();
   }
 
-  const reviewTheme = reviewModal ? packageThemeForPlan(reviewModal.plan) : null;
+  const reviewTheme = activeReviewState ? packageThemeForPlan(activeReviewState.plan) : null;
 
   return (
     <>
@@ -559,17 +596,20 @@ export function SubscriptionCard({
       />
     </div>
 
-      {reviewModal && reviewTheme && (
+      {activeReviewState && reviewTheme && (
         <MyReviewModal
-          review={reviewModal.review}
-          planName={reviewModal.plan.name}
+          key={activeReviewState.review.id}
+          review={activeReviewState.review}
+          planName={activeReviewState.plan.name}
           tierLabel={reviewTheme.tierLabel}
           tierColorVar={reviewTheme.colorVar}
           thumbnail={TIER_THUMBNAILS[reviewTheme.tier]}
-          isEditable={reviewModal.isEditable}
+          isEditable={activeReviewState.isEditable}
           onEdit={handleEditReview}
           onDelete={handleDeleteReview}
-          onClose={() => setReviewModal(null)}
+          onClose={() => setReviewIndex(null)}
+          onPrev={canNavigateReviews ? handlePrevReview : undefined}
+          onNext={canNavigateReviews ? handleNextReview : undefined}
         />
       )}
     </>

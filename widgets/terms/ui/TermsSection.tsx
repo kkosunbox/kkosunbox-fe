@@ -80,7 +80,7 @@ const TERMS_SECTIONS = [
 export default function TermsSection() {
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-content py-14 md:px-0 lg:px-0 max-md:px-6 max-md:py-10">
+      <div className="mx-auto max-w-content py-14 max-lg:px-6 lg:px-0 max-md:py-10">
         <Image
           src={termsTitle}
           alt="이용약관"

@@ -9,15 +9,9 @@ const FOOTER_LINKS = [
   { href: "/privacy", label: "개인정보처리방침" },
 ] as const;
 
-const COMPANY_INFO_DESKTOP = [
-  "주식회사 펫브릿지코어 | 사업자등록번호 : 355-87-03780 | 법인등록번호 : 124411-0045975",
-  "대표이사 : 오진영",
-  "주소 : 경기도 김포시 김포한강11로 288-31, 5층 508-38호(운양동, 에이스프라자)",
-] as const;
-
-const COMPANY_INFO_MOBILE = [
+const COMPANY_INFO_LINES = [
   "주식회사 펫브릿지코어 | 사업자등록번호 : 355-87-03780",
-  "법인등록번호 : 124411-0045975 | 대표이사 : 오진영",
+  "대표이사 : 오진영",
   "주소 : 경기도 김포시 김포한강11로 288-31, 5층 508-38호(운양동, 에이스프라자)",
 ] as const;
 
@@ -74,7 +68,7 @@ export default function FooterSection() {
       {/* ── 모바일 레이아웃 ── */}
       <div className="max-md:flex max-md:flex-col md:hidden lg:hidden px-6 py-8">
         <div className="space-y-1 text-center">
-          {COMPANY_INFO_MOBILE.map((line) => (
+          {COMPANY_INFO_LINES.map((line) => (
             <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
               {line}
             </p>
@@ -124,7 +118,7 @@ export default function FooterSection() {
               <Image src={logoMono} alt="" width={LOGO_W} height={LOGO_H} className="h-[28px] w-[88px]" />
             </Link>
             <div className="space-y-0.5">
-              {COMPANY_INFO_DESKTOP.map((line) => (
+              {COMPANY_INFO_LINES.map((line) => (
                 <p key={line} className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
                   {line}
                 </p>

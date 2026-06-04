@@ -230,9 +230,14 @@ function SubscriptionRow({
   const theme = packageThemeForPlan(plan);
   const boxQuantity = subscription.quantity || 1;
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
+  const detailHref = `/mypage/subscription/detail?subscriptionId=${subscription.id}`;
 
   return (
-    <div className="flex items-stretch overflow-hidden rounded-[20px] bg-[var(--color-surface-light)] max-md:h-[120px] max-md:rounded-[16px]">
+    <Link
+      href={detailHref}
+      className="flex items-stretch overflow-hidden rounded-[20px] bg-[var(--color-surface-light)] max-md:h-[120px] max-md:rounded-[16px] transition-opacity hover:opacity-90"
+      aria-label={`${plan.name} 구독 상세보기`}
+    >
       <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-[129px] md:min-h-[170px] lg:min-h-[170px] md:w-[182px] lg:w-[182px]">
         <img
           src={TIER_BOX_IMAGES[theme.tier].src}
@@ -262,15 +267,11 @@ function SubscriptionRow({
           >
             {isActive ? `${plan.name} ${isPaused ? "구독 쉬는 중" : "구독중"}` : plan.name}
           </Text>
-          <Link
-            href={`/mypage/subscription/detail?subscriptionId=${subscription.id}`}
-            className="shrink-0 transition-opacity hover:opacity-70"
-            aria-label="자세히보기"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <span className="shrink-0 text-[var(--color-text-secondary)]" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M7 4l6 6-6 6" stroke="#999999" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </Link>
+          </span>
         </div>
 
         <Text
@@ -292,7 +293,7 @@ function SubscriptionRow({
             : "-"}
         </Text>
       </div>
-    </div>
+    </Link>
   );
 }
 

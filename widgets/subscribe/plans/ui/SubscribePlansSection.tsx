@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { ChecklistRecommendModal, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
@@ -36,11 +36,10 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
   Premium: packageImagePremium,
 };
 
+const ROTATION_INTERVAL_MS = 8000;
+
 /** /subscribe 플랜 목록 노출 순서 */
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
-
-/** 선택 없을 때 왼쪽 패널 표시에 쓸 폴백 (첫 번째 노출 순서 = Premium) */
-const FALLBACK_DISPLAY_TIER: PackageTier = PACKAGE_SUMMARY_ORDER[0];
 
 const PACKAGE_EXPLAIN: Record<PackageTier, { src: StaticImageData; alt: string }> = {
   Basic: { src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
@@ -102,9 +101,18 @@ export default function SubscribePlansSection({
   const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
 
   const [selectedTier, setSelectedTier] = useState<PackageTier | null>(initialSelectedTier);
+  const [rotatingIndex, setRotatingIndex] = useState(0);
 
-  /** 왼쪽 패널 렌더링용 — 미선택 시 첫 번째 패키지(Premium)를 폴백으로 표시 */
-  const displayTier = selectedTier ?? FALLBACK_DISPLAY_TIER;
+  useEffect(() => {
+    if (selectedTier !== null) return;
+    const intervalId = window.setInterval(() => {
+      setRotatingIndex((i) => (i + 1) % PACKAGE_SUMMARY_ORDER.length);
+    }, ROTATION_INTERVAL_MS);
+    return () => window.clearInterval(intervalId);
+  }, [selectedTier]);
+
+  /** 왼쪽 패널 렌더링용 — 미선택 시 자동 회전 tier 표시 */
+  const displayTier = selectedTier ?? PACKAGE_SUMMARY_ORDER[rotatingIndex];
 
   const activeExplain = PACKAGE_EXPLAIN[displayTier];
   const activePlan = planForTier(sortedPlans, displayTier);
@@ -327,7 +335,7 @@ export default function SubscribePlansSection({
                           key={tier}
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
-                          onClick={() => setSelectedTier(tier)}
+                          onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
                           className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">

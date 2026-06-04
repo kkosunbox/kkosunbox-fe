@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
@@ -961,40 +961,38 @@ export default function OrderSection({
 
   const priceSummaryBar = (
     <div className="w-full bg-[var(--color-why-bg)]">
-      <div className="mx-auto flex w-full items-center justify-center px-4 max-md:h-[81px] md:h-[58px] md:max-w-[var(--max-width-content)] md:gap-10 md:px-4">
-        <div className="flex w-full max-w-[327px] items-center justify-between md:max-w-none md:justify-center md:gap-10">
-          {priceSummaryItems.map((item, index) => (
-            <div key={item.label} className="flex items-center max-md:gap-2 md:gap-10">
-              {index > 0 ? (
-                <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
-                  {index === 3 ? "=" : index === 2 ? "-" : "+"}
-                </span>
-              ) : null}
-              <div className={item.emphasis ? "flex flex-col items-center md:flex-row md:gap-3" : "flex flex-col items-center md:flex-row md:gap-2"}>
-                <span
-                  className={[
-                    "whitespace-nowrap tracking-[-0.04em]",
-                    item.emphasis
-                      ? "text-body-13-m text-[var(--color-accent-orange)] md:text-subtitle-16-b"
-                      : "text-body-13-m text-white md:text-subtitle-16-sb",
-                  ].join(" ")}
-                >
-                  {item.label}
-                </span>
-                <span
-                  className={[
-                    "whitespace-nowrap tracking-[-0.04em]",
-                    item.emphasis
-                      ? "text-body-14-sb text-[var(--color-accent-orange)] md:text-subtitle-20-b"
-                      : "text-body-14-sb text-white md:text-subtitle-16-sb",
-                  ].join(" ")}
-                >
-                  {item.value}
-                </span>
-              </div>
+      <div className="mx-auto flex w-full max-w-[806px] items-center justify-between px-8 max-md:h-[81px] md:h-[58px]">
+        {priceSummaryItems.map((item, index) => (
+          <Fragment key={item.label}>
+            {index > 0 && (
+              <span className="shrink-0 text-subtitle-16-sb tracking-[-0.04em] text-white">
+                {index === 3 ? "=" : index === 2 ? "-" : "+"}
+              </span>
+            )}
+            <div className={item.emphasis ? "flex flex-col items-center md:flex-row md:gap-3" : "flex flex-col items-center md:flex-row md:gap-2"}>
+              <span
+                className={[
+                  "whitespace-nowrap tracking-[-0.04em]",
+                  item.emphasis
+                    ? "text-body-13-m text-[var(--color-accent-orange)] md:text-subtitle-16-b"
+                    : "text-body-13-m text-white md:text-subtitle-16-sb",
+                ].join(" ")}
+              >
+                {item.label}
+              </span>
+              <span
+                className={[
+                  "whitespace-nowrap tracking-[-0.04em]",
+                  item.emphasis
+                    ? "text-body-14-sb text-[var(--color-accent-orange)] md:text-subtitle-20-b"
+                    : "text-body-14-sb text-white md:text-subtitle-16-sb",
+                ].join(" ")}
+              >
+                {item.value}
+              </span>
             </div>
-          ))}
-        </div>
+          </Fragment>
+        ))}
       </div>
     </div>
   );

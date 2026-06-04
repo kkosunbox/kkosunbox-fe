@@ -502,7 +502,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
       <div className="absolute left-0 right-0 top-0 max-md:h-[296px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
       {/* Hero — plan card fits entirely within the 258px band */}
-      <div className="relative mx-auto max-w-content max-md:px-6 md:px-0 lg:px-0 pt-8 pb-6">
+      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-8 pb-6">
         {/* Back + title */}
         <button
           type="button"
@@ -644,7 +644,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
       </div>
 
       {/* Payment history — flat on white background, 24px gap from band end */}
-      <div className="relative mx-auto max-w-content max-md:px-6 md:px-0 lg:px-0 max-md:pt-6 md:pt-6 pb-12">
+      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 max-md:pt-6 md:pt-6 pb-12">
         <Text as="h2" variant="subtitle-18-b" className="mb-5 text-[var(--color-text)]">
           구독 상세내역
         </Text>

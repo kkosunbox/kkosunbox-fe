@@ -273,7 +273,7 @@
  */
 @media (min-width: 48rem) and (max-width: 74.9375rem) {
   :root {
-    --max-width-content:        800px; /* 데스크탑 1012px → 태블릿 768px↑ 구간 */
+    --max-width-content:        848px; /* 데스크탑 1012px → 태블릿 768px↑ 구간 */
     --max-width-content-narrow: 700px; /* 데스크탑  940px → 태블릿 768px↑ 구간 */
     --max-width-content-wide:   860px; /* 데스크탑 1140px → 태블릿 768px↑ 구간 */
   }

@@ -183,7 +183,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 max-md:mt-[22px] lg:grid-cols-3">
+          <div className="grid w-full grid-cols-1 gap-5 max-md:mt-[22px] md:max-w-[680px] md:mx-auto lg:max-w-none lg:mx-0 lg:grid-cols-3">
             {[
               { icon: aboutFeatureCircle01, title: "건강한 재료", desc: "반려견에게 안전하고 건강한\n재료만 사용합니다." },
               { icon: aboutFeatureCircle02, title: "정성 가득 수제간식", desc: "대량 생산이 아닌,\n직접 만든 간식만 담습니다." },

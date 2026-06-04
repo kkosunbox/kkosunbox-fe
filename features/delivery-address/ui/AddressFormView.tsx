@@ -180,7 +180,7 @@ export default function AddressFormView({
         {/* 우편번호 */}
         <div className="flex items-center gap-3">
           <label className={LABEL_CLS}>우편번호</label>
-          <div className="flex flex-1 items-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
             <input
               type="text"
               value={pendingZipCode}

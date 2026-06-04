@@ -25,18 +25,28 @@ export default function PackageNutritionGuide({
 }: PackageNutritionGuideProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  function openModal(e: React.MouseEvent) {
+    e.stopPropagation();
+    setIsOpen(true);
+  }
+
   return (
     <>
+      {/* 클릭 영역 44×44로 확장 — SVG 아이콘 시각 위치(center)는 기존과 동일 */}
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={openModal}
         aria-label="영양정보 확인"
-        className="absolute right-[25px] top-6 z-10 flex items-center justify-center transition-opacity hover:opacity-80 active:opacity-70"
+        className="absolute right-[15px] top-[14px] z-10 flex h-11 w-11 items-center justify-center transition-opacity hover:opacity-80 active:opacity-70"
       >
         <InfoIcon />
       </button>
 
-      <div className="pointer-events-none absolute right-[25px] top-8 z-20 -translate-y-full max-md:translate-x-[41px] md:translate-x-[57px]">
+      {/* 말풍선 — 클릭 가능, 배경 이미지 이벤트 차단 */}
+      <div
+        className="absolute right-[25px] top-8 z-20 -translate-y-full max-md:translate-x-[41px] md:translate-x-[57px] cursor-pointer"
+        onClick={openModal}
+      >
         <div className="animate-float" style={{ "--float-distance": "-5px" } as CSSProperties}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

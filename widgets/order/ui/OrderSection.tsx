@@ -1007,12 +1007,18 @@ export default function OrderSection({
       />
       {priceSummaryBar}
 
-      <div className="bg-white md:overflow-x-auto lg:overflow-x-auto">
+      <div className="bg-white lg:overflow-x-auto">
         <div
-          className="mx-auto max-md:px-6 max-md:pt-6 md:min-w-[900px] md:px-0 md:py-8"
+          className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:px-0 lg:min-w-[900px]"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
-          <div className="max-md:hidden md:grid md:grid-cols-[1fr_1px_327px] md:gap-x-8 items-start">
+          <div className="max-md:hidden lg:hidden grid grid-cols-[55%_1px_1fr] gap-x-6 items-start">
+            {leftSections}
+            <div className="self-stretch bg-[var(--color-text-muted)]" />
+            {rightColumn}
+          </div>
+
+          <div className="max-lg:hidden grid grid-cols-[1fr_1px_327px] gap-x-8 items-start">
             {leftSections}
             <div className="self-stretch bg-[var(--color-text-muted)]" />
             {rightColumn}

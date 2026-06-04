@@ -349,7 +349,7 @@ export default function ChecklistResult({
         </p>
       </div>
 
-      <div className="relative mx-auto w-full max-md:px-6 md:max-w-[1013px] md:px-0 lg:px-0">
+      <div className="relative mx-auto w-full max-md:px-6 md:max-w-[680px] md:px-0 lg:max-w-[1013px] lg:px-0">
 
         {/* 페이지 제목 — 데스크탑·태블릿만 */}
         <Image
@@ -461,17 +461,19 @@ export default function ChecklistResult({
           </div>
         </div>
 
-        {/* 하단: 전체 패키지 구독 섹션 */}
-        {!plansLoading && sortedPlans.length > 0 && (
-          <div>
-            <Image
-              src={checklistLetStartPurchase}
-              alt="꼬순박스 정기구독을 시작해보세요!"
-              className="mx-auto mb-[48px] h-auto w-full max-w-[380px] max-md:mb-7 max-md:max-w-[260px]"
-              sizes="(min-width: 768px) 380px, 260px"
-            />
+      </div>
 
-            <div className="flex justify-between max-md:flex-col max-md:gap-6">
+      {/* 하단: 전체 패키지 구독 섹션 */}
+      {!plansLoading && sortedPlans.length > 0 && (
+        <div className="relative mx-auto w-full max-md:px-6 md:max-w-[1013px] md:px-6 lg:px-0">
+          <Image
+            src={checklistLetStartPurchase}
+            alt="꼬순박스 정기구독을 시작해보세요!"
+            className="mx-auto mb-[48px] h-auto w-full max-w-[380px] max-md:mb-7 max-md:max-w-[260px]"
+            sizes="(min-width: 768px) 380px, 260px"
+          />
+
+          <div className="flex max-md:flex-col max-md:gap-6 md:justify-between md:gap-4 lg:gap-0">
               {sortedPlans.map((plan) => {
                 const tier = tierFromSubscriptionPlan(plan);
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
@@ -482,10 +484,10 @@ export default function ChecklistResult({
                   <Link
                     key={plan.id}
                     href={`/subscribe/detail?planId=${plan.id}`}
-                    className="group flex w-full bg-white transition-opacity hover:opacity-90 active:opacity-80 max-md:h-[120px] max-md:flex-row md:max-w-[272px] md:flex-col md:overflow-hidden md:rounded-[16px]"
+                    className="group flex w-full bg-white transition-opacity hover:opacity-90 active:opacity-80 max-md:h-[120px] max-md:flex-row md:flex-1 md:max-w-[252px] md:flex-col md:overflow-hidden md:rounded-[16px] lg:flex-none lg:max-w-[272px]"
                   >
                     {/* 패키지 이미지 */}
-                    <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:h-[252px] md:w-full md:rounded-[16px]">
+                    <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:aspect-square md:w-full md:rounded-[16px] lg:aspect-auto lg:h-[252px]">
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />
                       {tier === recommendedPlanTier && (
                         <div className="absolute left-0 top-3 max-md:h-[52px] max-md:w-[52px] md:h-[144px] md:w-[144px]">
@@ -541,9 +543,8 @@ export default function ChecklistResult({
                 );
               })}
             </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

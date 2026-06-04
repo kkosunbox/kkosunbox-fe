@@ -465,7 +465,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
       <div className="absolute left-0 right-0 top-0 max-md:h-[367px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
       {/* Hero content — overlaps the 258px boundary */}
-      <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-6 md:pt-10 lg:pt-10">
+      <div className="relative mx-auto max-w-content max-md:px-4 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
         {/* Back + title */}
         <button
           type="button"
@@ -488,7 +488,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
       </div>
 
       {/* Subscription list — 구독 전체보기 */}
-      <div className="relative mx-auto max-w-content max-md:px-4 md:px-0 lg:px-0 pt-8 pb-10">
+      <div className="relative mx-auto max-w-content max-md:px-4 md:px-6 lg:px-0 pt-8 pb-10">
         <div className="md:px-0 lg:px-0">
           <div className="mb-6">
             <div className="flex items-center justify-between gap-3 max-md:mb-3">

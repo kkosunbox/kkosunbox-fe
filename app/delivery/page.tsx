@@ -19,7 +19,7 @@ export default async function DeliveryPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const token = await getServerToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/login?next=/delivery");
 
   const { status } = await searchParams;
   const deliveryStatus: DeliveryStatus = VALID_STATUSES.includes(

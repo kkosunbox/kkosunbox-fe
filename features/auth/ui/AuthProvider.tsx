@@ -124,7 +124,7 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     await logoutAction();
     tokenStore.clear();
     setUser(null);
-    router.push("/login");
+    router.replace("/login");
   }, [router]);
 
   // API 레이어에서 401 UNAUTHORIZED 이벤트를 받으면 강제 로그아웃.

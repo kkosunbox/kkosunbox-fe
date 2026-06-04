@@ -455,7 +455,7 @@ export function SubscriptionCard({
         <div
           className={[
             "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
-            "max-lg:px-6 max-lg:py-6 lg:pl-12 lg:pr-6 lg:py-5",
+            "max-lg:px-6 max-lg:pl-12 max-lg:py-6 lg:pl-12 lg:pr-6 lg:py-5",
           ].join(" ")}
         >
           {/* 카드 본문 클릭 — 구독 상세 */}

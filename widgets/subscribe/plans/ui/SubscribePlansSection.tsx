@@ -39,7 +39,8 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 /** /subscribe 플랜 목록 노출 순서 */
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
-const DEFAULT_SELECTED_TIER: PackageTier = "Premium";
+/** 선택 없을 때 왼쪽 패널 표시에 쓸 폴백 (첫 번째 노출 순서 = Premium) */
+const FALLBACK_DISPLAY_TIER: PackageTier = PACKAGE_SUMMARY_ORDER[0];
 
 const PACKAGE_EXPLAIN: Record<PackageTier, { src: StaticImageData; alt: string }> = {
   Basic: { src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
@@ -67,7 +68,7 @@ interface Props {
   plans: SubscriptionPlanDto[];
   initialProfile?: Profile | null;
   showChecklistRecommend?: boolean;
-  initialSelectedTier?: PackageTier;
+  initialSelectedTier?: PackageTier | null;
   heroDesktopImage?: StaticImageData;
   heroMobileImage?: StaticImageData;
   heroAlt?: string;
@@ -81,7 +82,7 @@ export default function SubscribePlansSection({
   plans,
   initialProfile = null,
   showChecklistRecommend = true,
-  initialSelectedTier = DEFAULT_SELECTED_TIER,
+  initialSelectedTier = null,
   heroDesktopImage,
   heroMobileImage,
   heroAlt = "이제 수제 간식도 맞춤형으로 구독하세요",
@@ -100,11 +101,14 @@ export default function SubscribePlansSection({
   );
   const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
 
-  const [selectedTier, setSelectedTier] = useState<PackageTier>(initialSelectedTier);
+  const [selectedTier, setSelectedTier] = useState<PackageTier | null>(initialSelectedTier);
 
-  const activeExplain = PACKAGE_EXPLAIN[selectedTier];
-  const activePlan = planForTier(sortedPlans, selectedTier);
-  const activePkg = PACKAGES.find((p) => p.tier === selectedTier);
+  /** 왼쪽 패널 렌더링용 — 미선택 시 첫 번째 패키지(Premium)를 폴백으로 표시 */
+  const displayTier = selectedTier ?? FALLBACK_DISPLAY_TIER;
+
+  const activeExplain = PACKAGE_EXPLAIN[displayTier];
+  const activePlan = planForTier(sortedPlans, displayTier);
+  const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
 
   const profile = clientProfile ?? initialProfile;
@@ -209,11 +213,15 @@ export default function SubscribePlansSection({
                       className="relative w-full rounded-[22px]"
                       style={{ boxShadow: "var(--shadow-card-soft)" }}
                     >
-                      <div className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-[var(--color-surface-warm)]">
+                      <div
+                        className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-[var(--color-surface-warm)]"
+                        onClick={handlePrimaryClick}
+                        style={{ cursor: activePrimaryButton && !activePrimaryButton.disabled ? "pointer" : undefined }}
+                      >
                         {activePkg ? (
                           <Image
-                            key={selectedTier}
-                            src={TIER_DETAIL_HERO_IMAGES[selectedTier]}
+                            key={displayTier}
+                            src={TIER_DETAIL_HERO_IMAGES[displayTier]}
                             alt={`${activePkg.name} 대표 이미지`}
                             fill
                             className="object-cover transition-opacity duration-500"
@@ -230,7 +238,7 @@ export default function SubscribePlansSection({
                         ) : null}
                       </div>
                       <PackageNutritionGuide
-                        initialTier={selectedTier}
+                        initialTier={displayTier}
                         bubbleClassName="h-auto w-[100px]"
                       />
                     </div>
@@ -268,10 +276,14 @@ export default function SubscribePlansSection({
                     className="relative w-full max-w-[600px] rounded-[22px] max-md:hidden md:rounded-[28px]"
                     style={{ boxShadow: "var(--shadow-card-soft)" }}
                   >
-                    <div className="relative overflow-hidden rounded-[22px] md:rounded-[28px]">
+                    <div
+                      className="relative overflow-hidden rounded-[22px] md:rounded-[28px]"
+                      onClick={handlePrimaryClick}
+                      style={{ cursor: activePrimaryButton && !activePrimaryButton.disabled ? "pointer" : undefined }}
+                    >
                       {activePkg ? (
                         <Image
-                          key={selectedTier}
+                          key={displayTier}
                           src={activeExplain.src}
                           alt={activeExplain.alt}
                           className="h-auto w-full transition-opacity duration-500"
@@ -292,7 +304,7 @@ export default function SubscribePlansSection({
                         "flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
                       )}
                     </div>
-                    <PackageNutritionGuide initialTier={selectedTier} />
+                    <PackageNutritionGuide initialTier={displayTier} />
                   </div>
 
                   {/* 우측 — 패키지 요약 카드 목록 */}
@@ -301,9 +313,10 @@ export default function SubscribePlansSection({
                       const pkg = PACKAGES.find((p) => p.tier === tier)!;
                       const plan = planForTier(sortedPlans, tier);
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
-                      const isSelected = selectedTier === tier;
+                      const isSelected = selectedTier !== null && selectedTier === tier;
                       const showSelectionState = showSelectedCardHighlight;
-                      const isUnselected = showSelectionState && !isSelected;
+                      // 명시적으로 다른 카드가 선택된 경우에만 dimmed 처리 (미선택 상태는 모두 중립)
+                      const isUnselected = showSelectionState && selectedTier !== null && !isSelected;
 
                       if (!plan) return null;
 
@@ -315,7 +328,7 @@ export default function SubscribePlansSection({
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
                           onClick={() => setSelectedTier(tier)}
-                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl md:shadow-sm lg:shadow-none"
+                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">
                             <PackageSummaryThumbnail src={img} alt={pkg.name} />

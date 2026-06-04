@@ -221,7 +221,9 @@ export default function PackagePlansSection() {
                           "mb-[14px] truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
                           isSelected
                             ? "font-bold text-[var(--color-text-emphasis)]"
-                            : "font-semibold text-[var(--color-text-label)]",
+                            : isUnselected
+                              ? "font-semibold text-[var(--color-text-label)]"
+                              : "font-semibold text-[var(--color-text-emphasis)]",
                         ].join(" ")}
                       >
                         {plan?.name || pkg.name}

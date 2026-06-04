@@ -55,20 +55,23 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 
 export default function PackagePlansSection() {
   const router = useRouter();
-  const [activePackageIndex, setActivePackageIndex] = useState(0);
+  const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
+  const [rotatingIndex, setRotatingIndex] = useState(0);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const planRatings = usePlanRatings(apiPlans.map((plan) => plan.id));
-  const activePackage = PACKAGE_EXPLAIN_IMAGES[activePackageIndex];
-  const activePkg = PACKAGES.find((packageItem) => packageItem.tier === activePackage.tier);
-  const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === activePackage.tier);
+
+  const displayTier = selectedTier ?? PACKAGE_SUMMARY_ORDER[rotatingIndex];
+  const activePackage = PACKAGE_EXPLAIN_IMAGES.find((img) => img.tier === displayTier) ?? PACKAGE_EXPLAIN_IMAGES[0];
+  const activePkg = PACKAGES.find((packageItem) => packageItem.tier === displayTier);
+  const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === displayTier);
 
   useEffect(() => {
+    if (selectedTier !== null) return;
     const intervalId = window.setInterval(() => {
-      setActivePackageIndex((currentIndex) => (currentIndex + 1) % PACKAGE_EXPLAIN_IMAGES.length);
+      setRotatingIndex((i) => (i + 1) % PACKAGE_SUMMARY_ORDER.length);
     }, ROTATION_INTERVAL_MS);
-
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [selectedTier]);
 
   useEffect(() => {
     getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
@@ -126,7 +129,7 @@ export default function PackagePlansSection() {
                   </div>
                 </div>
                 <PackageNutritionGuide
-                  initialTier={activePackage.tier}
+                  initialTier={displayTier}
                   bubbleClassName="h-auto w-[100px]"
                 />
               </div>
@@ -187,7 +190,7 @@ export default function PackagePlansSection() {
                   제품 상세보기
                 </button>
               </div>
-              <PackageNutritionGuide initialTier={activePackage.tier} />
+              <PackageNutritionGuide initialTier={displayTier} />
             </div>
 
             <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
@@ -195,23 +198,32 @@ export default function PackagePlansSection() {
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const plan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
+                const isSelected = selectedTier !== null && selectedTier === tier;
+                const isUnselected = selectedTier !== null && !isSelected;
 
                 return (
                   <button
                     key={tier}
                     type="button"
                     disabled={!plan}
-                    onClick={() => {
-                      if (!plan) return;
-                      router.push(`/subscribe/detail?planId=${plan.id}`);
-                    }}
+                    onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
                     className="group flex h-[132px] w-full overflow-hidden rounded-2xl border-0 bg-white text-left max-md:shadow-none shadow-sm transition-opacity md:h-[167px] lg:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />
+                      {isUnselected && (
+                        <div className="absolute inset-0 z-10 rounded-2xl bg-white/40" />
+                      )}
                     </div>
                     <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
-                      <p className="mb-[14px] truncate text-[17px] font-semibold leading-[24px] tracking-[-0.04em] text-[var(--color-text-emphasis)] md:mb-6 md:text-[20px]">
+                      <p
+                        className={[
+                          "mb-[14px] truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
+                          isSelected
+                            ? "font-bold text-[var(--color-text-emphasis)]"
+                            : "font-semibold text-[var(--color-text-label)]",
+                        ].join(" ")}
+                      >
                         {plan?.name || pkg.name}
                       </p>
                       {plan ? (

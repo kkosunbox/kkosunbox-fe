@@ -129,7 +129,7 @@ export default function PackagePlansSection() {
                   </div>
                 </div>
                 <PackageNutritionGuide
-                  initialTier={selectedTier}
+                  initialTier={displayTier}
                   bubbleClassName="h-auto w-[100px]"
                 />
               </div>
@@ -190,7 +190,7 @@ export default function PackagePlansSection() {
                   제품 상세보기
                 </button>
               </div>
-              <PackageNutritionGuide initialTier={selectedTier} />
+              <PackageNutritionGuide initialTier={displayTier} />
             </div>
 
             <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">

@@ -931,7 +931,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       <div className="max-md:hidden">
         {/* Plan selector — full-width dark tab bar */}
         <div className="mb-[44px] w-full" style={{ background: "var(--color-why-bg)" }}>
-          <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3">
+          <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3 md:px-6 lg:px-0">
             <span className="text-body-14-sb text-[var(--color-text-muted)] mr-6">구독선택</span>
             <div className="flex flex-wrap gap-2">
               {sortedPlans.map((plan) => {

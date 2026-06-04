@@ -376,10 +376,9 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     });
   }
 
-  /* Figma: 949px content × header 44px + row 49px each. Columns at 30/497/627/779 within bar.
-     Translated to grid: [name+chip+link / 금액 / 날짜 / 영수증] with header inset matching. */
+  /* lg+(1200px+) 데스크탑은 Figma 원본 컬럼 유지. md~lg 태블릿은 고정 컬럼을 축소해 1fr 셀 확보. */
   const ROW_GRID =
-    "grid grid-cols-[1fr_120px_130px_152px_140px] items-center";
+    "grid max-lg:grid-cols-[1fr_120px_130px_152px_72px] lg:grid-cols-[1fr_120px_130px_152px_140px] items-center";
   const ROW_HEIGHT = "h-[49px]";
 
   function RecordRow({ record, desktop, isOnly }: { record: SubscriptionPaymentDto; desktop: boolean; isOnly?: boolean }) {
@@ -446,18 +445,20 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
     return (
       <li className={`border-b border-[var(--color-text-muted)] ${isOnly ? "" : "last:border-b-0"}`}>
         <div className={`${ROW_GRID} ${ROW_HEIGHT} pl-[30px] pr-2`}>
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="text-body-14-m text-[var(--color-text)] truncate">{pkgName}</span>
-            <StatusBadge status={displayStatus} />
-            {(displayStatus === "예정" || canCancelPayment) && (
-              <button
-                type="button"
-                onClick={() => handleCancelPayment(record.id)}
-                className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
-              >
-                구매취소
-              </button>
-            )}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-body-14-m text-[var(--color-text)] truncate min-w-0">{pkgName}</span>
+            <div className="shrink-0 flex items-center gap-2">
+              <StatusBadge status={displayStatus} />
+              {(displayStatus === "예정" || canCancelPayment) && (
+                <button
+                  type="button"
+                  onClick={() => handleCancelPayment(record.id)}
+                  className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                >
+                  구매취소
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex items-center">
             {record.deliveryStatus ? (

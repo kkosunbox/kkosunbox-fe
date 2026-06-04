@@ -9,6 +9,7 @@ export {
 
 export type {
   ReviewResponse,
+  ReviewSortOrder,
   PlanReviewsResponse,
   MyReviewsResponse,
   PlanReviewEligibility,

@@ -4,13 +4,19 @@ import type {
   MyReviewsResponse,
   ReviewEligibilityResponse,
   ReviewResponse,
+  ReviewSortOrder,
   CreateReviewRequest,
   UpdateReviewRequest,
 } from "./types";
 
-export function getReviews(planId: number, page: number = 1, limit: number = 10) {
+export function getReviews(
+  planId: number,
+  page: number = 1,
+  limit: number = 10,
+  sortOrder: ReviewSortOrder = "LATEST",
+) {
   return apiClient.get<PlanReviewsResponse>(
-    `/v1/reviews?planId=${planId}&page=${page}&limit=${limit}`,
+    `/v1/reviews?planId=${planId}&page=${page}&limit=${limit}&sortOrder=${sortOrder}`,
   );
 }
 

@@ -31,7 +31,7 @@ import {
 } from "./packageData";
 import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
 import { getReviews } from "@/features/review/api";
-import type { ReviewResponse } from "@/features/review/api";
+import type { ReviewResponse, ReviewSortOrder } from "@/features/review/api";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 
 interface Props {
@@ -86,7 +86,11 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "support", label: "고객센터" },
 ];
 
-const SORT_OPTIONS = ["최신순", "평점 높은순", "평점 낮은순"] as const;
+const SORT_OPTIONS = [
+  { label: "최신순", value: "LATEST" },
+  { label: "평점 높은순", value: "RATING_DESC" },
+  { label: "평점 낮은순", value: "RATING_ASC" },
+] as const satisfies { label: string; value: ReviewSortOrder }[];
 
 
 const REVIEWS_PER_PAGE = 10;
@@ -383,7 +387,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
-  const [activeSort, setActiveSort] = useState<(typeof SORT_OPTIONS)[number]>("최신순");
+  const [activeSort, setActiveSort] = useState<ReviewSortOrder>("LATEST");
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
@@ -404,10 +408,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   }, [reviewLightbox]);
 
   const fetchReviews = useCallback(
-    async (planId: number, page: number) => {
+    async (planId: number, page: number, sortOrder: ReviewSortOrder) => {
       setReviewsLoading(true);
       try {
-        const data = await getReviews(planId, page, REVIEWS_PER_PAGE);
+        const data = await getReviews(planId, page, REVIEWS_PER_PAGE, sortOrder);
         setReviews(data.items);
         setReviewsTotal(data.total);
         setReviewsAverage(data.averageRating);
@@ -423,8 +427,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   );
 
   useEffect(() => {
-    fetchReviews(selectedPlan.id, reviewsPage);
-  }, [selectedPlan.id, reviewsPage, fetchReviews]);
+    fetchReviews(selectedPlan.id, reviewsPage, activeSort);
+  }, [selectedPlan.id, reviewsPage, activeSort, fetchReviews]);
 
   function handleReviewCountClick() {
     setActiveTab("review");
@@ -439,13 +443,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
   const sortedPlans = useMemo(() => [...plans].sort(comparePlansForDisplayOrder), [plans]);
 
-  const sortedReviews = useMemo(() => {
-    const sorted = [...reviews];
-    if (activeSort === "평점 높은순") sorted.sort((a, b) => b.rating - a.rating);
-    else if (activeSort === "평점 낮은순") sorted.sort((a, b) => a.rating - b.rating);
-    else sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    return sorted;
-  }, [reviews, activeSort]);
 
   const reviewImages = useMemo(
     () => reviews.flatMap((r) => r.imageUrls ?? []),
@@ -705,17 +702,17 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               </button>
               <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-[13px] font-medium text-[var(--color-text)]">
                 {SORT_OPTIONS.map((opt, idx) => (
-                  <Fragment key={opt}>
+                  <Fragment key={opt.value}>
                     <button
                       type="button"
-                      onClick={() => setActiveSort(opt)}
+                      onClick={() => { setActiveSort(opt.value); setReviewsPage(1); }}
                       className={
-                        activeSort === opt
+                        activeSort === opt.value
                           ? "font-semibold text-[var(--color-text-emphasis)]"
                           : "text-[var(--color-text-secondary)]"
                       }
                     >
-                      {opt}
+                      {opt.label}
                     </button>
                     {idx < SORT_OPTIONS.length - 1 && (
                       <span className="text-[var(--color-text-muted)]">|</span>
@@ -761,13 +758,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
                 리뷰를 불러오는 중...
               </p>
-            ) : sortedReviews.length === 0 ? (
+            ) : reviews.length === 0 ? (
               <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
                 아직 작성된 리뷰가 없습니다.
               </p>
             ) : (
               <ul className="space-y-6">
-                {sortedReviews.map((review) => (
+                {reviews.map((review) => (
                   <li
                     key={review.id}
                     className="border-b border-[var(--color-text-muted)] pb-6 last:border-b-0"
@@ -934,7 +931,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       <div className="max-md:hidden">
         {/* Plan selector — full-width dark tab bar */}
         <div className="mb-[44px] w-full" style={{ background: "var(--color-why-bg)" }}>
-          <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3">
+          <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3 md:px-6 lg:px-0">
             <span className="text-body-14-sb text-[var(--color-text-muted)] mr-6">구독선택</span>
             <div className="flex flex-wrap gap-2">
               {sortedPlans.map((plan) => {
@@ -1122,7 +1119,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           )}
 
           {activeTab === "review" && (
-            <div className="pt-10 pb-20">
+            <div className="pt-10 pb-20 md:px-6 lg:px-0">
               <div className="mb-6 flex items-center justify-between">
                 <button
                   type="button"
@@ -1141,17 +1138,17 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 </button>
                 <div className="flex items-center gap-3 text-[14px] leading-[17px]">
                   {SORT_OPTIONS.map((opt, idx) => (
-                    <Fragment key={opt}>
+                    <Fragment key={opt.value}>
                       <button
                         type="button"
-                        onClick={() => setActiveSort(opt)}
+                        onClick={() => { setActiveSort(opt.value); setReviewsPage(1); }}
                         className={
-                          activeSort === opt
+                          activeSort === opt.value
                             ? "font-semibold text-[var(--color-text-emphasis)]"
                             : "font-normal text-[var(--color-text-secondary)]"
                         }
                       >
-                        {opt}
+                        {opt.label}
                       </button>
                       {idx < SORT_OPTIONS.length - 1 && (
                         <span className="text-[var(--color-text-muted)]">|</span>
@@ -1197,13 +1194,13 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
                   리뷰를 불러오는 중...
                 </p>
-              ) : sortedReviews.length === 0 ? (
+              ) : reviews.length === 0 ? (
                 <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
                   아직 작성된 리뷰가 없습니다.
                 </p>
               ) : (
                 <ul>
-                  {sortedReviews.map((review) => (
+                  {reviews.map((review) => (
                     <li
                       key={review.id}
                       className="flex items-start gap-4 border-b border-[var(--color-text-muted)] py-6 last:border-b-0"
@@ -1315,7 +1312,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           )}
 
           {activeTab === "delivery" && (
-            <div className="mx-auto max-w-[815px] py-20">
+            <div className="mx-auto max-w-[815px] py-20 md:px-6 lg:px-0">
               <h3 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">배송정보</h3>
               <div className="mt-8 space-y-10 pl-2">
                 {DELIVERY_INFO_SECTIONS.map((section) => (
@@ -1340,7 +1337,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
           {activeTab === "support" && (
             <>
-              <div className="pt-10 pb-2">
+              <div className="pt-10 pb-2 md:px-6 lg:px-0">
                 <Link
                   href="/support"
                   className="inline-flex items-center gap-1 text-body-20-sb text-[var(--color-text-emphasis)]"

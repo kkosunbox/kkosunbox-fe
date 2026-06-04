@@ -485,8 +485,8 @@ export function SubscriptionCard({
                   {current.plan.name} 구독중
                 </Text>
                 {boxQuantity !== null && (
-                  <span className="inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-b capitalize leading-[19px] tracking-[-0.04em] text-white">
-                    {boxQuantity}BOX
+                  <span className="inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-sb capitalize leading-[19px] tracking-[-0.04em] text-white">
+                    {boxQuantity} BOX
                   </span>
                 )}
               </div>

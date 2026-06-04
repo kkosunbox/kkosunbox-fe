@@ -9,24 +9,17 @@ const FOOTER_LINKS = [
   { href: "/privacy", label: "개인정보처리방침" },
 ] as const;
 
-/** PC: 한 줄 / 모바일: 사업자·통신판매를 두 줄로 표시 */
-const COMPANY_REGISTRATION_DESKTOP =
-  "주식회사 핑크코브라 | 사업자등록번호 : 103-87-01124 | 통신판매업신고번호 : 2021-서울강북-0945";
-const COMPANY_REGISTRATION_MOBILE = [
-  "주식회사 핑크코브라 | 사업자등록번호 : 103-87-01124",
-  "통신판매업신고번호 : 2021-서울강북-0945",
+const COMPANY_INFO_DESKTOP = [
+  "주식회사 펫브릿지코어 | 사업자등록번호 : 355-87-03780 | 법인등록번호 : 124411-0045975",
+  "대표이사 : 오진영",
+  "주소 : 경기도 김포시 김포한강11로 288-31, 5층 508-38호(운양동, 에이스프라자)",
 ] as const;
 
-/** PC: 한 줄 / 모바일: 대표·번호 / 이메일 두 줄 */
-const COMPANY_CONTACT_DESKTOP =
-  "대표이사 : 정진웅 | 대표번호 : 1533-4005 | 이메일 : support@talkgate.im";
-const COMPANY_CONTACT_MOBILE = [
-  "대표이사 : 정진웅 | 대표번호 : 1533-4005",
-  "이메일 : support@talkgate.im",
+const COMPANY_INFO_MOBILE = [
+  "주식회사 펫브릿지코어 | 사업자등록번호 : 355-87-03780",
+  "법인등록번호 : 124411-0045975 | 대표이사 : 오진영",
+  "주소 : 경기도 김포시 김포한강11로 288-31, 5층 508-38호(운양동, 에이스프라자)",
 ] as const;
-
-const COMPANY_ADDRESS_LINE =
-  "주소 : 서울특별시 강북구 삼양로173길 223(우이동)";
 
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */
 const SOCIAL_LINKS = [
@@ -81,19 +74,11 @@ export default function FooterSection() {
       {/* ── 모바일 레이아웃 ── */}
       <div className="max-md:flex max-md:flex-col md:hidden lg:hidden px-6 py-8">
         <div className="space-y-1 text-center">
-          {COMPANY_REGISTRATION_MOBILE.map((line) => (
+          {COMPANY_INFO_MOBILE.map((line) => (
             <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
               {line}
             </p>
           ))}
-          {COMPANY_CONTACT_MOBILE.map((line) => (
-            <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
-              {line}
-            </p>
-          ))}
-          <p className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
-            {COMPANY_ADDRESS_LINE}
-          </p>
         </div>
         <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5">
           <p className="text-center text-caption-12-m text-[var(--color-footer-text)]">
@@ -139,15 +124,11 @@ export default function FooterSection() {
               <Image src={logoMono} alt="" width={LOGO_W} height={LOGO_H} className="h-[28px] w-[88px]" />
             </Link>
             <div className="space-y-0.5">
-              <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
-                {COMPANY_REGISTRATION_DESKTOP}
-              </p>
-              <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
-                {COMPANY_CONTACT_DESKTOP}
-              </p>
-              <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
-                {COMPANY_ADDRESS_LINE}
-              </p>
+              {COMPANY_INFO_DESKTOP.map((line) => (
+                <p key={line} className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
+                  {line}
+                </p>
+              ))}
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3 self-center">

@@ -86,7 +86,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "support", label: "고객센터" },
 ];
 
-const SORT_OPTIONS = ["최신순", "평점순", "평점 높은순", "평점 낮은순"] as const;
+const SORT_OPTIONS = ["최신순", "평점 높은순", "평점 낮은순"] as const;
 
 
 const REVIEWS_PER_PAGE = 10;
@@ -441,7 +441,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
   const sortedReviews = useMemo(() => {
     const sorted = [...reviews];
-    if (activeSort === "평점순" || activeSort === "평점 높은순") sorted.sort((a, b) => b.rating - a.rating);
+    if (activeSort === "평점 높은순") sorted.sort((a, b) => b.rating - a.rating);
     else if (activeSort === "평점 낮은순") sorted.sort((a, b) => a.rating - b.rating);
     else sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return sorted;

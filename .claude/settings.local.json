@@ -148,7 +148,8 @@
       "Bash(cat node_modules/@tosspayments/payment-widget-sdk/types/loadPaymentWidget.d.ts)",
       "Bash(ls node_modules/.pnpm/@tosspayments+payment-widget__types@1.1.0_typescript@5.9.3/node_modules/@tosspayments/payment-widget__types/types)",
       "Bash(sed -n 1,120p node_modules/.pnpm/@tosspayments+payment-widget__types@1.1.0_typescript@5.9.3/node_modules/@tosspayments/payment-widget__types/types/PaymentWidget.d.ts)",
-      "Bash(echo \"---EXIT $?---\")"
+      "Bash(echo \"---EXIT $?---\")",
+      "Bash(Copy-Item *)"
     ]
   }
 }

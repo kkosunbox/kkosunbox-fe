@@ -207,7 +207,7 @@ export default function PackagePlansSection() {
                     type="button"
                     disabled={!plan}
                     onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
-                    className="group flex h-[132px] w-full overflow-hidden rounded-2xl border-0 bg-white text-left max-md:shadow-none shadow-sm transition-opacity md:h-[167px] lg:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+                    className="group flex h-[132px] w-full overflow-hidden rounded-2xl border-0 bg-white text-left shadow-none transition-opacity md:h-[167px] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />

@@ -1,3 +1,5 @@
+export type ReviewSortOrder = "LATEST" | "RATING_ASC" | "RATING_DESC";
+
 export interface ReviewResponse {
   id: number;
   planId: number;

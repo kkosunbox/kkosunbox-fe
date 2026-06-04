@@ -10,7 +10,7 @@ export const MEDIA_MAX_SM_SIZES = `(max-width: ${BREAKPOINT_SM_PX - 1}px)`;
 export const BREAKPOINT_MD_PX = 768;
 
 /** Tailwind `md2:` / `max-md2:` — 일부 hero 섹션 전용 커스텀 브레이크포인트 (globals.css `@theme --breakpoint-md2` 와 동기화) */
-export const BREAKPOINT_MD2_PX = 910;
+export const BREAKPOINT_MD2_PX = 950;
 
 export const MEDIA_MD2_MIN = `(min-width: ${BREAKPOINT_MD2_PX}px)`;
 

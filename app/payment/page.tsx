@@ -9,7 +9,7 @@ export default async function PaymentPage({
   searchParams: Promise<{ method?: string }>;
 }) {
   const token = await getServerToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/login?next=/payment");
 
   const { method } = await searchParams;
 

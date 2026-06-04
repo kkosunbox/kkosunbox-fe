@@ -9,7 +9,7 @@ export default async function AddressPage({
   searchParams: Promise<{ selectedId?: string }>;
 }) {
   const token = await getServerToken();
-  if (!token) redirect("/login");
+  if (!token) redirect("/login?next=/address");
 
   const { selectedId: selectedIdStr } = await searchParams;
   const selectedId = selectedIdStr ? Number(selectedIdStr) : null;

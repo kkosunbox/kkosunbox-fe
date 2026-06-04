@@ -328,7 +328,7 @@ export default function SubscribePlansSection({
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
                           onClick={() => setSelectedTier(tier)}
-                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl md:shadow-sm lg:shadow-none"
+                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl shadow-none"
                         >
                           <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">
                             <PackageSummaryThumbnail src={img} alt={pkg.name} />

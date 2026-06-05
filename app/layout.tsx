@@ -71,7 +71,7 @@ export default async function RootLayout({
           <ProfileProvider>
             <LoadingOverlayProvider>
               <ModalProvider>
-                {children}
+                <div className="max-md:pt-[54px]">{children}</div>
                 <ScrollToTopButton />
               </ModalProvider>
             </LoadingOverlayProvider>

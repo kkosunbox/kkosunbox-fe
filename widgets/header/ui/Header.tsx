@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { BREAKPOINT_MD_PX } from "@/shared/config/breakpoints";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -516,6 +517,7 @@ export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
   const hasProfile = hasProfileRecord(profile);
@@ -543,8 +545,15 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < BREAKPOINT_MD_PX);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const isTransparentRoute = pathname === "/" || pathname === "/about";
-  const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered;
+  const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered || isMobile;
   const closeMenu = () => setIsMenuOpen(false);
 
   return (

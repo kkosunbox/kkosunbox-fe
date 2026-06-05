@@ -388,7 +388,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
           </div>
 
           {/* 테이블 헤더 */}
-          <div className="grid h-11 grid-cols-[1fr_178px_184px_167px_178px] items-center rounded-lg bg-[var(--color-surface-light)] px-6">
+          <div className="grid h-11 md:grid-cols-[1fr_120px_130px_110px_110px] lg:grid-cols-[1fr_178px_184px_167px_178px] items-center rounded-lg bg-[var(--color-surface-light)] px-6">
             {["내역", "포인트", "잔여포인트", "적립일", "사용기한"].map((col) => (
               <span key={col} className="text-body-16-m text-[var(--color-text-tertiary)]">{col}</span>
             ))}
@@ -405,7 +405,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
                   return (
                     <li
                       key={item.id}
-                      className="grid grid-cols-[1fr_178px_184px_167px_178px] items-center border-b border-[var(--color-text-muted)] px-6 py-[16px] last:border-b-0"
+                      className="grid md:grid-cols-[1fr_120px_130px_110px_110px] lg:grid-cols-[1fr_178px_184px_167px_178px] items-center border-b border-[var(--color-text-muted)] px-6 py-[16px] last:border-b-0"
                     >
                       <span className="text-body-14-m text-[var(--color-text)]">{item.description}</span>
                       <span className="text-body-14-m font-medium text-[var(--color-text)]">

@@ -307,7 +307,7 @@ export default function ReviewWriteSection({
   if (!isLoggedIn) return null;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white pt-[54px]">
       {/* Hero — "우리 아이의 꼬순박스, 만족하셨나요??" (텍스트 포함 배너) */}
       {/* 모바일(<910px): 전용 이미지 / 데스크톱(≥910px): 와이드 배너, 초광폭은 좌우 보완 */}
       <section aria-label="리뷰 작성 안내">

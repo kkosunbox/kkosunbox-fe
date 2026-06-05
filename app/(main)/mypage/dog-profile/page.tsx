@@ -16,9 +16,11 @@ export default async function DogProfilePage({
   const profile = isNewMode ? null : await fetchProfile(token);
 
   return (
-    <ProfileManagementSection
-      profile={profile}
-      isNewProfile={isNewMode}
-    />
+    <div className="pt-[54px]">
+      <ProfileManagementSection
+        profile={profile}
+        isNewProfile={isNewMode}
+      />
+    </div>
   );
 }

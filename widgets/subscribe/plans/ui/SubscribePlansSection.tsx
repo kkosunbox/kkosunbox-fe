@@ -180,7 +180,7 @@ export default function SubscribePlansSection({
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="flex min-h-full flex-1 flex-col bg-white pb-16 md:pb-20">
+      <section className="flex min-h-full flex-1 flex-col bg-white pt-[54px] pb-16 md:pb-20">
         <div className="flex w-full flex-1 flex-col">
           {/* Hero — 모바일: 전용 이미지 / 데스크톱: 배경 포함 renewal 배너 (118px, 좁은 뷰포트는 가로 중앙) */}
           <ScrollReveal variant="fade-in" duration={600}>

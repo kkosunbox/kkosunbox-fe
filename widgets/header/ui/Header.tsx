@@ -562,7 +562,7 @@ export default function Header() {
       >
         {/* 투명 헤더 전용: 헤더 배경 그라디언트 */}
         <div
-          className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${isSolid ? "opacity-0" : "opacity-100"}`}
+          className={`absolute inset-0 z-[-1] pointer-events-none transition-opacity duration-300 ${isSolid ? "opacity-0" : "opacity-100"}`}
           style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.00) 100%)", backdropFilter: "none" }}
           aria-hidden="true"
         />

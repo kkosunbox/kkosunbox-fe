@@ -26,7 +26,9 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <HeroSection />
+      <div className="max-md:mt-[54px]">
+        <HeroSection />
+      </div>
       <StatsBar />
       <PackagePlansSection />
       <WhyGallerySection />

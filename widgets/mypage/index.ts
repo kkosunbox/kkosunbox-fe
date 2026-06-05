@@ -7,6 +7,7 @@ export { default as SubscriptionChangePlansSection } from "./ui/SubscriptionChan
 export { default as SubscriptionDetailSection } from "./ui/SubscriptionDetailSection";
 export { default as SubscriptionManagementSection } from "./ui/SubscriptionManagementSection";
 export { default as WithdrawConfirmSection } from "./ui/WithdrawConfirmSection";
+export { default as PointHistorySection } from "./ui/PointHistorySection";
 
 export { ProfileSectionLoader } from "./ui/ProfileSectionLoader";
 export { SubscriptionCardLoader } from "./ui/SubscriptionCardLoader";

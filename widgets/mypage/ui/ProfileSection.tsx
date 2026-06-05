@@ -254,6 +254,17 @@ interface ProfileViewModel {
   onOpenProfileSwitch: () => void;
 }
 
+function MyPointButton() {
+  return (
+    <Link
+      href="/mypage/point"
+      className="inline-flex h-6 shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-cta-button)] px-2 text-body-13-m text-white transition-opacity hover:opacity-80"
+    >
+      MY 포인트
+    </Link>
+  );
+}
+
 function ProfileSwitchButton({ onClick }: { onClick: () => void }) {
   return (
     <button
@@ -309,7 +320,7 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
     <div className="relative px-0 pt-7 pb-10 lg:hidden">
       <Link
         href="/mypage/dog-profile"
-        className="absolute top-4 right-6 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+        className="absolute top-[9px] right-6 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
       >
         <span>정보변경</span>
         <ChevronRightIcon />
@@ -329,21 +340,13 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
               {vm.displayName}
             </Text>
             {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
-            {vm.hasProfile && (
-              <Text
-                variant="body-16-m"
-                mobileVariant="body-13-r"
-                className={[breedMetaClass, "max-sm:hidden"].join(" ")}
-              >
-                {vm.breedDisplay}
-              </Text>
-            )}
+            <MyPointButton />
           </div>
 
           {vm.hasProfile ? (
             <>
-              {/* 초소형 2줄: 견종 | 생년월일 */}
-              <div className="hidden max-sm:flex min-w-0 items-center gap-1">
+              {/* 2줄: 품종 | 생일 */}
+              <div className="flex min-w-0 items-center gap-1">
                 <Text variant="body-16-m" mobileVariant="body-13-r" className={breedMetaClass}>
                   {vm.breedDisplay}
                 </Text>
@@ -352,22 +355,8 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
                   {vm.birthEmpty ? "생년월일" : vm.birth}
                 </Text>
               </div>
-              {/* 초소형 3줄: 성별 | 몸무게 */}
-              <div className="hidden max-sm:flex min-w-0 items-center gap-1">
-                <Text variant="body-16-m" mobileVariant="body-13-r" className={genderMetaClass}>
-                  {vm.genderEmpty ? "성별" : vm.gender}
-                </Text>
-                <ProfileMetaDivider />
-                <Text variant="body-16-m" mobileVariant="body-13-r" className={weightMetaClass}>
-                  {vm.weightEmpty ? "몸무게" : vm.weight}
-                </Text>
-              </div>
-              {/* sm 이상 2줄: 생년월일 · 성별 · 몸무게 */}
-              <div className="flex min-w-0 items-center gap-1 max-sm:hidden min-[375px]:gap-3">
-                <Text variant="body-16-m" mobileVariant="body-13-r" className={birthMetaClass}>
-                  {vm.birthEmpty ? "생년월일" : vm.birth}
-                </Text>
-                <ProfileMetaDivider />
+              {/* 3줄: 성별 | 몸무게 */}
+              <div className="flex min-w-0 items-center gap-1">
                 <Text variant="body-16-m" mobileVariant="body-13-r" className={genderMetaClass}>
                   {vm.genderEmpty ? "성별" : vm.gender}
                 </Text>
@@ -379,7 +368,8 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
             </>
           ) : (
             <>
-              <div className="hidden max-sm:flex min-w-0 items-center gap-1 text-[var(--color-text-placeholder)]">
+              {/* 2줄: 견종 | 생년월일 */}
+              <div className="flex min-w-0 items-center gap-1 text-[var(--color-text-placeholder)]">
                 <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
                   견종
                 </Text>
@@ -388,20 +378,8 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
                   생년월일
                 </Text>
               </div>
-              <div className="hidden max-sm:flex min-w-0 items-center gap-1 text-[var(--color-text-placeholder)]">
-                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                  성별
-                </Text>
-                <ProfileMetaDivider />
-                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                  몸무게
-                </Text>
-              </div>
-              <div className="flex min-w-0 items-center gap-3 text-[var(--color-text-placeholder)] max-sm:hidden">
-                <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
-                  생년월일
-                </Text>
-                <ProfileMetaDivider />
+              {/* 3줄: 성별 | 몸무게 */}
+              <div className="flex min-w-0 items-center gap-1 text-[var(--color-text-placeholder)]">
                 <Text variant="body-16-m" mobileVariant="body-13-r" className="leading-[140%]">
                   성별
                 </Text>
@@ -468,6 +446,7 @@ function ProfileSectionDesktop({
                   {vm.displayName}
                 </Text>
                 {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
+                <MyPointButton />
               </div>
               {vm.hasProfile && (
                 <Text

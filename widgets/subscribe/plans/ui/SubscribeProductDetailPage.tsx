@@ -469,7 +469,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   }
 
   return (
-    <section className="flex min-h-full flex-1 flex-col md:pb-16 lg:pb-16">
+    <section className="flex min-h-full flex-1 flex-col pt-[54px] md:pb-16 lg:pb-16">
       {reviewLightbox ? (
         <ReviewImageLightbox
           urls={reviewLightbox.urls}

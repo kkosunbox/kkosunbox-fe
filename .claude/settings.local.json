@@ -151,7 +151,12 @@
       "Bash(echo \"---EXIT $?---\")",
       "Bash(Copy-Item *)",
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Directory)",
-      "Bash(Select-Object -First 20)"
+      "Bash(Select-Object -First 20)",
+      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\about\\\\page.tsx\")",
+      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\subscribe\\\\page.tsx\")",
+      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\support\\\\page.tsx\")",
+      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\mypage\\\\page.tsx\")",
+      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\inquiry\\\\page.tsx\")"
     ]
   }
 }

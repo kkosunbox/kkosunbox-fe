@@ -48,7 +48,7 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 */}
-      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-md:pt-[52px] max-md:pb-9 md:pt-[52px] md:pb-14 max-lg:pt-[52px] max-lg:pb-14 lg:py-0 lg:max-h-[578px]">
+      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-lg:pt-[62px] max-md:pb-9 md:pb-14 max-lg:pb-14 lg:py-0 lg:max-h-[590px]">
         <div className="mx-auto max-w-[var(--max-width-content)] px-6 lg:px-0">
           <h1 className="flex justify-center max-lg:mb-10 lg:hidden">
             <Image
@@ -66,9 +66,9 @@ export default function AboutSection() {
             <ScrollReveal
               variant="slide-right"
               duration={900}
-              className="flex w-full max-w-[520px] flex-1 shrink-0 max-md:max-w-none lg:max-h-[578px] lg:max-w-none lg:min-w-[640px] lg:order-last"
+              className="flex w-full max-w-[520px] flex-1 shrink-0 max-md:max-w-none lg:max-h-[590px] lg:max-w-none lg:min-w-[640px] lg:order-last"
             >
-              <div className="flex w-full justify-center lg:h-[578px] lg:max-h-[578px] lg:items-center lg:justify-end lg:overflow-hidden">
+              <div className="flex w-full justify-center lg:h-[590px] lg:max-h-[590px] lg:items-center lg:justify-end lg:overflow-hidden">
                 <div className="w-full overflow-hidden rounded-2xl lg:overflow-visible lg:rounded-none">
                   <Image
                     src={aboutHeroCollage}

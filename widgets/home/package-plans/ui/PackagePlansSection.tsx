@@ -3,13 +3,11 @@
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { Text, ScrollReveal } from "@/shared/ui";
 import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
-import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import PlanRatingStars from "@/widgets/subscribe/plans/ui/PlanRatingStars";
 import PackageNutritionGuide from "@/widgets/subscribe/plans/ui/PackageNutritionGuide";
-import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import packageExplainWithBasic from "../assets/package-explain-with-basic.png";
@@ -62,7 +60,6 @@ export default function PackagePlansSection() {
 
   const displayTier = selectedTier ?? PACKAGE_SUMMARY_ORDER[rotatingIndex];
   const activePackage = PACKAGE_EXPLAIN_IMAGES.find((img) => img.tier === displayTier) ?? PACKAGE_EXPLAIN_IMAGES[0];
-  const activePkg = PACKAGES.find((packageItem) => packageItem.tier === displayTier);
   const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === displayTier);
 
   useEffect(() => {
@@ -109,66 +106,8 @@ export default function PackagePlansSection() {
 
         <ScrollReveal variant="fade-up" delay={200}>
           <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center max-md:gap-[46px] lg:gap-7">
-            {/* 모바일 — detail 대표 이미지 + 패키지명·설명·상세보기 버튼 분리 */}
-            <div className="w-full max-w-[600px] max-md:block md:hidden lg:hidden">
-              <div className="relative w-full">
-                <div
-                  className="overflow-hidden rounded-[22px]"
-                  style={{ boxShadow: "var(--shadow-card-soft)" }}
-                >
-                  <div className="relative aspect-square w-full bg-[var(--color-surface-warm)]">
-                    <Image
-                      key={activePackage.tier}
-                      src={TIER_DETAIL_HERO_IMAGES[activePackage.tier]}
-                      alt={`${activePkg?.name ?? activePackage.tier} 대표 이미지`}
-                      fill
-                      className="object-cover transition-opacity duration-500"
-                      sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
-                      priority
-                    />
-                  </div>
-                </div>
-                <PackageNutritionGuide
-                  initialTier={displayTier}
-                  bubbleClassName="h-auto w-[100px]"
-                />
-              </div>
-
-              {activePkg ? (
-                <div className="mt-4">
-                  <p
-                    className="text-[17px] font-bold leading-[22px] tracking-[-0.04em]"
-                    style={{ color: activePkg.colorVar }}
-                  >
-                    {activePkg.name}
-                  </p>
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <ul className="min-w-0 flex-1 flex flex-col gap-2">
-                      {activePkg.items.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-2 text-body-13-m leading-[18px] text-[var(--color-text)]"
-                        >
-                          <CheckCircleIcon color={activePkg.colorVar} className="mt-0.5 shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      type="button"
-                      onClick={handleDetailClick}
-                      disabled={!activePlan}
-                      className="flex h-10 w-[108px] shrink-0 flex-row items-center justify-center self-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      제품 상세보기
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
-            {/* 태블릿·데스크탑 — 합성 설명 이미지 + 버튼 오버레이 */}
-            <div className="relative w-full max-w-[600px] max-md:hidden">
+            {/* 합성 설명 이미지 + 버튼 오버레이 */}
+            <div className="relative w-full max-w-[600px]">
               <div
                 className="relative overflow-hidden rounded-[22px] md:rounded-[28px]"
                 style={{ boxShadow: "var(--shadow-card-soft)" }}
@@ -193,7 +132,7 @@ export default function PackagePlansSection() {
               <PackageNutritionGuide initialTier={displayTier} />
             </div>
 
-            <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
+            <div className="max-md:hidden flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
               {PACKAGE_SUMMARY_ORDER.map((tier) => {
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
                 const img = PACKAGE_SUMMARY_IMAGES[tier];

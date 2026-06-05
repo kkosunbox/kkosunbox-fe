@@ -5,5 +5,9 @@ export const metadata = {
 };
 
 export default function AboutPage() {
-  return <AboutSection />;
+  return (
+    <div className="max-md:mt-[54px]">
+      <AboutSection />
+    </div>
+  );
 }

@@ -549,12 +549,6 @@ export default function Header() {
 
   return (
     <>
-      {/* 투명 헤더 전용: 히어로 위 상단 그라데이션 (검정 → 투명, 160px) */}
-      <div
-        className={`fixed inset-x-0 top-0 z-[49] h-[54px] pointer-events-none transition-opacity duration-300 ${isSolid ? "opacity-0" : "opacity-100"}`}
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, 35%, rgba(0,0,0,0) 100%)" }}
-        aria-hidden="true"
-      />
       {/* 흰색 헤더 전용: 하단 그라데이션 separator (검정 → 투명, 24px) */}
       <div
         className={`fixed inset-x-0 z-[49] h-6 pointer-events-none transition-opacity duration-300 ${isSolid ? "opacity-100" : "opacity-0"}`}
@@ -566,6 +560,12 @@ export default function Header() {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* 투명 헤더 전용: 헤더 배경 그라디언트 */}
+        <div
+          className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${isSolid ? "opacity-0" : "opacity-100"}`}
+          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.00) 100%)", backdropFilter: "none" }}
+          aria-hidden="true"
+        />
         <div className="mx-auto flex h-full max-w-content items-center justify-between max-md:px-6 md:px-[20px] lg:px-0">
           <div className="flex items-center gap-3">
             <button

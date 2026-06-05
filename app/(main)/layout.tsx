@@ -15,7 +15,7 @@ export default function MainLayout({
       <Header />
       <ProfileFloatWidget />
       <ChecklistFormModal />
-      <main className="flex flex-1 flex-col pt-[54px]">{children}</main>
+      <main className="flex flex-1 flex-col">{children}</main>
       <FooterSection />
     </div>
   );

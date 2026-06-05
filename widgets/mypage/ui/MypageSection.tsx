@@ -17,7 +17,7 @@ export default function MypageSection({
   inquiryCard,
 }: MypageSectionProps) {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col pt-[54px]">
       {/* 상단 — 크림 배경 */}
       <div className="shrink-0 bg-support-faq-surface">
         {profileSection}

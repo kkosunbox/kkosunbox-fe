@@ -142,7 +142,7 @@ export default function InquiryHistorySection() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className="flex min-h-full flex-1 flex-col pt-[54px]">
       <SupportHero />
       <div className="flex flex-1 flex-col max-md:py-6 md:py-10 lg:py-10">
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>

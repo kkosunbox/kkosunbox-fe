@@ -156,7 +156,11 @@
       "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\subscribe\\\\page.tsx\")",
       "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\support\\\\page.tsx\")",
       "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\mypage\\\\page.tsx\")",
-      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\inquiry\\\\page.tsx\")"
+      "Bash(Get-Content \"C:\\\\2026\\\\ggosoonbox\\\\app\\\\\\(main\\)\\\\inquiry\\\\page.tsx\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Directory -Filter \"mypage\")",
+      "Bash(Select-Object -First 10)",
+      "Bash(not exist *)",
+      "Bash(pnpm eslint *)"
     ]
   }
 }

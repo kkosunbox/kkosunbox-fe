@@ -463,6 +463,7 @@ button:disabled {
 @utility text-title-42-b  { font-size: 42px; line-height: 56px; font-weight: 700; }
 @utility text-title-40-b  { font-size: 40px; line-height: 56px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-title-40-r  { font-size: 40px; line-height: 64px; font-weight: 400; }
+@utility text-title-36-b  { font-size: 36px; line-height: 43px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-title-32-b  { font-size: 32px; line-height: 40px; font-weight: 700; }
 @utility text-title-32-r  { font-size: 32px; line-height: 48px; font-weight: 400; }
 @utility text-title-28-b  { font-size: 28px; line-height: 150%; font-weight: 700; letter-spacing: -0.04em; }

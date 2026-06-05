@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { BREAKPOINT_MD_PX } from "@/shared/config/breakpoints";
+import { BREAKPOINT_LG_PX } from "@/shared/config/breakpoints";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -546,7 +546,7 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < BREAKPOINT_MD_PX);
+    const check = () => setIsMobile(window.innerWidth < BREAKPOINT_LG_PX);
     check();
     window.addEventListener("resize", check, { passive: true });
     return () => window.removeEventListener("resize", check);

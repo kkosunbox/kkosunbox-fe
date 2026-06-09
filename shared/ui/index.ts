@@ -33,4 +33,4 @@ export {
 } from "./profilePetFormStyles";
 export { default as DefaultPetIcon } from "./DefaultPetIcon";
 export { default as CheckCircleIcon } from "./CheckCircleIcon";
-export { default as ScrollToTopButton } from "./ScrollToTopButton";
+export { ChannelTalkProvider } from "./ChannelTalkProvider";

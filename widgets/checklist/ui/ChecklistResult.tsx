@@ -315,7 +315,7 @@ export default function ChecklistResult({
   };
 
   return (
-    <section className="relative bg-white max-md:pt-[54px] max-md:pb-9 md:pt-[54px] md:pb-[64px] lg:pt-[54px] lg:pb-[64px]">
+    <section className="relative bg-white max-md:pt-[54px] max-md:pb-9 md:pt-[98px] md:pb-[64px] lg:pt-[98px] lg:pb-[64px]">
       {/* 데스크탑·태블릿 상단 웜 배경 밴드 */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[200px] max-md:hidden"
@@ -339,14 +339,22 @@ export default function ChecklistResult({
             <span className="text-emoji-28">🐶</span>
           )}
         </div>
-        <p className="text-body-14-m-griun leading-[1.5] tracking-[-0.02em] text-[var(--color-text)]">
-          체크리스트 분석 완료!{" "}
-          <strong className="text-subtitle-18-sb">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
-          <strong className="text-body-14-sb" style={{ color: tierColorVar }}>
-            {tierLabel} 패키지
-          </strong>
-          입니다.
-        </p>
+        <div className="flex flex-col gap-[3px]">
+          <span
+            className="inline-flex h-5 w-fit items-center rounded-full px-3 text-[12px] font-semibold leading-[14px] text-white"
+            style={{ background: tierColorVar }}
+          >
+            {tierLabel}
+          </span>
+          <p className="text-body-14-m-griun leading-[1.5] tracking-[-0.02em] text-[var(--color-text)]">
+            체크리스트 분석 완료!{" "}
+            <strong className="text-subtitle-18-sb">{petName}</strong>에게 꼭 필요한 영양만 꽉 채운{" "}
+            <strong className="text-body-14-sb" style={{ color: tierColorVar }}>
+              {tierLabel} 패키지
+            </strong>
+            입니다.
+          </p>
+        </div>
       </div>
 
       <div className="relative mx-auto w-full max-md:px-6 md:max-w-[680px] md:px-0 lg:max-w-[1013px] lg:px-0">
@@ -361,7 +369,7 @@ export default function ChecklistResult({
         />
 
         {/* 데스크탑·태블릿: 흰색 추천 카드 */}
-        <div className="relative mb-14 rounded-[20px] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] max-md:hidden">
+        <div className="relative mb-8 rounded-[20px] bg-white shadow-[0px_8px_24px_rgba(0,0,0,0.12)] max-md:hidden">
           <CardBody
             {...sharedCardProps}
             onDetailClick={navigateToDetail}

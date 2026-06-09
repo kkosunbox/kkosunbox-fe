@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { PointBalance, PointLedgerItem } from "@/features/point/api/types";
 import type { MyReferralCode } from "@/features/referral/api/types";
+import { useModal } from "@/shared/ui";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -118,6 +119,7 @@ function Pagination({
 /* ── 초대링크 행 ────────────────────────────────────────────────────── */
 function ReferralLinkRow({ referralCode }: { referralCode: MyReferralCode | null }) {
   const [copied, setCopied] = useState(false);
+  const { openAlert } = useModal();
 
   if (!referralCode) return null;
 
@@ -125,6 +127,11 @@ function ReferralLinkRow({ referralCode }: { referralCode: MyReferralCode | null
     navigator.clipboard.writeText(referralCode!.referralLink).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      openAlert({
+        type: "success",
+        title: "초대 링크가 복사되었습니다.",
+        description: "공유한 친구가 가입을 완료하면\n포인트가 즉시 지급됩니다.",
+      });
     });
   }
 
@@ -132,9 +139,14 @@ function ReferralLinkRow({ referralCode }: { referralCode: MyReferralCode | null
     <div className="flex items-center gap-3">
       <span className="shrink-0 text-body-13-m text-[var(--color-text)]">초대링크</span>
       <div className="flex min-w-0 flex-1 items-center gap-3 rounded bg-[var(--color-surface-light)] px-3 h-10">
-        <span className="min-w-0 flex-1 truncate text-body-13-m text-[var(--color-text)]">
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label="초대링크 복사"
+          className="min-w-0 flex-1 truncate text-left text-body-13-m text-[var(--color-text)]"
+        >
           {referralCode.referralLink}
-        </span>
+        </button>
         <button
           type="button"
           aria-label="초대링크 복사"

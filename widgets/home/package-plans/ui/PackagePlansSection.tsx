@@ -20,7 +20,6 @@ import packageImageStandard from "../assets/package-image-standard.png";
 import { PackageSummaryThumbnail } from "./PackageSummaryThumbnail";
 import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 
-const ROTATION_INTERVAL_MS = 8000;
 
 const PACKAGE_EXPLAIN_IMAGES: Array<{
   tier: PackageTier;
@@ -54,23 +53,14 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 
 export default function PackagePlansSection() {
   const router = useRouter();
-  const [selectedTier, setSelectedTier] = useState<PackageTier | null>(null);
-  const [rotatingIndex, setRotatingIndex] = useState(0);
+  const [selectedTier, setSelectedTier] = useState<PackageTier>(PACKAGE_SUMMARY_ORDER[0]);
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const planRatings = usePlanRatings(apiPlans.map((plan) => plan.id));
 
-  const displayTier = selectedTier ?? PACKAGE_SUMMARY_ORDER[rotatingIndex];
+  const displayTier = selectedTier;
   const activePackage = PACKAGE_EXPLAIN_IMAGES.find((img) => img.tier === displayTier) ?? PACKAGE_EXPLAIN_IMAGES[0];
   const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === displayTier);
   const activePkg = PACKAGES.find((pkg) => pkg.tier === displayTier);
-
-  useEffect(() => {
-    if (selectedTier !== null) return;
-    const intervalId = window.setInterval(() => {
-      setRotatingIndex((i) => (i + 1) % PACKAGE_SUMMARY_ORDER.length);
-    }, ROTATION_INTERVAL_MS);
-    return () => window.clearInterval(intervalId);
-  }, [selectedTier]);
 
   useEffect(() => {
     getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
@@ -213,22 +203,23 @@ export default function PackagePlansSection() {
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const plan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
-                const isSelected = selectedTier !== null && selectedTier === tier;
-                const isUnselected = selectedTier !== null && !isSelected;
+                const isSelected = selectedTier === tier;
 
                 return (
                   <button
                     key={tier}
                     type="button"
                     disabled={!plan}
-                    onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
-                    className="group flex h-[132px] w-full overflow-hidden rounded-2xl border-0 bg-white text-left shadow-none transition-opacity md:h-[167px] disabled:cursor-not-allowed disabled:opacity-60"
+                    onClick={() => setSelectedTier(tier)}
+                    className="group flex h-[132px] w-full rounded-2xl border-0 bg-white text-left shadow-none transition-opacity md:h-[167px] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]">
+                    <div
+                      className={[
+                        "relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]",
+                        isSelected ? "outline outline-2 outline-[var(--color-cta-button)]" : "",
+                      ].join(" ")}
+                    >
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />
-                      {isUnselected && (
-                        <div className="absolute inset-0 z-10 rounded-2xl bg-white/40" />
-                      )}
                     </div>
                     <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
                       <p
@@ -236,9 +227,7 @@ export default function PackagePlansSection() {
                           "mb-[14px] truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
                           isSelected
                             ? "font-bold text-[var(--color-text-emphasis)]"
-                            : isUnselected
-                              ? "font-semibold text-[var(--color-text-label)]"
-                              : "font-semibold text-[var(--color-text-emphasis)]",
+                            : "font-semibold text-[var(--color-text-emphasis)]",
                         ].join(" ")}
                       >
                         {plan?.name || pkg.name}

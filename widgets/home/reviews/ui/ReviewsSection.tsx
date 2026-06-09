@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import reviewsBg from "../assets/reviews-bg.png";
 import reviewsTitle from "../assets/reviews-title-new.svg";
 import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
@@ -267,10 +268,10 @@ export default function ReviewsSection() {
     }
     const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
     if (hasChecklist) {
-      router.push("/subscribe");
+      router.push("/checklist/result");
       return;
     }
-    router.push("/checklist");
+    openChecklistForm();
   }
 
   return (

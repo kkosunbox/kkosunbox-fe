@@ -160,7 +160,16 @@
       "Bash(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\" -Recurse -Directory -Filter \"mypage\")",
       "Bash(Select-Object -First 10)",
       "Bash(not exist *)",
-      "Bash(pnpm eslint *)"
+      "Bash(pnpm eslint *)",
+      "Bash(Get-ChildItem -Path . -Directory)",
+      "WebFetch(domain:developers.channel.io)",
+      "WebFetch(domain:velog.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:channel.io)",
+      "WebFetch(domain:docs.channel.io)",
+      "Bash(New-Item *)",
+      "Bash(Get-ChildItem -Path \"app/api\" -Recurse)",
+      "Bash(Select-Object FullName)"
     ]
   }
 }

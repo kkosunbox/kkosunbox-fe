@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { deleteProfile } from "@/features/profile/api/profileApi";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { MAX_PROFILE_COUNT, type Profile } from "@/features/profile/api/types";
@@ -122,7 +121,6 @@ function AddProfileItem({ onClick }: { onClick: () => void }) {
 
 export default function ProfileSwitchModal({ onClose }: Props) {
   const { profiles, profile, setActiveProfileId, refreshProfile } = useProfile();
-  const router = useRouter();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [selectedId, setSelectedId] = useState<number>(profile?.id ?? profiles[0]?.id ?? 0);
@@ -141,7 +139,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   const handleAddProfile = () => {
     if (!canAddProfile) return;
     onClose();
-    router.push("/mypage/dog-profile?new=true");
+    window.dispatchEvent(new CustomEvent("ggosoon:show-profile-widget", { detail: { isNew: true } }));
   };
 
   const handleDeleteProfile = (pet: Profile) => {

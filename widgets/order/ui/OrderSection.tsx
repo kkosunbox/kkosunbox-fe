@@ -750,13 +750,9 @@ export default function OrderSection({
                 label={method}
               />
             ))}
-            {/* 등록된 카드 정보 표시 — 클릭 시 카드 변경 팝업 */}
+            {/* 등록된 카드 정보 표시 + 카드 변경 버튼 */}
             {paymentMethod === "신용카드" && billing && (
-              <button
-                type="button"
-                onClick={() => openPaymentPopup(paymentMethod)}
-                className="flex items-center gap-3 text-left hover:opacity-70 transition-opacity"
-              >
+              <div className="flex items-center gap-3">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
                   <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
                   <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
@@ -768,7 +764,14 @@ export default function OrderSection({
                   <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
                   <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => openPaymentPopup(paymentMethod)}
+                  className="flex items-center justify-center px-2 py-1 h-6 rounded bg-[var(--color-text)] text-white text-[13px] font-medium leading-4 shrink-0 ml-auto"
+                >
+                  카드 변경
+                </button>
+              </div>
             )}
           </div>
 
@@ -994,7 +997,7 @@ export default function OrderSection({
   );
 
   return (
-    <div className="pt-[54px]">
+    <div className="pt-[var(--header-offset)]">
       <Script
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
         strategy="afterInteractive"

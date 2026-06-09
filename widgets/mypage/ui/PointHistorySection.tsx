@@ -283,7 +283,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
   ];
 
   return (
-    <div className="min-h-screen bg-white pt-[54px]">
+    <div className="min-h-screen bg-white pt-[var(--header-offset)]">
 
       {/* ━━━━━━━━ 모바일 ━━━━━━━━ */}
       <div className="md:hidden">

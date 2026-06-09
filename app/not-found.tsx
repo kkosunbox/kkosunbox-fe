@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main className="pt-[54px]">
+      <main className="pt-[var(--header-offset)]">
         <NotFoundSection />
       </main>
     </>

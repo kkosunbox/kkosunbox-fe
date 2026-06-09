@@ -135,7 +135,7 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative flex min-h-screen flex-col bg-white max-lg:min-h-dvh max-lg:min-h-lvh max-lg:bg-[var(--color-login-mobile-chrome)] lg:pt-[54px]"
+      className="relative flex min-h-screen flex-col bg-white max-lg:min-h-dvh max-lg:min-h-lvh max-lg:bg-[var(--color-login-mobile-chrome)] lg:pt-[var(--header-offset)]"
     >
 
       {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}

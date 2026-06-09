@@ -307,7 +307,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] pt-[54px]">
+    <div className="min-h-screen bg-[var(--color-background)] pt-[var(--header-offset)]">
 
       {/* ━━━━━━━━ 모바일 레이아웃 ━━━━━━━━ */}
       <div className="md:hidden lg:hidden pb-12">

@@ -498,7 +498,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   }
 
   return (
-    <div className="relative min-h-screen bg-white pt-[54px]">
+    <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* Upper solid color band — mobile 367px / desktop 258px */}
       <div className="absolute left-0 right-0 top-0 max-md:h-[296px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 

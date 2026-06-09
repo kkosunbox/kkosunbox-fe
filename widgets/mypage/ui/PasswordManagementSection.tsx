@@ -148,7 +148,7 @@ export default function PasswordManagementSection() {
   }
 
   const desktopLayout = (
-    <div className="max-md:hidden min-h-screen bg-[var(--color-background)] px-6 pb-16 pt-[84px]">
+    <div className="max-md:hidden min-h-screen bg-[var(--color-background)] px-6 pb-16 pt-[calc(var(--header-offset)+30px)]">
       <div className="mx-auto w-full max-w-[1014px]">
         <div className="rounded-[20px] bg-white px-[28px] pb-[34px] pt-[24px] shadow-[0_8px_30px_rgba(185,148,116,0.08)]">
           <div className="mb-4 flex items-center gap-1 text-[var(--color-text)]">

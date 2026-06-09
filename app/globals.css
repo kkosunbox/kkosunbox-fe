@@ -70,6 +70,11 @@
 }
 
 :root {
+  /* Layout heights — 배너/헤더 높이 한 곳에서 관리. 배너 제거 시 --banner-height: 0px 으로만 변경 */
+  --header-height: 54px;
+  --banner-height: 30px;
+  --header-offset: calc(var(--header-height) + var(--banner-height));
+
   /* Brand */
   --color-primary: #C97A3D;       /* Corgi Brown — 로고, 브랜드 아이콘, 메인 버튼 */
   --color-secondary: #F6E9DD;     /* Warm Beige — 카드, 섹션 배경, 패키지 디자인 */
@@ -193,6 +198,8 @@
   --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 리뷰 많은' 텍스트 */
   --color-badge-best-bg: #DFEEF7;       /* 상품 뱃지 'BEST' 배경 */
   --color-cta-button: #EC7700;          /* WhyChoose CTA 버튼 (진한 오렌지) */
+  --color-banner-bg: #F89602;           /* 띠 배너 배경 (그랜드 오픈) */
+  --color-banner-badge-bg: #B65B15;     /* 띠 배너 OPEN 뱃지 배경 */
   --color-profile-modal-subtitle: rgba(255, 255, 255, 0.7); /* 프로필 작성 모달 헤더 부제 */
   --color-gallery-cta-peach: #FFE2C8;   /* Gallery CTA 카드 A 배경 (피치) */
   --color-gallery-peach-soft: #FFD6B0;  /* WhyGallery upper 단색 타일 */
@@ -266,6 +273,11 @@
   --breakpoint-xl: 90rem;      /* 1440px — 와이드 데스크탑 시작 */
 }
 
+/* 모바일(<768px)에서 배너 높이 오버라이드 — 여기 한 줄만 바꾸면 전체 오프셋이 자동 갱신 */
+@media (max-width: 47.9375rem) {
+  :root { --banner-height: 34px; }
+}
+
 /*
  * 태블릿 콘텐츠 너비 — 768px에서도 적절한 여백을 확보하기 위해
  * 데스크탑 값(1012/940/1140px)보다 좁은 값으로 오버라이드.
@@ -311,6 +323,8 @@
   --color-badge-warm-text: var(--color-badge-warm-text);
   --color-badge-best-bg: var(--color-badge-best-bg);
   --color-cta-button: var(--color-cta-button);
+  --color-banner-bg: var(--color-banner-bg);
+  --color-banner-badge-bg: var(--color-banner-badge-bg);
   --color-profile-modal-subtitle: var(--color-profile-modal-subtitle);
   --color-profile-gender-selected-bg: var(--color-profile-gender-selected-bg);
   --color-gallery-cta-peach: var(--color-gallery-cta-peach);

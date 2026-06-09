@@ -257,7 +257,7 @@ export default function SupportSection({
   };
 
   return (
-    <div className={fillViewport ? "flex min-h-full flex-1 flex-col pt-[54px]" : "bg-white pt-[54px]"}>
+    <div className={fillViewport ? "flex min-h-full flex-1 flex-col pt-[var(--header-offset)]" : "bg-white pt-[var(--header-offset)]"}>
       {showBanner && <SupportHero />}
       <div className={`max-md:py-6 md:py-10 lg:py-10${fillViewport ? " flex flex-1 flex-col" : ""}`}>
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>

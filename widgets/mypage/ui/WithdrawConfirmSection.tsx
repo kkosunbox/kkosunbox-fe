@@ -384,7 +384,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white pt-[54px]">
+    <div className="flex min-h-0 flex-1 flex-col bg-white pt-[var(--header-offset)]">
       {desktopLayout}
       {mobileLayout}
     </div>

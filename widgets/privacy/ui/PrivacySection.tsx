@@ -70,7 +70,7 @@ const PRIVACY_SECTIONS = [
 
 export default function PrivacySection() {
   return (
-    <section className="bg-white pt-[54px]">
+    <section className="bg-white pt-[var(--header-offset)]">
       <div className="mx-auto max-w-content py-14 max-lg:px-6 lg:px-0 max-md:py-10">
         <Image
           src={privacyTitle}

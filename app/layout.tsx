@@ -4,7 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
 import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
-import { ModalProvider, LoadingOverlayProvider, ScrollToTopButton } from "@/shared/ui";
+import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider } from "@/shared/ui";
 
 const msMadi = Ms_Madi({
   weight: "400",
@@ -71,8 +71,8 @@ export default async function RootLayout({
           <ProfileProvider>
             <LoadingOverlayProvider>
               <ModalProvider>
+                <ChannelTalkProvider />
                 {children}
-                <ScrollToTopButton />
               </ModalProvider>
             </LoadingOverlayProvider>
           </ProfileProvider>

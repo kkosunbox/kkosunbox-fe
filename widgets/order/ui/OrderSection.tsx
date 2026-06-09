@@ -2,7 +2,6 @@
 
 import { Fragment, useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
@@ -725,6 +724,7 @@ export default function OrderSection({
                 onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
                 className={`${inputCls} md:max-w-[220px]`}
                 placeholder="배송 시 요청사항을 입력해주세요"
+                maxLength={50}
               />
             </FormRow>
           </div>
@@ -737,8 +737,8 @@ export default function OrderSection({
         onToggle={() => toggleSection("payment")}
       >
         <div className="flex flex-col gap-4">
-          {/* 결제 수단 라디오 — 현재 신용카드만 지원 */}
-          <div className="flex items-center gap-8 flex-wrap">
+          {/* 결제 수단 라디오 + 카드 정보 — 같은 행 */}
+          <div className="flex items-center gap-4 flex-wrap">
             {["신용카드" /* TODO: "카카오페이", "무통장입금", "계좌이체" — 추후 지원 예정 */].map((method) => (
               <RadioButton
                 key={method}
@@ -750,31 +750,30 @@ export default function OrderSection({
                 label={method}
               />
             ))}
+            {/* 등록된 카드 정보 표시 — 클릭 시 카드 변경 팝업 */}
+            {paymentMethod === "신용카드" && billing && (
+              <button
+                type="button"
+                onClick={() => openPaymentPopup(paymentMethod)}
+                className="flex items-center gap-3 text-left hover:opacity-70 transition-opacity"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
+                  <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
+                </svg>
+                <span className="text-body-13-m text-[var(--color-text)]">
+                  {billing.cardCompany} **** {billing.lastFourDigits}
+                </span>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                  <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
+                  <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
           </div>
 
-          {/* 등록된 카드 정보 표시 — 클릭 시 카드 변경 팝업 */}
-          {paymentMethod === "신용카드" && billing && (
-            <button
-              type="button"
-              onClick={() => openPaymentPopup(paymentMethod)}
-              className="flex items-center gap-3 border-t border-[var(--color-border-light)] pt-4 w-full text-left hover:opacity-70 transition-opacity"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
-                <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
-              </svg>
-              <span className="text-body-13-m text-[var(--color-text)]">
-                {billing.cardCompany} **** {billing.lastFourDigits}
-              </span>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
-                <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          )}
-
           {/* 쿠폰 사용 */}
-          <div className="flex flex-col gap-3 border-t border-[var(--color-border-light)] pt-4">
+          <div className="flex flex-col gap-3 pt-4">
             <Checkbox
               checked={couponEnabled}
               onChange={() => {
@@ -937,10 +936,7 @@ export default function OrderSection({
         </div>
       </SectionCard>
 
-      <Link
-        href="/checklist"
-        className="block overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]"
-      >
+      <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
         <Image
           src="/images/sidebar-banner-001.png"
           alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
@@ -948,7 +944,7 @@ export default function OrderSection({
           height={126}
           className="h-auto w-full"
         />
-      </Link>
+      </div>
     </div>
   );
 

@@ -283,6 +283,7 @@ export default function AddressFormView({
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             placeholder="배송 시 요청사항을 입력해주세요"
+            maxLength={50}
             className={INPUT_CLS}
           />
         </div>

@@ -323,8 +323,6 @@ export default function SubscribePlansSection({
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
                       const isSelected = selectedTier !== null && selectedTier === tier;
                       const showSelectionState = showSelectedCardHighlight;
-                      // 명시적으로 다른 카드가 선택된 경우에만 dimmed 처리 (미선택 상태는 모두 중립)
-                      const isUnselected = showSelectionState && selectedTier !== null && !isSelected;
 
                       if (!plan) return null;
 
@@ -336,16 +334,15 @@ export default function SubscribePlansSection({
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
                           onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
-                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] md:overflow-hidden md:rounded-2xl shadow-none"
+                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] shadow-none"
                         >
-                          <div className="relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]">
+                          <div
+                            className={[
+                              "relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]",
+                              isSelected ? "outline outline-2 outline-[var(--color-cta-button)]" : "",
+                            ].join(" ")}
+                          >
                             <PackageSummaryThumbnail src={img} alt={pkg.name} />
-                            {isUnselected ? (
-                              <div
-                                className="pointer-events-none absolute inset-0 z-[1] bg-white/40"
-                                aria-hidden
-                              />
-                            ) : null}
                             {isPlanCurrent ? (
                               <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
                                 <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
@@ -360,9 +357,7 @@ export default function SubscribePlansSection({
                                 "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
                                 showSelectionState && isSelected
                                   ? "font-bold text-[var(--color-text-emphasis)]"
-                                  : showSelectionState && isUnselected
-                                    ? "font-semibold text-[var(--color-text-label)]"
-                                    : "font-semibold text-[var(--color-text-emphasis)]",
+                                  : "font-semibold text-[var(--color-text-emphasis)]",
                               ].join(" ")}
                             >
                               {plan.name || pkg.name}

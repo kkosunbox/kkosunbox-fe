@@ -83,6 +83,7 @@ export default function ProfileFloatWidget() {
 
   const [visible, setVisible] = useState(false);
   const [forceVisible, setForceVisible] = useState(false);
+  const [isNewMode, setIsNewMode] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [dogName, setDogName] = useState("");
@@ -129,7 +130,19 @@ export default function ProfileFloatWidget() {
   }, [isLoggedIn, isAuthLoading, isProfilesReady, profiles, profile]);
 
   useEffect(() => {
-    const handler = () => setForceVisible(true);
+    const handler = (e: Event) => {
+      const isNew = (e as CustomEvent<{ isNew?: boolean }>).detail?.isNew ?? false;
+      if (isNew) {
+        setIsNewMode(true);
+        setDogName("");
+        setBreed("");
+        setWeight("");
+        setBirthDate(null);
+        setGender(null);
+        setNote("");
+      }
+      setForceVisible(true);
+    };
     window.addEventListener("ggosoon:show-profile-widget", handler);
     return () => window.removeEventListener("ggosoon:show-profile-widget", handler);
   }, []);
@@ -150,6 +163,7 @@ export default function ProfileFloatWidget() {
     dismissToday();
     setVisible(false);
     setForceVisible(false);
+    setIsNewMode(false);
   }
 
   async function handleSubmit() {
@@ -170,7 +184,7 @@ export default function ProfileFloatWidget() {
         weight: weight ? parseFloat(weight) : undefined,
         specialNotes: note || undefined,
       };
-      if (profile) {
+      if (profile && !isNewMode) {
         await updateProfile(profile.id, body);
       } else {
         await createProfile(body);
@@ -178,6 +192,7 @@ export default function ProfileFloatWidget() {
       await refreshProfile();
       setVisible(false);
       setForceVisible(false);
+      setIsNewMode(false);
       window.dispatchEvent(new CustomEvent("ggosoon:open-checklist-form"));
     } catch {
       window.dispatchEvent(new CustomEvent("ggosoon:open-checklist-form"));
@@ -186,7 +201,7 @@ export default function ProfileFloatWidget() {
     }
   }
 
-  if (pathname !== "/") return null;
+  if (!forceVisible && pathname !== "/") return null;
   if (!isOpen) return null;
 
   return (

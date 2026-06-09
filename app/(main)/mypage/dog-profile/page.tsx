@@ -16,7 +16,7 @@ export default async function DogProfilePage({
   const profile = isNewMode ? null : await fetchProfile(token);
 
   return (
-    <div className="pt-[54px]">
+    <div className="pt-[var(--header-offset)]">
       <ProfileManagementSection
         profile={profile}
         isNewProfile={isNewMode}

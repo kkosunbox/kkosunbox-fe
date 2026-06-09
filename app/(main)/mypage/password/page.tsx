@@ -4,7 +4,7 @@ export const metadata = { title: "비밀번호 변경 | 꼬순박스" };
 
 export default function PasswordPage() {
   return (
-    <div className="pt-[54px]">
+    <div className="pt-[var(--header-offset)]">
       <PasswordManagementSection />
     </div>
   );

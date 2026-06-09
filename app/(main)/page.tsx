@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <div className="max-lg:mt-[54px]">
+      <div className="max-lg:mt-[var(--header-offset)]">
         <HeroSection />
       </div>
       <StatsBar />

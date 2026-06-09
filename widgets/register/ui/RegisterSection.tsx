@@ -296,7 +296,7 @@ export default function RegisterSection() {
         onConfirm={() => setAgreements((prev) => ({ ...prev, [termsModal]: true }))}
       />
     )}
-    <div className="min-h-screen bg-white pt-[54px]">
+    <div className="min-h-screen bg-white pt-[var(--header-offset)]">
       <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 lg:px-6 md:py-[96px] lg:py-[96px]">
 
         {/* 타이틀 */}

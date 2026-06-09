@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import heroThirdBg from "../assets/hero-main-background-third-ver.png";
 import heroThirdHeading from "../assets/hero-catch-phrase-third-web.svg";
 import heroThirdMobileBg from "../assets/hero-main-background-third-mobile-expanded.png";
@@ -93,7 +94,7 @@ const slides: HeroSlide[] = [
 
 export default function HeroSection() {
   const { isLoggedIn } = useAuth();
-  const { profile, profiles } = useProfile();
+  const { profile } = useProfile();
   const router = useRouter();
   const [current, setCurrent] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -124,7 +125,9 @@ export default function HeroSection() {
   }, [startTimer]);
 
   function handlePointerDown(e: React.PointerEvent) {
-    dragRef.current = { startX: e.clientX, isDrag: false };
+    dragRef.current.isDrag = false;
+    if ((e.target as Element).closest("button, a")) return;
+    dragRef.current.startX = e.clientX;
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
   }
 
@@ -150,16 +153,16 @@ export default function HeroSection() {
   }
 
   function handleCta() {
-    if (isLoggedIn && profiles.length > 0) {
-      const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
-      if (hasChecklist) {
-        router.push("/checklist/result");
-      } else {
-        window.dispatchEvent(new CustomEvent("ggosoon:open-checklist-form"));
-      }
+    if (!isLoggedIn) {
+      router.push("/login?next=/checklist");
       return;
     }
-    window.dispatchEvent(new CustomEvent("ggosoon:show-profile-widget"));
+    const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
+    if (hasChecklist) {
+      router.push("/checklist/result");
+      return;
+    }
+    openChecklistForm();
   }
 
   return (

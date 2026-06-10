@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { PointBalance, PointLedgerItem } from "@/features/point/api/types";
 import type { MyReferralCode } from "@/features/referral/api/types";
@@ -66,6 +66,135 @@ function ChevronIcon({ dir }: { dir: "left" | "right" }) {
   );
 }
 
+function CalendarIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M6.66667 5.83333V2.5M13.3333 5.83333V2.5M5.83333 9.16667H14.1667M4.16667 17.5H15.8333C16.7538 17.5 17.5 16.7538 17.5 15.8333V5.83333C17.5 4.91286 16.7538 4.16667 15.8333 4.16667H4.16667C3.24619 4.16667 2.5 4.91286 2.5 5.83333V15.8333C2.5 16.7538 3.24619 17.5 4.16667 17.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+type PickerView = "month" | "year";
+
+function PickerChevronIcon({ dir }: { dir: "up" | "down" }) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      {dir === "down" ? (
+        <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      ) : (
+        <path d="M2.5 7.5L6 4l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      )}
+    </svg>
+  );
+}
+
+function buildYearRange(anchorYear: number): number[] {
+  const end = Math.max(anchorYear, new Date().getFullYear());
+  const start = end - 10;
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+/* ── 년/월 picker (말풍선) ─────────────────────────────────────────── */
+function YearMonthPicker({
+  year,
+  month,
+  tailLeft,
+  onSelect,
+}: {
+  year: number;
+  month: number;
+  tailLeft: number;
+  onSelect: (y: number, m: number) => void;
+}) {
+  const [pickerYear, setPickerYear] = useState(year);
+  const [view, setView] = useState<PickerView>("month");
+
+  useEffect(() => {
+    setPickerYear(year);
+    setView("month");
+  }, [year]);
+
+  const years = buildYearRange(pickerYear);
+
+  return (
+    <div
+      className="absolute left-0 top-[calc(100%+10px)] z-50 w-[280px]"
+      role="dialog"
+      aria-label="년월 선택"
+    >
+      {/* 말풍선 꼬리 */}
+      <div
+        className="pointer-events-none absolute -top-[6px] h-3 w-3 rotate-45 bg-white"
+        style={{ left: tailLeft, boxShadow: "-2px -2px 4px rgba(0,0,0,0.04)" }}
+        aria-hidden="true"
+      />
+      <div className="relative rounded-[20px] bg-white px-6 py-5 shadow-[0px_8px_24px_rgba(0,0,0,0.12)]">
+        <div className="mb-5 flex items-center gap-4">
+          <span className="text-body-16-b tracking-[-0.04em] text-[var(--color-text)]">
+            {String(month).padStart(2, "0")}월
+          </span>
+          <button
+            type="button"
+            onClick={() => setView((v) => (v === "year" ? "month" : "year"))}
+            className="flex items-center gap-1 text-body-16-b tracking-[-0.04em] text-[var(--color-text)] transition-opacity hover:opacity-70"
+            aria-expanded={view === "year"}
+          >
+            {pickerYear}
+            <PickerChevronIcon dir={view === "year" ? "up" : "down"} />
+          </button>
+        </div>
+
+        {view === "month" ? (
+          <div className="grid grid-cols-4 gap-x-2 gap-y-4">
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => onSelect(pickerYear, m)}
+                className={[
+                  "py-1 text-center text-body-14-m tracking-[-0.04em] transition-colors",
+                  pickerYear === year && m === month
+                    ? "font-semibold text-[var(--color-text)]"
+                    : "text-[var(--color-text)] hover:text-[var(--color-text-secondary)]",
+                ].join(" ")}
+              >
+                {m}월
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-4 gap-x-2 gap-y-4">
+            {years.map((y) => (
+              <button
+                key={y}
+                type="button"
+                onClick={() => {
+                  setPickerYear(y);
+                  setView("month");
+                }}
+                className={[
+                  "py-1 text-center text-body-14-m tracking-[-0.04em] transition-colors",
+                  y === pickerYear
+                    ? "font-semibold text-[var(--color-text)]"
+                    : "text-[var(--color-text)] hover:text-[var(--color-text-secondary)]",
+                ].join(" ")}
+              >
+                {y}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ── 페이지네이션 ──────────────────────────────────────────────────── */
 function Pagination({
   page,
@@ -117,7 +246,13 @@ function Pagination({
 }
 
 /* ── 초대링크 행 ────────────────────────────────────────────────────── */
-function ReferralLinkRow({ referralCode }: { referralCode: MyReferralCode | null }) {
+function ReferralLinkRow({
+  referralCode,
+  desktop = false,
+}: {
+  referralCode: MyReferralCode | null;
+  desktop?: boolean;
+}) {
   const [copied, setCopied] = useState(false);
   const { openAlert } = useModal();
 
@@ -136,14 +271,19 @@ function ReferralLinkRow({ referralCode }: { referralCode: MyReferralCode | null
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="shrink-0 text-body-13-m text-[var(--color-text)]">초대링크</span>
-      <div className="flex min-w-0 flex-1 items-center gap-3 rounded bg-[var(--color-surface-light)] px-3 h-10">
+    <div className={["flex items-center gap-3", desktop ? "w-[271px]" : ""].join(" ")}>
+      <span className="w-[46px] shrink-0 text-body-13-m leading-4 text-[var(--color-text)]">초대링크</span>
+      <div
+        className={[
+          "flex h-10 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3",
+          desktop ? "w-[213px] shrink-0" : "min-w-0 flex-1",
+        ].join(" ")}
+      >
         <button
           type="button"
           onClick={handleCopy}
           aria-label="초대링크 복사"
-          className="min-w-0 flex-1 truncate text-left text-body-13-m text-[var(--color-text)]"
+          className="min-w-0 flex-1 truncate text-left text-body-13-m leading-[18px] text-[var(--color-text)]"
         >
           {referralCode.referralLink}
         </button>
@@ -163,29 +303,159 @@ function ReferralLinkRow({ referralCode }: { referralCode: MyReferralCode | null
 /* ── 잔액 카드 ─────────────────────────────────────────────────────── */
 interface BalanceCardProps {
   mobile: boolean;
-  balanceValue: number;
-  expiringText: string;
+  monthlyEarned: number;
+  cumulativePoint: number;
   referralCode: MyReferralCode | null;
+  selectedYear: number;
+  selectedMonth: number;
+  showPicker: boolean;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+  onPickerOpen: () => void;
+  onPickerClose: () => void;
+  onMonthSelect: (year: number, month: number) => void;
 }
 
-function BalanceCard({ mobile, balanceValue, expiringText, referralCode }: BalanceCardProps) {
+function MonthBanner({
+  selectedMonth,
+  showPicker,
+  selectedYear,
+  bannerPadding,
+  onPrevMonth,
+  onNextMonth,
+  onPickerOpen,
+  onPickerClose,
+  onMonthSelect,
+}: {
+  selectedMonth: number;
+  showPicker: boolean;
+  selectedYear: number;
+  bannerPadding: string;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+  onPickerOpen: () => void;
+  onPickerClose: () => void;
+  onMonthSelect: (year: number, month: number) => void;
+}) {
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const calendarRef = useRef<HTMLButtonElement>(null);
+  const [tailLeft, setTailLeft] = useState(200);
+
+  useEffect(() => {
+    if (!showPicker) return;
+    function handlePointerDown(e: PointerEvent) {
+      if (bannerRef.current && !bannerRef.current.contains(e.target as Node)) {
+        onPickerClose();
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [showPicker, onPickerClose]);
+
+  useEffect(() => {
+    if (!showPicker || !bannerRef.current || !calendarRef.current) return;
+    const bannerRect = bannerRef.current.getBoundingClientRect();
+    const calRect = calendarRef.current.getBoundingClientRect();
+    const center = calRect.left - bannerRect.left + calRect.width / 2;
+    setTailLeft(center - 6);
+  }, [showPicker]);
+
+  return (
+    <div
+      ref={bannerRef}
+      className={`relative flex h-9 items-center rounded-t-[20px] bg-[var(--color-cta-button)] ${bannerPadding}`}
+    >
+      <div ref={navRef} className="inline-flex items-center gap-1">
+        <button
+          type="button"
+          onClick={onPrevMonth}
+          aria-label="이전 달"
+          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80"
+        >
+          <ChevronIcon dir="left" />
+        </button>
+        <span className="min-w-[2.5rem] text-center text-subtitle-16-b tracking-[-0.04em] text-white">
+          {selectedMonth}월
+        </span>
+        <button
+          type="button"
+          onClick={onNextMonth}
+          aria-label="다음 달"
+          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80"
+        >
+          <ChevronIcon dir="right" />
+        </button>
+        <button
+          ref={calendarRef}
+          type="button"
+          onClick={() => (showPicker ? onPickerClose() : onPickerOpen())}
+          aria-label="달력 열기"
+          aria-expanded={showPicker}
+          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80"
+        >
+          <CalendarIcon />
+        </button>
+      </div>
+      {showPicker && (
+        <YearMonthPicker
+          year={selectedYear}
+          month={selectedMonth}
+          tailLeft={tailLeft}
+          onSelect={onMonthSelect}
+        />
+      )}
+    </div>
+  );
+}
+
+function BalanceCard({
+  mobile,
+  monthlyEarned,
+  cumulativePoint,
+  referralCode,
+  selectedYear,
+  selectedMonth,
+  showPicker,
+  onPrevMonth,
+  onNextMonth,
+  onPickerOpen,
+  onPickerClose,
+  onMonthSelect,
+}: BalanceCardProps) {
+  const bannerProps = {
+    selectedMonth,
+    showPicker,
+    selectedYear,
+    onPrevMonth,
+    onNextMonth,
+    onPickerOpen,
+    onPickerClose,
+    onMonthSelect,
+  };
+
+  const pointInfo = (
+    <div className="flex flex-col gap-1">
+      <span className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)]">
+        적립 포인트
+      </span>
+      <div className="flex gap-3">
+        <span className="text-[36px] font-bold leading-[43px] tracking-[-0.04em] text-[var(--color-text)]">
+          {monthlyEarned.toLocaleString("ko-KR")}P
+        </span>
+        <span className="mt-[13px] shrink-0 text-body-14-m leading-[17px] tracking-[-0.04em] text-black">
+          누적 {cumulativePoint.toLocaleString("ko-KR")}P
+        </span>
+      </div>
+    </div>
+  );
+
   if (mobile) {
     return (
-      <div className="overflow-hidden rounded-[20px]">
-        {/* 오렌지 배너 — h-9(36px), px-6(24px) */}
-        <div className="flex h-9 items-center bg-[var(--color-cta-button)] px-6">
-          <span className="text-subtitle-16-b tracking-[-0.04em] text-white">보유 포인트</span>
-        </div>
-        {/* 흰색 콘텐츠 — pt/pb-6(24px), gap mb-4(16px) */}
-        <div className="bg-white px-6 pt-6 pb-6">
-          <div className="mb-4 flex items-center gap-4">
-            <span className="text-[36px] font-bold leading-[43px] tracking-[-0.04em] text-[var(--color-text)]">
-              {balanceValue.toLocaleString("ko-KR")}P
-            </span>
-            <span className="text-body-14-m tracking-[-0.04em] text-[var(--color-text-label)]">
-              {expiringText}
-            </span>
-          </div>
+      <div className="overflow-visible rounded-[20px] bg-white">
+        <MonthBanner bannerPadding="px-6" {...bannerProps} />
+        <div className="rounded-b-[20px] bg-white px-6 pt-6 pb-6">
+          <div className="mb-4">{pointInfo}</div>
           <ReferralLinkRow referralCode={referralCode} />
         </div>
       </div>
@@ -193,26 +463,11 @@ function BalanceCard({ mobile, balanceValue, expiringText, referralCode }: Balan
   }
 
   return (
-    <div className="overflow-hidden rounded-[20px]">
-      {/* 오렌지 배너 — h-9(36px), px-12(48px) */}
-      <div className="flex h-9 items-center bg-[var(--color-cta-button)] px-12">
-        <span className="text-subtitle-16-b tracking-[-0.04em] text-white">보유 포인트</span>
-      </div>
-
-      {/* 흰색 콘텐츠 — h-[118px](카드154-배너36), px-12(48px), 수직 중앙 정렬 */}
-      <div className="flex h-[118px] items-center justify-between bg-white px-12">
-        <div className="flex items-center gap-5">
-          <span className="text-[36px] font-bold leading-[43px] tracking-[-0.04em] text-[var(--color-text)]">
-            {balanceValue.toLocaleString("ko-KR")}P
-          </span>
-          <span className="text-body-14-m tracking-[-0.04em] text-[var(--color-text-label)]">
-            {expiringText}
-          </span>
-        </div>
-        {/* 초대링크 섹션 — w-[271px](46px label + 12px gap + 213px frame) */}
-        <div className="w-[271px] shrink-0">
-          <ReferralLinkRow referralCode={referralCode} />
-        </div>
+    <div className="overflow-visible rounded-[20px] bg-white">
+      <MonthBanner bannerPadding="pl-8" {...bannerProps} />
+      <div className="flex h-[118px] items-center justify-between rounded-b-[20px] bg-white px-12">
+        {pointInfo}
+        <ReferralLinkRow referralCode={referralCode} desktop />
       </div>
     </div>
   );
@@ -227,8 +482,61 @@ interface Props {
 
 /* ── 메인 컴포넌트 ─────────────────────────────────────────────────── */
 export default function PointHistorySection({ balance, items, referralCode }: Props) {
+  const now = new Date();
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  const [showPicker, setShowPicker] = useState(false);
   const [page, setPage] = useState(1);
   const [sortTab, setSortTab] = useState<SortTab>("all");
+
+  function handlePrevMonth() {
+    if (selectedMonth === 1) {
+      setSelectedYear((y) => y - 1);
+      setSelectedMonth(12);
+    } else {
+      setSelectedMonth((m) => m - 1);
+    }
+  }
+
+  function handleNextMonth() {
+    if (selectedMonth === 12) {
+      setSelectedYear((y) => y + 1);
+      setSelectedMonth(1);
+    } else {
+      setSelectedMonth((m) => m + 1);
+    }
+  }
+
+  function handleMonthSelect(year: number, month: number) {
+    setSelectedYear(year);
+    setSelectedMonth(month);
+    setShowPicker(false);
+  }
+
+  const monthlyItems = items.filter((item) => {
+    const d = new Date(item.createdAt);
+    return d.getFullYear() === selectedYear && d.getMonth() + 1 === selectedMonth;
+  });
+
+  const monthlyEarned = monthlyItems
+    .filter((item) => item.amount > 0)
+    .reduce((sum, item) => sum + item.amount, 0);
+
+  const cumulativePoint = balance.totalAmount;
+
+  const balanceCardProps = {
+    monthlyEarned,
+    cumulativePoint,
+    referralCode,
+    selectedYear,
+    selectedMonth,
+    showPicker,
+    onPrevMonth: handlePrevMonth,
+    onNextMonth: handleNextMonth,
+    onPickerOpen: () => setShowPicker(true),
+    onPickerClose: () => setShowPicker(false),
+    onMonthSelect: handleMonthSelect,
+  };
 
   const sortedItems = (() => {
     if (sortTab === "earn") return items.filter((i) => i.amount > 0);
@@ -241,13 +549,13 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
   const runningBalances = (() => {
     if (sortTab === "date") {
       const totalAmount = items.reduce((s, x) => s + x.amount, 0);
-      let running = balance.balance - totalAmount;
+      let running = balance.totalAmount - totalAmount;
       return sortedItems.map((item) => {
         running += item.amount;
         return running;
       });
     }
-    return computeRunningBalances(sortedItems, balance.balance);
+    return computeRunningBalances(sortedItems, balance.totalAmount);
   })();
 
   const totalPages = Math.max(1, Math.ceil(sortedItems.length / ITEMS_PER_PAGE));
@@ -274,8 +582,6 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
     setPage(1);
   }
 
-  const expiringText = `소멸예정 ${balance.expiringWithin30Days.toLocaleString("ko-KR")}P`;
-
   const SORT_TABS = [
     { id: "all" as const, label: "전체" },
     { id: "earn" as const, label: "적립순" },
@@ -299,12 +605,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
             </Link>
             <h1 className="text-[18px] font-semibold leading-[21px] tracking-[-0.04em] text-[var(--color-text-emphasis)]">MY 포인트</h1>
           </div>
-          <BalanceCard
-            mobile
-            balanceValue={balance.balance}
-            expiringText={expiringText}
-            referralCode={referralCode}
-          />
+          <BalanceCard mobile {...balanceCardProps} />
         </div>
 
         {/* 포인트 내역 — pt-6(24px), px-6 */}
@@ -319,9 +620,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
             <>
               <ul>
                 {pageItems.map((item, idx) => {
-                  const dateRange = item.expiresAt
-                    ? `${fmtDate(item.createdAt)} ~ ${fmtDate(item.expiresAt)}`
-                    : fmtDate(item.createdAt);
+                  const dateRange = fmtDate(item.createdAt);
                   return (
                     <li key={item.id} className="border-b border-[var(--color-text-muted)] py-4 last:border-b-0">
                       <div className="flex items-start justify-between gap-3">
@@ -361,12 +660,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
               </Link>
               <h1 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">MY 포인트</h1>
             </div>
-            <BalanceCard
-              mobile={false}
-              balanceValue={balance.balance}
-              expiringText={expiringText}
-              referralCode={referralCode}
-            />
+            <BalanceCard mobile={false} {...balanceCardProps} />
           </div>
         </div>
 
@@ -400,8 +694,8 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
           </div>
 
           {/* 테이블 헤더 */}
-          <div className="grid h-11 md:grid-cols-[1fr_120px_130px_110px_110px] lg:grid-cols-[1fr_178px_184px_167px_178px] items-center rounded-lg bg-[var(--color-surface-light)] px-6">
-            {["내역", "포인트", "잔여포인트", "적립일", "사용기한"].map((col) => (
+          <div className="grid h-11 md:grid-cols-[1fr_120px_130px_110px] lg:grid-cols-[1fr_178px_184px_167px] items-center rounded-lg bg-[var(--color-surface-light)] px-6">
+            {["내역", "포인트", "잔여포인트", "적립일"].map((col) => (
               <span key={col} className="text-body-16-m text-[var(--color-text-tertiary)]">{col}</span>
             ))}
           </div>
@@ -417,7 +711,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
                   return (
                     <li
                       key={item.id}
-                      className="grid md:grid-cols-[1fr_120px_130px_110px_110px] lg:grid-cols-[1fr_178px_184px_167px_178px] items-center border-b border-[var(--color-text-muted)] px-6 py-[16px] last:border-b-0"
+                      className="grid md:grid-cols-[1fr_120px_130px_110px] lg:grid-cols-[1fr_178px_184px_167px] items-center border-b border-[var(--color-text-muted)] px-6 py-[16px] last:border-b-0"
                     >
                       <span className="text-body-14-m text-[var(--color-text)]">{item.description}</span>
                       <span className="text-body-14-m font-medium text-[var(--color-text)]">
@@ -427,7 +721,6 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
                         {pageRunning[idx].toLocaleString("ko-KR")}P
                       </span>
                       <span className="text-body-14-m text-[var(--color-text)]">{fmtDate(item.createdAt)}</span>
-                      <span className="text-body-14-m text-[var(--color-text)]">{fmtDate(item.expiresAt)}</span>
                     </li>
                   );
                 })}

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <>
+    <div className="pt-[var(--banner-height)]">
       <div className="sticky top-[var(--banner-height)] z-0">
         <HeroSection />
       </div>
@@ -35,6 +35,6 @@ export default function Home() {
         <WhyGallerySection />
         <ReviewsSection />
       </div>
-    </>
+    </div>
   );
 }

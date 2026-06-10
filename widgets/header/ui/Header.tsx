@@ -551,6 +551,14 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      setIsScrolled(y > 0);
+      setIsBannerCollapsed(y > 36);
+    });
+  }, [pathname]);
+
+  useEffect(() => {
     if (isBannerCollapsed) {
       document.documentElement.style.setProperty("--banner-height", "0px");
     } else {

@@ -8,15 +8,19 @@ import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import heroThirdBg from "../assets/hero-main-background-third-ver.png";
-import heroThirdHeading from "../assets/hero-catch-phrase-third-web.svg";
-import heroThirdMobileBg from "../assets/hero-main-background-third-mobile-expanded.png";
-import heroThirdTabletBg from "../assets/hero-main-background-third-tablet-expanded.png";
-import heroMainMobileBg from "../assets/hero-main-background-mobile-expanded.png";
-import heroMainTabletBg from "../assets/hero-main-background-tablet-expanded.png";
-import heroDogTitleMobile01 from "../assets/hero-dog-title-mobile-01.png";
-import heroDogTitleMobile02 from "../assets/hero-dog-title-mobile-02.png";
-import heroDogTitleMobile03 from "../assets/hero-dog-title-mobile-03.png";
+import heroCustomSnackBg from "../assets/hero-custom-snack-bg.png";
+import heroCustomSnackHeading from "../assets/hero-custom-snack-heading.svg";
+import heroCustomSnackBgMobile from "../assets/hero-custom-snack-bg-mobile.png";
+import heroCustomSnackBgTablet from "../assets/hero-custom-snack-bg-tablet.png";
+import heroCustomSnackHeadingMobile from "../assets/hero-custom-snack-heading-mobile.png";
+import heroDogBg from "../assets/hero-dog-bg.png";
+import heroDogBgMobile from "../assets/hero-dog-bg-mobile.png";
+import heroDogBgTablet from "../assets/hero-dog-bg-tablet.png";
+import heroDogHeading from "../assets/hero-dog-heading.png";
+import heroDogHeadingMobile from "../assets/hero-dog-heading-mobile.png";
+import heroTruckHeading from "../assets/hero-truck-heading.png";
+import heroTruckHeadingMobile from "../assets/hero-truck-heading-mobile.png";
+import heroTruckImage from "../assets/hero-truck-image.png";
 
 const SLIDE_INTERVAL = 8000;
 const DRAG_THRESHOLD = 50;
@@ -45,11 +49,11 @@ const slides: HeroSlide[] = [
   {
     id: "custom-snack",
     type: "fullBg",
-    bgImage: heroThirdBg.src,
-    mobileBgImage: heroThirdMobileBg.src,
-    tabletBgImage: heroThirdTabletBg.src,
-    headingImg: heroThirdHeading.src,
-    mobileHeadingImg: heroDogTitleMobile03.src,
+    bgImage: heroCustomSnackBg.src,
+    mobileBgImage: heroCustomSnackBgMobile.src,
+    tabletBgImage: heroCustomSnackBgTablet.src,
+    headingImg: heroCustomSnackHeading.src,
+    mobileHeadingImg: heroCustomSnackHeadingMobile.src,
     headingAlt: "우리 아이를 위한 맞춤 건강간식",
     headingW: 333,
     headingH: 103,
@@ -66,8 +70,8 @@ const slides: HeroSlide[] = [
     id: "truck",
     type: "solid",
     bg: "var(--color-hero-truck-bg)",
-    headingImg: "/images/hero-truck-title.png",
-    mobileHeadingImg: heroDogTitleMobile02.src,
+    headingImg: heroTruckHeading.src,
+    mobileHeadingImg: heroTruckHeadingMobile.src,
     headingAlt: "매주 신선하게 정기배송",
     headingW: 558,
     headingH: 206,
@@ -79,10 +83,10 @@ const slides: HeroSlide[] = [
     id: "dog",
     type: "photo",
     bg: "var(--color-hero-bg)",
-    mobileBgImage: heroMainMobileBg.src,
-    tabletBgImage: heroMainTabletBg.src,
-    headingImg: "/images/hero-dog-title.png",
-    mobileHeadingImg: heroDogTitleMobile01.src,
+    mobileBgImage: heroDogBgMobile.src,
+    tabletBgImage: heroDogBgTablet.src,
+    headingImg: heroDogHeading.src,
+    mobileHeadingImg: heroDogHeadingMobile.src,
     headingAlt: "강아지가 먼저 찾는 간식",
     headingW: 571,
     headingH: 203,
@@ -167,7 +171,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="overflow-hidden relative max-lg:h-[585px] lg:min-h-[537px] cursor-grab active:cursor-grabbing select-none"
+      className="overflow-hidden relative max-lg:h-[640px] lg:min-h-[537px] cursor-grab active:cursor-grabbing select-none"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -209,7 +213,7 @@ export default function HeroSection() {
             {/* 사진 배경 (데스크탑 전용) */}
             {slide.type === "photo" && (
               <img
-                src="/images/hero-dog-hd.png"
+                src={heroDogBg.src}
                 alt=""
                 className="max-lg:hidden absolute inset-0 h-full w-full object-cover object-center"
                 decoding="async"
@@ -226,7 +230,7 @@ export default function HeroSection() {
               />
             )}
 
-            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[58px] h-full lg:min-h-[537px]">
+            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[90px] h-full lg:min-h-[537px]">
               {/* 좌측: 텍스트 */}
               <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left lg:pl-0">
                 <h1 className="max-lg:mb-4 lg:mb-6 lg:h-[110px] lg:overflow-hidden">
@@ -283,7 +287,7 @@ export default function HeroSection() {
               {slide.type === "solid" && (
                 <div className="flex flex-1 items-center justify-center max-lg:mb-4 lg:py-10">
                   <img
-                    src="/images/hero-truck.png"
+                    src={heroTruckImage.src}
                     alt="꼬순박스 배송 트럭"
                     width={460}
                     height={380}

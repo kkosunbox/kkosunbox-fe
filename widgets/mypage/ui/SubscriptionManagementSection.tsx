@@ -354,8 +354,6 @@ function Pagination({
   totalPages: number;
   onPageChange: (page: number) => void;
 }) {
-  if (totalPages <= 1) return null;
-
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (

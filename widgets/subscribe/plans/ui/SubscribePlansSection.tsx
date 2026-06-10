@@ -57,6 +57,14 @@ function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
 
 /* ── Main Section ───────────────────────────────────────────────── */
 
+type SvgBgData = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  path: string;
+} | null;
+
 interface PrimaryButtonConfig {
   label: string;
   disabled?: boolean;
@@ -126,8 +134,9 @@ export default function SubscribePlansSection({
   // Bridge refs
   const containerRef = useRef<HTMLDivElement>(null);
   const leftPanelRef = useRef<HTMLDivElement>(null);
+  const cardColumnRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([null, null, null]);
-  const [bridgeStyle, setBridgeStyle] = useState<React.CSSProperties | null>(null);
+  const [svgBg, setSvgBg] = useState<SvgBgData>(null);
 
   function handleClose() { setIsDismissed(true); }
   function handleConfirm() { setIsDismissed(true); router.push("/checklist"); }
@@ -176,41 +185,94 @@ export default function SubscribePlansSection({
     );
   }
 
-  // 브리지: 선택 카드와 왼쪽 패널을 시각적으로 연결
-  const updateBridge = useCallback(() => {
+  const updateSvgBg = useCallback(() => {
     const container = containerRef.current;
     const leftPanel = leftPanelRef.current;
-    if (!container || !leftPanel || selectedTier === null) { setBridgeStyle(null); return; }
+    const cardColumn = cardColumnRef.current;
+    if (!container || !leftPanel || !cardColumn) { setSvgBg(null); return; }
 
-    const tierIndex = PACKAGE_SUMMARY_ORDER.indexOf(selectedTier);
+    const tierIndex = PACKAGE_SUMMARY_ORDER.indexOf(displayTier);
     const card = cardRefs.current[tierIndex];
-    if (!card) { setBridgeStyle(null); return; }
+    if (!card) { setSvgBg(null); return; }
 
     const cRect = container.getBoundingClientRect();
     const lpRect = leftPanel.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
+    const colRect = cardColumn.getBoundingClientRect();
 
-    const gapWidth = cardRect.left - lpRect.right;
-    if (gapWidth < 4) { setBridgeStyle(null); return; }
+    if (lpRect.width < 10) { setSvgBg(null); return; }
+
+    const gapWidth = colRect.left - lpRect.right;
+    if (gapWidth < 4) { setSvgBg(null); return; }
 
     const R = 24;
-    const left = lpRect.right - cRect.left - R;
-    const topVal = Math.max(0, cardRect.top - cRect.top - R);
-    const bottomVal = Math.min(cRect.height, cardRect.bottom - cRect.top + R);
+    const FLUSH_THRESHOLD = R;
+    const lpW = lpRect.width;
+    const lpH = lpRect.height;
+    const cardH = cardRect.height;
+    const cardLocalTop = cardRect.top - lpRect.top;
+    const cardLocalBottom = cardLocalTop + cardH;
+    const totalW = colRect.right - lpRect.left;
+    const totalH = Math.max(lpH, cardLocalBottom);
 
-    setBridgeStyle({ left, top: topVal, width: gapWidth + R * 2, height: bottomVal - topVal });
-  }, [selectedTier]);
+    const isTopFlush = cardLocalTop <= FLUSH_THRESHOLD;
+    const isBottomFlush = cardLocalBottom >= lpH - FLUSH_THRESHOLD;
+
+    const parts: string[] = [];
+
+    if (isTopFlush) {
+      parts.push(`M ${R} 0`);
+      parts.push(`L ${totalW - R} 0`);
+      parts.push(`a ${R} ${R} 0 0 1 ${R} ${R}`);
+    } else {
+      parts.push(`M ${R} 0`);
+      parts.push(`L ${lpW - R} 0`);
+      parts.push(`a ${R} ${R} 0 0 1 ${R} ${R}`);
+      parts.push(`L ${lpW} ${cardLocalTop - R}`);
+      parts.push(`a ${R} ${R} 0 0 0 ${R} ${R}`);
+      parts.push(`L ${totalW - R} ${cardLocalTop}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${R} ${R}`);
+    }
+
+    parts.push(`L ${totalW} ${cardLocalBottom - R}`);
+
+    if (isBottomFlush) {
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${R}`);
+      parts.push(`L ${R} ${totalH}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${-R}`);
+    } else {
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${R}`);
+      parts.push(`L ${lpW + R} ${cardLocalBottom}`);
+      parts.push(`a ${R} ${R} 0 0 0 ${-R} ${R}`);
+      parts.push(`L ${lpW} ${lpH - R}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${R}`);
+      parts.push(`L ${R} ${lpH}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${-R}`);
+    }
+
+    parts.push(`L 0 ${R}`);
+    parts.push(`a ${R} ${R} 0 0 1 ${R} ${-R}`);
+    parts.push(`Z`);
+
+    setSvgBg({
+      left: lpRect.left - cRect.left,
+      top: lpRect.top - cRect.top,
+      width: totalW,
+      height: totalH,
+      path: parts.join(' '),
+    });
+  }, [displayTier]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
-  useLayoutEffect(() => { updateBridge(); }, [updateBridge]);
+  useLayoutEffect(() => { updateSvgBg(); }, [updateSvgBg]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(updateBridge);
+    const ro = new ResizeObserver(updateSvgBg);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [updateBridge]);
+  }, [updateSvgBg]);
 
   return (
     <>
@@ -253,13 +315,21 @@ export default function SubscribePlansSection({
                   ref={containerRef}
                   className="relative flex items-stretch justify-center max-md:flex-col max-md:items-center max-md:gap-[46px] md:gap-1 lg:gap-1"
                 >
-                  {/* 선택 카드↔왼쪽 패널 연결 브리지 */}
-                  {bridgeStyle && (
-                    <div
+                  {svgBg && (
+                    <svg
                       aria-hidden="true"
-                      className="pointer-events-none absolute z-0"
-                      style={{ ...bridgeStyle, background: "var(--color-surface-warm)" }}
-                    />
+                      className="pointer-events-none absolute z-0 overflow-visible"
+                      style={{
+                        left: svgBg.left,
+                        top: svgBg.top,
+                        width: svgBg.width,
+                        height: svgBg.height,
+                        filter: "drop-shadow(0px 4px 8px #00000033)",
+                      }}
+                      viewBox={`0 0 ${svgBg.width} ${svgBg.height}`}
+                    >
+                      <path d={svgBg.path} fill="var(--color-surface-warm)" />
+                    </svg>
                   )}
 
                   {/* 모바일 — 대표 이미지와 핵심 정보만 분리 표시 */}
@@ -286,7 +356,7 @@ export default function SubscribePlansSection({
                         ) : null}
                         {activeIsCurrentPlan ? (
                           <div className="absolute left-4 top-4 z-10">
-                            <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
+                            <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-body-14-sb-tight text-white">
                               이용중
                             </span>
                           </div>
@@ -301,7 +371,7 @@ export default function SubscribePlansSection({
                     {activePkg ? (
                       <div className="mt-4">
                         <p
-                          className="text-[17px] font-bold leading-[22px] tracking-[-0.04em]"
+                          className="text-subtitle-17-b-lh22"
                           style={{ color: activePkg.colorVar }}
                         >
                           {activePkg.name}
@@ -319,7 +389,7 @@ export default function SubscribePlansSection({
                             ))}
                           </ul>
                           {renderPrimaryAction(
-                            "flex h-10 w-[108px] shrink-0 items-center justify-center self-center rounded-[8px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
+                            "flex h-10 w-[108px] shrink-0 items-center justify-center self-center rounded-[8px] text-center text-body-14-sb tracking-[-0.02em]",
                           )}
                         </div>
                       </div>
@@ -329,8 +399,7 @@ export default function SubscribePlansSection({
                   {/* 태블릿·데스크탑 — 선택된 패키지 설명 */}
                   <div
                     ref={leftPanelRef}
-                    className="relative flex-1 min-w-0 max-w-[608px] bg-[var(--color-surface-warm)] rounded-[24px] p-6 max-md:hidden"
-                    style={{ boxShadow: "var(--shadow-card-selected)" }}
+                    className="relative flex-1 min-w-0 max-w-[608px] rounded-[24px] p-6 max-md:hidden"
                   >
                     {/* 이미지 영역 560×519 비율, overflow-hidden으로 클리핑 */}
                     <div
@@ -354,7 +423,7 @@ export default function SubscribePlansSection({
                       ) : null}
                       {activeIsCurrentPlan ? (
                         <div className="absolute left-4 top-4 z-10">
-                          <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
+                          <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-body-14-sb-tight text-white">
                             이용중
                           </span>
                         </div>
@@ -376,7 +445,7 @@ export default function SubscribePlansSection({
                   </div>
 
                   {/* 우측 — 패키지 요약 카드 목록 */}
-                  <div className="flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none">
+                  <div ref={cardColumnRef} className="flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none pr-5">
                     {PACKAGE_SUMMARY_ORDER.map((tier, i) => {
                       const pkg = PACKAGES.find((p) => p.tier === tier)!;
                       const plan = planForTier(sortedPlans, tier);
@@ -396,14 +465,11 @@ export default function SubscribePlansSection({
                           aria-pressed={showSelectionState ? isSelected : undefined}
                           onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
                           className={[
-                            "group relative flex flex-1 w-full overflow-hidden text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80",
-                            showSelectionState && isSelected
-                              ? "bg-[var(--color-surface-warm)]"
-                              : "bg-white",
+                            "group relative flex w-full text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80",
+                            showSelectionState && isSelected ? "h-[207px] flex-none bg-transparent" : "flex-1",
                           ].join(" ")}
-                          style={{ boxShadow: showSelectionState && isSelected ? "var(--shadow-card-selected)" : "var(--shadow-card-soft)" }}
                         >
-                          <div className="relative h-full w-[140px] shrink-0 overflow-hidden bg-[var(--color-surface-warm)] md:w-[150px] lg:w-[160px]">
+                          <div className={`relative ${isSelected ? "h-[167px] w-[180px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-[var(--color-surface-warm)] ${isSelected ? "ml-0" : "ml-3"}`}>
                             <PackageSummaryThumbnail src={img} alt={pkg.name} />
                             {isPlanCurrent ? (
                               <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
@@ -413,30 +479,30 @@ export default function SubscribePlansSection({
                               </div>
                             ) : null}
                           </div>
-                          <div className="min-w-0 flex-1 flex flex-col justify-center pl-6py-5">
+                          <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                             <p
                               className={[
-                                "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:text-[20px]",
-                                showSelectionState && isSelected
+                                "mb-2 truncate max-md:text-subtitle-17-b-lh24 md:text-subtitle-20-b",
+                                isSelected
                                   ? "font-extrabold text-[var(--color-text-emphasis)]"
                                   : "font-medium text-[var(--color-text-emphasis)]",
                               ].join(" ")}
                             >
                               {plan.name || pkg.name}
                             </p>
-                            <div className="mb-1 flex items-baseline gap-2">
-                              <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)] md:text-[16px]">
+                            <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                              <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
                                 {plan.discountRate}%
                               </span>
-                              <span className="text-[14px] leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through md:text-[16px]">
+                              <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
                                 {formatMonthlyPrice(plan.originalPrice)}
                               </span>
                             </div>
-                            <div className="mb-2 flex items-baseline gap-2">
-                              <span className="text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
+                            <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                              <span className="max-md:text-price-14-b md:text-price-16-b-tight text-[var(--color-text-body-warm)]">
                                 월 요금제
                               </span>
-                              <span className="text-[17px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                              <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
                                 {formatMonthlyPrice(plan.monthlyPrice)}
                               </span>
                             </div>

@@ -58,7 +58,7 @@ function PasswordField({ id, value, onChange, placeholder, autoComplete, visible
   onToggleVisible: () => void;
 }) {
   return (
-    <div className="relative flex h-10 flex-1 items-center rounded-[4px] bg-white">
+    <div className="relative flex h-10 flex-1 items-center rounded-[4px] bg-[var(--color-surface-light)]">
       <input
         id={id}
         type={visible ? "text" : "password"}
@@ -175,7 +175,7 @@ export default function AccountInfoModal({ onClose }: Props) {
         <div className={card}>
           {/* 헤더 */}
           <div className="relative flex h-6 items-center">
-            <h2 className="text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">계정 정보</h2>
+            <h2 className="text-subtitle-16-b-tight text-[var(--color-text)]">계정 정보</h2>
             <button onClick={onClose} aria-label="닫기" className="absolute right-0 flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-70">
               <CloseIcon />
             </button>
@@ -187,7 +187,7 @@ export default function AccountInfoModal({ onClose }: Props) {
               {/* 이메일 행 */}
               <div className="flex items-center">
                 <span className="w-[91px] shrink-0 text-body-13-m text-[var(--color-text)]">이메일</span>
-                <div className="flex h-10 min-w-0 flex-1 items-center rounded-[4px] bg-white px-3">
+                <div className="flex h-10 min-w-0 flex-1 items-center rounded-[4px] bg-[var(--color-surface-light)] px-3">
                   <span className="truncate text-body-13-m text-[var(--color-text)]">{user?.email ?? ""}</span>
                 </div>
               </div>
@@ -198,7 +198,7 @@ export default function AccountInfoModal({ onClose }: Props) {
                 <button
                   type="button"
                   onClick={() => setView("password-change")}
-                  className="h-8 w-[87px] rounded-[4px] bg-[var(--color-btn-dark-warm)] text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-90"
+                  className="h-8 w-[87px] rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-13-m-tight text-white transition-opacity hover:opacity-90"
                 >
                   비밀번호 변경
                 </button>
@@ -214,7 +214,7 @@ export default function AccountInfoModal({ onClose }: Props) {
                   router.push("/mypage/withdraw");
                 });
               }}
-              className="text-[14px] font-medium leading-[140%] tracking-[-0.02em] text-[var(--color-text-secondary)] underline transition-opacity hover:opacity-70"
+              className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-secondary)] underline transition-opacity hover:opacity-70"
             >
               계정 탈퇴
             </button>
@@ -282,7 +282,7 @@ export default function AccountInfoModal({ onClose }: Props) {
             </div>
 
             <div className="pl-[91px]">
-              <p className="text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
+              <p className="text-body-12-m-tight text-[var(--color-text-secondary)]">
                 * 비밀번호는 최소 8자 이상이어야 합니다.<br />
                 * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
               </p>

@@ -26,13 +26,15 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <div className="max-lg:mt-[var(--header-offset)]">
+      <div className="sticky top-[var(--banner-height)] z-0">
         <HeroSection />
       </div>
-      <StatsBar />
-      <PackagePlansSection />
-      <WhyGallerySection />
-      <ReviewsSection />
+      <div className="relative z-[1]">
+        <StatsBar />
+        <PackagePlansSection />
+        <WhyGallerySection />
+        <ReviewsSection />
+      </div>
     </>
   );
 }

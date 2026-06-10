@@ -252,7 +252,7 @@ function SubscriptionRow({
       <div className="flex min-w-0 flex-1 flex-col justify-center max-md:gap-1 md:gap-2 lg:gap-2 max-md:px-4 md:p-5 lg:p-5">
         {boxQuantity > 1 && (
           <span
-            className="max-md:text-[14px] md:text-[16px] font-semibold leading-tight max-md:mb-1"
+            className="max-md:text-body-14-sb md:text-subtitle-16-sb leading-tight max-md:mb-1"
             style={{ color: badgeColor }}
           >
             {boxQuantity}BOX
@@ -354,8 +354,6 @@ function Pagination({
   totalPages: number;
   onPageChange: (page: number) => void;
 }) {
-  if (totalPages <= 1) return null;
-
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
@@ -483,7 +481,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
           {/* Mobile: horizontal divider */}
           <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
           {/* Desktop: vertical divider */}
-          <div className="max-md:hidden w-px shrink-0 bg-[#EEEEEE] my-10" />
+          <div className="max-md:hidden w-px shrink-0 bg-[var(--color-border-light)] my-10" />
           <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
         </div>
       </div>
@@ -499,7 +497,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
                 </Text>
                 <Link
                   href="/mypage/subscription/change"
-                  className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-text)] px-2 text-[13px] font-medium leading-[16px] text-white transition-opacity hover:opacity-80"
+                  className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-text)] px-2 text-body-13-m-tight text-white transition-opacity hover:opacity-80"
                 >
                   구독추가
                 </Link>

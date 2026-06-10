@@ -572,12 +572,12 @@ export default function Header() {
   return (
     <>
       {/* 띠 배너: 헤더 위 고정 */}
-      <div className={`fixed inset-x-0 top-0 z-[51] flex h-[30px] max-md:h-[34px] items-center justify-center bg-[var(--color-banner-bg)] transition-transform duration-300 ${isBannerCollapsed ? "-translate-y-full" : ""}`}>
+      <div className={`fixed inset-x-0 top-0 z-[51] flex h-[30px] max-md:h-[34px] items-center justify-center bg-[var(--color-banner-bg)] transition-transform duration-[225ms] ${isBannerCollapsed ? "-translate-y-full" : ""}`}>
         <div className="flex items-center gap-2">
-          <span className="flex items-center justify-center rounded-[12px] bg-[var(--color-banner-badge-bg)] px-[9px] py-[2px]">
-            <span className="text-[11px] font-semibold leading-[13px] tracking-[-0.02em] text-white">OPEN</span>
+          <span className="flex items-center justify-center h-[17px] px-[9px] rounded-[12px] bg-[var(--color-banner-badge-bg)]">
+            <span className="text-caption-11-sb tracking-[-0.02em] text-white">OPEN</span>
           </span>
-          <span className="text-[13px] font-extrabold leading-[16px] text-white">
+          <span className="text-body-13-eb text-white">
             꼬순박스 그랜드 오픈! <span className="font-medium">정기구독 서비스 시작</span>
           </span>
         </div>
@@ -585,7 +585,7 @@ export default function Header() {
       {/* 흰색 헤더 전용: 하단 그라데이션 separator (검정 → 투명, 24px) */}
       <div
         className={`fixed inset-x-0 max-md:top-[88px] top-[84px] z-[49] h-6 pointer-events-none transition-[opacity,transform] duration-300 ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "opacity-100" : "opacity-0"}`}
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 100%)" }}
+        style={{ background: "var(--gradient-header-separator)" }}
         aria-hidden="true"
       />
       <nav
@@ -596,7 +596,7 @@ export default function Header() {
         {/* 투명 헤더 전용: 헤더 배경 그라디언트 */}
         <div
           className={`absolute inset-0 z-[-1] pointer-events-none transition-opacity duration-300 ${isSolid ? "opacity-0" : "opacity-100"}`}
-          style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.00) 100%)", backdropFilter: "none" }}
+          style={{ background: "var(--gradient-header-overlay)", backdropFilter: "none" }}
           aria-hidden="true"
         />
         <div className="mx-auto flex h-full max-w-content items-center justify-between max-md:px-6 md:px-[20px] lg:px-0">
@@ -678,8 +678,7 @@ export default function Header() {
       >
         {/* 상단 그라디언트 섹션 */}
         <div
-          className="relative shrink-0 flex flex-col items-center"
-          style={{ background: "#ffffff", borderRadius: "0 0 40px 40px" }}
+          className="relative shrink-0 flex flex-col items-center bg-white rounded-b-[40px]"
         >
           {/* 닫기 버튼 */}
           <button
@@ -768,7 +767,7 @@ export default function Header() {
         </div>
 
         {/* 구분선 */}
-        <div className="shrink-0 border-t border-[#EAEAEA]" />
+        <div className="shrink-0 border-t border-[var(--color-divider-neutral)]" />
 
         {/* 스크롤 가능 영역 (네비게이션 + 로그아웃) */}
         <div className="flex flex-1 flex-col overflow-y-auto">

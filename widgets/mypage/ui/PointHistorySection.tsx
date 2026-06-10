@@ -48,8 +48,8 @@ function CopyIcon({ checked }: { checked: boolean }) {
   }
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="9" y="9" width="11" height="11" rx="1.5" stroke="#B0B0B0" strokeWidth="2" />
-      <path d="M15 9V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" stroke="#B0B0B0" strokeWidth="2" strokeLinecap="round" />
+      <rect x="9" y="9" width="11" height="11" rx="1.5" stroke="var(--color-border)" strokeWidth="2" />
+      <path d="M15 9V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" stroke="var(--color-border)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -439,7 +439,7 @@ function BalanceCard({
         적립 포인트
       </span>
       <div className="flex gap-3">
-        <span className="text-[36px] font-bold leading-[43px] tracking-[-0.04em] text-[var(--color-text)]">
+        <span className="text-title-36-b text-[var(--color-text)]">
           {monthlyEarned.toLocaleString("ko-KR")}P
         </span>
         <span className="mt-[13px] shrink-0 text-body-14-m leading-[17px] tracking-[-0.04em] text-black">
@@ -602,14 +602,14 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
             >
               <BackIcon />
             </Link>
-            <h1 className="text-[18px] font-semibold leading-[21px] tracking-[-0.04em] text-[var(--color-text-emphasis)]">MY 포인트</h1>
+            <h1 className="text-subtitle-18-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">MY 포인트</h1>
           </div>
           <BalanceCard mobile {...balanceCardProps} />
         </div>
 
         {/* 포인트 내역 — pt-6(24px), px-6 */}
         <div className="px-6 pb-12 pt-6">
-          <h2 className="mb-6 text-[18px] font-semibold leading-[21px] tracking-[-0.04em] text-[var(--color-text-emphasis)]">포인트 내역</h2>
+          <h2 className="mb-6 text-subtitle-18-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">포인트 내역</h2>
 
           {sortedItems.length === 0 ? (
             <p className="py-10 text-center text-body-14-m text-[var(--color-text-label)]">

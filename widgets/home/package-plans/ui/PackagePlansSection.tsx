@@ -239,7 +239,7 @@ export default function PackagePlansSection() {
               {activePkg ? (
                 <div className="mt-4">
                   <p
-                    className="text-[17px] font-bold leading-[22px] tracking-[-0.04em]"
+                    className="text-subtitle-17-b-lh22"
                     style={{ color: activePkg.colorVar }}
                   >
                     {activePkg.name}
@@ -351,7 +351,7 @@ export default function PackagePlansSection() {
                     <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                       <p
                         className={[
-                          "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:text-[20px]",
+                          "mb-2 truncate max-md:text-subtitle-17-b-lh24 md:text-subtitle-20-b",
                           isSelected
                             ? "font-extrabold text-[var(--color-text-emphasis)]"
                             : "font-medium text-[var(--color-text-emphasis)]",
@@ -362,18 +362,18 @@ export default function PackagePlansSection() {
                       {plan ? (
                         <>
                           <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                            <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)] md:text-[16px]">
+                            <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
                               {plan.discountRate}%
                             </span>
-                            <span className="text-[14px] leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through md:text-[16px]">
+                            <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
                               {plan.originalPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>
                           <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                            <span className="text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
+                            <span className="max-md:text-price-14-b md:text-price-16-b-tight text-[var(--color-text-body-warm)]">
                               월 요금제
                             </span>
-                            <span className="text-[17px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                            <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
                               {plan.monthlyPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>

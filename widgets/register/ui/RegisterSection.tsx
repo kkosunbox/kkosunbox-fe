@@ -27,7 +27,7 @@ const inputBase =
 const inputDisabled = "opacity-50 pointer-events-none bg-[var(--color-surface-light)]";
 
 const actionBtnCls =
-  "h-10 shrink-0 rounded-[4px] px-2 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
+  "h-10 shrink-0 rounded-[8px] px-2 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
 
 /* ─── 체크박스 ─── */
 function CheckboxIcon({ checked }: { checked: boolean }) {
@@ -325,8 +325,8 @@ export default function RegisterSection() {
 
         {/* ─── 폼 카드 ─── */}
         <div
-          className="relative overflow-hidden rounded-[20px] px-6 py-8 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] max-md:pb-16 md:py-11 lg:py-11"
-          style={{ background: "var(--color-surface-warm)" }}
+          className="relative overflow-hidden rounded-[20px] px-6 py-8 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] max-md:pb-16 md:py-11 lg:py-11 lg:pb-[64px]"
+          style={{ background: "var(--color-support-faq-surface)" }}
         >
           <div className="flex flex-col gap-4 md:mx-auto lg:mx-auto md:w-[414px] lg:w-[414px]">
 
@@ -405,7 +405,7 @@ export default function RegisterSection() {
 
             {/* ── 비밀번호 ── */}
             <FieldRow label="비밀번호" required htmlFor="reg-pw">
-              <div className="relative">
+              <div className="relative w-full md:w-[220px]">
                 <input
                   id="reg-pw"
                   type={showPw ? "text" : "password"}
@@ -434,7 +434,7 @@ export default function RegisterSection() {
 
             {/* ── 비밀번호 확인 ── */}
             <FieldRow label="비밀번호 확인" required htmlFor="reg-pw-confirm">
-              <div className="relative">
+              <div className="relative w-full md:w-[220px]">
                 <input
                   id="reg-pw-confirm"
                   type={showPwConfirm ? "text" : "password"}
@@ -544,7 +544,7 @@ export default function RegisterSection() {
             src={registerPaw}
             alt=""
             aria-hidden="true"
-            className="absolute right-4 bottom-4 md:bottom-[88px] lg:bottom-[88px] md:right-[44px] lg:right-[44px] w-[60px] h-[50px] md:w-[84px] lg:w-[84px] md:h-[70px] lg:h-[70px] opacity-60"
+            className="absolute right-4 bottom-4 md:bottom-[36px] lg:bottom-[36px] md:right-[44px] lg:right-[44px] w-[60px] h-[50px] md:w-[84px] lg:w-[84px] md:h-[70px] lg:h-[70px] opacity-60"
           />
         </div>
 
@@ -553,7 +553,7 @@ export default function RegisterSection() {
           type="button"
           disabled={!canSubmit}
           onClick={handleSignup}
-          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-[8px] max-md:text-subtitle-16-sb md:text-body-14-sb lg:text-body-14-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14 md:h-[54px] lg:h-[54px]"
+          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-[12px] max-md:text-subtitle-16-sb md:text-body-16-sb lg:text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14"
           style={{ background: "var(--color-btn-dark-warm)" }}
         >
           {isPending ? "처리 중..." : "가입하기"}

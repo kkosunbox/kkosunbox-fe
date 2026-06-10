@@ -534,7 +534,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
           </p>
 
-          <h2 className="mt-[30px] text-[24px] font-semibold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
+          <h2 className="mt-[30px] text-[24px] font-bold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
             {selectedPlan.name}
           </h2>
 

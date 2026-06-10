@@ -535,6 +535,7 @@ button:disabled {
 @utility text-subtitle-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; }
 @utility text-subtitle-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-subtitle-20-sb { font-size: 20px; line-height: 24px; font-weight: 550; }
+@utility text-subtitle-20-eb { font-size: 20px; line-height: 24px; font-weight: 800; }
 @utility text-subtitle-18-b  { font-size: 18px; line-height: 22px; font-weight: 700; }
 @utility text-subtitle-18-sb { font-size: 18px; line-height: 22px; font-weight: 550; }
 @utility text-subtitle-18-m  { font-size: 18px; line-height: 22px; font-weight: 500; }
@@ -542,6 +543,8 @@ button:disabled {
 @utility text-subtitle-17-b  { font-size: 17px; line-height: 1.4;  font-weight: 700; letter-spacing: -0.02em; }
 @utility text-subtitle-17-b-lh22 { font-size: 17px; line-height: 22px; font-weight: 700; letter-spacing: -0.04em; }
 @utility text-subtitle-17-b-lh24 { font-size: 17px; line-height: 24px; font-weight: 700; letter-spacing: -0.04em; }
+@utility text-subtitle-17-m-lh24 { font-size: 17px; line-height: 24px; font-weight: 500; letter-spacing: -0.04em; }
+@utility text-subtitle-17-eb-lh24 { font-size: 17px; line-height: 24px; font-weight: 800; letter-spacing: -0.04em; }
 @utility text-subtitle-17-sb { font-size: 17px; line-height: 1.2;  font-weight: 550; }
 @utility text-subtitle-16-b  { font-size: 16px; line-height: 22px; font-weight: 700; }
 @utility text-subtitle-16-b-tight { font-size: 16px; line-height: 19px; font-weight: 700; letter-spacing: -0.05em; }

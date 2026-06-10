@@ -171,7 +171,12 @@
       "Bash(Get-ChildItem -Path \"app/api\" -Recurse)",
       "Bash(Select-Object FullName)",
       "Bash(Get-ChildItem \"C:\\\\2026\\\\ggosoonbox\\\\public\" -Recurse -Filter \"hero-*\")",
-      "Bash(Out-Null)"
+      "Bash(Out-Null)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\2026\\\\ggosoonbox\\\\app\" -Recurse -File -Name | Select-String \"checklist\" | Where-Object {$_ -notmatch \"node_modules|\\\\.next\"})",
+      "PowerShell(npx eslint widgets/home/package-plans/ui/PackagePlansSection.tsx widgets/subscribe/plans/ui/SubscribePlansSection.tsx; \"exit code: $LASTEXITCODE\")",
+      "PowerShell(Get-Process *)",
+      "Bash(taskkill *)",
+      "PowerShell(Stop-Process *)"
     ]
   }
 }

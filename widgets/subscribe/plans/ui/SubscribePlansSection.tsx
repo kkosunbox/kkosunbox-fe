@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { ChecklistRecommendModal, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
@@ -72,7 +72,7 @@ interface Props {
   heroMobileImage?: StaticImageData;
   heroAlt?: string;
   isCurrentPlan?: (plan: SubscriptionPlanDto) => boolean;
-  /** false면 우측 카드 선택 테두리 미표시 (구독 추가 모드 등) */
+  /** false면 우측 카드 선택 배경 강조 미표시 */
   showSelectedCardHighlight?: boolean;
   getPrimaryButton?: (plan: SubscriptionPlanDto) => PrimaryButtonConfig;
 }
@@ -123,14 +123,14 @@ export default function SubscribePlansSection({
   const isChecklistDone = hasChecklistAnswers(profile);
   const showModal = showChecklistRecommend && isLoggedIn && !isChecklistDone && !isDismissed;
 
-  function handleClose() {
-    setIsDismissed(true);
-  }
+  // Bridge refs
+  const containerRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([null, null, null]);
+  const [bridgeStyle, setBridgeStyle] = useState<React.CSSProperties | null>(null);
 
-  function handleConfirm() {
-    setIsDismissed(true);
-    router.push("/checklist");
-  }
+  function handleClose() { setIsDismissed(true); }
+  function handleConfirm() { setIsDismissed(true); router.push("/checklist"); }
 
   function primaryButtonFor(plan: SubscriptionPlanDto): PrimaryButtonConfig {
     return getPrimaryButton?.(plan) ?? {
@@ -176,13 +176,49 @@ export default function SubscribePlansSection({
     );
   }
 
+  // 브리지: 선택 카드와 왼쪽 패널을 시각적으로 연결
+  const updateBridge = useCallback(() => {
+    const container = containerRef.current;
+    const leftPanel = leftPanelRef.current;
+    if (!container || !leftPanel || selectedTier === null) { setBridgeStyle(null); return; }
+
+    const tierIndex = PACKAGE_SUMMARY_ORDER.indexOf(selectedTier);
+    const card = cardRefs.current[tierIndex];
+    if (!card) { setBridgeStyle(null); return; }
+
+    const cRect = container.getBoundingClientRect();
+    const lpRect = leftPanel.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+
+    const gapWidth = cardRect.left - lpRect.right;
+    if (gapWidth < 4) { setBridgeStyle(null); return; }
+
+    const R = 24;
+    const left = lpRect.right - cRect.left - R;
+    const topVal = Math.max(0, cardRect.top - cRect.top - R);
+    const bottomVal = Math.min(cRect.height, cardRect.bottom - cRect.top + R);
+
+    setBridgeStyle({ left, top: topVal, width: gapWidth + R * 2, height: bottomVal - topVal });
+  }, [selectedTier]);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useLayoutEffect(() => { updateBridge(); }, [updateBridge]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(updateBridge);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [updateBridge]);
+
   return (
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
       <section className="flex min-h-full flex-1 flex-col bg-white pt-[var(--header-offset)] pb-16 md:pb-20">
         <div className="flex w-full flex-1 flex-col">
-          {/* Hero — 모바일: 전용 이미지 / 데스크톱: 배경 포함 renewal 배너 (118px, 좁은 뷰포트는 가로 중앙) */}
+          {/* Hero */}
           <ScrollReveal variant="fade-in" duration={600}>
             <div className="mb-6 md:mb-10 lg:mb-10">
               <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
@@ -193,7 +229,6 @@ export default function SubscribePlansSection({
                   priority
                 />
               </div>
-              {/* 데스크톱: 1920px 이내는 이미지로 채우고, 초광폭은 좌우를 support hero와 동일 톤으로 보완 */}
               <div className="max-md2:hidden w-full bg-support-hero-side-bg">
                 <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
                   <Image
@@ -214,7 +249,19 @@ export default function SubscribePlansSection({
               </p>
             ) : (
               <ScrollReveal variant="fade-up" delay={150}>
-                <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center max-md:gap-[46px] lg:gap-7">
+                <div
+                  ref={containerRef}
+                  className="relative flex items-stretch justify-center max-md:flex-col max-md:items-center max-md:gap-[46px] md:gap-1 lg:gap-1"
+                >
+                  {/* 선택 카드↔왼쪽 패널 연결 브리지 */}
+                  {bridgeStyle && (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute z-0"
+                      style={{ ...bridgeStyle, background: "var(--color-surface-warm)" }}
+                    />
+                  )}
+
                   {/* 모바일 — 대표 이미지와 핵심 정보만 분리 표시 */}
                   <div className="w-full max-w-[600px] max-md:block md:hidden lg:hidden">
                     <div
@@ -279,45 +326,58 @@ export default function SubscribePlansSection({
                     ) : null}
                   </div>
 
-                  {/* 태블릿·데스크톱 — 선택된 패키지 설명 (메인 PackagePlansSection 패턴) */}
+                  {/* 태블릿·데스크탑 — 선택된 패키지 설명 */}
                   <div
-                    className="relative w-full max-w-[600px] rounded-[22px] max-md:hidden md:rounded-[28px]"
-                    style={{ boxShadow: "var(--shadow-card-soft)" }}
+                    ref={leftPanelRef}
+                    className="relative flex-1 min-w-0 max-w-[608px] bg-[var(--color-surface-warm)] rounded-[24px] p-6 max-md:hidden"
+                    style={{ boxShadow: "var(--shadow-card-selected)" }}
                   >
+                    {/* 이미지 영역 560×519 비율, overflow-hidden으로 클리핑 */}
                     <div
-                      className="relative overflow-hidden rounded-[22px] md:rounded-[28px]"
+                      className="relative w-full overflow-hidden rounded-[16px]"
+                      style={{
+                        aspectRatio: "560 / 519",
+                        cursor: activePrimaryButton && !activePrimaryButton.disabled ? "pointer" : undefined,
+                      }}
                       onClick={handlePrimaryClick}
-                      style={{ cursor: activePrimaryButton && !activePrimaryButton.disabled ? "pointer" : undefined }}
                     >
                       {activePkg ? (
                         <Image
                           key={displayTier}
                           src={activeExplain.src}
                           alt={activeExplain.alt}
-                          className="h-auto w-full transition-opacity duration-500"
-                          sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
+                          fill
+                          className="object-cover transition-opacity duration-500"
+                          sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
                           priority
                         />
                       ) : null}
                       {activeIsCurrentPlan ? (
-                        <div className="absolute left-5 top-5 z-10 lg:left-11 lg:top-11">
+                        <div className="absolute left-4 top-4 z-10">
                           <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-[14px] font-semibold leading-[17px] text-white">
                             이용중
                           </span>
                         </div>
                       ) : null}
+                      <div className="absolute bottom-4 right-4 z-10">
+                        {renderPrimaryAction(
+                          "flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
+                        )}
+                      </div>
                     </div>
-                    <div className="absolute bottom-4 right-4 lg:bottom-11 lg:right-11">
-                      {renderPrimaryAction(
-                        "flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
-                      )}
+                    {/* NutritionGuide — absolute inset-6 기준으로 이미지 영역 위에 배치 */}
+                    <div className="pointer-events-none absolute inset-6">
+                      <div className="relative h-full w-full">
+                        <div className="pointer-events-auto">
+                          <PackageNutritionGuide initialTier={displayTier} />
+                        </div>
+                      </div>
                     </div>
-                    <PackageNutritionGuide initialTier={displayTier} />
                   </div>
 
                   {/* 우측 — 패키지 요약 카드 목록 */}
-                  <div className="flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
-                    {PACKAGE_SUMMARY_ORDER.map((tier) => {
+                  <div className="flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none">
+                    {PACKAGE_SUMMARY_ORDER.map((tier, i) => {
                       const pkg = PACKAGES.find((p) => p.tier === tier)!;
                       const plan = planForTier(sortedPlans, tier);
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
@@ -331,17 +391,19 @@ export default function SubscribePlansSection({
                       return (
                         <button
                           key={tier}
+                          ref={(el) => { cardRefs.current[i] = el; }}
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
                           onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
-                          className="group relative flex h-[132px] w-full overflow-visible rounded-2xl bg-white text-left transition-all hover:opacity-90 active:opacity-80 md:h-[167px] shadow-none"
+                          className={[
+                            "group relative flex flex-1 w-full overflow-hidden text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80",
+                            showSelectionState && isSelected
+                              ? "bg-[var(--color-surface-warm)]"
+                              : "bg-white",
+                          ].join(" ")}
+                          style={{ boxShadow: showSelectionState && isSelected ? "var(--shadow-card-selected)" : "var(--shadow-card-soft)" }}
                         >
-                          <div
-                            className={[
-                              "relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl bg-[var(--color-surface-warm)] md:w-[180px]",
-                              isSelected ? "outline outline-2 outline-[var(--color-cta-button)]" : "",
-                            ].join(" ")}
-                          >
+                          <div className="relative h-full w-[140px] shrink-0 overflow-hidden bg-[var(--color-surface-warm)] md:w-[150px] lg:w-[160px]">
                             <PackageSummaryThumbnail src={img} alt={pkg.name} />
                             {isPlanCurrent ? (
                               <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
@@ -351,22 +413,22 @@ export default function SubscribePlansSection({
                               </div>
                             ) : null}
                           </div>
-                          <div className="min-w-0 flex-1 py-[6px] pl-5 pr-0 md:py-[25px] md:pl-7 md:pr-4 lg:pl-6 lg:pr-0">
+                          <div className="min-w-0 flex-1 flex flex-col justify-center pl-6py-5">
                             <p
                               className={[
-                                "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
+                                "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:text-[20px]",
                                 showSelectionState && isSelected
-                                  ? "font-bold text-[var(--color-text-emphasis)]"
-                                  : "font-semibold text-[var(--color-text-emphasis)]",
+                                  ? "font-extrabold text-[var(--color-text-emphasis)]"
+                                  : "font-medium text-[var(--color-text-emphasis)]",
                               ].join(" ")}
                             >
                               {plan.name || pkg.name}
                             </p>
-                            <div className="mb-1.5 flex items-baseline gap-2">
+                            <div className="mb-1 flex items-baseline gap-2">
                               <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)] md:text-[16px]">
                                 {plan.discountRate}%
                               </span>
-                              <span className="text-[14px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through md:text-[16px]">
+                              <span className="text-[14px] leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through md:text-[16px]">
                                 {formatMonthlyPrice(plan.originalPrice)}
                               </span>
                             </div>
@@ -374,7 +436,7 @@ export default function SubscribePlansSection({
                               <span className="text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
                                 월 요금제
                               </span>
-                              <span className="text-[18px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
+                              <span className="text-[17px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
                                 {formatMonthlyPrice(plan.monthlyPrice)}
                               </span>
                             </div>

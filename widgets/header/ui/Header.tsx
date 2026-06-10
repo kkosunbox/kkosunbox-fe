@@ -518,6 +518,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isBannerCollapsed, setIsBannerCollapsed] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
   const hasProfile = hasProfileRecord(profile);
@@ -539,11 +540,23 @@ export default function Header() {
   }, [isMenuOpen]);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setIsScrolled(y > 0);
+      setIsBannerCollapsed(y > window.innerHeight * 0.6);
+    };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (isBannerCollapsed) {
+      document.documentElement.style.setProperty("--banner-height", "0px");
+    } else {
+      document.documentElement.style.removeProperty("--banner-height");
+    }
+  }, [isBannerCollapsed]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < BREAKPOINT_LG_PX);
@@ -559,24 +572,24 @@ export default function Header() {
   return (
     <>
       {/* 띠 배너: 헤더 위 고정 */}
-      <div className="fixed inset-x-0 top-0 z-[51] flex h-[30px] max-md:h-[34px] items-center justify-center bg-[var(--color-banner-bg)]">
+      <div className={`fixed inset-x-0 top-0 z-[51] flex h-[30px] max-md:h-[34px] items-center justify-center bg-[var(--color-banner-bg)] transition-transform duration-300 ${isBannerCollapsed ? "-translate-y-full" : ""}`}>
         <div className="flex items-center gap-2">
           <span className="flex items-center justify-center rounded-[12px] bg-[var(--color-banner-badge-bg)] px-[9px] py-[2px]">
             <span className="text-[11px] font-semibold leading-[13px] tracking-[-0.02em] text-white">OPEN</span>
           </span>
           <span className="text-[13px] font-extrabold leading-[16px] text-white">
-            꼬순박스 그랜드 오픈! 정기구독 서비스 시작
+            꼬순박스 그랜드 오픈! <span className="font-medium">정기구독 서비스 시작</span>
           </span>
         </div>
       </div>
       {/* 흰색 헤더 전용: 하단 그라데이션 separator (검정 → 투명, 24px) */}
       <div
-        className={`fixed inset-x-0 z-[49] h-6 pointer-events-none transition-opacity duration-300 max-md:top-[88px] top-[84px] ${isSolid ? "opacity-100" : "opacity-0"}`}
+        className={`fixed inset-x-0 max-md:top-[88px] top-[84px] z-[49] h-6 pointer-events-none transition-[opacity,transform] duration-300 ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "opacity-100" : "opacity-0"}`}
         style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 100%)" }}
         aria-hidden="true"
       />
       <nav
-        className={`fixed inset-x-0 max-md:top-[34px] top-[30px] z-50 h-[54px] transition-[background-color] duration-300 ${isSolid ? "bg-white" : "bg-transparent"}`}
+        className={`fixed inset-x-0 max-md:top-[34px] top-[30px] z-50 h-[54px] transition-[background-color,transform] duration-300 ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "bg-white" : "bg-transparent"}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

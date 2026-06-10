@@ -2,7 +2,7 @@
 
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
 import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
@@ -26,21 +26,9 @@ const PACKAGE_EXPLAIN_IMAGES: Array<{
   src: StaticImageData;
   alt: string;
 }> = [
-  {
-    tier: "Basic",
-    src: packageExplainWithBasic,
-    alt: "베이직 패키지 BOX 설명",
-  },
-  {
-    tier: "Standard",
-    src: packageExplainWithStandard,
-    alt: "스탠다드 패키지 BOX 설명",
-  },
-  {
-    tier: "Premium",
-    src: packageExplainWithPremium,
-    alt: "프리미엄 패키지 BOX 설명",
-  },
+  { tier: "Basic", src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
+  { tier: "Standard", src: packageExplainWithStandard, alt: "스탠다드 패키지 BOX 설명" },
+  { tier: "Premium", src: packageExplainWithPremium, alt: "프리미엄 패키지 BOX 설명" },
 ];
 
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
@@ -62,6 +50,20 @@ export default function PackagePlansSection() {
   const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === displayTier);
   const activePkg = PACKAGES.find((pkg) => pkg.tier === displayTier);
 
+  type SvgBgData = {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    path: string;
+  } | null;
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const cardColumnRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([null, null, null]);
+  const [svgBg, setSvgBg] = useState<SvgBgData>(null);
+
   useEffect(() => {
     getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
   }, []);
@@ -70,6 +72,96 @@ export default function PackagePlansSection() {
     if (!activePlan) return;
     router.push(`/subscribe/detail?planId=${activePlan.id}`);
   }
+
+  const updateSvgBg = useCallback(() => {
+    const container = containerRef.current;
+    const leftPanel = leftPanelRef.current;
+    const cardColumn = cardColumnRef.current;
+    if (!container || !leftPanel || !cardColumn) { setSvgBg(null); return; }
+
+    const tierIndex = PACKAGE_SUMMARY_ORDER.indexOf(displayTier);
+    const card = cardRefs.current[tierIndex];
+    if (!card) { setSvgBg(null); return; }
+
+    const cRect = container.getBoundingClientRect();
+    const lpRect = leftPanel.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const colRect = cardColumn.getBoundingClientRect();
+
+    const gapWidth = colRect.left - lpRect.right;
+    if (gapWidth < 4) { setSvgBg(null); return; }
+
+    const R = 24;
+    const FLUSH_THRESHOLD = R;
+    const lpW = lpRect.width;
+    const lpH = lpRect.height;
+    const cardH = cardRect.height;
+    const cardLocalTop = cardRect.top - lpRect.top;
+    const cardLocalBottom = cardLocalTop + cardH;
+    const totalW = colRect.right - lpRect.left;
+    const totalH = Math.max(lpH, cardLocalBottom);
+
+    // 카드가 패널 상단/하단 끝에 붙어있을 때만 직선(평평) 처리
+    const isTopFlush = cardLocalTop <= FLUSH_THRESHOLD;
+    const isBottomFlush = cardLocalBottom >= lpH - FLUSH_THRESHOLD;
+
+    const parts: string[] = [];
+
+    if (isTopFlush) {
+      parts.push(`M ${R} 0`);
+      parts.push(`L ${totalW - R} 0`);
+      parts.push(`a ${R} ${R} 0 0 1 ${R} ${R}`);
+    } else {
+      parts.push(`M ${R} 0`);
+      parts.push(`L ${lpW - R} 0`);
+      parts.push(`a ${R} ${R} 0 0 1 ${R} ${R}`);
+      parts.push(`L ${lpW} ${cardLocalTop - R}`);
+      parts.push(`a ${R} ${R} 0 0 0 ${R} ${R}`);
+      parts.push(`L ${totalW - R} ${cardLocalTop}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${R} ${R}`);
+    }
+
+    parts.push(`L ${totalW} ${cardLocalBottom - R}`);
+
+    if (isBottomFlush) {
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${R}`);
+      parts.push(`L ${R} ${totalH}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${-R}`);
+    } else {
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${R}`);
+      parts.push(`L ${lpW + R} ${cardLocalBottom}`);
+      parts.push(`a ${R} ${R} 0 0 0 ${-R} ${R}`);
+      parts.push(`L ${lpW} ${lpH - R}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${R}`);
+      parts.push(`L ${R} ${lpH}`);
+      parts.push(`a ${R} ${R} 0 0 1 ${-R} ${-R}`);
+    }
+
+    parts.push(`L 0 ${R}`);
+    parts.push(`a ${R} ${R} 0 0 1 ${R} ${-R}`);
+    parts.push(`Z`);
+
+    const path = parts.join(' ');
+
+    setSvgBg({
+      left: lpRect.left - cRect.left,
+      top: lpRect.top - cRect.top,
+      width: totalW,
+      height: totalH,
+      path,
+    });
+  }, [displayTier]);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useLayoutEffect(() => { updateSvgBg(); }, [updateSvgBg]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(updateSvgBg);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [updateSvgBg]);
 
   return (
     <section className="bg-white py-12 md:py-16 lg:py-20">
@@ -97,7 +189,28 @@ export default function PackagePlansSection() {
         </ScrollReveal>
 
         <ScrollReveal variant="fade-up" delay={200}>
-          <div className="flex items-stretch justify-center gap-6 max-lg:flex-col max-lg:items-center max-md:gap-[46px] lg:gap-7">
+          <div
+            ref={containerRef}
+            className="relative flex items-stretch justify-center max-md:flex-col max-md:items-center max-md:gap-[46px] md:gap-1 lg:gap-1"
+          >
+            {/* 선택 카드↔왼쪽 패널 연결 SVG 통합 배경 */}
+            {svgBg && (
+              <svg
+                aria-hidden="true"
+                className="pointer-events-none absolute z-0 overflow-visible"
+                style={{
+                  left: svgBg.left,
+                  top: svgBg.top,
+                  width: svgBg.width,
+                  height: svgBg.height,
+                  filter: "drop-shadow(0px 4px 8px #00000033)",
+                }}
+                viewBox={`0 0 ${svgBg.width} ${svgBg.height}`}
+              >
+                <path d={svgBg.path} fill="var(--color-surface-warm)" />
+              </svg>
+            )}
+
             {/* 모바일 전용 — 대표 이미지 + 패키지 정보 */}
             <div className="w-full max-w-[600px] max-md:block md:hidden">
               <div
@@ -172,34 +285,48 @@ export default function PackagePlansSection() {
               </div>
             </div>
 
-            {/* 태블릿·데스크톱 — 합성 설명 이미지 + 버튼 오버레이 */}
-            <div className="relative w-full max-w-[600px] max-md:hidden">
+            {/* 태블릿·데스크탑 — 합성 설명 이미지 + 버튼 오버레이 */}
+            <div
+              ref={leftPanelRef}
+              className="relative flex-1 min-w-0 max-w-[608px] rounded-[24px] p-6 max-md:hidden"
+            >
+              {/* 이미지 영역 560×519 비율, overflow-hidden으로 클리핑 */}
               <div
-                className="relative overflow-hidden rounded-[22px] md:rounded-[28px]"
-                style={{ boxShadow: "var(--shadow-card-soft)" }}
+                className="relative w-full overflow-hidden rounded-[16px]"
+                style={{ aspectRatio: "560 / 519", cursor: activePlan ? "pointer" : undefined }}
+                onClick={handleDetailClick}
               >
                 <Image
                   key={activePackage.tier}
                   src={activePackage.src}
                   alt={activePackage.alt}
-                  className="h-auto w-full transition-opacity duration-500"
-                  sizes="(min-width: 1200px) 600px, calc(100vw - 40px)"
+                  fill
+                  className="object-cover transition-opacity duration-500"
+                  sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
                   priority
                 />
                 <button
                   type="button"
-                  onClick={handleDetailClick}
+                  onClick={(e) => { e.stopPropagation(); handleDetailClick(); }}
                   disabled={!activePlan}
-                  className="absolute bottom-4 right-4 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-11 lg:right-11"
+                  className="absolute bottom-4 right-4 z-10 flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60 lg:bottom-8 lg:right-8"
                 >
                   제품 상세보기
                 </button>
               </div>
-              <PackageNutritionGuide initialTier={displayTier} />
+              {/* NutritionGuide — absolute inset-6 기준으로 이미지 영역 위에 배치 */}
+              <div className="pointer-events-none absolute inset-6">
+                <div className="relative h-full w-full">
+                  <div className="pointer-events-auto">
+                    <PackageNutritionGuide initialTier={displayTier} />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="max-md:hidden flex w-full max-w-[600px] flex-col gap-6 lg:h-[556px] lg:w-[386px] lg:max-w-none lg:shrink-0">
-              {PACKAGE_SUMMARY_ORDER.map((tier) => {
+            {/* 태블릿·데스크탑 — 패키지 요약 카드 목록 */}
+            <div ref={cardColumnRef} className="max-md:hidden flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none pr-5">
+              {PACKAGE_SUMMARY_ORDER.map((tier, i) => {
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const plan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
@@ -208,45 +335,45 @@ export default function PackagePlansSection() {
                 return (
                   <button
                     key={tier}
+                    ref={(el) => { cardRefs.current[i] = el; }}
                     type="button"
                     disabled={!plan}
                     onClick={() => setSelectedTier(tier)}
-                    className="group flex h-[132px] w-full rounded-2xl border-0 bg-white text-left shadow-none transition-opacity md:h-[167px] disabled:cursor-not-allowed disabled:opacity-60"
+                    className={[
+                      "group relative flex w-full text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
+                      isSelected ? "h-[207px] flex-none bg-transparent" : "flex-1",
+                    ].join(" ")}
+                    style={undefined}
                   >
-                    <div
-                      className={[
-                        "relative h-full w-[142px] shrink-0 overflow-hidden rounded-2xl md:w-[180px]",
-                        isSelected ? "outline outline-2 outline-[var(--color-cta-button)]" : "",
-                      ].join(" ")}
-                    >
+                    <div className={`relative ${isSelected ? "h-[167px] w-[180px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-[var(--color-surface-warm)] ${isSelected ? "ml-0" : "ml-3"}`}>
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />
                     </div>
-                    <div className="min-w-0 flex-1 pl-7 pr-4 py-[8px] md:py-[25px] lg:pl-6 lg:pr-0">
+                    <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                       <p
                         className={[
-                          "mb-[14px] truncate text-[17px] leading-[24px] tracking-[-0.04em] md:mb-6 md:text-[20px]",
+                          "mb-2 truncate text-[17px] leading-[24px] tracking-[-0.04em] md:text-[20px]",
                           isSelected
-                            ? "font-bold text-[var(--color-text-emphasis)]"
-                            : "font-semibold text-[var(--color-text-emphasis)]",
+                            ? "font-extrabold text-[var(--color-text-emphasis)]"
+                            : "font-medium text-[var(--color-text-emphasis)]",
                         ].join(" ")}
                       >
                         {plan?.name || pkg.name}
                       </p>
                       {plan ? (
                         <>
-                          <div className="mb-[6px] flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                            <span className="text-left text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)]">
+                          <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                            <span className="text-[14px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-cta-button)] md:text-[16px]">
                               {plan.discountRate}%
                             </span>
-                            <span className="text-left text-[16px] font-medium leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
+                            <span className="text-[14px] leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through md:text-[16px]">
                               {plan.originalPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>
-                          <div className="mb-[8px] flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                            <span className="text-left text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
+                          <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                            <span className="text-[14px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)] md:text-[16px]">
                               월 요금제
                             </span>
-                            <span className="text-left text-[20px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-surface-dark)]">
+                            <span className="text-[17px] font-extrabold leading-[24px] tracking-[-0.05em] text-[var(--color-text-emphasis)] md:text-[20px]">
                               {plan.monthlyPrice.toLocaleString("ko-KR")}원
                             </span>
                           </div>

@@ -543,7 +543,7 @@ export default function Header() {
     const handleScroll = () => {
       const y = window.scrollY;
       setIsScrolled(y > 0);
-      setIsBannerCollapsed(y > window.innerHeight * 0.6);
+      setIsBannerCollapsed(y > 36);
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -566,7 +566,7 @@ export default function Header() {
   }, []);
 
   const isTransparentRoute = pathname === "/" || pathname === "/about";
-  const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered || isMobile;
+  const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered;
   const closeMenu = () => setIsMenuOpen(false);
 
   return (

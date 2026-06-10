@@ -58,7 +58,7 @@ function PasswordField({ id, value, onChange, placeholder, autoComplete, visible
   onToggleVisible: () => void;
 }) {
   return (
-    <div className="relative flex h-10 flex-1 items-center rounded-[4px] bg-white">
+    <div className="relative flex h-10 flex-1 items-center rounded-[4px] bg-[var(--color-surface-light)]">
       <input
         id={id}
         type={visible ? "text" : "password"}
@@ -187,7 +187,7 @@ export default function AccountInfoModal({ onClose }: Props) {
               {/* 이메일 행 */}
               <div className="flex items-center">
                 <span className="w-[91px] shrink-0 text-body-13-m text-[var(--color-text)]">이메일</span>
-                <div className="flex h-10 min-w-0 flex-1 items-center rounded-[4px] bg-white px-3">
+                <div className="flex h-10 min-w-0 flex-1 items-center rounded-[4px] bg-[var(--color-surface-light)] px-3">
                   <span className="truncate text-body-13-m text-[var(--color-text)]">{user?.email ?? ""}</span>
                 </div>
               </div>

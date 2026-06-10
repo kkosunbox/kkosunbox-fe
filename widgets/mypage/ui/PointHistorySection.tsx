@@ -209,7 +209,6 @@ function Pagination({
   onNext: () => void;
   onSelect: (p: number) => void;
 }) {
-  if (totalPages <= 1) return null;
   return (
     <nav className="flex items-center justify-center gap-2 py-5" aria-label="포인트 내역 페이지 탐색">
       <button

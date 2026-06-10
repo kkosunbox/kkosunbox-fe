@@ -15,7 +15,6 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
     type: "REFERRAL_REWARD",
     description: "포인트 사용",
     createdAt: "2026-04-21T00:00:00Z",
-    expiresAt: "2027-04-21T00:00:00Z",
     referenceId: 1001,
     referralCode: null,
   },
@@ -25,7 +24,6 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
     type: "REFERRAL_REWARD",
     description: "친구추가 적립",
     createdAt: "2026-03-21T00:00:00Z",
-    expiresAt: "2027-03-21T00:00:00Z",
     referenceId: null,
     referralCode: "ABC123",
   },
@@ -35,7 +33,6 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
     type: "REFERRAL_REWARD",
     description: "친구추가 적립",
     createdAt: "2026-02-21T00:00:00Z",
-    expiresAt: "2027-02-21T00:00:00Z",
     referenceId: null,
     referralCode: "DEF456",
   },
@@ -45,7 +42,6 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
     type: "REFERRAL_REWARD",
     description: "친구추가 적립",
     createdAt: "2026-01-21T00:00:00Z",
-    expiresAt: "2027-01-21T00:00:00Z",
     referenceId: null,
     referralCode: "GHI789",
   },
@@ -55,14 +51,13 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
     type: "REFERRAL_REWARD",
     description: "포인트 사용",
     createdAt: "2025-12-21T00:00:00Z",
-    expiresAt: "2026-12-21T00:00:00Z",
     referenceId: 1002,
     referralCode: null,
   },
 ];
 
 // TODO: API 연동 완료 시 제거
-const DUMMY_BALANCE = { balance: 2270, expiringWithin30Days: 0 };
+const DUMMY_BALANCE = { totalAmount: 2270, monthlyAmount: 800, year: 2026, month: 6 };
 const DUMMY_REFERRAL: MyReferralCode = {
   referralCode: "TEST123",
   referralLink: "http://kkosunbox.com/ds/TEST123",
@@ -77,7 +72,7 @@ export default async function PointPage() {
     fetchMyReferralCode(token),
   ]);
 
-  const displayBalance = balance.balance === 0 ? DUMMY_BALANCE : balance;
+  const displayBalance = balance.totalAmount === 0 ? DUMMY_BALANCE : balance;
   const displayItems = history.items.length === 0 ? DUMMY_ITEMS : history.items;
   const displayReferral = referralCode ?? DUMMY_REFERRAL;
 

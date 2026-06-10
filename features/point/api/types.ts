@@ -1,8 +1,15 @@
 // ── 포인트 잔액 ────────────────────────────────────────────────────
 
 export interface PointBalance {
-  balance: number;              // 유효 포인트 잔액 (만료되지 않은 포인트 합산)
-  expiringWithin30Days: number; // 30일 이내 소멸 예정 포인트
+  totalAmount: number;   // 전체 누적 포인트
+  monthlyAmount: number; // 조회 월 적립 포인트
+  year: number;
+  month: number;
+}
+
+export interface PointBalanceParams {
+  year?: number;
+  month?: number;
 }
 
 // ── 포인트 내역 ────────────────────────────────────────────────────
@@ -11,13 +18,12 @@ export type PointLedgerType = "REFERRAL_REWARD";
 
 export interface PointLedgerItem {
   id: number;
-  amount: number;       // 포인트 금액 (양수: 적립)
+  amount: number;
   type: PointLedgerType;
   description: string;
-  createdAt: string;    // ISO 8601
-  expiresAt: string | null;
-  referenceId: number | null;  // 관련 결제 ID
-  referralCode: string | null; // 사용된 레퍼럴 코드
+  createdAt: string; // ISO 8601
+  referenceId: number | null;
+  referralCode: string | null;
 }
 
 export interface PointHistoryPage {
@@ -30,4 +36,6 @@ export interface PointHistoryPage {
 export interface PointHistoryParams {
   page?: number;
   limit?: number;
+  year?: number;
+  month?: number;
 }

@@ -262,7 +262,7 @@ export default function HeroSection() {
                   {slide.subtext}
                 </p>
                 <p
-                  className={`max-lg:mb-6 lg:mb-[52px] lg:h-[24px] lg:overflow-hidden max-lg:h-[40px] max-lg:overflow-hidden max-lg:text-[13px] max-lg:leading-[20px] ${
+                  className={`max-lg:mb-6 lg:mb-[52px] lg:h-[24px] lg:overflow-hidden max-lg:h-[16px] max-lg:overflow-hidden max-lg:text-[13px] max-lg:leading-[20px] ${
                     slide.tagsClass ??
                     "text-[var(--color-hero-tagline)] max-lg:text-body-13-r lg:text-body-14-m"
                   }`}

@@ -20,7 +20,6 @@ import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscri
 import type { PetInfo, RecommendedTier } from "./types";
 import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
-import stamp from "@/widgets/checklist/assets/stamp-new.png";
 import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.png";
 import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
 import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
@@ -497,16 +496,6 @@ export default function ChecklistResult({
                     {/* 패키지 이미지 */}
                     <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:aspect-square md:w-full md:rounded-[16px] lg:aspect-auto lg:h-[252px]">
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />
-                      {tier === recommendedPlanTier && (
-                        <div className="absolute left-0 top-3 max-md:h-[52px] max-md:w-[52px] md:h-[144px] md:w-[144px]">
-                          <Image
-                            src={stamp}
-                            alt="추천 도장"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
-                      )}
                     </div>
 
                     {/* 텍스트 영역 */}

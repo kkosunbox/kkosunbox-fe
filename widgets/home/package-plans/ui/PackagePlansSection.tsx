@@ -207,7 +207,7 @@ export default function PackagePlansSection() {
                 }}
                 viewBox={`0 0 ${svgBg.width} ${svgBg.height}`}
               >
-                <path d={svgBg.path} fill="var(--color-surface-warm)" />
+                <path d={svgBg.path} fill="white" />
               </svg>
             )}
 
@@ -218,7 +218,7 @@ export default function PackagePlansSection() {
                 style={{ boxShadow: "var(--shadow-card-soft)" }}
               >
                 <div
-                  className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-[var(--color-surface-warm)]"
+                  className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-white"
                   onClick={handleDetailClick}
                   style={{ cursor: activePlan ? "pointer" : undefined }}
                 >
@@ -288,7 +288,7 @@ export default function PackagePlansSection() {
             {/* 태블릿·데스크탑 — 합성 설명 이미지 + 버튼 오버레이 */}
             <div
               ref={leftPanelRef}
-              className="relative flex-1 min-w-0 max-w-[608px] rounded-[24px] p-6 max-md:hidden"
+              className="relative flex-1 min-w-0 max-w-[600px] rounded-[24px] p-6 pr-4 max-md:hidden"
             >
               {/* 이미지 영역 560×519 비율, overflow-hidden으로 클리핑 */}
               <div
@@ -325,7 +325,7 @@ export default function PackagePlansSection() {
             </div>
 
             {/* 태블릿·데스크탑 — 패키지 요약 카드 목록 */}
-            <div ref={cardColumnRef} className="max-md:hidden flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none pr-5">
+            <div ref={cardColumnRef} className="max-md:hidden flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none pr-1">
               {PACKAGE_SUMMARY_ORDER.map((tier, i) => {
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
@@ -345,16 +345,16 @@ export default function PackagePlansSection() {
                     ].join(" ")}
                     style={undefined}
                   >
-                    <div className={`relative ${isSelected ? "h-[167px] w-[180px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-[var(--color-surface-warm)] ${isSelected ? "ml-0" : "ml-3"}`}>
+                    <div className={`relative ${isSelected ? "h-[159px] w-[172px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-white ${isSelected ? "ml-0" : "ml-3"}`}>
                       <PackageSummaryThumbnail src={img} alt={pkg.name} />
                     </div>
                     <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                       <p
                         className={[
-                          "mb-2 truncate max-md:text-subtitle-17-b-lh24 md:text-subtitle-20-b",
+                          "mb-2 truncate text-[var(--color-text-emphasis)]",
                           isSelected
-                            ? "font-extrabold text-[var(--color-text-emphasis)]"
-                            : "font-medium text-[var(--color-text-emphasis)]",
+                            ? "max-md:text-subtitle-17-eb-lh24 md:text-subtitle-20-eb"
+                            : "max-md:text-subtitle-17-m-lh24 md:text-subtitle-18-m",
                         ].join(" ")}
                       >
                         {plan?.name || pkg.name}

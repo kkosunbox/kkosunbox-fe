@@ -169,7 +169,9 @@
       "WebFetch(domain:docs.channel.io)",
       "Bash(New-Item *)",
       "Bash(Get-ChildItem -Path \"app/api\" -Recurse)",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem \"C:\\\\2026\\\\ggosoonbox\\\\public\" -Recurse -Filter \"hero-*\")",
+      "Bash(Out-Null)"
     ]
   }
 }

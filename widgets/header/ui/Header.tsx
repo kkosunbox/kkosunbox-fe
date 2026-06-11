@@ -11,6 +11,7 @@ import { getProfileDisplayName } from "@/shared/config/profile";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasProfileRecord } from "@/features/profile/lib/profileStatus";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 
 const NAV_ITEMS = [
   { href: "/", label: "홈", icon: "home" as const },
@@ -445,12 +446,12 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
 
   const handleAddProfile = () => {
     onClose();
-    router.push("/mypage/dog-profile?new=true");
+    openChecklistForm({ isNewProfile: true });
   };
 
   return (
     <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-72 rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden">
-      <div className="flex flex-col">
+      <div className="flex flex-col pb-[6px]">
         {/* 프로필 헤더 — 그라디언트 배경 */}
         <div
           className="flex h-[90px] items-center gap-4 rounded-[10px_10px_0_0] px-5"
@@ -730,7 +731,7 @@ export default function Header() {
                 </>
               ) : (
                 <button
-                  onClick={() => { closeMenu(); router.push("/mypage/dog-profile?new=true"); }}
+                  onClick={() => { closeMenu(); openChecklistForm({ isNewProfile: true }); }}
                   className="text-body-20-sb text-[var(--color-text-secondary)]"
                 >
                   프로필 등록하기

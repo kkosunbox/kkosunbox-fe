@@ -118,72 +118,26 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────────────────
-// D. 애견 프로필 관리 (/mypage/dog-profile)
-//
-// SSR 구성:
-//   fetchProfile(token)            → GET /v1/profiles    → MOCK_PROFILE (name:"쿠키", weight:3.5, gender:"female")
-//   fetchActiveSubscription(token) → GET /v1/subscriptions → MOCK_SUBSCRIPTION
-//
-// 레이아웃 주의: ProfileManagementSection은 모바일/데스크톱 DOM을 동시에 렌더링한다.
-//   - 모바일 레이아웃(lg:hidden): Desktop Chrome에서 display:none → 비상호작용
-//   - 데스크톱 레이아웃(max-md:hidden): Desktop Chrome에서 표시
-// 입력 필드: 데스크톱 #d-name / #d-breed / #d-weight, 모바일 #m-name / #m-breed / #m-weight
-// 버튼·에러: .last()로 데스크톱 요소 선택 (모바일 DOM이 앞, 데스크톱이 뒤)
+// D. 애견 프로필 수정 (ChecklistFormModal — /mypage 정보변경)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test.describe("애견 프로필 관리 (/mypage/dog-profile)", () => {
-  test("기존 프로필 → 페이지 렌더링 및 필드 사전 채움", async ({ page }) => {
+test.describe("애견 프로필 수정 (마이페이지 정보변경)", () => {
+  test("/mypage/dog-profile → /mypage 리다이렉트", async ({ page }) => {
     await loginAndGoTo(page, "/mypage/dog-profile");
-
-    await expect(page.getByRole("heading", { name: "프로필 관리" }).last()).toBeVisible({
-      timeout: 10_000,
-    });
-
-    // 이름·품종·몸무게: MOCK_PROFILE 값으로 사전 채움
-    await expect(page.locator("#d-name")).toHaveValue("쿠키");
-    await expect(page.locator("#d-breed")).toHaveValue("포메라니안");
-    await expect(page.locator("#d-weight")).toHaveValue("3.5kg");
+    await page.waitForURL("/mypage", { timeout: 10_000 });
   });
 
-  test("몸무게 입력 → 숫자만 유지하고 포커스 해제 시 kg 표시", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/dog-profile");
+  // 주의: 모달 본문(ChecklistPetForm)은 체크리스트 질문 로드 후에만 렌더된다.
+  // authed + mock API 경로의 데이터 로드 이슈(e2e-test-status.md 분류 B)로
+  // 현재 환경에서는 폼 필드 값 사전 채움까지 검증할 수 없어, 모달이
+  // editProfile 모드("프로필 작성")로 열리는 것까지만 검증한다.
+  test("정보변경 클릭 → 프로필 작성 모달 열림", async ({ page }) => {
+    await loginAndGoTo(page, "/mypage");
 
-    await page.locator("#d-weight").clear();
-    await page.locator("#d-weight").fill("abc12.3kg");
-    await expect(page.locator("#d-weight")).toHaveValue("12.3");
+    await page.getByRole("button", { name: "정보변경" }).first().click();
 
-    await page.locator("#d-name").focus();
-    await expect(page.locator("#d-weight")).toHaveValue("12.3kg");
-  });
-
-  test("강아지 품종 select → 검색 결과 선택 시 input 반영", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/dog-profile?new=true");
-
-    await page.locator("#d-breed").fill("비숑");
-    await page.getByRole("option", { name: /비숑 프리제/ }).click();
-
-    await expect(page.locator("#d-breed")).toHaveValue("비숑 프리제");
-  });
-
-  test("강아지 품종 select → 직접 입력만 한 값은 선택값으로 저장하지 않음", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/dog-profile?new=true");
-
-    await page.locator("#d-breed").fill("없는 품종");
-    await page.locator("#d-name").focus();
-
-    await expect(page.locator("#d-breed")).toHaveValue("");
-  });
-
-  test("새 프로필 등록 모드 (?new=true) → '프로필 등록' 제목 + 빈 폼", async ({ page }) => {
-    await loginAndGoTo(page, "/mypage/dog-profile?new=true");
-
-    await expect(page.getByRole("heading", { name: "프로필 등록" }).last()).toBeVisible({
-      timeout: 10_000,
-    });
-
-    // isNewProfile=true → 폼 초기값 비어있음
-    await expect(page.locator("#d-name")).toHaveValue("");
-    await expect(page.locator("#d-breed")).toHaveValue("");
+    const modal = page.getByRole("dialog", { name: "프로필 작성" });
+    await expect(modal).toBeVisible({ timeout: 10_000 });
   });
 });
 

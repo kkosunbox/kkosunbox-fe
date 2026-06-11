@@ -78,7 +78,7 @@ export default function AlertModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-5"
+      className="fixed inset-0 z-[210] flex items-center justify-center px-5"
       role="dialog"
       aria-modal="true"
       aria-label={title}

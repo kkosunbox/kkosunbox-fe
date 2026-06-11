@@ -79,6 +79,7 @@ interface Props {
   setPetInfo: React.Dispatch<React.SetStateAction<PetInfo>>;
   avatarSrc: string | null;
   onAvatarChange: (src: string | null) => void;
+  onAvatarFileSelect?: (file: File) => void;
 }
 
 export default function ChecklistPetForm({
@@ -86,6 +87,7 @@ export default function ChecklistPetForm({
   setPetInfo,
   avatarSrc,
   onAvatarChange,
+  onAvatarFileSelect,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const birthMaxDate = new Date();
@@ -96,6 +98,7 @@ export default function ChecklistPetForm({
     if (!file) return;
     const url = URL.createObjectURL(file);
     onAvatarChange(url);
+    onAvatarFileSelect?.(file);
   }
 
   return (

@@ -27,7 +27,7 @@ const inputBase =
 const inputDisabled = "opacity-50 pointer-events-none bg-[var(--color-surface-light)]";
 
 const actionBtnCls =
-  "h-10 shrink-0 rounded-[8px] px-2 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
+  "h-10 shrink-0 rounded-[8px] text-[13px] font-medium leading-4 text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
 
 /* ─── 체크박스 ─── */
 function CheckboxIcon({ checked }: { checked: boolean }) {
@@ -328,7 +328,7 @@ export default function RegisterSection() {
           className="relative overflow-hidden rounded-[20px] px-6 py-8 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] max-md:pb-16 md:py-11 lg:py-11 lg:pb-[64px]"
           style={{ background: "var(--color-support-faq-surface)" }}
         >
-          <div className="flex flex-col gap-4 md:mx-auto lg:mx-auto md:w-[414px] lg:w-[414px]">
+          <div className="flex flex-col gap-4 md:mx-auto lg:mx-auto md:w-[420px] lg:w-[420px]">
 
             {/* ── 이메일 ── */}
             <FieldRow label="이메일" required htmlFor="reg-email">
@@ -348,7 +348,7 @@ export default function RegisterSection() {
                   type="button"
                   onClick={handleSendCode}
                   disabled={!email.trim() || isPending || emailVerified || dailyLimitReached || (codeSent && countdown > 0)}
-                  className={[actionBtnCls, "bg-[var(--color-btn-dark-warm)]"].join(" ")}
+                  className={[actionBtnCls, "min-w-[95px] px-3 bg-[var(--color-btn-dark-warm)]"].join(" ")}
                 >
                   {isPending && !codeSent
                     ? "발송 중..."
@@ -391,7 +391,7 @@ export default function RegisterSection() {
                   type="button"
                   onClick={handleVerifyOtp}
                   disabled={!otp.trim() || isPending || !codeSent || emailVerified}
-                  className={[actionBtnCls, "bg-[var(--color-btn-dark-warm)]"].join(" ")}
+                  className={[actionBtnCls, "min-w-[52px] px-2 bg-[var(--color-btn-dark-warm)]"].join(" ")}
                 >
                   {isPending && codeSent && !emailVerified ? "확인 중..." : "확인"}
                 </button>

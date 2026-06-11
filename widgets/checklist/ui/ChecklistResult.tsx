@@ -29,6 +29,8 @@ import packageImageBasic from "@/widgets/home/package-plans/assets/package-image
 import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
 import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
 import { PackageSummaryThumbnail } from "@/widgets/home/package-plans/ui/PackageSummaryThumbnail";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
+import { useModal } from "@/shared/ui";
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -86,6 +88,71 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
 
 type RecommendReason = RecommendReasonDto;
 
+function ChecklistRetryButton({ className }: { className?: string }) {
+  const { openAlert } = useModal();
+
+  const handleRetry = () =>
+    openAlert({
+      title: "체크리스트를 다시 진행하시겠습니까?",
+      description: "처음부터 다시 작성할 수 있습니다.\n기존에 작성한 결과는 삭제되지 않습니다.",
+      primaryLabel: "다시하기",
+      onPrimary: () => openChecklistForm({ rewrite: true }),
+      secondaryLabel: "취소하기",
+    });
+
+  return (
+    <button
+      type="button"
+      onClick={handleRetry}
+      className={[
+        "group inline-flex h-9 shrink-0 items-center justify-center overflow-hidden",
+        "rounded-full border border-[var(--color-text-muted)]",
+        "text-body-13-m leading-4 text-[var(--color-text)]",
+        "transition-all duration-300 ease-out active:opacity-70",
+        // 모바일: 라벨 항상 노출
+        "gap-[10px] px-3 py-2",
+        // 웹·태블릿(≥768px): 아이콘만 보이는 원형 → hover 시 라벨 확장
+        "md:gap-0 md:px-2 md:hover:gap-[10px] md:hover:px-3",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      aria-label="체크리스트 다시하기"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden
+        className="shrink-0 transition-transform duration-500 ease-out md:group-hover:rotate-[360deg]"
+      >
+        <path
+          d="M9 8L12 5.5L9 3"
+          stroke="var(--color-text-label)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M15.0518 8.08331C15.6939 9.19539 15.951 10.4883 15.7834 11.7614C15.6158 13.0345 15.0328 14.2168 14.1248 15.1248C13.2168 16.0328 12.0345 16.6158 10.7614 16.7834C9.48826 16.951 8.1954 16.6939 7.08332 16.0518C5.97125 15.4097 5.1021 14.4187 4.61069 13.2323C4.11928 12.0459 4.03307 10.7306 4.36542 9.4902C4.69778 8.24984 5.43012 7.15381 6.44888 6.37208C7.46764 5.59036 8.71587 5.16665 9.99999 5.16665"
+          stroke="var(--color-text-label)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span
+        className={[
+          "overflow-hidden whitespace-nowrap transition-all duration-300 ease-out",
+          "md:max-w-0 md:opacity-0 md:group-hover:max-w-[64px] md:group-hover:opacity-100",
+        ].join(" ")}
+      >
+        다시하기
+      </span>
+    </button>
+  );
+}
+
 /* ── 추천 카드 내부 (데스크탑·태블릿 전용) ─── */
 
 interface CardBodyProps {
@@ -130,7 +197,7 @@ function CardBody({
         </div>
 
         {/* 뱃지 + 설명 */}
-        <div className="flex flex-col gap-2">
+        <div className="min-w-0 flex-1 flex flex-col gap-2">
           <span
             className="inline-flex h-[24px] w-fit items-center rounded-full px-3 text-[14px] font-semibold leading-[17px] text-white"
             style={{ background: tierColorVar }}
@@ -146,6 +213,9 @@ function CardBody({
             입니다.
           </p>
         </div>
+
+        {/* 다시하기 — 데스크탑(≥1200px) 전용, 태블릿에서는 숨김 */}
+        <ChecklistRetryButton className="ml-auto max-lg:hidden" />
       </div>
 
       {/* 본문: 이미지(좌) + 추천이유(우) */}
@@ -324,7 +394,7 @@ export default function ChecklistResult({
 
       {/* 모바일 전용: FFF7EF 배너 — 아바타 + 분석 결과 텍스트 */}
       <div
-        className="md:hidden flex items-center gap-4 px-6 py-[21px]"
+        className="md:hidden flex items-start gap-3 px-6 py-[21px]"
         style={{ background: "var(--color-support-faq-surface)" }}
       >
         <div
@@ -338,7 +408,7 @@ export default function ChecklistResult({
             <span className="text-emoji-28">🐶</span>
           )}
         </div>
-        <div className="flex flex-col gap-[3px]">
+        <div className="min-w-0 flex-1 flex flex-col gap-[3px]">
           <span
             className="inline-flex h-5 w-fit items-center rounded-full px-3 text-[12px] font-semibold leading-[14px] text-white"
             style={{ background: tierColorVar }}
@@ -464,6 +534,11 @@ export default function ChecklistResult({
                 </span>
                 {"를 추천드려요!"}
               </p>
+
+              {/* 다시하기 — 모바일 전용, 추천이유 박스 하단 중앙 */}
+              <div className="mt-2 flex justify-center">
+                <ChecklistRetryButton />
+              </div>
             </div>
           </div>
         </div>

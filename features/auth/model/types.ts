@@ -1,6 +1,7 @@
 export interface AuthUser {
   id: number;
   email: string;
+  isInfluencer: boolean;
 }
 
 export interface AuthContextValue {

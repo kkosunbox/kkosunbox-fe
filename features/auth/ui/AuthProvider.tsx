@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { loginAction, logoutAction, syncAuthCookieAction } from "../lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
 import type { AuthContextValue, AuthUser } from "../model/types";
+import { toAuthUser } from "../lib/mapUser";
 
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -84,7 +85,7 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
         const apiUser = await getUser();
         if (cancelled) return;
 
-        setUser((prev) => prev ?? { id: apiUser.id, email: apiUser.email });
+        setUser(toAuthUser(apiUser));
         const newAccess = tokenStore.getAccess();
         if (newAccess) await syncAuthCookieAction(newAccess).catch(() => {});
       } catch {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { ChecklistRecommendModal, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
@@ -37,10 +37,11 @@ const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
   Premium: packageImagePremium,
 };
 
-const ROTATION_INTERVAL_MS = 8000;
-
-/** /subscribe 플랜 목록 노출 순서 */
+/** /subscribe 플랜 목록 노출 순서 (데스크탑 세로 카드·모바일 네비) */
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
+
+/** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
+const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
 
 const PACKAGE_EXPLAIN: Record<PackageTier, { src: StaticImageData; alt: string }> = {
   Basic: { src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
@@ -123,19 +124,12 @@ export default function SubscribePlansSection({
   );
   const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
 
-  const [selectedTier, setSelectedTier] = useState<PackageTier | null>(initialSelectedTier);
-  const [rotatingIndex, setRotatingIndex] = useState(0);
+  const [selectedTier, setSelectedTier] = useState<PackageTier>(
+    initialSelectedTier ?? PACKAGE_SUMMARY_ORDER[0],
+  );
 
-  useEffect(() => {
-    if (selectedTier !== null) return;
-    const intervalId = window.setInterval(() => {
-      setRotatingIndex((i) => (i + 1) % PACKAGE_SUMMARY_ORDER.length);
-    }, ROTATION_INTERVAL_MS);
-    return () => window.clearInterval(intervalId);
-  }, [selectedTier]);
-
-  /** 왼쪽 패널 렌더링용 — 미선택 시 자동 회전 tier 표시 */
-  const displayTier = selectedTier ?? PACKAGE_SUMMARY_ORDER[rotatingIndex];
+  /** 왼쪽 패널 렌더링용 — 항상 선택된 tier 표시 (미선택 상태 없음) */
+  const displayTier = selectedTier;
 
   const activeExplain = PACKAGE_EXPLAIN[displayTier];
   const activePlan = planForTier(sortedPlans, displayTier);
@@ -425,7 +419,7 @@ export default function SubscribePlansSection({
                       const pkg = PACKAGES.find((p) => p.tier === tier)!;
                       const plan = planForTier(sortedPlans, tier);
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
-                      const isSelected = selectedTier !== null && selectedTier === tier;
+                      const isSelected = selectedTier === tier;
                       const showSelectionState = showSelectedCardHighlight;
 
                       if (!plan) return null;
@@ -438,7 +432,7 @@ export default function SubscribePlansSection({
                           ref={(el) => { cardRefs.current[i] = el; }}
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
-                          onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
+                          onClick={() => setSelectedTier(tier)}
                           className={[
                             "group relative flex w-full text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80",
                             showSelectionState && isSelected ? "h-[207px] flex-none bg-transparent" : "flex-1",
@@ -495,11 +489,12 @@ export default function SubscribePlansSection({
                     ref={tabletCardColumnRef}
                     className="max-md:hidden md:flex lg:hidden w-full justify-between items-start"
                   >
-                    {PACKAGE_SUMMARY_ORDER.map((tier, i) => {
+                    {TABLET_SUMMARY_ORDER.map((tier) => {
+                      const i = PACKAGE_SUMMARY_ORDER.indexOf(tier);
                       const pkg = PACKAGES.find((p) => p.tier === tier)!;
                       const plan = planForTier(sortedPlans, tier);
                       const img = PACKAGE_SUMMARY_IMAGES[tier];
-                      const isSelected = selectedTier !== null && selectedTier === tier;
+                      const isSelected = selectedTier === tier;
                       const showSelectionState = showSelectedCardHighlight;
 
                       if (!plan) return null;
@@ -512,7 +507,7 @@ export default function SubscribePlansSection({
                           ref={(el) => { tabletCardRefs.current[i] = el; }}
                           type="button"
                           aria-pressed={showSelectionState ? isSelected : undefined}
-                          onClick={() => setSelectedTier((prev) => (prev === tier ? null : tier))}
+                          onClick={() => setSelectedTier(tier)}
                           className={[
                             "group relative z-[1] flex flex-col items-start text-left rounded-[24px] transition-colors duration-300 hover:opacity-90 active:opacity-80",
                             // 선택: 브릿지 흰 배경 위 패딩 / 미선택: border·shadow 없이 패널 아래로 내려 배치

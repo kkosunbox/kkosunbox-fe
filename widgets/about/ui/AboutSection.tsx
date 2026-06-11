@@ -48,7 +48,7 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 */}
-      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-lg:pt-[62px] max-md:pb-9 md:pb-14 max-lg:pb-14 lg:py-0 lg:max-h-[calc(590px+var(--banner-height))]">
+      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-lg:pt-[62px] max-md:pb-9 md:pb-14 max-lg:pb-14 lg:pt-[var(--header-height)] lg:pb-0 lg:max-h-[calc(590px+var(--banner-height)+var(--header-height))]">
         <div className="mx-auto max-w-[var(--max-width-content)] px-6 lg:px-0">
           <h1 className="flex justify-center max-lg:mb-10 lg:hidden">
             <Image

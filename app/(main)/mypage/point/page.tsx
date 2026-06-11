@@ -1,4 +1,5 @@
-import { getServerToken } from "@/features/auth/lib/session";
+import { redirect } from "next/navigation";
+import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchPointBalance, fetchPointHistory } from "@/features/point/api/queries";
 import { fetchMyReferralCode } from "@/features/referral/api/queries";
 import type { PointLedgerItem } from "@/features/point/api/types";
@@ -64,6 +65,11 @@ const DUMMY_REFERRAL: MyReferralCode = {
 };
 
 export default async function PointPage() {
+  const authUser = await getAuthUser();
+  if (!authUser?.isInfluencer) {
+    redirect("/");
+  }
+
   const token = await getServerToken();
 
   const [balance, history, referralCode] = await Promise.all([

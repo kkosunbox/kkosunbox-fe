@@ -1,6 +1,10 @@
 export interface ChecklistFormOptions {
   rewrite?: boolean;
   editQuestionId?: number | null;
+  /** 새 프로필 추가 — step 0 빈 폼에서 시작, submit 시 createProfile */
+  isNewProfile?: boolean;
+  /** 기존 프로필 수정 — step 0에 activeProfile 프리필, 저장 후 모달 닫기 */
+  editProfile?: boolean;
 }
 
 export interface OpenChecklistFormDetail extends ChecklistFormOptions {

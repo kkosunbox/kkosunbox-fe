@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { getPointBalance, getPointHistory } from "@/features/point/api";
 import type { PointBalance, PointLedgerItem } from "@/features/point/api/types";
 import type { MyReferralCode } from "@/features/referral/api/types";
+import { getErrorMessage } from "@/shared/lib/api";
 import { useModal } from "@/shared/ui";
 
 const ITEMS_PER_PAGE = 10;
@@ -98,6 +100,16 @@ function buildYearRange(anchorYear: number): number[] {
   const end = Math.max(anchorYear, new Date().getFullYear());
   const start = end - 10;
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+function getPrevMonth(year: number, month: number): { year: number; month: number } {
+  if (month === 1) return { year: year - 1, month: 12 };
+  return { year, month: month - 1 };
+}
+
+function getNextMonth(year: number, month: number): { year: number; month: number } {
+  if (month === 12) return { year: year + 1, month: 1 };
+  return { year, month: month + 1 };
 }
 
 /* ── 년/월 picker (말풍선) ─────────────────────────────────────────── */
@@ -308,6 +320,7 @@ interface BalanceCardProps {
   selectedYear: number;
   selectedMonth: number;
   showPicker: boolean;
+  isLoading: boolean;
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onPickerOpen: () => void;
@@ -320,6 +333,7 @@ function MonthBanner({
   showPicker,
   selectedYear,
   bannerPadding,
+  isLoading,
   onPrevMonth,
   onNextMonth,
   onPickerOpen,
@@ -330,6 +344,7 @@ function MonthBanner({
   showPicker: boolean;
   selectedYear: number;
   bannerPadding: string;
+  isLoading: boolean;
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onPickerOpen: () => void;
@@ -369,8 +384,9 @@ function MonthBanner({
         <button
           type="button"
           onClick={onPrevMonth}
+          disabled={isLoading}
           aria-label="이전 달"
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80"
+          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50"
         >
           <ChevronIcon dir="left" />
         </button>
@@ -380,8 +396,9 @@ function MonthBanner({
         <button
           type="button"
           onClick={onNextMonth}
+          disabled={isLoading}
           aria-label="다음 달"
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80"
+          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50"
         >
           <ChevronIcon dir="right" />
         </button>
@@ -389,9 +406,10 @@ function MonthBanner({
           ref={calendarRef}
           type="button"
           onClick={() => (showPicker ? onPickerClose() : onPickerOpen())}
+          disabled={isLoading}
           aria-label="달력 열기"
           aria-expanded={showPicker}
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80"
+          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50"
         >
           <CalendarIcon />
         </button>
@@ -416,6 +434,7 @@ function BalanceCard({
   selectedYear,
   selectedMonth,
   showPicker,
+  isLoading,
   onPrevMonth,
   onNextMonth,
   onPickerOpen,
@@ -426,6 +445,7 @@ function BalanceCard({
     selectedMonth,
     showPicker,
     selectedYear,
+    isLoading,
     onPrevMonth,
     onNextMonth,
     onPickerOpen,
@@ -434,7 +454,7 @@ function BalanceCard({
   };
 
   const pointInfo = (
-    <div className="flex flex-col gap-1">
+    <div className={["flex flex-col gap-1 transition-opacity", isLoading ? "opacity-50" : ""].join(" ")}>
       <span className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)]">
         적립 포인트
       </span>
@@ -480,47 +500,52 @@ interface Props {
 }
 
 /* ── 메인 컴포넌트 ─────────────────────────────────────────────────── */
-export default function PointHistorySection({ balance, items, referralCode }: Props) {
-  const now = new Date();
-  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+export default function PointHistorySection({ balance: initialBalance, items: initialItems, referralCode }: Props) {
+  const { openAlert } = useModal();
+  const [balance, setBalance] = useState(initialBalance);
+  const [items, setItems] = useState(initialItems);
+  const [selectedYear, setSelectedYear] = useState(initialBalance.year);
+  const [selectedMonth, setSelectedMonth] = useState(initialBalance.month);
   const [showPicker, setShowPicker] = useState(false);
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [sortTab, setSortTab] = useState<SortTab>("all");
 
-  function handlePrevMonth() {
-    if (selectedMonth === 1) {
-      setSelectedYear((y) => y - 1);
-      setSelectedMonth(12);
-    } else {
-      setSelectedMonth((m) => m - 1);
+  async function loadMonthData(year: number, month: number) {
+    setIsBalanceLoading(true);
+    try {
+      const [newBalance, newHistory] = await Promise.all([
+        getPointBalance({ year, month }),
+        getPointHistory({ year, month, limit: 200 }),
+      ]);
+      setBalance(newBalance);
+      setItems(newHistory.items);
+      setSelectedYear(newBalance.year);
+      setSelectedMonth(newBalance.month);
+      setPage(1);
+    } catch (err) {
+      openAlert({ title: getErrorMessage(err, "포인트 정보를 불러오지 못했습니다.") });
+    } finally {
+      setIsBalanceLoading(false);
     }
+  }
+
+  function handlePrevMonth() {
+    const { year, month } = getPrevMonth(selectedYear, selectedMonth);
+    void loadMonthData(year, month);
   }
 
   function handleNextMonth() {
-    if (selectedMonth === 12) {
-      setSelectedYear((y) => y + 1);
-      setSelectedMonth(1);
-    } else {
-      setSelectedMonth((m) => m + 1);
-    }
+    const { year, month } = getNextMonth(selectedYear, selectedMonth);
+    void loadMonthData(year, month);
   }
 
   function handleMonthSelect(year: number, month: number) {
-    setSelectedYear(year);
-    setSelectedMonth(month);
     setShowPicker(false);
+    void loadMonthData(year, month);
   }
 
-  const monthlyItems = items.filter((item) => {
-    const d = new Date(item.createdAt);
-    return d.getFullYear() === selectedYear && d.getMonth() + 1 === selectedMonth;
-  });
-
-  const monthlyEarned = monthlyItems
-    .filter((item) => item.amount > 0)
-    .reduce((sum, item) => sum + item.amount, 0);
-
+  const monthlyEarned = balance.monthlyAmount;
   const cumulativePoint = balance.totalAmount;
 
   const balanceCardProps = {
@@ -530,6 +555,7 @@ export default function PointHistorySection({ balance, items, referralCode }: Pr
     selectedYear,
     selectedMonth,
     showPicker,
+    isLoading: isBalanceLoading,
     onPrevMonth: handlePrevMonth,
     onNextMonth: handleNextMonth,
     onPickerOpen: () => setShowPicker(true),

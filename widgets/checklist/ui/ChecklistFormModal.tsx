@@ -4,25 +4,24 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Button,
-  ProfileStepPawLeft,
-  ProfileStepPawRight,
-  PROFILE_PET_MODAL_SUBTITLE,
-  PROFILE_PET_MODAL_TITLE,
   PROFILE_PET_SUBMIT_BTN,
   useModal,
 } from "@/shared/ui";
 import { unsavedCloseAlertOptions } from "@/shared/lib/modal/alertPresets";
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { useAuth } from "@/features/auth";
 import {
   createProfile,
   getChecklistQuestions,
   updateProfile,
 } from "@/features/profile/api/profileApi";
-import type {
-  ChecklistAnswerInput,
-  ChecklistQuestion,
-  CreateProfileRequest,
-  Profile,
+import {
+  MAX_PROFILE_COUNT,
+  type ChecklistAnswerInput,
+  type ChecklistQuestion,
+  type CreateProfileRequest,
+  type Profile,
 } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
@@ -194,6 +193,7 @@ function ChecklistFormModalInner({
   const { isLoggedIn, user } = useAuth();
   const {
     profile: activeProfile,
+    profiles,
     refreshProfile,
     setActiveProfileId,
   } = useProfile();
@@ -211,6 +211,8 @@ function ChecklistFormModalInner({
     Record<number, number[]>
   >({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const avatarFileRef = useRef<File | null>(null);
   const { openAlert } = useModal();
 
   /* body 스크롤 잠금 */
@@ -261,7 +263,16 @@ function ChecklistFormModalInner({
       let restoredAnswers: Record<number, number[]> = {};
       let initialStep = 0;
 
-      if (isLoggedIn && activeProfile) {
+      if (options.isNewProfile) {
+        pet = EMPTY_PET_INFO;
+        av = null;
+        restoredAnswers = {};
+        initialStep = 0;
+      } else if (options.editProfile && isLoggedIn && activeProfile) {
+        pet = profileToPetInfo(activeProfile);
+        av = activeProfile.profileImageUrl;
+        initialStep = 0;
+      } else if (isLoggedIn && activeProfile) {
         pet = profileToPetInfo(activeProfile);
         av = activeProfile.profileImageUrl;
         if (activeProfile.checklistAnswers?.length) {
@@ -277,13 +288,15 @@ function ChecklistFormModalInner({
 
       if (cancelled) return;
 
-      if (options.rewrite) {
-        initialStep = 1;
-      }
+      if (!options.isNewProfile && !options.editProfile) {
+        if (options.rewrite) {
+          initialStep = 1;
+        }
 
-      if (options.editQuestionId != null) {
-        const idx = questions.findIndex((q) => q.id === options.editQuestionId);
-        if (idx >= 0) initialStep = idx + 1;
+        if (options.editQuestionId != null) {
+          const idx = questions.findIndex((q) => q.id === options.editQuestionId);
+          if (idx >= 0) initialStep = idx + 1;
+        }
       }
 
       setPetInfo(pet);
@@ -300,6 +313,7 @@ function ChecklistFormModalInner({
         answers: { ...restoredAnswers },
       });
       setInitReady(true);
+      avatarFileRef.current = null;
     })();
 
     return () => {
@@ -320,24 +334,46 @@ function ChecklistFormModalInner({
   const isDirty =
     questions !== null &&
     baseline !== null &&
-    step > 0 &&
-    (!petInfoEqual(petInfo, baseline.petInfo) ||
-      avatarSrc !== baseline.avatarSrc ||
-      !answersEqual(answersByQuestion, baseline.answers));
+    (options.editProfile && step === 0
+      ? !petInfoEqual(petInfo, baseline.petInfo) ||
+        avatarSrc !== baseline.avatarSrc
+      : step > 0 &&
+        (!petInfoEqual(petInfo, baseline.petInfo) ||
+          avatarSrc !== baseline.avatarSrc ||
+          !answersEqual(answersByQuestion, baseline.answers)));
 
   const isDirtyRef = useRef(isDirty);
   useEffect(() => {
     isDirtyRef.current = isDirty;
   });
 
+  /** 미저장 확인 AlertModal(z-[210])이 열려 있을 때 ESC를 ChecklistFormModal이 가로채지 않도록 */
+  const closeConfirmOpenRef = useRef(false);
+
   const promptCloseConfirm = useCallback(() => {
-    openAlert(unsavedCloseAlertOptions(onClose));
+    const resetConfirm = () => {
+      closeConfirmOpenRef.current = false;
+    };
+    closeConfirmOpenRef.current = true;
+    const opts = unsavedCloseAlertOptions(() => {
+      resetConfirm();
+      onClose();
+    });
+    openAlert({
+      ...opts,
+      onDismiss: resetConfirm,
+      onSecondary: () => {
+        opts.onSecondary?.();
+        resetConfirm();
+      },
+    });
   }, [openAlert, onClose]);
 
   /* ESC 처리 — 캡처 단계에서 가로채 ModalProvider보다 먼저 실행 */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      if (closeConfirmOpenRef.current) return;
       e.stopImmediatePropagation();
       if (isDirtyRef.current) {
         promptCloseConfirm();
@@ -362,6 +398,11 @@ function ChecklistFormModalInner({
       if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
       return src;
     });
+    if (!src) avatarFileRef.current = null;
+  }
+
+  function handleAvatarFileSelect(file: File) {
+    avatarFileRef.current = file;
   }
 
   function toggleOptionForQuestion(
@@ -399,6 +440,10 @@ function ChecklistFormModalInner({
     if (!questions?.length) return;
     if (step === 0) {
       if (!petInfo.name.trim()) return;
+      if (options.editProfile) {
+        void handleSaveProfile();
+        return;
+      }
       setStep(1);
       setMaxVisitedStep((prev) => Math.max(prev, 1));
       return;
@@ -423,6 +468,55 @@ function ChecklistFormModalInner({
     ) {
       if (targetStep > step && !isCurrentQuestionAnswered) return;
       setStep(targetStep);
+    }
+  }
+
+  async function handleSaveProfile() {
+    if (!isLoggedIn || !activeProfile) return;
+    const trimmedName = petInfo.name.trim();
+    if (!trimmedName) return;
+
+    setIsSaving(true);
+
+    const trimmedBreed = petInfo.breed.trim();
+    const trimmedNotes = petInfo.specialNotes.trim();
+    const trimmedWeight = petInfo.weight.trim();
+    const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : Number.NaN;
+    const weightValue =
+      trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : null;
+    const birthIso = petBirthToIso(petInfo.birthDate);
+
+    try {
+      let profileImageUrl: string | null | undefined;
+
+      const file = avatarFileRef.current;
+      if (file) {
+        const { uploadUrl, fileUrl } = await getProfileImagePresignedUrl({
+          fileName: file.name,
+          fileType: file.type,
+        });
+        await uploadToS3(uploadUrl, file, file.type);
+        profileImageUrl = fileUrl;
+      }
+
+      await updateProfile(activeProfile.id, {
+        name: trimmedName,
+        breed: trimmedBreed || null,
+        specialNotes: trimmedNotes || null,
+        gender: petInfo.gender,
+        birthDate: birthIso,
+        weight: weightValue,
+        ...(profileImageUrl !== undefined ? { profileImageUrl } : {}),
+      });
+      await refreshProfile();
+      avatarFileRef.current = null;
+      onClose();
+    } catch (e) {
+      openAlert({
+        title: getErrorMessage(e, "저장 중 오류가 발생했습니다. 다시 시도해주세요."),
+      });
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -451,7 +545,29 @@ function ChecklistFormModalInner({
     let checklistSaved = false;
 
     try {
-      if (isLoggedIn && activeProfile) {
+      if (options.isNewProfile) {
+        if (profiles.length >= MAX_PROFILE_COUNT) {
+          openAlert({
+            type: "info",
+            title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.`,
+          });
+          setIsAnalyzing(false);
+          return;
+        }
+        const body: CreateProfileRequest = {
+          name: trimmedName,
+          checklistAnswers,
+          ...(trimmedBreed ? { breed: trimmedBreed } : {}),
+          ...(trimmedNotes ? { specialNotes: trimmedNotes } : {}),
+          ...(petInfo.gender ? { gender: petInfo.gender } : {}),
+          ...(birthIso ? { birthDate: birthIso } : {}),
+          ...(weightValue !== null ? { weight: weightValue } : {}),
+        };
+        const newProfile = await createProfile(body);
+        savedProfileId = newProfile.id;
+        setActiveProfileId(newProfile.id);
+        checklistSaved = true;
+      } else if (isLoggedIn && activeProfile) {
         await updateProfile(activeProfile.id, {
           checklistAnswers,
           name: trimmedName,
@@ -506,13 +622,19 @@ function ChecklistFormModalInner({
 
   const isStep0NameValid = petInfo.name.trim().length > 0;
   const lastQuestionStep = qLen;
+  const isEditProfileMode = options.editProfile === true;
   const ctaLabel =
     step === 0
-      ? "체크리스트 작성하기"
+      ? isEditProfileMode
+        ? isSaving
+          ? "저장 중…"
+          : "저장"
+        : "체크리스트 작성하기"
       : step === lastQuestionStep
         ? "결과보기"
         : "다음";
   const isMobileCtaDisabled =
+    isSaving ||
     (step === 0 && !isStep0NameValid) ||
     (step >= 1 && step <= qLen && !isCurrentQuestionAnswered);
 
@@ -523,7 +645,6 @@ function ChecklistFormModalInner({
   }
 
   const headerTitle = step === 0 ? "프로필 작성" : "체크리스트 작성";
-  const isProfileStep = step === 0;
 
   return (
     <div
@@ -546,44 +667,19 @@ function ChecklistFormModalInner({
           className="shrink-0 px-6 max-md:pt-[env(safe-area-inset-top,0px)]"
           style={{ background: "var(--color-cta-button)" }}
         >
-          {isProfileStep ? (
-            <div className="relative flex flex-col items-center gap-1 py-3">
-              <div className="relative flex h-7 w-full items-center justify-center">
-                <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 max-md:-left-0.5">
-                  <ProfileStepPawLeft />
-                </span>
-                <span className="pointer-events-none absolute right-10 top-1/2 -translate-y-1/2">
-                  <ProfileStepPawRight />
-                </span>
-                <span className={`${PROFILE_PET_MODAL_TITLE} text-white`}>
-                  {headerTitle}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleCloseRequest}
-                  aria-label="닫기"
-                  className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-70"
-                >
-                  <CloseIcon />
-                </button>
-              </div>
-              <p className={PROFILE_PET_MODAL_SUBTITLE}>강아지 프로필을 작성해주세요.</p>
-            </div>
-          ) : (
-            <div className="relative flex h-[48px] items-center justify-center">
-              <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
-                {headerTitle}
-              </span>
-              <button
-                type="button"
-                onClick={handleCloseRequest}
-                aria-label="닫기"
-                className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-70"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-          )}
+          <div className="relative flex h-[48px] items-center">
+            <span className="text-subtitle-16-sb tracking-[-0.04em] text-white">
+              {headerTitle}
+            </span>
+            <button
+              type="button"
+              onClick={handleCloseRequest}
+              aria-label="닫기"
+              className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center transition-opacity hover:opacity-70"
+            >
+              <CloseIcon />
+            </button>
+          </div>
         </div>
 
         {/* 본문 */}
@@ -610,6 +706,7 @@ function ChecklistFormModalInner({
                   setPetInfo={setPetInfo}
                   avatarSrc={avatarSrc}
                   onAvatarChange={handleAvatarChange}
+                  onAvatarFileSelect={handleAvatarFileSelect}
                 />
               )}
               {step > 0 && step <= qLen && questions[step - 1] ? (

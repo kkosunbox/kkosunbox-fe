@@ -194,7 +194,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       {/* 버튼 */}
       <div className="mt-[44px] flex justify-center gap-[17px]">
         <Link
-          href="/mypage/dog-profile"
+          href="/mypage"
           className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
         >
           유지하기
@@ -315,7 +315,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       {/* 버튼 */}
       <div className="mt-6 flex justify-center gap-3">
         <Link
-          href="/mypage/dog-profile"
+          href="/mypage"
           className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
         >
           유지하기

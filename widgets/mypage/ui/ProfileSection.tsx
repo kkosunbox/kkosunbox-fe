@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DefaultPetIcon, Text, useModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { ChevronRightIcon } from "./mypage-icons";
+import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { hasChecklistAnswers, hasProfileRecord } from "@/features/profile/lib/profileStatus";
@@ -34,7 +35,13 @@ function PencilIcon({ className }: { className?: string }) {
   );
 }
 
-function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
+function PetAvatar({
+  imageUrl,
+  onEditProfile,
+}: {
+  imageUrl: string | null;
+  onEditProfile: () => void;
+}) {
   return (
     <div className="relative shrink-0">
       <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] lg:h-[124px] lg:w-[124px]">
@@ -56,13 +63,14 @@ function PetAvatar({ imageUrl }: { imageUrl: string | null }) {
           </div>
         )}
       </div>
-      <Link
-        href="/mypage/dog-profile"
+      <button
+        type="button"
+        onClick={onEditProfile}
         aria-label="프로필 사진 변경"
         className="absolute bottom-0 right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-secondary)] transition-opacity hover:opacity-90 lg:h-[40px] lg:w-[40px]"
       >
         <PencilIcon className="h-5 w-5 lg:h-8 lg:w-8" />
-      </Link>
+      </button>
     </div>
   );
 }
@@ -242,6 +250,7 @@ interface ProfileViewModel {
   displayName: string;
   hasProfile: boolean;
   hasNamedProfile: boolean;
+  isInfluencer: boolean;
   breedDisplay: string;
   breedEmpty: boolean;
   birth: string;
@@ -252,6 +261,7 @@ interface ProfileViewModel {
   weightEmpty: boolean;
   specialNotes: string;
   onOpenProfileSwitch: () => void;
+  onEditProfile: () => void;
 }
 
 function MyPointButton() {
@@ -318,16 +328,17 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
 
   return (
     <div className="relative px-0 pt-7 pb-10 lg:hidden">
-      <Link
-        href="/mypage/dog-profile"
+      <button
+        type="button"
+        onClick={vm.onEditProfile}
         className="absolute top-[9px] right-6 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
       >
         <span>정보변경</span>
         <ChevronRightIcon />
-      </Link>
+      </button>
 
       <div className="flex items-center gap-5">
-        <PetAvatar imageUrl={vm.imageUrl} />
+        <PetAvatar imageUrl={vm.imageUrl} onEditProfile={vm.onEditProfile} />
         <div className="min-w-0 flex flex-1 flex-col gap-2">
           {/* 1줄: 이름 + 전환 (초소형·일반 공통) */}
           <div className="flex min-w-0 items-center justify-start gap-2">
@@ -340,7 +351,7 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
               {vm.displayName}
             </Text>
             {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
-            <MyPointButton />
+            {vm.isInfluencer && <MyPointButton />}
           </div>
 
           {vm.hasProfile ? (
@@ -426,15 +437,16 @@ function ProfileSectionDesktop({
     <div className="relative hidden h-full pl-10 lg:flex lg:items-center lg:px-7 lg:py-[26px]">
       <div className="relative flex w-full items-center gap-0">
         {/* 구분선(h-148px) 상단과 맞춤 — 행 items-center 유지, 버튼만 절대 위치 */}
-        <Link
-          href="/mypage/dog-profile"
+        <button
+          type="button"
+          onClick={vm.onEditProfile}
           className="absolute top-[calc(50%-74px)] right-[calc(358px+40px+0.5rem)] z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
         >
           <span>정보변경</span>
           <ChevronRightIcon />
-        </Link>
+        </button>
         <div className="flex min-h-0 min-w-0 flex-1 items-center gap-8">
-          <PetAvatar imageUrl={vm.imageUrl} />
+          <PetAvatar imageUrl={vm.imageUrl} onEditProfile={vm.onEditProfile} />
           <div className="min-w-0 flex-1 pr-[84px]">
             <div className="flex flex-col gap-[12px]">
               <div className="flex min-w-0 items-center gap-3">
@@ -446,7 +458,7 @@ function ProfileSectionDesktop({
                   {vm.displayName}
                 </Text>
                 {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
-                <MyPointButton />
+                {vm.isInfluencer && <MyPointButton />}
               </div>
               {vm.hasProfile && (
                 <Text
@@ -543,6 +555,7 @@ export function ProfileSection({
   profile: Profile | null;
   checklistQuestions: ChecklistQuestion[];
 }) {
+  const { user } = useAuth();
   const { profile: clientProfile, profiles } = useProfile();
   const { openModal } = useModal();
   const profile = clientProfile ?? serverProfile;
@@ -561,6 +574,7 @@ export function ProfileSection({
     displayName: getProfileDisplayName(profile?.name),
     hasProfile,
     hasNamedProfile,
+    isInfluencer: user?.isInfluencer ?? false,
     breedDisplay: breedTrimmed || "견종",
     breedEmpty: !breedTrimmed,
     birth,
@@ -571,6 +585,10 @@ export function ProfileSection({
     weightEmpty: weight === "-",
     specialNotes: profile?.specialNotes?.trim() ?? "",
     onOpenProfileSwitch: () => openModal("profile-switch"),
+    onEditProfile: () => {
+      if (profile) openChecklistForm({ editProfile: true });
+      else openChecklistForm();
+    },
   };
 
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);

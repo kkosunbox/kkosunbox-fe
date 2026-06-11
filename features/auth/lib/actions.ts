@@ -5,6 +5,7 @@ import { COOKIE_NAME, COOKIE_MAX_AGE_SEC } from "./constants";
 import { login as loginApi, signup as signupApi } from "../api/authApi";
 import { ApiError, getErrorMessage } from "@/shared/lib/api";
 import type { AuthUser } from "../model/types";
+import { toAuthUser } from "./mapUser";
 
 const COOKIE_OPTS = {
   httpOnly: true,
@@ -35,7 +36,7 @@ export async function loginAction(
     cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
 
     return {
-      user: { id: data.user.id, email: data.user.email },
+      user: toAuthUser(data.user),
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
     };
@@ -77,7 +78,7 @@ export async function signupAction(
     cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
 
     return {
-      user: { id: data.user.id, email: data.user.email },
+      user: toAuthUser(data.user),
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
     };
@@ -118,7 +119,7 @@ export async function socialLoginAction(
     cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
 
     return {
-      user: { id: data.user.id, email: data.user.email },
+      user: toAuthUser(data.user),
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
       isNewUser: data.isNewUser,

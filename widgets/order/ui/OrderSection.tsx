@@ -18,11 +18,11 @@ import {
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 const inputCls =
-  "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
+  "h-10 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
-// chip2 (Figma): 고정 높이 24px · padding 4px 8px · radius 4px · #2F2F2F · 13/16 medium white
+// 폼 액션 버튼: input과 정렬되도록 높이 40px · radius 4px · #2F2F2F · 13/16 medium white
 const actionChipCls =
-  "flex h-6 shrink-0 items-center justify-center rounded px-2 py-1 text-[13px] font-medium leading-4 text-white bg-[var(--color-text)] transition-opacity hover:opacity-90";
+  "flex h-10 shrink-0 items-center justify-center rounded-[4px] px-3 text-[13px] font-medium leading-4 text-white bg-[var(--color-btn-dark-warm)] transition-opacity hover:opacity-90";
 
 function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -303,6 +303,7 @@ export default function OrderSection({
     product: true,
     customer: true,
     payment: true,
+    invite: true,
     date: true,
     summary: true,
   });
@@ -353,6 +354,14 @@ export default function OrderSection({
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
+
+  // 초대코드 — API 미구현. 현재는 입력값 보관만 하며, 추후 적용/검증 로직 연동 예정.
+  const [inviteCodeInput, setInviteCodeInput] = useState("");
+
+  // TODO: 초대코드 API 연동 시 검증·할인 적용 로직 추가
+  function handleApplyInviteCode() {
+    // 퍼블리싱 단계: API 연동 전까지 동작 없음
+  }
 
   const [agreeOpen, setAgreeOpen] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -828,6 +837,38 @@ export default function OrderSection({
               </div>
             )}
           </div>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        title="초대코드 입력"
+        open={openSections.invite}
+        onToggle={() => toggleSection("invite")}
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-0 md:gap-4">
+            <span className="shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px]">
+              코드입력
+            </span>
+            <div className="flex flex-1 items-center gap-3 min-w-0">
+              <input
+                value={inviteCodeInput}
+                onChange={(e) => setInviteCodeInput(e.target.value)}
+                className={`${inputCls} flex-1 min-w-0`}
+                placeholder="초대코드를 입력해주세요."
+              />
+              <button
+                type="button"
+                onClick={handleApplyInviteCode}
+                className={actionChipCls}
+              >
+                코드적용
+              </button>
+            </div>
+          </div>
+          <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">
+            첫 구독 시에만 사용 가능합니다.
+          </p>
         </div>
       </SectionCard>
 

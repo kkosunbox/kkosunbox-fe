@@ -1,26 +1,5 @@
-import { getServerToken } from "@/features/auth/lib/session";
-import { fetchProfile } from "@/features/profile/api/queries";
-import { ProfileManagementSection } from "@/widgets/mypage";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "애견 프로필 관리 | 꼬순박스" };
-
-export default async function DogProfilePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ new?: string }>;
-}) {
-  const params = await searchParams;
-  const isNewMode = params.new === "true";
-  const token = await getServerToken();
-
-  const profile = isNewMode ? null : await fetchProfile(token);
-
-  return (
-    <div className="pt-[var(--header-offset)]">
-      <ProfileManagementSection
-        profile={profile}
-        isNewProfile={isNewMode}
-      />
-    </div>
-  );
+export default function DogProfilePage() {
+  redirect("/mypage");
 }

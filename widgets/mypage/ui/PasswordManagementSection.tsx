@@ -135,7 +135,7 @@ export default function PasswordManagementSection() {
           type: "success",
           title: "비밀번호가 변경되었습니다.",
           onPrimary: () => {
-            router.push("/mypage/dog-profile");
+            router.push("/mypage");
             router.refresh();
           },
         });
@@ -153,8 +153,8 @@ export default function PasswordManagementSection() {
         <div className="rounded-[20px] bg-white px-[28px] pb-[34px] pt-[24px] shadow-[0_8px_30px_rgba(185,148,116,0.08)]">
           <div className="mb-4 flex items-center gap-1 text-[var(--color-text)]">
             <Link
-              href="/mypage/dog-profile"
-              aria-label="프로필 관리로 돌아가기"
+              href="/mypage"
+              aria-label="마이페이지로 돌아가기"
               className="inline-flex h-8 w-8 items-center justify-center text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)]"
             >
               <BackIcon />
@@ -223,7 +223,7 @@ export default function PasswordManagementSection() {
 
           <div className="mt-[28px] flex justify-end gap-[17px]">
             <Link
-              href="/mypage/dog-profile"
+              href="/mypage"
               className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
             >
               취소
@@ -246,8 +246,8 @@ export default function PasswordManagementSection() {
     <div className="md:hidden lg:hidden min-h-screen bg-white px-6 pb-10 pt-4">
       <div className="mb-[26px] flex items-center gap-2 text-[var(--color-text)]">
         <Link
-          href="/mypage/dog-profile"
-          aria-label="프로필 관리로 돌아가기"
+          href="/mypage"
+          aria-label="마이페이지로 돌아가기"
           className="inline-flex h-6 w-6 items-center justify-center text-[var(--color-text-secondary)]"
         >
           <BackIcon />
@@ -325,7 +325,7 @@ export default function PasswordManagementSection() {
 
       <div className="mt-[23px] flex gap-[11px]">
         <Link
-          href="/mypage/dog-profile"
+          href="/mypage"
           className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
         >
           취소

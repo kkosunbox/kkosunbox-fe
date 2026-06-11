@@ -105,6 +105,7 @@ const MOCK_USER = {
   isAllowTerms: true,
   isAllowPrivacy: true,
   isAllowMarketing: false,
+  isInfluencer: false,
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
@@ -117,6 +118,7 @@ const MOCK_NO_PROFILE_USER = {
   isAllowTerms: true,
   isAllowPrivacy: true,
   isAllowMarketing: false,
+  isInfluencer: false,
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
 };

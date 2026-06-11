@@ -23,8 +23,8 @@
 |---|---|---|
 | 카드 노출 순서 `PACKAGE_SUMMARY_ORDER` | `[Premium, Basic, Standard]` | `[Premium, Standard, Basic]` |
 | 플랜 데이터 소스 | 자체 `getSubscriptionPlans()` fetch | `plans` props로 주입 |
-| 자동 회전(rotation) | 없음 (항상 선택 상태) | 있음 (`ROTATION_INTERVAL_MS`) |
-| 선택 해제 토글 | 없음 (항상 1개 선택) | 있음 (`prev === tier ? null`) |
+| 자동 회전(rotation) | 없음 (항상 선택 상태) | 없음 (양쪽 모두 자동 회전 제거됨) |
+| 선택 해제 토글 | 없음 (항상 1개 선택) | 없음 (양쪽 모두 미선택 상태 없음, 기본 `PACKAGE_SUMMARY_ORDER[0]` 선택) |
 | `이용중` 뱃지 (`isCurrentPlan`) | 없음 | 있음 |
 | 체크리스트 추천 모달 | 없음 | 있음 (`ChecklistRecommendModal`) |
 | Hero 이미지 영역 | 없음 (섹션 헤더 이미지+부제) | 있음 (`heroDesktopImage`/`heroMobileImage`) |

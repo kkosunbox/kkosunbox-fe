@@ -7,6 +7,7 @@ import { MAX_PROFILE_COUNT, type Profile } from "@/features/profile/api/types";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import DefaultPetIcon from "../DefaultPetIcon";
 
@@ -139,7 +140,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   const handleAddProfile = () => {
     if (!canAddProfile) return;
     onClose();
-    window.dispatchEvent(new CustomEvent("ggosoon:show-profile-widget", { detail: { isNew: true } }));
+    openChecklistForm({ isNewProfile: true });
   };
 
   const handleDeleteProfile = (pet: Profile) => {

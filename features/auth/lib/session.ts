@@ -4,6 +4,7 @@ import { COOKIE_NAME } from "./constants";
 import { apiClient } from "@/shared/lib/api";
 import type { User } from "../api/types";
 import type { AuthUser } from "../model/types";
+import { toAuthUser } from "./mapUser";
 
 /** 쿠키에서 accessToken을 추출합니다. Server Component 전용. */
 export async function getServerToken(): Promise<string | undefined> {
@@ -30,7 +31,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
       skipRefresh: true,
       signal: controller.signal,
     });
-    return { id: user.id, email: user.email };
+    return toAuthUser(user);
   } catch {
     return null;
   } finally {

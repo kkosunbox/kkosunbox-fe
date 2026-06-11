@@ -34,6 +34,9 @@ const PACKAGE_EXPLAIN_IMAGES: Array<{
 
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 
+/** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 */
+const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
+
 const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
   Basic: packageImageBasic,
   Standard: packageImageStandard,
@@ -302,7 +305,8 @@ export default function PackagePlansSection() {
               ref={tabletCardColumnRef}
               className="max-md:hidden md:flex lg:hidden w-full justify-between items-start"
             >
-              {PACKAGE_SUMMARY_ORDER.map((tier, i) => {
+              {TABLET_SUMMARY_ORDER.map((tier) => {
+                const i = PACKAGE_SUMMARY_ORDER.indexOf(tier);
                 const pkg = PACKAGES.find((packageItem) => packageItem.tier === tier)!;
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const plan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);

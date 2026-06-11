@@ -10,6 +10,7 @@ export interface User {
   isAllowTerms: boolean;
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;
+  isInfluencer: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -237,7 +237,7 @@ widgets/home/photo-gallery/assets/
 // REVIEWS 데이터에 subscriptionBadge 필드 추가
 { subscriptionBadge: "구독 3개월", name: "공공", ... }
 { subscriptionBadge: "구독 5개월", name: "보리", ... }
-{ subscriptionBadge: "구독 2개월", name: "두부", ... }
+{ subscriptionBadge: "구독 2개월", name: "몽땅", ... }
 ```
 
 배지 스타일: 소형 라운드 알약형, 오렌지/primary 배경, 흰 텍스트

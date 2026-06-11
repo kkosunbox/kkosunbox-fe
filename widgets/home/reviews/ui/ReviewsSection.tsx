@@ -13,7 +13,7 @@ import reviewsTitle from "../assets/reviews-title-new.svg";
 import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
 import reviewsProfile01 from "../assets/reviews-profile-01.jpg";
 import reviewsProfile02 from "../assets/reviews-profile-02.jpg";
-import reviewsProfile03 from "../assets/reviews-profile-03.webp";
+import reviewsProfile03 from "../assets/reviews-profile-03.jpg";
 import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [
@@ -38,7 +38,7 @@ const REVIEWS = [
     profileObjectPosition: "93% center",
   },
   {
-    name: "두부",
+    name: "몽땅",
     subscriptionBadge: "구독 2개월",
     subscription: "2026.04.08 (구독 2개월, 베이직)",
     review:

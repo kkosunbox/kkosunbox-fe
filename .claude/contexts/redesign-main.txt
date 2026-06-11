@@ -1424,7 +1424,7 @@ flex-grow: 0;
 z-index: 2;
 
 
-/* 두부 (리트리버) */
+/* 몽땅 (리트리버) */
 
 width: 112px;
 height: 21px;

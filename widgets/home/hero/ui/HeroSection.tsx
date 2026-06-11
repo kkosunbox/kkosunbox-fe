@@ -291,7 +291,7 @@ export default function HeroSection() {
                     alt="꼬순박스 배송 트럭"
                     width={460}
                     height={380}
-                    className="max-lg:max-w-[220px] lg:max-w-[460px] w-full object-contain"
+                    className="max-md:max-w-[220px] md:max-lg:w-[275px] md:max-lg:h-[216px] lg:max-w-[460px] w-full object-contain"
                     loading="eager"
                     decoding="async"
                   />

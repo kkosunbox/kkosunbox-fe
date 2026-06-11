@@ -20,6 +20,10 @@ import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 const inputCls =
   "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
 
+// chip2 (Figma): 고정 높이 24px · padding 4px 8px · radius 4px · #2F2F2F · 13/16 medium white
+const actionChipCls =
+  "flex h-6 shrink-0 items-center justify-center rounded px-2 py-1 text-[13px] font-medium leading-4 text-white bg-[var(--color-text)] transition-opacity hover:opacity-90";
+
 function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
@@ -621,7 +625,7 @@ export default function OrderSection({
               <button
                 type="button"
                 onClick={handleChangeAddress}
-                className="flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-2 py-1 text-body-13-m text-[var(--color-surface-light)] transition-opacity hover:opacity-90"
+                className={actionChipCls}
               >
                 배송지 변경
               </button>
@@ -675,7 +679,7 @@ export default function OrderSection({
             </div>
             {/* 우편번호 + 주소찾기 */}
             <FormRow label="우편번호">
-              <div className="flex gap-3">
+              <div className="flex items-center gap-3">
                 <input
                   value={newAddr.zipCode}
                   readOnly
@@ -684,7 +688,7 @@ export default function OrderSection({
                 <button
                   type="button"
                   onClick={handleSearchAddress}
-                  className="flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-2 py-1 text-body-13-m text-[var(--color-surface-light)] transition-opacity hover:opacity-90"
+                  className={actionChipCls}
                 >
                   주소찾기
                 </button>
@@ -752,26 +756,28 @@ export default function OrderSection({
             ))}
             {/* 등록된 카드 정보 표시 + 카드 변경 버튼 */}
             {paymentMethod === "신용카드" && billing && (
-              <div className="flex items-center gap-3">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
-                  <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
-                </svg>
-                <span className="text-body-13-m text-[var(--color-text)]">
-                  {billing.cardCompany} **** {billing.lastFourDigits}
-                </span>
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                  <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
-                  <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <>
+                <div className="flex items-center gap-3">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                    <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
+                    <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
+                  </svg>
+                  <span className="text-body-13-m text-[var(--color-text)]">
+                    {billing.cardCompany} **** {billing.lastFourDigits}
+                  </span>
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                    <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
+                    <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
                 <button
                   type="button"
                   onClick={() => openPaymentPopup(paymentMethod)}
-                  className="flex items-center justify-center px-2 py-1 h-6 rounded bg-[var(--color-text)] text-white text-[13px] font-medium leading-4 shrink-0 ml-auto"
+                  className={`${actionChipCls} ml-auto`}
                 >
                   카드 변경
                 </button>
-              </div>
+              </>
             )}
           </div>
 
@@ -795,7 +801,7 @@ export default function OrderSection({
                   <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px] md:pt-0">
                     쿠폰입력
                   </span>
-                  <div className="flex flex-1 gap-3 min-w-0">
+                  <div className="flex flex-1 items-center gap-3 min-w-0">
                     <input
                       value={couponCodeInput}
                       onChange={(e) => setCouponCodeInput(e.target.value)}
@@ -805,7 +811,7 @@ export default function OrderSection({
                     <button
                       type="button"
                       onClick={() => void handleApplyCoupon()}
-                      className="h-10 shrink-0 rounded-[8px] bg-[var(--color-why-bg)] px-3 text-body-13-m text-white"
+                      className={actionChipCls}
                     >
                       쿠폰적용
                     </button>

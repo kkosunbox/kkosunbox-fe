@@ -176,7 +176,17 @@
       "PowerShell(npx eslint widgets/home/package-plans/ui/PackagePlansSection.tsx widgets/subscribe/plans/ui/SubscribePlansSection.tsx; \"exit code: $LASTEXITCODE\")",
       "PowerShell(Get-Process *)",
       "Bash(taskkill *)",
-      "PowerShell(Stop-Process *)"
+      "PowerShell(Stop-Process *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40)",
+      "PowerShell(npx eslint \"widgets/home/package-plans/ui/PackagePlansSection.tsx\" \"widgets/subscribe/plans/ui/SubscribePlansSection.tsx\" \"widgets/subscribe/plans/ui/useSvgBridge.ts\" 2>&1 | Select-Object -First 60)",
+      "PowerShell(pnpm tsc *)",
+      "PowerShell(pnpm exec *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; \"tsc exit: $LASTEXITCODE\")",
+      "PowerShell(npx eslint \"widgets/order/ui/OrderSection.tsx\" \"widgets/home/hero/ui/HeroSection.tsx\" \"widgets/home/package-plans/ui/PackagePlansSection.tsx\" \"widgets/subscribe/plans/ui/SubscribePlansSection.tsx\" \"widgets/subscribe/plans/ui/useSvgBridge.ts\" 2>&1 | Select-Object -First 60; \"eslint exit: $LASTEXITCODE\")",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port 3001 LISTENING \\(pid $\\($c.OwningProcess -join ','\\)\\)\" } else { \"Port 3001 free — build will run fresh\" })",
+      "PowerShell(Get-CimInstance *)",
+      "PowerShell(pnpm test *)",
+      "PowerShell($f = \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\b5fec9e4-9540-404b-bc46-2c9d07f171f1\\\\tasks\\\\bmvg65u55.output\"; $lines = Get-Content $f; \"LINES: $\\($lines.Count\\)\"; \"--- tail summary ---\"; $lines | Select-String -Pattern \"\\\\d+ passed|\\\\d+ failed|\\\\d+ flaky|\\\\\\(\\\\d+\\\\.\\\\dm\\\\\\)|\\\\\\(\\\\d+\\\\.\\\\ds\\\\\\)\" | Select-Object -Last 10; \"--- failing spec list ---\"; $lines | Select-String -Pattern \"^\\\\s+\\\\d+\\\\\\) \\\\[chromium\\\\]\" -AllMatches | ForEach-Object { \\($_ -replace '\\\\?',''\\).Substring\\(0,[Math]::Min\\(70,$_.Line.Length\\)\\) } | Select-Object -First 30)"
     ]
   }
 }

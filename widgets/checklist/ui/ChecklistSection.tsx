@@ -578,6 +578,7 @@ export default function ChecklistSection() {
       <ChecklistResult
         petInfo={petInfo}
         avatarSrc={avatarSrc}
+        userId={user?.id ?? null}
         recommendedTier={recommendedTier}
         profileId={recommendedProfileId}
       />
@@ -630,6 +631,7 @@ export default function ChecklistSection() {
                       petInfo={petInfo}
                       setPetInfo={setPetInfo}
                       avatarSrc={avatarSrc}
+                      userId={user?.id ?? null}
                       onAvatarChange={handleAvatarChange}
                     />
                   )}

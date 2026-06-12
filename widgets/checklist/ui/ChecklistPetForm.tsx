@@ -4,6 +4,7 @@ import { useRef } from "react";
 import {
   BreedCombobox,
   DatePicker,
+  FallbackAvatar,
   PROFILE_PET_BREED_INPUT_CLASS,
   PROFILE_PET_DATE_TRIGGER_CLASS,
   PROFILE_PET_FIELD,
@@ -36,9 +37,11 @@ function BreedSearchGlyph() {
 
 function PetAvatar({
   src,
+  userId,
   onButtonClick,
 }: {
   src: string | null;
+  userId?: number | null;
   onButtonClick: () => void;
 }) {
   return (
@@ -50,13 +53,13 @@ function PetAvatar({
         onClick={onButtonClick}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onButtonClick(); } }}
         className="flex max-md:h-[88px] max-md:w-[88px] md:h-[124px] md:w-[124px] cursor-pointer items-center justify-center overflow-hidden rounded-full"
-        style={{ background: "var(--color-secondary)" }}
+        style={src ? { background: "var(--color-secondary)" } : undefined}
       >
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt="반려견 프로필" className="h-full w-full object-cover" />
         ) : (
-          <span className="text-emoji-44">🐶</span>
+          <FallbackAvatar userId={userId} className="h-full w-full" />
         )}
       </div>
       <button
@@ -78,6 +81,7 @@ interface Props {
   petInfo: PetInfo;
   setPetInfo: React.Dispatch<React.SetStateAction<PetInfo>>;
   avatarSrc: string | null;
+  userId?: number | null;
   onAvatarChange: (src: string | null) => void;
   onAvatarFileSelect?: (file: File) => void;
 }
@@ -86,6 +90,7 @@ export default function ChecklistPetForm({
   petInfo,
   setPetInfo,
   avatarSrc,
+  userId,
   onAvatarChange,
   onAvatarFileSelect,
 }: Props) {
@@ -112,6 +117,7 @@ export default function ChecklistPetForm({
       />
       <PetAvatar
         src={avatarSrc}
+        userId={userId}
         onButtonClick={() => fileInputRef.current?.click()}
       />
 

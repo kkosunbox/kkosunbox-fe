@@ -401,9 +401,9 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                 <button
                   type="button"
                   onClick={() => handleCancelPayment(record.id)}
-                  className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                  className="shrink-0 text-right text-body-13-sb leading-[130%] text-[var(--color-btn-dark-warm)] underline hover:opacity-80"
                 >
-                  구매취소
+                  구독취소
                 </button>
               )}
               <button
@@ -453,9 +453,9 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                 <button
                   type="button"
                   onClick={() => handleCancelPayment(record.id)}
-                  className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
+                  className="shrink-0 text-right text-body-13-sb leading-[130%] text-[var(--color-btn-dark-warm)] underline hover:opacity-80"
                 >
-                  구매취소
+                  구독취소
                 </button>
               )}
             </div>
@@ -544,7 +544,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
                   <button
                     type="button"
                     onClick={handleTogglePause}
-                    className="self-start text-body-13-r text-[var(--color-primary)] underline hover:opacity-80 transition-opacity"
+                    className="shrink-0 self-start text-right text-body-13-sb leading-[130%] text-[var(--color-accent)] underline hover:opacity-80 transition-opacity"
                   >
                     {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
                   </button>

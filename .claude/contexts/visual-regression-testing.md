@@ -37,6 +37,30 @@ await expect(page).toHaveScreenshot("subscribe-detail-desktop-info.png", {
 
 이는 태스크 문서의 "변경 전후 동일" 검증을 자동화한 것이다.
 
+### 회귀 검증용 — 리팩토링이 이미 커밋된 경우
+
+리팩토링을 **이미 커밋한 뒤** "정말 픽셀 동등했는지" 사후 검증하려면 baseline을 과거 코드에서 떠야 한다.
+전체 커밋을 체크아웃할 필요 없이, **대상 UI 파일만** 리팩토링 직전 버전으로 잠깐 되돌려 baseline을 생성한다.
+(현재 테스트 인프라·mock은 HEAD 그대로 유지되므로 비교가 깨끗하다.)
+
+`SubscribeProductDetailPage` 리팩토링(커밋 `d68e2a6`, 직전 `f04e15b`) 검증 예시:
+
+```bash
+# 1) HEAD(리팩토링 후)에서 스냅샷 스펙 작성 — 아직 baseline 없음
+
+# 2) 대상 파일만 리팩토링 직전(f04e15b)으로 되돌려 baseline 생성
+git checkout f04e15b -- widgets/subscribe/plans/ui/SubscribeProductDetailPage.tsx
+pnpm test --update-snapshots   # /subscribe/detail 스냅샷 baseline 확보
+
+# 3) 리팩토링 후(HEAD) 파일로 복원하고 비교
+git checkout HEAD -- widgets/subscribe/plans/ui/SubscribeProductDetailPage.tsx
+pnpm test                      # diff 0 → 픽셀 동등 검증 완료
+```
+
+- 이 한 파일은 `f04e15b` 시점에 1358줄 자기완결형(`reviews/`·`detail/` import 없음)이라 단일 파일 교체만으로 구버전이 렌더된다.
+- 새로 추가한 `--color-avatar-1~6` 토큰은 구버전에 영향이 없다(구버전은 hex 직접 사용). 별점 hex(`#FDD264`/`#DDDDDD`) ↔ 토큰 값이 동일하므로 별점도 픽셀 동일.
+- diff가 0이 아니면 그 지점이 곧 회귀 위치다.
+
 ---
 
 ## 이 프로젝트에서 잘 맞는 이유

@@ -48,6 +48,13 @@ const ERROR_MESSAGES: Record<string, string> = {
   INVALID_COUPON: "유효하지 않은 쿠폰입니다.",
   COUPON_EXPIRED: "만료된 쿠폰입니다.",
 
+  // 레퍼럴(초대 코드) — 사용자에게 상세 사유는 노출하지 않고 2종으로만 안내한다.
+  REFERRAL_CODE_INVALID: "사용할 수 없는 코드입니다.",
+  REFERRAL_SELF_REFERRAL: "사용할 수 없는 코드입니다.",
+  REFERRAL_NOT_INFLUENCER: "사용할 수 없는 코드입니다.",
+  REFERRAL_CONTRACT_EXPIRED: "사용할 수 없는 코드입니다.",
+  REFERRAL_NOT_FIRST_SUBSCRIPTION: "첫 구독 시에만 사용 가능합니다.",
+
   // 결제 이력
   PAYMENT_NOT_FOUND: "결제 내역을 찾을 수 없습니다.",
   CONTENT_NOT_FOUND: "요청한 정보를 찾을 수 없습니다.",

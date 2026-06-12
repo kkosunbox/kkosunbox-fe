@@ -102,6 +102,7 @@ export interface CreateSubscriptionRequest {
   quantity?: number; // 1~99, 기본값 1. 쿠폰 할인은 단가 1개에만 적용
   // billingDate?: string; // YYYY-MM-DD — 백엔드에서 더 이상 요구하지 않아 미사용
   couponCode?: string;
+  referralCode?: string; // 추천인 레퍼럴 코드 (선택). ?ref로 진입한 첫 구독자에 한해 서버가 할인 적용
 }
 
 export interface ChangePlanRequest {

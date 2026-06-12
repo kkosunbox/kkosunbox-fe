@@ -29,10 +29,24 @@ module.exports = {
       from: { path: "^widgets/" },
       to: { path: "^app/" },
     },
+    {
+      name: "no-entities-to-features",
+      comment: "FSD: entities must not import features (verified 0 violations on 2026-06-12)",
+      severity: "error",
+      from: { path: "^entities/" },
+      to: { path: "^features/" },
+    },
+    {
+      name: "package-plans-is-leaf",
+      comment: "widgets/package-plans is a shared leaf widget — it must not import other widgets",
+      severity: "error",
+      from: { path: "^widgets/package-plans/" },
+      to: { path: "^widgets/(?!package-plans)" },
+    },
 
     {
       name: "widget-mypage-subscribe-coupling",
-      severity: "warn",
+      severity: "error",
       from: { path: "^widgets/mypage/" },
       to: { path: "^widgets/subscribe/" },
     },

@@ -304,8 +304,8 @@ export default function PackagePlansSection() {
                     onClick={() => setSelectedTier(tier)}
                     className={[
                       "group relative z-[1] flex flex-col items-start text-left rounded-[24px] transition-colors duration-300 hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
-                      // 선택: 브릿지 흰 배경 위 패딩 / 미선택: border·shadow 없이 패널 아래로 내려 배치
-                      isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6",
+                      // 선택: 브릿지 흰 배경 위 패딩 / 미선택: 최소 수평 여백 유지
+                      isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6 px-2",
                     ].join(" ")}
                   >
                     <div className="relative h-[148px] w-[160px] shrink-0 overflow-hidden rounded-[16px] bg-white">

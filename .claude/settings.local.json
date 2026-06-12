@@ -211,7 +211,8 @@
       "Bash(git diff *)",
       "Bash(echo \"=== playwright exit: $? ===\")",
       "Bash(git show *)",
-      "Bash(pnpm test:unit)"
+      "Bash(pnpm test:unit)",
+      "Bash(pnpm depcruise *)"
     ]
   }
 }

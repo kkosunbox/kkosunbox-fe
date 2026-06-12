@@ -205,7 +205,13 @@
       "PowerShell($c = Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c.OwningProcess | Select-Object -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; Start-Sleep 1; \"Port 3001 cleared\" } else { \"Port 3001 free\" })",
       "Bash([ -f \"$f\" ])",
       "Bash(echo \"=== tsc exit: $? ===\")",
-      "Bash(echo \"=== eslint exit: $? ===\")"
+      "Bash(echo \"=== eslint exit: $? ===\")",
+      "Bash(command -v cwebp)",
+      "Bash(command -v magick)",
+      "Bash(git diff *)",
+      "Bash(echo \"=== playwright exit: $? ===\")",
+      "Bash(git show *)",
+      "Bash(pnpm test:unit)"
     ]
   }
 }

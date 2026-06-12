@@ -9,11 +9,13 @@ import {
   PROFILE_PET_DATE_TRIGGER_CLASS,
   PROFILE_PET_FIELD,
   PROFILE_PET_INPUT,
+  PROFILE_PET_WEIGHT_INPUT,
   PROFILE_PET_INPUT_SUFFIX,
   PROFILE_PET_LABEL,
   PROFILE_PET_GENDER_ROW,
   profilePetGenderBtnClass,
 } from "@/shared/ui";
+import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
 import type { PetInfo } from "./types";
 
 const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
@@ -148,7 +150,7 @@ export default function ChecklistPetForm({
                 placeholder="ex) 웰시코기"
                 className="w-full"
                 inputClassName={PROFILE_PET_BREED_INPUT_CLASS}
-                clearButtonRight="right-[40px]"
+                clearButtonRight="right-[44px]"
               />
               <span className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2">
                 <BreedSearchGlyph />
@@ -176,10 +178,14 @@ export default function ChecklistPetForm({
             <label className={PROFILE_PET_LABEL}>몸무게</label>
             <div className="relative">
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={petInfo.weight}
-                onChange={(e) => setPetInfo((p) => ({ ...p, weight: e.target.value }))}
-                className={PROFILE_PET_INPUT}
+                onChange={(e) =>
+                  setPetInfo((p) => ({ ...p, weight: sanitizeWeightInput(e.target.value) }))
+                }
+                placeholder="0"
+                className={PROFILE_PET_WEIGHT_INPUT}
               />
               <span className={PROFILE_PET_INPUT_SUFFIX}>kg</span>
             </div>

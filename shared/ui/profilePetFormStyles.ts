@@ -10,6 +10,8 @@ export const PROFILE_PET_LABEL =
 export const PROFILE_PET_INPUT =
   "h-10 w-full rounded-[8px] border-0 bg-[var(--color-surface-light)] px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:ring-0";
 
+export const PROFILE_PET_WEIGHT_INPUT = `${PROFILE_PET_INPUT} !pr-10`;
+
 export const PROFILE_PET_INPUT_SUFFIX =
   "pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-body-14-m leading-[1.4] text-[var(--color-text-secondary)]";
 

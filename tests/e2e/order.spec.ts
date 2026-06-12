@@ -211,6 +211,38 @@ test.describe("주문 페이지 초대코드 섹션 (레퍼럴)", () => {
     });
   });
 
+  test("locked + 무효 코드 → 탈출구(코드 삭제) 후 입력 활성화", async ({ page }) => {
+    await loginAsNoProfile(page);
+    await setRefCookie(page, "BADCODE");
+    await page.goto(`/order?planId=${VALID_PLAN_ID}`);
+
+    const input = visiblePlaceholder(page, invitePlaceholder);
+    await expect(input).toBeDisabled();
+    await expect(visibleText(page, "사용할 수 없는 코드입니다.")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await page.getByRole("button", { name: "코드 삭제" }).first().click();
+    await expect(input).toBeEnabled();
+    await expect(input).toHaveValue("");
+  });
+
+  test("로그아웃 후에도 ggosoon-ref 쿠키 유지", async ({ page }) => {
+    await loginAsNoProfile(page);
+    await setRefCookie(page, "ABC123");
+    await page.goto(`/order?planId=${VALID_PLAN_ID}`);
+    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await page.getByRole("button", { name: "프로필 메뉴" }).click();
+    await page.getByRole("button", { name: "로그아웃" }).click();
+    await page.waitForURL(/\/login/, { timeout: 10_000 });
+
+    const cookies = await page.context().cookies();
+    expect(cookies.find((c) => c.name === REFERRAL_COOKIE)?.value).toBe("ABC123");
+  });
+
   test("open: 쿠폰 + 초대코드 할인 합산 → 총액 반영", async ({ page }) => {
     await loginAsNoProfile(page);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);

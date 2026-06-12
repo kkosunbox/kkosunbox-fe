@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeOrderPricing } from "@/widgets/order/lib/orderPricing";
+import { computeOrderPricing } from "@/features/order";
 
 // 기준 단가 39,000원 (베이직 플랜)
 const UNIT = 39000;

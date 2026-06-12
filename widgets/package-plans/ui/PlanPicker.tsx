@@ -410,7 +410,6 @@ export default function PlanPicker({
                 const plan = planForTier(sortedPlans, tier);
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const isSelected = selectedTier === tier;
-                const showSelectionState = showSelectedCardHighlight;
 
                 if (!plan) return null;
 
@@ -421,12 +420,12 @@ export default function PlanPicker({
                     key={tier}
                     ref={(el) => { tabletCardRefs.current[i] = el; }}
                     type="button"
-                    aria-pressed={showSelectionState ? isSelected : undefined}
+                    aria-pressed={isSelected}
                     onClick={() => setSelectedTier(tier)}
                     className={[
                       "group relative z-[1] flex flex-col items-start text-left rounded-[24px] transition-colors duration-300 hover:opacity-90 active:opacity-80",
                       // 선택: 브릿지 흰 배경 위 패딩 / 미선택: 최소 수평 여백 유지
-                      showSelectionState && isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6 px-2",
+                      isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6 px-2",
                     ].join(" ")}
                   >
                     <div className="relative h-[148px] w-[160px] shrink-0 overflow-hidden rounded-[16px] bg-white">

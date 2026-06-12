@@ -29,7 +29,7 @@
 | 체크리스트 추천 모달 | 없음 | 없음 (SubscribePlansSection 글루 래퍼 담당) |
 | Hero 이미지 영역 | 없음 (섹션 헤더 이미지+부제) | 없음 (각 글루 래퍼 담당) |
 | Primary 버튼 | 고정 "제품 상세보기", disabled 없음 | `getPrimaryButton` required prop (라벨·동작·disabled 가변) |
-| 선택 카드 강조 | 항상 (`isSelected ? px-[22px] : mt-6 px-2`) | `showSelectedCardHighlight` prop (false 시 모든 카드 `mt-6 px-2`) |
+| **데스크탑** 선택 카드 높이 | 없음 (데스크탑 카드 컬럼 없음) | `showSelectedCardHighlight` prop — true시 선택 카드 `h-[207px] flex-none`, false시 모두 `flex-1` |
 | 플랜 없는 카드 | disabled + 스켈레톤 펄스 | 행 생략 (`if (!plan) return null`) ← **미판정 드리프트, Phase 2에서 통합 시 결정** |
 | 카드 컬럼 패딩 | `pr-1` | `pr-5` ← **미판정 드리프트, Phase 2에서 통합 시 결정** |
 | 좌패널 상세보기 버튼 위치 | `lg:bottom-8 lg:right-8` | `bottom-4 right-4` 고정 ← **미판정 드리프트, Phase 2에서 통합 시 결정** |

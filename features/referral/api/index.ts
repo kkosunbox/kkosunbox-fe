@@ -1,3 +1,3 @@
-export { getMyReferralCode } from "./referralApi";
+export { getMyReferralCode, validateReferralCode } from "./referralApi";
 
-export type { MyReferralCode } from "./types";
+export type { MyReferralCode, ReferralValidation } from "./types";

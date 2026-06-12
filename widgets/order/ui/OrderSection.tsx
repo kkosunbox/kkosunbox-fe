@@ -1,11 +1,11 @@
 "use client";
 
-import { Fragment, useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import { getErrorMessage } from "@/shared/lib/api";
+import { getErrorMessage, ApiError } from "@/shared/lib/api";
 import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
@@ -16,6 +16,9 @@ import {
   getCouponInfo,
 } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { validateReferralCode } from "@/features/referral/api";
+import { clearStoredInviteCode } from "@/features/referral/lib";
+import { computeOrderPricing } from "@/widgets/order/lib/orderPricing";
 import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
 const inputCls =
   "h-10 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
@@ -285,6 +288,10 @@ export interface OrderSectionProps {
   initialAddresses: DeliveryAddress[];
   initialBilling: BillingInfo | null;
   initialQuantity?: number;
+  /** 구독 이력 존재 여부 (취소 건 포함). 초대코드 섹션 노출/잠금 분기에 사용 */
+  hasSubscriptionHistory: boolean;
+  /** ?ref로 캡처된 초대 코드 (쿠키, 서버에서 검증·전달). 없으면 null */
+  initialInviteCode: string | null;
 }
 
 export default function OrderSection({
@@ -292,6 +299,8 @@ export default function OrderSection({
   initialAddresses,
   initialBilling,
   initialQuantity = 1,
+  hasSubscriptionHistory,
+  initialInviteCode,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -355,12 +364,78 @@ export default function OrderSection({
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
 
-  // 초대코드 — API 미구현. 현재는 입력값 보관만 하며, 추후 적용/검증 로직 연동 예정.
-  const [inviteCodeInput, setInviteCodeInput] = useState("");
+  // 초대코드 섹션 노출 모드 — (초대링크 진입 여부) × (구독 이력 여부)로 결정한다.
+  //  - "hidden"     : 일반 진입 + 구독 이력 있음 → 섹션 자체를 가린다.
+  //  - "ineligible" : 초대링크 진입 + 구독 이력 있음 → input 제거, "첫 구독 시에만" 문구만 노출.
+  //  - "locked"     : 초대링크 진입 + 구독 이력 없음 → 코드 자동 입력·검증, input 잠금.
+  //  - "open"       : 일반 진입 + 구독 이력 없음 → 빈 input 노출, 유저가 직접 입력.
+  const inviteSectionMode = useMemo<"hidden" | "ineligible" | "locked" | "open">(() => {
+    if (initialInviteCode) return hasSubscriptionHistory ? "ineligible" : "locked";
+    return hasSubscriptionHistory ? "hidden" : "open";
+  }, [initialInviteCode, hasSubscriptionHistory]);
 
-  // TODO: 초대코드 API 연동 시 검증·할인 적용 로직 추가
+  // 초대 코드 입력값. locked 모드(초대링크+첫구독)에서는 캡처된 코드를 채워 잠근다.
+  const [inviteCodeInput, setInviteCodeInput] = useState(
+    inviteSectionMode === "locked" ? (initialInviteCode ?? "") : "",
+  );
+
+  // 초대코드 검증 상태.
+  //  - "idle"        : 검증 전/입력 변경됨. 안내 문구 없음, 결제 시 코드 미전송.
+  //  - "loading"     : validate 호출 중.
+  //  - "applicable"  : 적용 가능. 결제 시 referralCode로 전송한다.
+  //  - "blocked"     : 적용 불가. 사유 문구 노출, 코드 미전송.
+  const [inviteStatus, setInviteStatus] = useState<"idle" | "loading" | "applicable" | "blocked">("idle");
+  // blocked 사유 메시지 — validate 400 에러 코드를 한국어로 변환해 보관한다.
+  const [inviteBlockedMsg, setInviteBlockedMsg] = useState<string | null>(null);
+  // 적용 가능한 초대 코드의 할인율 (분수, 0.1 = 10%). 할인 금액 표시·합산에 사용한다.
+  const [inviteDiscountRate, setInviteDiscountRate] = useState(0);
+
+  // 입력된 초대 코드를 검증해 상태를 갱신한다. 진입 시 prefill 검증과 "코드적용" 버튼이 공유한다.
+  const validateInviteCode = useCallback((rawCode: string) => {
+    const code = rawCode.trim();
+    setInviteBlockedMsg(null);
+    setInviteDiscountRate(0);
+    if (!code) {
+      setInviteStatus("idle");
+      return;
+    }
+    setInviteStatus("loading");
+    validateReferralCode(code)
+      .then((res) => {
+        // 200 → 적용 가능. discountRate(0.1=10%)를 보관해 할인 금액 표시에 사용한다.
+        if (res.isApplicable) {
+          setInviteStatus("applicable");
+          setInviteDiscountRate(res.discountRate ?? 0);
+        } else {
+          setInviteStatus("blocked");
+        }
+      })
+      .catch((err) => {
+        // 무효한 코드는 400 + 사유별 에러 코드(REFERRAL_*)로 온다. 적용 불가로 판정하고 사유 문구를 노출한다.
+        // 네트워크 등 ApiError가 아닌 경우엔 흐름을 막지 않도록 idle로 둔다.
+        if (err instanceof ApiError) {
+          setInviteStatus("blocked");
+          setInviteBlockedMsg(getErrorMessage(err, "사용할 수 없는 코드입니다."));
+        } else {
+          setInviteStatus("idle");
+        }
+      });
+  }, []);
+
+  // locked 모드 진입 시(초대링크 + 첫 구독) 캡처된 코드를 우선순위를 낮춰(idle) 자동 검증한다.
+  useEffect(() => {
+    if (inviteSectionMode !== "locked" || !initialInviteCode) return;
+
+    const run = () => validateInviteCode(initialInviteCode);
+    const idle = window.requestIdleCallback?.(run) ?? window.setTimeout(run, 0);
+    return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle as number);
+      else window.clearTimeout(idle as number);
+    };
+  }, [inviteSectionMode, initialInviteCode, validateInviteCode]);
+
   function handleApplyInviteCode() {
-    // 퍼블리싱 단계: API 연동 전까지 동작 없음
+    validateInviteCode(inviteCodeInput);
   }
 
   const [agreeOpen, setAgreeOpen] = useState(true);
@@ -400,14 +475,17 @@ export default function OrderSection({
   }
 
   const unitPrice = plan.monthlyPrice;
-  const basePrice = unitPrice * quantity;
-  const couponDiscount = useMemo(() => {
-    if (!couponInfo?.canUse || !couponInfo.discountRate) return 0;
-    // 쿠폰은 단가 1개에만 적용
-    return Math.floor((unitPrice * couponInfo.discountRate) / 100);
-  }, [unitPrice, couponInfo]);
-
-  const total = Math.max(0, basePrice - couponDiscount);
+  // 금액·할인 계산은 순수 함수로 분리(단위 테스트 대상). 쿠폰·초대코드 모두 단가 1개에만 적용.
+  const { basePrice, couponDiscount, totalDiscount, total } = useMemo(
+    () =>
+      computeOrderPricing({
+        unitPrice,
+        quantity,
+        couponRatePercent: couponInfo?.canUse ? couponInfo.discountRate : null,
+        inviteRate: inviteStatus === "applicable" ? inviteDiscountRate : null,
+      }),
+    [unitPrice, quantity, couponInfo, inviteStatus, inviteDiscountRate],
+  );
 
   const agreeAll = agreeTerms && agreePrivacy && agreeAge;
   function handleAgreeAll() {
@@ -506,7 +584,15 @@ export default function OrderSection({
           quantity,
           couponCode:
             couponInfo?.canUse && couponCodeInput.trim() ? couponCodeInput.trim() : undefined,
+          // 검증을 통과(applicable)한 초대 코드만 전송한다. 서버가 첫 구독자에 한해 할인을 반영한다.
+          referralCode:
+            inviteStatus === "applicable" && inviteCodeInput.trim()
+              ? inviteCodeInput.trim()
+              : undefined,
         });
+
+        // 구독 생성 완료 → 소비된 초대 코드를 정리해 재적용을 방지한다.
+        clearStoredInviteCode();
 
         router.refresh();
         router.push("/mypage/subscription?welcome=1");
@@ -840,37 +926,57 @@ export default function OrderSection({
         </div>
       </SectionCard>
 
-      <SectionCard
-        title="초대코드 입력"
-        open={openSections.invite}
-        onToggle={() => toggleSection("invite")}
-      >
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-0 md:gap-4">
-            <span className="shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px]">
-              코드입력
-            </span>
-            <div className="flex flex-1 items-center gap-3 min-w-0">
-              <input
-                value={inviteCodeInput}
-                onChange={(e) => setInviteCodeInput(e.target.value)}
-                className={`${inputCls} flex-1 min-w-0`}
-                placeholder="초대코드를 입력해주세요."
-              />
-              <button
-                type="button"
-                onClick={handleApplyInviteCode}
-                className={actionChipCls}
-              >
-                코드적용
-              </button>
+      {inviteSectionMode !== "hidden" && (
+        <SectionCard
+          title="초대코드 입력"
+          open={openSections.invite}
+          onToggle={() => toggleSection("invite")}
+        >
+          {inviteSectionMode === "ineligible" ? (
+            // 초대링크 진입 + 구독 이력 있음 → 입력 필드 없이 안내 문구만 노출
+            <p className="text-body-13-m text-[var(--color-text-secondary)]">
+              초대코드는 첫 구독 시에만 사용 가능합니다.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-0 md:gap-4">
+                <span className="shrink-0 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px]">
+                  코드입력
+                </span>
+                <div className="flex flex-1 items-center gap-3 min-w-0">
+                  <input
+                    value={inviteCodeInput}
+                    onChange={(e) => {
+                      setInviteCodeInput(e.target.value);
+                      // 입력이 바뀌면 직전 검증 결과는 무효이므로 초기화한다(코드적용 재검증 필요).
+                      setInviteStatus("idle");
+                      setInviteBlockedMsg(null);
+                      setInviteDiscountRate(0);
+                    }}
+                    // locked 모드(초대링크 + 첫 구독)에서는 자동 적용 코드를 수정하지 못하게 잠근다.
+                    disabled={inviteSectionMode === "locked"}
+                    className={`${inputCls} flex-1 min-w-0 disabled:cursor-not-allowed disabled:opacity-60`}
+                    placeholder="초대코드를 입력해주세요."
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyInviteCode}
+                    disabled={inviteSectionMode === "locked" || inviteStatus === "loading"}
+                    className={`${actionChipCls} disabled:cursor-not-allowed disabled:opacity-60`}
+                  >
+                    코드적용
+                  </button>
+                </div>
+              </div>
+              {inviteStatus === "blocked" && (
+                <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">
+                  {inviteBlockedMsg ?? "첫 구독 시에만 사용 가능합니다."}
+                </p>
+              )}
             </div>
-          </div>
-          <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">
-            첫 구독 시에만 사용 가능합니다.
-          </p>
-        </div>
-      </SectionCard>
+          )}
+        </SectionCard>
+      )}
 
       <SectionCard
         title="배송방법"
@@ -905,9 +1011,9 @@ export default function OrderSection({
                 <span className="text-body-13-m text-[var(--color-text)]">{formatPrice(basePrice)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-body-13-m text-[var(--color-text)]">총 쿠폰 할인금액</span>
+                <span className="text-body-13-m text-[var(--color-text)]">총 할인금액</span>
                 <span className="text-body-13-m text-[var(--color-text)]">
-                  -{formatPrice(couponDiscount)}
+                  -{formatPrice(totalDiscount)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -1000,7 +1106,7 @@ export default function OrderSection({
 
   const priceSummaryItems = [
     { label: "주문상품금액", value: formatPrice(basePrice), emphasis: false },
-    { label: "총 할인금액", value: formatPrice(couponDiscount), emphasis: false },
+    { label: "총 할인금액", value: formatPrice(totalDiscount), emphasis: false },
     { label: "총 배송비", value: "0원", emphasis: false },
     { label: "총 주문금액", value: formatPrice(total), emphasis: true },
   ] as const;

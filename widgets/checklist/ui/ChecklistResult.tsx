@@ -109,10 +109,10 @@ function ChecklistRetryButton({ className }: { className?: string }) {
         "rounded-full border border-[var(--color-text-muted)]",
         "text-body-13-m leading-4 text-[var(--color-text)]",
         "transition-all duration-300 ease-out active:opacity-70",
-        // 모바일: 라벨 항상 노출
+        // 모바일·태블릿: 라벨 항상 노출, 애니메이션 없음
         "gap-[10px] px-3 py-2",
-        // 웹·태블릿(≥768px): 아이콘만 보이는 원형 → hover 시 라벨 확장
-        "md:gap-0 md:px-2 md:hover:gap-[10px] md:hover:px-3",
+        // 데스크탑(≥1200px): 아이콘만 보이는 원형 → hover 시 라벨 확장 + 회전
+        "lg:gap-0 lg:px-2 lg:hover:gap-[10px] lg:hover:px-3",
         className,
       ]
         .filter(Boolean)
@@ -126,7 +126,7 @@ function ChecklistRetryButton({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
-        className="shrink-0 transition-transform duration-500 ease-out md:group-hover:rotate-[360deg]"
+        className="shrink-0 transition-transform duration-500 ease-out lg:group-hover:rotate-[360deg]"
       >
         <path
           d="M9 8L12 5.5L9 3"
@@ -144,7 +144,7 @@ function ChecklistRetryButton({ className }: { className?: string }) {
       <span
         className={[
           "overflow-hidden whitespace-nowrap transition-all duration-300 ease-out",
-          "md:max-w-0 md:opacity-0 md:group-hover:max-w-[64px] md:group-hover:opacity-100",
+          "lg:max-w-0 lg:opacity-0 lg:group-hover:max-w-[64px] lg:group-hover:opacity-100",
         ].join(" ")}
       >
         다시하기
@@ -214,8 +214,7 @@ function CardBody({
           </p>
         </div>
 
-        {/* 다시하기 — 데스크탑(≥1200px) 전용, 태블릿에서는 숨김 */}
-        <ChecklistRetryButton className="ml-auto max-lg:hidden" />
+        <ChecklistRetryButton className="ml-auto" />
       </div>
 
       {/* 본문: 이미지(좌) + 추천이유(우) */}

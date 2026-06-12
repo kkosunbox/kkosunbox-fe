@@ -1,8 +1,10 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
-import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
+import { fetchSubscriptionPlans, fetchSubscriptions } from "@/features/subscription/api/queries";
+import { INVITE_CODE_COOKIE, isValidInviteCode } from "@/features/referral/lib";
 import { OrderSection } from "@/widgets/order";
 
 export const metadata = {
@@ -33,10 +35,12 @@ export default async function OrderPage({
     redirect(`/login?next=${encodeURIComponent(`/order?planId=${planId}`)}`);
   }
 
-  const [plans, addresses, billing] = await Promise.all([
+  const [plans, addresses, billing, subscriptions, cookieStore] = await Promise.all([
     fetchSubscriptionPlans(token),
     fetchDeliveryAddresses(token),
     fetchBillingInfo(token),
+    fetchSubscriptions(token),
+    cookies(),
   ]);
 
   const plan = plans.find((p) => p.id === planId);
@@ -44,12 +48,22 @@ export default async function OrderPage({
     redirect("/subscribe");
   }
 
+  // 구독 이력 존재 여부 (취소 건 포함) — 초대코드 섹션 노출/잠금 분기에 사용
+  const hasSubscriptionHistory = subscriptions.length > 0;
+
+  // ?ref로 캡처된 초대 코드 (미들웨어가 저장한 쿠키). 형식 검증 후 전달
+  const rawInviteCode = cookieStore.get(INVITE_CODE_COOKIE)?.value ?? null;
+  const initialInviteCode =
+    rawInviteCode && isValidInviteCode(rawInviteCode) ? rawInviteCode : null;
+
   return (
     <OrderSection
       plan={plan}
       initialAddresses={addresses}
       initialBilling={billing}
       initialQuantity={initialQuantity}
+      hasSubscriptionHistory={hasSubscriptionHistory}
+      initialInviteCode={initialInviteCode}
     />
   );
 }

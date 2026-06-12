@@ -1,47 +1,30 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
-import { PACKAGES, PackageTier, tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
-import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
-import PlanRatingStars from "@/widgets/subscribe/plans/ui/PlanRatingStars";
-import PackageNutritionGuide from "@/widgets/subscribe/plans/ui/PackageNutritionGuide";
+import {
+  PACKAGES,
+  PackageTier,
+  tierFromSubscriptionPlan,
+  PACKAGE_SUMMARY_IMAGES,
+  PACKAGE_EXPLAIN_BY_TIER,
+  PackageSummaryThumbnail,
+  PlanRatingStars,
+  TIER_DETAIL_HERO_IMAGES,
+  useSvgBridge,
+} from "@/entities/package";
+import { usePlanRatings } from "@/features/review";
+import { PackageNutritionGuide } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
-import packageExplainWithBasic from "../assets/package-explain-with-basic.png";
-import packageExplainWithPremium from "../assets/package-explain-with-premium.png";
-import packageExplainWithStandard from "../assets/package-explain-with-standard.png";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
-import packageImageBasic from "../assets/package-image-basic.png";
-import packageImagePremium from "../assets/package-image-premium.png";
-import packageImageStandard from "../assets/package-image-standard.png";
-import { PackageSummaryThumbnail } from "./PackageSummaryThumbnail";
-import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
-import { useSvgBridge } from "@/widgets/subscribe/plans/ui/useSvgBridge";
-
-
-const PACKAGE_EXPLAIN_IMAGES: Array<{
-  tier: PackageTier;
-  src: StaticImageData;
-  alt: string;
-}> = [
-  { tier: "Basic", src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
-  { tier: "Standard", src: packageExplainWithStandard, alt: "스탠다드 패키지 BOX 설명" },
-  { tier: "Premium", src: packageExplainWithPremium, alt: "프리미엄 패키지 BOX 설명" },
-];
 
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 */
 const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
-
-const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
-  Basic: packageImageBasic,
-  Standard: packageImageStandard,
-  Premium: packageImagePremium,
-};
 
 export default function PackagePlansSection() {
   const router = useRouter();
@@ -50,7 +33,7 @@ export default function PackagePlansSection() {
   const planRatings = usePlanRatings(apiPlans.map((plan) => plan.id));
 
   const displayTier = selectedTier;
-  const activePackage = PACKAGE_EXPLAIN_IMAGES.find((img) => img.tier === displayTier) ?? PACKAGE_EXPLAIN_IMAGES[0];
+  const activePackage = PACKAGE_EXPLAIN_BY_TIER[displayTier];
   const activePlan = apiPlans.find((plan) => tierFromSubscriptionPlan(plan) === displayTier);
   const activePkg = PACKAGES.find((pkg) => pkg.tier === displayTier);
 
@@ -207,7 +190,7 @@ export default function PackagePlansSection() {
                 onClick={handleDetailClick}
               >
                 <Image
-                  key={activePackage.tier}
+                  key={displayTier}
                   src={activePackage.src}
                   alt={activePackage.alt}
                   fill

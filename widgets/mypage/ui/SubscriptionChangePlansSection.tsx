@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/shared/lib/api";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
-import { tierFromSubscriptionPlan, type PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
+import { tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
 import subscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
 import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop.png";
 

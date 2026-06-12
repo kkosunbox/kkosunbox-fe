@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/features/auth";
 import { deleteProfile } from "@/features/profile/api/profileApi";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { MAX_PROFILE_COUNT, type Profile } from "@/features/profile/api/types";
@@ -10,6 +11,7 @@ import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import DefaultPetIcon from "../DefaultPetIcon";
+import FallbackAvatar from "../FallbackAvatar";
 
 interface Props {
   onClose: () => void;
@@ -107,11 +109,11 @@ function ProfileItem({
   );
 }
 
-function AddProfileItem({ onClick }: { onClick: () => void }) {
+function AddProfileItem({ onClick, userId }: { onClick: () => void; userId?: number | null }) {
   return (
     <button onClick={onClick} className="flex w-20 flex-col items-center gap-2" type="button">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full border border-[var(--color-text-muted)] bg-[var(--color-secondary)]">
-        <DefaultPetIcon className="h-[41px] w-[41px]" />
+      <div className="h-20 w-20 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
+        <FallbackAvatar userId={userId} size={80} />
       </div>
       <span className="max-w-20 truncate text-center text-body-14-sb-tight tracking-[-0.04em] text-[var(--color-text)]">
         프로필 추가
@@ -121,6 +123,7 @@ function AddProfileItem({ onClick }: { onClick: () => void }) {
 }
 
 export default function ProfileSwitchModal({ onClose }: Props) {
+  const { user } = useAuth();
   const { profiles, profile, setActiveProfileId, refreshProfile } = useProfile();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
@@ -210,7 +213,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
                   onDelete={() => handleDeleteProfile(pet)}
                 />
               ))}
-              {canAddProfile && <AddProfileItem onClick={handleAddProfile} />}
+              {canAddProfile && <AddProfileItem onClick={handleAddProfile} userId={user?.id ?? null} />}
             </div>
 
             <p className="w-full text-center text-[14px] font-normal leading-[17px] tracking-[-0.04em] text-[var(--color-text)]">

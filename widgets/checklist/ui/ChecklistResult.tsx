@@ -19,7 +19,7 @@ import {
 } from "@/entities/package";
 import { PackageNutritionGuide } from "@/entities/package";
 import { usePlanRatings } from "@/features/review";
-import { CheckCircleIcon } from "@/shared/ui";
+import { CheckCircleIcon, FallbackAvatar } from "@/shared/ui";
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
@@ -139,9 +139,28 @@ function ChecklistRetryButton({ className }: { className?: string }) {
 
 /* ── 추천 카드 내부 (데스크탑·태블릿 전용) ─── */
 
+function ResultAvatar({
+  avatarSrc,
+  userId,
+  size,
+}: {
+  avatarSrc: string | null;
+  userId?: number | null;
+  size: number;
+}) {
+  if (avatarSrc) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
+    );
+  }
+  return <FallbackAvatar userId={userId} size={size} className="h-full w-full" />;
+}
+
 interface CardBodyProps {
   petName: string;
   avatarSrc: string | null;
+  userId?: number | null;
   effectiveRecommendedTier: RecommendedTier;
   tierColorVar: string;
   tierLabel: string;
@@ -154,6 +173,7 @@ interface CardBodyProps {
 function CardBody({
   petName,
   avatarSrc,
+  userId,
   effectiveRecommendedTier,
   tierColorVar,
   tierLabel,
@@ -168,16 +188,8 @@ function CardBody({
       {/* 상단: 아바타 + 뱃지 + 설명 */}
       <div className="mb-[39px] flex items-center gap-8">
         {/* 아바타 */}
-        <div
-          className="flex h-[78px] w-[78px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)]"
-          style={{ background: "var(--color-secondary)" }}
-        >
-          {avatarSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
-          ) : (
-            <span className="text-emoji-34">🐶</span>
-          )}
+        <div className="flex h-[78px] w-[78px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
+          <ResultAvatar avatarSrc={avatarSrc} userId={userId} size={78} />
         </div>
 
         {/* 뱃지 + 설명 */}
@@ -285,6 +297,7 @@ function CardBody({
 interface Props {
   petInfo: PetInfo;
   avatarSrc: string | null;
+  userId?: number | null;
   recommendedTier: RecommendedTier;
   profileId?: number | null;
 }
@@ -292,6 +305,7 @@ interface Props {
 export default function ChecklistResult({
   petInfo,
   avatarSrc,
+  userId,
   recommendedTier,
   profileId,
 }: Props) {
@@ -358,6 +372,7 @@ export default function ChecklistResult({
   const sharedCardProps: Omit<CardBodyProps, "onDetailClick"> = {
     petName,
     avatarSrc,
+    userId,
     effectiveRecommendedTier,
     tierColorVar,
     tierLabel,
@@ -380,16 +395,8 @@ export default function ChecklistResult({
         className="md:hidden flex items-start gap-3 px-6 py-[21px]"
         style={{ background: "var(--color-support-faq-surface)" }}
       >
-        <div
-          className="flex h-[48px] w-[48px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[var(--color-text-muted)]"
-          style={{ background: "var(--color-secondary)" }}
-        >
-          {avatarSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
-          ) : (
-            <span className="text-emoji-28">🐶</span>
-          )}
+        <div className="flex h-[48px] w-[48px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
+          <ResultAvatar avatarSrc={avatarSrc} userId={userId} size={48} />
         </div>
         <div className="min-w-0 flex-1 flex flex-col gap-[3px]">
           <span

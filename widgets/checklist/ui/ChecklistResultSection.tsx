@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import type { Profile } from "@/features/profile/api/types";
 import ChecklistResult from "./ChecklistResult";
@@ -32,6 +33,7 @@ export default function ChecklistResultSection({
 }: {
   tier: RecommendedTier;
 }) {
+  const { user } = useAuth();
   const { profile } = useProfile();
 
   if (!profile) {
@@ -48,6 +50,7 @@ export default function ChecklistResultSection({
     <ChecklistResult
       petInfo={profileToPetInfo(profile)}
       avatarSrc={profile.profileImageUrl}
+      userId={user?.id ?? null}
       recommendedTier={tier}
       profileId={profile.id}
     />

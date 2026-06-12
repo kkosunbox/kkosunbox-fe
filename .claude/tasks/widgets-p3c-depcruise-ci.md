@@ -2,8 +2,8 @@
 
 > **진행 상태**: 미착수  
 > **위험도**: 낮음  
-> **권장 순서**: P3 **1번** (이후 P3-d/b/a 작업의 회귀 방지용 인프라)  
-> **선행 완료**: P0–P2 ([`scripts/widget-refactor-report.md`](../scripts/widget-refactor-report.md))
+> **권장 순서**: P3 **1번** (P3-d/b 작업의 회귀 방지용 인프라)  
+> **선행 완료**: P0–P2, **P3-a 완료 (2026-06-12)**
 
 ## 목적
 
@@ -15,22 +15,24 @@ P0–P2에서 수동으로 추가한 [`.dependency-cruiser.cjs`](../../.dependen
 
 | 항목 | 현황 |
 |------|------|
-| depcruise 설정 | [`.dependency-cruiser.cjs`](../../.dependency-cruiser.cjs) — error 4규칙, warn 5규칙 |
+| depcruise 설정 | [`.dependency-cruiser.cjs`](../../.dependency-cruiser.cjs) — **error 7규칙**, warn 4규칙 (P3-a에서 3건 추가·승격) |
 | npm script | [`package.json`](../../package.json) — `"depcruise": "depcruise app widgets features entities shared --config .dependency-cruiser.cjs"` |
 | CI | `.github/` **없음** — 워크플로 신규 생성 필요 |
-| 로컬 기준선 | `pnpm depcruise` → **0 errors**, 5 warnings (2026-06-12 P2 후) |
+| 로컬 기준선 | `pnpm depcruise` → **0 errors**, 4 warnings (2026-06-12 P3-a 후) |
 
-### error 규칙 (CI 실패 대상)
+### error 규칙 (CI 실패 대상) — 현재 7건
 
 - `no-features-to-widgets`
 - `no-entities-to-widgets`
 - `no-shared-to-widgets`
 - `no-widgets-to-app`
+- `no-entities-to-features` ← P3-a 추가
+- `package-plans-is-leaf` ← P3-a 추가
+- `widget-mypage-subscribe-coupling` ← P3-a에서 warn→error 승격, 0 violations 확인
 
-### warn 규칙 (초기에는 통과 허용)
+### warn 규칙 (초기에는 통과 허용) — 현재 4건
 
-- `widget-mypage-subscribe-coupling`
-- `widget-order-subscribe-coupling` (P2 후 order→subscribe 직접 import 없으면 미발화 가능)
+- `widget-order-subscribe-coupling`
 - `widget-forgot-password-register-coupling`
 - `widget-inquiry-support-coupling`
 - `widget-subscribe-support-coupling`
@@ -100,7 +102,7 @@ jobs:
 
 ## 주의 사항
 
-- **warn을 error로 올리지 말 것** — P3-a 미완료 상태에서 CI가 항상 red가 됨.
+- **warn 4건은 현재 유효한 커플링** — error 승격 전에 각 커플링 제거 작업(P3-b 등) 선행 필요.
 - `pnpm install` 시 lockfile 동기화 필수. `--frozen-lockfile`로 CI 재현성 확보.
 - depcruise는 TypeScript path alias(`@/*`)를 [`tsconfig.json`](../../tsconfig.json) 기준으로 해석함 — 설정 이미 존재.
 - 이 태스크는 **코드 리팩터 없음**. 워크플로 파일만 추가.
@@ -140,4 +142,4 @@ npx tsc --noEmit
 | 태스크 | 관계 |
 |--------|------|
 | [widgets-p3d-deprecated-cleanup.md](widgets-p3d-deprecated-cleanup.md) | 다음 권장 |
-| [widgets-p3a-mypage-plans-picker.md](widgets-p3a-mypage-plans-picker.md) | 완료 후 `widget-mypage-subscribe-coupling` warn 제거 가능 |
+| [widgets-p3b-order-section-split.md](widgets-p3b-order-section-split.md) | 완료 후 `widget-order-subscribe-coupling` warn 제거 검토 |

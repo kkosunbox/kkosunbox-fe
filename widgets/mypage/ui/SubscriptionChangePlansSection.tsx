@@ -2,12 +2,14 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { ScrollReveal } from "@/shared/ui";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
-import { SubscribePlansSection } from "@/widgets/subscribe/plans";
-import { tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
+import { tierFromSubscriptionPlan } from "@/entities/package";
+import { PlanPicker } from "@/widgets/package-plans";
 import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile.png";
 import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop.png";
 
@@ -27,9 +29,9 @@ export default function SubscriptionChangePlansSection({
 
   const isChangeMode = targetSubscription !== null;
 
-  const initialSelectedTier: PackageTier | undefined = targetSubscription
+  const initialSelectedTier = targetSubscription
     ? tierFromSubscriptionPlan(targetSubscription.plan)
-    : undefined;
+    : null;
 
   function checkIsCurrentPlan(plan: SubscriptionPlanDto) {
     if (!targetSubscription) return false;
@@ -61,25 +63,50 @@ export default function SubscriptionChangePlansSection({
     });
   }
 
-  return (
-    <SubscribePlansSection
-      plans={plans}
-      showChecklistRecommend={false}
-      initialSelectedTier={initialSelectedTier}
-      heroDesktopImage={subscriptionChangeHeroDesktop}
-      heroMobileImage={subscriptionChangeHeroMobile}
-      heroAlt="기존 구독을 변경하려면 새로운 구독을 선택하세요"
-      showSelectedCardHighlight={isChangeMode}
-      isCurrentPlan={checkIsCurrentPlan}
-      getPrimaryButton={(plan) => {
-        const isCurrent = checkIsCurrentPlan(plan);
+  const heroAlt = "기존 구독을 변경하려면 새로운 구독을 선택하세요";
 
-        return {
-          label: isCurrent ? "현재 구독중" : isChangeMode ? "변경하기" : "구독하기",
-          disabled: isPending || isCurrent,
-          onClick: () => handlePlanAction(plan),
-        };
-      }}
-    />
+  return (
+    <section className="flex min-h-full flex-1 flex-col bg-white pt-[var(--header-offset)] pb-16 md:pb-20">
+      <div className="flex w-full flex-1 flex-col">
+        {/* Hero */}
+        <ScrollReveal variant="fade-in" duration={600}>
+          <div className="mb-6 md:mb-10 lg:mb-10">
+            <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
+              <Image
+                src={subscriptionChangeHeroMobile}
+                alt={heroAlt}
+                className="h-[111px] w-full shrink-0 object-cover object-center"
+                priority
+              />
+            </div>
+            <div className="max-md2:hidden w-full bg-support-hero-side-bg">
+              <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
+                <Image
+                  src={subscriptionChangeHeroDesktop}
+                  alt={heroAlt}
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        <PlanPicker
+          plans={plans}
+          initialSelectedTier={initialSelectedTier}
+          showSelectedCardHighlight={isChangeMode}
+          isCurrentPlan={checkIsCurrentPlan}
+          getPrimaryButton={(plan) => {
+            const isCurrent = checkIsCurrentPlan(plan);
+            return {
+              label: isCurrent ? "현재 구독중" : isChangeMode ? "변경하기" : "구독하기",
+              disabled: isPending || isCurrent,
+              onClick: () => handlePlanAction(plan),
+            };
+          }}
+        />
+      </div>
+    </section>
   );
 }

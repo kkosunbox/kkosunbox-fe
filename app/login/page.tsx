@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import logoMain2x from "@/shared/assets/logo-main@2x.webp";
 import loginBannerHd from "@/shared/assets/login-banner-hd.png";
 import loginMobileDeco from "@/shared/assets/login-mobile-upper-deco.webp";
-import { useAuth, getOAuthUrl } from "@/features/auth";
+import { useAuth, getOAuthUrl, setOAuthReturnPath } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
 import { useLoadingOverlay } from "@/shared/ui";
 
@@ -109,6 +109,10 @@ export default function LoginPage() {
   }, [isLoggedIn, router]);
 
   function handleSocialLogin(provider: OAuthProvider) {
+    const next = searchParams.get("next");
+    if (next?.startsWith("/")) {
+      setOAuthReturnPath(next);
+    }
     const url = getOAuthUrl(provider);
     if (url) window.location.href = url;
   }

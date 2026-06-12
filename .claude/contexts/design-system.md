@@ -137,6 +137,7 @@
 | `--color-avatar-4` | `#B5C9DB` | 리뷰 프로필 폴백 아바타 배경 4 |
 | `--color-avatar-5` | `#DBB5C9` | 리뷰 프로필 폴백 아바타 배경 5 |
 | `--color-avatar-6` | `#A5C4A5` | 리뷰 프로필 폴백 아바타 배경 6 |
+| `--color-avatar-fallback` | `#B3A79D` | 유저 폴백 아바타 배경 |
 | `--color-review-text` | `#2C2C2C` | 리뷰 카드 본문·이름 텍스트 |
 | `--color-review-chip` | `#A16240` | 리뷰 카드 구독 기간 칩 |
 

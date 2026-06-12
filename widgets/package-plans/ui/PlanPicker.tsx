@@ -24,6 +24,9 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
 const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
 
+/** 데스크탑 카드 열·모바일 네비 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
+const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
+
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
@@ -79,7 +82,7 @@ export default function PlanPicker({
   isCurrentPlan,
   showSelectedCardHighlight = true,
   getPrimaryButton,
-  summaryOrder = ["Premium", "Standard", "Basic"],
+  summaryOrder = DEFAULT_SUMMARY_ORDER,
   mobileSlot,
 }: PlanPickerProps) {
   const sortedPlans = useMemo(

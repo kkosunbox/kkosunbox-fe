@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { DefaultPetIcon, Text, useModal } from "@/shared/ui";
+import { FallbackAvatar, Text, useModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { ChevronRightIcon } from "./mypage-icons";
 import { useAuth } from "@/features/auth";
@@ -37,9 +37,11 @@ function PencilIcon({ className }: { className?: string }) {
 
 function PetAvatar({
   imageUrl,
+  userId,
   onEditProfile,
 }: {
   imageUrl: string | null;
+  userId?: number | null;
   onEditProfile: () => void;
 }) {
   return (
@@ -55,12 +57,7 @@ function PetAvatar({
             height={124}
           />
         ) : (
-          <div
-            className="absolute inset-0 flex items-center justify-center rounded-full bg-[var(--color-secondary)]"
-            aria-hidden
-          >
-            <DefaultPetIcon className="h-12 w-12 shrink-0 lg:h-16 lg:w-16" />
-          </div>
+          <FallbackAvatar userId={userId} className="absolute inset-0 h-full w-full" />
         )}
       </div>
       <button
@@ -247,6 +244,7 @@ function ChecklistPanel({
 
 interface ProfileViewModel {
   imageUrl: string | null;
+  userId?: number | null;
   displayName: string;
   hasProfile: boolean;
   hasNamedProfile: boolean;
@@ -338,7 +336,7 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
       </button>
 
       <div className="flex items-center gap-5">
-        <PetAvatar imageUrl={vm.imageUrl} onEditProfile={vm.onEditProfile} />
+        <PetAvatar imageUrl={vm.imageUrl} userId={vm.userId} onEditProfile={vm.onEditProfile} />
         <div className="min-w-0 flex flex-1 flex-col gap-2">
           {/* 1줄: 이름 + 전환 (초소형·일반 공통) */}
           <div className="flex min-w-0 items-center justify-start gap-2">
@@ -446,7 +444,7 @@ function ProfileSectionDesktop({
           <ChevronRightIcon />
         </button>
         <div className="flex min-h-0 min-w-0 flex-1 items-center gap-8">
-          <PetAvatar imageUrl={vm.imageUrl} onEditProfile={vm.onEditProfile} />
+          <PetAvatar imageUrl={vm.imageUrl} userId={vm.userId} onEditProfile={vm.onEditProfile} />
           <div className="min-w-0 flex-1 pr-[84px]">
             <div className="flex flex-col gap-[12px]">
               <div className="flex min-w-0 items-center gap-3">
@@ -571,6 +569,7 @@ export function ProfileSection({
 
   const vm: ProfileViewModel = {
     imageUrl: profile?.profileImageUrl ?? null,
+    userId: user?.id ?? null,
     displayName: getProfileDisplayName(profile?.name),
     hasProfile,
     hasNamedProfile,

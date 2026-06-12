@@ -131,6 +131,12 @@
 | `--color-link-blue` | `#1C67D4` | 체크리스트 모달 본문 강조 링크 |
 | `--color-sage` | `#87AB7D` | Sage Green — About CTA 카드 배경 |
 | `--color-star` | `#FDD264` | Gold — 리뷰 별점 아이콘 |
+| `--color-avatar-1` | `#E8B89B` | 리뷰 프로필 폴백 아바타 배경 1 |
+| `--color-avatar-2` | `#C9DBB5` | 리뷰 프로필 폴백 아바타 배경 2 |
+| `--color-avatar-3` | `#F7D4A7` | 리뷰 프로필 폴백 아바타 배경 3 |
+| `--color-avatar-4` | `#B5C9DB` | 리뷰 프로필 폴백 아바타 배경 4 |
+| `--color-avatar-5` | `#DBB5C9` | 리뷰 프로필 폴백 아바타 배경 5 |
+| `--color-avatar-6` | `#A5C4A5` | 리뷰 프로필 폴백 아바타 배경 6 |
 | `--color-review-text` | `#2C2C2C` | 리뷰 카드 본문·이름 텍스트 |
 | `--color-review-chip` | `#A16240` | 리뷰 카드 구독 기간 칩 |
 

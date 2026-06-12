@@ -49,7 +49,7 @@ export default function AboutSection() {
     <>
       {/* Section 1: 꼬순박스 소개 */}
       <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-lg:pt-[62px] max-md:pb-9 md:pb-14 max-lg:pb-14 lg:pt-[var(--header-height)] lg:pb-0 lg:max-h-[calc(590px+var(--banner-height)+var(--header-height))]">
-        <div className="mx-auto max-w-[var(--max-width-content)] px-6 lg:px-0">
+        <div className="mx-auto max-md:max-w-[480px] md:max-w-[var(--max-width-content)] px-6 lg:px-0">
           <h1 className="flex justify-center max-lg:mb-10 lg:hidden">
             <Image
               src={aboutHeroTitle}
@@ -138,7 +138,7 @@ export default function AboutSection() {
 
       {/* Section 2: 믿고 먹일 수 있는 간식, 생각보다 어렵습니다. + 피처 카드 */}
       <section className="bg-white py-10 md:py-[72px] lg:pt-[107px] lg:pb-[111px]">
-        <div className="mx-auto flex max-w-[var(--max-width-content)] flex-col gap-0 px-6 md:gap-12 md:px-0">
+        <div className="mx-auto flex max-md:max-w-[480px] md:max-w-[var(--max-width-content)] flex-col gap-0 px-6 md:gap-12 md:px-0">
           <ScrollReveal variant="fade-up">
             <Text
               as="h2"
@@ -209,7 +209,7 @@ export default function AboutSection() {
           />
         </div>
 
-        <div className="relative z-10 mx-auto flex max-w-[var(--max-width-content)] flex-col gap-8 px-6 lg:px-0">
+        <div className="relative z-10 mx-auto flex max-md:max-w-[480px] md:max-w-[var(--max-width-content)] flex-col gap-8 px-6 lg:px-0">
           <ScrollReveal variant="fade-up">
             <Text
               as="h2"

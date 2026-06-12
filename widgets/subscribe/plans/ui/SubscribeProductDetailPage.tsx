@@ -1,11 +1,9 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
-import { SupportSection } from "@/widgets/support/faq";
 import { TIER_DETAIL_HERO_IMAGES } from "./packageThumbnails";
 import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.png";
 import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.png";
@@ -30,9 +28,14 @@ import {
   type PackageTier,
 } from "./packageData";
 import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
-import { getReviews } from "@/features/review/api";
-import type { ReviewResponse, ReviewSortOrder } from "@/features/review/api";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import Stars from "./reviews/Stars";
+import ReviewImageLightbox from "./reviews/ReviewImageLightbox";
+import { useProductReviews } from "./reviews/useProductReviews";
+import ProductReviewList from "./reviews/ProductReviewList";
+import ProductInfoImages from "./detail/ProductInfoImages";
+import ProductDeliveryInfo from "./detail/ProductDeliveryInfo";
+import ProductSupportTab from "./detail/ProductSupportTab";
 
 interface Props {
   initialPlan: SubscriptionPlanDto;
@@ -86,349 +89,15 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "support", label: "고객센터" },
 ];
 
-const SORT_OPTIONS = [
-  { label: "최신순", value: "LATEST" },
-  { label: "평점 높은순", value: "RATING_DESC" },
-  { label: "평점 낮은순", value: "RATING_ASC" },
-] as const satisfies { label: string; value: ReviewSortOrder }[];
-
-
-const REVIEWS_PER_PAGE = 10;
-const REVIEW_CONTENT_COLLAPSED_LINES = 3;
-
-const AVATAR_COLORS = ["#E8B89B", "#C9DBB5", "#F7D4A7", "#B5C9DB", "#DBB5C9", "#A5C4A5"];
-
-function getAvatarColor(seed: string | number | null): string {
-  if (seed === null) return AVATAR_COLORS[0];
-  const n = typeof seed === "number" ? seed : seed.charCodeAt(0);
-  return AVATAR_COLORS[Math.abs(n) % AVATAR_COLORS.length];
-}
-
-function maskEmail(email: string | null): string {
-  if (!email) return "";
-  const atIdx = email.indexOf("@");
-  if (atIdx < 0) return email;
-  const local = email.slice(0, atIdx);
-  const domain = email.slice(atIdx);
-  if (local.length <= 2) return `${local[0]}**${domain}`;
-  return `${local.slice(0, 2)}****${domain}`;
-}
-
-function formatReviewDate(isoDate: string): string {
-  return isoDate.slice(0, 10).replace(/-/g, ".");
-}
-
-const DELIVERY_INFO_SECTIONS = [
-  {
-    title: "기본 배송 정보",
-    items: [
-      "배송 방법: 택배",
-      "배송 지역: 전국 (일부 도서산간 지역 제외)",
-      "배송 비용: 3,000원 (2만원 이상 구매 시 무료배송)",
-      "배송 기간: 결제 완료 후 1~3일 이내 출고 (주말/공휴일 제외)",
-    ],
-  },
-  {
-    title: "교환/반품 배송 관련",
-    items: [
-      "단순 변심에 의한 교환/반품 시 왕복 배송비는 고객 부담입니다. (무료배송: 5,000원 / 배송비지불: 2,500원)",
-      "상품 불량 및 오배송의 경우 배송비는 판매자가 부담합니다.",
-      "상품 수령 후 7일 이내 교환/반품 신청 가능합니다.",
-    ],
-  },
-  {
-    title: "도서산간 추가 비용",
-    items: [
-      "제주 및 도서산간 지역은 추가 배송비가 발생할 수 있습니다. (제주: 3,000원 / 도서산간: 3,000원 추가)",
-      "추가 배송비는 주문 후 별도 안내드립니다.",
-    ],
-  },
-  {
-    title: "배송 조회",
-    items: [
-      "상품 출고 후 송장번호가 문자/알림톡으로 발송됩니다.",
-      "배송 현황은 택배사 홈페이지에서 확인 가능합니다.",
-    ],
-  },
-] as const;
-
-function FullStarIcon({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
-        fill="#FDD264"
-      />
-    </svg>
-  );
-}
-
-function HalfStarIcon({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
-        fill="#FDD264"
-      />
-      <path
-        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
-        fill="#FDD264"
-      />
-      <path
-        d="M14.81 8.63L12 2V17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63Z"
-        fill="#DDDDDD"
-      />
-    </svg>
-  );
-}
-
-function EmptyStarIcon({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"
-        fill="#DDDDDD"
-      />
-    </svg>
-  );
-}
-
-function Stars({ rating, size = 20 }: { rating: number; size?: number }) {
-  const normalized = Math.max(0, Math.min(5, Math.round(rating * 2) / 2));
-  const fullCount = Math.floor(normalized);
-  const hasHalf = normalized - fullCount >= 0.5;
-  const emptyCount = 5 - fullCount - (hasHalf ? 1 : 0);
-
-  return (
-    <span className="inline-flex items-center gap-0.5" aria-label={`별점 ${normalized}점`}>
-      {Array.from({ length: fullCount }).map((_, idx) => (
-        <FullStarIcon key={`full-${idx}`} size={size} />
-      ))}
-      {hasHalf ? <HalfStarIcon key="half" size={size} /> : null}
-      {Array.from({ length: emptyCount }).map((_, idx) => (
-        <EmptyStarIcon key={`empty-${idx}`} size={size} />
-      ))}
-    </span>
-  );
-}
-
-type ReviewLightboxState = { urls: string[]; index: number };
-
-function ReviewImageLightbox({
-  urls,
-  index,
-  onClose,
-  onNavigate,
-}: {
-  urls: string[];
-  index: number;
-  onClose: () => void;
-  onNavigate: (next: number) => void;
-}) {
-  const onCloseRef = useRef(onClose);
-  const onNavigateRef = useRef(onNavigate);
-
-  useEffect(() => {
-    onCloseRef.current = onClose;
-    onNavigateRef.current = onNavigate;
-  }, [onClose, onNavigate]);
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onCloseRef.current();
-      if (e.key === "ArrowLeft") onNavigateRef.current(Math.max(0, index - 1));
-      if (e.key === "ArrowRight") onNavigateRef.current(Math.min(urls.length - 1, index + 1));
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [index, urls.length]);
-
-  const url = urls[index];
-  if (!url) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label="리뷰 사진"
-      onClick={onClose}
-    >
-      <button
-        type="button"
-        aria-label="닫기"
-        className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-[24px] font-light leading-none text-white hover:bg-black/70 md:right-6 lg:right-6 md:top-6 lg:top-6"
-        onClick={(e) => {
-          e.stopPropagation();
-          onClose();
-        }}
-      >
-        ×
-      </button>
-      {urls.length > 1 ? (
-        <span className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-body-13-m text-white">
-          {index + 1} / {urls.length}
-        </span>
-      ) : null}
-      <div
-        className="relative flex max-h-[90vh] max-w-full items-center justify-center"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {urls.length > 1 ? (
-          <button
-            type="button"
-            aria-label="이전 사진"
-            className="absolute left-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-left-1 md:-left-14 lg:-left-14"
-            disabled={index <= 0}
-            onClick={() => onNavigate(index - 1)}
-          >
-            ‹
-          </button>
-        ) : null}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={url} alt={`리뷰 사진 ${index + 1}`} className="max-h-[85vh] max-w-full object-contain" />
-        {urls.length > 1 ? (
-          <button
-            type="button"
-            aria-label="다음 사진"
-            className="absolute right-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-right-1 md:-right-14 lg:-right-14"
-            disabled={index >= urls.length - 1}
-            onClick={() => onNavigate(index + 1)}
-          >
-            ›
-          </button>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function ReviewContent({ content, className }: { content: string; className: string }) {
-  const contentRef = useRef<HTMLParagraphElement | null>(null);
-  const [expanded, setExpanded] = useState(false);
-  const [canExpand, setCanExpand] = useState(false);
-
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el || expanded) return;
-
-    let frame = 0;
-    const measure = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        setCanExpand(el.scrollHeight > el.clientHeight + 1);
-      });
-    };
-
-    measure();
-
-    const resizeObserver =
-      typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
-    resizeObserver?.observe(el);
-    window.addEventListener("resize", measure);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      resizeObserver?.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [content, expanded]);
-
-  return (
-    <div className={className}>
-      <p
-        ref={contentRef}
-        className="whitespace-pre-line text-[14px] font-medium leading-[20px] tracking-[-0.04em] text-[var(--color-text)]"
-        style={
-          expanded
-            ? undefined
-            : {
-                display: "-webkit-box",
-                WebkitLineClamp: REVIEW_CONTENT_COLLAPSED_LINES,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }
-        }
-      >
-        {content}
-      </p>
-      {canExpand ? (
-        <button
-          type="button"
-          aria-expanded={expanded}
-          onClick={() => setExpanded((prev) => !prev)}
-          className="mt-2 inline-flex h-5 items-center gap-1 text-[14px] font-medium leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)] capitalize transition-opacity hover:opacity-80"
-        >
-          {expanded ? "접기" : "더보기"}
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            aria-hidden="true"
-            className={expanded ? "-rotate-90" : "rotate-90"}
-          >
-            <path
-              d="M8 5L13 10L8 15"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      ) : null}
-    </div>
-  );
-}
-
 export default function SubscribeProductDetailPage({ initialPlan, plans }: Props) {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
-  const [activeSort, setActiveSort] = useState<ReviewSortOrder>("LATEST");
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
-  const [reviews, setReviews] = useState<ReviewResponse[]>([]);
-  const [reviewsTotal, setReviewsTotal] = useState(0);
-  const [reviewsAverage, setReviewsAverage] = useState(0);
-  const [reviewsPage, setReviewsPage] = useState(1);
-  const [reviewsLoading, setReviewsLoading] = useState(false);
-  const [reviewLightbox, setReviewLightbox] = useState<ReviewLightboxState | null>(null);
-
-  useEffect(() => {
-    if (!reviewLightbox) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [reviewLightbox]);
-
-  const fetchReviews = useCallback(
-    async (planId: number, page: number, sortOrder: ReviewSortOrder) => {
-      setReviewsLoading(true);
-      try {
-        const data = await getReviews(planId, page, REVIEWS_PER_PAGE, sortOrder);
-        setReviews(data.items);
-        setReviewsTotal(data.total);
-        setReviewsAverage(data.averageRating);
-      } catch {
-        setReviews([]);
-        setReviewsTotal(0);
-        setReviewsAverage(0);
-      } finally {
-        setReviewsLoading(false);
-      }
-    },
-    [],
-  );
-
-  useEffect(() => {
-    fetchReviews(selectedPlan.id, reviewsPage, activeSort);
-  }, [selectedPlan.id, reviewsPage, activeSort, fetchReviews]);
+  const reviewState = useProductReviews(selectedPlan.id);
 
   function handleReviewCountClick() {
     setActiveTab("review");
@@ -443,13 +112,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
   const sortedPlans = useMemo(() => [...plans].sort(comparePlansForDisplayOrder), [plans]);
 
-
-  const reviewImages = useMemo(
-    () => reviews.flatMap((r) => r.imageUrls ?? []),
-    [reviews],
-  );
-
-  const totalPages = Math.max(1, Math.ceil(reviewsTotal / REVIEWS_PER_PAGE));
   const selectedTheme = packageThemeForPlan(selectedPlan);
   const selectedTier = tierFromSubscriptionPlan(selectedPlan);
   const selectedPackage = PACKAGES.find((pkg) => pkg.tier === selectedTier) ?? PACKAGES[0];
@@ -464,20 +126,18 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
     setQuantity(1);
-    setReviewsPage(1);
+    reviewState.setPage(1);
     router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
   }
 
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
-      {reviewLightbox ? (
+      {reviewState.lightbox ? (
         <ReviewImageLightbox
-          urls={reviewLightbox.urls}
-          index={reviewLightbox.index}
-          onClose={() => setReviewLightbox(null)}
-          onNavigate={(next) =>
-            setReviewLightbox((s) => (s ? { ...s, index: next } : null))
-          }
+          urls={reviewState.lightbox.urls}
+          index={reviewState.lightbox.index}
+          onClose={reviewState.closeLightbox}
+          onNavigate={reviewState.navigateLightbox}
         />
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
@@ -553,10 +213,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           <div className="mt-3 flex items-center gap-2">
-            <Stars rating={reviewsAverage} size={24} />
-            {reviewsAverage > 0 && (
+            <Stars rating={reviewState.average} size={24} />
+            {reviewState.average > 0 && (
               <span className="text-[18px] font-semibold leading-[21px] tracking-[-0.02em] text-[var(--color-text)]">
-                {reviewsAverage.toFixed(1)}
+                {reviewState.average.toFixed(1)}
               </span>
             )}
             <button
@@ -564,7 +224,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               onClick={handleReviewCountClick}
               className="text-[14px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text-tertiary)] underline decoration-[var(--color-text-tertiary)]"
             >
-              {reviewsTotal}개 리뷰
+              {reviewState.total}개 리뷰
             </button>
           </div>
 
@@ -665,266 +325,33 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
         </div>
 
         {activeTab === "info" && (
-          <div className="pt-5">
-            <div className="relative left-1/2 w-screen -translate-x-1/2">
-              <div className="mx-auto w-full">
-                {detailImages.map((imageSrc, index) => (
-                  <Image
-                    key={`${selectedTier}-${index}`}
-                    src={imageSrc}
-                    alt={`${selectedPlan.name} 구독정보 상세 이미지 ${index + 1}`}
-                    className="h-auto w-full"
-                    priority={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <ProductInfoImages
+            variant="mobile"
+            images={detailImages}
+            planName={selectedPlan.name}
+            tier={selectedTier}
+          />
         )}
 
         {activeTab === "review" && (
-          <div className="px-6 pt-6 pb-10">
-            <div className="mb-4 flex flex-col gap-2">
-              <button
-                type="button"
-                className="flex shrink-0 items-center gap-2 self-start text-[16px] font-bold leading-[19px] text-[var(--color-text-emphasis)]"
-              >
-                꼬순박스 리뷰
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path
-                    d="M6 4L10 8L6 12"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-[13px] font-medium text-[var(--color-text)]">
-                {SORT_OPTIONS.map((opt, idx) => (
-                  <Fragment key={opt.value}>
-                    <button
-                      type="button"
-                      onClick={() => { setActiveSort(opt.value); setReviewsPage(1); }}
-                      className={
-                        activeSort === opt.value
-                          ? "font-semibold text-[var(--color-text-emphasis)]"
-                          : "text-[var(--color-text-secondary)]"
-                      }
-                    >
-                      {opt.label}
-                    </button>
-                    {idx < SORT_OPTIONS.length - 1 && (
-                      <span className="text-[var(--color-text-muted)]">|</span>
-                    )}
-                  </Fragment>
-                ))}
-              </div>
-            </div>
-
-            {reviewImages.length > 0 && (
-              <div className="mb-6 flex items-center gap-3 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {reviewImages.slice(0, 3).map((url, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setReviewLightbox({ urls: [...reviewImages], index: idx })}
-                    className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90 active:opacity-80"
-                    aria-label={`리뷰 사진 ${idx + 1} 크게 보기`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt="" className="pointer-events-none h-full w-full object-cover" />
-                  </button>
-                ))}
-                {reviewImages.length > 3 && (
-                  <button
-                    type="button"
-                    onClick={() => setReviewLightbox({ urls: [...reviewImages], index: 3 })}
-                    className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[6px] transition-opacity hover:opacity-90 active:opacity-80"
-                    aria-label={`리뷰 사진 더보기, ${reviewImages.length - 3}장 추가`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={reviewImages[3]} alt="" className="h-full w-full object-cover" />
-                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
-                      더보기
-                      <br />+{reviewImages.length - 3}
-                    </div>
-                  </button>
-                )}
-              </div>
-            )}
-
-            {reviewsLoading ? (
-              <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
-                리뷰를 불러오는 중...
-              </p>
-            ) : reviews.length === 0 ? (
-              <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
-                아직 작성된 리뷰가 없습니다.
-              </p>
-            ) : (
-              <ul className="space-y-6">
-                {reviews.map((review) => (
-                  <li
-                    key={review.id}
-                    className="border-b border-[var(--color-text-muted)] pb-6 last:border-b-0"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
-                        aria-hidden="true"
-                      >
-                        {review.snapshotPetProfileImageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={review.snapshotPetProfileImageUrl}
-                            alt=""
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div
-                            className="h-full w-full"
-                            style={{ background: getAvatarColor(review.userId ?? review.id) }}
-                          />
-                        )}
-                      </div>
-                      <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
-                            style={{ background: selectedTheme.colorVar }}
-                          >
-                            {selectedTheme.tierLabel}
-                          </span>
-                          <Stars rating={review.rating} size={24} />
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
-                          <span className="font-semibold text-[var(--color-text)]">
-                            {review.snapshotPetName ?? "익명"}
-                          </span>
-                          {review.snapshotUserEmail && (
-                            <span className="font-medium text-[var(--color-text-secondary)]">
-                              {maskEmail(review.snapshotUserEmail)}
-                            </span>
-                          )}
-                          <span className="font-medium text-[var(--color-text-secondary)]">
-                            {formatReviewDate(review.createdAt)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <ReviewContent content={review.content} className="mt-[9px] pl-[66px]" />
-                    {review.imageUrls && review.imageUrls.length > 0 && (
-                      <div className="mt-4 flex gap-2 pl-[66px]">
-                        {review.imageUrls.slice(0, 3).map((url, imgIdx) => (
-                          <button
-                            key={imgIdx}
-                            type="button"
-                            onClick={() =>
-                              setReviewLightbox({
-                                urls: review.imageUrls ? [...review.imageUrls] : [],
-                                index: imgIdx,
-                              })
-                            }
-                            className="h-[100px] w-[100px] overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] transition-opacity hover:opacity-90 active:opacity-80"
-                            aria-label={`리뷰 사진 ${imgIdx + 1} 크게 보기`}
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={url}
-                              alt={`리뷰 사진 ${imgIdx + 1}`}
-                              className="pointer-events-none h-full w-full object-cover"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <nav className="mt-8 flex items-center justify-center gap-2" aria-label="리뷰 페이지네이션">
-              <button
-                type="button"
-                onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
-                disabled={reviewsPage === 1}
-                className="flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)] disabled:opacity-30"
-                aria-label="이전 페이지"
-              >
-                ‹
-              </button>
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  onClick={() => setReviewsPage(page)}
-                  className={
-                    page === reviewsPage
-                      ? "flex h-8 w-8 items-center justify-center text-[14px] font-semibold text-[var(--color-text)]"
-                      : "flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)]"
-                  }
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setReviewsPage((p) => Math.min(totalPages, p + 1))}
-                disabled={reviewsPage === totalPages}
-                className="flex h-8 w-8 items-center justify-center text-[14px] text-[var(--color-text-secondary)] disabled:opacity-30"
-                aria-label="다음 페이지"
-              >
-                ›
-              </button>
-            </nav>
-          </div>
+          <ProductReviewList
+            variant="mobile"
+            selectedTheme={selectedTheme}
+            reviews={reviewState.reviews}
+            loading={reviewState.loading}
+            reviewImages={reviewState.reviewImages}
+            page={reviewState.page}
+            totalPages={reviewState.totalPages}
+            sort={reviewState.sort}
+            onChangeSort={reviewState.changeSort}
+            onChangePage={reviewState.setPage}
+            onOpenLightbox={reviewState.openLightbox}
+          />
         )}
 
-        {activeTab === "delivery" && (
-          <div className="px-6 py-10">
-            <h3 className="text-[20px] font-semibold leading-6 tracking-[-0.04em] text-[var(--color-text-emphasis)]">
-              배송정보
-            </h3>
-            <div className="mt-6 space-y-8 pl-2">
-              {DELIVERY_INFO_SECTIONS.map((section) => (
-                <section key={section.title}>
-                  <h4 className="text-[16px] font-semibold leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]">
-                    {section.title}
-                  </h4>
-                  <ul className="mt-3 space-y-2">
-                    {section.items.map((item) => (
-                      <li
-                        key={item}
-                        className="relative pl-4 text-[14px] font-medium leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
-                      >
-                        <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              ))}
-            </div>
-          </div>
-        )}
+        {activeTab === "delivery" && <ProductDeliveryInfo variant="mobile" />}
 
-        {activeTab === "support" && (
-          <>
-            <div className="px-6 pt-6">
-              <Link
-                href="/support"
-                className="inline-flex items-center gap-1 text-body-16-sb text-[var(--color-text-emphasis)]"
-              >
-                고객센터
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
-            </div>
-            <SupportSection showBanner={false} />
-          </>
-        )}
+        {activeTab === "support" && <ProductSupportTab variant="mobile" />}
       </div>
 
       {/* Desktop layout */}
@@ -983,10 +410,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 {selectedPlan.name}
               </h2>
               <div className="mb-4 flex items-center gap-3">
-                <Stars rating={reviewsAverage} size={24} />
-                {reviewsAverage > 0 && (
+                <Stars rating={reviewState.average} size={24} />
+                {reviewState.average > 0 && (
                   <span className="text-[18px] font-semibold leading-[21px] tracking-[-0.02em] text-[var(--color-text)]">
-                    {reviewsAverage.toFixed(1)}
+                    {reviewState.average.toFixed(1)}
                   </span>
                 )}
                 <button
@@ -994,7 +421,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   onClick={handleReviewCountClick}
                   className="text-[14px] font-normal leading-[150%] tracking-[-0.02em] text-[var(--color-text-tertiary)] underline decoration-[var(--color-text-tertiary)]"
                 >
-                  {reviewsTotal}개 리뷰
+                  {reviewState.total}개 리뷰
                 </button>
               </div>
               <div className="mb-5 flex items-center gap-2">
@@ -1103,254 +530,33 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           </div>
 
           {activeTab === "info" && (
-            <div className="pt-5 md:pt-10 lg:pt-[54px]">
-              <div className="mx-auto w-full md:max-w-[800px] lg:max-w-[800px]">
-                {detailImages.map((imageSrc, index) => (
-                  <Image
-                    key={`${selectedTier}-${index}`}
-                    src={imageSrc}
-                    alt={`${selectedPlan.name} 구독정보 상세 이미지 ${index + 1}`}
-                    className="h-auto w-full"
-                    priority={index === 0}
-                  />
-                ))}
-              </div>
-            </div>
+            <ProductInfoImages
+              variant="desktop"
+              images={detailImages}
+              planName={selectedPlan.name}
+              tier={selectedTier}
+            />
           )}
 
           {activeTab === "review" && (
-            <div className="pt-10 pb-20 md:px-6 lg:px-0">
-              <div className="mb-6 flex items-center justify-between">
-                <button
-                  type="button"
-                  className="flex items-center gap-2 text-[20px] font-bold leading-[24px] text-[var(--color-text-emphasis)]"
-                >
-                  꼬순박스 리뷰
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <path
-                      d="M7.5 5L12.5 10L7.5 15"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-                <div className="flex items-center gap-3 text-[14px] leading-[17px]">
-                  {SORT_OPTIONS.map((opt, idx) => (
-                    <Fragment key={opt.value}>
-                      <button
-                        type="button"
-                        onClick={() => { setActiveSort(opt.value); setReviewsPage(1); }}
-                        className={
-                          activeSort === opt.value
-                            ? "font-semibold text-[var(--color-text-emphasis)]"
-                            : "font-normal text-[var(--color-text-secondary)]"
-                        }
-                      >
-                        {opt.label}
-                      </button>
-                      {idx < SORT_OPTIONS.length - 1 && (
-                        <span className="text-[var(--color-text-muted)]">|</span>
-                      )}
-                    </Fragment>
-                  ))}
-                </div>
-              </div>
-
-              {reviewImages.length > 0 && (
-                <div className="mb-10 flex items-center gap-4">
-                  {reviewImages.slice(0, 4).map((url, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setReviewLightbox({ urls: [...reviewImages], index: idx })}
-                      className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90 active:opacity-80"
-                      aria-label={`리뷰 사진 ${idx + 1} 크게 보기`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt="" className="pointer-events-none h-full w-full object-cover" />
-                    </button>
-                  ))}
-                  {reviewImages.length > 4 && (
-                    <button
-                      type="button"
-                      onClick={() => setReviewLightbox({ urls: [...reviewImages], index: 4 })}
-                      className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] transition-opacity hover:opacity-90 active:opacity-80"
-                      aria-label={`리뷰 사진 더보기, ${reviewImages.length - 4}장 추가`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={reviewImages[4]} alt="" className="h-full w-full object-cover" />
-                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-center text-subtitle-16-sb text-white">
-                        더보기
-                        <br />+{reviewImages.length - 4}
-                      </div>
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {reviewsLoading ? (
-                <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
-                  리뷰를 불러오는 중...
-                </p>
-              ) : reviews.length === 0 ? (
-                <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
-                  아직 작성된 리뷰가 없습니다.
-                </p>
-              ) : (
-                <ul>
-                  {reviews.map((review) => (
-                    <li
-                      key={review.id}
-                      className="flex items-start gap-4 border-b border-[var(--color-text-muted)] py-6 last:border-b-0"
-                    >
-                      {/* Left: avatar + info + content */}
-                      <div className="flex flex-1 items-start gap-4">
-                        <div
-                          className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
-                          aria-hidden="true"
-                        >
-                          {review.snapshotPetProfileImageUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={review.snapshotPetProfileImageUrl}
-                              alt=""
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <div
-                              className="h-full w-full"
-                              style={{ background: getAvatarColor(review.userId ?? review.id) }}
-                            />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
-                            <span className="font-bold text-[var(--color-text)]">
-                              {review.snapshotPetName ?? "익명"}
-                            </span>
-                            {review.snapshotUserEmail && (
-                              <span className="font-medium text-[var(--color-text-secondary)]">
-                                {maskEmail(review.snapshotUserEmail)}
-                              </span>
-                            )}
-                            <span className="font-medium text-[var(--color-text-secondary)]">
-                              {formatReviewDate(review.createdAt)}
-                            </span>
-                          </div>
-                          <div className="mb-3">
-                            <Stars rating={review.rating} size={24} />
-                          </div>
-                          <ReviewContent content={review.content} className="" />
-                        </div>
-                      </div>
-                      {/* Right: first review photo */}
-                      {review.imageUrls && review.imageUrls.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setReviewLightbox({
-                              urls: review.imageUrls ? [...review.imageUrls] : [],
-                              index: 0,
-                            })
-                          }
-                          className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] transition-opacity hover:opacity-90 active:opacity-80"
-                          aria-label="리뷰 사진 크게 보기"
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={review.imageUrls[0]}
-                            alt="리뷰 사진"
-                            className="pointer-events-none h-full w-full object-cover"
-                          />
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <nav
-                className="mt-10 flex items-center justify-center gap-3"
-                aria-label="리뷰 페이지네이션"
-              >
-                <button
-                  type="button"
-                  onClick={() => setReviewsPage((p) => Math.max(1, p - 1))}
-                  disabled={reviewsPage === 1}
-                  className="flex h-9 w-9 items-center justify-center text-[16px] text-[var(--color-text-secondary)] disabled:opacity-30"
-                  aria-label="이전 페이지"
-                >
-                  ‹
-                </button>
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    type="button"
-                    onClick={() => setReviewsPage(page)}
-                    className={
-                      page === reviewsPage
-                        ? "flex h-9 w-9 items-center justify-center text-[15px] font-semibold text-[var(--color-text)]"
-                        : "flex h-9 w-9 items-center justify-center text-[15px] text-[var(--color-text-secondary)]"
-                    }
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setReviewsPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={reviewsPage === totalPages}
-                  className="flex h-9 w-9 items-center justify-center text-[16px] text-[var(--color-text-secondary)] disabled:opacity-30"
-                  aria-label="다음 페이지"
-                >
-                  ›
-                </button>
-              </nav>
-            </div>
+            <ProductReviewList
+              variant="desktop"
+              selectedTheme={selectedTheme}
+              reviews={reviewState.reviews}
+              loading={reviewState.loading}
+              reviewImages={reviewState.reviewImages}
+              page={reviewState.page}
+              totalPages={reviewState.totalPages}
+              sort={reviewState.sort}
+              onChangeSort={reviewState.changeSort}
+              onChangePage={reviewState.setPage}
+              onOpenLightbox={reviewState.openLightbox}
+            />
           )}
 
-          {activeTab === "delivery" && (
-            <div className="mx-auto max-w-[815px] py-20 md:px-6 lg:px-0">
-              <h3 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">배송정보</h3>
-              <div className="mt-8 space-y-10 pl-2">
-                {DELIVERY_INFO_SECTIONS.map((section) => (
-                  <section key={section.title}>
-                    <h4 className="text-body-16-sb tracking-[-0.04em] text-[var(--color-text-secondary)]">{section.title}</h4>
-                    <ul className="mt-3 space-y-2.5">
-                      {section.items.map((item) => (
-                        <li
-                          key={item}
-                          className="relative pl-4 text-body-14-m leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
-                        >
-                          <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                ))}
-              </div>
-            </div>
-          )}
+          {activeTab === "delivery" && <ProductDeliveryInfo variant="desktop" />}
 
-          {activeTab === "support" && (
-            <>
-              <div className="pt-10 pb-2 md:px-6 lg:px-0">
-                <Link
-                  href="/support"
-                  className="inline-flex items-center gap-1 text-body-20-sb text-[var(--color-text-emphasis)]"
-                >
-                  고객센터
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                    <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
-              </div>
-              <SupportSection showBanner={false} />
-            </>
-          )}
+          {activeTab === "support" && <ProductSupportTab variant="desktop" />}
         </div>
       </div>
     </section>

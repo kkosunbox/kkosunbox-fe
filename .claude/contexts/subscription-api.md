@@ -90,35 +90,38 @@ Status:200
 }
 
 구독 시작​Copy link
-빌링키가 등록된 상태에서 구독을 생성합니다. 첫 결제는 선택한 billingDate에 자동으로 청구됩니다. billingDate는 오늘로부터 최소 7일 이후여야 합니다. couponCode를 전달하면 첫 결제에 할인율이 적용됩니다.
+빌링키가 등록된 상태에서 구독을 생성합니다. 구독 생성 즉시 결제가 진행됩니다. 이후 매월 구독 시작일(앵커 날짜) 기준으로 자동 갱신됩니다. couponCode를 전달하면 단가 1개에만 할인율이 적용됩니다.
 
 Body
 required
 application/json
-billingDateCopy link to billingDate
-Type:string
-required
-Example
-첫 결제일 (YYYY-MM-DD). 오늘로부터 최소 3일 이후여야 합니다.
-
 deliveryAddressIdCopy link to deliveryAddressId
 Type:number
 required
 배송지 ID
-
-petProfileIdCopy link to petProfileId
-Type:number
-required
-애견 프로필 ID
 
 planIdCopy link to planId
 Type:number
 required
 플랜 ID
 
+quantityCopy link to quantity
+Type:number
+min: 1 max: 99
+required
+구독 수량 (기본값 1). 쿠폰 할인은 단가 1개에만 적용됩니다.
+
 couponCodeCopy link to couponCode
 Type:string
 할인 쿠폰 코드 (선택)
+
+petProfileIdCopy link to petProfileId
+Type:number
+애견 프로필 ID
+
+referralCodeCopy link to referralCode
+Type:string
+추천인 레퍼럴 코드 (선택)
 
 Responses
 
@@ -282,8 +285,9 @@ curl https://api-dev.kkosunbox.com/v1/subscriptions \
   "petProfileId": 1,
   "deliveryAddressId": 1,
   "planId": 1,
-  "billingDate": "2026-03-26",
-  "couponCode": ""
+  "quantity": 1,
+  "couponCode": "",
+  "referralCode": "A3KX8P2B"
 }'
 
 

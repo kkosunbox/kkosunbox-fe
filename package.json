@@ -10,7 +10,11 @@
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "diagnose:widgets": "node scripts/diagnose-widgets-deps.mjs",
+    "diagnose:widgets:json": "node scripts/diagnose-widgets-deps.mjs --json",
+    "depcruise": "depcruise app widgets features entities shared --config .dependency-cruiser.cjs",
+    "depcruise:report": "depcruise app widgets features entities shared --config .dependency-cruiser.cjs --output-type err-html -f scripts/reports/depcruise.html"
   },
   "dependencies": {
     "@fontsource/pretendard": "^5.2.5",
@@ -28,6 +32,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dependency-cruiser": "^16.10.4",
     "eslint": "^9",
     "eslint-config-next": "16.1.7",
     "tailwindcss": "^4",

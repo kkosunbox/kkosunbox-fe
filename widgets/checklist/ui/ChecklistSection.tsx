@@ -19,7 +19,7 @@ import type {
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
-import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { tierFromSubscriptionPlan } from "@/entities/package";
 import ChecklistHero from "./ChecklistHero";
 import ChecklistPetForm from "./ChecklistPetForm";
 import ChecklistQuestionStep from "./ChecklistQuestionStep";

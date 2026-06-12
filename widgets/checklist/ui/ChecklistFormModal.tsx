@@ -25,7 +25,7 @@ import {
 } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
-import { tierFromSubscriptionPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { tierFromSubscriptionPlan } from "@/entities/package";
 import type {
   ChecklistFormOptions,
   OpenChecklistFormDetail,

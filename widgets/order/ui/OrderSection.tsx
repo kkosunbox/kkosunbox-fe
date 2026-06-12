@@ -1,12 +1,13 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useId, useMemo, useState, useTransition, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import { getErrorMessage, ApiError } from "@/shared/lib/api";
-import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { getErrorMessage } from "@/shared/lib/api";
+import { useAuth } from "@/features/auth";
+import { TIER_BOX_IMAGES } from "@/entities/package";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -17,271 +18,38 @@ import {
 } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { validateReferralCode } from "@/features/referral/api";
-import { clearStoredInviteCode } from "@/features/referral/lib";
-import { computeOrderPricing } from "@/widgets/order/lib/orderPricing";
-import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
-const inputCls =
-  "h-10 w-full rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m leading-[140%] text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] outline-none";
-
-// 폼 액션 버튼: input과 정렬되도록 높이 40px · radius 4px · #2F2F2F · 13/16 medium white
-const actionChipCls =
-  "flex h-10 shrink-0 items-center justify-center rounded-[4px] px-3 text-[13px] font-medium leading-4 text-white bg-[var(--color-btn-dark-warm)] transition-opacity hover:opacity-90";
-
-function formatPrice(n: number) {
-  return n.toLocaleString("ko-KR") + "원";
-}
-
-function digitsOnly(s: string) {
-  return s.replace(/\D/g, "");
-}
-
-function formatPhoneNumber(digits: string): string {
-  if (digits.startsWith("02")) {
-    const d = digits.slice(0, 10);
-    if (d.length <= 2) return d;
-    if (d.length <= 5) return `${d.slice(0, 2)}-${d.slice(2)}`;
-    if (d.length <= 9) return `${d.slice(0, 2)}-${d.slice(2, 5)}-${d.slice(5)}`;
-    return `${d.slice(0, 2)}-${d.slice(2, 6)}-${d.slice(6, 10)}`;
-  }
-  if (digits.startsWith("010")) {
-    const d = digits.slice(0, 11);
-    if (d.length <= 3) return d;
-    if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
-    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
-  }
-  const d = digits.slice(0, 10);
-  if (d.length <= 3) return d;
-  if (d.length <= 6) return `${d.slice(0, 3)}-${d.slice(3)}`;
-  return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
-}
-
-function isValidKoreanPhone(digits: string): boolean {
-  // 02(서울) | 010/011/016~019(모바일) | 031~033/041~044/051~055/061~064/070(지역·VoIP)
-  return /^(02\d{7,8}|01[016789]\d{7,8}|0(3[1-3]|4[1-4]|5[1-5]|6[1-4]|70)\d{7,8})$/.test(digits);
-}
-
-function ChevronIcon({ open }: { open: boolean }) {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      style={{
-        transform: open ? "matrix(1,0,0,-1,0,0)" : "none",
-        transition: "transform 0.2s",
-      }}
-    >
-      <path
-        d="M6 9L12 15L18 9"
-        stroke="var(--color-text-secondary)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function CheckCircleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-      <circle cx="9" cy="9" r="8" stroke="var(--color-accent)" strokeWidth="1.5" />
-      <path
-        d="M5.5 9L8 11.5L12.5 6.5"
-        stroke="var(--color-accent)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-      <path
-        d="M2 6L4.5 8.5L10 3.5"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function RadioCheckedIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <rect x="0.5" y="0.5" width="19" height="19" rx="9.5" stroke="var(--color-accent)" />
-      <rect x="5" y="5" width="10" height="10" rx="5" fill="var(--color-accent)" />
-    </svg>
-  );
-}
-
-function QuantityMinusIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" fill="var(--color-text-muted)" fillOpacity="0.3" />
-      <path d="M8 12H16" stroke="var(--color-text)" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function QuantityPlusIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" fill="var(--color-text-muted)" fillOpacity="0.3" />
-      <path d="M12 15L12 9" stroke="var(--color-text)" strokeWidth="1.2" strokeLinecap="round" />
-      <path d="M15 12L9 12" stroke="var(--color-text)" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CollapsiblePanel({
-  open,
-  id,
-  children,
-  className = "",
-  innerClassName = "",
-}: {
-  open: boolean;
-  id?: string;
-  children: ReactNode;
-  className?: string;
-  innerClassName?: string;
-}) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => setPrefersReducedMotion(media.matches);
-
-    updatePreference();
-    media.addEventListener("change", updatePreference);
-    return () => media.removeEventListener("change", updatePreference);
-  }, []);
-
-  return (
-    <div
-      id={id}
-      aria-hidden={!open}
-      inert={!open}
-      className={className}
-      style={{
-        display: "grid",
-        gridTemplateRows: open ? "1fr" : "0fr",
-        opacity: open ? 1 : 0,
-        transition: prefersReducedMotion
-          ? "none"
-          : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease",
-      }}
-    >
-      <div className="min-h-0 overflow-hidden">
-        {innerClassName ? <div className={innerClassName}>{children}</div> : children}
-      </div>
-    </div>
-  );
-}
-
-function SectionCard({
-  title,
-  open,
-  onToggle,
-  children,
-}: {
-  title: string;
-  open: boolean;
-  onToggle: () => void;
-  children: ReactNode;
-}) {
-  const contentId = useId();
-
-  return (
-    <div className="max-md:rounded-none max-md:px-0 md:rounded-[20px] md:bg-white md:px-3">
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={open}
-        aria-controls={contentId}
-        className="flex w-full items-center justify-between border-b border-[var(--color-text-muted)] text-left max-md:pb-3 md:pt-7 md:pb-5"
-      >
-        <span className="tracking-[-0.04em] text-[var(--color-text)] max-md:text-subtitle-16-b md:text-subtitle-18-b">{title}</span>
-        <ChevronIcon open={open} />
-      </button>
-      <CollapsiblePanel id={contentId} open={open} innerClassName="max-md:pt-5 md:pt-5 md:pb-5">
-        {children}
-      </CollapsiblePanel>
-    </div>
-  );
-}
-
-function Checkbox({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: () => void;
-  label: ReactNode;
-}) {
-  return (
-    <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-      <button
-        type="button"
-        onClick={onChange}
-        className={[
-          "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
-          checked ? "bg-[var(--color-accent)]" : "border border-[var(--color-border)] bg-white",
-        ].join(" ")}
-      >
-        {checked && <CheckIcon />}
-      </button>
-      <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">{label}</span>
-    </label>
-  );
-}
-
-function RadioButton({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: () => void;
-  label: string;
-}) {
-  return (
-    <label className="inline-flex items-center gap-2 cursor-pointer">
-      <button
-        type="button"
-        onClick={onChange}
-        className={[
-          "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
-          checked ? "" : "border border-[var(--color-border)]",
-        ].join(" ")}
-      >
-        {checked && <RadioCheckedIcon />}
-      </button>
-      <span className="text-body-14-m leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
-        {label}
-      </span>
-    </label>
-  );
-}
-
-function FormRow({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex items-start gap-0">
-      <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px]">
-        {label}
-      </span>
-      <div className="flex-1 min-w-0">{children}</div>
-    </div>
-  );
-}
+import { clearStoredInviteCode, getStoredInviteCode } from "@/features/referral/lib";
+import {
+  computeOrderPricing,
+  getInviteSectionMode,
+  isStaleValidationRequest,
+  resolveReferralValidationFailure,
+  resolveReferralValidationSuccess,
+  type InviteValidationOutcome,
+} from "@/features/order";
+import { packageThemeForPlan } from "@/entities/package";
+import {
+  ORDER_ACTION_CHIP_CLASS as actionChipCls,
+  ORDER_INPUT_CLASS as inputCls,
+} from "./order-section/orderSectionStyles";
+import {
+  digitsOnly,
+  formatOrderPrice as formatPrice,
+  formatPhoneNumber,
+  isValidKoreanPhone,
+} from "./order-section/orderSectionFormatters";
+import {
+  OrderCheckCircleIcon as CheckCircleIcon,
+  QuantityMinusIcon,
+  QuantityPlusIcon,
+} from "./order-section/OrderSectionIcons";
+import {
+  Checkbox,
+  CollapsiblePanel,
+  FormRow,
+  RadioButton,
+  SectionCard,
+} from "./order-section/OrderSectionFormParts";
 
 export interface OrderSectionProps {
   plan: SubscriptionPlanDto;
@@ -306,6 +74,7 @@ export default function OrderSection({
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const { profile } = useProfile();
+  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
 
   const [openSections, setOpenSections] = useState({
@@ -364,78 +133,138 @@ export default function OrderSection({
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
 
-  // 초대코드 섹션 노출 모드 — (초대링크 진입 여부) × (구독 이력 여부)로 결정한다.
-  //  - "hidden"     : 일반 진입 + 구독 이력 있음 → 섹션 자체를 가린다.
-  //  - "ineligible" : 초대링크 진입 + 구독 이력 있음 → input 제거, "첫 구독 시에만" 문구만 노출.
-  //  - "locked"     : 초대링크 진입 + 구독 이력 없음 → 코드 자동 입력·검증, input 잠금.
-  //  - "open"       : 일반 진입 + 구독 이력 없음 → 빈 input 노출, 유저가 직접 입력.
-  const inviteSectionMode = useMemo<"hidden" | "ineligible" | "locked" | "open">(() => {
-    if (initialInviteCode) return hasSubscriptionHistory ? "ineligible" : "locked";
-    return hasSubscriptionHistory ? "hidden" : "open";
-  }, [initialInviteCode, hasSubscriptionHistory]);
+  // 쿠키 초대코드를 사용자가 삭제한 경우 locked 재진입 방지
+  const [inviteDismissed, setInviteDismissed] = useState(false);
 
-  // 초대 코드 입력값. locked 모드(초대링크+첫구독)에서는 캡처된 코드를 채워 잠근다.
+  const inviteSectionMode = useMemo(
+    () =>
+      getInviteSectionMode({
+        initialInviteCode,
+        hasSubscriptionHistory,
+        inviteDismissed,
+      }),
+    [initialInviteCode, hasSubscriptionHistory, inviteDismissed],
+  );
+
+  const isInviteInputLocked = inviteSectionMode === "locked";
+
   const [inviteCodeInput, setInviteCodeInput] = useState(
     inviteSectionMode === "locked" ? (initialInviteCode ?? "") : "",
   );
 
-  // 초대코드 검증 상태.
-  //  - "idle"        : 검증 전/입력 변경됨. 안내 문구 없음, 결제 시 코드 미전송.
-  //  - "loading"     : validate 호출 중.
-  //  - "applicable"  : 적용 가능. 결제 시 referralCode로 전송한다.
-  //  - "blocked"     : 적용 불가. 사유 문구 노출, 코드 미전송.
-  const [inviteStatus, setInviteStatus] = useState<"idle" | "loading" | "applicable" | "blocked">("idle");
-  // blocked 사유 메시지 — validate 400 에러 코드를 한국어로 변환해 보관한다.
+  const [inviteStatus, setInviteStatus] = useState<
+    "idle" | "loading" | "applicable" | "blocked" | "networkError"
+  >("idle");
   const [inviteBlockedMsg, setInviteBlockedMsg] = useState<string | null>(null);
-  // 적용 가능한 초대 코드의 할인율 (분수, 0.1 = 10%). 할인 금액 표시·합산에 사용한다.
   const [inviteDiscountRate, setInviteDiscountRate] = useState(0);
+  const validateRequestIdRef = useRef(0);
+  const accountKeyRef = useRef(`${user?.id ?? "anon"}-${profile?.id ?? "none"}`);
 
-  // 입력된 초대 코드를 검증해 상태를 갱신한다. 진입 시 prefill 검증과 "코드적용" 버튼이 공유한다.
-  const validateInviteCode = useCallback((rawCode: string) => {
-    const code = rawCode.trim();
+  const applyValidationOutcome = useCallback((outcome: InviteValidationOutcome) => {
+      setInviteStatus(outcome.status);
+      setInviteBlockedMsg(outcome.blockedMsg);
+      setInviteDiscountRate(outcome.discountRate);
+    },
+    [],
+  );
+
+  const validateInviteCode = useCallback(
+    (rawCode: string) => {
+      const code = rawCode.trim();
+      const requestId = ++validateRequestIdRef.current;
+
+      setInviteBlockedMsg(null);
+      setInviteDiscountRate(0);
+      if (!code) {
+        setInviteStatus("idle");
+        return;
+      }
+      setInviteStatus("loading");
+
+      validateReferralCode(code)
+        .then((res) => {
+          if (isStaleValidationRequest(requestId, validateRequestIdRef.current)) return;
+          applyValidationOutcome(resolveReferralValidationSuccess(res));
+        })
+        .catch((err) => {
+          if (isStaleValidationRequest(requestId, validateRequestIdRef.current)) return;
+          applyValidationOutcome(resolveReferralValidationFailure(err));
+        });
+    },
+    [applyValidationOutcome],
+  );
+
+  function handleDismissStoredInviteCode() {
+    validateRequestIdRef.current += 1;
+    clearStoredInviteCode();
+    setInviteDismissed(true);
+    setInviteCodeInput("");
+    setInviteStatus("idle");
     setInviteBlockedMsg(null);
     setInviteDiscountRate(0);
-    if (!code) {
-      setInviteStatus("idle");
-      return;
-    }
-    setInviteStatus("loading");
-    validateReferralCode(code)
-      .then((res) => {
-        // 200 → 적용 가능. discountRate(0.1=10%)를 보관해 할인 금액 표시에 사용한다.
-        if (res.isApplicable) {
-          setInviteStatus("applicable");
-          setInviteDiscountRate(res.discountRate ?? 0);
-        } else {
-          setInviteStatus("blocked");
-        }
-      })
-      .catch((err) => {
-        // 무효한 코드는 400 + 사유별 에러 코드(REFERRAL_*)로 온다. 적용 불가로 판정하고 사유 문구를 노출한다.
-        // 네트워크 등 ApiError가 아닌 경우엔 흐름을 막지 않도록 idle로 둔다.
-        if (err instanceof ApiError) {
-          setInviteStatus("blocked");
-          setInviteBlockedMsg(getErrorMessage(err, "사용할 수 없는 코드입니다."));
-        } else {
-          setInviteStatus("idle");
-        }
-      });
-  }, []);
+  }
 
-  // locked 모드 진입 시(초대링크 + 첫 구독) 캡처된 코드를 우선순위를 낮춰(idle) 자동 검증한다.
+  const resetInviteStateForAccount = useCallback(() => {
+    validateRequestIdRef.current += 1;
+    setInviteDismissed(false);
+    const mode = getInviteSectionMode({
+      initialInviteCode,
+      hasSubscriptionHistory,
+      inviteDismissed: false,
+    });
+    setInviteCodeInput(mode === "locked" ? (initialInviteCode ?? "") : "");
+    setInviteStatus("idle");
+    setInviteBlockedMsg(null);
+    setInviteDiscountRate(0);
+  }, [initialInviteCode, hasSubscriptionHistory]);
+
+  // locked 모드 진입 시 캡처된 코드를 자동 검증한다.
   useEffect(() => {
     if (inviteSectionMode !== "locked" || !initialInviteCode) return;
 
     const run = () => validateInviteCode(initialInviteCode);
     const idle = window.requestIdleCallback?.(run) ?? window.setTimeout(run, 0);
     return () => {
+      validateRequestIdRef.current += 1;
       if (window.cancelIdleCallback) window.cancelIdleCallback(idle as number);
       else window.clearTimeout(idle as number);
     };
   }, [inviteSectionMode, initialInviteCode, validateInviteCode]);
 
+  // 계정(유저·프로필) 전환 시 이전 세션의 검증 결과를 초기화한다.
+  useEffect(() => {
+    const key = `${user?.id ?? "anon"}-${profile?.id ?? "none"}`;
+    if (key === accountKeyRef.current) return;
+    accountKeyRef.current = key;
+    resetInviteStateForAccount();
+  }, [user?.id, profile?.id, resetInviteStateForAccount]);
+
+  // 다른 탭에서 구독 완료 등으로 쿠키가 삭제된 경우 stale 할인 상태를 정리한다.
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.visibilityState !== "visible") return;
+      if (getStoredInviteCode()) return;
+      if (!initialInviteCode) return;
+
+      validateRequestIdRef.current += 1;
+      setInviteDismissed(true);
+      setInviteCodeInput("");
+      setInviteStatus("idle");
+      setInviteBlockedMsg(null);
+      setInviteDiscountRate(0);
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [initialInviteCode]);
+
   function handleApplyInviteCode() {
     validateInviteCode(inviteCodeInput);
+  }
+
+  function handleRetryInviteValidation() {
+    const code = inviteCodeInput.trim() || initialInviteCode || "";
+    validateInviteCode(code);
   }
 
   const [agreeOpen, setAgreeOpen] = useState(true);
@@ -947,32 +776,62 @@ export default function OrderSection({
                   <input
                     value={inviteCodeInput}
                     onChange={(e) => {
+                      validateRequestIdRef.current += 1;
                       setInviteCodeInput(e.target.value);
-                      // 입력이 바뀌면 직전 검증 결과는 무효이므로 초기화한다(코드적용 재검증 필요).
                       setInviteStatus("idle");
                       setInviteBlockedMsg(null);
                       setInviteDiscountRate(0);
                     }}
-                    // locked 모드(초대링크 + 첫 구독)에서는 자동 적용 코드를 수정하지 못하게 잠근다.
-                    disabled={inviteSectionMode === "locked"}
+                    disabled={isInviteInputLocked}
                     className={`${inputCls} flex-1 min-w-0 disabled:cursor-not-allowed disabled:opacity-60`}
                     placeholder="초대코드를 입력해주세요."
                   />
                   <button
                     type="button"
                     onClick={handleApplyInviteCode}
-                    disabled={inviteSectionMode === "locked" || inviteStatus === "loading"}
+                    disabled={isInviteInputLocked || inviteStatus === "loading"}
                     className={`${actionChipCls} disabled:cursor-not-allowed disabled:opacity-60`}
                   >
                     코드적용
                   </button>
                 </div>
               </div>
+              {isInviteInputLocked && inviteStatus === "loading" && (
+                <p className="text-body-13-m text-[var(--color-text-secondary)] max-md:pl-[82px] md:pl-[86px]">
+                  초대코드 적용 확인 중…
+                </p>
+              )}
               {inviteStatus === "blocked" && (
                 <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">
                   {inviteBlockedMsg ?? "첫 구독 시에만 사용 가능합니다."}
                 </p>
               )}
+              {inviteStatus === "networkError" && (
+                <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">
+                  초대코드 확인에 실패했습니다.
+                </p>
+              )}
+              {isInviteInputLocked &&
+                (inviteStatus === "blocked" || inviteStatus === "networkError") && (
+                  <div className="flex flex-wrap items-center gap-3 max-md:pl-[82px] md:pl-[86px]">
+                    {inviteStatus === "networkError" && (
+                      <button
+                        type="button"
+                        onClick={handleRetryInviteValidation}
+                        className="text-body-13-m text-[var(--color-accent)] underline"
+                      >
+                        다시 시도
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleDismissStoredInviteCode}
+                      className="text-body-13-m text-[var(--color-accent)] underline"
+                    >
+                      코드 삭제
+                    </button>
+                  </div>
+                )}
             </div>
           )}
         </SectionCard>

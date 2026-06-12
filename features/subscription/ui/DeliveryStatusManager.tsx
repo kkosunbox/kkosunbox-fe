@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { getPaymentHistory, cancelPayment } from "@/features/subscription/api/subscriptionApi";
 import { getErrorMessage } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
-import type { PackageTier } from "@/widgets/subscribe/plans/ui/packageData";
+import { packageThemeForPlan } from "@/entities/package";
+import type { PackageTier } from "@/entities/package";
 import type {
   SubscriptionPaymentDto,
   DeliveryStatus,

@@ -10,8 +10,8 @@ import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
-import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
-import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { packageThemeForPlan } from "@/entities/package";
+import { TIER_BOX_IMAGES } from "@/entities/package";
 import MyReviewModal from "./MyReviewModal";
 
 /* 도트 인디케이터 슬라이드 설정 */

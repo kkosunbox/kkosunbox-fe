@@ -8,7 +8,7 @@ import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
-import subscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
+import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile.png";
 import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop.png";
 
 interface Props {
@@ -67,7 +67,7 @@ export default function SubscriptionChangePlansSection({
       showChecklistRecommend={false}
       initialSelectedTier={initialSelectedTier}
       heroDesktopImage={subscriptionChangeHeroDesktop}
-      heroMobileImage={subscribePlansHeroImageMobile}
+      heroMobileImage={subscriptionChangeHeroMobile}
       heroAlt="기존 구독을 변경하려면 새로운 구독을 선택하세요"
       showSelectedCardHighlight={isChangeMode}
       isCurrentPlan={checkIsCurrentPlan}

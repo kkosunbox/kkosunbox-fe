@@ -2,8 +2,8 @@
 
 > **진행 상태**: 미착수  
 > **위험도**: 낮음~중간  
-> **권장 순서**: P3 **2번** (P3-c CI 완료 후, **P3-a 전에** 수행 권장)  
-> **선행 완료**: P0–P2 re-export shim 생성 완료
+> **권장 순서**: P3 **2번** (P3-c CI 완료 후)  
+> **선행 완료**: P0–P2 re-export shim 생성 완료, **P3-a 완료 (2026-06-12)**
 
 ## 목적
 
@@ -99,7 +99,7 @@ rg "from [\"']\\./packageThumbnails" widgets/subscribe/plans
 
 ## 주의 사항
 
-- **P3-a(PlansPicker) 전에 완료할 것** — shim 삭제 후 import가 `@/entities/package`로 통일되어 추출 작업 시 경로 혼란 방지.
+- P3-a는 이미 완료됨 — `PlanPicker`와 `PackagePlansSection`은 이미 `@/entities/package` 정식 경로를 사용. shim 삭제 후 순서 영향 없음.
 - `default export` vs `named export` 주의: `PlanRatingStars`는 entities에서 **named**, 구 shim은 default re-export였음. `import PlanRatingStars from` 사용처를 `{ PlanRatingStars }`로 수정.
 - 삭제 후 `widgets/order/lib/` 참조하는 테스트는 이미 `@/features/order` 사용 중 ([`tests/unit/orderPricing.test.ts`](../../tests/unit/orderPricing.test.ts) 등).
 

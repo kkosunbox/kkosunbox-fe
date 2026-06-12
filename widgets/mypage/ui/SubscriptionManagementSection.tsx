@@ -4,15 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import pawsImg from "../assets/subscription-management-paws.png";
-import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
-} from "@/widgets/subscribe/plans/ui/packageData";
-import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "./dashboard-shared";
+} from "@/entities/package";
+import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "../lib/dashboard-shared";
 
 type SubscriptionFilter = "all" | "active" | "ended";
 

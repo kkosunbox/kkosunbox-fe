@@ -1,7 +1,7 @@
 "use client";
 
 import { Text } from "@/shared/ui";
-import { DashboardCard, SectionHeader } from "./dashboard-shared";
+import { DashboardCard, SectionHeader } from "../lib/dashboard-shared";
 import type { DeliveryStatus, DeliveryStatusSummaryResponse } from "@/features/subscription/api/types";
 
 function PackingIcon() {

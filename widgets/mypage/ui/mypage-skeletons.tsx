@@ -1,4 +1,4 @@
-import { DASHBOARD_CARD_SURFACE_CLASS } from "./dashboard-shared";
+import { DASHBOARD_CARD_SURFACE_CLASS } from "../lib/dashboard-shared";
 
 function Bone({ className }: { className?: string }) {
   return (

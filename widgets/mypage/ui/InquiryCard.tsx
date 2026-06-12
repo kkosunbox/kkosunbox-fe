@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Text } from "@/shared/ui";
-import { DashboardCard, SectionHeader } from "./dashboard-shared";
+import { DashboardCard, SectionHeader } from "../lib/dashboard-shared";
 import { ChevronLeftIcon, ChevronRightIcon } from "./mypage-icons";
 import type { InquiryDto } from "@/features/inquiry/api/types";
 import { InquiryDetailModal, InquiryStatusBadge } from "@/features/inquiry/ui";

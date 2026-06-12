@@ -186,7 +186,26 @@
       "PowerShell($c = Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port 3001 LISTENING \\(pid $\\($c.OwningProcess -join ','\\)\\)\" } else { \"Port 3001 free — build will run fresh\" })",
       "PowerShell(Get-CimInstance *)",
       "PowerShell(pnpm test *)",
-      "PowerShell($f = \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\b5fec9e4-9540-404b-bc46-2c9d07f171f1\\\\tasks\\\\bmvg65u55.output\"; $lines = Get-Content $f; \"LINES: $\\($lines.Count\\)\"; \"--- tail summary ---\"; $lines | Select-String -Pattern \"\\\\d+ passed|\\\\d+ failed|\\\\d+ flaky|\\\\\\(\\\\d+\\\\.\\\\dm\\\\\\)|\\\\\\(\\\\d+\\\\.\\\\ds\\\\\\)\" | Select-Object -Last 10; \"--- failing spec list ---\"; $lines | Select-String -Pattern \"^\\\\s+\\\\d+\\\\\\) \\\\[chromium\\\\]\" -AllMatches | ForEach-Object { \\($_ -replace '\\\\?',''\\).Substring\\(0,[Math]::Min\\(70,$_.Line.Length\\)\\) } | Select-Object -First 30)"
+      "PowerShell($f = \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\b5fec9e4-9540-404b-bc46-2c9d07f171f1\\\\tasks\\\\bmvg65u55.output\"; $lines = Get-Content $f; \"LINES: $\\($lines.Count\\)\"; \"--- tail summary ---\"; $lines | Select-String -Pattern \"\\\\d+ passed|\\\\d+ failed|\\\\d+ flaky|\\\\\\(\\\\d+\\\\.\\\\dm\\\\\\)|\\\\\\(\\\\d+\\\\.\\\\ds\\\\\\)\" | Select-Object -Last 10; \"--- failing spec list ---\"; $lines | Select-String -Pattern \"^\\\\s+\\\\d+\\\\\\) \\\\[chromium\\\\]\" -AllMatches | ForEach-Object { \\($_ -replace '\\\\?',''\\).Substring\\(0,[Math]::Min\\(70,$_.Line.Length\\)\\) } | Select-Object -First 30)",
+      "Bash(git checkout *)",
+      "Bash(awk '$1==3')",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint widgets/order/ui/OrderSection.tsx shared/lib/api/errorMessages.ts)",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint widgets/order/ui/OrderSection.tsx shared/lib/api/errorMessages.ts features/subscription/api/types.ts)",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint widgets/order/ui/OrderSection.tsx)",
+      "Bash(xargs wc -l)",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint \"widgets/order/ui/OrderSection.tsx\" \"app/\\(main\\)/order/page.tsx\")",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint tests/e2e/order.spec.ts tests/helpers/auth.ts tests/helpers/mockApiServer.ts)",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $procs = $c.OwningProcess | Select-Object -Unique; foreach \\($p in $procs\\) { Write-Output \"Killing PID $p on 3001\"; Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }; Start-Sleep -Seconds 1; \"Port 3001 cleared\" } else { \"Port 3001 free — fresh build will run\" })",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint tests/e2e/order.spec.ts)",
+      "PowerShell(npx eslint tests/e2e/order.spec.ts; if \\($?\\) { \"ESLINT CLEAN\" })",
+      "Bash(git check-ignore *)",
+      "PowerShell(pnpm add *)",
+      "PowerShell(pnpm test:unit *)",
+      "PowerShell(npx tsc --noEmit; if \\($?\\) { \"TSC OK\" }; npx eslint widgets/order/ui/OrderSection.tsx widgets/order/lib/orderPricing.ts tests/unit vitest.config.ts; if \\($?\\) { \"ESLINT CLEAN\" })",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c.OwningProcess | Select-Object -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; Start-Sleep 1; \"Port 3001 cleared\" } else { \"Port 3001 free\" })",
+      "Bash([ -f \"$f\" ])",
+      "Bash(echo \"=== tsc exit: $? ===\")",
+      "Bash(echo \"=== eslint exit: $? ===\")"
     ]
   }
 }

@@ -51,6 +51,10 @@ export const MOCK_ADDRESS = {
 // 유효한 쿠폰 코드 — 10% 할인
 export const MOCK_VALID_COUPON_CODE = "TEST10";
 
+// 적용 가능한 초대(레퍼럴) 코드 — 10% 할인(discountRate=0.1).
+// 이 외의 코드는 /v1/referral/validate가 400 REFERRAL_CODE_INVALID로 응답한다.
+export const MOCK_VALID_REFERRAL_CODE = "FRIEND10";
+
 export const MOCK_SUBSCRIPTION = {
   id: 1,
   userId: 1,
@@ -263,13 +267,34 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
-    // GET /v1/subscriptions — 활성 구독 조회 (mypage, 구독 변경 등)
+    // GET /v1/subscriptions — 구독 목록 조회 (취소 건 포함, 구독 이력 판정에 사용)
+    // MOCK_ACCESS_TOKEN(test 유저) → 구독 1건(이력 있음)
+    // NO_PROFILE 토큰 등 그 외 → 빈 배열(이력 없음)
     if (method === "GET" && url === "/v1/subscriptions") {
       const auth = req.headers.authorization ?? "";
       if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {
         ok(res, { subscriptions: [MOCK_SUBSCRIPTION] });
       } else {
         ok(res, { subscriptions: [] });
+      }
+      return;
+    }
+
+    // POST /v1/subscriptions — 구독 생성 (referralCode 포함 가능). 응답 본문은 사용하지 않음.
+    if (method === "POST" && url === "/v1/subscriptions") {
+      ok(res, { subscription: null });
+      return;
+    }
+
+    // GET /v1/referral/validate?code=XXX — 초대코드 적용 가능 여부
+    // 유효 → 200 { isApplicable: true, discountRate: 0.1 }
+    // 그 외 → 400 REFERRAL_CODE_INVALID (사유별 에러 코드 계약)
+    if (method === "GET" && url.startsWith("/v1/referral/validate")) {
+      const code = new URL(url, "http://localhost").searchParams.get("code") ?? "";
+      if (code.toUpperCase() === MOCK_VALID_REFERRAL_CODE) {
+        ok(res, { isApplicable: true, discountRate: 0.1 });
+      } else {
+        err(res, 400, "REFERRAL_CODE_INVALID", "invalid referral code");
       }
       return;
     }

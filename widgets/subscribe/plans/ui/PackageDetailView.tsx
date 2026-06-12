@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CheckCircleIcon } from "@/shared/ui";
-import { TIER_THUMBNAIL_IMAGE_CLASS, TIER_THUMBNAILS } from "./packageThumbnails";
 import {
   PACKAGES,
   COMPARE_PACKAGES,
   tierFromSubscriptionPlan,
   tierLabel,
+  PackageCompareTable,
+  PackageCompareCloseButton,
+  PackageCompareHeartIcon,
+  TIER_THUMBNAIL_IMAGE_CLASS,
+  TIER_THUMBNAILS,
   type PackageTier,
-} from "./packageData";
+} from "@/entities/package";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 
@@ -19,42 +23,7 @@ function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-/* ─── Icons ─── */
-function HeartIcon({ filled }: { filled: boolean }) {
-  const color = filled ? "var(--color-primary)" : "var(--color-text-muted)";
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M4.45067 13.9082L11.4033 20.4395C11.6428 20.6644 11.7625 20.7769 11.9037 20.8046C11.9673 20.8171 12.0327 20.8171 12.0963 20.8046C12.2375 20.7769 12.3572 20.6644 12.5967 20.4395L19.5493 13.9082C21.5055 12.0706 21.743 9.0466 20.0978 6.92607L19.7885 6.52734C17.8203 3.99058 13.8696 4.41601 12.4867 7.31365C12.2913 7.72296 11.7087 7.72296 11.5133 7.31365C10.1304 4.41601 6.17972 3.99058 4.21154 6.52735L3.90219 6.92607C2.25695 9.0466 2.4945 12.0706 4.45067 13.9082Z"
-        fill={color}
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-
-function CloseButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="목록으로 돌아가기"
-      className="flex h-6 w-6 items-center justify-center opacity-60 transition-opacity hover:opacity-100"
-    >
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-        <path
-          d="M11.5 1.5L1.5 11.5M1.5 1.5L11.5 11.5"
-          stroke="var(--color-text-secondary)"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-      </svg>
-    </button>
-  );
-}
+export { PackageCompareTable };
 
 export type PackageDetailPrimaryButton = {
   label: string;
@@ -82,7 +51,7 @@ function MobileCompareWarmPanel({
       style={{ background: "var(--color-surface-warm)" }}
     >
       <div className="absolute right-5 top-5">
-        <CloseButton onClick={onClose} />
+        <PackageCompareCloseButton onClick={onClose} />
       </div>
 
       <p className="mb-3 text-center text-subtitle-16-sb leading-[22px] tracking-[-0.04em] text-[var(--color-text)]">
@@ -134,7 +103,7 @@ function MobileCompareWarmPanel({
 
         <div className="flex justify-center gap-1 px-5 py-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <HeartIcon key={i} filled={i < comparePkg.hearts} />
+            <PackageCompareHeartIcon key={i} filled={i < comparePkg.hearts} />
           ))}
         </div>
       </div>
@@ -166,207 +135,6 @@ interface Props {
   onClose: () => void;
   /** 미지정 시 결제(구독하기) 플로우 */
   getPrimaryButton?: (plan: SubscriptionPlanDto) => PackageDetailPrimaryButton;
-}
-
-/* ─── 비교 표만 담는 독립 컴포넌트 (오버레이용) ─── */
-export function PackageCompareTable({
-  initialTier,
-  onClose,
-}: {
-  initialTier: PackageTier;
-  onClose: () => void;
-}) {
-  const [selectedTier, setSelectedTier] = useState<PackageTier>(initialTier);
-  const [hoveredTier, setHoveredTier] = useState<PackageTier | null>(null);
-
-  /** 모바일은 클릭한(initialTier) 패키지 1개만 고정 표시, 탭/전환 없음 */
-  const mobilePkg = COMPARE_PACKAGES.find((p) => p.tier === initialTier) ?? COMPARE_PACKAGES[0];
-
-  return (
-    <>
-      {/* ══ MOBILE (< md) — 단일 패키지 세로 카드 ════════════════════ */}
-      <div className="md:hidden relative overflow-hidden rounded-[20px] bg-white shadow-[4px_4px_24px_0px_rgba(0,0,0,0.25)]">
-        <div className="absolute right-5 top-4 z-10">
-          <CloseButton onClick={onClose} />
-        </div>
-
-        {/* 헤더 바 */}
-        <div
-          className="flex h-[52px] items-center justify-center rounded-t-[20px] px-12 text-center text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]"
-          style={{ background: mobilePkg.tabActiveBg }}
-        >
-          {mobilePkg.name}
-        </div>
-
-        <div className="flex flex-col px-6 pb-7">
-          {/* 티어 칩 */}
-          <div className="flex items-center justify-center py-5">
-            <span
-              className="inline-block rounded-full px-3 py-[3px] text-body-14-sb text-white"
-              style={{ background: mobilePkg.colorVar }}
-            >
-              {tierLabel(mobilePkg.tier)}
-            </span>
-          </div>
-
-          {/* quote */}
-          <div className="flex items-center justify-center border-t border-[var(--color-text-muted)] px-2 py-4">
-            <p
-              className="whitespace-pre-line text-center text-body-13-r leading-[17px] text-[var(--color-text)]"
-              style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
-            >
-              &ldquo;{mobilePkg.quote}&rdquo;
-            </p>
-          </div>
-
-          {/* contents */}
-          <div className="flex flex-col items-center justify-center gap-0.5 border-t border-[var(--color-text-muted)] px-2 py-4">
-            {mobilePkg.contents.map((c) => (
-              <p
-                key={c}
-                className="text-center text-body-13-b leading-[20px]"
-                style={{ color: mobilePkg.colorVar }}
-              >
-                {c}
-              </p>
-            ))}
-          </div>
-
-          {/* special */}
-          <div className="flex items-center justify-center border-t border-[var(--color-text-muted)] px-2 py-4">
-            <p className="text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
-              {mobilePkg.special}
-            </p>
-          </div>
-
-          {/* customization */}
-          <div className="flex items-center justify-center border-t border-[var(--color-text-muted)] px-2 py-4">
-            <p className="whitespace-pre-line text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
-              {mobilePkg.customization}
-            </p>
-          </div>
-
-          {/* hearts */}
-          <div className="flex items-center justify-center gap-1 border-t border-[var(--color-text-muted)] pt-5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <HeartIcon key={i} filled={i < mobilePkg.hearts} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ══ TABLET·DESKTOP (md+) — 3컬럼 비교 표, 680px 고정 ════════════ */}
-      <div className="max-md:hidden relative overflow-hidden rounded-[20px] bg-white shadow-[4px_4px_24px_0px_rgba(0,0,0,0.25)] md:w-[680px]">
-        <div className="absolute right-6 top-5 z-10">
-          <CloseButton onClick={onClose} />
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-0.5 px-11 pt-14">
-          {COMPARE_PACKAGES.map((p) => {
-            const isActive = selectedTier === p.tier;
-            const isHoverActive = !isActive && hoveredTier === p.tier;
-            const showActiveStyle = isActive || isHoverActive;
-            return (
-              <button
-                key={p.tier}
-                type="button"
-                onClick={() => setSelectedTier(p.tier)}
-                onMouseEnter={() => setHoveredTier(p.tier)}
-                onMouseLeave={() => setHoveredTier(null)}
-                className="h-[37px] flex-1 truncate px-2 font-semibold tracking-[-0.04em] transition-colors"
-                style={{
-                  borderRadius: "20px 20px 0 0",
-                  background: showActiveStyle ? p.tabActiveBg : "var(--color-ui-inactive-bg)",
-                  color: showActiveStyle ? "var(--color-text)" : "var(--color-text-secondary)",
-                  fontSize: isActive ? "16px" : "14px",
-                }}
-              >
-                {p.name}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Comparison rows */}
-        <div className="px-11 pb-6">
-
-          <div className="grid grid-cols-3">
-            {COMPARE_PACKAGES.map((p) => (
-              <div key={p.tier} className="flex items-center justify-center py-5">
-                <span
-                  className="inline-block rounded-full px-3 py-[3px] text-body-14-sb text-white"
-                  style={{ background: selectedTier === p.tier ? p.colorVar : "var(--color-text-muted)" }}
-                >
-                  {tierLabel(p.tier)}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-3 border-t border-b border-[var(--color-text-muted)]">
-            {COMPARE_PACKAGES.map((p) => (
-              <div key={p.tier} className="flex items-center justify-center px-2 py-3">
-                <p
-                  className="whitespace-pre-line text-center text-body-13-r leading-[17px] text-[var(--color-text)]"
-                  style={{ fontFamily: '"Griun PolFairness", "Griun Fromsol", cursive' }}
-                >
-                  &ldquo;{p.quote}&rdquo;
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
-            {COMPARE_PACKAGES.map((p) => (
-              <div key={p.tier} className="flex flex-col items-center justify-center gap-0.5 px-2 py-3">
-                {p.contents.map((c) => (
-                  <p
-                    key={c}
-                    className={`text-center leading-[20px] ${selectedTier === p.tier ? "text-body-13-b" : "text-body-13-r"}`}
-                    style={{ color: selectedTier === p.tier ? p.colorVar : "var(--color-text)" }}
-                  >
-                    {c}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
-            {COMPARE_PACKAGES.map((p) => (
-              <div key={p.tier} className="flex items-center justify-center px-2 py-3">
-                <p className="text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
-                  {p.special}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-3 border-b border-[var(--color-text-muted)]">
-            {COMPARE_PACKAGES.map((p) => (
-              <div key={p.tier} className="flex items-center justify-center px-2 py-3">
-                <p className="whitespace-pre-line text-center text-body-13-r leading-[16px] text-[var(--color-text)]">
-                  {p.customization}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-3 py-3">
-            {COMPARE_PACKAGES.map((p) => (
-              <div key={p.tier} className="flex items-center justify-center gap-1">
-                {Array.from({ length: p.hearts }).map((_, i) => (
-                  <HeartIcon key={i} filled={selectedTier === p.tier} />
-                ))}
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </div>
-    </>
-  );
 }
 
 export default function PackageDetailView({
@@ -508,7 +276,7 @@ export default function PackageDetailView({
         style={{ background: "var(--color-surface-warm)" }}
       >
         <div className="absolute right-6 top-5 z-10">
-          <CloseButton onClick={onClose} />
+          <PackageCompareCloseButton onClick={onClose} />
         </div>
 
         <div
@@ -699,7 +467,7 @@ export default function PackageDetailView({
                     {COMPARE_PACKAGES.map((p) => (
                       <div key={p.tier} className="flex items-center justify-center gap-1">
                         {Array.from({ length: p.hearts }).map((_, i) => (
-                          <HeartIcon key={i} filled={selectedTier === p.tier} />
+                          <PackageCompareHeartIcon key={i} filled={selectedTier === p.tier} />
                         ))}
                       </div>
                     ))}

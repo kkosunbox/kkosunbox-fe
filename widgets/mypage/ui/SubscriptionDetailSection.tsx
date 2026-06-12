@@ -13,8 +13,8 @@ import {
   reactivateSubscription,
   resumeSubscription,
 } from "@/features/subscription/api/subscriptionApi";
-import { TIER_BOX_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
-import { packageThemeForPlan } from "@/widgets/subscribe/plans/ui/packageData";
+import { TIER_BOX_IMAGES } from "@/entities/package";
+import { packageThemeForPlan } from "@/entities/package";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 
 /* ─────────────────────────────

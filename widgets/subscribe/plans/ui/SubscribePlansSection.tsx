@@ -10,44 +10,28 @@ import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-renewal.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.png";
-import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
-import packageExplainWithPremium from "@/widgets/home/package-plans/assets/package-explain-with-premium.png";
-import packageExplainWithStandard from "@/widgets/home/package-plans/assets/package-explain-with-standard.png";
-import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
-import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
-import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
-import { PackageSummaryThumbnail } from "@/widgets/home/package-plans/ui/PackageSummaryThumbnail";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
   tierFromSubscriptionPlan,
+  PACKAGE_SUMMARY_IMAGES,
+  PACKAGE_EXPLAIN_BY_TIER,
+  PackageSummaryThumbnail,
+  PlanRatingStars,
+  TIER_DETAIL_HERO_IMAGES,
+  useSvgBridge,
   type PackageTier,
-} from "./packageData";
-import { TIER_DETAIL_HERO_IMAGES } from "./packageThumbnails";
-import PackageNutritionGuide from "./PackageNutritionGuide";
-import { usePlanRatings } from "./usePlanRatings";
-import PlanRatingStars from "./PlanRatingStars";
-import { useSvgBridge } from "./useSvgBridge";
+} from "@/entities/package";
+import { usePlanRatings } from "@/features/review";
+import { PackageNutritionGuide } from "@/entities/package";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
-
-const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
-  Basic: packageImageBasic,
-  Standard: packageImageStandard,
-  Premium: packageImagePremium,
-};
 
 /** /subscribe 플랜 목록 노출 순서 (데스크탑 세로 카드·모바일 네비) */
 const PACKAGE_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
 const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
-
-const PACKAGE_EXPLAIN: Record<PackageTier, { src: StaticImageData; alt: string }> = {
-  Basic: { src: packageExplainWithBasic, alt: "베이직 패키지 BOX 설명" },
-  Standard: { src: packageExplainWithStandard, alt: "스탠다드 패키지 BOX 설명" },
-  Premium: { src: packageExplainWithPremium, alt: "프리미엄 패키지 BOX 설명" },
-};
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -131,7 +115,7 @@ export default function SubscribePlansSection({
   /** 왼쪽 패널 렌더링용 — 항상 선택된 tier 표시 (미선택 상태 없음) */
   const displayTier = selectedTier;
 
-  const activeExplain = PACKAGE_EXPLAIN[displayTier];
+  const activeExplain = PACKAGE_EXPLAIN_BY_TIER[displayTier];
   const activePlan = planForTier(sortedPlans, displayTier);
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;

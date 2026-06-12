@@ -10,25 +10,21 @@ import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
   tierFromSubscriptionPlan,
+  PACKAGE_SUMMARY_IMAGES,
+  PACKAGE_EXPLAIN_BY_TIER,
+  PackageSummaryThumbnail,
+  TIER_DETAIL_HERO_IMAGES,
   type PackageData,
   type PackageTier,
-} from "@/widgets/subscribe/plans/ui/packageData";
-import PackageNutritionGuide from "@/widgets/subscribe/plans/ui/PackageNutritionGuide";
-import { TIER_DETAIL_HERO_IMAGES } from "@/widgets/subscribe/plans/ui/packageThumbnails";
+} from "@/entities/package";
+import { PackageNutritionGuide } from "@/entities/package";
+import { usePlanRatings } from "@/features/review";
 import { CheckCircleIcon } from "@/shared/ui";
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
-import { usePlanRatings } from "@/widgets/subscribe/plans/ui/usePlanRatings";
 import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
 import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.png";
 import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
-import packageExplainWithBasic from "@/widgets/home/package-plans/assets/package-explain-with-basic.png";
-import packageExplainWithPremium from "@/widgets/home/package-plans/assets/package-explain-with-premium.png";
-import packageExplainWithStandard from "@/widgets/home/package-plans/assets/package-explain-with-standard.png";
-import packageImageBasic from "@/widgets/home/package-plans/assets/package-image-basic.png";
-import packageImagePremium from "@/widgets/home/package-plans/assets/package-image-premium.png";
-import packageImageStandard from "@/widgets/home/package-plans/assets/package-image-standard.png";
-import { PackageSummaryThumbnail } from "@/widgets/home/package-plans/ui/PackageSummaryThumbnail";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useModal } from "@/shared/ui";
 
@@ -72,18 +68,6 @@ const TIER_LABEL: Record<RecommendedTier, string> = {
   basic: "베이직",
   standard: "스탠다드",
   premium: "프리미엄",
-};
-
-const PACKAGE_EXPLAIN_IMAGES: Record<PackageTier, StaticImageData> = {
-  Basic: packageExplainWithBasic,
-  Standard: packageExplainWithStandard,
-  Premium: packageExplainWithPremium,
-};
-
-const PACKAGE_SUMMARY_IMAGES: Record<PackageTier, StaticImageData> = {
-  Basic: packageImageBasic,
-  Standard: packageImageStandard,
-  Premium: packageImagePremium,
 };
 
 type RecommendReason = RecommendReasonDto;
@@ -365,7 +349,7 @@ export default function ChecklistResult({
     : TIER_LABEL[effectiveRecommendedTier];
 
   const reasons = recommendReasons;
-  const explainImage = PACKAGE_EXPLAIN_IMAGES[recommendedPlanTier];
+  const explainImage = PACKAGE_EXPLAIN_BY_TIER[recommendedPlanTier].src;
 
   const navigateToDetail = () =>
     recommendedApiPlan &&

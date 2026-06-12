@@ -8,7 +8,7 @@ import { getErrorMessage } from "@/shared/lib/api";
 import { getPaymentReceipt, cancelSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
-import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "./dashboard-shared";
+import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "../lib/dashboard-shared";
 
 /* ── 결제 상태 변환 ────────────────────────────────────────── */
 type DisplayStatus = "예정" | "완료" | "실패" | "환불";

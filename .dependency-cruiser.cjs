@@ -46,7 +46,7 @@ module.exports = {
 
     {
       name: "widget-mypage-subscribe-coupling",
-      severity: "warn",
+      severity: "error",
       from: { path: "^widgets/mypage/" },
       to: { path: "^widgets/subscribe/" },
     },

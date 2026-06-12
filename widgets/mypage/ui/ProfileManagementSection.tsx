@@ -9,6 +9,7 @@ import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
+import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
 import { BreedCombobox, DatePicker, DefaultPetIcon, useLoadingOverlay, useModal } from "@/shared/ui";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 
@@ -35,13 +36,6 @@ function birthDateToValue(birth: string): Date | null {
   const [y, m, d] = birth.split("-").map((n) => parseInt(n, 10));
   if (!y || !m || !d) return null;
   return new Date(y, m - 1, d);
-}
-
-function sanitizeWeightInput(value: string): string {
-  const numeric = value.replace(/[^\d.]/g, "");
-  const [integer = "", ...fractions] = numeric.split(".");
-  if (fractions.length === 0) return integer;
-  return `${integer}.${fractions.join("")}`;
 }
 
 function formatWeightInput(value: string, isFocused: boolean): string {

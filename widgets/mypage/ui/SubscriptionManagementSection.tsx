@@ -35,6 +35,16 @@ function ChevronRightIcon() {
   );
 }
 
+/** Figma Add_round — 20×20 plus icon */
+function AddRoundIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M10 5V15" stroke="var(--color-text-label)" strokeWidth="2" strokeLinecap="round" />
+      <path d="M5 10H15" stroke="var(--color-text-label)" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /* ─────────────────────────────
    Props
 ───────────────────────────── */
@@ -491,15 +501,16 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
         <div className="md:px-0 lg:px-0">
           <div className="mb-6">
             <div className="flex items-center justify-between gap-3 max-md:mb-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-5">
                 <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
                   구독 전체보기
                 </Text>
                 <Link
                   href="/mypage/subscription/change"
-                  className="inline-flex h-[24px] items-center rounded-[4px] bg-[var(--color-text)] px-2 text-body-13-m-tight text-white transition-opacity hover:opacity-80"
+                  className="box-border inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-[24px] border border-[var(--color-text-muted)] px-3 py-2 text-body-13-m leading-4 text-[var(--color-text)] transition-opacity hover:opacity-80"
                 >
-                  구독추가
+                  <AddRoundIcon />
+                  구독 추가
                 </Link>
               </div>
               {/* 태블릿·데스크탑: 타이틀 행 우측 */}

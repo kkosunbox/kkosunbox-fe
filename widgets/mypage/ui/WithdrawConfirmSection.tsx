@@ -149,31 +149,39 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           탈퇴 이유
         </h2>
 
-        <div className="mt-[18px] grid grid-cols-2 gap-y-5">
-          {WITHDRAW_REASONS.map((reason) => (
+        <div className="mt-[18px]">
+          <div className="grid grid-cols-2 gap-y-5 items-start">
+            {WITHDRAW_REASONS.slice(0, 4).map((reason) => (
+              <RadioButton
+                key={reason}
+                checked={selectedReason === reason}
+                onClick={() => setSelectedReason(reason)}
+                label={reason}
+              />
+            ))}
+          </div>
+          {/* 3행 — input(h-10) 높이 보정으로 상단 간격 축소, 왼쪽은 오른쪽 열 높이에 맞춰 세로 중앙 정렬 */}
+          <div className="mt-2.5 grid grid-cols-2 items-center">
             <RadioButton
-              key={reason}
-              checked={selectedReason === reason}
-              onClick={() => setSelectedReason(reason)}
-              label={reason}
+              checked={selectedReason === WITHDRAW_REASONS[4]}
+              onClick={() => setSelectedReason(WITHDRAW_REASONS[4])}
+              label={WITHDRAW_REASONS[4]}
             />
-          ))}
-
-          {/* 기타 + 입력 필드 */}
-          <div className="flex items-center gap-3">
-            <RadioButton
-              checked={isEtc}
-              onClick={() => setSelectedReason(REASON_ETC)}
-              label={REASON_ETC}
-            />
-            <input
-              type="text"
-              value={etcText}
-              onChange={(e) => setEtcText(e.target.value)}
-              placeholder="탈퇴 이유를 작성해주세요."
-              disabled={!isEtc}
-              className="h-10 w-[271px] rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] disabled:opacity-50"
-            />
+            <div className="flex items-center gap-3">
+              <RadioButton
+                checked={isEtc}
+                onClick={() => setSelectedReason(REASON_ETC)}
+                label={REASON_ETC}
+              />
+              <input
+                type="text"
+                value={etcText}
+                onChange={(e) => setEtcText(e.target.value)}
+                placeholder="탈퇴 이유를 작성해주세요."
+                disabled={!isEtc}
+                className="h-10 w-[271px] rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] disabled:opacity-50"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -233,7 +241,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
             {daysWithUs ? (
               <>
                 꼬순박스와 함께한 지{" "}
-                <span className="text-[16px]">
+                <span className="text-[18px]">
                   <span className="text-[var(--color-primary)]">{daysWithUs}</span>일째,
                 </span>
               </>

@@ -57,6 +57,37 @@ function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
   return plans.find((p) => tierFromSubscriptionPlan(p) === tier);
 }
 
+/** 모바일 패키지 선택 도트 — 재탭 시 onTierSelect가 primary 버튼과 동일 동작 */
+export function PlanTierDots({
+  tier,
+  order,
+  onTierSelect,
+}: {
+  tier: PackageTier;
+  order: PackageTier[];
+  onTierSelect: (tier: PackageTier) => void;
+}) {
+  return (
+    <div className="mt-6 flex justify-center gap-3">
+      {order.map((t) => {
+        const pkg = PACKAGES.find((p) => p.tier === t)!;
+        const isActive = tier === t;
+        return (
+          <button
+            key={t}
+            type="button"
+            onClick={() => onTierSelect(t)}
+            aria-label={`${t} 패키지 선택`}
+            aria-pressed={isActive}
+            className="h-3 w-3 rounded-full transition-colors duration-300"
+            style={{ background: isActive ? pkg.colorVar : "var(--color-border)" }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export interface PrimaryButtonConfig {
   label: string;
   disabled?: boolean;
@@ -72,8 +103,8 @@ export interface PlanPickerProps {
   getPrimaryButton: (plan: SubscriptionPlanDto) => PrimaryButtonConfig;
   /** 데스크탑 카드 열·모바일 네비 순서. 기본값: ["Premium", "Standard", "Basic"] */
   summaryOrder?: PackageTier[];
-  /** 모바일(<768px) 슬롯. 제공 시 기본 셰브론 네비를 대체한다. */
-  mobileSlot?: (tier: PackageTier, setTier: (tier: PackageTier) => void, order: PackageTier[]) => ReactNode;
+  /** 모바일(<768px) 슬롯. 제공 시 기본 셰브론+도트 네비를 대체한다. onTierSelect는 재탭 시 primary 버튼과 동일 동작. */
+  mobileSlot?: (tier: PackageTier, onTierSelect: (tier: PackageTier) => void, order: PackageTier[]) => ReactNode;
 }
 
 export default function PlanPicker({
@@ -131,6 +162,15 @@ export default function PlanPicker({
     primaryButton.onClick();
   }
 
+  /** 미선택 tier → 선택. 이미 선택된 카드 재클릭 → primary 버튼과 동일 동작 */
+  function handleTierSelect(tier: PackageTier) {
+    if (selectedTier === tier) {
+      handlePrimaryClick();
+      return;
+    }
+    setSelectedTier(tier);
+  }
+
   function renderPrimaryAction(className: string) {
     if (!activePrimaryButton) return null;
 
@@ -184,7 +224,7 @@ export default function PlanPicker({
           {/* 모바일 — 대표 이미지 + 네비 + 선택 패키지 정보 */}
           <div className="w-full max-w-[600px] max-md:block md:hidden lg:hidden">
             {mobileSlot ? (
-              mobileSlot(displayTier, setSelectedTier, summaryOrder)
+              mobileSlot(displayTier, handleTierSelect, summaryOrder)
             ) : (
               <>
                 <div
@@ -284,6 +324,11 @@ export default function PlanPicker({
                     )}
                   </div>
                 ) : null}
+                <PlanTierDots
+                  tier={displayTier}
+                  order={summaryOrder}
+                  onTierSelect={handleTierSelect}
+                />
               </>
             )}
           </div>
@@ -352,7 +397,7 @@ export default function PlanPicker({
                   type="button"
                   disabled={!plan}
                   aria-pressed={showSelectionState ? isSelected : undefined}
-                  onClick={() => setSelectedTier(tier)}
+                  onClick={() => handleTierSelect(tier)}
                   className={[
                     "group relative flex w-full text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                     showSelectionState && isSelected ? "h-[207px] flex-none bg-transparent" : "flex-1",
@@ -430,7 +475,7 @@ export default function PlanPicker({
                   type="button"
                   disabled={!plan}
                   aria-pressed={isSelected}
-                  onClick={() => setSelectedTier(tier)}
+                  onClick={() => handleTierSelect(tier)}
                   className={[
                     "group relative z-[1] flex flex-col items-start text-left rounded-[24px] transition-colors duration-300 hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                     isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6 px-2",

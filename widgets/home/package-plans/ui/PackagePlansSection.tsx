@@ -13,7 +13,7 @@ import {
 } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
-import { PlanPicker } from "@/widgets/package-plans";
+import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
 
 const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
@@ -58,7 +58,7 @@ export default function PackagePlansSection() {
             label: "제품 상세보기",
             onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
           })}
-          mobileSlot={(tier, setTier, order) => {
+          mobileSlot={(tier, onTierSelect, order) => {
             const activePkg = PACKAGES.find((p) => p.tier === tier);
             const activePlan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
             return (
@@ -121,22 +121,7 @@ export default function PackagePlansSection() {
                     </div>
                   </div>
                 ) : null}
-                <div className="mt-6 flex justify-center gap-3">
-                  {order.map((t) => {
-                    const pkg = PACKAGES.find((p) => p.tier === t)!;
-                    const isActive = tier === t;
-                    return (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setTier(t)}
-                        aria-label={`${t} 패키지 선택`}
-                        className="h-3 w-3 rounded-full transition-colors duration-300"
-                        style={{ background: isActive ? pkg.colorVar : "var(--color-border)" }}
-                      />
-                    );
-                  })}
-                </div>
+                <PlanTierDots tier={tier} order={order} onTierSelect={onTierSelect} />
               </>
             );
           }}

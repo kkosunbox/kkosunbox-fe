@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import logoMain from "@/shared/assets/logo-main@2x.png";
-import { Button, DefaultPetIcon, useModal } from "@/shared/ui";
+import { Button, FallbackAvatar, useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
@@ -399,25 +399,46 @@ function DropdownLogoutIcon() {
 
 // ========== 프로필 썸네일 ==========
 
-function ProfileThumbnail({ imageUrl, size }: { imageUrl: string | null; size: "sm" | "md" | "lg" | "xl" }) {
+const THUMBNAIL_SIZE_PX = { sm: 32, md: 48, lg: 54, xl: 68 } as const;
+
+function ProfileThumbnail({
+  imageUrl,
+  userId,
+  size,
+}: {
+  imageUrl: string | null;
+  userId?: number | null;
+  size: "sm" | "md" | "lg" | "xl";
+}) {
   const sizeClass = { sm: "h-8 w-8", md: "h-12 w-12", lg: "h-[54px] w-[54px]", xl: "h-[68px] w-[68px]" }[size];
-  const iconClass = { sm: "h-5 w-5", md: "h-7 w-7", lg: "h-8 w-8", xl: "h-10 w-10" }[size];
 
   return (
-    <div className={`${sizeClass} shrink-0 overflow-hidden rounded-full bg-[var(--color-secondary)]`}>
+    <div className={`${sizeClass} shrink-0 overflow-hidden rounded-full`}>
       {imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
         <img src={imageUrl} alt="" className="h-full w-full object-cover" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-[var(--color-secondary)]">
-          <DefaultPetIcon className={iconClass} />
-        </div>
+        <FallbackAvatar userId={userId} size={THUMBNAIL_SIZE_PX[size]} className="h-full w-full" />
       )}
     </div>
   );
 }
 
-function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose }: { hasProfile: boolean; petName: string | null; email: string | null; profileImageUrl: string | null; onClose: () => void }) {
+function ProfileDropdown({
+  hasProfile,
+  petName,
+  email,
+  profileImageUrl,
+  userId,
+  onClose,
+}: {
+  hasProfile: boolean;
+  petName: string | null;
+  email: string | null;
+  profileImageUrl: string | null;
+  userId?: number | null;
+  onClose: () => void;
+}) {
   const { logout } = useAuth();
   const { openModal } = useModal();
   const router = useRouter();
@@ -458,7 +479,7 @@ function ProfileDropdown({ hasProfile, petName, email, profileImageUrl, onClose 
           style={{ background: "var(--gradient-dropdown-header)" }}
         >
           <div className="shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
-            <ProfileThumbnail imageUrl={profileImageUrl} size="lg" />
+            <ProfileThumbnail imageUrl={profileImageUrl} userId={userId} size="lg" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1 min-w-0">
@@ -647,7 +668,7 @@ export default function Header() {
                   aria-expanded={isProfileOpen}
                   className="flex items-center justify-center hover:opacity-80 transition-opacity"
                 >
-                  <ProfileThumbnail imageUrl={profileImageUrl} size="sm" />
+                  <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
                 </button>
                 {isProfileOpen && (
                   <ProfileDropdown
@@ -655,6 +676,7 @@ export default function Header() {
                     petName={profile?.name ?? null}
                     email={user?.email ?? null}
                     profileImageUrl={profileImageUrl}
+                    userId={user?.id ?? null}
                     onClose={() => setIsProfileOpen(false)}
                   />
                 )}
@@ -704,10 +726,10 @@ export default function Header() {
           <div className="mt-[25px]">
             {isLoggedIn ? (
               <Link href="/mypage" onClick={closeMenu}>
-                <ProfileThumbnail imageUrl={profileImageUrl} size="xl" />
+                <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="xl" />
               </Link>
             ) : (
-              <ProfileThumbnail imageUrl={null} size="xl" />
+              <ProfileThumbnail imageUrl={null} userId={null} size="xl" />
             )}
           </div>
 

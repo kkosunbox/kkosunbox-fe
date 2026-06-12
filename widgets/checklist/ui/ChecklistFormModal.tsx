@@ -705,6 +705,7 @@ function ChecklistFormModalInner({
                   petInfo={petInfo}
                   setPetInfo={setPetInfo}
                   avatarSrc={avatarSrc}
+                  userId={user?.id ?? null}
                   onAvatarChange={handleAvatarChange}
                   onAvatarFileSelect={handleAvatarFileSelect}
                 />

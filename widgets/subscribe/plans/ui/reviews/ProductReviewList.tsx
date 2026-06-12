@@ -2,10 +2,27 @@
 
 import { Fragment } from "react";
 import type { ReviewSortOrder } from "@/features/review/api";
+import { FallbackAvatar } from "@/shared/ui";
 import Stars from "./Stars";
 import ReviewContent from "./ReviewContent";
-import { getAvatarColor, maskEmail, formatReviewDate } from "./reviewUtils";
+import { maskEmail, formatReviewDate } from "./reviewUtils";
 import type { UseProductReviewsReturn } from "./useProductReviews";
+
+function ReviewAvatar({
+  imageUrl,
+  userId,
+}: {
+  imageUrl: string | null;
+  userId: number;
+}) {
+  if (imageUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+    );
+  }
+  return <FallbackAvatar userId={userId} size={54} className="h-full w-full" />;
+}
 
 const SORT_OPTIONS = [
   { label: "최신순", value: "LATEST" },
@@ -135,19 +152,10 @@ function MobileReviewList({
                   className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
                   aria-hidden="true"
                 >
-                  {review.snapshotPetProfileImageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={review.snapshotPetProfileImageUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="h-full w-full"
-                      style={{ background: getAvatarColor(review.userId ?? review.id) }}
-                    />
-                  )}
+                  <ReviewAvatar
+                    imageUrl={review.snapshotPetProfileImageUrl}
+                    userId={review.userId ?? review.id}
+                  />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
                   <div className="flex items-center gap-2">
@@ -344,19 +352,10 @@ function DesktopReviewList({
                   className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
                   aria-hidden="true"
                 >
-                  {review.snapshotPetProfileImageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={review.snapshotPetProfileImageUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="h-full w-full"
-                      style={{ background: getAvatarColor(review.userId ?? review.id) }}
-                    />
-                  )}
+                  <ReviewAvatar
+                    imageUrl={review.snapshotPetProfileImageUrl}
+                    userId={review.userId ?? review.id}
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">

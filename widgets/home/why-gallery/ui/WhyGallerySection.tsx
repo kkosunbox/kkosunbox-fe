@@ -7,15 +7,15 @@ import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { GalleryCTALogo } from "./GalleryCTALogo";
 import { GalleryLogoMark } from "./GalleryLogoMark";
 import { GalleryMutedLogo } from "./GalleryMutedLogo";
-import whyGalleryTitle from "../assets/why-gallery-title.png";
-import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.png";
-import pawsPatternWithBg from "../assets/paws-patterns-with-bg.png";
-import galleryDogsUpper001 from "./gallery-dogs-upper-001.png";
-import galleryDogsUpper002 from "./gallery-dogs-upper-002.png";
-import galleryDogsUpper003 from "./gallery-dogs-upper-003.jpg";
-import galleryDogsDowner001 from "./gallery-dogs-downer-001.jpg";
-import galleryDogsDowner002 from "./gallery-dogs-downer-002.png";
-import galleryDogsDowner003 from "./gallery-dogs-downer-003.png";
+import whyGalleryTitle from "../assets/why-gallery-title.webp";
+import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.webp";
+import pawsPatternWithBg from "../assets/paws-patterns-with-bg.webp";
+import galleryDogsUpper001 from "./gallery-dogs-upper-001.webp";
+import galleryDogsUpper002 from "./gallery-dogs-upper-002.webp";
+import galleryDogsUpper003 from "./gallery-dogs-upper-003.webp";
+import galleryDogsDowner001 from "./gallery-dogs-downer-001.webp";
+import galleryDogsDowner002 from "./gallery-dogs-downer-002.webp";
+import galleryDogsDowner003 from "./gallery-dogs-downer-003.webp";
 
 type GalleryItem =
   | { type: "image"; src: StaticImageData; alt: string }

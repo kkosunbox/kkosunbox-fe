@@ -8,12 +8,12 @@ import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import reviewsBg from "../assets/reviews-bg.png";
+import reviewsBg from "../assets/reviews-bg.webp";
 import reviewsTitle from "../assets/reviews-title-new.svg";
-import reviewsTitleMobile from "../assets/reviews-title-mobile.png";
-import reviewsProfile01 from "../assets/reviews-profile-01.jpg";
-import reviewsProfile02 from "../assets/reviews-profile-02.jpg";
-import reviewsProfile03 from "../assets/reviews-profile-03.jpg";
+import reviewsTitleMobile from "../assets/reviews-title-mobile.webp";
+import reviewsProfile01 from "../assets/reviews-profile-01.webp";
+import reviewsProfile02 from "../assets/reviews-profile-02.webp";
+import reviewsProfile03 from "../assets/reviews-profile-03.webp";
 import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [

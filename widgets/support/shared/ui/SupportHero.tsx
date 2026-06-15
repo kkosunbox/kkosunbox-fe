@@ -1,6 +1,6 @@
-import Link from "next/link";
-import SupportHeroBg from "../assets/support-hero-bg.png";
-import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.png";
+﻿import Link from "next/link";
+import SupportHeroBg from "../assets/support-hero-bg.webp";
+import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.webp";
 
 export function SupportHero({ showButton = true }: { showButton?: boolean }) {
   return (

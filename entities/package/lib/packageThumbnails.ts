@@ -1,13 +1,13 @@
-import type { StaticImageData } from "next/image";
-import boxMockupBasic from "../assets/box-mockup-basic.png";
-import boxMockupStandard from "../assets/box-mockup-standard.png";
-import boxMockupPremium from "../assets/box-mockup-premium.png";
-import packageThumbnailBasic from "../assets/package-thumbnail-basic.png";
-import packageThumbnailPremium from "../assets/package-thumbnail-premium.png";
-import packageThumbnailStandard from "../assets/package-thumbnail-standard.png";
-import packageImageBasic from "../assets/package-image-basic.png";
-import packageImageStandard from "../assets/package-image-standard.png";
-import packageImagePremium from "../assets/package-image-premium.png";
+﻿import type { StaticImageData } from "next/image";
+import boxMockupBasic from "../assets/box-mockup-basic.webp";
+import boxMockupStandard from "../assets/box-mockup-standard.webp";
+import boxMockupPremium from "../assets/box-mockup-premium.webp";
+import packageThumbnailBasic from "../assets/package-thumbnail-basic.webp";
+import packageThumbnailPremium from "../assets/package-thumbnail-premium.webp";
+import packageThumbnailStandard from "../assets/package-thumbnail-standard.webp";
+import packageImageBasic from "../assets/package-image-basic.webp";
+import packageImageStandard from "../assets/package-image-standard.webp";
+import packageImagePremium from "../assets/package-image-premium.webp";
 import type { PackageTier } from "./packageData";
 
 /** @deprecated box-mockup 이미지 — 신규 사용처에는 TIER_BOX_IMAGES 사용 */

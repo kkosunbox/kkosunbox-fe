@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { BREAKPOINT_LG_PX } from "@/shared/config/breakpoints";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import logoMain from "@/shared/assets/logo-main@2x.png";
+import logoMain from "@/shared/assets/logo-main@2x.webp";
 import { Button, FallbackAvatar, useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { useAuth } from "@/features/auth";
@@ -843,7 +843,7 @@ export default function Header() {
         {/* 하단 배너 */}
         <div className="shrink-0">
           <Image
-            src="/images/sidebar-banner-001.png"
+            src="/images/sidebar-banner-001.webp"
             alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
             width={375}
             height={126}

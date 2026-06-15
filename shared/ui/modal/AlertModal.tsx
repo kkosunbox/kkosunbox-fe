@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
@@ -22,11 +22,11 @@ interface Props extends AlertModalOptions {
 }
 
 const ICONS: Record<AlertModalType, { src: string; alt: string }> = {
-  alert:    { src: "/icons/modal/alert.png",    alt: "경고" },
-  contents: { src: "/icons/modal/contents.png", alt: "내용" },
-  info:     { src: "/icons/modal/info.png",     alt: "안내" },
-  present:  { src: "/icons/modal/present.png",  alt: "선물" },
-  success:  { src: "/icons/modal/success.png",  alt: "완료" },
+  alert:    { src: "/icons/modal/alert.webp",    alt: "경고" },
+  contents: { src: "/icons/modal/contents.webp", alt: "내용" },
+  info:     { src: "/icons/modal/info.webp",     alt: "안내" },
+  present:  { src: "/icons/modal/present.webp",  alt: "선물" },
+  success:  { src: "/icons/modal/success.webp",  alt: "완료" },
 };
 
 /** description 내 [텍스트] 패턴을 primary 색상으로 강조 렌더링 */

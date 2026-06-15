@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -21,7 +21,7 @@ export default function SubscriptionPauseModal({ onClose, onConfirm }: Props) {
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         <Image
-          src="/images/modal/custom-modal-10-upper.png"
+          src="/images/modal/custom-modal-10-upper.webp"
           alt="시계 아이콘"
           width={210}
           height={210}
@@ -49,7 +49,7 @@ export default function SubscriptionPauseModal({ onClose, onConfirm }: Props) {
           </button>
 
           <Image
-            src="/images/modal/custom-modal-10-contents.png"
+            src="/images/modal/custom-modal-10-contents.webp"
             alt="잠시 이번 달만 쉬어가기의 시간을 가질까요?"
             width={280}
             height={140}

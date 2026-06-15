@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import whyGalleryTitle from "../../why-gallery/assets/why-gallery-title.png";
+import whyGalleryTitle from "../../why-gallery/assets/why-gallery-title.webp";
 
 export default function WhyChooseSection() {
   const { isLoggedIn } = useAuth();

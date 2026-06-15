@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Ms_Madi, Give_You_Glory } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth";

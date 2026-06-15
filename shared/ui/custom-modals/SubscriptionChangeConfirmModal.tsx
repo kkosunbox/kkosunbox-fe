@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -21,7 +21,7 @@ export default function SubscriptionChangeConfirmModal({ onClose, onConfirm }: P
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         <Image
-          src="/images/modal/custom-modal-11-upper.png"
+          src="/images/modal/custom-modal-11-upper.webp"
           alt="경고 아이콘"
           width={210}
           height={210}
@@ -49,7 +49,7 @@ export default function SubscriptionChangeConfirmModal({ onClose, onConfirm }: P
           </button>
 
           <Image
-            src="/images/modal/custom-modal-11-contents.png"
+            src="/images/modal/custom-modal-11-contents.webp"
             alt="다른 플랜으로 구독 변경을 하시겠습니까?"
             width={206}
             height={129}

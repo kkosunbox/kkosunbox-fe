@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -21,7 +21,7 @@ export default function DeliveryReviewModal({ onClose, onConfirm }: Props) {
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         <Image
-          src="/images/modal/custom-modal-12-upper.png"
+          src="/images/modal/custom-modal-12-upper.webp"
           alt="리뷰 아이콘"
           width={210}
           height={210}
@@ -49,7 +49,7 @@ export default function DeliveryReviewModal({ onClose, onConfirm }: Props) {
           </button>
 
           <Image
-            src="/images/modal/custom-modal-12-contents.png"
+            src="/images/modal/custom-modal-12-contents.webp"
             alt="리뷰로 소중한 의견을 들려주세요!"
             width={201}
             height={129}

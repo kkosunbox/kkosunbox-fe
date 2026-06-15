@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -22,8 +22,8 @@ import { usePlanRatings } from "@/features/review";
 import { CheckCircleIcon, FallbackAvatar } from "@/shared/ui";
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
-import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.png";
-import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.png";
+import checklistHeroTitle from "@/widgets/checklist/assets/checklist-hero-title-new.webp";
+import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-start-purchase.webp";
 import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useModal } from "@/shared/ui";

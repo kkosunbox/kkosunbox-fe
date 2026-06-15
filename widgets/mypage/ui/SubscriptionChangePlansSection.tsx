@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -10,8 +10,8 @@ import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { tierFromSubscriptionPlan } from "@/entities/package";
 import { PlanPicker } from "@/widgets/package-plans";
-import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile.png";
-import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop.png";
+import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile.webp";
+import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop.webp";
 
 interface Props {
   plans: SubscriptionPlanDto[];

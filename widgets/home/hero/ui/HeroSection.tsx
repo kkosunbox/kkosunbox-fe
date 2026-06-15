@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 /* eslint-disable @next/next/no-img-element -- Hero는 대형 원본 해상도 유지가 필요해 Next/Image 미사용 */
 
@@ -8,19 +8,19 @@ import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import heroCustomSnackBg from "../assets/hero-custom-snack-bg.png";
+import heroCustomSnackBg from "../assets/hero-custom-snack-bg.webp";
 import heroCustomSnackHeading from "../assets/hero-custom-snack-heading.svg";
-import heroCustomSnackBgMobile from "../assets/hero-custom-snack-bg-mobile.png";
-import heroCustomSnackBgTablet from "../assets/hero-custom-snack-bg-tablet.png";
-import heroCustomSnackHeadingMobile from "../assets/hero-custom-snack-heading-mobile.png";
-import heroDogBg from "../assets/hero-dog-bg.png";
-import heroDogBgMobile from "../assets/hero-dog-bg-mobile.png";
-import heroDogBgTablet from "../assets/hero-dog-bg-tablet.png";
-import heroDogHeading from "../assets/hero-dog-heading.png";
-import heroDogHeadingMobile from "../assets/hero-dog-heading-mobile.png";
-import heroTruckHeading from "../assets/hero-truck-heading.png";
-import heroTruckHeadingMobile from "../assets/hero-truck-heading-mobile.png";
-import heroTruckImage from "../assets/hero-truck-image.png";
+import heroCustomSnackBgMobile from "../assets/hero-custom-snack-bg-mobile.webp";
+import heroCustomSnackBgTablet from "../assets/hero-custom-snack-bg-tablet.webp";
+import heroCustomSnackHeadingMobile from "../assets/hero-custom-snack-heading-mobile.webp";
+import heroDogBg from "../assets/hero-dog-bg.webp";
+import heroDogBgMobile from "../assets/hero-dog-bg-mobile.webp";
+import heroDogBgTablet from "../assets/hero-dog-bg-tablet.webp";
+import heroDogHeading from "../assets/hero-dog-heading.webp";
+import heroDogHeadingMobile from "../assets/hero-dog-heading-mobile.webp";
+import heroTruckHeading from "../assets/hero-truck-heading.webp";
+import heroTruckHeadingMobile from "../assets/hero-truck-heading-mobile.webp";
+import heroTruckImage from "../assets/hero-truck-image.webp";
 
 const SLIDE_INTERVAL = 8000;
 const DRAG_THRESHOLD = 50;

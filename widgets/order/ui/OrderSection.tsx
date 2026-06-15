@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Script from "next/script";
@@ -155,7 +155,7 @@ export default function OrderSection(props: OrderSectionProps) {
       />
       <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
         <Image
-          src="/images/sidebar-banner-001.png"
+          src="/images/sidebar-banner-001.webp"
           alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
           width={375}
           height={126}

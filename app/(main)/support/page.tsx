@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { SupportSection } from "@/widgets/support/faq";
 
 const description = "꼬순박스 이용 중 궁금한 점이 있으신가요? 자주 묻는 질문과 1:1 문의를 통해 빠르게 도움드립니다.";

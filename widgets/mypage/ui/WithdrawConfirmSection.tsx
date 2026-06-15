@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web.png";
-import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile.png";
+import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web.webp";
+import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";

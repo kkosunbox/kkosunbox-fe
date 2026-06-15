@@ -1,21 +1,21 @@
-"use client";
+﻿"use client";
 
 import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
-import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.png";
-import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.png";
+import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.webp";
+import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.webp";
 import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.webp";
 import subscribeItem01C from "@/widgets/subscribe/plans/assets/subscribe-item-01-C.webp";
 import subscribeItem01D from "@/widgets/subscribe/plans/assets/subscribe-item-01-D.webp";
-import subscribeItem02A from "@/widgets/subscribe/plans/assets/subscribe-item-02-A.png";
-import subscribeItem02B from "@/widgets/subscribe/plans/assets/subscribe-item-02-B.png";
+import subscribeItem02A from "@/widgets/subscribe/plans/assets/subscribe-item-02-A.webp";
+import subscribeItem02B from "@/widgets/subscribe/plans/assets/subscribe-item-02-B.webp";
 import subscribeItem02BB from "@/widgets/subscribe/plans/assets/subscribe-item-02-BB.webp";
 import subscribeItem02C from "@/widgets/subscribe/plans/assets/subscribe-item-02-C.webp";
 import subscribeItem02D from "@/widgets/subscribe/plans/assets/subscribe-item-02-D.webp";
-import subscribeItem03A from "@/widgets/subscribe/plans/assets/subscribe-item-03-A.png";
-import subscribeItem03B from "@/widgets/subscribe/plans/assets/subscribe-item-03-B.png";
+import subscribeItem03A from "@/widgets/subscribe/plans/assets/subscribe-item-03-A.webp";
+import subscribeItem03B from "@/widgets/subscribe/plans/assets/subscribe-item-03-B.webp";
 import subscribeItem03BB from "@/widgets/subscribe/plans/assets/subscribe-item-03-BB.webp";
 import subscribeItem03C from "@/widgets/subscribe/plans/assets/subscribe-item-03-C.webp";
 import subscribeItem03D from "@/widgets/subscribe/plans/assets/subscribe-item-03-D.webp";

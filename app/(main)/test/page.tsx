@@ -29,7 +29,7 @@ const fontSamples = [
   },
   {
     name: "GangwonEduPower",
-    description: "local TTF / GangwonEduPower.ttf",
+    description: "local woff / GangwonEduPower.woff",
     family: '"GangwonEduPower", sans-serif',
   },
   {

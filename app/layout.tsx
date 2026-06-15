@@ -1,10 +1,13 @@
 ﻿import type { Metadata } from "next";
 import { Ms_Madi, Give_You_Glory } from "next/font/google";
+import Script from "next/script";
+import { Suspense } from "react";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
 import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
-import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider } from "@/shared/ui";
+import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider, GoogleAnalyticsTracker } from "@/shared/ui";
+import { GA_ID } from "@/shared/lib/analytics";
 
 const msMadi = Ms_Madi({
   weight: "400",
@@ -68,6 +71,23 @@ export default async function RootLayout({
         />
       </head>
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">{`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_ID}');
+            `}</Script>
+          </>
+        )}
+        <Suspense>
+          <GoogleAnalyticsTracker />
+        </Suspense>
         <AuthProvider initialUser={initialUser}>
           <ProfileProvider>
             <LoadingOverlayProvider>

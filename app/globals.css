@@ -31,7 +31,7 @@
 
 @font-face {
   font-family: "GangwonEduPower";
-  src: url("/fonts/GangwonEduPower.ttf") format("truetype");
+  src: url("/fonts/GangwonEduPower.woff") format("woff");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -66,6 +66,27 @@
   src: url("/fonts/Griun_YuriDaggu-Rg.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff") format("woff");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
+  font-weight: 700;
   font-display: swap;
 }
 
@@ -451,6 +472,7 @@
   --color-ui-inactive-bg: var(--color-ui-inactive-bg);
 
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-gmarket-sans: "GMarketSans", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
   --font-weight-semibold: 550;
 

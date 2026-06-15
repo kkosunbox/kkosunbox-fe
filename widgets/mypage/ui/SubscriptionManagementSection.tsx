@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import pawsImg from "../assets/subscription-management-paws.png";
+import pawsImg from "../assets/subscription-management-paws.webp";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";

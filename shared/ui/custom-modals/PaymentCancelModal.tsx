@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -22,7 +22,7 @@ export default function PaymentCancelModal({ onClose, onConfirm, onConfirm2 }: P
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         <Image
-          src="/images/modal/custom-modal-09-upper.png"
+          src="/images/modal/custom-modal-09-upper.webp"
           alt="경고 아이콘"
           width={210}
           height={210}
@@ -50,7 +50,7 @@ export default function PaymentCancelModal({ onClose, onConfirm, onConfirm2 }: P
           </button>
 
           <Image
-            src="/images/modal/custom-modal-09-contents.png"
+            src="/images/modal/custom-modal-09-contents.webp"
             alt="결제 취소 시 꼬순박스 구독도 취소하시겠습니까?"
             width={268}
             height={129}

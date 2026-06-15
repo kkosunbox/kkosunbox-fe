@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { HeroSection } from "@/widgets/home/hero";
 import { StatsBar } from "@/widgets/home/stats-bar";
 import { PackagePlansSection } from "@/widgets/home/package-plans";

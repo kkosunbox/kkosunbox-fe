@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
@@ -10,8 +10,8 @@ import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop.png";
-import reviewWriteHeroMobile from "../assets/review-write-hero-mobile.png";
+import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop.webp";
+import reviewWriteHeroMobile from "../assets/review-write-hero-mobile.webp";
 
 const HERO_ALT =
   "우리 아이의 꼬순박스, 만족하셨나요? 남겨주신 리뷰는 더 나은 꼬순박스를 만드는 데 큰 힘이 됩니다.";

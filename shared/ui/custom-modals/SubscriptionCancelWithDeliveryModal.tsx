@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -22,7 +22,7 @@ export default function SubscriptionCancelWithDeliveryModal({ onClose, onConfirm
         style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
       >
         <Image
-          src="/images/modal/custom-modal-08-upper.png"
+          src="/images/modal/custom-modal-08-upper.webp"
           alt="경고 아이콘"
           width={210}
           height={210}
@@ -50,7 +50,7 @@ export default function SubscriptionCancelWithDeliveryModal({ onClose, onConfirm
           </button>
 
           <Image
-            src="/images/modal/custom-modal-08-contents.png"
+            src="/images/modal/custom-modal-08-contents.webp"
             alt="잠깐만요! 받지 못하신 상품이 있어요!"
             width={270}
             height={129}

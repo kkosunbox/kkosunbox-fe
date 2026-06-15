@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, type CSSProperties } from "react";
 import type { PackageTier } from "../lib/packageData";
@@ -48,7 +48,7 @@ export function PackageNutritionGuide({
         <div className="animate-float" style={{ "--float-distance": "-5px" } as CSSProperties}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/please-info-check.png"
+            src="/images/please-info-check.webp"
             alt="영양정보 확인"
             width={130}
             height={55}

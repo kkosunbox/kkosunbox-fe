@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -9,14 +9,14 @@ import {
   MEDIA_MAX_MD_SIZES,
 } from "@/shared/config/breakpoints";
 
-import aboutHeroTitle from "../assets/about-hero-title.png";
-import aboutHeroCollage from "../assets/about-hero-collage.png";
+import aboutHeroTitle from "../assets/about-hero-title.webp";
+import aboutHeroCollage from "../assets/about-hero-collage.webp";
 import aboutFeatureHealthy from "../assets/about-feature-healty.webp";
-import aboutFeatureCircle01 from "../assets/about-feature-circle-01.png";
-import aboutFeatureCircle02 from "../assets/about-feature-circle-02.png";
-import aboutFeatureCircle03 from "../assets/about-feature-circle-03.png";
-import aboutCtaBg from "../assets/about-cta-bg.png";
-import aboutCtaProduct from "../assets/about-cta-product.png";
+import aboutFeatureCircle01 from "../assets/about-feature-circle-01.webp";
+import aboutFeatureCircle02 from "../assets/about-feature-circle-02.webp";
+import aboutFeatureCircle03 from "../assets/about-feature-circle-03.webp";
+import aboutCtaBg from "../assets/about-cta-bg.webp";
+import aboutCtaProduct from "../assets/about-cta-product.webp";
 import aboutCtaMark from "../assets/about-cta-mark.webp";
 import aboutCtaLogo from "../assets/about-cta-logo.webp";
 

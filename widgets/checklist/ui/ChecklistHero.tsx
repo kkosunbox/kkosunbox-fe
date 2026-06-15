@@ -1,9 +1,9 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import { Text } from "@/shared/ui";
 import checklistHeroPcPattern from "../assets/checklist-hero-pc-pattern.webp";
 import checklistHeroMobilePaw from "../assets/checklist-hero-mobile-paw.webp";
 import checklistHeroTitle from "../assets/checklist-hero-title.webp";
-import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.png";
+import checklistHeroTitleMobile from "../assets/checklist-hero-title-mobile.webp";
 
 const MOBILE_PADDING_TOP_PX = 36;
 const DESKTOP_FORM_OVERLAP_PX = 50;

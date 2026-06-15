@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ import {
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
-import homePackagePlansTitle from "../assets/home-package-plans-title-02.png";
+import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
 
 const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 

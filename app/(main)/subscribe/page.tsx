@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProfile } from "@/features/profile/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";

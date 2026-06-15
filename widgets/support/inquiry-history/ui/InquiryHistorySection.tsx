@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import { PawCircleIcon, useModal } from "@/shared/ui";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import { SupportHero } from "@/widgets/support/shared";
-import InquiryPaw from "../assets/inquiry-paw.png";
+import InquiryPaw from "../assets/inquiry-paw.webp";
 
 const ITEMS_PER_PAGE = 4;
 

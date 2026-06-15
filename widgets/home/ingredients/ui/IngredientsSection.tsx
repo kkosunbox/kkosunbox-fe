@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button, ScrollReveal, useModal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import ingredientsDetailHappy from "../assets/ingredients-detail-happy.webp";
-import ingredientsDetailProfitPackage from "../assets/ingredients-detail-profit-package.png";
+import ingredientsDetailProfitPackage from "../assets/ingredients-detail-profit-package.webp";
 
 export default function IngredientsSection() {
   const { isLoggedIn } = useAuth();

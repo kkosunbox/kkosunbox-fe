@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -55,7 +55,7 @@ export default function MemberWithdrawModal({ onClose, onConfirm }: Props) {
 
           {/* Title image */}
           <Image
-            src="/images/modal/custom-modal-07-contents.png"
+            src="/images/modal/custom-modal-07-contents.webp"
             alt="정말로 회원 탈퇴를 하시겠습니까?"
             width={206}
             height={129}

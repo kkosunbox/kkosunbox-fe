@@ -21,13 +21,21 @@ const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 export default function PackagePlansSection() {
   const router = useRouter();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <section className="bg-white py-12 md:py-24 lg:py-20">
+    <section className={`bg-white py-12 md:py-24 lg:py-20 transition-[border-radius] duration-300 ${scrolled ? "rounded-t-[24px]" : ""}`}>
       <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0">
         {/* 섹션 헤더 */}
         <ScrollReveal variant="fade-up">

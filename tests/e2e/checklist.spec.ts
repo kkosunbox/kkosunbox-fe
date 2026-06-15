@@ -2,48 +2,29 @@ import { test, expect } from "@playwright/test";
 import { MOCK_ACCESS_TOKEN } from "../helpers/mockApiServer";
 import { loginAndGoTo } from "../helpers/auth";
 
-test.describe("체크리스트 — 버튼 클릭 가드 (비로그인 → 로그인 유도 모달)", () => {
+test.describe("체크리스트 — 홈 CTA 버튼", () => {
+  // CTA 버튼: "10초 진단하고 우리 아이 맞춤 추천 받기"
+  // 비로그인: /login?next=/checklist 직접 이동 (로그인 유도 모달 없음)
+  // 로그인(체크리스트 없음): openChecklistForm() → 체크리스트 모달 홈에서 오픈
 
-  // ── 홈 페이지 체크리스트 버튼 ────────────────────────────────────
-
-  test("홈 체크리스트 버튼: 비로그인 → 로그인 유도 모달 표시", async ({ page }) => {
+  test("홈 CTA: 비로그인 → /login 이동", async ({ page }) => {
     await page.goto("/");
-
-    // '체크리스트 작성하기' 버튼 클릭
-    await page.getByRole("button", { name: "체크리스트 작성하기" }).click();
-
-    // 로그인 유도 모달이 나타나야 함
-    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 5_000 });
-    await expect(page.getByText("로그인이 필요해요")).toBeVisible();
-    await expect(page.getByText("체크리스트 작성은 로그인 후 이용할 수 있어요.")).toBeVisible();
-
-    // /checklist 로 이동하지 않아야 함
-    await expect(page).toHaveURL("/");
-  });
-
-  test("홈 체크리스트 버튼: 비로그인 모달 → '로그인 하러 가기' 클릭 → /login?next=/checklist", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: "체크리스트 작성하기" }).click();
-    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 5_000 });
-
-    await page.getByRole("button", { name: "로그인 하러 가기" }).click();
-
+    await page.getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" }).first().click();
     await page.waitForURL((url) => url.pathname === "/login", { timeout: 10_000 });
-    expect(new URL(page.url()).searchParams.get("next")).toBe("/checklist");
+    // /checklist 로 이동하지 않아야 함
+    await expect(page).not.toHaveURL("/");
   });
 
-  test("홈 체크리스트 버튼: 비로그인 모달 → '취소' 클릭 → 홈 유지", async ({ page }) => {
+  test("홈 CTA: 비로그인 redirect URL에 next=/checklist 파라미터 포함", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("button", { name: "체크리스트 작성하기" }).click();
-    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 5_000 });
-
-    await page.getByRole("button", { name: "취소" }).click();
-
-    await expect(page.getByRole("dialog")).not.toBeVisible();
-    await expect(page).toHaveURL("/");
+    await page.getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" }).first().click();
+    await page.waitForURL((url) => url.pathname === "/login", { timeout: 10_000 });
+    // 로그인 후 체크리스트 흐름으로 이어지도록 next=/checklist
+    expect(new URL(page.url()).searchParams.get("next")).toBe("/checklist");
+    await expect(page.getByPlaceholder("이메일을 입력하세요")).toBeVisible();
   });
 
-  test("홈 체크리스트 버튼: 로그인 상태 → 모달 없이 /checklist 이동", async ({ page }) => {
+  test("홈 CTA: 로그인(체크리스트 없음) → 체크리스트 모달 오픈", async ({ page }) => {
     await page.context().addCookies([{
       name: "ggosoon-auth",
       value: MOCK_ACCESS_TOKEN,
@@ -53,12 +34,25 @@ test.describe("체크리스트 — 버튼 클릭 가드 (비로그인 → 로그
       secure: false,
       sameSite: "Lax",
     }]);
-
     await page.goto("/");
-    await page.getByRole("button", { name: "체크리스트 작성하기" }).click();
+    await page.getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" }).first().click();
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10_000 });
+  });
 
-    await page.waitForURL("/checklist", { timeout: 10_000 });
-    await expect(page.getByRole("dialog")).not.toBeVisible();
+  test("홈 CTA: 로그인 → 체크리스트 모달 오픈 + 홈(/) URL 유지", async ({ page }) => {
+    await page.context().addCookies([{
+      name: "ggosoon-auth",
+      value: MOCK_ACCESS_TOKEN,
+      domain: "localhost",
+      path: "/",
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    }]);
+    await page.goto("/");
+    await page.getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" }).first().click();
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10_000 });
+    await expect(page).toHaveURL("/");
   });
 
 });
@@ -67,13 +61,14 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
 
   // ── 비로그인 접근 차단 ──────────────────────────────────────────────
 
-  test("비로그인 사용자가 /checklist 접근 → /login?next=/checklist 리다이렉트", async ({ page }) => {
+  test("비로그인 사용자가 /checklist 접근 → /login?next=/ 리다이렉트 (무한루프 방지)", async ({ page }) => {
     await page.goto("/checklist");
     await page.waitForURL((url) => url.pathname === "/login", { timeout: 10_000 });
 
-    // next 파라미터가 /checklist로 설정되어 있어야 함
+    // 체크리스트는 로그인 필수이므로 next=/checklist로 설정하면 로그인 후 다시 로그인 루프 발생
+    // 따라서 next=/ (홈)으로 설정하여 무한 리다이렉트 방지
     const url = new URL(page.url());
-    expect(url.searchParams.get("next")).toBe("/checklist");
+    expect(url.searchParams.get("next")).toBe("/");
   });
 
   test("비로그인 사용자는 체크리스트 폼을 볼 수 없음", async ({ page }) => {
@@ -87,19 +82,17 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
 
   // ── 로그인 후 접근 허용 ─────────────────────────────────────────────
 
-  test("로그인된 사용자는 /checklist 접근 가능", async ({ page }) => {
+  test("로그인된 사용자가 /checklist 접근 → / 로 이동하며 체크리스트 모달 오픈", async ({ page }) => {
     await loginAndGoTo(page, "/checklist");
 
-    // URL이 /checklist여야 함 (리다이렉트 없음)
-    await expect(page).toHaveURL("/checklist");
+    // ChecklistRedirectClient가 router.replace("/")를 호출하여 홈으로 이동
+    await page.waitForURL("/", { timeout: 10_000 });
 
-    // 체크리스트 히어로 섹션이 렌더링 되어야 함
-    await expect(
-      page.getByRole("region", { name: "체크리스트 페이지 소개" })
-    ).toBeVisible({ timeout: 10_000 });
+    // 체크리스트 모달이 열려야 함
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10_000 });
   });
 
-  test("SSR 쿠키로 로그인된 사용자는 /checklist 직접 접근 가능", async ({ page }) => {
+  test("SSR 쿠키로 로그인된 사용자가 /checklist 직접 접근 → / 로 이동하며 체크리스트 모달 오픈", async ({ page }) => {
     await page.context().addCookies([
       {
         name: "ggosoon-auth",
@@ -114,17 +107,18 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
 
     await page.goto("/checklist");
 
-    // 리다이렉트 없이 체크리스트 페이지에 머물러야 함
-    await expect(page).toHaveURL("/checklist");
-    await expect(
-      page.getByRole("region", { name: "체크리스트 페이지 소개" })
-    ).toBeVisible({ timeout: 10_000 });
+    // ChecklistRedirectClient가 router.replace("/")를 호출하여 홈으로 이동
+    await page.waitForURL("/", { timeout: 10_000 });
+
+    // 체크리스트 모달이 열려야 함
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10_000 });
   });
 
   // ── ?next= 연동 ──────────────────────────────────────────────────────
 
-  test("/login?next=/checklist 에서 로그인 → /checklist 로 리다이렉트", async ({ page }) => {
-    // 비로그인 상태에서 체크리스트 접근 시 next 파라미터가 보존되어 로그인 후 되돌아와야 함
+  test("/checklist 비로그인 접근 후 로그인 → / 로 이동 (무한루프 방지용 next=/)", async ({ page }) => {
+    // 비로그인 상태에서 /checklist 접근 → /login?next=/ 으로 리다이렉트
+    // (next=/checklist 이면 로그인 후 다시 /checklist → 로그인 루프 발생)
     await page.goto("/checklist");
     await page.waitForURL((url) => url.pathname === "/login", { timeout: 10_000 });
 
@@ -137,11 +131,8 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
     );
     await page.getByRole("button", { name: "로그인", exact: true }).click();
 
-    // next=/checklist 이므로 /checklist 로 이동해야 함
-    await page.waitForURL("/checklist", { timeout: 15_000 });
-    await expect(
-      page.getByRole("region", { name: "체크리스트 페이지 소개" })
-    ).toBeVisible({ timeout: 10_000 });
+    // next=/ 이므로 홈(/)으로 이동 — 무한 리다이렉트 방지 정책
+    await page.waitForURL("/", { timeout: 15_000 });
   });
 
 });

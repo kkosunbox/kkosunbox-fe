@@ -4,7 +4,7 @@ import {
   COMPARE_PACKAGES,
   tierFromSubscriptionPlan,
   tierLabel,
-} from "./packageData";
+} from "@/entities/package";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
 function HeartIcon({ filled }: { filled: boolean }) {

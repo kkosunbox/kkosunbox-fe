@@ -14,6 +14,7 @@ import reviewsTitleMobile from "../assets/reviews-title-mobile.webp";
 import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
+import reviewsProfile04 from "../assets/reviews-profile-04.webp";
 import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [
@@ -45,6 +46,15 @@ const REVIEWS = [
       "일반 간식 주면 꼭 항상 반 정도 남기던 애인데 이건 끝까지 다 먹어요. 특히 종류가 다양해서 질려하지 않는 게 가장 좋아요. 가격 대비 만족도가 생각보다 훨씬 높네요.",
     rating: 5,
     profile: reviewsProfile03,
+  },
+  {
+    name: "루루",
+    subscriptionBadge: "구독 4개월",
+    subscription: "2026.04.20 (구독 2개월, 스탠다드)",
+    review:
+      "처음엔 반신반의하면서 시작했는데 지금은 간식 시간만 되면 눈빛이 완전 달라져요ㅋㅋ 배송도 깔끔하고 신선한 느낌이 확실히 있어서 '아 이건 다르다' 싶었습니다. 루루가 너무 좋아해서 앞으로도 꾸준히 구독할 의향 있어요~",
+    rating: 5,
+    profile: reviewsProfile04,
   },
 ] as const;
 
@@ -222,14 +232,12 @@ function ReviewsCarousel() {
 
   const displayIndex = Math.min(startIndex, maxStart);
   const stepPx = metrics.slide > 0 ? metrics.slide + metrics.gap : 0;
-  const canPrev = displayIndex > 0;
-  const canNext = displayIndex < maxStart;
 
   return (
     <div className="mx-auto flex w-full max-w-[1107px] items-center justify-between gap-3 md:gap-4 lg:gap-6">
       <CarouselPrevButton
-        disabled={!canPrev}
-        onClick={() => setStartIndex(Math.max(0, displayIndex - 1))}
+        disabled={false}
+        onClick={() => setStartIndex(displayIndex === 0 ? maxStart : displayIndex - 1)}
       />
       <div ref={viewportRef} className="min-w-0 w-full max-w-[1011px] overflow-hidden pt-[60px] max-md:max-w-[640px] max-md:mx-auto">
         <div
@@ -249,8 +257,8 @@ function ReviewsCarousel() {
         </div>
       </div>
       <CarouselNextButton
-        disabled={!canNext}
-        onClick={() => setStartIndex(Math.min(maxStart, displayIndex + 1))}
+        disabled={false}
+        onClick={() => setStartIndex(displayIndex === maxStart ? 0 : displayIndex + 1)}
       />
     </div>
   );
@@ -319,7 +327,7 @@ export default function ReviewsSection() {
 
         <ScrollReveal variant="fade-up" delay={300} className="mt-[34px] w-full md:mt-[64px] lg:mt-[94px]">
           <div className="md:hidden mx-auto flex w-full max-w-[360px] flex-col gap-[84px] pt-[60px]">
-            {REVIEWS.slice(0, 3).map((review, i) => (
+            {REVIEWS.map((review, i) => (
               <ReviewCard key={`${review.name}-mobile-${i}`} review={review} />
             ))}
           </div>

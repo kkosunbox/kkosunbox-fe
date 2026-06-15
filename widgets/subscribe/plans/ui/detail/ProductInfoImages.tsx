@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
-import type { PackageTier } from "../packageData";
+import type { PackageTier } from "@/entities/package";
 
 interface ProductInfoImagesProps {
   variant: "mobile" | "desktop";

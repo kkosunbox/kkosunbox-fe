@@ -28,9 +28,9 @@ export default function Home() {
     <div className="pt-[var(--banner-height)]">
       <div className="sticky top-[var(--banner-height)] z-0">
         <HeroSection />
+        <StatsBar />
       </div>
       <div className="relative z-[1]">
-        <StatsBar />
         <PackagePlansSection />
         <WhyGallerySection />
         <ReviewsSection />

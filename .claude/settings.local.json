@@ -212,7 +212,9 @@
       "Bash(echo \"=== playwright exit: $? ===\")",
       "Bash(git show *)",
       "Bash(pnpm test:unit)",
-      "Bash(pnpm depcruise *)"
+      "Bash(pnpm depcruise *)",
+      "Bash(git remote *)",
+      "Bash(git log *)"
     ]
   }
 }

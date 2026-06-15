@@ -147,21 +147,28 @@ test.describe("애견 프로필 수정 (마이페이지 정보변경)", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe("구독 변경 (/mypage/subscription/change)", () => {
-  test("구독 없는 유저 접근 → /mypage/subscription 리다이렉트", async ({ page }) => {
+  test("구독 없는 유저 접근 → 플랜 선택 화면 렌더링 (리다이렉트 없음)", async ({ page }) => {
     await page.goto("/login");
     await page.getByPlaceholder("이메일을 입력하세요").fill(NO_PROFILE_CREDENTIALS.email);
     await page.getByPlaceholder("비밀번호를 입력하세요").fill(NO_PROFILE_CREDENTIALS.password);
     await page.getByRole("button", { name: "로그인", exact: true }).click();
     await page.waitForURL("/", { timeout: 15_000 });
     await page.goto("/mypage/subscription/change");
-    await page.waitForURL("/mypage/subscription", { timeout: 10_000 });
+    // 리다이렉트 없이 현재 페이지에 머물러야 함
+    await expect(page).toHaveURL("/mypage/subscription/change");
+    // 플랜 선택 UI (히어로 이미지)가 표시되어야 함
+    // 데스크탑/모바일 레이아웃 양쪽에 동일 alt 이미지가 존재하므로 .first()
+    await expect(
+      page.getByAltText("기존 구독을 변경하려면 새로운 구독을 선택하세요").last()
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("활성 구독 유저 접근 → 플랜 변경 화면 렌더링", async ({ page }) => {
     await loginAndGoTo(page, "/mypage/subscription/change");
-    // 히어로 이미지의 alt 텍스트로 페이지 진입 확인
+    // 히어로 이미지의 alt 텍스트로 페이지 진입 확인 (마침표 없음)
+    // 데스크탑/모바일 레이아웃 양쪽에 동일 alt 이미지가 존재하므로 .first()
     await expect(
-      page.getByAltText("기존 구독을 변경하려면 새로운 구독을 선택하세요.")
+      page.getByAltText("기존 구독을 변경하려면 새로운 구독을 선택하세요").last()
     ).toBeVisible({ timeout: 10_000 });
   });
 });

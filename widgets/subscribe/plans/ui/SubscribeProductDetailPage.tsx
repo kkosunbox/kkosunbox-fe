@@ -4,7 +4,6 @@ import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
-import { TIER_DETAIL_HERO_IMAGES } from "./packageThumbnails";
 import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.png";
 import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.png";
 import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.webp";
@@ -21,12 +20,13 @@ import subscribeItem03BB from "@/widgets/subscribe/plans/assets/subscribe-item-0
 import subscribeItem03C from "@/widgets/subscribe/plans/assets/subscribe-item-03-C.webp";
 import subscribeItem03D from "@/widgets/subscribe/plans/assets/subscribe-item-03-D.webp";
 import {
+  TIER_DETAIL_HERO_IMAGES,
   comparePlansForDisplayOrder,
   packageThemeForPlan,
   PACKAGES,
   tierFromSubscriptionPlan,
   type PackageTier,
-} from "./packageData";
+} from "@/entities/package";
 import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import Stars from "./reviews/Stars";

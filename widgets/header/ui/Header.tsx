@@ -471,7 +471,7 @@ function ProfileDropdown({
   };
 
   return (
-    <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-72 rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden">
+    <div className="absolute right-0 top-[calc(100%+23px)] z-50 w-72 rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden">
       <div className="flex flex-col pb-[6px]">
         {/* 프로필 헤더 — 그라디언트 배경 */}
         <div

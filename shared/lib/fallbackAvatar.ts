@@ -3,7 +3,7 @@ const STORAGE_KEY = "ggb-fallback-avatar-idx";
 
 export const FALLBACK_AVATAR_PATHS = Array.from(
   { length: FALLBACK_COUNT },
-  (_, i) => `/images/fallback-user/type-${String.fromCharCode(97 + i)}.png`
+  (_, i) => `/images/fallback-user/type-${String.fromCharCode(97 + i)}.webp`
 );
 
 /** 비로그인 SSR 스냅샷 — 하이드레이션 후 localStorage 기반 값으로 교체 */

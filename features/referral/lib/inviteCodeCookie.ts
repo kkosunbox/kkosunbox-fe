@@ -39,3 +39,22 @@ export function clearStoredInviteCode(): void {
   if (typeof document === "undefined") return;
   document.cookie = `${INVITE_CODE_COOKIE}=; Max-Age=0; path=/`;
 }
+
+export const INVITE_SLUG_COOKIE = "ggosoon-ref-slug";
+
+/** 저장된 초대 slug를 반환한다. 없거나 SSR 환경이면 null. */
+export function getStoredInviteSlug(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(
+    new RegExp(`(?:^|;\\s*)${INVITE_SLUG_COOKIE}=([^;]*)`),
+  );
+  if (!match) return null;
+  const slug = decodeURIComponent(match[1]);
+  return slug.length > 0 && slug.length <= 128 ? slug : null;
+}
+
+/** 저장된 초대 slug를 삭제한다. clearStoredInviteCode()와 함께 호출한다. */
+export function clearStoredInviteSlug(): void {
+  if (typeof document === "undefined") return;
+  document.cookie = `${INVITE_SLUG_COOKIE}=; Max-Age=0; path=/`;
+}

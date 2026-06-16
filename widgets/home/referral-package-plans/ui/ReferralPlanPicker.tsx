@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
 import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import {
@@ -19,7 +18,7 @@ import {
   PackageNutritionGuide,
   type PackageTier,
 } from "@/entities/package";
-import { usePlanRatings } from "@/features/review";
+import { useReferral } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
@@ -28,26 +27,20 @@ const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
 /** 데스크탑 카드 열·모바일 네비 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
 const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
-/** 이미지 blur+opacity crossfade에 사용할 전체 티어 목록 */
-const ALL_TIERS: PackageTier[] = ["Premium", "Standard", "Basic"];
+const TIER_RATINGS: Record<PackageTier, number> = {
+  Premium: 4.7,
+  Standard: 4.6,
+  Basic: 4.9,
+};
 
-/** 카드 레이아웃 애니메이션 타이밍 — Material standard easing */
-const LAYOUT_TRANSITION = { duration: 0.3, ease: [0.4, 0, 0.2, 1] } as const;
-
-/** SVG 브릿지 페이드인 지연 (레이아웃 애니메이션 완료 후 여유) */
-const SVG_REVEAL_DELAY_MS = 380;
+const TIER_BADGE_BG: Record<PackageTier, string> = {
+  Premium: "var(--color-accent-orange)",
+  Standard: "var(--color-plus)",
+  Basic: "var(--color-basic)",
+};
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
-}
-
-/** 이미지 전환 인라인 스타일 — blur + opacity crossfade */
-function crossfadeStyle(isActive: boolean): React.CSSProperties {
-  return {
-    opacity: isActive ? 1 : 0,
-    filter: isActive ? "blur(0px)" : "blur(6px)",
-    transition: "opacity 350ms ease, filter 350ms ease",
-  };
 }
 
 /** 모바일 좌우 네비 버튼용 셰브론 */
@@ -126,7 +119,7 @@ export interface PlanPickerProps {
   mobileSlot?: (tier: PackageTier, onTierSelect: (tier: PackageTier) => void, order: PackageTier[]) => ReactNode;
 }
 
-export default function PlanPicker({
+export default function ReferralPlanPicker({
   plans,
   initialSelectedTier = null,
   isCurrentPlan,
@@ -139,7 +132,12 @@ export default function PlanPicker({
     () => [...plans].sort(comparePlansForDisplayOrder),
     [plans],
   );
-  const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
+
+  const { discountRate } = useReferral();
+  const additionalDiscountPct = Math.round(discountRate * 100);
+  const referralPrice = (monthlyPrice: number) => Math.round(monthlyPrice * (1 - discountRate));
+  const combinedDiscountPct = (plan: SubscriptionPlanDto) =>
+    Math.round((1 - referralPrice(plan.monthlyPrice) / plan.originalPrice) * 100);
 
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
     initialSelectedTier ?? summaryOrder[0],
@@ -148,6 +146,7 @@ export default function PlanPicker({
   /** 왼쪽 패널 렌더링용 — 항상 선택된 tier 표시 (미선택 상태 없음) */
   const displayTier = selectedTier;
 
+  const activeExplain = PACKAGE_EXPLAIN_BY_TIER[displayTier];
   const activePlan = planForTier(sortedPlans, displayTier);
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
@@ -161,28 +160,7 @@ export default function PlanPicker({
     tabletCardColumnRef,
     tabletCardRefs,
     svgBg,
-    refreshBridge,
   } = useSvgBridge(summaryOrder, displayTier);
-
-  // SVG 브릿지 — selectedTier 변경 시 숨기고 레이아웃 정착 후 재측정·페이드인
-  const [svgBridgeVisible, setSvgBridgeVisible] = useState(true);
-  const isFirstRenderRef = useRef(true);
-
-  useEffect(() => {
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
-    const hideTimer = setTimeout(() => setSvgBridgeVisible(false), 0);
-    const showTimer = setTimeout(() => {
-      refreshBridge();
-      setSvgBridgeVisible(true);
-    }, SVG_REVEAL_DELAY_MS);
-    return () => {
-      clearTimeout(hideTimer);
-      clearTimeout(showTimer);
-    };
-  }, [selectedTier, refreshBridge]);
 
   /** 모바일 — 이전(-1)/다음(+1) 패키지로 이동 */
   function goToTier(direction: -1 | 1) {
@@ -236,9 +214,6 @@ export default function PlanPicker({
     );
   }
 
-  // 기본 선택 티어 — priority 이미지 결정용
-  const defaultTier = initialSelectedTier ?? summaryOrder[0];
-
   return (
     <div className="mx-auto w-full max-w-content max-md:px-5 md:px-6 lg:px-0">
       <ScrollReveal variant="fade-up" delay={150}>
@@ -256,8 +231,6 @@ export default function PlanPicker({
                 width: svgBg.width,
                 height: svgBg.height,
                 filter: "drop-shadow(0px 4px 8px #00000033)",
-                opacity: svgBridgeVisible ? 1 : 0,
-                transition: "opacity 200ms ease",
               }}
               viewBox={`0 0 ${svgBg.width} ${svgBg.height}`}
             >
@@ -280,21 +253,17 @@ export default function PlanPicker({
                     onClick={handlePrimaryClick}
                     style={{ cursor: activePrimaryButton && !activePrimaryButton.disabled ? "pointer" : undefined }}
                   >
-                    {ALL_TIERS.map((tier) => {
-                      const pkg = PACKAGES.find((p) => p.tier === tier);
-                      return (
-                        <Image
-                          key={tier}
-                          src={TIER_DETAIL_HERO_IMAGES[tier]}
-                          alt={`${pkg?.name ?? tier} 대표 이미지`}
-                          fill
-                          className="object-cover"
-                          sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
-                          priority={tier === defaultTier}
-                          style={crossfadeStyle(displayTier === tier)}
-                        />
-                      );
-                    })}
+                    {activePkg ? (
+                      <Image
+                        key={displayTier}
+                        src={TIER_DETAIL_HERO_IMAGES[displayTier]}
+                        alt={`${activePkg.name} 대표 이미지`}
+                        fill
+                        className="object-cover transition-opacity duration-500"
+                        sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
+                        priority
+                      />
+                    ) : null}
                     {activeIsCurrentPlan ? (
                       <div className="absolute left-4 top-4 z-10">
                         <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-body-14-sb-tight text-white">
@@ -302,6 +271,12 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    <span
+                      className="absolute left-3 top-3 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
+                      style={{ background: TIER_BADGE_BG[displayTier] }}
+                    >
+                      {additionalDiscountPct}%추가할인
+                    </span>
                   </div>
 
                   {/* 좌우 네비 — 이전/다음 패키지 (이미지 세로 중앙) */}
@@ -355,13 +330,13 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {activePlan.discountRate}%
+                            {combinedDiscountPct(activePlan)}%
                           </span>
                           <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
                             {formatMonthlyPrice(activePlan.originalPrice)}
                           </span>
                           <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(activePlan.monthlyPrice)}
+                            {formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))}
                           </span>
                         </div>
                       </div>
@@ -395,21 +370,15 @@ export default function PlanPicker({
               }}
               onClick={handlePrimaryClick}
             >
-              {ALL_TIERS.map((tier) => {
-                const explain = PACKAGE_EXPLAIN_BY_TIER[tier];
-                return (
-                  <Image
-                    key={tier}
-                    src={explain.src}
-                    alt={explain.alt}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
-                    priority={tier === defaultTier}
-                    style={crossfadeStyle(displayTier === tier)}
-                  />
-                );
-              })}
+              <Image
+                key={displayTier}
+                src={activeExplain.src}
+                alt={activeExplain.alt}
+                fill
+                className="object-cover transition-opacity duration-500"
+                sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
+                priority
+              />
               {activeIsCurrentPlan ? (
                 <div className="absolute left-4 top-4 z-10">
                   <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-body-14-sb-tight text-white">
@@ -445,10 +414,8 @@ export default function PlanPicker({
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
 
               return (
-                <motion.button
+                <button
                   key={tier}
-                  layout="position"
-                  transition={LAYOUT_TRANSITION}
                   ref={(el) => { cardRefs.current[i] = el; }}
                   type="button"
                   disabled={!plan}
@@ -468,13 +435,19 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    <span
+                      className="absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
+                      style={{ background: TIER_BADGE_BG[tier] }}
+                    >
+                      {additionalDiscountPct}%추가할인
+                    </span>
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",
                         isSelected
-                          ? "max-md:text-subtitle-17-eb-lh24 md:text-subtitle-18-eb"
+                          ? "max-md:text-subtitle-17-eb-lh24 md:text-subtitle-20-eb"
                           : "max-md:text-subtitle-17-m-lh24 md:text-subtitle-18-m",
                       ].join(" ")}
                     >
@@ -484,7 +457,7 @@ export default function PlanPicker({
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
-                            {plan.discountRate}%
+                            {combinedDiscountPct(plan)}%
                           </span>
                           <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
                             {formatMonthlyPrice(plan.originalPrice)}
@@ -495,18 +468,18 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(plan.monthlyPrice)}
+                            {formatMonthlyPrice(referralPrice(plan.monthlyPrice))}
                           </span>
                         </div>
-                        {planRatings[plan.id] > 0 ? (
-                          <PlanRatingStars rating={planRatings[plan.id]} size={16} />
+                        {TIER_RATINGS[tier] > 0 ? (
+                          <PlanRatingStars rating={TIER_RATINGS[tier]} size={16} />
                         ) : null}
                       </>
                     ) : (
                       <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
                     )}
                   </div>
-                </motion.button>
+                </button>
               );
             })}
           </div>
@@ -525,10 +498,8 @@ export default function PlanPicker({
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
 
               return (
-                <motion.button
+                <button
                   key={tier}
-                  layout="position"
-                  transition={LAYOUT_TRANSITION}
                   ref={(el) => { tabletCardRefs.current[i] = el; }}
                   type="button"
                   disabled={!plan}
@@ -548,6 +519,12 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    <span
+                      className="absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
+                      style={{ background: TIER_BADGE_BG[tier] }}
+                    >
+                      {additionalDiscountPct}%추가할인
+                    </span>
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
                     <p
@@ -562,7 +539,7 @@ export default function PlanPicker({
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {plan.discountRate}%
+                            {combinedDiscountPct(plan)}%
                           </span>
                           <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
                             {formatMonthlyPrice(plan.originalPrice)}
@@ -578,18 +555,18 @@ export default function PlanPicker({
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >
-                            {formatMonthlyPrice(plan.monthlyPrice)}
+                            {formatMonthlyPrice(referralPrice(plan.monthlyPrice))}
                           </span>
                         </div>
-                        {planRatings[plan.id] > 0 ? (
-                          <PlanRatingStars rating={planRatings[plan.id]} size={16} />
+                        {TIER_RATINGS[tier] > 0 ? (
+                          <PlanRatingStars rating={TIER_RATINGS[tier]} size={16} />
                         ) : null}
                       </>
                     ) : (
                       <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
                     )}
                   </div>
-                </motion.button>
+                </button>
               );
             })}
           </div>

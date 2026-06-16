@@ -1,6 +1,7 @@
 import { Header } from "@/widgets/header";
 import { FooterSection } from "@/widgets/footer";
 import ChecklistFormModal from "@/widgets/checklist/ui/ChecklistFormModal";
+import { ReferralProvider } from "@/features/referral/model";
 // import { CursorPaw } from "@/shared/ui";
 
 export default function MainLayout({
@@ -9,12 +10,14 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh flex-col" suppressHydrationWarning>
-      {/* <CursorPaw /> */}
-      <Header />
-      <ChecklistFormModal />
-      <main className="flex flex-1 flex-col">{children}</main>
-      <FooterSection />
-    </div>
+    <ReferralProvider>
+      <div className="flex min-h-dvh flex-col" suppressHydrationWarning>
+        {/* <CursorPaw /> */}
+        <Header />
+        <ChecklistFormModal />
+        <main className="flex flex-1 flex-col">{children}</main>
+        <FooterSection />
+      </div>
+    </ReferralProvider>
   );
 }

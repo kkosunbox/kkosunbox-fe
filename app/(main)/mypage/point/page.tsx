@@ -61,7 +61,8 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
 const DUMMY_BALANCE = { totalAmount: 2270, monthlyAmount: 800, year: 2026, month: 6 };
 const DUMMY_REFERRAL: MyReferralCode = {
   referralCode: "TEST123",
-  referralLink: "http://kkosunbox.com/ds/TEST123",
+  slug: null,
+  referralLink: null,
 };
 
 export default async function PointPage() {

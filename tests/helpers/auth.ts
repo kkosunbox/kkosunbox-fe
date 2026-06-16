@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { TEST_CREDENTIALS, NO_PROFILE_CREDENTIALS } from "./mockApiServer";
+import { TEST_CREDENTIALS, NO_PROFILE_CREDENTIALS, INFLUENCER_CREDENTIALS } from "./mockApiServer";
 
 type Credentials = { email: string; password: string };
 
@@ -24,4 +24,9 @@ export async function loginAndGoTo(page: Page, path: string): Promise<void> {
 /** 구독 이력이 없는 프로필 미보유 계정으로 로그인하고 홈에 도달할 때까지 기다린다. */
 export async function loginAsNoProfile(page: Page): Promise<void> {
   await login(page, NO_PROFILE_CREDENTIALS);
+}
+
+/** 인플루언서 계정(isInfluencer: true)으로 로그인하고 홈에 도달할 때까지 기다린다. */
+export async function loginAsInfluencer(page: Page): Promise<void> {
+  await login(page, INFLUENCER_CREDENTIALS);
 }

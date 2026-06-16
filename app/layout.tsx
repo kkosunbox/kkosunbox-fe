@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import { Ms_Madi, Give_You_Glory } from "next/font/google";
+import { Ms_Madi, Give_You_Glory, Gantari } from "next/font/google";
 import Script from "next/script";
 import { Suspense } from "react";
 import "./globals.css";
@@ -19,6 +19,12 @@ const giveYouGlory = Give_You_Glory({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-give-you-glory",
+});
+
+const gantari = Gantari({
+  weight: ["700"],
+  subsets: ["latin"],
+  variable: "--font-gantari",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -70,7 +76,7 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable}`}>
+      <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable} ${gantari.variable}`}>
         {GA_ID && (
           <>
             <Script

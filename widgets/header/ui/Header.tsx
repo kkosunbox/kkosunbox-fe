@@ -595,7 +595,7 @@ export default function Header() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const isTransparentRoute = pathname === "/" || pathname === "/about";
+  const isTransparentRoute = pathname === "/" || pathname === "/about" || pathname.startsWith("/ref/");
   const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered;
   const closeMenu = () => setIsMenuOpen(false);
 

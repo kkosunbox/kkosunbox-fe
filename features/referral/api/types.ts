@@ -1,8 +1,19 @@
 // ── 레퍼럴 코드 ───────────────────────────────────────────────────
 
 export interface MyReferralCode {
-  referralCode: string; // 나의 레퍼럴 코드
-  referralLink: string; // 클라이언트가 공유에 사용할 링크
+  referralCode: string;
+  slug: string | null;       // 초대 페이지 slug (미설정 시 null)
+  referralLink: string | null; // 레퍼럴 링크 (slug 설정 시 /ref/{slug}, 미설정 시 null)
+}
+
+// ── 인플루언서 초대 페이지 (공개) ─────────────────────────────────
+
+export interface ReferralPageResponse {
+  referralCode: string;
+  displayName: string;
+  profileImageUrl: string | null;
+  discountRate: number;
+  isActive: boolean;
 }
 
 // ── 초대 코드 적용 가능 여부 ──────────────────────────────────────

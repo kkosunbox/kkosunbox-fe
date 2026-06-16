@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
-import { HeroSection } from "@/widgets/home/hero";
+import { HomeHero } from "@/widgets/home/hero";
 import { StatsBar } from "@/widgets/home/stats-bar";
-import { PackagePlansSection } from "@/widgets/home/package-plans";
+import { HomePackagePlansSection } from "@/widgets/home/package-plans";
 import { WhyGallerySection } from "@/widgets/home/why-gallery";
 import { ReviewsSection } from "@/widgets/home/reviews";
 
@@ -27,11 +27,11 @@ export default function Home() {
   return (
     <div className="pt-[var(--banner-height)]">
       <div className="sticky top-[var(--banner-height)] z-0">
-        <HeroSection />
+        <HomeHero />
         <StatsBar />
       </div>
       <div className="relative z-[1]">
-        <PackagePlansSection />
+        <HomePackagePlansSection />
         <WhyGallerySection />
         <ReviewsSection />
       </div>

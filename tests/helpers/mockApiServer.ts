@@ -55,6 +55,42 @@ export const MOCK_VALID_COUPON_CODE = "TEST10";
 // 이 외의 코드는 /v1/referral/validate가 400 REFERRAL_CODE_INVALID로 응답한다.
 export const MOCK_VALID_REFERRAL_CODE = "FRIEND10";
 
+// 인플루언서 계정 — isInfluencer: true, /mypage/point 접근 가능
+export const INFLUENCER_CREDENTIALS = {
+  email: "influencer@example.com",
+  password: "Test1234!",
+};
+export const MOCK_INFLUENCER_ACCESS_TOKEN = "mock-influencer-access-token";
+const MOCK_INFLUENCER_REFRESH_TOKEN = "mock-influencer-refresh-token";
+
+// 레퍼럴 랜딩 페이지 슬러그
+export const MOCK_ACTIVE_SLUG = "test-influencer";
+export const MOCK_INACTIVE_SLUG = "inactive-influencer";
+
+// GET /v1/referral/pages/{slug} 응답
+export const MOCK_REFERRAL_PAGE = {
+  referralCode: MOCK_VALID_REFERRAL_CODE,
+  displayName: "테스트인플루언서",
+  profileImageUrl: null as string | null,
+  discountRate: 0.1,
+  isActive: true,
+};
+
+// GET /v1/referral/me 응답 (인플루언서 전용)
+export const MOCK_MY_REFERRAL_CODE = {
+  referralCode: MOCK_VALID_REFERRAL_CODE,
+  slug: MOCK_ACTIVE_SLUG,
+  referralLink: `https://dev.kkosunbox.com/ref/${MOCK_ACTIVE_SLUG}`,
+};
+
+// GET /v1/points/balance 응답
+export const MOCK_POINT_BALANCE = {
+  totalAmount: 2270,
+  monthlyAmount: 800,
+  year: 2026,
+  month: 6,
+};
+
 export const MOCK_SUBSCRIPTION = {
   id: 1,
   userId: 1,
@@ -139,6 +175,19 @@ const MOCK_NO_PROFILE_USER = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
 
+const MOCK_INFLUENCER_USER = {
+  id: 3,
+  email: INFLUENCER_CREDENTIALS.email,
+  status: "active",
+  lastLoginAt: "2026-01-01T00:00:00.000Z",
+  isAllowTerms: true,
+  isAllowPrivacy: true,
+  isAllowMarketing: false,
+  isInfluencer: true,
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+};
+
 function readBody(req: IncomingMessage): Promise<unknown> {
   return new Promise((resolve) => {
     let raw = "";
@@ -201,6 +250,12 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
           refreshToken: MOCK_NO_PROFILE_REFRESH_TOKEN,
           user: MOCK_NO_PROFILE_USER,
         });
+      } else if (body.email === INFLUENCER_CREDENTIALS.email && body.password === INFLUENCER_CREDENTIALS.password) {
+        ok(res, {
+          accessToken: MOCK_INFLUENCER_ACCESS_TOKEN,
+          refreshToken: MOCK_INFLUENCER_REFRESH_TOKEN,
+          user: MOCK_INFLUENCER_USER,
+        });
       } else {
         // loginAction treats 401 as "아이디 또는 비밀번호가 올바르지 않습니다."
         err(res, 401, "UNAUTHORIZED", "Invalid credentials");
@@ -215,6 +270,8 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
         ok(res, MOCK_USER);
       } else if (auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}`) {
         ok(res, MOCK_NO_PROFILE_USER);
+      } else if (auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`) {
+        ok(res, MOCK_INFLUENCER_USER);
       } else {
         err(res, 401, "UNAUTHORIZED");
       }
@@ -232,6 +289,11 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
         ok(res, {
           accessToken: MOCK_NO_PROFILE_ACCESS_TOKEN,
           refreshToken: MOCK_NO_PROFILE_REFRESH_TOKEN,
+        });
+      } else if (body.refreshToken === MOCK_INFLUENCER_REFRESH_TOKEN) {
+        ok(res, {
+          accessToken: MOCK_INFLUENCER_ACCESS_TOKEN,
+          refreshToken: MOCK_INFLUENCER_REFRESH_TOKEN,
         });
       } else {
         err(res, 401, "UNAUTHORIZED");
@@ -339,6 +401,55 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
         auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}`
       ) {
         ok(res, { plans: MOCK_PLANS });
+      } else {
+        err(res, 401, "UNAUTHORIZED");
+      }
+      return;
+    }
+
+    // GET /v1/referral/pages/{slug} — 인플루언서 초대 페이지 (공개 API)
+    // 특정 slug만 처리하고 나머지는 404
+    if (method === "GET" && url === `/v1/referral/pages/${MOCK_ACTIVE_SLUG}`) {
+      ok(res, MOCK_REFERRAL_PAGE);
+      return;
+    }
+    if (method === "GET" && url === `/v1/referral/pages/${MOCK_INACTIVE_SLUG}`) {
+      ok(res, { ...MOCK_REFERRAL_PAGE, isActive: false });
+      return;
+    }
+    if (method === "GET" && url.startsWith("/v1/referral/pages/")) {
+      err(res, 404, "INFLUENCER_PROFILE_NOT_FOUND");
+      return;
+    }
+
+    // GET /v1/referral/me — 내 레퍼럴 코드 (인플루언서 전용)
+    if (method === "GET" && url === "/v1/referral/me") {
+      const auth = req.headers.authorization ?? "";
+      if (auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`) {
+        ok(res, MOCK_MY_REFERRAL_CODE);
+      } else {
+        err(res, 403, "FORBIDDEN");
+      }
+      return;
+    }
+
+    // GET /v1/points/balance — 포인트 잔액 (인플루언서 토큰만 정상 응답)
+    // 반드시 /v1/points 보다 앞에 위치해야 한다
+    if (method === "GET" && url.startsWith("/v1/points/balance")) {
+      const auth = req.headers.authorization ?? "";
+      if (auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`) {
+        ok(res, MOCK_POINT_BALANCE);
+      } else {
+        err(res, 401, "UNAUTHORIZED");
+      }
+      return;
+    }
+
+    // GET /v1/points — 포인트 적립/사용 내역 (인플루언서 토큰만 정상 응답)
+    if (method === "GET" && url.startsWith("/v1/points")) {
+      const auth = req.headers.authorization ?? "";
+      if (auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`) {
+        ok(res, { items: [], total: 0, page: 1, limit: 200 });
       } else {
         err(res, 401, "UNAUTHORIZED");
       }

@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { CheckCircleIcon } from "@/shared/ui";
 import {
   PACKAGES,
   tierFromSubscriptionPlan,
@@ -13,55 +13,56 @@ import {
 } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
-import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
-import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
+import { useReferral } from "@/features/referral/model";
+import { PlanTierDots } from "@/widgets/package-plans";
+import ReferralPlanPicker from "./ReferralPlanPicker";
+import NimIRecommendSvg from "./NimIRecommendSvg";
+import ReferralTitleSvg from "./ReferralTitleSvg";
 
-const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
+const TIER_BADGE_BG: Record<PackageTier, string> = {
+  Premium: "var(--color-accent-orange)",
+  Standard: "var(--color-plus)",
+  Basic: "var(--color-basic)",
+};
 
-export default function PackagePlansSection() {
+export default function ReferralPackagePlansSection() {
   const router = useRouter();
+  const { influencerName, discountRate } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
+    getSubscriptionPlans()
+      .then((res) => setApiPlans(res.plans))
+      .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 0);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const additionalDiscountPct = Math.round(discountRate * 100);
 
   return (
-    <section className={`bg-white py-12 md:py-24 lg:py-20 transition-[border-radius] duration-300 ${scrolled ? "rounded-t-[24px]" : ""}`}>
+    <section className="bg-white py-12 md:py-20">
       <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0">
         {/* 섹션 헤더 */}
-        <ScrollReveal variant="fade-up">
-          <Image
-            src={homePackagePlansTitle}
-            alt="우리 아이에게 맞는 간식 선택 후 구독하세요!"
-            className="mx-auto h-auto w-full max-w-[300px] md:max-w-[352px]"
-            sizes="(min-width: 768px) 352px, 300px"
-            priority
-          />
-        </ScrollReveal>
-        <ScrollReveal variant="fade-up" delay={150}>
-          <Text
-            variant="subtitle-18-m"
-            mobileVariant="body-14-m"
-            className="mt-4 mb-10 md:mb-12 lg:mb-14 text-center text-[var(--color-text-warm)] max-md:leading-[20px]"
-          >
-            체크리스트 후 우리 아이에게 적절한{" "}
-            <br className="md:hidden lg:hidden" />
-            패키지 박스를 추천받을 수 있습니다!
-          </Text>
-        </ScrollReveal>
+        <div className="mb-8 text-center md:mb-10 lg:mb-12">
+          {/* Row 1: [인플루언서이름] + 님이 추천하는 꼬순박스 SVG */}
+          <div className="flex items-center justify-center gap-2">
+            <span
+              className="flex items-center max-md:text-[22px] text-[32px] font-bold leading-[1.5] tracking-[-0.04em] text-[var(--color-text-discount)]"
+              style={{ fontFamily: "var(--font-gmarket-sans)" }}
+            >
+              [{influencerName}]
+            </span>
+            <NimIRecommendSvg className="max-md:h-[18px] h-[26px] w-auto" />
+          </div>
+          {/* Row 2: 전용 할인 받고 구독 시작하세요! SVG */}
+          <ReferralTitleSvg className="mt-2 w-full max-md:max-w-[320px] max-w-[588px] h-auto mx-auto" />
+          {/* Row 3: 지금 구독하면... */}
+          <p className="mt-6 max-md:text-body-13-r text-body-18-m text-[var(--color-text-on-warm)]">
+            지금 구독하면 전용 혜택이 자동으로 적용됩니다.
+          </p>
+        </div>
 
-        <PlanPicker
+        <ReferralPlanPicker
           plans={apiPlans}
-          summaryOrder={HOME_SUMMARY_ORDER}
           getPrimaryButton={(plan) => ({
             label: "제품 상세보기",
             onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
@@ -101,15 +102,18 @@ export default function PackagePlansSection() {
                         />
                       );
                     })}
+                    <span
+                      className="absolute left-3 top-3 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
+                      style={{ background: TIER_BADGE_BG[tier] }}
+                    >
+                      {additionalDiscountPct}%추가할인
+                    </span>
                   </div>
                   <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
                 </div>
                 {activePkg ? (
                   <div className="mt-4">
-                    <p
-                      className="text-subtitle-17-b-lh22"
-                      style={{ color: activePkg.colorVar }}
-                    >
+                    <p className="text-subtitle-17-b-lh22" style={{ color: activePkg.colorVar }}>
                       {activePkg.name}
                     </p>
                     <div className="mt-3 flex items-center justify-between gap-3">

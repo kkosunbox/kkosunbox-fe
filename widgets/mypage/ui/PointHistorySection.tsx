@@ -256,7 +256,7 @@ function Pagination({
   );
 }
 
-/* ── 초대링크 행 ────────────────────────────────────────────────────── */
+/* ── 초대코드·초대링크 행 ───────────────────────────────────────────── */
 function ReferralLinkRow({
   referralCode,
   desktop = false,
@@ -264,15 +264,25 @@ function ReferralLinkRow({
   referralCode: MyReferralCode | null;
   desktop?: boolean;
 }) {
-  const [copied, setCopied] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const { openAlert } = useModal();
 
   if (!referralCode) return null;
 
-  function handleCopy() {
+  function handleCopyCode() {
+    navigator.clipboard.writeText(referralCode!.referralCode).then(() => {
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+      openAlert({ type: "success", title: "초대 코드가 복사되었습니다." });
+    });
+  }
+
+  function handleCopyLink() {
+    if (!referralCode!.referralLink) return;
     navigator.clipboard.writeText(referralCode!.referralLink).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
       openAlert({
         type: "success",
         title: "초대 링크가 복사되었습니다.",
@@ -281,18 +291,43 @@ function ReferralLinkRow({
     });
   }
 
-  return (
-    <div className={["flex items-center gap-3", desktop ? "w-[271px]" : ""].join(" ")}>
-      <span className="w-[46px] shrink-0 text-body-13-m leading-4 text-[var(--color-text)]">초대링크</span>
-      <div
-        className={[
-          "flex h-10 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3",
-          desktop ? "w-[213px] shrink-0" : "min-w-0 flex-1",
-        ].join(" ")}
-      >
+  const inputCls = desktop
+    ? "w-[213px] shrink-0"
+    : "min-w-0 flex-1";
+
+  const rowCls = desktop ? "w-[271px]" : "";
+
+  const codeRow = (
+    <div className={["flex items-center gap-3", rowCls].join(" ")}>
+      <span className="w-[46px] shrink-0 text-body-13-m leading-4 text-[var(--color-text)]">초대코드</span>
+      <div className={["flex h-10 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3", inputCls].join(" ")}>
         <button
           type="button"
-          onClick={handleCopy}
+          onClick={handleCopyCode}
+          aria-label="초대코드 복사"
+          className="min-w-0 flex-1 truncate text-left text-body-13-m leading-[18px] text-[var(--color-text)]"
+        >
+          {referralCode.referralCode}
+        </button>
+        <button
+          type="button"
+          aria-label="초대코드 복사"
+          onClick={handleCopyCode}
+          className="shrink-0 transition-opacity hover:opacity-70"
+        >
+          <CopyIcon checked={codeCopied} />
+        </button>
+      </div>
+    </div>
+  );
+
+  const linkRow = referralCode.referralLink ? (
+    <div className={["flex items-center gap-3", rowCls].join(" ")}>
+      <span className="w-[46px] shrink-0 text-body-13-m leading-4 text-[var(--color-text)]">초대링크</span>
+      <div className={["flex h-10 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3", inputCls].join(" ")}>
+        <button
+          type="button"
+          onClick={handleCopyLink}
           aria-label="초대링크 복사"
           className="min-w-0 flex-1 truncate text-left text-body-13-m leading-[18px] text-[var(--color-text)]"
         >
@@ -301,12 +336,28 @@ function ReferralLinkRow({
         <button
           type="button"
           aria-label="초대링크 복사"
-          onClick={handleCopy}
+          onClick={handleCopyLink}
           className="shrink-0 transition-opacity hover:opacity-70"
         >
-          <CopyIcon checked={copied} />
+          <CopyIcon checked={linkCopied} />
         </button>
       </div>
+    </div>
+  ) : null;
+
+  if (desktop) {
+    return (
+      <div className="flex items-center gap-4">
+        {codeRow}
+        {linkRow}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {codeRow}
+      {linkRow}
     </div>
   );
 }

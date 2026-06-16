@@ -21,7 +21,7 @@ const inputBase =
 const inputDisabled = "opacity-50 pointer-events-none bg-[var(--color-surface-light)]";
 
 const actionBtnCls =
-  "h-10 shrink-0 rounded-[4px] px-2 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
+  "h-10 shrink-0 rounded-[8px] text-[13px] font-medium leading-4 text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
 
 /* ─── 눈 아이콘 ─── */
 function EyeOffIcon({ className }: { className?: string }) {
@@ -208,7 +208,7 @@ export default function ForgotPasswordSection() {
                   type="button"
                   onClick={handleSendCode}
                   disabled={!email.trim() || isPending || emailVerified || (codeSent && countdown > 0)}
-                  className={[actionBtnCls, "bg-[var(--color-btn-dark-warm)]"].join(" ")}
+                  className={[actionBtnCls, "min-w-[95px] px-3 bg-[var(--color-btn-dark-warm)]"].join(" ")}
                 >
                   {isPending && !codeSent
                     ? "발송 중..."
@@ -249,7 +249,7 @@ export default function ForgotPasswordSection() {
                   type="button"
                   onClick={handleVerifyOtp}
                   disabled={!otp.trim() || isPending || !codeSent || emailVerified}
-                  className={[actionBtnCls, "bg-[var(--color-btn-dark-warm)]"].join(" ")}
+                  className={[actionBtnCls, "min-w-[52px] px-2 bg-[var(--color-btn-dark-warm)]"].join(" ")}
                 >
                   {isPending && codeSent && !emailVerified ? "확인 중..." : "확인"}
                 </button>
@@ -335,7 +335,7 @@ export default function ForgotPasswordSection() {
           type="button"
           disabled={!canSubmit}
           onClick={handleResetPassword}
-          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-[8px] max-md:text-subtitle-16-sb md:text-body-14-sb lg:text-body-14-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14 md:h-[54px] lg:h-[54px]"
+          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-[12px] max-md:text-subtitle-16-sb md:text-body-16-sb lg:text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14"
           style={{ background: "var(--color-btn-dark-warm)" }}
         >
           {isPending ? "처리 중..." : "확인"}

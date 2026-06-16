@@ -214,7 +214,16 @@
       "Bash(pnpm test:unit)",
       "Bash(pnpm depcruise *)",
       "Bash(git remote *)",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Bash(mkdir -p \"C:/2026/ggosoonbox/public/images/referral\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/main-hero-referal-bg.png\" \"C:/2026/ggosoonbox/public/images/referral/\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/main-hero-referal-center-card.png\" \"C:/2026/ggosoonbox/public/images/referral/\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/main-hero-referal-left-twinkle.svg\" \"C:/2026/ggosoonbox/public/images/referral/\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/main-hero-referal-right-twinkle.svg\" \"C:/2026/ggosoonbox/public/images/referral/\")",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; \\(pnpm lint 2>&1\\) | Out-String | Select-String \"referral|ref.slug\" -AllMatches | ForEach-Object { $_.Matches } | Select-Object -First 20)",
+      "Skill(run)",
+      "Bash(python *)",
+      "PowerShell(pnpm playwright *)"
     ]
   }
 }

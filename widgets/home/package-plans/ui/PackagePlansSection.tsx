@@ -82,17 +82,25 @@ export default function PackagePlansSection() {
                     }}
                     style={{ cursor: activePlan ? "pointer" : undefined }}
                   >
-                    {activePkg ? (
-                      <Image
-                        key={tier}
-                        src={TIER_DETAIL_HERO_IMAGES[tier]}
-                        alt={`${activePkg.name} 대표 이미지`}
-                        fill
-                        className="object-cover transition-opacity duration-500"
-                        sizes="100vw"
-                        priority
-                      />
-                    ) : null}
+                    {(["Premium", "Standard", "Basic"] as const).map((t) => {
+                      const tPkg = PACKAGES.find((p) => p.tier === t);
+                      return (
+                        <Image
+                          key={t}
+                          src={TIER_DETAIL_HERO_IMAGES[t]}
+                          alt={`${tPkg?.name ?? t} 대표 이미지`}
+                          fill
+                          className="object-cover"
+                          sizes="100vw"
+                          priority={t === "Premium"}
+                          style={{
+                            opacity: tier === t ? 1 : 0,
+                            filter: tier === t ? "blur(0px)" : "blur(6px)",
+                            transition: "opacity 350ms ease, filter 350ms ease",
+                          }}
+                        />
+                      );
+                    })}
                   </div>
                   <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
                 </div>

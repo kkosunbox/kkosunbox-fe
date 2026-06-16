@@ -193,5 +193,7 @@ export function useSvgBridge(order: PackageTier[], displayTier: PackageTier) {
     tabletCardColumnRef,
     tabletCardRefs,
     svgBg,
+    /** 레이아웃 애니메이션 완료 후 외부에서 재측정을 요청할 때 사용 */
+    refreshBridge: updateSvgBg,
   };
 }

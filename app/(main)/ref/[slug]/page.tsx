@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchReferralPage } from "@/features/referral/api/queries";
 import { ReferralProvider } from "@/features/referral/model";
-import { HomeHero } from "@/widgets/home/hero";
+import { ReferralHeroSection } from "@/widgets/home/referral-hero";
 import { StatsBar } from "@/widgets/home/stats-bar";
 import { ReferralPackagePlansSection } from "@/widgets/home/referral-package-plans";
 import { WhyGallerySection } from "@/widgets/home/why-gallery";
@@ -42,7 +42,7 @@ export default async function ReferralLandingPage({ params }: Props) {
     >
       <div className="pt-[var(--banner-height)]">
         <div className="sticky top-[var(--banner-height)] z-0">
-          <HomeHero />
+          <ReferralHeroSection />
           <StatsBar />
         </div>
         <div className="relative z-[1]">

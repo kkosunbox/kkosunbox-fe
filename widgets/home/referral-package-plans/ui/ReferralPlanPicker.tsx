@@ -151,7 +151,6 @@ export default function ReferralPlanPicker({
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
 
-  // Bridge refs — 왼쪽 패널 ↔ 선택 카드 연결 SVG
   const {
     containerRef,
     leftPanelRef,
@@ -422,7 +421,7 @@ export default function ReferralPlanPicker({
                   aria-pressed={showSelectionState ? isSelected : undefined}
                   onClick={() => handleTierSelect(tier)}
                   className={[
-                    "group relative flex w-full text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
+                    "group relative flex w-full text-left rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                     showSelectionState && isSelected ? "h-[207px] flex-none bg-transparent" : "flex-1",
                   ].join(" ")}
                 >
@@ -506,7 +505,7 @@ export default function ReferralPlanPicker({
                   aria-pressed={isSelected}
                   onClick={() => handleTierSelect(tier)}
                   className={[
-                    "group relative z-[1] flex flex-col items-start text-left rounded-[24px] transition-colors duration-300 hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
+                    "group relative z-[1] flex flex-col items-start text-left rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                     isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6 px-2",
                   ].join(" ")}
                 >

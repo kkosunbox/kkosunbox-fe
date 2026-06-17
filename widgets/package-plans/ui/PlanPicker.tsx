@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
 import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import {
@@ -31,22 +30,18 @@ const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 /** 이미지 blur+opacity crossfade에 사용할 전체 티어 목록 */
 const ALL_TIERS: PackageTier[] = ["Premium", "Standard", "Basic"];
 
-/** 카드 레이아웃 애니메이션 타이밍 — Material standard easing */
-const LAYOUT_TRANSITION = { duration: 0.3, ease: [0.4, 0, 0.2, 1] } as const;
-
-/** SVG 브릿지 페이드인 지연 (레이아웃 애니메이션 완료 후 여유) */
-const SVG_REVEAL_DELAY_MS = 380;
-
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-/** 이미지 전환 인라인 스타일 — blur + opacity crossfade */
+/** 이미지 전환 인라인 스타일 — blur focus-in + 비대칭 타이밍 */
 function crossfadeStyle(isActive: boolean): React.CSSProperties {
   return {
     opacity: isActive ? 1 : 0,
-    filter: isActive ? "blur(0px)" : "blur(6px)",
-    transition: "opacity 350ms ease, filter 350ms ease",
+    filter: isActive ? "blur(0px)" : "blur(20px)",
+    transition: isActive
+      ? "opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), filter 660ms cubic-bezier(0.16, 1, 0.3, 1)"
+      : "opacity 200ms ease, filter 200ms ease",
   };
 }
 
@@ -152,7 +147,6 @@ export default function PlanPicker({
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
 
-  // Bridge refs — 왼쪽 패널 ↔ 선택 카드 연결 SVG
   const {
     containerRef,
     leftPanelRef,
@@ -161,28 +155,7 @@ export default function PlanPicker({
     tabletCardColumnRef,
     tabletCardRefs,
     svgBg,
-    refreshBridge,
   } = useSvgBridge(summaryOrder, displayTier);
-
-  // SVG 브릿지 — selectedTier 변경 시 숨기고 레이아웃 정착 후 재측정·페이드인
-  const [svgBridgeVisible, setSvgBridgeVisible] = useState(true);
-  const isFirstRenderRef = useRef(true);
-
-  useEffect(() => {
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
-    const hideTimer = setTimeout(() => setSvgBridgeVisible(false), 0);
-    const showTimer = setTimeout(() => {
-      refreshBridge();
-      setSvgBridgeVisible(true);
-    }, SVG_REVEAL_DELAY_MS);
-    return () => {
-      clearTimeout(hideTimer);
-      clearTimeout(showTimer);
-    };
-  }, [selectedTier, refreshBridge]);
 
   /** 모바일 — 이전(-1)/다음(+1) 패키지로 이동 */
   function goToTier(direction: -1 | 1) {
@@ -256,8 +229,6 @@ export default function PlanPicker({
                 width: svgBg.width,
                 height: svgBg.height,
                 filter: "drop-shadow(0px 4px 8px #00000033)",
-                opacity: svgBridgeVisible ? 1 : 0,
-                transition: "opacity 200ms ease",
               }}
               viewBox={`0 0 ${svgBg.width} ${svgBg.height}`}
             >
@@ -445,17 +416,15 @@ export default function PlanPicker({
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
 
               return (
-                <motion.button
+                <button
                   key={tier}
-                  layout="position"
-                  transition={LAYOUT_TRANSITION}
                   ref={(el) => { cardRefs.current[i] = el; }}
                   type="button"
                   disabled={!plan}
                   aria-pressed={showSelectionState ? isSelected : undefined}
                   onClick={() => handleTierSelect(tier)}
                   className={[
-                    "group relative flex w-full text-left transition-colors duration-300 rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
+                    "group relative flex w-full text-left rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                     showSelectionState && isSelected ? "h-[207px] flex-none bg-transparent" : "flex-1",
                   ].join(" ")}
                 >
@@ -506,7 +475,7 @@ export default function PlanPicker({
                       <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
                     )}
                   </div>
-                </motion.button>
+                </button>
               );
             })}
           </div>
@@ -525,17 +494,15 @@ export default function PlanPicker({
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
 
               return (
-                <motion.button
+                <button
                   key={tier}
-                  layout="position"
-                  transition={LAYOUT_TRANSITION}
                   ref={(el) => { tabletCardRefs.current[i] = el; }}
                   type="button"
                   disabled={!plan}
                   aria-pressed={isSelected}
                   onClick={() => handleTierSelect(tier)}
                   className={[
-                    "group relative z-[1] flex flex-col items-start text-left rounded-[24px] transition-colors duration-300 hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
+                    "group relative z-[1] flex flex-col items-start text-left rounded-[24px] hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60",
                     isSelected ? "bg-transparent px-[22px] pb-[22px]" : "mt-6 px-2",
                   ].join(" ")}
                 >
@@ -589,7 +556,7 @@ export default function PlanPicker({
                       <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
                     )}
                   </div>
-                </motion.button>
+                </button>
               );
             })}
           </div>

@@ -68,22 +68,17 @@ test.describe("레퍼럴 랜딩 페이지 (/ref/[slug])", () => {
 });
 
 // ──────────────────────────────────────────────────────────────────────────────
-// B. 홈 화면 레퍼럴 히어로 (ReferralProvider 쿠키 기반)
+// B. 홈 화면 히어로
 //
-// ReferralProvider.useEffect 흐름:
-//   ggosoon-ref 쿠키 없음            → 일반 HeroSection 유지
-//   쿠키 있음 + validate 200(applicable) → ReferralHeroSection 표시
-//   쿠키 있음 + validate 400(invalid)    → 일반 HeroSection 유지
+// HomeHero는 항상 일반 HeroSection을 렌더한다.
+// 레퍼럴 히어로(ReferralHeroSection)는 /ref/[slug] 페이지에서만 표시된다.
 //
 // 일반 히어로 판별: "10초 진단하고 우리 아이 맞춤 추천 받기" 버튼 (슬라이드 #1)
-// 레퍼럴 히어로 판별: CTA_LABEL 버튼
-//
-// 참고: validate API 호출은 비동기이므로 레퍼럴 히어로 테스트는 충분한 timeout이 필요하다.
 // ──────────────────────────────────────────────────────────────────────────────
 
 const NORMAL_HERO_CTA = "10초 진단하고 우리 아이 맞춤 추천 받기";
 
-test.describe("홈 화면 레퍼럴 히어로 (쿠키 기반)", () => {
+test.describe("홈 화면 히어로", () => {
   test("ggosoon-ref 쿠키 없음 → 일반 히어로 CTA 표시", async ({ page }) => {
     await page.goto("/");
     // 모바일·데스크탑 레이아웃이 동시에 렌더되어 같은 버튼이 2개 존재함 → .first()
@@ -92,7 +87,7 @@ test.describe("홈 화면 레퍼럴 히어로 (쿠키 기반)", () => {
     });
   });
 
-  test("유효 코드 쿠키 설정 후 홈 방문 → 레퍼럴 히어로 + 할인율 표시", async ({ page }) => {
+  test("유효 코드 쿠키 설정 후 홈 방문 → 일반 히어로 유지 (레퍼럴 히어로는 /ref/[slug] 전용)", async ({ page }) => {
     await page.context().addCookies([
       {
         name: "ggosoon-ref",
@@ -102,10 +97,11 @@ test.describe("홈 화면 레퍼럴 히어로 (쿠키 기반)", () => {
       },
     ]);
     await page.goto("/");
-    // validate API 응답 후 히어로가 전환될 때까지 대기
-    await expect(page.getByRole("button", { name: CTA_LABEL })).toBeVisible({
+    // 홈은 쿠키 유무와 무관하게 항상 일반 히어로를 표시
+    await expect(page.getByRole("button", { name: NORMAL_HERO_CTA }).first()).toBeVisible({
       timeout: 10_000,
     });
+    await expect(page.getByRole("button", { name: CTA_LABEL })).not.toBeVisible();
   });
 
   test("무효 코드 쿠키 설정 후 홈 방문 → 일반 히어로 유지", async ({ page }) => {
@@ -118,11 +114,9 @@ test.describe("홈 화면 레퍼럴 히어로 (쿠키 기반)", () => {
       },
     ]);
     await page.goto("/");
-    // validate API가 400을 반환하면 히어로 전환 없음 → 일반 CTA가 보여야 함
     await expect(page.getByRole("button", { name: NORMAL_HERO_CTA }).first()).toBeVisible({
       timeout: 10_000,
     });
-    // 레퍼럴 히어로 CTA는 나타나지 않아야 함
     await expect(page.getByRole("button", { name: CTA_LABEL }).first()).not.toBeVisible();
   });
 });

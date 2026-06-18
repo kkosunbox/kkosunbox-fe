@@ -67,18 +67,16 @@ export default function FooterSection() {
 
       {/* ── 모바일 레이아웃 ── */}
       <div className="max-md:flex max-md:flex-col md:hidden lg:hidden px-6 py-8">
-        <div className="space-y-1 text-center">
-          {COMPANY_INFO_LINES.map((line) => (
-            <p key={line} className="text-caption-12-m leading-[1.6] text-[var(--color-footer-text)]">
+        <p className="text-center text-caption-12-m leading-[1.8] text-[var(--color-footer-text)]">
+          {COMPANY_INFO_LINES.map((line, idx) => (
+            <Fragment key={line}>
+              {idx > 0 && <br />}
               {line}
-            </p>
+            </Fragment>
           ))}
-        </div>
-        <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5">
-          <p className="text-center text-caption-12-m text-[var(--color-footer-text)]">
-            Copyright © Kkosunbox {year}. All rights reserved.
-          </p>
-          <div className="mt-2 flex items-center justify-center gap-2">
+        </p>
+        <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5 flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2">
             {SOCIAL_LINKS.map((social) => (
               <a
                 key={social.label}
@@ -92,22 +90,25 @@ export default function FooterSection() {
               </a>
             ))}
           </div>
+          <nav className="flex items-center" aria-label="Footer policy and support links">
+            {FOOTER_LINKS.map((item, idx) => (
+              <Fragment key={item.href}>
+                {idx > 0 && (
+                  <span aria-hidden="true" className="mx-1 text-[var(--color-footer-text)]">|</span>
+                )}
+                <Link
+                  href={item.href}
+                  className="text-caption-12-m text-[var(--color-footer-text)] transition-opacity hover:opacity-80"
+                >
+                  {item.label}
+                </Link>
+              </Fragment>
+            ))}
+          </nav>
+          <p className="text-caption-12-m text-[var(--color-footer-text)]">
+            Copyright © Kkosunbox {year}. All rights reserved.
+          </p>
         </div>
-        <nav className="mt-4 flex items-center justify-center" aria-label="Footer policy and support links">
-          {FOOTER_LINKS.map((item, idx) => (
-            <Fragment key={item.href}>
-              {idx > 0 && (
-                <span aria-hidden="true" className="mx-1 text-[var(--color-footer-text)]">|</span>
-              )}
-              <Link
-                href={item.href}
-                className="text-caption-12-m text-[var(--color-footer-text)] transition-opacity hover:opacity-80"
-              >
-                {item.label}
-              </Link>
-            </Fragment>
-          ))}
-        </nav>
       </div>
 
       {/* ── 데스크톱 레이아웃 ── */}

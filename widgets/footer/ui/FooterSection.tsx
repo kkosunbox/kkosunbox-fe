@@ -4,15 +4,15 @@ import Link from "next/link";
 import logoMono from "@/shared/assets/logo-mono.webp";
 
 const FOOTER_LINKS = [
-  { href: "/support", label: "자주 묻는 질문" },
-  { href: "/terms", label: "이용약관" },
-  { href: "/privacy", label: "개인정보처리방침" },
+  { href: "/support", label: "FAQ" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms of Use" },
 ] as const;
 
 const COMPANY_INFO_LINES = [
-  "주식회사 펫브릿지코어 | 사업자등록번호 : 355-87-03780",
-  "대표이사 : 오진영",
-  "주소 : 경기도 김포시 김포한강11로 288-31, 5층 508-38호(운양동, 에이스프라자)",
+  "PetBridge Core Co. Ltd.  |  Business Registration No. : 355-87-03780",
+  "CEO: Jin-young Oh  |  Address : #508-38, 5F, Ace Plaza, 288-31, Gimpohangang 11-ro,",
+  "Gimpo-si, Gyeonggi-do, Republic of Korea",
 ] as const;
 
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */
@@ -63,7 +63,7 @@ export default function FooterSection() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[var(--color-footer-bg)] text-[var(--color-footer-text)]" aria-label="사이트 푸터">
+    <footer className="bg-[var(--color-footer-bg)] text-[var(--color-footer-text)]" aria-label="Site footer">
 
       {/* ── 모바일 레이아웃 ── */}
       <div className="max-md:flex max-md:flex-col md:hidden lg:hidden px-6 py-8">
@@ -93,7 +93,7 @@ export default function FooterSection() {
             ))}
           </div>
         </div>
-        <nav className="mt-4 flex items-center justify-center" aria-label="푸터 정책·고객 안내">
+        <nav className="mt-4 flex items-center justify-center" aria-label="Footer policy and support links">
           {FOOTER_LINKS.map((item, idx) => (
             <Fragment key={item.href}>
               {idx > 0 && (
@@ -114,7 +114,7 @@ export default function FooterSection() {
       <div className="max-md:hidden mx-auto flex max-w-content-wide flex-col px-8">
         <div className="flex items-start justify-between pt-[26px] pb-[26px]">
           <div className="flex items-start gap-20">
-            <Link href="/" className="shrink-0 self-center" aria-label="꼬순박스 홈">
+            <Link href="/" className="shrink-0 self-center" aria-label="Kkosunbox home">
               <Image src={logoMono} alt="" width={LOGO_W} height={LOGO_H} className="h-[28px] w-[88px]" />
             </Link>
             <div className="space-y-0.5">
@@ -145,7 +145,7 @@ export default function FooterSection() {
             <p className="text-caption-12-m text-[var(--color-footer-text)]">
               Copyright © Kkosunbox {year}. All rights reserved.
             </p>
-            <nav className="flex items-center gap-x-6" aria-label="푸터 정책·고객 안내">
+            <nav className="flex items-center gap-x-6" aria-label="Footer policy and support links">
               {FOOTER_LINKS.map((item) => (
                 <Link
                   key={item.href}

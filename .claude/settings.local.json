@@ -227,7 +227,11 @@
       "Bash(Write-Output \"copied\")",
       "Bash(cp \"/c/2026/ggosoonbox/.claude/assets/designs/main-hero-referral-bg-mobile.png\" \"/c/2026/ggosoonbox/public/images/referral/main-hero-referral-bg-mobile.png\")",
       "Bash(cp \"/c/2026/ggosoonbox/.claude/assets/designs/main-hero-referral-bg-tablet.png\" \"/c/2026/ggosoonbox/public/images/referral/main-hero-referral-bg-tablet.png\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-hero-renewal.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-hero-renewal.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-puppy-run-renewal.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-puppy-run-renewal.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-make-box.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-make-box.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-deco-paws.svg\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-deco-paws.svg\")"
     ]
   }
 }

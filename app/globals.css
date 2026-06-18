@@ -134,9 +134,14 @@
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
-  --color-about-hero-bg: #715D4C; /* About Hero 섹션 배경 (웜 브라운) */
+  --color-about-hero-bg: #5E4B3C; /* About Hero 섹션 배경 (웜 브라운) */
   --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
   --color-about-feature-heading: #49403B; /* About Feature 섹션 헤딩 */
+  --color-about-tan-bg: #87684C;   /* About Feature 카드 섹션 다크 탄 배경 (Figma Rectangle 4282) */
+  --color-about-peach-bg: #FBE9DA; /* About 피치 섹션 배경 */
+  --color-feature-card-warm: #FFDBB7;  /* Section 4 카드 1 배경 (건강한 재료) */
+  --color-feature-card-peach: #FEEAD5; /* Section 4 카드 2 배경 (수제간식) */
+  --color-feature-card-sage: #E7F2CA;  /* Section 4 카드 3 배경 (맞춤 간식) */
   --color-btn-dark-warm: #584B40;         /* 구독 변경·재시작 버튼 다크 웜 브라운 */
   --color-profile-gender-selected-bg: #FFE8DC; /* 프로필 작성 모달 성별 선택 배경 (Figma) */
 
@@ -382,6 +387,11 @@
   --color-about-hero-bg: var(--color-about-hero-bg);
   --color-about-hero-accent: var(--color-about-hero-accent);
   --color-about-feature-heading: var(--color-about-feature-heading);
+  --color-about-tan-bg: var(--color-about-tan-bg);
+  --color-about-peach-bg: var(--color-about-peach-bg);
+  --color-feature-card-warm: var(--color-feature-card-warm);
+  --color-feature-card-peach: var(--color-feature-card-peach);
+  --color-feature-card-sage: var(--color-feature-card-sage);
   --color-btn-dark-warm: var(--color-btn-dark-warm);
 
   /* Tier */
@@ -604,7 +614,14 @@ button:disabled {
 @utility text-body-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
 @utility text-body-16-b  { font-size: 16px; line-height: 24px; font-weight: 700; }
+@utility text-body-16-r-lh130 { font-size: 16px; line-height: 130%; font-weight: 400; }
 @utility text-body-16-b-lh130 { font-size: 16px; line-height: 130%; font-weight: 700; letter-spacing: 0; }
+@utility text-body-20-r-griun-lh130 {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 20px;
+  line-height: 130%;
+  font-weight: 400;
+}
 @utility text-body-16-sb { font-size: 16px; line-height: 24px; font-weight: 550; }
 @utility text-body-16-m  { font-size: 16px; line-height: 24px; font-weight: 500; }
 @utility text-body-16-r  { font-size: 16px; line-height: 24px; font-weight: 400; }
@@ -726,6 +743,22 @@ button:disabled {
 /* Brand display (GangwonEduPower — size/line-height only, family set via style prop) */
 @utility text-brand-display-14 { font-size: 14px; line-height: 14px; }
 @utility text-brand-display-24 { font-size: 24px; line-height: 25px; }
+
+/* About Introduce — GangwonEduPower 섹션 헤딩 */
+@utility text-introduce-heading {
+  font-family: "GangwonEduPower", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 42px;
+  line-height: 58px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+@utility text-introduce-heading-sm {
+  font-family: "GangwonEduPower", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
 
 /* 프로필 작성 모달 헤더 (Figma Group 1000005494) */
 @utility text-profile-modal-title {

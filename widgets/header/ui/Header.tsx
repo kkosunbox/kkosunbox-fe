@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
-import { BREAKPOINT_LG_PX } from "@/shared/config/breakpoints";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -539,8 +538,7 @@ export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isBannerCollapsed, setIsBannerCollapsed] = useState(false);
+const [isBannerCollapsed, setIsBannerCollapsed] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
   const hasProfile = hasProfileRecord(profile);
@@ -573,11 +571,7 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    requestAnimationFrame(() => {
-      const y = window.scrollY;
-      setIsScrolled(y > 0);
-      setIsBannerCollapsed(y > 36);
-    });
+    window.dispatchEvent(new Event("scroll"));
   }, [pathname]);
 
   useEffect(() => {
@@ -587,13 +581,6 @@ export default function Header() {
       document.documentElement.style.removeProperty("--banner-height");
     }
   }, [isBannerCollapsed]);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < BREAKPOINT_LG_PX);
-    check();
-    window.addEventListener("resize", check, { passive: true });
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   const isTransparentRoute = pathname === "/" || pathname === "/about" || pathname.startsWith("/ref/");
   const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered;
@@ -620,7 +607,7 @@ export default function Header() {
       />
       <nav
         className={`fixed inset-x-0 max-md:top-[34px] top-[30px] z-50 h-[54px] transition-[background-color,transform] duration-300 ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "bg-white" : "bg-transparent"}`}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => { if (window.matchMedia("(hover: hover)").matches) setIsHovered(true); }}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* 투명 헤더 전용: 헤더 배경 그라디언트 */}

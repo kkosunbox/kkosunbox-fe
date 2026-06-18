@@ -194,7 +194,7 @@ export default function AboutSection() {
                   width={79}
                   height={66}
                   aria-hidden
-                  className="absolute -right-8 top-4 max-lg:hidden"
+                  className="absolute -right-8 top-4"
                   style={{ transform: "rotate(19.28deg)" }}
                 />
               </div>
@@ -295,8 +295,8 @@ export default function AboutSection() {
                   width={79}
                   height={66}
                   aria-hidden
-                  className="absolute -right-6 -bottom-4 max-lg:hidden"
-                  style={{ transform: "rotate(-15deg)" }}
+                  className="absolute -right-6 -bottom-4"
+                  style={{ transform: "rotate(19.28deg)" }}
                 />
               </div>
             </ScrollReveal>

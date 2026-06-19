@@ -6,6 +6,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { useReferral } from "@/features/referral/model";
+import referralHeroBg from "../assets/main-hero-referal-bg.png";
+import referralHeroBgMobile from "../assets/main-hero-referral-bg-mobile.png";
+import referralHeroBgTablet from "../assets/main-hero-referral-bg-tablet.png";
+import referralHeroCenterCard from "../assets/main-hero-referal-center-card.png";
+import referralHeroCenterCard15Percent from "../assets/main-hero-referal-center-card-15-percent.png";
+import referralHeroSubtitle from "../assets/main-hero-referal-subtitle.svg";
+import referralHeroTitle from "../assets/main-hero-referral-title.svg";
+import referralHeroTitlePc from "../assets/main-hero-referral-title-pc.svg";
+import referralHeroNonPcLeftTopTwinkle from "../assets/main-hero-referral-non-pc-left-top-twinkle.png";
+import referralHeroNonPcLeftBottomTwinkle from "../assets/main-hero-referral-non-pc-left-bottom-twinkle.png";
+import referralHeroNonPcRightTopTwinkle from "../assets/main-hero-referral-non-pc-right-top-twinkle.png";
+import referralHeroNonPcRightBottomTwinkle from "../assets/main-hero-referral-non-pc-right-bottom-twinkle.png";
+import referralHeroLeftTwinkle from "../assets/main-hero-referal-left-twinkle.svg";
+import referralHeroRightTwinkle from "../assets/main-hero-referal-right-twinkle.svg";
 
 export default function ReferralHeroSection() {
   const router = useRouter();
@@ -13,8 +27,8 @@ export default function ReferralHeroSection() {
   const discountPct = Math.round(discountRate * 100);
   const cardSrc =
     discountPct === 15
-      ? "/images/referral/main-hero-referal-center-card-15-percent.png"
-      : "/images/referral/main-hero-referal-center-card.png";
+      ? referralHeroCenterCard15Percent.src
+      : referralHeroCenterCard.src;
   const [profileError, setProfileError] = useState(false);
   const showProfile = !!profileImageUrl && !profileError;
 
@@ -22,7 +36,7 @@ export default function ReferralHeroSection() {
     <section className="relative overflow-hidden max-lg:h-[585px] lg:h-[594px]">
       {/* 배경 이미지 — 모바일 (< 768px) */}
       <img
-        src="/images/referral/main-hero-referral-bg-mobile.png"
+        src={referralHeroBgMobile.src}
         alt=""
         className="md:hidden absolute inset-0 w-full h-full object-cover object-top"
         loading="eager"
@@ -30,7 +44,7 @@ export default function ReferralHeroSection() {
       />
       {/* 배경 이미지 — 태블릿 (768px – 1199px) */}
       <img
-        src="/images/referral/main-hero-referral-bg-tablet.png"
+        src={referralHeroBgTablet.src}
         alt=""
         className="max-md:hidden lg:hidden absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -38,7 +52,7 @@ export default function ReferralHeroSection() {
       />
       {/* 배경 이미지 — 데스크탑 (≥ 1200px) */}
       <img
-        src="/images/referral/main-hero-referal-bg.png"
+        src={referralHeroBg.src}
         alt=""
         className="max-lg:hidden absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -81,7 +95,7 @@ export default function ReferralHeroSection() {
           )}
 
           {/* 서브타이틀: [인플루언서명] + "님과 함께하는 특별혜택" SVG */}
-          <div className="flex items-baseline gap-2 flex-wrap justify-center max-md:mb-[8px] md:mb-[6px] lg:mb-[108px]">
+          <div className="flex items-baseline gap-2 flex-wrap justify-center max-md:mb-[8px] md:mb-[6px] lg:mb-3">
             <span
               className="font-bold tracking-[-0.04em] text-[var(--color-hero-heading)] max-md:text-[16px] md:text-[20px] lg:text-[28px]"
               style={{ fontFamily: '"GMarketSans"' }}
@@ -89,7 +103,7 @@ export default function ReferralHeroSection() {
               [{influencerName}]
             </span>
             <img
-              src="/images/referral/main-hero-referal-subtitle.svg"
+              src={referralHeroSubtitle.src}
               alt="님과 함께하는 특별혜택"
               width={200}
               height={19}
@@ -100,11 +114,22 @@ export default function ReferralHeroSection() {
 
           {/* 꼬순박스 구독 제목 SVG — 모바일·태블릿 전용 */}
           <img
-            src="/images/referral/main-hero-referral-title.svg"
+            src={referralHeroTitle.src}
             alt="꼬순박스 구독"
             width={245}
             height={48}
             className="max-lg:block lg:hidden w-[245px] h-auto max-md:mb-[12px] md:mb-[16px]"
+            loading="eager"
+            decoding="async"
+          />
+
+          {/* 꼬순박스 구독 제목 SVG — 데스크탑·와이드 전용 */}
+          <img
+            src={referralHeroTitlePc.src}
+            alt="꼬순박스 구독"
+            width={372}
+            height={81}
+            className="max-lg:hidden w-[372px] h-auto mb-6"
             loading="eager"
             decoding="async"
           />
@@ -126,28 +151,28 @@ export default function ReferralHeroSection() {
                 />
               </div>
               <img
-                src="/images/referral/main-hero-referral-non-pc-left-top-twinkle.png"
+                src={referralHeroNonPcLeftTopTwinkle.src}
                 alt=""
                 className="absolute"
                 style={{ left: 0, top: 38, width: 14, height: 15, animation: "referralTwinklePulse 2s ease-in-out infinite" }}
                 decoding="async"
               />
               <img
-                src="/images/referral/main-hero-referral-non-pc-left-bottom-twinkle.png"
+                src={referralHeroNonPcLeftBottomTwinkle.src}
                 alt=""
                 className="absolute"
                 style={{ left: 5, top: 70, width: 26, height: 30, animation: "referralFloat 3.2s ease-in-out 0.8s infinite" }}
                 decoding="async"
               />
               <img
-                src="/images/referral/main-hero-referral-non-pc-right-top-twinkle.png"
+                src={referralHeroNonPcRightTopTwinkle.src}
                 alt=""
                 className="absolute"
                 style={{ left: 305, top: 79, width: 26, height: 30, animation: "referralFloat 3.9s ease-in-out 0.5s infinite" }}
                 decoding="async"
               />
               <img
-                src="/images/referral/main-hero-referral-non-pc-right-bottom-twinkle.png"
+                src={referralHeroNonPcRightBottomTwinkle.src}
                 alt=""
                 className="absolute"
                 style={{ left: 298, top: 109, width: 15, height: 14, animation: "referralTwinklePulse 2.4s ease-in-out 1.2s infinite" }}
@@ -158,7 +183,7 @@ export default function ReferralHeroSection() {
             {/* 데스크탑·와이드 전용: PC twinkles */}
             <div className="max-lg:hidden flex items-center gap-[35px]">
               <img
-                src="/images/referral/main-hero-referal-left-twinkle.svg"
+                src={referralHeroLeftTwinkle.src}
                 alt=""
                 width={37}
                 height={74}
@@ -179,7 +204,7 @@ export default function ReferralHeroSection() {
                 />
               </div>
               <img
-                src="/images/referral/main-hero-referal-right-twinkle.svg"
+                src={referralHeroRightTwinkle.src}
                 alt=""
                 width={35}
                 height={41}

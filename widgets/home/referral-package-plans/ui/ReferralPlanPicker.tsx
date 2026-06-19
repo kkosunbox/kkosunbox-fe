@@ -20,6 +20,7 @@ import {
 } from "@/entities/package";
 import { useReferral } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { ReferralAdditionalDiscountChip } from "./ReferralAdditionalDiscountChip";
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
 const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
@@ -31,12 +32,6 @@ const TIER_RATINGS: Record<PackageTier, number> = {
   Premium: 4.7,
   Standard: 4.6,
   Basic: 4.9,
-};
-
-const TIER_BADGE_BG: Record<PackageTier, string> = {
-  Premium: "var(--color-accent-orange)",
-  Standard: "var(--color-plus)",
-  Basic: "var(--color-basic)",
 };
 
 function formatMonthlyPrice(n: number) {
@@ -270,12 +265,10 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    <span
-                      className="absolute left-3 top-3 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
-                      style={{ background: TIER_BADGE_BG[displayTier] }}
-                    >
-                      {additionalDiscountPct}%추가할인
-                    </span>
+                    <ReferralAdditionalDiscountChip
+                      pct={additionalDiscountPct}
+                      className="left-3 top-3"
+                    />
                   </div>
 
                   {/* 좌우 네비 — 이전/다음 패키지 (이미지 세로 중앙) */}
@@ -434,12 +427,10 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    <span
-                      className="absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
-                      style={{ background: TIER_BADGE_BG[tier] }}
-                    >
-                      {additionalDiscountPct}%추가할인
-                    </span>
+                    <ReferralAdditionalDiscountChip
+                      pct={additionalDiscountPct}
+                      className="left-2 top-2"
+                    />
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                     <p
@@ -518,12 +509,10 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    <span
-                      className="absolute left-2 top-2 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
-                      style={{ background: TIER_BADGE_BG[tier] }}
-                    >
-                      {additionalDiscountPct}%추가할인
-                    </span>
+                    <ReferralAdditionalDiscountChip
+                      pct={additionalDiscountPct}
+                      className="left-2 top-2"
+                    />
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
                     <p

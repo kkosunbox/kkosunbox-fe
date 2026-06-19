@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { TIER_BOX_IMAGES } from "@/entities/package";
 import { ScrollReveal } from "@/shared/ui";
 import {
   MEDIA_MAX_LG_SIZES,
@@ -18,6 +17,7 @@ import introduceSection401 from "../assets/introduce-section-4-01.png";
 import introduceSection402 from "../assets/introduce-section-4-02.png";
 import introduceSection403 from "../assets/introduce-section-4-03.png";
 import aboutCtaBg from "../assets/introduce-cta-bg.png";
+import aboutCtaProduct from "../assets/about-cta-product-2xl.png";
 
 type FeatureCardProps = {
   image: typeof introduceSection401;
@@ -360,13 +360,15 @@ export default function AboutSection() {
         <div className="relative z-10 mx-auto flex max-md:max-w-[480px] md:max-w-[var(--max-width-content)] flex-col items-center gap-10 px-6 lg:flex-row lg:items-center lg:gap-[110px] lg:px-0">
           <ScrollReveal variant="scale-in" delay={150} className="flex-none">
             <div className="overflow-hidden rounded-[56px] w-full max-lg:max-w-[320px] lg:w-[468px] lg:h-[429px]">
-              <Image
-                src={TIER_BOX_IMAGES.Premium}
-                alt="꼬순박스 프리미엄 패키지"
-                width={TIER_BOX_IMAGES.Premium.width}
-                height={TIER_BOX_IMAGES.Premium.height}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={aboutCtaProduct.src}
+                alt="꼬순박스 프리미엄 수제 간식과 패키지"
+                width={aboutCtaProduct.width}
+                height={aboutCtaProduct.height}
                 className="h-full w-full object-cover"
-                sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), ${MEDIA_MAX_LG_SIZES} 320px, 468px`}
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </ScrollReveal>

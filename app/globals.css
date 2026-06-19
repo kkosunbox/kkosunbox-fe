@@ -189,6 +189,8 @@
   --color-text-body-warm: #5B5B5B; /* 웜 섹션 본문 */
   --color-text-price: #171713;     /* 강조 가격 텍스트 */
   --color-text-discount: #EC7700;  /* 할인율 텍스트 (오렌지) */
+  --color-referral-discount-chip-bg: #FFE7E7;    /* 레퍼럴 플랜 카드 추가할인 칩 배경 */
+  --color-referral-discount-chip-text: #C00000;  /* 레퍼럴 플랜 카드 추가할인 칩 텍스트 */
   --color-modal-desc: rgba(34, 34, 38, 0.82); /* 범용 모달 설명 텍스트 */
 
   /* Status */
@@ -456,6 +458,8 @@
   --color-text-body-warm: var(--color-text-body-warm);
   --color-text-price: var(--color-text-price);
   --color-text-discount: var(--color-text-discount);
+  --color-referral-discount-chip-bg: var(--color-referral-discount-chip-bg);
+  --color-referral-discount-chip-text: var(--color-referral-discount-chip-text);
   --color-modal-desc: var(--color-modal-desc);
 
   /* Status */
@@ -704,6 +708,7 @@ button:disabled {
 @utility text-caption-11-sb { font-size: 11px; line-height: 13px; font-weight: 600; }
 @utility text-caption-12-sb { font-size: 12px; line-height: 20px; font-weight: 550; }
 @utility text-caption-12-sb-tight { font-size: 12px; line-height: 14px; font-weight: 550; }
+@utility text-caption-12-b-tight { font-size: 12px; line-height: 100%; font-weight: 700; letter-spacing: 0; }
 @utility text-caption-12-b  { font-size: 12px; line-height: 20px; font-weight: 700; }
 @utility text-caption-12-r  { font-size: 12px; line-height: 20px; font-weight: 400; }
 @utility text-caption-12-m  { font-size: 12px; line-height: 24px; font-weight: 500; font-feature-settings: "liga" 0; }

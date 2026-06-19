@@ -9,21 +9,15 @@ import {
   tierFromSubscriptionPlan,
   TIER_DETAIL_HERO_IMAGES,
   PackageNutritionGuide,
-  type PackageTier,
 } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { useReferral } from "@/features/referral/model";
 import { PlanTierDots } from "@/widgets/package-plans";
 import ReferralPlanPicker from "./ReferralPlanPicker";
+import { ReferralAdditionalDiscountChip } from "./ReferralAdditionalDiscountChip";
 import NimIRecommendSvg from "./NimIRecommendSvg";
 import ReferralTitleSvg from "./ReferralTitleSvg";
-
-const TIER_BADGE_BG: Record<PackageTier, string> = {
-  Premium: "var(--color-accent-orange)",
-  Standard: "var(--color-plus)",
-  Basic: "var(--color-basic)",
-};
 
 export default function ReferralPackagePlansSection() {
   const router = useRouter();
@@ -102,12 +96,10 @@ export default function ReferralPackagePlansSection() {
                         />
                       );
                     })}
-                    <span
-                      className="absolute left-3 top-3 z-10 rounded-full px-2 py-0.5 text-body-11-sb text-white"
-                      style={{ background: TIER_BADGE_BG[tier] }}
-                    >
-                      {additionalDiscountPct}%추가할인
-                    </span>
+                    <ReferralAdditionalDiscountChip
+                      pct={additionalDiscountPct}
+                      className="left-3 top-3"
+                    />
                   </div>
                   <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
                 </div>

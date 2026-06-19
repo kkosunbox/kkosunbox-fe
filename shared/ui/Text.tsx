@@ -44,6 +44,7 @@ export type TypographyVariant =
   // Captions
   | "caption-12-sb"
   | "caption-12-sb-tight"
+  | "caption-12-b-tight"
   | "caption-12-m-tight"
   | "caption-12-r"
   // Action
@@ -98,6 +99,7 @@ const BASE: Record<TypographyVariant, string> = {
   "body-13-sb":             "text-body-13-sb",
   "caption-12-sb":          "text-caption-12-sb",
   "caption-12-sb-tight":    "text-caption-12-sb-tight",
+  "caption-12-b-tight":     "text-caption-12-b-tight",
   "caption-12-m-tight":     "text-caption-12-m-tight",
   "caption-12-r":           "text-caption-12-r",
   "btn-14-m":               "text-btn-14-m",
@@ -158,6 +160,7 @@ const MAX_MD: Record<TypographyVariant, string> = {
   "body-13-sb":             "max-md:text-body-13-sb",
   "caption-12-sb":          "max-md:text-caption-12-sb",
   "caption-12-sb-tight":    "max-md:text-caption-12-sb-tight",
+  "caption-12-b-tight":     "max-md:text-caption-12-b-tight",
   "caption-12-m-tight":     "max-md:text-caption-12-m-tight",
   "caption-12-r":           "max-md:text-caption-12-r",
   "btn-14-m":               "max-md:text-btn-14-m",

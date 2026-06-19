@@ -345,13 +345,13 @@ export default function AboutSection() {
       </section>
 
       {/* Section 5: CTA */}
-      <section className="relative overflow-hidden bg-white py-14 lg:h-[698px] lg:flex lg:items-center">
+      <section className="relative overflow-hidden bg-[var(--color-about-cta-bg)] py-14 lg:h-[698px] lg:flex lg:items-center">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           <Image
             src={aboutCtaBg}
             alt=""
             fill
-            className="object-cover opacity-[0.32] blur-sm"
+            className="object-cover opacity-[0.16] blur-sm"
             style={{ objectPosition: "center 82%" }}
             sizes="100vw"
           />

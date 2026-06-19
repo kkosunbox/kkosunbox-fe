@@ -139,6 +139,7 @@
   --color-about-feature-heading: #49403B; /* About Feature 섹션 헤딩 */
   --color-about-tan-bg: #87684C;   /* About Feature 카드 섹션 다크 탄 배경 (Figma Rectangle 4282) */
   --color-about-peach-bg: #FBE9DA; /* About 피치 섹션 배경 */
+  --color-about-cta-bg: #FDEBD8; /* About CTA 섹션 배경 */
   --color-feature-card-warm: #FFDBB7;  /* Section 4 카드 1 배경 (건강한 재료) */
   --color-feature-card-peach: #FEEAD5; /* Section 4 카드 2 배경 (수제간식) */
   --color-feature-card-sage: #E7F2CA;  /* Section 4 카드 3 배경 (맞춤 간식) */
@@ -389,6 +390,7 @@
   --color-about-feature-heading: var(--color-about-feature-heading);
   --color-about-tan-bg: var(--color-about-tan-bg);
   --color-about-peach-bg: var(--color-about-peach-bg);
+  --color-about-cta-bg: var(--color-about-cta-bg);
   --color-feature-card-warm: var(--color-feature-card-warm);
   --color-feature-card-peach: var(--color-feature-card-peach);
   --color-feature-card-sage: var(--color-feature-card-sage);

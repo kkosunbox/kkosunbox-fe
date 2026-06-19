@@ -63,9 +63,9 @@ export default function ReferralHeroSection() {
         {/* 왼쪽: 인플루언서 원형 프로필
             1920px Figma 기준: left 325px, top 229px, size 240px
             lg viewport(1440px): background clips 240px each side → circle at x=85 from content left */}
-        <div className="max-md:hidden flex-shrink-0 md:flex md:items-start md:justify-center md:pt-[292px] md:w-[220px] lg:block lg:pt-0 lg:w-[330px] lg:pl-[85px]">
+        <div className="max-md:hidden flex-shrink-0 md:flex md:items-start md:justify-center md:pt-[248px] md:w-[220px] lg:block lg:pt-0 lg:w-[330px] lg:pl-[85px]">
           {showProfile && (
-            <div className="md:w-[170px] md:h-[170px] lg:mt-[229px] lg:w-[240px] lg:h-[240px] rounded-full overflow-hidden ring-4 ring-white/60 shadow-lg">
+            <div className="md:w-[170px] md:h-[170px] lg:mt-[185px] lg:w-[240px] lg:h-[240px] rounded-full overflow-hidden ring-4 ring-white/60 shadow-lg">
               <img
                 src={profileImageUrl}
                 alt={`${influencerName} 프로필`}

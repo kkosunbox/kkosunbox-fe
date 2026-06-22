@@ -18,7 +18,7 @@ import {
   PackageNutritionGuide,
   type PackageTier,
 } from "@/entities/package";
-import { useReferral } from "@/features/referral/model";
+import { useReferralPricing } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { ReferralAdditionalDiscountChip } from "./ReferralAdditionalDiscountChip";
 
@@ -128,11 +128,8 @@ export default function ReferralPlanPicker({
     [plans],
   );
 
-  const { discountRate } = useReferral();
-  const additionalDiscountPct = Math.round(discountRate * 100);
-  const referralPrice = (monthlyPrice: number) => Math.round(monthlyPrice * (1 - discountRate));
-  const combinedDiscountPct = (plan: SubscriptionPlanDto) =>
-    Math.round((1 - referralPrice(plan.monthlyPrice) / plan.originalPrice) * 100);
+  const { referralPrice, combinedDiscountPct, additionalDiscountPct } =
+    useReferralPricing();
 
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
     initialSelectedTier ?? summaryOrder[0],

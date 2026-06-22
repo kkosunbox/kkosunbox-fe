@@ -239,7 +239,12 @@
       "Read(//tmp/**)",
       "Bash(break)",
       "Bash(echo \"EXIT_TSC=$?\")",
-      "Bash(echo \"EXIT_LINT=$?\")"
+      "Bash(echo \"EXIT_LINT=$?\")",
+      "PowerShell(pnpm build *)",
+      "PowerShell(git stash *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell($env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test tests/e2e/subscribe.spec.ts 2>&1 | Select-Object -Last 50)",
+      "PowerShell($env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test tests/e2e/order.spec.ts tests/e2e/mypage.spec.ts tests/e2e/login.spec.ts 2>&1 | Select-Object -Last 20)"
     ]
   }
 }

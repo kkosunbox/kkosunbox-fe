@@ -259,9 +259,9 @@ export default function SupportSection({
   return (
     <div className={fillViewport ? "flex min-h-full flex-1 flex-col pt-[var(--header-offset)]" : "bg-white pt-[var(--header-offset)]"}>
       {showBanner && <SupportHero />}
-      <div className={`max-md:py-6 md:py-10 lg:py-10${fillViewport ? " flex flex-1 flex-col" : ""}`}>
+      <div className={`max-md:py-6 md:max-md2:py-10 md2:pb-10${fillViewport ? " flex flex-1 flex-col" : ""}`}>
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
-        {/* ── 모바일 전용 (< 910px): 문의하기 CTA (히어로 아래) ── */}
+        {/* ── 모바일 전용 (< 950px): 문의하기 CTA (히어로 아래) ── */}
         {showBanner && (
           <ScrollReveal variant="fade-in" delay={200} className="flex flex-col items-center md2:hidden">
             <Link

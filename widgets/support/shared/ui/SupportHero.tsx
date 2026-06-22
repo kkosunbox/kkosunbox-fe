@@ -1,11 +1,11 @@
 ﻿import Link from "next/link";
-import SupportHeroBg from "../assets/support-hero-bg.webp";
+import SupportHeroBg from "../assets/support-hero-bg-renewal.png";
 import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.webp";
 
 export function SupportHero({ showButton = true }: { showButton?: boolean }) {
   return (
     <section className="relative w-full overflow-hidden" aria-label="1:1 문의 안내">
-      {/* 모바일 (< 910px): 단일 배너(111px 고정, 가로 중앙 정렬) */}
+      {/* 모바일 (< 950px): 단일 배너(111px 고정, 가로 중앙 정렬) */}
       <div className="relative h-[111px] w-full overflow-hidden md2:hidden">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element -- 정적 배너 원본 품질 유지 */}
@@ -21,10 +21,11 @@ export function SupportHero({ showButton = true }: { showButton?: boolean }) {
         </div>
       </div>
 
-      {/* 데스크톱 (≥ 910px): 배너 + 문의하기 버튼 */}
+      {/* 데스크톱 (≥ 950px): 배너 + 문의하기 버튼 */}
       {/* 초광폭(>1920px)에서는 좌우를 support-hero-side-bg로 채워 이미지 부족 영역 보완 */}
-      <div className="max-md2:hidden w-full bg-support-hero-side-bg">
-        <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
+      <div className="max-md2:hidden relative w-full h-[252px]">
+        <div className="absolute inset-x-0 top-0 h-[202px] w-full bg-support-hero-side-bg" />
+        <div className="relative mx-auto h-[252px] w-full max-w-[1920px] overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element -- 초광폭 배너 PNG, next/image 재인코딩·다운스케일 시 엣지 노이즈 방지 */}
           <img
             src={SupportHeroBg.src}

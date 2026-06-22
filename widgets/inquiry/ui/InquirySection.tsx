@@ -186,8 +186,8 @@ export default function InquirySection() {
         onConfirm={() => setForm((prev) => ({ ...prev, [termsModal === "terms" ? "agreeTerms" : "agreePrivacy"]: true }))}
       />
     )}
-    <div className="bg-white pt-[var(--header-offset)]">
-      <SupportHero showButton={false} />
+    <div className="bg-white">
+      <SupportHero />
 
       {/* 폼 영역 */}
       <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:py-10 lg:py-10`}>

@@ -10,7 +10,7 @@ import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop.webp";
+import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop-renewal.png";
 import reviewWriteHeroMobile from "../assets/review-write-hero-mobile.webp";
 
 const HERO_ALT =
@@ -307,9 +307,9 @@ export default function ReviewWriteSection({
   if (!isLoggedIn) return null;
 
   return (
-    <div className="bg-white pt-[var(--header-offset)]">
+    <div className="bg-white">
       {/* Hero — "우리 아이의 꼬순박스, 만족하셨나요??" (텍스트 포함 배너) */}
-      {/* 모바일(<910px): 전용 이미지 / 데스크톱(≥910px): 와이드 배너, 초광폭은 좌우 보완 */}
+      {/* 모바일(<950px): 전용 이미지 / 데스크톱(≥950px): 와이드 배너, 초광폭은 좌우 보완 */}
       <section aria-label="리뷰 작성 안내">
         <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
           <Image
@@ -319,8 +319,9 @@ export default function ReviewWriteSection({
             priority
           />
         </div>
-        <div className="max-md2:hidden w-full bg-support-hero-side-bg">
-          <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
+        <div className="max-md2:hidden relative w-full h-[306px]">
+          <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+          <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
             <Image
               src={reviewWriteHeroDesktop}
               alt={HERO_ALT}
@@ -332,7 +333,7 @@ export default function ReviewWriteSection({
       </section>
 
       {/* 폼 영역 */}
-      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:py-10 lg:py-10`}>
+      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:max-md2:py-10 md2:pb-10`}>
         {isLoadingReview ? (
           <div className="flex min-h-[300px] items-center justify-center">
             <p className="text-body-14-m text-[var(--color-text-secondary)]">

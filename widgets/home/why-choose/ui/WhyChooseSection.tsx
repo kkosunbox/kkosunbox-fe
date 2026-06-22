@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import whyGalleryTitle from "../../why-gallery/assets/why-gallery-title.webp";
 
 export default function WhyChooseSection() {
@@ -17,7 +18,8 @@ export default function WhyChooseSection() {
       return;
     }
     const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
-    router.push(hasChecklist ? "/subscribe" : "/checklist");
+    if (hasChecklist) { router.push("/subscribe"); return; }
+    openChecklistForm();
   }
 
   return (

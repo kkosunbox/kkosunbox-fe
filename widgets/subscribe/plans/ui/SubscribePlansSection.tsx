@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
@@ -34,7 +35,7 @@ export default function SubscribePlansSection({
   const showModal = showChecklistRecommend && isLoggedIn && !isChecklistDone && !isDismissed;
 
   function handleClose() { setIsDismissed(true); }
-  function handleConfirm() { setIsDismissed(true); router.push("/checklist"); }
+  function handleConfirm() { setIsDismissed(true); openChecklistForm(); }
 
   return (
     <>

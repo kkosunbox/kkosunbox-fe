@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { ScrollReveal } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import {
   MEDIA_MAX_LG_SIZES,
   MEDIA_MAX_MD_SIZES,
@@ -54,6 +56,17 @@ function FeatureCard({ image, title, description, bgColorVar }: FeatureCardProps
  * "반려동물을 위한 좋은 간식, 기준은 꼬순박스가 세우겠습니다.")
  */
 export default function AboutSection() {
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  function handleChecklistClick() {
+    if (!isLoggedIn) {
+      router.push("/login?next=/checklist");
+      return;
+    }
+    openChecklistForm();
+  }
+
   return (
     <>
       {/* Section 1: 꼬순박스 소개 (Hero) */}
@@ -544,12 +557,13 @@ export default function AboutSection() {
               </div>
             </ScrollReveal>
             <ScrollReveal variant="fade-up" delay={400}>
-              <Link
-                href="/checklist"
+              <button
+                type="button"
+                onClick={handleChecklistClick}
                 className="mt-2 inline-flex h-[52px] w-full max-w-[312px] items-center justify-center rounded-xl bg-[var(--color-cta-button)] px-6 text-[16px] font-semibold leading-[30px] tracking-[-0.04em] text-white"
               >
                 10초 만에 우리 아이 맞춤 추천 받기
-              </Link>
+              </button>
             </ScrollReveal>
           </div>
         </div>

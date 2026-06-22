@@ -12,6 +12,7 @@ import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
 import { BreedCombobox, DatePicker, DefaultPetIcon, useLoadingOverlay, useModal } from "@/shared/ui";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
@@ -342,8 +343,7 @@ export default function ProfileManagementSection({
           });
           await refreshProfile();
           setActiveProfileId(newProfile.id);
-          sessionStorage.setItem("kkosun_from_new_profile", "1");
-          router.push("/checklist");
+          openChecklistForm();
         } else {
           await updateProfile(profile.id, {
             ...body,

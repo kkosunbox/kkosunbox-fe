@@ -385,7 +385,7 @@ export default function ChecklistResult({
     <section className="relative bg-white max-md:pt-[var(--header-offset)] max-md:pb-9 md:pt-[calc(var(--header-offset)+44px)] md:pb-[64px] lg:pt-[calc(var(--header-offset)+44px)] lg:pb-[64px]">
       {/* 데스크탑·태블릿 상단 웜 배경 밴드 */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[200px] max-md:hidden"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[254px] max-md:hidden"
         style={{ background: "var(--color-support-faq-surface)" }}
         aria-hidden
       />

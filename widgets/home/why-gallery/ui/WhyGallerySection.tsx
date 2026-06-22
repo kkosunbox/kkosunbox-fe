@@ -4,6 +4,7 @@ import type { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { GalleryCTALogo } from "./GalleryCTALogo";
 import { GalleryLogoMark } from "./GalleryLogoMark";
 import { GalleryMutedLogo } from "./GalleryMutedLogo";
@@ -202,7 +203,8 @@ export default function WhyGallerySection() {
       return;
     }
     const hasChecklist = (profile?.checklistAnswers?.length ?? 0) > 0;
-    router.push(hasChecklist ? "/subscribe" : "/checklist");
+    if (hasChecklist) { router.push("/subscribe"); return; }
+    openChecklistForm();
   }
 
   const goSubscribe = () => router.push("/subscribe");

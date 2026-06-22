@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button, ScrollReveal, useModal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
+import { openChecklistForm } from "@/shared/lib/checklistModal";
 import ingredientsDetailHappy from "../assets/ingredients-detail-happy.webp";
 import ingredientsDetailProfitPackage from "../assets/ingredients-detail-profit-package.webp";
 
@@ -14,7 +15,7 @@ export default function IngredientsSection() {
 
   function handleChecklistClick() {
     if (isLoggedIn) {
-      router.push("/checklist");
+      openChecklistForm();
       return;
     }
     openAlert({

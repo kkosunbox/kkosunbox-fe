@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web.webp";
+import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web-renewal.png";
 import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
@@ -102,7 +102,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   /* ── 데스크톱 ──────────────────────────────────────────────────── */
 
   const desktopLayout = (
-    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pt-6 pb-[104px]">
+    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 max-md2:pt-6 pb-[104px]">
       {/* 프로필 배너 */}
       <div className="overflow-hidden rounded-[20px] bg-[var(--color-support-faq-surface)] px-14 py-7">
         <div className="flex items-center gap-9">
@@ -354,8 +354,9 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           />
         </div>
         {/* 데스크톱 (≥md2) */}
-        <div className="max-md2:hidden w-full bg-support-hero-side-bg">
-          <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
+        <div className="max-md2:hidden relative w-full h-[252px]">
+          <div className="absolute inset-x-0 top-0 h-[202px] w-full bg-support-hero-side-bg" />
+          <div className="relative mx-auto h-[252px] w-full max-w-[1920px] overflow-hidden">
             <img
               src={withdrawHeroDesktop.src}
               alt={HERO_ALT}

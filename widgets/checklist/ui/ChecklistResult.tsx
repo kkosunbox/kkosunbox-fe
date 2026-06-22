@@ -537,7 +537,7 @@ export default function ChecklistResult({
 
       {/* 하단: 전체 패키지 구독 섹션 */}
       {!plansLoading && sortedPlans.length > 0 && (
-        <div className="relative mx-auto w-full max-md:px-6 md:max-w-[1013px] md:px-6 lg:px-0">
+        <div className="relative mx-auto w-full max-md:px-6 md:max-w-[1013px] md:pt-4 md:px-6 lg:px-0">
           <Image
             src={checklistLetStartPurchase}
             alt="꼬순박스 정기구독을 시작해보세요!"
@@ -545,7 +545,7 @@ export default function ChecklistResult({
             sizes="(min-width: 768px) 380px, 260px"
           />
 
-          <div className="flex max-md:flex-col max-md:gap-6 md:justify-between md:gap-4 lg:gap-0">
+          <div className="flex max-md:flex-col max-md:gap-6 md:justify-center md:gap-6 lg:justify-between lg:gap-0">
               {sortedPlans.map((plan) => {
                 const tier = tierFromSubscriptionPlan(plan);
                 const img = PACKAGE_SUMMARY_IMAGES[tier];

@@ -23,9 +23,9 @@ export function SupportHero({ showButton = true }: { showButton?: boolean }) {
 
       {/* 데스크톱 (≥ 950px): 배너 + 문의하기 버튼 */}
       {/* 초광폭(>1920px)에서는 좌우를 support-hero-side-bg로 채워 이미지 부족 영역 보완 */}
-      <div className="max-md2:hidden relative w-full h-[252px]">
-        <div className="absolute inset-x-0 top-0 h-[202px] w-full bg-support-hero-side-bg" />
-        <div className="relative mx-auto h-[252px] w-full max-w-[1920px] overflow-hidden">
+      <div className="max-md2:hidden relative w-full h-[306px]">
+        <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+        <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element -- 초광폭 배너 PNG, next/image 재인코딩·다운스케일 시 엣지 노이즈 방지 */}
           <img
             src={SupportHeroBg.src}

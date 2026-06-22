@@ -342,7 +342,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   const HERO_ALT = "정말로 꼬순박스를 탈퇴하실 건가요?";
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white pt-[var(--header-offset)]">
+    <div className="flex min-h-0 flex-1 flex-col bg-white">
       {/* Hero 배너 */}
       <section aria-label="탈퇴 페이지 안내">
         {/* 모바일 (<md2) */}
@@ -354,9 +354,9 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           />
         </div>
         {/* 데스크톱 (≥md2) */}
-        <div className="max-md2:hidden relative w-full h-[252px]">
-          <div className="absolute inset-x-0 top-0 h-[202px] w-full bg-support-hero-side-bg" />
-          <div className="relative mx-auto h-[252px] w-full max-w-[1920px] overflow-hidden">
+        <div className="max-md2:hidden relative w-full h-[306px]">
+          <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+          <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
             <img
               src={withdrawHeroDesktop.src}
               alt={HERO_ALT}

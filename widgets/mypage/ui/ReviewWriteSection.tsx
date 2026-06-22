@@ -307,7 +307,7 @@ export default function ReviewWriteSection({
   if (!isLoggedIn) return null;
 
   return (
-    <div className="bg-white pt-[var(--header-offset)]">
+    <div className="bg-white">
       {/* Hero — "우리 아이의 꼬순박스, 만족하셨나요??" (텍스트 포함 배너) */}
       {/* 모바일(<950px): 전용 이미지 / 데스크톱(≥950px): 와이드 배너, 초광폭은 좌우 보완 */}
       <section aria-label="리뷰 작성 안내">
@@ -319,9 +319,9 @@ export default function ReviewWriteSection({
             priority
           />
         </div>
-        <div className="max-md2:hidden relative w-full h-[252px]">
-          <div className="absolute inset-x-0 top-0 h-[202px] w-full bg-support-hero-side-bg" />
-          <div className="relative mx-auto h-[252px] w-full max-w-[1920px] overflow-hidden">
+        <div className="max-md2:hidden relative w-full h-[306px]">
+          <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+          <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
             <Image
               src={reviewWriteHeroDesktop}
               alt={HERO_ALT}

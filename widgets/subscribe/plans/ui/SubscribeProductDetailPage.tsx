@@ -28,6 +28,7 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
+import { useReferralPricing } from "@/features/referral/model";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import Stars from "./reviews/Stars";
 import ReviewImageLightbox from "./reviews/ReviewImageLightbox";
@@ -122,6 +123,16 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const discountedUnitPrice = selectedPlan.monthlyPrice;
   const hasDiscount = selectedPlan.discountRate > 0;
   const salePrice = discountedUnitPrice * quantity;
+
+  // 레퍼럴 쿠키 보유 시 할인가가 계산되어 대기한다 (UI 변경 없음 — 선 배선).
+  // 디자인 확정 후 적용:
+  // - referralPrice(selectedPlan.monthlyPrice)            → discountedUnitPrice 대체
+  // - referralPrice(selectedPlan.monthlyPrice) * quantity → salePrice 대체
+  // - combinedDiscountPct(selectedPlan)                   → 할인율 표시
+  // - isReferral                                          → 레퍼럴 배지 조건부 표시
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const { referralPrice, combinedDiscountPct, isReferral } = useReferralPricing();
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);

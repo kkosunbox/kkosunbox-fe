@@ -232,7 +232,14 @@
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-puppy-run-renewal.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-puppy-run-renewal.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-make-box.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-make-box.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-deco-paws.svg\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-deco-paws.svg\")",
-      "Bash(xargs -I{} git show {} -- widgets/footer/ui/FooterSection.tsx)"
+      "Bash(xargs -I{} git show {} -- widgets/footer/ui/FooterSection.tsx)",
+      "PowerShell(Out-File *)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\(x86\\)/Microsoft/Edge/Application/**)",
+      "Read(//tmp/**)",
+      "Bash(break)",
+      "Bash(echo \"EXIT_TSC=$?\")",
+      "Bash(echo \"EXIT_LINT=$?\")"
     ]
   }
 }

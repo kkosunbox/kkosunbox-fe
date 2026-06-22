@@ -19,6 +19,7 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import { usePlanRatings } from "@/features/review";
+import { useReferralPricing } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
@@ -144,6 +145,17 @@ export default function PlanPicker({
   const displayTier = selectedTier;
 
   const activePlan = planForTier(sortedPlans, displayTier);
+
+  // 레퍼럴 쿠키 보유 시 할인가가 계산되어 대기한다 (UI 변경 없음 — 선 배선).
+  // 디자인 확정 후 아래를 JSX 가격 표시에 적용:
+  // - referralPrice(plan.monthlyPrice) → formatMonthlyPrice(plan.monthlyPrice) 대체
+  // - combinedDiscountPct(plan)        → plan.discountRate 대체
+  // - isReferral                       → 레퍼럴 배지 조건부 표시
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const { referralPrice, combinedDiscountPct, additionalDiscountPct, isReferral } =
+    useReferralPricing();
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
 

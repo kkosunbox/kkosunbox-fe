@@ -1,8 +1,7 @@
-﻿import Link from "next/link";
-import SupportHeroBg from "../assets/support-hero-bg-renewal.png";
+﻿import SupportHeroBg from "../assets/support-hero-bg-renewal.png";
 import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.webp";
 
-export function SupportHero({ showButton = true }: { showButton?: boolean }) {
+export function SupportHero() {
   return (
     <section className="relative w-full overflow-hidden" aria-label="1:1 문의 안내">
       {/* 모바일 (< 950px): 단일 배너(111px 고정, 가로 중앙 정렬) */}
@@ -36,18 +35,6 @@ export function SupportHero({ showButton = true }: { showButton?: boolean }) {
             fetchPriority="high"
             decoding="async"
           />
-          {showButton && (
-            <div className="absolute inset-0 z-10">
-              <div className="mx-auto flex h-full w-full max-w-content items-center justify-end max-lg:px-8 lg:px-0">
-                <Link
-                  href="/inquiry"
-                  className="inline-flex h-10 w-[148px] shrink-0 items-center justify-center rounded-lg bg-[var(--color-cta-button)] px-6 text-center text-body-14-sb leading-[1.5] tracking-[-0.02em] text-white"
-                >
-                  문의하기
-                </Link>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>

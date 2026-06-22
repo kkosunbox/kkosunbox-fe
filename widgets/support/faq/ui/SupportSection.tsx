@@ -276,9 +276,24 @@ export default function SupportSection({
         {/* ── FAQ 패널 (#FFF7EF) ── */}
         <ScrollReveal variant="fade-up" delay={150}>
           <section
-            className={`rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-6 lg:pt-6${fillViewport ? " flex min-h-0 flex-1 flex-col" : ""}`}
+            className={`relative rounded-[20px] bg-[var(--color-support-faq-surface)] py-8 max-md:px-5 max-md:py-5 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-6 lg:pt-6${fillViewport ? " flex min-h-0 flex-1 flex-col" : ""}`}
             aria-label="자주 묻는 질문"
           >
+          {/* 데스크탑 우상단: 내 문의내역 + 문의하기 버튼 */}
+          <div className="absolute top-6 right-[45px] z-10 max-md2:hidden flex items-center gap-3">
+            <Link
+              href="/support/history"
+              className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)] underline underline-offset-2"
+            >
+              내 문의내역
+            </Link>
+            <Link
+              href="/inquiry"
+              className="inline-flex h-10 w-[148px] shrink-0 items-center justify-center rounded-lg bg-[var(--color-cta-button)] px-6 text-center text-body-14-sb leading-[1.5] tracking-[-0.02em] text-white"
+            >
+              문의하기
+            </Link>
+          </div>
           <div className="mb-3 flex items-center justify-between gap-2 md:hidden">
             <h2 className="whitespace-nowrap text-body-13-sb tracking-[-0.04em] text-[var(--color-text)]">
               자주 묻는 질문(FAQ)
@@ -291,10 +306,9 @@ export default function SupportSection({
             </Link>
           </div>
 
-          {/* 검색 + 내 문의내역 */}
-          <div className="mb-6 grid w-full grid-cols-1 gap-3 md:mb-8 lg:mb-8 md:grid-cols-[1fr_auto_1fr] lg:grid-cols-[1fr_auto_1fr] md:items-center lg:items-center">
-            <div aria-hidden="true" className="max-md:hidden" />
-            <label className="mx-auto flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-[8px] bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:mx-0 lg:mx-0 md:w-[320px] lg:w-[320px] md:shrink-0 lg:shrink-0">
+          {/* 검색 */}
+          <div className="mb-6 md:mb-8 lg:mb-8">
+            <label className="flex h-10 max-md:w-full cursor-text items-center gap-2 rounded-[8px] bg-white px-5 py-2 shadow-[0px_0.73544px_1.47088px_rgba(16,24,40,0.05)] md:w-[320px] lg:w-[320px] md:shrink-0 lg:shrink-0">
               <span className="sr-only">질문 검색</span>
               <SearchIcon />
               <input
@@ -305,14 +319,6 @@ export default function SupportSection({
                 className="min-w-0 flex-1 border-0 bg-transparent p-0 text-body-14-m leading-[17px] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
               />
             </label>
-            <div className="max-md:hidden flex justify-end">
-              <Link
-                href="/support/history"
-                className="text-right text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)] underline underline-offset-2"
-              >
-                내 문의내역
-              </Link>
-            </div>
           </div>
 
           {currentItems.length > 0 ? (

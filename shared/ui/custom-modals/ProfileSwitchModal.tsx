@@ -10,7 +10,6 @@ import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
-import DefaultPetIcon from "../DefaultPetIcon";
 import FallbackAvatar from "../FallbackAvatar";
 
 interface Props {
@@ -50,7 +49,7 @@ function DeleteIcon() {
   );
 }
 
-function ProfileAvatar({ pet }: { pet: Profile }) {
+function ProfileAvatar({ pet, userId }: { pet: Profile; userId?: number | null }) {
   if (pet.profileImageUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL
@@ -58,21 +57,19 @@ function ProfileAvatar({ pet }: { pet: Profile }) {
     );
   }
 
-  return (
-    <div className="flex h-full w-full items-center justify-center bg-[var(--color-secondary)]">
-      <DefaultPetIcon className="h-[41px] w-[41px]" />
-    </div>
-  );
+  return <FallbackAvatar userId={userId} className="h-full w-full" />;
 }
 
 function ProfileItem({
   pet,
   selected,
+  userId,
   onSelect,
   onDelete,
 }: {
   pet: Profile;
   selected: boolean;
+  userId?: number | null;
   onSelect: () => void;
   onDelete: () => void;
 }) {
@@ -88,7 +85,7 @@ function ProfileItem({
               : "border border-[var(--color-text-muted)]"
           }`}
         >
-          <ProfileAvatar pet={pet} />
+          <ProfileAvatar pet={pet} userId={userId} />
         </button>
         <button
           type="button"
@@ -209,6 +206,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
                   key={pet.id}
                   pet={pet}
                   selected={selectedId === pet.id}
+                  userId={user?.id ?? null}
                   onSelect={() => setSelectedId(pet.id)}
                   onDelete={() => handleDeleteProfile(pet)}
                 />

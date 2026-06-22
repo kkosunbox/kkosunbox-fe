@@ -365,7 +365,7 @@ export default function InquirySection() {
                   </button>
                 </label>
               </div>
-              <div className="flex justify-center pt-2 lg:pt-[26px]">
+              <div className="flex justify-center max-md:pt-2 md:pt-5 lg:pt-[26px]">
                 <button
                   type="submit"
                   disabled={!isSubmittable || isPending}

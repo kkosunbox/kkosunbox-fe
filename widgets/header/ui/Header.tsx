@@ -582,7 +582,15 @@ const [isBannerCollapsed, setIsBannerCollapsed] = useState(false);
     }
   }, [isBannerCollapsed]);
 
-  const isTransparentRoute = pathname === "/" || pathname === "/about" || pathname.startsWith("/ref/");
+  const isTransparentRoute =
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname.startsWith("/ref/") ||
+    pathname === "/subscribe" ||
+    pathname === "/support" ||
+    pathname === "/mypage/review/write" ||
+    pathname === "/mypage/subscription/change" ||
+    pathname === "/mypage/withdraw";
   const isSolid = !isTransparentRoute || isMenuOpen || isScrolled || isHovered;
   const closeMenu = () => setIsMenuOpen(false);
 

@@ -10,7 +10,8 @@ import { getProfileDisplayName } from "@/shared/config/profile";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
-import { BreedCombobox, DatePicker, DefaultPetIcon, useLoadingOverlay, useModal } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
+import { BreedCombobox, DatePicker, FallbackAvatar, useLoadingOverlay, useModal } from "@/shared/ui";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 
@@ -76,6 +77,7 @@ function PetAvatar({
   size = 124,
   editSize = 40,
   imageUrl,
+  userId,
   onEditClick,
   disabled,
   uploading,
@@ -83,12 +85,11 @@ function PetAvatar({
   size?: number;
   editSize?: number;
   imageUrl: string | null;
+  userId?: number | null;
   onEditClick: () => void;
   disabled?: boolean;
   uploading?: boolean;
 }) {
-  const iconSize = size <= 64 ? "w-[60%] h-[60%]" : "w-[60%] h-[60%]";
-
   return (
     <div className="relative shrink-0">
       <div
@@ -110,9 +111,7 @@ function PetAvatar({
             height={size}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-[var(--color-secondary)]">
-            <DefaultPetIcon className={iconSize} />
-          </div>
+          <FallbackAvatar userId={userId} className="h-full w-full" />
         )}
       </div>
       <button
@@ -188,6 +187,7 @@ export default function ProfileManagementSection({
   isNewProfile = false,
 }: ProfileManagementSectionProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const { profile: activeProfile, profiles, refreshProfile, setActiveProfileId } = useProfile();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const { openAlert } = useModal();
@@ -389,6 +389,7 @@ export default function ProfileManagementSection({
                 size={124}
                 editSize={40}
                 imageUrl={profileImageUrl}
+                userId={user?.id ?? null}
                 onEditClick={() => fileInputRef.current?.click()}
                 uploading={isUploadingImage}
               />
@@ -569,6 +570,7 @@ export default function ProfileManagementSection({
             size={100}
             editSize={32}
             imageUrl={profileImageUrl}
+            userId={user?.id ?? null}
             onEditClick={() => fileInputRef.current?.click()}
             uploading={isUploadingImage}
           />

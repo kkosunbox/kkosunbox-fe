@@ -132,7 +132,7 @@ function MobileReviewList({
         </div>
       )}
 
-      {loading ? (
+      {loading && reviews.length === 0 ? (
         <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
           리뷰를 불러오는 중...
         </p>
@@ -141,7 +141,7 @@ function MobileReviewList({
           아직 작성된 리뷰가 없습니다.
         </p>
       ) : (
-        <ul className="space-y-6">
+        <ul className={`space-y-6 transition-opacity duration-150 ${loading ? "pointer-events-none opacity-40" : ""}`}>
           {reviews.map((review) => (
             <li
               key={review.id}
@@ -331,7 +331,7 @@ function DesktopReviewList({
         </div>
       )}
 
-      {loading ? (
+      {loading && reviews.length === 0 ? (
         <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
           리뷰를 불러오는 중...
         </p>
@@ -340,7 +340,7 @@ function DesktopReviewList({
           아직 작성된 리뷰가 없습니다.
         </p>
       ) : (
-        <ul>
+        <ul className={`transition-opacity duration-150 ${loading ? "pointer-events-none opacity-40" : ""}`}>
           {reviews.map((review) => (
             <li
               key={review.id}

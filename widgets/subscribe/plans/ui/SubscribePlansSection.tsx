@@ -8,7 +8,7 @@ import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
-import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-renewal.webp";
+import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-renewal.png";
 import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
 import { PlanPicker } from "@/widgets/package-plans";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -45,7 +45,7 @@ export default function SubscribePlansSection({
         <div className="flex w-full flex-1 flex-col">
           {/* Hero */}
           <ScrollReveal variant="fade-in" duration={600}>
-            <div className="mb-6 md:mb-10 lg:mb-10">
+            <div className="max-md:mb-6 md:max-md2:mb-10">
               <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
                 <Image
                   src={SubscribePlansHeroImageMobile}
@@ -54,8 +54,9 @@ export default function SubscribePlansSection({
                   priority
                 />
               </div>
-              <div className="max-md2:hidden w-full bg-support-hero-side-bg">
-                <div className="relative mx-auto h-[118px] w-full max-w-[1920px] overflow-hidden">
+              <div className="max-md2:hidden relative w-full h-[252px]">
+                <div className="absolute inset-x-0 top-0 h-[202px] w-full bg-support-hero-side-bg" />
+                <div className="relative mx-auto h-[252px] w-full max-w-[1920px] overflow-hidden">
                   <Image
                     src={SubscribePlansHeroImage}
                     alt="이제 수제 간식도 맞춤형으로 구독하세요"

@@ -21,10 +21,13 @@ const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
 export default function PackagePlansSection() {
   const router = useRouter();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const [plansReady, setPlansReady] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    getSubscriptionPlans().then((res) => setApiPlans(res.plans)).catch(() => {});
+    getSubscriptionPlans()
+      .then((res) => { setApiPlans(res.plans); setPlansReady(true); })
+      .catch(() => { setPlansReady(true); });
   }, []);
 
   useEffect(() => {
@@ -61,6 +64,7 @@ export default function PackagePlansSection() {
 
         <PlanPicker
           plans={apiPlans}
+          plansReady={plansReady}
           summaryOrder={HOME_SUMMARY_ORDER}
           getPrimaryButton={(plan) => ({
             label: "제품 상세보기",

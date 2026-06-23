@@ -68,13 +68,28 @@ export default function SubscribePlansSection({
             </div>
           </ScrollReveal>
 
-          <PlanPicker
-            plans={plans}
-            getPrimaryButton={(plan) => ({
-              label: "제품 상세보기",
-              onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
-            })}
-          />
+          {plans.length === 0 ? (
+            <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
+              <p className="text-body-16-m text-[var(--color-text-secondary)]">
+                잠시 후 다시 시도해 주세요.
+              </p>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="text-body-14-sb text-[var(--color-accent)] underline underline-offset-2"
+              >
+                새로고침
+              </button>
+            </div>
+          ) : (
+            <PlanPicker
+              plans={plans}
+              getPrimaryButton={(plan) => ({
+                label: "제품 상세보기",
+                onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
+              })}
+            />
+          )}
         </div>
       </section>
     </>

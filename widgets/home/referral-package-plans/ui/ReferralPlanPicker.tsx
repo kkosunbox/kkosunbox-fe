@@ -107,6 +107,8 @@ export interface PlanPickerProps {
   isCurrentPlan?: (plan: SubscriptionPlanDto) => boolean;
   /** false면 데스크탑 카드 선택 배경·높이 강조 미표시 */
   showSelectedCardHighlight?: boolean;
+  /** false이면 plans 로딩 중 — plan 없는 슬롯에 pulse 애니메이션 표시. true(기본값)이면 로딩 완료 — 정적 플레이스홀더 표시 */
+  plansReady?: boolean;
   getPrimaryButton: (plan: SubscriptionPlanDto) => PrimaryButtonConfig;
   /** 데스크탑 카드 열·모바일 네비 순서. 기본값: ["Premium", "Standard", "Basic"] */
   summaryOrder?: PackageTier[];
@@ -119,6 +121,7 @@ export default function ReferralPlanPicker({
   initialSelectedTier = null,
   isCurrentPlan,
   showSelectedCardHighlight = true,
+  plansReady = true,
   getPrimaryButton,
   summaryOrder = DEFAULT_SUMMARY_ORDER,
   mobileSlot,
@@ -463,7 +466,7 @@ export default function ReferralPlanPicker({
                         ) : null}
                       </>
                     ) : (
-                      <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
+                      <div className={`h-10 rounded bg-[var(--color-text-muted)] ${plansReady ? "opacity-30" : "animate-pulse"}`} />
                     )}
                   </div>
                 </button>
@@ -548,7 +551,7 @@ export default function ReferralPlanPicker({
                         ) : null}
                       </>
                     ) : (
-                      <div className="h-10 animate-pulse rounded bg-[var(--color-text-muted)]" />
+                      <div className={`h-10 rounded bg-[var(--color-text-muted)] ${plansReady ? "opacity-30" : "animate-pulse"}`} />
                     )}
                   </div>
                 </button>

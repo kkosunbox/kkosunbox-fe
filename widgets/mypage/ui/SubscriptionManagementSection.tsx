@@ -82,8 +82,10 @@ function earliestNextBillingDate(subs: UserSubscriptionDto[]): string | null {
 ───────────────────────────── */
 function SubscriptionsSummaryCard({
   activeSubscriptions,
+  hasPlans,
 }: {
   activeSubscriptions: UserSubscriptionDto[];
+  hasPlans: boolean;
 }) {
   const count = activeSubscriptions.length;
   const nextDate = earliestNextBillingDate(activeSubscriptions);
@@ -135,13 +137,19 @@ function SubscriptionsSummaryCard({
       )}
 
       <Text as="h3" variant="subtitle-16-b" className="mb-3 text-[var(--color-text)]">
-        {count > 0 ? `총 ${count}개의 구독 이용중` : "이용중인 구독이 없습니다"}
+        {!hasPlans
+          ? "구독 정보를 불러올 수 없습니다"
+          : count > 0
+          ? `총 ${count}개의 구독 이용중`
+          : "이용중인 구독이 없습니다"}
       </Text>
 
-      <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
-        <p>다음 결제일 : {nextDate ? formatDate(nextDate) : "-"}</p>
-        <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
-      </div>
+      {hasPlans && (
+        <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
+          <p>다음 결제일 : {nextDate ? formatDate(nextDate) : "-"}</p>
+          <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
+        </div>
+      )}
 
       <img
         src={pawsImg.src}
@@ -487,7 +495,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
 
         {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
         <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white max-md:shadow-[0px_4px_12px_0px_#00000014] md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_12px_0px_#00000014] lg:shadow-[0px_4px_12px_0px_#00000014]">
-          <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} />
+          <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} hasPlans={hasPlans} />
           {/* Mobile: horizontal divider */}
           <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
           {/* Desktop: vertical divider */}

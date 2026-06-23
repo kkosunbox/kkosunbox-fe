@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, useModal } from "@/shared/ui";
 import { unsavedLeaveAlertOptions } from "@/shared/lib/modal/alertPresets";
+import { getErrorMessage } from "@/shared/lib/api";
 import { useAuth } from "@/features/auth";
 import {
   createProfile,
@@ -484,6 +485,7 @@ export default function ChecklistSection() {
     let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
     let savedProfileId: number | null = null;
     let checklistSaved = false;
+    let saveError: unknown = null;
     try {
       if (isLoggedIn && activeProfile) {
         await updateProfile(activeProfile.id, {
@@ -524,7 +526,13 @@ export default function ChecklistSection() {
         }
       }
     } catch (e) {
-      console.error("[ChecklistSection] save or plan fetch failed", e);
+      if (!checklistSaved) saveError = e;
+    }
+
+    if (isLoggedIn && !checklistSaved) {
+      openAlert({
+        title: getErrorMessage(saveError, "체크리스트 저장에 실패했습니다. 잠시 후 다시 시도해 주세요."),
+      });
     }
 
     if (checklistSaved && user?.id) {

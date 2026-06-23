@@ -23,11 +23,12 @@ export default function ReferralPackagePlansSection() {
   const router = useRouter();
   const { influencerName, discountRate } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
+  const [plansReady, setPlansReady] = useState(false);
 
   useEffect(() => {
     getSubscriptionPlans()
-      .then((res) => setApiPlans(res.plans))
-      .catch(() => {});
+      .then((res) => { setApiPlans(res.plans); setPlansReady(true); })
+      .catch(() => { setPlansReady(true); });
   }, []);
 
   const additionalDiscountPct = Math.round(discountRate * 100);
@@ -57,6 +58,7 @@ export default function ReferralPackagePlansSection() {
 
         <ReferralPlanPicker
           plans={apiPlans}
+          plansReady={plansReady}
           getPrimaryButton={(plan) => ({
             label: "제품 상세보기",
             onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),

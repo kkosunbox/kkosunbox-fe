@@ -20,6 +20,7 @@ import {
 } from "@/entities/package";
 import { usePlanRatings } from "@/features/review";
 import { useReferralPricing } from "@/features/referral/model";
+import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
@@ -149,15 +150,8 @@ export default function PlanPicker({
 
   const activePlan = planForTier(sortedPlans, displayTier);
 
-  // 레퍼럴 쿠키 보유 시 할인가가 계산되어 대기한다 (UI 변경 없음 — 선 배선).
-  // 디자인 확정 후 아래를 JSX 가격 표시에 적용:
-  // - referralPrice(plan.monthlyPrice) → formatMonthlyPrice(plan.monthlyPrice) 대체
-  // - combinedDiscountPct(plan)        → plan.discountRate 대체
-  // - isReferral                       → 레퍼럴 배지 조건부 표시
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const { referralPrice, combinedDiscountPct, additionalDiscountPct, isReferral } =
+  const { referralPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
     useReferralPricing();
-  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
@@ -288,6 +282,12 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-3 top-3"
+                      />
+                    ) : null}
                   </div>
 
                   {/* 좌우 네비 — 이전/다음 패키지 (이미지 세로 중앙) */}
@@ -341,13 +341,15 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {activePlan.discountRate}%
+                            {inviteEligible ? combinedDiscountPct(activePlan) : activePlan.discountRate}%
                           </span>
                           <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
                             {formatMonthlyPrice(activePlan.originalPrice)}
                           </span>
                           <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(activePlan.monthlyPrice)}
+                            {inviteEligible
+                              ? formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))
+                              : formatMonthlyPrice(activePlan.monthlyPrice)}
                           </span>
                         </div>
                       </div>
@@ -452,6 +454,12 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-2 top-2"
+                      />
+                    ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                     <p
@@ -468,7 +476,7 @@ export default function PlanPicker({
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
-                            {plan.discountRate}%
+                            {inviteEligible ? combinedDiscountPct(plan) : plan.discountRate}%
                           </span>
                           <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
                             {formatMonthlyPrice(plan.originalPrice)}
@@ -479,7 +487,9 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(plan.monthlyPrice)}
+                            {inviteEligible
+                              ? formatMonthlyPrice(referralPrice(plan.monthlyPrice))
+                              : formatMonthlyPrice(plan.monthlyPrice)}
                           </span>
                         </div>
                         {planRatings[plan.id] > 0 ? (
@@ -530,6 +540,12 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-2 top-2"
+                      />
+                    ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
                     <p
@@ -544,7 +560,7 @@ export default function PlanPicker({
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {plan.discountRate}%
+                            {inviteEligible ? combinedDiscountPct(plan) : plan.discountRate}%
                           </span>
                           <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
                             {formatMonthlyPrice(plan.originalPrice)}
@@ -560,7 +576,9 @@ export default function PlanPicker({
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >
-                            {formatMonthlyPrice(plan.monthlyPrice)}
+                            {inviteEligible
+                              ? formatMonthlyPrice(referralPrice(plan.monthlyPrice))
+                              : formatMonthlyPrice(plan.monthlyPrice)}
                           </span>
                         </div>
                         {planRatings[plan.id] > 0 ? (

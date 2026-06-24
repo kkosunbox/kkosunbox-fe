@@ -9,7 +9,7 @@ import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
 import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-renewal.png";
-import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobi.webp";
+import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobile-renewal.png";
 import { PlanPicker } from "@/widgets/package-plans";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
@@ -45,12 +45,12 @@ export default function SubscribePlansSection({
         <div className="flex w-full flex-1 flex-col">
           {/* Hero */}
           <ScrollReveal variant="fade-in" duration={600}>
-            <div className="max-md:mb-6 md:max-md2:mb-10">
-              <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
+            <div className="max-md2:mb-1">
+              <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
                 <img
                   src={SubscribePlansHeroImageMobile.src}
                   alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                  className="h-[111px] w-full shrink-0 object-cover object-center"
+                  className="h-[156px] w-full shrink-0 object-cover object-center"
                 />
               </div>
               <div className="max-md2:hidden relative w-full h-[306px]">

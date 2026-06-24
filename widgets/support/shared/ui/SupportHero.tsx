@@ -1,23 +1,21 @@
 ﻿import SupportHeroBg from "../assets/support-hero-bg-renewal.png";
-import InquiryHeroBannerMobile from "../assets/inquiry-hero-banner.webp";
+import InquiryHeroBannerMobile from "../assets/support-hero-mobile-renewal.png";
 
 export function SupportHero() {
   return (
     <section className="relative w-full overflow-hidden" aria-label="1:1 문의 안내">
-      {/* 모바일 (< 950px): 단일 배너(111px 고정, 가로 중앙 정렬) */}
-      <div className="relative h-[111px] w-full overflow-hidden md2:hidden">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element -- 정적 배너 원본 품질 유지 */}
-          <img
-            src={InquiryHeroBannerMobile.src}
-            alt="꼬순박스에 궁금한 점을 작성해주세요. 1:1 문의를 남겨주시면 담당자가 확인 후 빠르게 답변해 드립니다."
-            width={InquiryHeroBannerMobile.width}
-            height={InquiryHeroBannerMobile.height}
-            className="h-[111px] w-auto max-w-none shrink-0"
-            fetchPriority="high"
-            decoding="async"
-          />
-        </div>
+      {/* 모바일 (< 950px): 단일 배너(헤더 오프셋 포함 156px 가시 영역 확보) */}
+      <div className="flex h-[calc(156px+var(--banner-height))] w-full items-end overflow-hidden md2:hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element -- 정적 배너 원본 품질 유지 */}
+        <img
+          src={InquiryHeroBannerMobile.src}
+          alt="꼬순박스에 궁금한 점이 있으신가요?"
+          width={InquiryHeroBannerMobile.width}
+          height={InquiryHeroBannerMobile.height}
+          className="h-[156px] w-full object-cover object-center"
+          fetchPriority="high"
+          decoding="async"
+        />
       </div>
 
       {/* 데스크톱 (≥ 950px): 배너 + 문의하기 버튼 */}

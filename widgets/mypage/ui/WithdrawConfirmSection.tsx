@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web-renewal.png";
-import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile.webp";
+import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile-renewal.png";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";
@@ -346,11 +346,11 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       {/* Hero 배너 */}
       <section aria-label="탈퇴 페이지 안내">
         {/* 모바일 (<md2) */}
-        <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
+        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
           <img
             src={withdrawHeroMobile.src}
             alt={HERO_ALT}
-            className="h-[111px] w-full object-cover object-center"
+            className="h-[156px] w-full object-cover object-center"
           />
         </div>
         {/* 데스크톱 (≥md2) */}

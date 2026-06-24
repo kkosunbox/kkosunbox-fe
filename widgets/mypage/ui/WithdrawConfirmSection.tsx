@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web-renewal.png";
-import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile-renewal.png";
+import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web-renewal.webp";
+import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile-renewal.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";

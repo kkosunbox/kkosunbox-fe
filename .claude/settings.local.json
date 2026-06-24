@@ -267,7 +267,8 @@
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/image-005.png\" \"C:/2026/ggosoonbox/widgets/support/shared/assets/support-hero-mobile-renewal.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/image-006.png\" \"C:/2026/ggosoonbox/widgets/mypage/assets/withdraw-confirm-hero-mobile-renewal.png\")",
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/screenshots/image-007.png\" \"C:/2026/ggosoonbox/widgets/mypage/assets/review-write-hero-mobile-renewal.png\")",
-      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test 2>&1 | Select-Object -Last 20)"
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test 2>&1 | Select-Object -Last 20)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/checklist.spec.ts tests/e2e/referral.spec.ts 2>&1 | Select-Object -Last 20)"
     ]
   }
 }

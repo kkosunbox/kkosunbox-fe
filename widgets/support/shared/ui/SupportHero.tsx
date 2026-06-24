@@ -1,5 +1,5 @@
-﻿import SupportHeroBg from "../assets/support-hero-bg-renewal.png";
-import InquiryHeroBannerMobile from "../assets/support-hero-mobile-renewal.png";
+﻿import SupportHeroBg from "../assets/support-hero-bg-renewal.webp";
+import InquiryHeroBannerMobile from "../assets/support-hero-mobile-renewal.webp";
 
 export function SupportHero() {
   return (

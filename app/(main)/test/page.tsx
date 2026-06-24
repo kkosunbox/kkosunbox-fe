@@ -58,12 +58,20 @@ export default function TestPage() {
           </p>
         </header>
 
-        <Link
-          href="/test/toss"
-          className="inline-flex w-fit items-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-        >
-          토스 결제 테스트 →
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/test/toss"
+            className="inline-flex w-fit items-center gap-2 rounded-xl bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
+          >
+            토스 결제 테스트 →
+          </Link>
+          <Link
+            href="/test/error"
+            className="inline-flex w-fit items-center gap-2 rounded-xl bg-zinc-700 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-600"
+          >
+            에러 화면 테스트 →
+          </Link>
+        </div>
 
         <DesignSystemPanels />
 

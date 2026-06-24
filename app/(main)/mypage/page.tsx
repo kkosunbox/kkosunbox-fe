@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import ErrorBoundary from "@/shared/ui/ErrorBoundary";
 import {
   MypageSection,
   ProfileSectionLoader,
@@ -11,35 +12,48 @@ import {
   PaymentCardSkeleton,
   DeliveryCardSkeleton,
   InquiryCardSkeleton,
+  ProfileSectionErrorFallback,
+  SubscriptionCardErrorFallback,
+  CardErrorFallback,
 } from "@/widgets/mypage";
 
 export default function MyPage() {
   return (
     <MypageSection
       profileSection={
-        <Suspense fallback={<ProfileSectionSkeleton />}>
-          <ProfileSectionLoader />
-        </Suspense>
+        <ErrorBoundary fallback={<ProfileSectionErrorFallback />}>
+          <Suspense fallback={<ProfileSectionSkeleton />}>
+            <ProfileSectionLoader />
+          </Suspense>
+        </ErrorBoundary>
       }
       subscriptionCard={
-        <Suspense fallback={<SubscriptionCardSkeleton />}>
-          <SubscriptionCardLoader />
-        </Suspense>
+        <ErrorBoundary fallback={<SubscriptionCardErrorFallback />}>
+          <Suspense fallback={<SubscriptionCardSkeleton />}>
+            <SubscriptionCardLoader />
+          </Suspense>
+        </ErrorBoundary>
       }
       paymentCard={
-        <Suspense fallback={<PaymentCardSkeleton />}>
-          <PaymentCardLoader />
-        </Suspense>
+        <ErrorBoundary fallback={<CardErrorFallback title="결제관리" />}>
+          <Suspense fallback={<PaymentCardSkeleton />}>
+            <PaymentCardLoader />
+          </Suspense>
+        </ErrorBoundary>
       }
       deliveryCard={
-        <Suspense fallback={<DeliveryCardSkeleton />}>
-          <DeliveryCardLoader />
-        </Suspense>
+        <ErrorBoundary fallback={<CardErrorFallback title="배송관리" />}>
+          <Suspense fallback={<DeliveryCardSkeleton />}>
+            <DeliveryCardLoader />
+          </Suspense>
+        </ErrorBoundary>
       }
       inquiryCard={
-        <Suspense fallback={<InquiryCardSkeleton />}>
-          <InquiryCardLoader />
-        </Suspense>
+        <ErrorBoundary fallback={<CardErrorFallback title="문의관리" />}>
+          <Suspense fallback={<InquiryCardSkeleton />}>
+            <InquiryCardLoader />
+          </Suspense>
+        </ErrorBoundary>
       }
     />
   );

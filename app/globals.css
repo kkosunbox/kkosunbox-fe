@@ -135,7 +135,10 @@
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
   --color-about-hero-bg: #825732; /* About Hero 섹션 배경 (웜 브라운) */
+  --color-about-hero-mobile-fill: #E0AE82; /* About Hero 모바일·태블릿 이미지 양옆 채움 색상 */
   --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
+  --color-about-hero-text: #2F2F2F;        /* About Hero 본문 텍스트 (갱신 이미지 배경 대응) */
+  --color-about-hero-text-accent: #964B00; /* About Hero 강조 문구 (갱신 이미지 배경 대응) */
   --color-about-feature-heading: #49403B; /* About Feature 섹션 헤딩 */
   --color-about-tan-bg: #87684C;   /* About Feature 카드 섹션 다크 탄 배경 (Figma Rectangle 4282) */
   --color-about-peach-bg: #FBE9DA; /* About 피치 섹션 배경 */
@@ -388,7 +391,10 @@
   --color-cta-sage-bg: var(--color-cta-sage-bg);
   --color-text-cta: var(--color-text-cta);
   --color-about-hero-bg: var(--color-about-hero-bg);
+  --color-about-hero-mobile-fill: var(--color-about-hero-mobile-fill);
   --color-about-hero-accent: var(--color-about-hero-accent);
+  --color-about-hero-text: var(--color-about-hero-text);
+  --color-about-hero-text-accent: var(--color-about-hero-text-accent);
   --color-about-feature-heading: var(--color-about-feature-heading);
   --color-about-tan-bg: var(--color-about-tan-bg);
   --color-about-peach-bg: var(--color-about-peach-bg);
@@ -622,9 +628,17 @@ button:disabled {
 @utility text-body-16-b  { font-size: 16px; line-height: 24px; font-weight: 700; }
 @utility text-body-16-r-lh130 { font-size: 16px; line-height: 130%; font-weight: 400; }
 @utility text-body-16-b-lh130 { font-size: 16px; line-height: 130%; font-weight: 700; letter-spacing: 0; }
+@utility text-body-17-r-lh130 { font-size: 17px; line-height: 130%; font-weight: 400; }
+@utility text-body-17-b-lh130 { font-size: 17px; line-height: 130%; font-weight: 700; }
 @utility text-body-20-r-griun-lh130 {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 20px;
+  line-height: 130%;
+  font-weight: 400;
+}
+@utility text-body-22-r-griun-lh130 {
+  font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
+  font-size: 22px;
   line-height: 130%;
   font-weight: 400;
 }

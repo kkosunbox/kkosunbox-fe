@@ -11,7 +11,8 @@ import {
   MEDIA_MAX_MD_SIZES,
 } from "@/shared/config/breakpoints";
 
-import introduceHeroRenewal from "../assets/introduce-hero-renewal.png";
+import introduceHeroRenewalMobileTablet from "../assets/introduce-hero-renewal-mobile-tablet.png";
+import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.png";
 import introducePuppyRunRenewal from "../assets/introduce-puppy-run-renewal.png";
 import introduceMakeBox from "../assets/introduce-make-box.png";
 import introduceDecoPaws from "../assets/introduce-deco-paws.svg";
@@ -70,10 +71,25 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 (Hero) */}
-      <section className="overflow-hidden bg-[var(--color-about-hero-bg)] text-white max-lg:pt-[62px] max-md:pb-10 md:pb-12 max-lg:pb-12 lg:pt-[var(--header-height)] lg:h-[602px]">
-        <div className="mx-auto max-md:max-w-[480px] md:max-w-[var(--max-width-content)] px-6 lg:px-0 lg:h-full">
-          {/* 모바일 타이틀 */}
-          <h1 className="flex justify-center max-lg:pt-4 max-lg:mb-1 lg:hidden" aria-label="About Us">
+      <section className="relative overflow-hidden bg-[var(--color-about-hero-bg)] max-lg:pt-[62px] max-lg:h-[641px] lg:h-[602px]">
+
+        {/* 모바일·태블릿 레이아웃 (lg 미만): 이미지 전체 배경 + 텍스트 overlay */}
+        {/* 배경 이미지 — absolute inset-0 으로 padding 영향 없이 section 전체를 채움 */}
+        <div className="lg:hidden absolute inset-0">
+          <Image
+            src={introduceHeroRenewalMobileTablet}
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 100vw`}
+            aria-hidden
+            priority
+          />
+        </div>
+
+        {/* 텍스트 overlay — SVG 상단, 문단 하단 */}
+        <div className="lg:hidden relative z-10 h-full flex flex-col items-center text-center px-6 pt-4">
+          <h1 aria-label="About Us">
             <svg
               width="175"
               height="33"
@@ -93,39 +109,53 @@ export default function AboutSection() {
             </svg>
           </h1>
 
-          {/* 데스크탑: 텍스트(356px) + 이미지(720px) → 합계 1076px, 우측 64px overflow 후 section clip */}
-          <div className="flex flex-col items-center lg:flex-row lg:items-center lg:h-full">
-            {/* 우측: 이미지 (order-last, 고정 720px) */}
-            <ScrollReveal
-              variant="slide-right"
-              duration={900}
-              className="max-lg:w-full lg:order-last lg:flex-none lg:w-[720px]"
-            >
-              <Image
-                src={introduceHeroRenewal}
-                alt="꼬순박스 소개 — 귀여운 3D 강아지들과 박스"
-                width={720}
-                height={405}
-                className="mx-auto h-auto w-full max-w-[360px] object-contain lg:hidden"
-                sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 360px`}
-                priority
-              />
-              <Image
-                src={introduceHeroRenewal}
-                alt="꼬순박스 소개 — 귀여운 3D 강아지들과 박스"
-                width={720}
-                height={405}
-                className="max-lg:hidden w-[720px] h-auto object-contain"
-                sizes="720px"
-                priority
-              />
+          <div className="flex-1" />
+          <div className="flex flex-col gap-5 pb-8">
+            <ScrollReveal variant="fade-up" delay={200}>
+              <p className="max-md:text-[14px] max-md:leading-[130%] text-body-16-r-lh130 text-[var(--color-about-hero-text)]">
+                간식을 고를 때마다 고민이 됩니다.
+              </p>
             </ScrollReveal>
+            <ScrollReveal variant="fade-up" delay={300}>
+              <p className="max-md:text-[14px] max-md:leading-[130%] text-body-16-r-lh130 text-[var(--color-about-hero-text)]">
+                번거롭기도 하고,<br />
+                우리 아이에게 맞는 건지 늘 불안합니다.
+              </p>
+            </ScrollReveal>
+            <ScrollReveal variant="fade-up" delay={400}>
+              <p className="max-md:text-[14px] max-md:leading-[130%] text-body-20-r-griun-lh130 text-[var(--color-about-hero-text)]">
+                그래서, 안심하고 먹일 수 있는 간식만<br />
+                주고 싶었습니다.
+              </p>
+            </ScrollReveal>
+            <ScrollReveal variant="fade-up" delay={500}>
+              <p className="max-md:text-[14px] max-md:leading-[130%] text-body-16-b-lh130 text-[var(--color-about-hero-text-accent)]">
+                꼬순박스는<br />
+                그 고민을 대신하기 위해 시작되었습니다.
+              </p>
+            </ScrollReveal>
+          </div>
+        </div>
 
-            {/* 좌측: 텍스트 (고정 356px) */}
-            <div className="max-lg:mt-8 max-lg:flex max-lg:flex-col max-lg:items-center lg:flex-none lg:w-[356px]">
+        {/* 데스크탑 레이아웃 (lg 이상): PC/web 이미지를 섹션 전체 배경으로, 텍스트를 좌측에 overlay */}
+        <div className="max-lg:hidden h-full relative">
+          {/* 전체 너비 배경 이미지 */}
+          <Image
+            src={introduceHeroRenewalPcWeb}
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            aria-hidden
+            priority
+          />
+
+          {/* 텍스트 레이어 — 배경 이미지 위에 overlay */}
+          <div className="relative z-10 h-full mx-auto md:max-w-[var(--max-width-content)] px-0 lg:pt-[var(--header-height)] flex items-center">
+            <div className="flex-none w-[356px]">
               {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={100}>
-                <h1 className="max-lg:hidden mb-10" aria-label="About Us">
+                <h1 className="mb-10" aria-label="About Us">
                   <svg
                     width="175"
                     height="33"
@@ -146,33 +176,26 @@ export default function AboutSection() {
                 </h1>
               </ScrollReveal>
 
-              <div className="flex flex-col gap-5 max-lg:items-center max-lg:text-center lg:items-start lg:text-left">
-                {/* Para 1: Pretendard 400 16px 130% */}
+              <div className="flex flex-col gap-5 items-start text-left">
                 <ScrollReveal variant="fade-up" delay={200}>
-                  <p className="max-md:text-[14px] max-md:leading-[130%] text-body-16-r-lh130">
+                  <p className="text-body-17-r-lh130 text-[var(--color-about-hero-text)]">
                     간식을 고를 때마다 고민이 됩니다.
                   </p>
                 </ScrollReveal>
-
-                {/* Para 2: Pretendard 400 16px 130% */}
                 <ScrollReveal variant="fade-up" delay={300}>
-                  <p className="max-md:text-[14px] max-md:leading-[130%] text-body-16-r-lh130">
+                  <p className="text-body-17-r-lh130 text-[var(--color-about-hero-text)]">
                     번거롭기도 하고,<br />
                     우리 아이에게 맞는 건지 늘 불안합니다.
                   </p>
                 </ScrollReveal>
-
-                {/* Para 3: Griun PolFairness 400 20px 130% */}
                 <ScrollReveal variant="fade-up" delay={400}>
-                  <p className="max-md:text-[14px] max-md:leading-[130%] text-body-20-r-griun-lh130">
+                  <p className="text-body-22-r-griun-lh130 text-[var(--color-about-hero-text)]">
                     그래서, 안심하고 먹일 수 있는 간식만<br />
                     주고 싶었습니다.
                   </p>
                 </ScrollReveal>
-
-                {/* Para 4: Pretendard 700 16px 130% + accent color */}
                 <ScrollReveal variant="fade-up" delay={500}>
-                  <p className="max-md:text-[14px] max-md:leading-[130%] text-body-16-b-lh130 text-[var(--color-about-hero-accent)]">
+                  <p className="text-body-17-b-lh130 text-[var(--color-about-hero-text-accent)]">
                     꼬순박스는<br />
                     그 고민을 대신하기 위해 시작되었습니다.
                   </p>

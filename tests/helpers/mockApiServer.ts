@@ -222,6 +222,9 @@ function err(res: ServerResponse, status: number, code: string, message = "") {
  * needed for login E2E tests. Returns a stop function for teardown.
  */
 export async function startMockApiServer(port: number): Promise<() => Promise<void>> {
+  // 테스트별 에러 주입: POST /v1/__test/fail 로 추가, DELETE 로 전체 해제
+  const failingPaths = new Set<string>();
+
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     const url = req.url ?? "";
     const method = req.method ?? "GET";
@@ -230,6 +233,26 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     if (method === "OPTIONS") {
       res.writeHead(204, { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type, Authorization" });
       res.end();
+      return;
+    }
+
+    // 테스트 전용 어드민: 에러 주입 경로 설정/해제
+    if (url === "/v1/__test/fail") {
+      if (method === "POST") {
+        const body = await readBody(req) as { endpoints?: string[] };
+        (body.endpoints ?? []).forEach((p) => failingPaths.add(p));
+      } else if (method === "DELETE") {
+        failingPaths.clear();
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify({ ok: true, failing: [...failingPaths] }));
+      return;
+    }
+
+    // 주입된 경로는 500 반환 (인증 엔드포인트 제외)
+    const pathname = url.split("?")[0];
+    if (failingPaths.has(pathname)) {
+      err(res, 500, "INTERNAL_SERVER_ERROR", "Simulated API failure for testing");
       return;
     }
 

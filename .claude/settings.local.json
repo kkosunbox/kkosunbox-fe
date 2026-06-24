@@ -244,7 +244,19 @@
       "PowerShell(git stash *)",
       "PowerShell(Get-NetTCPConnection *)",
       "PowerShell($env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test tests/e2e/subscribe.spec.ts 2>&1 | Select-Object -Last 50)",
-      "PowerShell($env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test tests/e2e/order.spec.ts tests/e2e/mypage.spec.ts tests/e2e/login.spec.ts 2>&1 | Select-Object -Last 20)"
+      "PowerShell($env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test tests/e2e/order.spec.ts tests/e2e/mypage.spec.ts tests/e2e/login.spec.ts 2>&1 | Select-Object -Last 20)",
+      "Bash(findstr \":3001 \")",
+      "Bash(findstr \"LISTEN\")",
+      "PowerShell(Get-ChildItem \"C:\\\\2026\\\\ggosoonbox\\\\tests\\\\e2e\\\\screenshots\\\\error-boundaries\" | Select-Object Name, @{N='Size';E={\"{0:N0} KB\" -f \\($_.Length/1KB\\)}} | Format-Table -AutoSize)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; git add app/\\(main\\)/error.tsx app/\\(main\\)/mypage/error.tsx app/\\(main\\)/mypage/page.tsx app/\\(main\\)/order/error.tsx app/\\(main\\)/subscribe/error.tsx app/error.tsx shared/ui/ErrorBoundary.tsx shared/ui/index.ts widgets/mypage/index.ts widgets/mypage/ui/mypage-error-fallbacks.tsx tests/e2e/error-boundaries.spec.ts tests/helpers/mockApiServer.ts .gitignore)",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-hero-renewal-0623-mobile-tablet.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-hero-renewal-mobile-tablet.png\")",
+      "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/introduce-hero-renewal-0623-pc-web.png\" \"C:/2026/ggosoonbox/widgets/about/assets/introduce-hero-renewal-pc-web.png\")",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test 2>&1 | Select-Object -Last 40)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/login.spec.ts --grep \"localStorage refreshToken\" 2>&1 | Select-Object -Last 50)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/login.spec.ts --grep \"localStorage refreshToken\" --reporter=line 2>&1 | Select-String -Pattern \"\\(Error|expect|received|timeout|actual|locator|→\\)\" | Select-Object -First 20)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/login.spec.ts:190 2>&1 | Select-Object -Last 15)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; git log --oneline app/\\\\\\(main\\\\\\)/layout.tsx | Select-Object -First 5)"
     ]
   }
 }

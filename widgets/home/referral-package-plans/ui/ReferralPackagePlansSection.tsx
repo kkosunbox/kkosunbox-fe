@@ -15,7 +15,7 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { useReferral } from "@/features/referral/model";
 import { PlanTierDots } from "@/widgets/package-plans";
 import ReferralPlanPicker from "./ReferralPlanPicker";
-import { ReferralAdditionalDiscountChip } from "./ReferralAdditionalDiscountChip";
+import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import NimIRecommendSvg from "./NimIRecommendSvg";
 import ReferralTitleSvg from "./ReferralTitleSvg";
 

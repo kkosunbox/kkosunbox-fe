@@ -1,28 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useAgreementState } from "./hooks/useAgreementState";
+import { useAddressState } from "./hooks/useAddressState";
+import { useExternalMessages } from "./hooks/useExternalMessages";
+import { useInviteState } from "./hooks/useInviteState";
+import { usePaymentState } from "./hooks/usePaymentState";
+import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import { useAuth } from "@/features/auth";
 import type { BillingInfo } from "@/features/billing/api/types";
-import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
-import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import { createSubscription, getCouponInfo } from "@/features/subscription/api/subscriptionApi";
-import type { CouponInfo, SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { validateReferralCode } from "@/features/referral/api";
-import { clearStoredInviteCode, getStoredInviteCode } from "@/features/referral/lib";
-import {
-  computeOrderPricing,
-  getInviteSectionMode,
-  isStaleValidationRequest,
-  resolveReferralValidationFailure,
-  resolveReferralValidationSuccess,
-  type InviteValidationOutcome,
-} from "@/features/order";
+import { createSubscription } from "@/features/subscription/api/subscriptionApi";
+import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { clearStoredInviteCode } from "@/features/referral/lib";
+import { computeOrderPricing } from "@/features/order";
 import { packageThemeForPlan } from "@/entities/package";
-import { digitsOnly, isValidKoreanPhone } from "./orderSectionFormatters";
+import { isValidKoreanPhone } from "./orderSectionFormatters";
+export type { NewAddrState } from "./hooks/useAddressState";
 
 export interface OrderSectionProps {
   plan: SubscriptionPlanDto;
@@ -34,15 +30,6 @@ export interface OrderSectionProps {
   /** ?ref로 캡처된 초대 코드 (쿠키, 서버에서 검증·전달). 없으면 null */
   initialInviteCode: string | null;
 }
-
-export type NewAddrState = {
-  receiverName: string;
-  phoneNumber: string;
-  zipCode: string;
-  address: string;
-  addressDetail: string;
-  memo: string;
-};
 
 export function useOrderSectionState({
   plan,
@@ -56,8 +43,11 @@ export function useOrderSectionState({
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const { profile } = useProfile();
-  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
+  const agreement = useAgreementState();
+  const address = useAddressState({ initialAddresses });
+  const payment = usePaymentState({ initialBilling });
+  const invite = useInviteState({ initialInviteCode, hasSubscriptionHistory });
 
   const [openSections, setOpenSections] = useState({
     product: true,
@@ -68,233 +58,14 @@ export function useOrderSectionState({
     summary: true,
   });
 
-  const [addresses, setAddresses] = useState<DeliveryAddress[]>(initialAddresses);
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
-    initialAddresses[0]?.id ?? null,
-  );
-
-  const selectedAddress = useMemo(
-    () => addresses.find((a) => a.id === selectedAddressId) ?? null,
-    [addresses, selectedAddressId],
-  );
-
-  // /address 새 창에서 선택한 배송지 수신
-  useEffect(() => {
-    function handleMessage(e: MessageEvent) {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "ADDRESS_SELECTED" && e.data.address) {
-        const addr = e.data.address as DeliveryAddress;
-        setAddresses((prev) => {
-          const idx = prev.findIndex((a) => a.id === addr.id);
-          if (idx >= 0) {
-            const next = [...prev];
-            next[idx] = addr;
-            return next;
-          }
-          return [...prev, addr];
-        });
-        setSelectedAddressId(addr.id);
-      }
-    }
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
-
-  const [newAddr, setNewAddr] = useState<NewAddrState>({
-    receiverName: "",
-    phoneNumber: "",
-    zipCode: "",
-    address: "",
-    addressDetail: "",
-    memo: "",
-  });
-  const [paymentMethod, setPaymentMethod] = useState<string>("신용카드");
-  const [couponEnabled, setCouponEnabled] = useState(false);
-
-  const [couponCodeInput, setCouponCodeInput] = useState("");
-  const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
-  const [couponError, setCouponError] = useState<string | null>(null);
-
-  // 쿠키 초대코드를 사용자가 삭제한 경우 locked 재진입 방지
-  const [inviteDismissed, setInviteDismissed] = useState(false);
-
-  const inviteSectionMode = useMemo(
-    () =>
-      getInviteSectionMode({
-        initialInviteCode,
-        hasSubscriptionHistory,
-        inviteDismissed,
-      }),
-    [initialInviteCode, hasSubscriptionHistory, inviteDismissed],
-  );
-
-  const isInviteInputLocked = inviteSectionMode === "locked";
-
-  const [inviteCodeInput, setInviteCodeInput] = useState(
-    inviteSectionMode === "locked" ? (initialInviteCode ?? "") : "",
-  );
-
-  const [inviteStatus, setInviteStatus] = useState<
-    "idle" | "loading" | "applicable" | "blocked" | "networkError"
-  >("idle");
-  const [inviteBlockedMsg, setInviteBlockedMsg] = useState<string | null>(null);
-  const [inviteDiscountRate, setInviteDiscountRate] = useState(0);
-  const validateRequestIdRef = useRef(0);
-  const accountKeyRef = useRef(`${user?.id ?? "anon"}-${profile?.id ?? "none"}`);
-
-  const applyValidationOutcome = useCallback((outcome: InviteValidationOutcome) => {
-    setInviteStatus(outcome.status);
-    setInviteBlockedMsg(outcome.blockedMsg);
-    setInviteDiscountRate(outcome.discountRate);
-  }, []);
-
-  const validateInviteCode = useCallback(
-    (rawCode: string) => {
-      const code = rawCode.trim();
-      const requestId = ++validateRequestIdRef.current;
-
-      setInviteBlockedMsg(null);
-      setInviteDiscountRate(0);
-      if (!code) {
-        setInviteStatus("idle");
-        return;
-      }
-      setInviteStatus("loading");
-
-      validateReferralCode(code)
-        .then((res) => {
-          if (isStaleValidationRequest(requestId, validateRequestIdRef.current)) return;
-          applyValidationOutcome(resolveReferralValidationSuccess(res));
-        })
-        .catch((err) => {
-          if (isStaleValidationRequest(requestId, validateRequestIdRef.current)) return;
-          applyValidationOutcome(resolveReferralValidationFailure(err));
-        });
-    },
-    [applyValidationOutcome],
-  );
-
-  function handleDismissStoredInviteCode() {
-    validateRequestIdRef.current += 1;
-    clearStoredInviteCode();
-    setInviteDismissed(true);
-    setInviteCodeInput("");
-    setInviteStatus("idle");
-    setInviteBlockedMsg(null);
-    setInviteDiscountRate(0);
-  }
-
-  const resetInviteStateForAccount = useCallback(() => {
-    validateRequestIdRef.current += 1;
-    setInviteDismissed(false);
-    const mode = getInviteSectionMode({
-      initialInviteCode,
-      hasSubscriptionHistory,
-      inviteDismissed: false,
-    });
-    setInviteCodeInput(mode === "locked" ? (initialInviteCode ?? "") : "");
-    setInviteStatus("idle");
-    setInviteBlockedMsg(null);
-    setInviteDiscountRate(0);
-  }, [initialInviteCode, hasSubscriptionHistory]);
-
-  // locked 모드 진입 시 캡처된 코드를 자동 검증한다.
-  useEffect(() => {
-    if (inviteSectionMode !== "locked" || !initialInviteCode) return;
-
-    const run = () => validateInviteCode(initialInviteCode);
-    const idle = window.requestIdleCallback?.(run) ?? window.setTimeout(run, 0);
-    return () => {
-      validateRequestIdRef.current += 1;
-      if (window.cancelIdleCallback) window.cancelIdleCallback(idle as number);
-      else window.clearTimeout(idle as number);
-    };
-  }, [inviteSectionMode, initialInviteCode, validateInviteCode]);
-
-  // 계정(유저·프로필) 전환 시 이전 세션의 검증 결과를 초기화한다.
-  useEffect(() => {
-    const key = `${user?.id ?? "anon"}-${profile?.id ?? "none"}`;
-    if (key === accountKeyRef.current) return;
-    accountKeyRef.current = key;
-    resetInviteStateForAccount();
-  }, [user?.id, profile?.id, resetInviteStateForAccount]);
-
-  // 다른 탭에서 구독 완료 등으로 쿠키가 삭제된 경우 stale 할인 상태를 정리한다.
-  useEffect(() => {
-    function handleVisibilityChange() {
-      if (document.visibilityState !== "visible") return;
-      if (getStoredInviteCode()) return;
-      if (!initialInviteCode) return;
-
-      validateRequestIdRef.current += 1;
-      setInviteDismissed(true);
-      setInviteCodeInput("");
-      setInviteStatus("idle");
-      setInviteBlockedMsg(null);
-      setInviteDiscountRate(0);
-    }
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [initialInviteCode]);
-
-  function handleApplyInviteCode() {
-    validateInviteCode(inviteCodeInput);
-  }
-
-  function handleRetryInviteValidation() {
-    const code = inviteCodeInput.trim() || initialInviteCode || "";
-    validateInviteCode(code);
-  }
-
-  function handleInviteCodeChange(value: string) {
-    validateRequestIdRef.current += 1;
-    setInviteCodeInput(value);
-    setInviteStatus("idle");
-    setInviteBlockedMsg(null);
-    setInviteDiscountRate(0);
-  }
-
-  const [agreeOpen, setAgreeOpen] = useState(true);
-  const [agreeTerms, setAgreeTerms] = useState(false);
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const [agreeAge, setAgreeAge] = useState(false);
-
   const [quantity, setQuantity] = useState(initialQuantity);
 
-  const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
-
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
 
-  // /payment 팝업에서 결제수단/카드 선택 결과 수신
-  useEffect(() => {
-    function handlePaymentMessage(e: MessageEvent) {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "PAYMENT_SELECTED") {
-        const { method, billing: selectedBilling } = e.data as {
-          method: string;
-          billing?: BillingInfo;
-        };
-        setPaymentMethod(method);
-        if (selectedBilling) {
-          setBilling(selectedBilling);
-        }
-      }
-    }
-    window.addEventListener("message", handlePaymentMessage);
-    return () => window.removeEventListener("message", handlePaymentMessage);
-  }, []);
-
-  function openPaymentPopup(method: string) {
-    const url = `/payment?method=${encodeURIComponent(method)}`;
-    window.open(url, "paymentPopup", "width=480,height=700,scrollbars=yes");
-  }
-
-  function handleSelectPaymentMethod(method: string) {
-    setPaymentMethod(method);
-    openPaymentPopup(method);
-  }
+  useExternalMessages({
+    onAddressSelected: address.handleAddressSelected,
+    onPaymentSelected: payment.handlePaymentSelected,
+  });
 
   const unitPrice = plan.monthlyPrice;
   // 금액·할인 계산은 순수 함수로 분리(단위 테스트 대상). 쿠폰·초대코드 모두 단가 1개에만 적용.
@@ -303,79 +74,41 @@ export function useOrderSectionState({
       computeOrderPricing({
         unitPrice,
         quantity,
-        couponRatePercent: couponInfo?.canUse ? couponInfo.discountRate : null,
-        inviteRate: inviteStatus === "applicable" ? inviteDiscountRate : null,
+        couponRatePercent: payment.couponInfo?.canUse ? payment.couponInfo.discountRate : null,
+        inviteRate: invite.inviteStatus === "applicable" ? invite.inviteDiscountRate : null,
       }),
-    [unitPrice, quantity, couponInfo, inviteStatus, inviteDiscountRate],
+    [unitPrice, quantity, payment.couponInfo, invite.inviteStatus, invite.inviteDiscountRate],
   );
-
-  const agreeAll = agreeTerms && agreePrivacy && agreeAge;
-  function handleAgreeAll() {
-    const next = !agreeAll;
-    setAgreeTerms(next);
-    setAgreePrivacy(next);
-    setAgreeAge(next);
-  }
 
   function toggleSection(key: keyof typeof openSections) {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  function handleToggleCoupon() {
-    const next = !couponEnabled;
-    setCouponEnabled(next);
-    if (!next) {
-      setCouponCodeInput("");
-      setCouponInfo(null);
-      setCouponError(null);
-    }
-  }
-
-  async function handleApplyCoupon() {
-    setCouponError(null);
-    const code = couponCodeInput.trim();
-    if (!code) {
-      setCouponError("쿠폰 코드를 입력해 주세요.");
-      setCouponInfo(null);
-      return;
-    }
-    try {
-      const info = await getCouponInfo({ code });
-      setCouponInfo(info);
-      if (!info.canUse) {
-        setCouponError(info.unavailableReason ?? "사용할 수 없는 쿠폰입니다.");
-      }
-    } catch (err) {
-      setCouponInfo(null);
-      setCouponError(getErrorMessage(err, "쿠폰 확인에 실패했습니다."));
-    }
-  }
-
   function handlePay() {
     setSubmitError(null);
-    if (!agreeAll) {
+    if (!agreement.agreeAll) {
       setSubmitError("필수 약관에 동의해 주세요.");
       return;
     }
 
-    if (!selectedAddress) {
-      const rawPhone = digitsOnly(newAddr.phoneNumber);
+    if (!address.selectedAddress) {
+      const rawPhone = address.newAddr.phoneNumber.replace(/\D/g, "");
       if (
-        !newAddr.receiverName.trim() ||
+        !address.newAddr.receiverName.trim() ||
         !rawPhone ||
-        !newAddr.zipCode.trim() ||
-        !newAddr.address.trim()
+        !address.newAddr.zipCode.trim() ||
+        !address.newAddr.address.trim()
       ) {
         setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
         return;
       }
       if (!isValidKoreanPhone(rawPhone)) {
-        setPhoneError("올바른 전화번호 형식이 아닙니다.");
+        address.setPhoneError("올바른 전화번호 형식이 아닙니다.");
         return;
       }
     }
 
-    if (!billing) {
+    if (!payment.billing) {
       setSubmitError("결제수단을 선택해 주세요.");
       return;
     }
@@ -387,20 +120,10 @@ export function useOrderSectionState({
     showLoading("구독을 처리하고 있습니다...");
     startTransition(async () => {
       try {
-        let deliveryAddressId = selectedAddressId;
+        let deliveryAddressId = address.selectedAddressId;
 
-        if (!selectedAddress) {
-          const created = await createDeliveryAddress({
-            receiverName: newAddr.receiverName.trim(),
-            phoneNumber: digitsOnly(newAddr.phoneNumber),
-            zipCode: newAddr.zipCode.trim(),
-            address: newAddr.address.trim(),
-            addressDetail: newAddr.addressDetail.trim() || undefined,
-            memo: newAddr.memo.trim() || undefined,
-          });
-          deliveryAddressId = created.id;
-          setAddresses((prev) => [...prev, created]);
-          setSelectedAddressId(created.id);
+        if (!address.selectedAddress) {
+          deliveryAddressId = await address.createAddress();
         }
 
         if (deliveryAddressId === null) {
@@ -415,11 +138,13 @@ export function useOrderSectionState({
           planId: plan.id,
           quantity,
           couponCode:
-            couponInfo?.canUse && couponCodeInput.trim() ? couponCodeInput.trim() : undefined,
+            payment.couponInfo?.canUse && payment.couponCodeInput.trim()
+              ? payment.couponCodeInput.trim()
+              : undefined,
           // 검증을 통과(applicable)한 초대 코드만 전송한다. 서버가 첫 구독자에 한해 할인을 반영한다.
           referralCode:
-            inviteStatus === "applicable" && inviteCodeInput.trim()
-              ? inviteCodeInput.trim()
+            invite.inviteStatus === "applicable" && invite.inviteCodeInput.trim()
+              ? invite.inviteCodeInput.trim()
               : undefined,
         });
 
@@ -436,79 +161,73 @@ export function useOrderSectionState({
     });
   }
 
-  function handleChangeAddress() {
-    const url = selectedAddressId
-      ? `/address?selectedId=${selectedAddressId}`
-      : "/address";
-    window.open(url, "addressPopup", "width=480,height=700,scrollbars=yes");
-  }
-
-  function handleSearchAddress() {
-    if (typeof window !== "undefined" && window.daum) {
-      const postcode = new window.daum.Postcode({
-        oncomplete(data: { zonecode: string; roadAddress: string; jibunAddress: string; addressType: string }) {
-          const addr = data.addressType === "R" ? data.roadAddress : data.jibunAddress;
-          setNewAddr((s) => ({ ...s, zipCode: data.zonecode, address: addr }));
-        },
-        width: "100%",
-        height: "100%",
-      }) as { embed: (el: HTMLElement) => void; open: () => void };
-      postcode.open();
-    }
-  }
-
   const orderPlanTheme = packageThemeForPlan(plan);
 
   return {
+    // ── section open/close ──
     openSections,
-    selectedAddress,
-    newAddr,
-    setNewAddr,
-    paymentMethod,
-    couponEnabled,
-    couponCodeInput,
-    setCouponCodeInput,
-    couponInfo,
-    couponError,
-    couponDiscount,
-    inviteSectionMode,
-    isInviteInputLocked,
-    inviteCodeInput,
-    inviteStatus,
-    inviteBlockedMsg,
-    agreeOpen,
-    setAgreeOpen,
-    agreeTerms,
-    setAgreeTerms,
-    agreePrivacy,
-    setAgreePrivacy,
-    agreeAge,
-    setAgreeAge,
-    agreeAll,
+    toggleSection,
+
+    // ── address ──
+    selectedAddress: address.selectedAddress,
+    newAddr: address.newAddr,
+    setNewAddr: address.setNewAddr,
+    phoneError: address.phoneError,
+    setPhoneError: address.setPhoneError,
+    handleChangeAddress: address.handleChangeAddress,
+    handleSearchAddress: address.handleSearchAddress,
+
+    // ── payment ──
+    paymentMethod: payment.paymentMethod,
+    billing: payment.billing,
+    couponEnabled: payment.couponEnabled,
+    couponCodeInput: payment.couponCodeInput,
+    setCouponCodeInput: payment.setCouponCodeInput,
+    couponInfo: payment.couponInfo,
+    couponError: payment.couponError,
+    handleSelectPaymentMethod: payment.handleSelectPaymentMethod,
+    handleChangeCard: payment.handleChangeCard,
+    handleToggleCoupon: payment.handleToggleCoupon,
+    handleApplyCoupon: payment.handleApplyCoupon,
+
+    // ── invite ──
+    inviteSectionMode: invite.inviteSectionMode,
+    isInviteInputLocked: invite.isInviteInputLocked,
+    inviteCodeInput: invite.inviteCodeInput,
+    inviteStatus: invite.inviteStatus,
+    inviteBlockedMsg: invite.inviteBlockedMsg,
+    handleApplyInviteCode: invite.handleApplyInviteCode,
+    handleRetryInviteValidation: invite.handleRetryInviteValidation,
+    handleDismissStoredInviteCode: invite.handleDismissStoredInviteCode,
+    handleInviteCodeChange: invite.handleInviteCodeChange,
+
+    // ── pricing (product·payment·invite 교차) ──
+    unitPrice,
     quantity,
     setQuantity,
-    billing,
-    submitError,
-    phoneError,
-    setPhoneError,
-    isPending,
-    unitPrice,
     basePrice,
+    couponDiscount,
     totalDiscount,
     total,
-    orderPlanTheme,
-    toggleSection,
-    handleApplyCoupon,
+
+    // ── agreement ──
+    agreeOpen: agreement.agreeOpen,
+    agreeTerms: agreement.agreeTerms,
+    agreePrivacy: agreement.agreePrivacy,
+    agreeAge: agreement.agreeAge,
+    agreeAll: agreement.agreeAll,
+    onToggleAgreePanel: agreement.onToggleAgreePanel,
+    onToggleTerms: agreement.onToggleTerms,
+    onTogglePrivacy: agreement.onTogglePrivacy,
+    onToggleAge: agreement.onToggleAge,
+    handleAgreeAll: agreement.handleAgreeAll,
+
+    // ── submit (모든 그룹 교차) ──
+    submitError,
+    isPending,
     handlePay,
-    handleChangeAddress,
-    handleSearchAddress,
-    handleApplyInviteCode,
-    handleRetryInviteValidation,
-    handleDismissStoredInviteCode,
-    handleInviteCodeChange,
-    handleToggleCoupon,
-    handleSelectPaymentMethod,
-    openPaymentPopup,
-    handleAgreeAll,
+
+    // ── misc ──
+    orderPlanTheme,
   };
 }

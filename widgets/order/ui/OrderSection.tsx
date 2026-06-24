@@ -35,13 +35,13 @@ export default function OrderSection(props: OrderSectionProps) {
     inviteStatus,
     inviteBlockedMsg,
     agreeOpen,
-    setAgreeOpen,
+    onToggleAgreePanel,
     agreeTerms,
-    setAgreeTerms,
+    onToggleTerms,
     agreePrivacy,
-    setAgreePrivacy,
+    onTogglePrivacy,
     agreeAge,
-    setAgreeAge,
+    onToggleAge,
     agreeAll,
     quantity,
     setQuantity,
@@ -66,7 +66,7 @@ export default function OrderSection(props: OrderSectionProps) {
     handleInviteCodeChange,
     handleToggleCoupon,
     handleSelectPaymentMethod,
-    openPaymentPopup,
+    handleChangeCard,
     handleAgreeAll,
   } = useOrderSectionState(props);
 
@@ -98,7 +98,7 @@ export default function OrderSection(props: OrderSectionProps) {
         paymentMethod={paymentMethod}
         billing={billing}
         onSelectPaymentMethod={handleSelectPaymentMethod}
-        openPaymentPopup={openPaymentPopup}
+        onChangeCard={handleChangeCard}
         couponEnabled={couponEnabled}
         onToggleCoupon={handleToggleCoupon}
         couponCodeInput={couponCodeInput}
@@ -140,13 +140,13 @@ export default function OrderSection(props: OrderSectionProps) {
         totalDiscount={totalDiscount}
         total={total}
         agreeOpen={agreeOpen}
-        setAgreeOpen={setAgreeOpen}
+        onToggleAgreePanel={onToggleAgreePanel}
         agreeTerms={agreeTerms}
-        setAgreeTerms={setAgreeTerms}
+        onToggleTerms={onToggleTerms}
         agreePrivacy={agreePrivacy}
-        setAgreePrivacy={setAgreePrivacy}
+        onTogglePrivacy={onTogglePrivacy}
         agreeAge={agreeAge}
-        setAgreeAge={setAgreeAge}
+        onToggleAge={onToggleAge}
         agreeAll={agreeAll}
         handleAgreeAll={handleAgreeAll}
         submitError={submitError}
@@ -178,20 +178,9 @@ export default function OrderSection(props: OrderSectionProps) {
           className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:px-0 lg:min-w-[900px]"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
-          <div className="max-md:hidden lg:hidden grid grid-cols-[55%_1px_1fr] gap-x-6 items-start">
+          <div className="grid items-start max-md:gap-y-9 md:grid-cols-[55%_1px_1fr] md:gap-x-6 lg:grid-cols-[1fr_1px_327px] lg:gap-x-8">
             {leftSections}
-            <div className="self-stretch bg-[var(--color-text-muted)]" />
-            {rightColumn}
-          </div>
-
-          <div className="max-lg:hidden grid grid-cols-[1fr_1px_327px] gap-x-8 items-start">
-            {leftSections}
-            <div className="self-stretch bg-[var(--color-text-muted)]" />
-            {rightColumn}
-          </div>
-
-          <div className="flex flex-col gap-9 md:hidden">
-            {leftSections}
+            <div className="max-md:hidden self-stretch bg-[var(--color-text-muted)]" />
             {rightColumn}
           </div>
         </div>

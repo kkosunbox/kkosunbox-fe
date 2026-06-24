@@ -1,9 +1,7 @@
 import { redirect } from "next/navigation";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchPointBalance, fetchPointHistory } from "@/features/point/api/queries";
-import { fetchMyReferralCode } from "@/features/referral/api/queries";
 import type { PointLedgerItem } from "@/features/point/api/types";
-import type { MyReferralCode } from "@/features/referral/api/types";
 import { PointHistorySection } from "@/widgets/mypage";
 
 export const metadata = { title: "MY 포인트 | 꼬순박스" };
@@ -59,11 +57,6 @@ const DUMMY_ITEMS: PointLedgerItem[] = [
 
 // TODO: API 연동 완료 시 제거
 const DUMMY_BALANCE = { totalAmount: 2270, monthlyAmount: 800, year: 2026, month: 6 };
-const DUMMY_REFERRAL: MyReferralCode = {
-  referralCode: "TEST123",
-  slug: null,
-  referralLink: null,
-};
 
 export default async function PointPage() {
   const authUser = await getAuthUser();
@@ -73,21 +66,18 @@ export default async function PointPage() {
 
   const token = await getServerToken();
 
-  const [balance, history, referralCode] = await Promise.all([
+  const [balance, history] = await Promise.all([
     fetchPointBalance(token),
     fetchPointHistory(token, { limit: 200 }),
-    fetchMyReferralCode(token),
   ]);
 
   const displayBalance = balance.totalAmount === 0 ? DUMMY_BALANCE : balance;
   const displayItems = history.items.length === 0 ? DUMMY_ITEMS : history.items;
-  const displayReferral = referralCode ?? DUMMY_REFERRAL;
 
   return (
     <PointHistorySection
       balance={displayBalance}
       items={displayItems}
-      referralCode={displayReferral}
     />
   );
 }

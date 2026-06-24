@@ -10,6 +10,12 @@ interface ProductInfoImagesProps {
 }
 
 export default function ProductInfoImages({ variant, images, planName, tier }: ProductInfoImagesProps) {
+  const disclaimer = (
+    <p className="py-6 text-center text-[14px] font-medium leading-[17px] text-[var(--color-text-caption)]">
+      ※ 제품 및 패키지 이미지는 연출된 이미지로 실제 상품과 다소 차이가 있을 수 있습니다.
+    </p>
+  );
+
   if (variant === "mobile") {
     return (
       <div className="pt-5">
@@ -26,6 +32,7 @@ export default function ProductInfoImages({ variant, images, planName, tier }: P
             ))}
           </div>
         </div>
+        {disclaimer}
       </div>
     );
   }
@@ -43,6 +50,7 @@ export default function ProductInfoImages({ variant, images, planName, tier }: P
           />
         ))}
       </div>
+      {disclaimer}
     </div>
   );
 }

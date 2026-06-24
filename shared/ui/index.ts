@@ -38,3 +38,4 @@ export { ChannelTalkProvider } from "./ChannelTalkProvider";
 export { default as FallbackAvatar } from "./FallbackAvatar";
 export { default as GoogleAnalyticsTracker } from "./GoogleAnalyticsTracker";
 export { default as ErrorBoundary } from "./ErrorBoundary";
+export { default as PageErrorFallback } from "./PageErrorFallback";

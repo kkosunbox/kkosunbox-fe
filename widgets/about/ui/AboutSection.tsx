@@ -11,16 +11,16 @@ import {
   MEDIA_MAX_MD_SIZES,
 } from "@/shared/config/breakpoints";
 
-import introduceHeroRenewalMobileTablet from "../assets/introduce-hero-renewal-mobile-tablet.png";
-import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.png";
-import introducePuppyRunRenewal from "../assets/introduce-puppy-run-renewal.png";
-import introduceMakeBox from "../assets/introduce-make-box.png";
+import introduceHeroRenewalMobileTablet from "../assets/introduce-hero-renewal-mobile-tablet.webp";
+import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.webp";
+import introducePuppyRunRenewal from "../assets/introduce-puppy-run-renewal.webp";
+import introduceMakeBox from "../assets/introduce-make-box.webp";
 import introduceDecoPaws from "../assets/introduce-deco-paws.svg";
-import introduceSection401 from "../assets/introduce-section-4-01.png";
-import introduceSection402 from "../assets/introduce-section-4-02.png";
-import introduceSection403 from "../assets/introduce-section-4-03.png";
-import aboutCtaBg from "../assets/introduce-cta-bg.png";
-import aboutCtaProduct from "../assets/about-cta-product-2xl.png";
+import introduceSection401 from "../assets/introduce-section-4-01.webp";
+import introduceSection402 from "../assets/introduce-section-4-02.webp";
+import introduceSection403 from "../assets/introduce-section-4-03.webp";
+import aboutCtaBg from "../assets/introduce-cta-bg.webp";
+import aboutCtaProduct from "../assets/about-cta-product-2xl.webp";
 
 type FeatureCardProps = {
   image: typeof introduceSection401;

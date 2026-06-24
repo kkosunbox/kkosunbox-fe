@@ -10,8 +10,8 @@ import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { tierFromSubscriptionPlan } from "@/entities/package";
 import { PlanPicker } from "@/widgets/package-plans";
-import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile-renewal.png";
-import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop-renewal.png";
+import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile-renewal.webp";
+import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop-renewal.webp";
 
 interface Props {
   plans: SubscriptionPlanDto[];

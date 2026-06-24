@@ -71,19 +71,21 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 (Hero) */}
-      <section className="relative overflow-hidden bg-[var(--color-about-hero-bg)] max-lg:pt-[62px] max-lg:h-[641px] lg:h-[602px]">
+      <section className="relative overflow-hidden bg-[var(--color-about-hero-bg)] max-lg:pt-[62px] max-lg:h-[641px] lg:h-[calc(601px+var(--banner-height))]">
 
         {/* 모바일·태블릿 레이아웃 (lg 미만): 이미지 전체 배경 + 텍스트 overlay */}
         {/* 배경 이미지 — absolute inset-0 으로 padding 영향 없이 section 전체를 채움 */}
         <div className="lg:hidden absolute inset-0">
-          <Image
-            src={introduceHeroRenewalMobileTablet}
+          {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 배경 원본 품질 유지 */}
+          <img
+            src={introduceHeroRenewalMobileTablet.src}
             alt=""
-            fill
-            className="object-cover object-center"
-            sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 100vw`}
+            width={introduceHeroRenewalMobileTablet.width}
+            height={introduceHeroRenewalMobileTablet.height}
+            className="absolute inset-0 h-full w-full object-cover object-center"
             aria-hidden
-            priority
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
 
@@ -137,21 +139,30 @@ export default function AboutSection() {
           </div>
         </div>
 
-        {/* 데스크탑 레이아웃 (lg 이상): PC/web 이미지를 섹션 전체 배경으로, 텍스트를 좌측에 overlay */}
-        <div className="max-lg:hidden h-full relative">
-          {/* 전체 너비 배경 이미지 */}
-          <Image
-            src={introduceHeroRenewalPcWeb}
-            alt=""
-            fill
-            className="object-cover object-center"
-            sizes="100vw"
-            aria-hidden
-            priority
-          />
+        {/* 데스크탑 레이아웃 (lg 이상): 띠배너 아래 601px 영역에만 배경 이미지, 와이드는 양옆 fill */}
+        <div className="max-lg:hidden relative flex h-full flex-col">
+          <div className="shrink-0 h-[var(--banner-height)]" aria-hidden />
+
+          <div className="relative h-[601px] w-full shrink-0 overflow-hidden bg-[var(--color-about-hero-mobile-fill)]">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 배경 원본 비율 유지 */}
+              <img
+                src={introduceHeroRenewalPcWeb.src}
+                alt=""
+                width={introduceHeroRenewalPcWeb.width}
+                height={introduceHeroRenewalPcWeb.height}
+                className="h-full w-auto max-w-none shrink-0"
+                aria-hidden
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
+          </div>
 
           {/* 텍스트 레이어 — 배경 이미지 위에 overlay */}
-          <div className="relative z-10 h-full mx-auto md:max-w-[var(--max-width-content)] px-0 lg:pt-[var(--header-height)] flex items-center">
+          <div className="absolute inset-0 z-10 flex flex-col">
+            <div className="shrink-0 h-[var(--banner-height)]" aria-hidden />
+            <div className="flex h-[601px] items-center mx-auto w-full md:max-w-[var(--max-width-content)] px-0 ">
             <div className="flex-none w-[356px]">
               {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={100}>
@@ -203,6 +214,7 @@ export default function AboutSection() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </section>
 

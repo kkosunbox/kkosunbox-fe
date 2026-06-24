@@ -256,7 +256,12 @@
       "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/login.spec.ts --grep \"localStorage refreshToken\" 2>&1 | Select-Object -Last 50)",
       "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/login.spec.ts --grep \"localStorage refreshToken\" --reporter=line 2>&1 | Select-String -Pattern \"\\(Error|expect|received|timeout|actual|locator|→\\)\" | Select-Object -First 20)",
       "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test tests/e2e/login.spec.ts:190 2>&1 | Select-Object -Last 15)",
-      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; git log --oneline app/\\\\\\(main\\\\\\)/layout.tsx | Select-Object -First 5)"
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; git log --oneline app/\\\\\\(main\\\\\\)/layout.tsx | Select-Object -First 5)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test \"tests/e2e/login.spec.ts:190\" --trace=on 2>&1 | Select-Object -Last 20)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test \"tests/e2e/login.spec.ts\" --reporter=list 2>&1 | Select-String -Pattern \"\\(PASS|FAIL|✓|✗|×|●|›|passed|failed|login\\)\" | Select-Object -First 30)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test \"tests/e2e/login.spec.ts\" --reporter=list 2>&1 | Select-Object -Last 30)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; npx playwright test \"tests/e2e/login.spec.ts\" --grep \"로그인 후 새로고침|SSR 쿠키|로그인 성공 후 /login|localStorage refreshToken\" --reporter=list 2>&1 | Select-Object -Last 20)",
+      "PowerShell(cd C:\\\\2026\\\\ggosoonbox; $env:NODE_OPTIONS=\"--max-old-space-size=4096\"; $env:NEXT_WORKER_PARALLELISM=\"4\"; npx playwright test 2>&1 | Select-Object -Last 15)"
     ]
   }
 }

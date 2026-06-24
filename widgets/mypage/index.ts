@@ -23,3 +23,8 @@ export {
   InquiryCardSkeleton,
   CardSkeleton,
 } from "./ui/mypage-skeletons";
+export {
+  ProfileSectionErrorFallback,
+  SubscriptionCardErrorFallback,
+  CardErrorFallback,
+} from "./ui/mypage-error-fallbacks";

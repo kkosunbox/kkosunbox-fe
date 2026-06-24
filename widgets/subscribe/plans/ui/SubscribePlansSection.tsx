@@ -1,8 +1,8 @@
 ﻿"use client";
+/* eslint-disable @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useAuth } from "@/features/auth";
@@ -47,21 +47,19 @@ export default function SubscribePlansSection({
           <ScrollReveal variant="fade-in" duration={600}>
             <div className="max-md:mb-6 md:max-md2:mb-10">
               <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
-                <Image
-                  src={SubscribePlansHeroImageMobile}
+                <img
+                  src={SubscribePlansHeroImageMobile.src}
                   alt="이제 수제 간식도 맞춤형으로 구독하세요"
                   className="h-[111px] w-full shrink-0 object-cover object-center"
-                  priority
                 />
               </div>
               <div className="max-md2:hidden relative w-full h-[306px]">
                 <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
                 <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-                  <Image
-                    src={SubscribePlansHeroImage}
+                  <img
+                    src={SubscribePlansHeroImage.src}
                     alt="이제 수제 간식도 맞춤형으로 구독하세요"
                     className="absolute inset-0 h-full w-full object-cover object-center"
-                    priority
                   />
                 </div>
               </div>

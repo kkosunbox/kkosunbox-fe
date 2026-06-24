@@ -21,7 +21,7 @@ export function ReferralAdditionalDiscountChip({
         .filter(Boolean)
         .join(" ")}
     >
-      {pct}%추가할인
+      첫 달 {pct}%추가할인
     </Text>
   );
 }

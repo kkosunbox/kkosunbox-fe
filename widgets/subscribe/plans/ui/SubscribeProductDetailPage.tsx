@@ -29,6 +29,7 @@ import {
 } from "@/entities/package";
 import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
 import { useReferralPricing } from "@/features/referral/model";
+import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import Stars from "./reviews/Stars";
 import ReviewImageLightbox from "./reviews/ReviewImageLightbox";
@@ -119,20 +120,14 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
   const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
-  const originalPrice = selectedPlan.originalPrice;
-  const discountedUnitPrice = selectedPlan.monthlyPrice;
-  const hasDiscount = selectedPlan.discountRate > 0;
-  const salePrice = discountedUnitPrice * quantity;
+  const { referralPrice, additionalDiscountPct, inviteEligible } = useReferralPricing();
 
-  // 레퍼럴 쿠키 보유 시 할인가가 계산되어 대기한다 (UI 변경 없음 — 선 배선).
-  // 디자인 확정 후 적용:
-  // - referralPrice(selectedPlan.monthlyPrice)            → discountedUnitPrice 대체
-  // - referralPrice(selectedPlan.monthlyPrice) * quantity → salePrice 대체
-  // - combinedDiscountPct(selectedPlan)                   → 할인율 표시
-  // - isReferral                                          → 레퍼럴 배지 조건부 표시
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const { referralPrice, combinedDiscountPct, isReferral } = useReferralPricing();
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  const originalPrice = selectedPlan.originalPrice;
+  const discountedUnitPrice = inviteEligible
+    ? referralPrice(selectedPlan.monthlyPrice)
+    : selectedPlan.monthlyPrice;
+  const hasDiscount = inviteEligible || selectedPlan.discountRate > 0;
+  const salePrice = discountedUnitPrice * quantity;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
@@ -200,6 +195,12 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               tags={selectedPlan.tags}
               className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
             />
+            {inviteEligible ? (
+              <ReferralAdditionalDiscountChip
+                pct={additionalDiscountPct}
+                className="left-3 top-3"
+              />
+            ) : null}
           </div>
           <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -410,6 +411,12 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   tags={selectedPlan.tags}
                   className="absolute right-4 top-4 z-10 flex items-center gap-2"
                 />
+                {inviteEligible ? (
+                  <ReferralAdditionalDiscountChip
+                    pct={additionalDiscountPct}
+                    className="left-4 top-4"
+                  />
+                ) : null}
               </div>
               <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
                 ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.

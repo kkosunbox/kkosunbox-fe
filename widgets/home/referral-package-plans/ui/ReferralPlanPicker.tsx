@@ -20,7 +20,7 @@ import {
 } from "@/entities/package";
 import { useReferralPricing } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { ReferralAdditionalDiscountChip } from "./ReferralAdditionalDiscountChip";
+import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
 const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];

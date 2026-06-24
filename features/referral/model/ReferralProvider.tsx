@@ -13,6 +13,9 @@ import { validateReferralCode, getReferralPage, getMyReferralCode } from "@/feat
 interface ReferralState {
   refCode: string | null;
   isReferral: boolean;
+  /** true = 현재 세션에서 초대코드 할인을 받을 수 있음.
+   * /ref/{slug}: 항상 true. 다른 페이지: isReferral && !hasSubscriptionHistory */
+  inviteEligible: boolean;
   discountRate: number;
   influencerName: string;
   profileImageUrl: string | null;
@@ -29,6 +32,7 @@ export interface InitialReferralData {
 const DEFAULT_STATE: ReferralState = {
   refCode: null,
   isReferral: false,
+  inviteEligible: false,
   discountRate: 0.1,
   influencerName: "홍길동",
   profileImageUrl: null,
@@ -39,15 +43,19 @@ const ReferralContext = createContext<ReferralState>(DEFAULT_STATE);
 export function ReferralProvider({
   children,
   initialData,
+  hasSubscriptionHistory = false,
 }: {
   children: React.ReactNode;
   initialData?: InitialReferralData;
+  /** 서버에서 전달 — 구독 이력 존재 여부. 쿠키 기반 초대코드 할인 적격 판정에 사용 */
+  hasSubscriptionHistory?: boolean;
 }) {
   const [state, setState] = useState<ReferralState>(() =>
     initialData
       ? {
           refCode: initialData.refCode,
           isReferral: true,
+          inviteEligible: true,
           discountRate: initialData.discountRate,
           influencerName: initialData.influencerName,
           profileImageUrl: initialData.profileImageUrl,
@@ -56,6 +64,7 @@ export function ReferralProvider({
   );
   const isMounted = useRef(true);
   const initialDataRef = useRef(initialData);
+  const hasSubscriptionHistoryRef = useRef(hasSubscriptionHistory);
 
   useEffect(() => {
     isMounted.current = true;
@@ -82,6 +91,7 @@ export function ReferralProvider({
             setState({
               refCode: myCode.referralCode,
               isReferral: true,
+              inviteEligible: !hasSubscriptionHistoryRef.current,
               discountRate: pageData.discountRate,
               influencerName: pageData.displayName,
               profileImageUrl: pageData.profileImageUrl,
@@ -101,6 +111,7 @@ export function ReferralProvider({
             setState({
               refCode: code,
               isReferral: true,
+              inviteEligible: !hasSubscriptionHistoryRef.current,
               discountRate: pageData.discountRate,
               influencerName: pageData.displayName,
               profileImageUrl: pageData.profileImageUrl,
@@ -116,6 +127,7 @@ export function ReferralProvider({
             setState({
               refCode: code,
               isReferral: true,
+              inviteEligible: !hasSubscriptionHistoryRef.current,
               discountRate: apiData.discountRate,
               influencerName: DEFAULT_STATE.influencerName,
               profileImageUrl: null,

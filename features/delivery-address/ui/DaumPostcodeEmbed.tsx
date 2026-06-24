@@ -22,7 +22,7 @@ declare global {
         onclose?: () => void;
         width: string;
         height: string;
-      }) => { embed: (el: HTMLElement) => void };
+      }) => { embed: (el: HTMLElement) => void; open: () => void };
     };
   }
 }

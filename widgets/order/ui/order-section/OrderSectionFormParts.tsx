@@ -92,16 +92,21 @@ export function Checkbox({
 }) {
   return (
     <label className="inline-flex items-center gap-2 cursor-pointer select-none">
-      <button
-        type="button"
-        onClick={onChange}
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={() => onChange()}
+        className="sr-only"
+      />
+      <span
+        aria-hidden="true"
         className={[
           "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
           checked ? "bg-[var(--color-accent)]" : "border border-[var(--color-border)] bg-white",
         ].join(" ")}
       >
         {checked && <CheckIcon />}
-      </button>
+      </span>
       <span className="text-body-13-m leading-[16px] text-[var(--color-text)]">{label}</span>
     </label>
   );
@@ -118,16 +123,21 @@ export function RadioButton({
 }) {
   return (
     <label className="inline-flex items-center gap-2 cursor-pointer">
-      <button
-        type="button"
-        onClick={onChange}
+      <input
+        type="radio"
+        checked={checked}
+        onChange={() => onChange()}
+        className="sr-only"
+      />
+      <span
+        aria-hidden="true"
         className={[
           "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
           checked ? "" : "border border-[var(--color-border)]",
         ].join(" ")}
       >
         {checked && <RadioCheckedIcon />}
-      </button>
+      </span>
       <span className="text-body-14-m leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
         {label}
       </span>

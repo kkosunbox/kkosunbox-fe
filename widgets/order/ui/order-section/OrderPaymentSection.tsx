@@ -3,6 +3,7 @@ import type { CouponInfo } from "@/features/subscription/api/types";
 import { ORDER_ACTION_CHIP_CLASS as actionChipCls, ORDER_INPUT_CLASS as inputCls } from "./orderSectionStyles";
 import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
 import { SectionCard, RadioButton, Checkbox } from "./OrderSectionFormParts";
+import { CardIcon, BillingRegisteredIcon } from "./OrderSectionIcons";
 
 interface OrderPaymentSectionProps {
   open: boolean;
@@ -10,7 +11,7 @@ interface OrderPaymentSectionProps {
   paymentMethod: string;
   billing: BillingInfo | null;
   onSelectPaymentMethod: (method: string) => void;
-  openPaymentPopup: (method: string) => void;
+  onChangeCard: () => void;
   couponEnabled: boolean;
   onToggleCoupon: () => void;
   couponCodeInput: string;
@@ -27,7 +28,7 @@ export function OrderPaymentSection({
   paymentMethod,
   billing,
   onSelectPaymentMethod,
-  openPaymentPopup,
+  onChangeCard,
   couponEnabled,
   onToggleCoupon,
   couponCodeInput,
@@ -54,21 +55,15 @@ export function OrderPaymentSection({
           {paymentMethod === "신용카드" && billing && (
             <>
               <div className="flex items-center gap-3">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
-                  <rect x="2" y="5" width="20" height="14" rx="2" stroke="var(--color-text)" strokeWidth="1.5" />
-                  <path d="M2 10H22" stroke="var(--color-text)" strokeWidth="1.5" />
-                </svg>
+                <CardIcon />
                 <span className="text-body-13-m text-[var(--color-text)]">
                   {billing.cardCompany} **** {billing.lastFourDigits}
                 </span>
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                  <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
-                  <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <BillingRegisteredIcon />
               </div>
               <button
                 type="button"
-                onClick={() => openPaymentPopup(paymentMethod)}
+                onClick={onChangeCard}
                 className={`${actionChipCls} ml-auto`}
               >
                 카드 변경

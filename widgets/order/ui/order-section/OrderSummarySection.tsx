@@ -1,6 +1,6 @@
-import type { Dispatch, SetStateAction } from "react";
 import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
 import { SectionCard, Checkbox, CollapsiblePanel } from "./OrderSectionFormParts";
+import { ChevronIcon } from "./OrderSectionIcons";
 
 interface OrderSummarySectionProps {
   open: boolean;
@@ -10,13 +10,13 @@ interface OrderSummarySectionProps {
   totalDiscount: number;
   total: number;
   agreeOpen: boolean;
-  setAgreeOpen: Dispatch<SetStateAction<boolean>>;
+  onToggleAgreePanel: () => void;
   agreeTerms: boolean;
-  setAgreeTerms: Dispatch<SetStateAction<boolean>>;
+  onToggleTerms: () => void;
   agreePrivacy: boolean;
-  setAgreePrivacy: Dispatch<SetStateAction<boolean>>;
+  onTogglePrivacy: () => void;
   agreeAge: boolean;
-  setAgreeAge: Dispatch<SetStateAction<boolean>>;
+  onToggleAge: () => void;
   agreeAll: boolean;
   handleAgreeAll: () => void;
   submitError: string | null;
@@ -32,13 +32,13 @@ export function OrderSummarySection({
   totalDiscount,
   total,
   agreeOpen,
-  setAgreeOpen,
+  onToggleAgreePanel,
   agreeTerms,
-  setAgreeTerms,
+  onToggleTerms,
   agreePrivacy,
-  setAgreePrivacy,
+  onTogglePrivacy,
   agreeAge,
-  setAgreeAge,
+  onToggleAge,
   agreeAll,
   handleAgreeAll,
   submitError,
@@ -79,21 +79,11 @@ export function OrderSummarySection({
               <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="모두 동의합니다." />
               <button
                 type="button"
-                onClick={() => setAgreeOpen((p) => !p)}
+                onClick={onToggleAgreePanel}
                 aria-expanded={agreeOpen}
                 aria-controls="order-agreements-panel"
-                className="transition-transform duration-200"
-                style={{ transform: agreeOpen ? "matrix(1,0,0,-1,0,0)" : "none" }}
               >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M5 7.5L10 12.5L15 7.5"
-                    stroke="var(--color-text-secondary)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ChevronIcon open={agreeOpen} size={20} />
               </button>
             </div>
             <CollapsiblePanel
@@ -104,17 +94,17 @@ export function OrderSummarySection({
             >
                 <Checkbox
                   checked={agreeTerms}
-                  onChange={() => setAgreeTerms((p) => !p)}
+                  onChange={onToggleTerms}
                   label="이용약관 동의 (필수)"
                 />
                 <Checkbox
                   checked={agreePrivacy}
-                  onChange={() => setAgreePrivacy((p) => !p)}
+                  onChange={onTogglePrivacy}
                   label="개인정보 수집·이용 동의 (필수)"
                 />
                 <Checkbox
                   checked={agreeAge}
-                  onChange={() => setAgreeAge((p) => !p)}
+                  onChange={onToggleAge}
                   label="만 14세 이상 확인 (필수)"
                 />
             </CollapsiblePanel>

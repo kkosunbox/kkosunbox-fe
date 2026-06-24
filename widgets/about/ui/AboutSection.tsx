@@ -21,6 +21,7 @@ import introduceSection402 from "../assets/introduce-section-4-02.webp";
 import introduceSection403 from "../assets/introduce-section-4-03.webp";
 import aboutCtaBg from "../assets/introduce-cta-bg.webp";
 import aboutCtaProduct from "../assets/about-cta-product-2xl.webp";
+import aboutCtaMobileTabletBg from "../assets/about-cta-mobile-tablet-bg-wide.png";
 
 type FeatureCardProps = {
   image: typeof introduceSection401;
@@ -71,7 +72,7 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: 꼬순박스 소개 (Hero) */}
-      <section className="relative overflow-hidden bg-[var(--color-about-hero-bg)] max-lg:pt-[62px] max-lg:h-[641px] lg:h-[calc(601px+var(--banner-height))]">
+      <section className="relative overflow-hidden max-lg:bg-[var(--color-about-hero-mobile-fill)] lg:bg-[var(--color-about-hero-bg)] max-lg:pt-[62px] max-lg:h-[641px] lg:h-[calc(601px+var(--banner-height))]">
 
         {/* 모바일·태블릿 레이아웃 (lg 미만): 이미지 전체 배경 + 텍스트 overlay */}
         {/* 배경 이미지 — absolute inset-0 으로 padding 영향 없이 section 전체를 채움 */}
@@ -495,13 +496,31 @@ export default function AboutSection() {
       </section>
 
       {/* Section 5: CTA */}
-      <section className="relative overflow-hidden bg-[var(--color-about-cta-bg)] py-14 lg:h-[698px] lg:flex lg:items-center">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
+      <section className="relative overflow-hidden flex items-center max-lg:h-[706px] lg:py-14 lg:h-[698px]">
+        {/* 모바일·태블릿 배경: 375×706 이미지 중앙 고정, 양옆은 --color-about-cta-mobile-fill 단색 */}
+        <div className="lg:hidden pointer-events-none absolute inset-0 bg-[var(--color-about-cta-mobile-fill)]" aria-hidden>
+          <div className="absolute inset-0 flex justify-center overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={aboutCtaMobileTabletBg.src}
+              alt=""
+              width={375}
+              height={706}
+              className="h-full w-auto"
+              aria-hidden
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+        {/* 데스크탑 배경 */}
+        <div className="max-lg:hidden pointer-events-none absolute inset-0" aria-hidden>
+          <div className="absolute inset-0 bg-[var(--color-about-cta-bg)] opacity-50" />
           <Image
             src={aboutCtaBg}
             alt=""
             fill
-            className="object-cover opacity-[0.16] blur-sm"
+            className="object-cover opacity-50 blur-sm"
             style={{ objectPosition: "center 82%" }}
             sizes="100vw"
           />
@@ -577,7 +596,7 @@ export default function AboutSection() {
               </h2>
             </ScrollReveal>
             {/* 모바일: 안내문 → 제목 → 이미지 → 버튼 순서 */}
-            <ScrollReveal variant="scale-in" delay={150} className="flex-none lg:hidden">
+            <ScrollReveal variant="scale-in" delay={150} className="flex-none max-lg:mt-10 lg:hidden">
               <div className="overflow-hidden rounded-[56px] w-full max-w-[320px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

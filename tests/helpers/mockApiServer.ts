@@ -18,8 +18,8 @@ export const TRIGGER_SERVER_ERROR_EMAIL = "server-error@example.com";
 export const MOCK_ACCESS_TOKEN = "mock-access-token-for-testing";
 export const MOCK_REFRESH_TOKEN = "mock-refresh-token-for-testing";
 
-const MOCK_NO_PROFILE_ACCESS_TOKEN = "mock-no-profile-access-token-for-testing";
-const MOCK_NO_PROFILE_REFRESH_TOKEN = "mock-no-profile-refresh-token-for-testing";
+export const MOCK_NO_PROFILE_ACCESS_TOKEN = "mock-no-profile-access-token-for-testing";
+export const MOCK_NO_PROFILE_REFRESH_TOKEN = "mock-no-profile-refresh-token-for-testing";
 
 export const MOCK_PROFILE = {
   id: 1,

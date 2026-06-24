@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { getPointBalance, getPointHistory } from "@/features/point/api";
 import type { PointBalance, PointLedgerItem } from "@/features/point/api/types";
-import type { MyReferralCode } from "@/features/referral/api/types";
 import { getErrorMessage } from "@/shared/lib/api";
 import { useModal } from "@/shared/ui";
 
@@ -36,22 +35,6 @@ function BackIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M15 6L9 12l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function CopyIcon({ checked }: { checked: boolean }) {
-  if (checked) {
-    return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M5 12l5 5L20 7" stroke="var(--color-cta-button)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="9" y="9" width="11" height="11" rx="1.5" stroke="var(--color-border)" strokeWidth="2" />
-      <path d="M15 9V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" stroke="var(--color-border)" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -256,118 +239,11 @@ function Pagination({
   );
 }
 
-/* ── 초대코드·초대링크 행 ───────────────────────────────────────────── */
-function ReferralLinkRow({
-  referralCode,
-  desktop = false,
-}: {
-  referralCode: MyReferralCode | null;
-  desktop?: boolean;
-}) {
-  const [codeCopied, setCodeCopied] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
-  const { openAlert } = useModal();
-
-  if (!referralCode) return null;
-
-  function handleCopyCode() {
-    navigator.clipboard.writeText(referralCode!.referralCode).then(() => {
-      setCodeCopied(true);
-      setTimeout(() => setCodeCopied(false), 2000);
-      openAlert({ type: "success", title: "초대 코드가 복사되었습니다." });
-    });
-  }
-
-  function handleCopyLink() {
-    if (!referralCode!.referralLink) return;
-    navigator.clipboard.writeText(referralCode!.referralLink).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-      openAlert({
-        type: "success",
-        title: "초대 링크가 복사되었습니다.",
-        description: "공유한 친구가 가입을 완료하면\n포인트가 즉시 지급됩니다.",
-      });
-    });
-  }
-
-  const inputCls = desktop
-    ? "w-[213px] shrink-0"
-    : "min-w-0 flex-1";
-
-  const rowCls = desktop ? "w-[271px]" : "";
-
-  const codeRow = (
-    <div className={["flex items-center gap-3", rowCls].join(" ")}>
-      <span className="w-[46px] shrink-0 text-body-13-m leading-4 text-[var(--color-text)]">초대코드</span>
-      <div className={["flex h-10 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3", inputCls].join(" ")}>
-        <button
-          type="button"
-          onClick={handleCopyCode}
-          aria-label="초대코드 복사"
-          className="min-w-0 flex-1 truncate text-left text-body-13-m leading-[18px] text-[var(--color-text)]"
-        >
-          {referralCode.referralCode}
-        </button>
-        <button
-          type="button"
-          aria-label="초대코드 복사"
-          onClick={handleCopyCode}
-          className="shrink-0 transition-opacity hover:opacity-70"
-        >
-          <CopyIcon checked={codeCopied} />
-        </button>
-      </div>
-    </div>
-  );
-
-  const linkRow = referralCode.referralLink ? (
-    <div className={["flex items-center gap-3", rowCls].join(" ")}>
-      <span className="w-[46px] shrink-0 text-body-13-m leading-4 text-[var(--color-text)]">초대링크</span>
-      <div className={["flex h-10 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3", inputCls].join(" ")}>
-        <button
-          type="button"
-          onClick={handleCopyLink}
-          aria-label="초대링크 복사"
-          className="min-w-0 flex-1 truncate text-left text-body-13-m leading-[18px] text-[var(--color-text)]"
-        >
-          {referralCode.referralLink}
-        </button>
-        <button
-          type="button"
-          aria-label="초대링크 복사"
-          onClick={handleCopyLink}
-          className="shrink-0 transition-opacity hover:opacity-70"
-        >
-          <CopyIcon checked={linkCopied} />
-        </button>
-      </div>
-    </div>
-  ) : null;
-
-  if (desktop) {
-    return (
-      <div className="flex items-center gap-4">
-        {codeRow}
-        {linkRow}
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-3">
-      {codeRow}
-      {linkRow}
-    </div>
-  );
-}
-
 /* ── 잔액 카드 ─────────────────────────────────────────────────────── */
 interface BalanceCardProps {
   mobile: boolean;
   monthlyEarned: number;
   cumulativePoint: number;
-  referralCode: MyReferralCode | null;
   selectedYear: number;
   selectedMonth: number;
   showPicker: boolean;
@@ -481,7 +357,6 @@ function BalanceCard({
   mobile,
   monthlyEarned,
   cumulativePoint,
-  referralCode,
   selectedYear,
   selectedMonth,
   showPicker,
@@ -526,7 +401,6 @@ function BalanceCard({
         <MonthBanner bannerPadding="px-6" {...bannerProps} />
         <div className="rounded-b-[20px] bg-white px-6 pt-6 pb-6">
           <div className="mb-4">{pointInfo}</div>
-          <ReferralLinkRow referralCode={referralCode} />
         </div>
       </div>
     );
@@ -535,9 +409,8 @@ function BalanceCard({
   return (
     <div className="overflow-visible rounded-[20px] bg-white">
       <MonthBanner bannerPadding="pl-8" {...bannerProps} />
-      <div className="flex h-[118px] items-center justify-between rounded-b-[20px] bg-white px-12">
+      <div className="flex h-[118px] items-center rounded-b-[20px] bg-white px-12">
         {pointInfo}
-        <ReferralLinkRow referralCode={referralCode} desktop />
       </div>
     </div>
   );
@@ -547,11 +420,10 @@ function BalanceCard({
 interface Props {
   balance: PointBalance;
   items: PointLedgerItem[];
-  referralCode: MyReferralCode | null;
 }
 
 /* ── 메인 컴포넌트 ─────────────────────────────────────────────────── */
-export default function PointHistorySection({ balance: initialBalance, items: initialItems, referralCode }: Props) {
+export default function PointHistorySection({ balance: initialBalance, items: initialItems }: Props) {
   const { openAlert } = useModal();
   const [balance, setBalance] = useState(initialBalance);
   const [items, setItems] = useState(initialItems);
@@ -602,7 +474,6 @@ export default function PointHistorySection({ balance: initialBalance, items: in
   const balanceCardProps = {
     monthlyEarned,
     cumulativePoint,
-    referralCode,
     selectedYear,
     selectedMonth,
     showPicker,

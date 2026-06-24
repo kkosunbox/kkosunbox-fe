@@ -11,7 +11,7 @@ import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop-renewal.png";
-import reviewWriteHeroMobile from "../assets/review-write-hero-mobile.webp";
+import reviewWriteHeroMobile from "../assets/review-write-hero-mobile-renewal.png";
 
 const HERO_ALT =
   "우리 아이의 꼬순박스, 만족하셨나요? 남겨주신 리뷰는 더 나은 꼬순박스를 만드는 데 큰 힘이 됩니다.";
@@ -311,11 +311,11 @@ export default function ReviewWriteSection({
       {/* Hero — "우리 아이의 꼬순박스, 만족하셨나요??" (텍스트 포함 배너) */}
       {/* 모바일(<950px): 전용 이미지 / 데스크톱(≥950px): 와이드 배너, 초광폭은 좌우 보완 */}
       <section aria-label="리뷰 작성 안내">
-        <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
+        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
           <Image
             src={reviewWriteHeroMobile}
             alt={HERO_ALT}
-            className="h-[111px] w-full object-cover object-center"
+            className="h-[156px] w-full object-cover object-center"
             priority
           />
         </div>

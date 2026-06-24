@@ -10,7 +10,7 @@ import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { tierFromSubscriptionPlan } from "@/entities/package";
 import { PlanPicker } from "@/widgets/package-plans";
-import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile.webp";
+import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile-renewal.png";
 import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop-renewal.png";
 
 interface Props {
@@ -70,12 +70,12 @@ export default function SubscriptionChangePlansSection({
       <div className="flex w-full flex-1 flex-col">
         {/* Hero */}
         <ScrollReveal variant="fade-in" duration={600}>
-          <div className="max-md:mb-6 md:max-md2:mb-10">
-            <div className="flex h-[111px] items-center justify-center overflow-hidden md2:hidden">
+          <div className="max-md2:mb-1">
+            <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
               <img
                 src={subscriptionChangeHeroMobile.src}
                 alt={heroAlt}
-                className="h-[111px] w-full shrink-0 object-cover object-center"
+                className="h-[156px] w-full shrink-0 object-cover object-center"
               />
             </div>
             <div className="max-md2:hidden relative w-full h-[306px]">

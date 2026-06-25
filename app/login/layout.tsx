@@ -20,7 +20,13 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div data-login-mobile-chrome className="max-lg:bg-[var(--color-login-mobile-chrome)]">
+    <div data-login-mobile-chrome>
+      {/* 모바일·태블릿: form 뒤 최상단 고정 배경 — theme-color 미지원 브라우저 보완 */}
+      <div
+        aria-hidden="true"
+        className="max-lg:fixed max-lg:inset-x-0 max-lg:top-0 max-lg:h-svh max-lg:-z-10 lg:hidden"
+        style={{ backgroundColor: "var(--color-login-top)" }}
+      />
       <div className="max-lg:hidden">
         <Header />
       </div>

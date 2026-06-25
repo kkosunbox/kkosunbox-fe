@@ -1,5 +1,10 @@
+import type { Viewport } from "next";
 import { Header } from "@/widgets/header";
 import { FooterSection } from "@/widgets/footer";
+
+export const viewport: Viewport = {
+  themeColor: "#FFF4EA",
+};
 
 /**
  * 로그인 페이지 레이아웃
@@ -15,7 +20,7 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div data-login-mobile-chrome>
+    <div data-login-mobile-chrome className="max-lg:bg-[var(--color-login-mobile-chrome)]">
       <div className="max-lg:hidden">
         <Header />
       </div>

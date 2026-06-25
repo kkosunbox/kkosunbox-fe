@@ -604,7 +604,7 @@ export function ProfileSection({
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
-    <section className="max-lg:pt-6 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
+    <section className="max-lg:pt-1 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
       <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
         <ProfileSectionMobile vm={vm} />
         <ProfileSectionDesktop vm={vm} checklistItems={checklistItems} hasChecklist={hasChecklist} />

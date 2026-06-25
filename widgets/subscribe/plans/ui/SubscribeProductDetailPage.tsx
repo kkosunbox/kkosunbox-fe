@@ -195,12 +195,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               tags={selectedPlan.tags}
               className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
             />
-            {inviteEligible ? (
-              <ReferralAdditionalDiscountChip
-                pct={additionalDiscountPct}
-                className="left-3 top-3"
-              />
-            ) : null}
           </div>
           <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -222,6 +216,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
               {formatWon(discountedUnitPrice)}
             </span>
+            {inviteEligible && (
+              <ReferralAdditionalDiscountChip pct={additionalDiscountPct} inline />
+            )}
           </div>
 
           <div className="mt-3 flex items-center gap-2">
@@ -411,12 +408,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   tags={selectedPlan.tags}
                   className="absolute right-4 top-4 z-10 flex items-center gap-2"
                 />
-                {inviteEligible ? (
-                  <ReferralAdditionalDiscountChip
-                    pct={additionalDiscountPct}
-                    className="left-4 top-4"
-                  />
-                ) : null}
               </div>
               <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
                 ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -454,6 +445,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
                   {formatWon(discountedUnitPrice)}
                 </span>
+                {inviteEligible && (
+                  <ReferralAdditionalDiscountChip pct={additionalDiscountPct} inline />
+                )}
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
                 <div className="space-y-6 md:space-y-8 lg:space-y-8">

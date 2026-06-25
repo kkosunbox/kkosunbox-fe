@@ -588,6 +588,7 @@ const [isBannerCollapsed, setIsBannerCollapsed] = useState(false);
     pathname.startsWith("/ref/") ||
     pathname === "/subscribe" ||
     pathname === "/support" ||
+    pathname.startsWith("/support/") ||
     pathname === "/inquiry" ||
     pathname === "/mypage/review/write" ||
     pathname === "/mypage/subscription/change" ||

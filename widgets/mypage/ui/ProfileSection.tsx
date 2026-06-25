@@ -159,7 +159,13 @@ function ChecklistPanel({
           : "flex flex-col justify-center"
       }
     >
-      <div className="mb-2.5 flex items-center justify-between">
+      <div
+        className={
+          isMobile
+            ? "relative mb-2.5"
+            : "mb-2.5 flex items-center justify-between"
+        }
+      >
         <div className="flex items-center gap-2">
           <Text as="h2" variant="body-14-sb-tight" className="text-[var(--color-text)]">
             체크리스트
@@ -177,7 +183,10 @@ function ChecklistPanel({
           <button
             type="button"
             onClick={() => openChecklistForm({ rewrite: true })}
-            className="inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+            className={[
+              "inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80",
+              isMobile ? "absolute top-0 right-0" : "",
+            ].join(" ")}
           >
             <span>다시 작성하기</span>
             <ChevronRightIcon />
@@ -325,15 +334,17 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
   ].join(" ");
 
   return (
-    <div className="relative px-0 pt-7 pb-10 lg:hidden">
-      <button
-        type="button"
-        onClick={vm.onEditProfile}
-        className="absolute top-[9px] right-6 z-10 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
-      >
-        <span>정보변경</span>
-        <ChevronRightIcon />
-      </button>
+    <div className="px-0 pt-7 pb-10 lg:hidden">
+      <div className="mb-1 flex justify-end">
+        <button
+          type="button"
+          onClick={vm.onEditProfile}
+          className="inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+        >
+          <span>정보변경</span>
+          <ChevronRightIcon />
+        </button>
+      </div>
 
       <div className="flex items-center gap-5">
         <PetAvatar imageUrl={vm.imageUrl} userId={vm.userId} onEditProfile={vm.onEditProfile} />

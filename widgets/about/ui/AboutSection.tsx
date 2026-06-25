@@ -13,7 +13,7 @@ import {
 
 import introduceHeroRenewalMobileTablet from "../assets/introduce-hero-renewal-mobile-tablet.webp";
 import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.webp";
-import introducePuppyRunRenewal from "../assets/introduce-puppy-run-renewal.webp";
+import introducePuppyRunRenewal from "../assets/introduce-puppy-run-renewal.png";
 import introduceMakeBox from "../assets/introduce-make-box.webp";
 import introduceDecoPaws from "../assets/introduce-deco-paws.svg";
 import introduceSection401 from "../assets/introduce-section-4-01.webp";
@@ -233,8 +233,8 @@ export default function AboutSection() {
                 <Image
                   src={introducePuppyRunRenewal}
                   alt="달리는 강아지"
-                  width={360}
-                  height={360}
+                  width={590}
+                  height={590}
                   className="h-auto w-full max-w-[320px] rounded-[30px] lg:max-w-[360px]"
                   sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), ${MEDIA_MAX_LG_SIZES} 320px, 360px`}
                 />
@@ -303,8 +303,8 @@ export default function AboutSection() {
                   <Image
                     src={introducePuppyRunRenewal}
                     alt="달리는 강아지"
-                    width={360}
-                    height={360}
+                    width={590}
+                    height={590}
                     className="h-auto w-full max-w-[320px] rounded-[30px]"
                     sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
                   />

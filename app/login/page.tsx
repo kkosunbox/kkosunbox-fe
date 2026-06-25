@@ -175,7 +175,7 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative flex min-h-screen flex-col bg-white max-lg:h-svh max-lg:overflow-hidden max-lg:bg-[var(--color-login-mobile-chrome)] lg:pt-[var(--header-offset)]"
+      className="relative flex flex-col max-lg:h-svh max-lg:overflow-hidden max-lg:bg-[var(--color-login-top)] max-lg:pt-[30px] lg:min-h-screen lg:bg-white lg:pt-[var(--header-offset)]"
     >
 
       {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}
@@ -188,7 +188,7 @@ export default function LoginPage() {
             width: "max(423px, calc(100% + 48px))",
             bottom: 0,
             background: "var(--gradient-login-bg)",
-            borderRadius: 24,
+            borderRadius: "0 0 24px 24px",
           }}
         />
         {/* 데코 이미지 (꼬랑지) — 상단 장식, 콘텐츠 위에 떠 있음 */}

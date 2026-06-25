@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Ms_Madi, Give_You_Glory, Gantari } from "next/font/google";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -29,9 +29,12 @@ const gantari = Gantari({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+export const viewport: Viewport = {
+  themeColor: "#F89602",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  themeColor: "#F89602",
   title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
   description: "강아지에게 맞춤 수제간식을 정기적으로 제공하는 프리미엄 패키지 구독 서비스",
   openGraph: {

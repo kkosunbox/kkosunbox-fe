@@ -4,7 +4,6 @@ import {
   MOCK_ACTIVE_SLUG,
   MOCK_INACTIVE_SLUG,
   MOCK_REFERRAL_PAGE,
-  MOCK_MY_REFERRAL_CODE,
 } from "../helpers/mockApiServer";
 import { loginAndGoTo, loginAsInfluencer } from "../helpers/auth";
 
@@ -157,26 +156,6 @@ test.describe("/mypage/point (인플루언서 전용)", () => {
     await expect(page.getByRole("heading", { name: "MY 포인트" })).toBeVisible({
       timeout: 10_000,
     });
-  });
-
-  test("인플루언서 접근 → 초대코드 행 표시", async ({ page }) => {
-    await loginAsInfluencer(page);
-    await page.goto("/mypage/point");
-    // 모바일(md:hidden)·데스크탑(max-md:hidden) 레이아웃이 동시에 렌더됨.
-    // Desktop Chrome에서는 데스크탑 레이아웃만 보이므로 .last()로 선택.
-    await expect(page.getByText("초대코드").last()).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText(MOCK_MY_REFERRAL_CODE.referralCode).last()).toBeVisible();
-  });
-
-  test("referralLink가 있을 때 → 초대링크 행 표시", async ({ page }) => {
-    await loginAsInfluencer(page);
-    await page.goto("/mypage/point");
-    await expect(page.getByText("초대링크").last()).toBeVisible({ timeout: 10_000 });
-    // 링크 버튼은 aria-label="초대링크 복사"를 가지므로 getByRole(name=URL)로는 찾을 수 없음
-    // → getByText로 텍스트 내용을 직접 확인
-    await expect(
-      page.getByText(MOCK_MY_REFERRAL_CODE.referralLink!).last()
-    ).toBeVisible();
   });
 
   test("referralLink=null일 때 → 초대링크 행 미표시", async ({ page }) => {

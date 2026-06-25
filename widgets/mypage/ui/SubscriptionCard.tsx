@@ -557,7 +557,7 @@ export function SubscriptionCard({
 
       {/* 노치 원 + 화살표 버튼 (구독 1개일 때 비활성화) */}
       <div
-        className="absolute left-0 top-1/2 z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+        className="absolute left-0 top-1/2 z-10 max-lg:h-8 max-lg:w-8 lg:h-12 lg:w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         aria-hidden
       />
       <button
@@ -571,7 +571,7 @@ export function SubscriptionCard({
       </button>
 
       <div
-        className="absolute right-0 top-1/2 z-10 h-12 w-12 translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+        className="absolute right-0 top-1/2 z-10 max-lg:h-8 max-lg:w-8 lg:h-12 lg:w-12 translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
         aria-hidden
       />
       <button

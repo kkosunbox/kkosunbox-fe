@@ -11,6 +11,9 @@ import { useAuth, getOAuthUrl, setOAuthReturnPath } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
 import { useLoadingOverlay } from "@/shared/ui";
 
+const LAST_LOGIN_KEY = "ggosoonbox_last_login";
+type LastLoginMethod = "email" | OAuthProvider;
+
 const LOGO_WIDTH = 156;
 const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
 
@@ -33,6 +36,30 @@ function EyeIcon({ className }: { className?: string }) {
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="12" cy="12" r="3" stroke="var(--color-text-secondary)" strokeWidth="1.5" />
     </svg>
+  );
+}
+
+function LastLoginBadge() {
+  return (
+    <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2.5 -translate-x-1/2">
+      <div
+        className="relative whitespace-nowrap rounded-full bg-black/75 px-3 py-[5px] text-white"
+        style={{ fontSize: 11, fontWeight: 500, lineHeight: "16px", letterSpacing: "-0.01em" }}
+      >
+        최근에 로그인했어요
+        <div
+          className="absolute left-1/2 -translate-x-1/2"
+          style={{
+            top: "calc(100% - 1px)",
+            width: 0,
+            height: 0,
+            borderLeft: "5px solid transparent",
+            borderRight: "5px solid transparent",
+            borderTop: "6px solid rgba(0,0,0,0.75)",
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -93,6 +120,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [lastLoginMethod, setLastLoginMethod] = useState<LastLoginMethod | null>(null);
 
   const { isLoggedIn, login } = useAuth();
   const { showLoading, hideLoading } = useLoadingOverlay();
@@ -101,6 +129,11 @@ export default function LoginPage() {
   // 폼 제출로 로그인이 진행 중이면 true. login() 콜백이 직접 navigate하므로
   // isLoggedIn useEffect의 redirect가 그것을 덮어쓰지 않도록 막는다.
   const formLoginInProgressRef = useRef(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(LAST_LOGIN_KEY) as LastLoginMethod | null;
+    setLastLoginMethod(saved);
+  }, []);
 
   // 이미 로그인된 상태(SSR 초기값 또는 클라이언트 세션 복구 완료)면 홈으로 이동
   useEffect(() => {
@@ -113,6 +146,7 @@ export default function LoginPage() {
     if (next?.startsWith("/")) {
       setOAuthReturnPath(next);
     }
+    localStorage.setItem(LAST_LOGIN_KEY, provider);
     const url = getOAuthUrl(provider);
     if (url) window.location.href = url;
   }
@@ -129,6 +163,8 @@ export default function LoginPage() {
         if (result.error) {
           formLoginInProgressRef.current = false;
           setError(result.error);
+        } else {
+          localStorage.setItem(LAST_LOGIN_KEY, "email");
         }
       } finally {
         hideLoading();
@@ -139,11 +175,11 @@ export default function LoginPage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative flex min-h-screen flex-col bg-white max-lg:min-h-dvh max-lg:min-h-lvh max-lg:bg-[var(--color-login-mobile-chrome)] lg:pt-[var(--header-offset)]"
+      className="relative flex min-h-screen flex-col bg-white max-lg:h-svh max-lg:overflow-hidden max-lg:bg-[var(--color-login-mobile-chrome)] lg:pt-[var(--header-offset)]"
     >
 
       {/* ── 모바일 전용: 그라데이션 배경 + 장식 레이어 ── */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden max-lg:inset-x-0 max-lg:bottom-[calc(-1*max(0px,100lvh-100dvh))] lg:hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden lg:hidden">
         {/* 그라데이션 둥근 배경 — 뷰포트 전체를 감싸도록 배치 */}
         <div
           className="absolute left-1/2 -translate-x-1/2"
@@ -154,15 +190,6 @@ export default function LoginPage() {
             background: "var(--gradient-login-bg)",
             borderRadius: 24,
           }}
-        />
-        {/* 그라데이션 하단과 동일 톤 — 브라우저 동적 하단 UI 영역 */}
-        <div
-          className="absolute inset-x-0 bottom-0"
-          style={{
-            height: "max(120px, calc(100lvh - 100dvh + env(safe-area-inset-bottom, 0px)))",
-            background: "var(--color-login-mobile-chrome)",
-          }}
-          aria-hidden="true"
         />
         {/* 데코 이미지 (꼬랑지) — 상단 장식, 콘텐츠 위에 떠 있음 */}
         <div className="absolute left-1/2 -translate-x-1/2" style={{ top: "2%", width: 423, height: 250 }}>
@@ -176,16 +203,16 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── 콘텐츠: 모바일 세로 중앙 / 데스크톱 2컬럼 ── */}
-      <div className="relative flex flex-1 flex-col max-lg:items-center max-lg:justify-center lg:mx-auto lg:flex-row lg:w-full max-lg:overflow-x-auto max-lg:px-8 lg:max-w-content lg:px-0">
+      {/* ── 콘텐츠: 모바일 상단 패딩 기준 / 데스크톱 2컬럼 ── */}
+      <div className="relative flex flex-1 flex-col max-lg:items-center max-lg:min-h-0 max-lg:overflow-y-auto lg:mx-auto lg:flex-row lg:w-full max-lg:px-8 lg:max-w-content lg:px-0">
 
         {/* 좌측 — 폼 */}
-        <div className="flex w-full flex-col max-lg:px-0 px-6 max-lg:flex-1 max-lg:justify-center lg:min-h-[calc(100vh-54px)] lg:min-w-[448px] lg:flex-1 lg:justify-center">
+        <div className="flex w-full flex-col max-lg:px-0 px-6 max-lg:my-auto max-lg:py-[40px] lg:min-h-[calc(100vh-54px)] lg:min-w-[448px] lg:flex-1 lg:justify-center">
           {/* 모바일: 고정 간격 블록, 세로 중앙 정렬 / 데스크톱: 기존 레이아웃 유지 */}
           <div className="w-full max-w-[400px] px-0 max-lg:mx-auto">
 
             {/* 모바일 전용: 로고 영역 */}
-            <div className="max-lg:flex lg:hidden items-center justify-center pb-[100px]">
+            <div className="max-lg:flex lg:hidden items-center justify-center pb-[40px]">
               <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto relative" priority />
             </div>
 
@@ -260,15 +287,18 @@ export default function LoginPage() {
             </div>
 
             {/* 로그인 버튼 */}
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full rounded-[12px] bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
-                max-lg:h-[48px] max-lg:text-[14px] max-lg:font-semibold max-lg:tracking-[-0.04em] max-lg:mt-[90px]
-                lg:h-[54px] lg:text-subtitle-16-sb lg:tracking-[0.2px] lg:mt-[68px]"
-            >
-              {isPending ? "로그인 중..." : "로그인"}
-            </button>
+            <div className="relative max-lg:mt-[40px] lg:mt-[68px]">
+              {lastLoginMethod === "email" && <LastLoginBadge />}
+              <button
+                type="submit"
+                disabled={isPending}
+                className="w-full rounded-[12px] bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
+                  max-lg:h-[48px] max-lg:text-[14px] max-lg:font-semibold max-lg:tracking-[-0.04em]
+                  lg:h-[54px] lg:text-subtitle-16-sb lg:tracking-[0.2px]"
+              >
+                {isPending ? "로그인 중..." : "로그인"}
+              </button>
+            </div>
 
             {/* 간편로그인 */}
             <p
@@ -280,23 +310,32 @@ export default function LoginPage() {
 
             {/* 소셜 버튼 */}
             <div className="flex items-center justify-center gap-[40px] mt-7 lg:mt-8">
-              <button type="button" aria-label="카카오로 로그인"
-                onClick={() => handleSocialLogin("kakao")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
-                style={{ backgroundColor: "var(--color-kakao)" }}>
-                <KakaoIcon />
-              </button>
-              <button type="button" aria-label="네이버로 로그인"
-                onClick={() => handleSocialLogin("naver")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
-                style={{ backgroundColor: "var(--color-naver)" }}>
-                <NaverIcon />
-              </button>
-              <button type="button" aria-label="구글로 로그인"
-                onClick={() => handleSocialLogin("google")}
-                className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
-                <GoogleIcon />
-              </button>
+              <div className="relative">
+                {lastLoginMethod === "kakao" && <LastLoginBadge />}
+                <button type="button" aria-label="카카오로 로그인"
+                  onClick={() => handleSocialLogin("kakao")}
+                  className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
+                  style={{ backgroundColor: "var(--color-kakao)" }}>
+                  <KakaoIcon />
+                </button>
+              </div>
+              <div className="relative">
+                {lastLoginMethod === "naver" && <LastLoginBadge />}
+                <button type="button" aria-label="네이버로 로그인"
+                  onClick={() => handleSocialLogin("naver")}
+                  className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition-opacity hover:opacity-85"
+                  style={{ backgroundColor: "var(--color-naver)" }}>
+                  <NaverIcon />
+                </button>
+              </div>
+              <div className="relative">
+                {lastLoginMethod === "google" && <LastLoginBadge />}
+                <button type="button" aria-label="구글로 로그인"
+                  onClick={() => handleSocialLogin("google")}
+                  className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[var(--color-surface-light)] transition-opacity hover:opacity-85">
+                  <GoogleIcon />
+                </button>
+              </div>
             </div>
 
             {/* 회원가입 */}

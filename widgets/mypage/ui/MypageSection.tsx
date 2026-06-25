@@ -25,12 +25,12 @@ export default function MypageSection({
 
       {/* 하단 — 흰색 배경 (콘텐츠가 짧아도 main 영역 하단까지 채움) */}
       <div className="flex flex-1 flex-col bg-white pb-12 lg:pb-16">
-        <section className="pt-4 lg:pt-8">
+        <section className="max-lg:pt-6 lg:pt-8">
           <div className="mx-auto w-full max-w-content max-lg:px-6 lg:px-0">
             <Text
               as="h2"
               variant="title-20-sb"
-              className="mb-4 leading-[100%] tracking-[-0.04em] text-[var(--color-text)] max-lg:text-subtitle-16-b max-lg:leading-[20px] max-lg:tracking-normal lg:mb-5"
+              className="leading-[100%] tracking-[-0.04em] text-[var(--color-text)] max-lg:text-subtitle-16-b max-lg:leading-[20px] max-lg:tracking-normal max-lg:mb-6 lg:mb-5"
             >
               마이페이지
             </Text>

@@ -68,14 +68,6 @@ function NextArrowIcon() {
   );
 }
 
-/* 리뷰 버튼 우측 화살표 — currentColor로 텍스트 색 상속 */
-function ReviewArrowIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 function SubscriptionEmpty() {
   return (
@@ -442,10 +434,10 @@ export function SubscriptionCard({
 
   return (
     <>
-    <div className="relative max-lg:mb-5 lg:h-[186px]">
+    <div className="relative flex max-lg:h-[144px] flex-col lg:h-[186px]">
       {/* 오렌지 카드 */}
       <div
-        className="relative z-0 flex h-full max-lg:min-h-[199px] rounded-[20px] max-lg:rounded-[16px] lg:h-[186px]"
+        className="relative z-0 flex flex-1 rounded-[20px] max-lg:rounded-[16px]"
         style={{ background: planTheme.colorVar }}
         onClickCapture={handleClickCapture}
         onTouchStart={handleTouchStart}
@@ -455,7 +447,7 @@ export function SubscriptionCard({
         <div
           className={[
             "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
-            "max-lg:px-6 max-lg:pl-12 max-lg:py-6 lg:pl-12 lg:pr-6 lg:py-5",
+            "max-lg:px-6 max-lg:pl-12 max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
           ].join(" ")}
         >
           {/* 카드 본문 클릭 — 구독 상세 */}
@@ -475,32 +467,39 @@ export function SubscriptionCard({
             </div> */}
 
             {/* 텍스트 정보 */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col max-lg:gap-1 lg:gap-1.5">
+              {/* 모바일·태블릿: 뱃지 독립 행 */}
+              {boxQuantity !== null && (
+                <span className="lg:hidden inline-flex self-start h-[14px] items-center rounded-[4px] bg-white/30 px-1 text-body-12-sb leading-[14px] tracking-[-0.04em] text-white uppercase">
+                  {boxQuantity} BOX
+                </span>
+              )}
+              {/* 플랜명 행 — 데스크탑에서는 뱃지도 함께 표시 */}
               <div className="flex flex-wrap items-center gap-[10px]">
                 <Text
                   variant="subtitle-16-sb"
                   mobileVariant="body-14-sb"
-                  className="leading-tight tracking-[-0.04em] text-white"
+                  className="max-lg:text-body-14-sb leading-tight tracking-[-0.04em] text-white"
                 >
                   {current.plan.name} 구독중
                 </Text>
                 {boxQuantity !== null && (
-                  <span className="inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-sb capitalize leading-[19px] tracking-[-0.04em] text-white">
+                  <span className="max-lg:hidden inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-sb capitalize leading-[19px] tracking-[-0.04em] text-white">
                     {boxQuantity} BOX
                   </span>
                 )}
               </div>
               <Text
                 variant="body-16-m"
-                mobileVariant="body-14-m"
-                className="leading-tight text-white/80"
+                mobileVariant="body-13-m"
+                className="max-lg:text-body-13-m leading-tight text-white/80"
               >
                 결제일 : {billingDayLabel(current.nextBillingDate)}
               </Text>
               <Text
                 variant="body-16-m"
-                mobileVariant="body-14-m"
-                className="leading-tight text-white/80"
+                mobileVariant="body-13-m"
+                className="max-lg:text-body-13-m leading-tight text-white/80"
               >
                 결제금액 : {paymentAmount.toLocaleString("ko-KR")}원
               </Text>
@@ -508,31 +507,29 @@ export function SubscriptionCard({
           </Link>
 
           {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성 */}
-          <div className="mt-2.5">
+          <div className="max-lg:mt-2 lg:mt-2.5">
             {myReview ? (
               <button
                 type="button"
                 onClick={handleWrittenReviewClick}
-                className="inline-flex h-7 items-center gap-1 rounded-full bg-white px-3 text-body-13-sb leading-[1] transition-opacity hover:opacity-90"
+                className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
                 style={{ color: planTheme.colorVar }}
               >
-                내 리뷰보러가기
-                <ReviewArrowIcon />
+                내 리뷰보러가기 →
               </button>
             ) : canReview ? (
               <Link
                 href={`/mypage/review/write?planId=${currentPlanId}`}
-                className="inline-flex h-7 items-center gap-1 rounded-full bg-white px-3 text-body-13-sb leading-[1] transition-opacity hover:opacity-90"
+                className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
                 style={{ color: planTheme.colorVar }}
               >
-                리뷰쓰러가기
-                <ReviewArrowIcon />
+                리뷰쓰러가기 →
               </Link>
             ) : (
               <button
                 type="button"
                 onClick={handleUnavailableReviewClick}
-                className="inline-flex h-7 items-center gap-1 rounded-full bg-white/40 px-3 text-body-13-sb leading-[1] text-white/80 transition-opacity hover:opacity-90"
+                className="inline-flex h-6 items-center rounded-full bg-white/40 px-3 text-body-14-sb leading-[17px] text-white/80 transition-opacity hover:opacity-90"
                 aria-label="리뷰쓰러가기 — 배송 완료 후 작성 가능"
               >
                 리뷰쓰러가기
@@ -549,12 +546,12 @@ export function SubscriptionCard({
           구독관리
         </Link>
 
-        {/* 도트 인디케이터 — 데스크톱: 카드 하단 */}
+        {/* 도트 인디케이터 — 카드 하단 (모바일·데스크톱 공통) */}
         <SubscriptionCarouselIndicator
           position={position}
           total={total}
           onSelectSlot={goToSlot}
-          className="absolute bottom-4 left-0 right-0 max-lg:hidden"
+          className="absolute bottom-4 left-0 right-0"
         />
       </div>
 
@@ -587,13 +584,6 @@ export function SubscriptionCard({
         <NextArrowIcon />
       </button>
 
-      {/* 도트 인디케이터 — 모바일: 카드 외부 하단 */}
-      <SubscriptionCarouselIndicator
-        position={position}
-        total={total}
-        onSelectSlot={goToSlot}
-        className="pt-3 lg:hidden"
-      />
     </div>
 
       {activeReviewState && reviewTheme && (

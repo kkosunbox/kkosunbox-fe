@@ -77,8 +77,8 @@ export function ProfileSectionSkeleton() {
 /** SubscriptionCard — 오렌지 카드 / lg 186px / 모바일 하단 여백 */
 export function SubscriptionCardSkeleton() {
   return (
-    <div className="relative max-lg:mb-5 max-lg:min-h-[199px] lg:h-[186px]">
-      <Bone className="h-full min-h-[199px] w-full rounded-[16px] max-lg:min-h-[199px] lg:h-[186px] lg:rounded-[20px]" />
+    <div className="relative max-lg:h-[144px] lg:h-[186px]">
+      <Bone className="h-full w-full rounded-[16px] lg:rounded-[20px]" />
     </div>
   );
 }

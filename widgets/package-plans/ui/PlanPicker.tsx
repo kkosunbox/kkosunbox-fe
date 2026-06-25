@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
@@ -47,25 +47,26 @@ function crossfadeStyle(isActive: boolean): React.CSSProperties {
   };
 }
 
-/** 모바일 좌우 네비 버튼용 셰브론 */
-function ChevronIcon({ direction }: { direction: "left" | "right" }) {
+/** 모바일 좌우 네비 버튼용 SVG 아이콘 */
+function NavArrowLeft() {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className={direction === "left" ? "-ml-0.5" : "ml-0.5"}
-    >
-      <path
-        d={direction === "left" ? "M15 6L9 12L15 18" : "M9 6L15 12L9 18"}
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div className="rounded-full shadow-[2px_2px_4px_rgba(0,0,0,0.12)]">
+      <svg width="32" height="32" viewBox="2 2 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2" y="2" width="32" height="32" rx="16" fill="white" />
+        <path d="M21.5554 10.8892L13.5554 18.0003L21.5554 25.1114" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
+}
+
+function NavArrowRight() {
+  return (
+    <div className="rounded-full shadow-[2px_2px_4px_rgba(0,0,0,0.12)]">
+      <svg width="32" height="32" viewBox="2 2 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="32" height="32" rx="16" transform="matrix(-1 0 0 1 34 2)" fill="white" />
+        <path d="M14.4446 10.8892L22.4446 18.0003L14.4446 25.1114" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
   );
 }
 
@@ -174,6 +175,19 @@ export default function PlanPicker({
     setSelectedTier(summaryOrder[nextIdx]);
   }
 
+  const touchStartX = useRef<number | null>(null);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) > 50) goToTier(delta < 0 ? 1 : -1);
+  }
+
   const activePrimaryButton = activePlan ? getPrimaryButton(activePlan) : null;
 
   function handlePrimaryClick() {
@@ -257,8 +271,8 @@ export default function PlanPicker({
                 >
                   <div
                     className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-white"
-                    onClick={handlePrimaryClick}
-                    style={{ cursor: activePrimaryButton && !activePrimaryButton.disabled ? "pointer" : undefined }}
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
                   >
                     {ALL_TIERS.map((tier) => {
                       const pkg = PACKAGES.find((p) => p.tier === tier);
@@ -290,22 +304,22 @@ export default function PlanPicker({
                     ) : null}
                   </div>
 
-                  {/* 좌우 네비 — 이전/다음 패키지 (이미지 세로 중앙) */}
+                  {/* 좌우 네비 — 이전/다음 패키지 (중심이 이미지 wrapper 경계에 위치) */}
                   <button
                     type="button"
                     aria-label="이전 패키지"
                     onClick={() => goToTier(-1)}
-                    className="absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--color-text)]/40 text-white backdrop-blur-sm transition-opacity hover:opacity-90 active:opacity-80"
+                    className="absolute left-0 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 transition-opacity hover:opacity-90 active:opacity-80"
                   >
-                    <ChevronIcon direction="left" />
+                    <NavArrowLeft />
                   </button>
                   <button
                     type="button"
                     aria-label="다음 패키지"
                     onClick={() => goToTier(1)}
-                    className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-[var(--color-text)]/40 text-white backdrop-blur-sm transition-opacity hover:opacity-90 active:opacity-80"
+                    className="absolute right-0 top-1/2 z-20 translate-x-1/2 -translate-y-1/2 transition-opacity hover:opacity-90 active:opacity-80"
                   >
-                    <ChevronIcon direction="right" />
+                    <NavArrowRight />
                   </button>
 
                   <PackageNutritionGuide
@@ -360,11 +374,6 @@ export default function PlanPicker({
                     )}
                   </div>
                 ) : null}
-                <PlanTierDots
-                  tier={displayTier}
-                  order={summaryOrder}
-                  onTierSelect={handleTierSelect}
-                />
               </>
             )}
           </div>

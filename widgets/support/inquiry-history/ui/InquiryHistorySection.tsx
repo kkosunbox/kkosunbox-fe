@@ -153,7 +153,7 @@ export default function InquiryHistorySection() {
           <div className="mb-6 max-md:mb-6 md:mb-8 lg:mb-8">
             <Link
               href="/support"
-              className="inline-flex items-center gap-1 text-body-20-sb text-[var(--color-text)]"
+              className="inline-flex items-center gap-1 text-body-18-sb text-[var(--color-text)]"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 6L9 12L15 18" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />

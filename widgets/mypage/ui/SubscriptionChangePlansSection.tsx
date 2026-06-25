@@ -11,6 +11,7 @@ import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscr
 import { tierFromSubscriptionPlan } from "@/entities/package";
 import { PlanPicker } from "@/widgets/package-plans";
 import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile-renewal.webp";
+import subscriptionChangeHeroTablet from "../assets/subscription-change-hero-tablet-renewal.webp";
 import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop-renewal.webp";
 
 interface Props {
@@ -70,15 +71,25 @@ export default function SubscriptionChangePlansSection({
       <div className="flex w-full flex-1 flex-col">
         {/* Hero */}
         <ScrollReveal variant="fade-in" duration={600}>
-          <div className="max-md2:mb-1">
-            <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
+          <div className="max-lg:mb-1">
+            {/* 모바일 (<768px) */}
+            <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
               <img
                 src={subscriptionChangeHeroMobile.src}
                 alt={heroAlt}
                 className="h-[156px] w-full shrink-0 object-cover object-center"
               />
             </div>
-            <div className="max-md2:hidden relative w-full h-[306px]">
+            {/* 태블릿 (768px~1199px) */}
+            <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden">
+              <img
+                src={subscriptionChangeHeroTablet.src}
+                alt={heroAlt}
+                className="h-[156px] w-full shrink-0 object-cover object-center"
+              />
+            </div>
+            {/* 데스크톱 (≥1200px) */}
+            <div className="max-lg:hidden relative w-full h-[306px]">
               <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
               <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
                 <img

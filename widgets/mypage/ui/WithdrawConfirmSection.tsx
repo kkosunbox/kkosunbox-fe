@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web-renewal.webp";
+import withdrawHeroTablet from "../assets/withdraw-confirm-hero-tablet-renewal.webp";
 import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile-renewal.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
@@ -102,7 +103,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   /* ── 데스크톱 ──────────────────────────────────────────────────── */
 
   const desktopLayout = (
-    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 max-md2:pt-6 pb-[104px]">
+    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pb-[104px]">
       {/* 프로필 배너 */}
       <div className="overflow-hidden rounded-[20px] bg-[var(--color-support-faq-surface)] px-14 py-7">
         <div className="flex items-center gap-9">
@@ -345,16 +346,25 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
     <div className="flex min-h-0 flex-1 flex-col bg-white">
       {/* Hero 배너 */}
       <section aria-label="탈퇴 페이지 안내">
-        {/* 모바일 (<md2) */}
-        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
+        {/* 모바일 (<768px) */}
+        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
           <img
             src={withdrawHeroMobile.src}
             alt={HERO_ALT}
             className="h-[156px] w-full object-cover object-center"
           />
         </div>
-        {/* 데스크톱 (≥md2) */}
-        <div className="max-md2:hidden relative w-full h-[306px]">
+        {/* 태블릿 (768px~1199px) */}
+        <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */}
+          <img
+            src={withdrawHeroTablet.src}
+            alt={HERO_ALT}
+            className="h-[156px] w-full shrink-0 object-cover object-center"
+          />
+        </div>
+        {/* 데스크톱 (≥1200px) */}
+        <div className="max-lg:hidden relative w-full h-[306px]">
           <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
           <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
             <img

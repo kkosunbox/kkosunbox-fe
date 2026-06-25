@@ -1,8 +1,8 @@
 ﻿"use client";
+/* eslint-disable @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createReview, getMyReviews, updateReview } from "@/features/review/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
@@ -11,6 +11,7 @@ import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop-renewal.webp";
+import reviewWriteHeroTablet from "../assets/review-write-hero-tablet-renewal.webp";
 import reviewWriteHeroMobile from "../assets/review-write-hero-mobile-renewal.webp";
 
 const HERO_ALT =
@@ -311,29 +312,43 @@ export default function ReviewWriteSection({
       {/* Hero — "우리 아이의 꼬순박스, 만족하셨나요??" (텍스트 포함 배너) */}
       {/* 모바일(<950px): 전용 이미지 / 데스크톱(≥950px): 와이드 배너, 초광폭은 좌우 보완 */}
       <section aria-label="리뷰 작성 안내">
-        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md2:hidden">
-          <Image
-            src={reviewWriteHeroMobile}
+        {/* 모바일 (<768px) */}
+        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
+          <img
+            src={reviewWriteHeroMobile.src}
             alt={HERO_ALT}
-            className="h-[156px] w-full object-cover object-center"
-            priority
+            className="h-[156px] w-full shrink-0 object-cover object-center"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
-        <div className="max-md2:hidden relative w-full h-[306px]">
+        {/* 태블릿 (768px~1199px) */}
+        <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden">
+          <img
+            src={reviewWriteHeroTablet.src}
+            alt={HERO_ALT}
+            className="h-[156px] w-full shrink-0 object-cover object-center"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+        {/* 데스크톱 (≥1200px) */}
+        <div className="max-lg:hidden relative w-full h-[306px]">
           <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
           <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-            <Image
-              src={reviewWriteHeroDesktop}
+            <img
+              src={reviewWriteHeroDesktop.src}
               alt={HERO_ALT}
-              className="absolute inset-0 h-full w-full object-cover object-center"
-              priority
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+              fetchPriority="high"
+              decoding="async"
             />
           </div>
         </div>
       </section>
 
       {/* 폼 영역 */}
-      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:max-md2:py-10 md2:pb-10`}>
+      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pb-10`}>
         {isLoadingReview ? (
           <div className="flex min-h-[300px] items-center justify-center">
             <p className="text-body-14-m text-[var(--color-text-secondary)]">

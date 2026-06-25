@@ -30,7 +30,7 @@ function SectionHeaderSkeleton({ tight = false }: { tight?: boolean }) {
 /** ProfileSection 레이아웃과 동일한 구조 (크림 배경, 흰 카드 없음) */
 export function ProfileSectionSkeleton() {
   return (
-    <section className="max-lg:pt-6 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
+    <section className="max-lg:pt-1 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
       <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
         <div className="relative max-lg:px-7 max-lg:py-7 lg:flex lg:h-full lg:items-center lg:px-7 lg:py-[26px]">
           <Bone className="lg:hidden absolute top-4 right-7 h-4 w-14" />

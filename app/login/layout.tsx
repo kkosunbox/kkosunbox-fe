@@ -1,9 +1,16 @@
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { Header } from "@/widgets/header";
 import { FooterSection } from "@/widgets/footer";
 
 export const viewport: Viewport = {
   themeColor: "#FFF4EA",
+  viewportFit: "cover",
+};
+
+export const metadata: Metadata = {
+  appleWebApp: {
+    statusBarStyle: "default",
+  },
 };
 
 /**
@@ -21,10 +28,10 @@ export default function LoginLayout({
 }) {
   return (
     <div data-login-mobile-chrome>
-      {/* 모바일·태블릿: form 뒤 최상단 고정 배경 — theme-color 미지원 브라우저 보완 */}
+      {/* 헤더 띠배너와 동일한 패턴: fixed inset-x-0 top-0 z-[51] 베이스 클래스로 iOS 브라우저 상단 크림색 통일 */}
       <div
         aria-hidden="true"
-        className="max-lg:fixed max-lg:inset-x-0 max-lg:top-0 max-lg:h-svh max-lg:-z-10 lg:hidden"
+        className="fixed inset-x-0 top-0 z-[51] h-[30px] lg:hidden"
         style={{ backgroundColor: "var(--color-login-top)" }}
       />
       <div className="max-lg:hidden">

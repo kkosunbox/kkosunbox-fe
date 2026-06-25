@@ -289,22 +289,21 @@
   --gradient-reviews: linear-gradient(180deg, #FFF9F3 0%, #E3EEFF 100%); /* 리뷰 섹션 배경 (크림 위 → 블루 아래) */
   --gradient-login-bg: linear-gradient(180.15deg, #FFF4EA 42.65%, #CDE1FF 120.01%); /* 로그인 모바일 배경 (피치 → 스카이블루) */
   --color-login-top: #FFF4EA; /* 로그인 모바일 — 상단 그라디언트 시작 색상·브라우저 상단 오버스크롤 */
-  --color-login-mobile-chrome: #E2E9F6; /* 로그인 모바일 — 삼성 인터넷 등 동적 하단 UI·오버스크롤 영역 */
+  --color-login-mobile-chrome: #DAE6F9; /* 로그인 모바일 — 삼성 인터넷 등 동적 하단 UI·오버스크롤 영역 */
   --gradient-modal-alert-header: linear-gradient(176.77deg, #FFF7E9 -5.94%, #FFFFFF 99.39%); /* 범용 모달 헤더 — 웜 크림 → 화이트 */
   --gradient-header-separator: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 100%); /* 흰 헤더 하단 구분 그림자 */
   --gradient-header-overlay: linear-gradient(180deg, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.00) 100%);  /* 투명 헤더 배경 오버레이 */
   --gradient-referral-card: linear-gradient(99.93deg, #EECAA8 -19.4%, #C97A3D 103.95%); /* 레퍼럴 할인 카드 — 골드 베이지 → 코기 브라운 */
 }
 
-/* 로그인 모바일 — 주소창·하단 툴바 등으로 늘어나는 뷰포트 여백(삼성 인터넷 등) */
+/* 로그인 모바일 — 오버스크롤 영역 상·하단 색상 분리
+ * html: 하단 오버스크롤(body 아래 공간) / body: 상단 오버스크롤(콘텐츠 위 공간) */
 @media (width < 48rem) {
   html:has([data-login-mobile-chrome]) {
-    /* 상단 오버스크롤 영역 = 그라디언트 시작 색상 (따뜻한 크림) */
-    background-color: var(--color-login-top);
+    background-color: var(--color-login-mobile-chrome);
   }
   body:has([data-login-mobile-chrome]) {
-    /* 하단 오버스크롤·chrome 영역 = 기존 파란 계열 */
-    background-color: var(--color-login-mobile-chrome);
+    background-color: var(--color-login-top);
   }
 }
 

@@ -296,14 +296,20 @@
   --gradient-referral-card: linear-gradient(99.93deg, #EECAA8 -19.4%, #C97A3D 103.95%); /* 레퍼럴 할인 카드 — 골드 베이지 → 코기 브라운 */
 }
 
-/* 로그인 모바일 — 오버스크롤 영역 상·하단 색상 분리
- * html: 하단 오버스크롤(body 아래 공간) / body: 상단 오버스크롤(콘텐츠 위 공간) */
+/* 로그인 모바일 — 브라우저 안전영역/오버스크롤 색상 처리
+ *
+ * 최신 iOS Safari는 위·아래 오버스크롤(고무줄) 영역을 단일 캔버스 색(html 배경) 하나로
+ * 통일하므로, 과거의 html=하단/body=상단 2색 분리 트릭은 더 이상 동작하지 않는다.
+ * 전략:
+ *  - P0(폴백): 캔버스를 단일 크림(login-top)으로 통일 + overscroll-behavior로 고무줄 억제.
+ *             → 미지원 기기에서도 깨지지 않고 브랜드 톤 단색으로 우아하게 폴백된다.
+ *  - P1(향상): safe-area는 fixed 색 띠로 직접 도색해 상단=크림/하단=파랑 2색을 노린다.
+ *             (app/login/layout.tsx, env(safe-area-inset-*) 사용) */
 @media (width < 48rem) {
-  html:has([data-login-mobile-chrome]) {
-    background-color: var(--color-login-mobile-chrome);
-  }
+  html:has([data-login-mobile-chrome]),
   body:has([data-login-mobile-chrome]) {
     background-color: var(--color-login-top);
+    overscroll-behavior: none;
   }
 }
 

@@ -3,8 +3,19 @@ import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProfile } from "@/features/profile/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
+import { JsonLd } from "@/shared/ui";
+import { SITE_URL } from "@/shared/lib/seo";
 
 const description = "베이직부터 프리미엄까지, 우리 강아지에게 맞는 구독 플랜을 선택하세요. 매달 신선한 수제간식이 배송됩니다.";
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "홈", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "구독 플랜", item: `${SITE_URL}/subscribe` },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "구독 플랜 | 꼬순박스",
@@ -29,5 +40,10 @@ export default async function SubscribePage() {
     fetchSubscriptionPlans(token),
   ]);
 
-  return <SubscribePlansSection plans={plans} initialProfile={profile} />;
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd} />
+      <SubscribePlansSection plans={plans} initialProfile={profile} />
+    </>
+  );
 }

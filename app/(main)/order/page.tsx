@@ -6,9 +6,11 @@ import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries"
 import { fetchSubscriptionPlans, fetchSubscriptions } from "@/features/subscription/api/queries";
 import { INVITE_CODE_COOKIE, isValidInviteCode } from "@/features/referral/lib";
 import { OrderSection } from "@/widgets/order";
+import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata = {
   title: "주문 | 꼬순박스",
+  ...NOINDEX_METADATA,
 };
 
 export default async function OrderPage({

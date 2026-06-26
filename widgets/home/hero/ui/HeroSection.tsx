@@ -233,7 +233,9 @@ export default function HeroSection() {
             <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[90px] h-full lg:min-h-[537px]">
               {/* 좌측: 텍스트 */}
               <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left lg:pl-0">
-                <h1 className="max-lg:mb-4 lg:mb-6 lg:h-[110px] lg:overflow-hidden">
+                {/* 슬라이드별 마케팅 헤딩(이미지). 페이지의 시맨틱 h1은 page.tsx의 단일 h1이 담당하므로
+                    캐러셀로 중복 생성되는 것을 막기 위해 div로 둔다. 텍스트는 각 img의 alt로 제공. */}
+                <div className="max-lg:mb-4 lg:mb-6 lg:h-[110px] lg:overflow-hidden">
                   {/* 모바일 제목 이미지 (< 1200px) */}
                   <img
                     src={slide.mobileHeadingImg}
@@ -252,7 +254,7 @@ export default function HeroSection() {
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                   />
-                </h1>
+                </div>
                 <p
                   className={`max-lg:mb-2 lg:mb-3 lg:h-[30px] lg:overflow-hidden max-lg:h-[20px] max-lg:overflow-hidden max-lg:text-[14px] max-lg:leading-[20px] ${
                     slide.subtextClass ??

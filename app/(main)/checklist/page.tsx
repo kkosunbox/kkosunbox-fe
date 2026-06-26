@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { getAuthUser } from "@/features/auth/lib/session";
 import ChecklistRedirectClient from "./ChecklistRedirectClient";
+import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata = {
   title: "체크리스트 | 꼬순박스",
+  ...NOINDEX_METADATA,
 };
 
 export default async function ChecklistPage({

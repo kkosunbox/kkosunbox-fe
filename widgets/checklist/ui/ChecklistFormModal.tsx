@@ -759,22 +759,26 @@ export default function ChecklistFormModal() {
   const [options, setOptions] = useState<ChecklistFormOptions>({});
   const pathname = usePathname();
   // 리다이렉트 진입(/checklist → / replace) 직후의 1회성 경로 변경으로
-  // 방금 연 모달이 닫히는 것을 막기 위한 가드.
-  const ignoreNextPathnameRef = useRef(false);
+  // 방금 연 모달이 닫히는 것을 막기 위한 가드. (렌더 중 읽어야 하므로 ref 대신 state)
+  const [ignoreNextPathname, setIgnoreNextPathname] = useState(false);
 
-  useEffect(() => {
-    if (ignoreNextPathnameRef.current) {
-      ignoreNextPathnameRef.current = false;
-      return;
+  // 경로가 바뀌면 모달을 닫는다. effect 안에서 setState하면 연쇄 렌더(set-state-in-effect)가
+  // 발생하므로, "직전 경로와 비교해 렌더 중 보정"하는 React 권장 패턴을 사용한다.
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    if (ignoreNextPathname) {
+      setIgnoreNextPathname(false);
+    } else if (isOpen) {
+      setIsOpen(false);
     }
-    setIsOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     const handler = (e: Event) => {
       const { viaRedirect, ...detail } =
         (e as CustomEvent<OpenChecklistFormDetail>).detail ?? {};
-      if (viaRedirect) ignoreNextPathnameRef.current = true;
+      setIgnoreNextPathname(Boolean(viaRedirect));
       setOptions(detail);
       setIsOpen(true);
     };

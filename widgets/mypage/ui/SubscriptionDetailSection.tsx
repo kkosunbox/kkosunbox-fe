@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
+import { trackSubscriptionCancelAttempt } from "@/shared/lib/analytics";
 import {
   cancelPayment,
   cancelSubscription,
@@ -256,6 +257,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
   }
 
   function handleCancel() {
+    trackSubscriptionCancelAttempt();
     const hasCancellablePayment = payments.some(
       (p) => p.status === "completed" && p.deliveryStatus !== "DeliveryCompleted",
     );

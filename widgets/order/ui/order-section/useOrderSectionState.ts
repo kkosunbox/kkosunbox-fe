@@ -17,6 +17,7 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { clearStoredInviteCode } from "@/features/referral/lib";
 import { computeOrderPricing } from "@/features/order";
 import { packageThemeForPlan } from "@/entities/package";
+import { trackPurchase } from "@/shared/lib/analytics";
 import { isValidKoreanPhone } from "./orderSectionFormatters";
 export type { NewAddrState } from "./hooks/useAddressState";
 
@@ -132,7 +133,7 @@ export function useOrderSectionState({
           return;
         }
 
-        await createSubscription({
+        const { subscription: newSub } = await createSubscription({
           petProfileId: profile?.id,
           deliveryAddressId,
           planId: plan.id,
@@ -146,6 +147,13 @@ export function useOrderSectionState({
             invite.inviteStatus === "applicable" && invite.inviteCodeInput.trim()
               ? invite.inviteCodeInput.trim()
               : undefined,
+        });
+
+        trackPurchase({
+          transaction_id: String(newSub.id),
+          value: total,
+          plan_tier: plan.name,
+          quantity,
         });
 
         // 구독 생성 완료 → 소비된 초대 코드를 정리해 재적용을 방지한다.

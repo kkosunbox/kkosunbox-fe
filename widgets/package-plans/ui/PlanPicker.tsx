@@ -22,6 +22,7 @@ import { usePlanRatings } from "@/features/review";
 import { useReferralPricing } from "@/features/referral/model";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { trackSelectItem } from "@/shared/lib/analytics";
 
 /** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
 const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
@@ -194,6 +195,7 @@ export default function PlanPicker({
     if (!activePlan) return;
     const primaryButton = getPrimaryButton(activePlan);
     if (primaryButton.disabled) return;
+    trackSelectItem({ plan_tier: activePlan.name });
     primaryButton.onClick();
   }
 

@@ -10,6 +10,7 @@ import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { tierFromSubscriptionPlan } from "@/entities/package";
 import { PlanPicker } from "@/widgets/package-plans";
+import { trackSubscriptionPlanChange } from "@/shared/lib/analytics";
 import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile-renewal.webp";
 import subscriptionChangeHeroTablet from "../assets/subscription-change-hero-tablet-renewal.webp";
 import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop-renewal.webp";
@@ -49,6 +50,7 @@ export default function SubscriptionChangePlansSection({
     startTransition(async () => {
       try {
         await changePlan(targetSubscription.id, { newPlanId: plan.id });
+        trackSubscriptionPlanChange({ plan_tier: plan.name });
         openAlert({
           type: "success",
           title: "플랜이 변경되었습니다.",

@@ -13,6 +13,7 @@ import { loginAction, logoutAction, syncAuthCookieAction } from "../lib/actions"
 import { tokenStore } from "@/shared/lib/api/token";
 import type { AuthContextValue, AuthUser } from "../model/types";
 import { toAuthUser } from "../lib/mapUser";
+import { trackLogin } from "@/shared/lib/analytics";
 
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -109,6 +110,7 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
       const result = await loginAction(email, password);
       if (result.error) return { error: result.error };
 
+      trackLogin("email");
       if (result.accessToken && result.refreshToken) {
         tokenStore.setTokens(result.accessToken, result.refreshToken);
       }

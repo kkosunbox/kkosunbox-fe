@@ -6,6 +6,7 @@ import { socialLoginAction, getCallbackUrl, consumeOAuthReturnPath } from "@/fea
 import { tokenStore } from "@/shared/lib/api/token";
 import { LoadingOverlay } from "@/shared/ui";
 import type { OAuthProvider } from "@/features/auth";
+import { trackLogin } from "@/shared/lib/analytics";
 
 const VALID_PROVIDERS = new Set<OAuthProvider>(["google", "naver", "kakao"]);
 
@@ -50,6 +51,7 @@ export default function OAuthCallbackPage() {
           setApiError(result.error);
           return;
         }
+        trackLogin(provider as OAuthProvider);
         if (result.accessToken && result.refreshToken) {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
         }

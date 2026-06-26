@@ -19,6 +19,7 @@ import type {
 } from "@/features/profile/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
+import { trackChecklistStart, trackChecklistComplete } from "@/shared/lib/analytics";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import { tierFromSubscriptionPlan } from "@/entities/package";
 import ChecklistHero from "./ChecklistHero";
@@ -438,6 +439,7 @@ export default function ChecklistSection() {
     if (!questions?.length) return;
     if (step === 0) {
       if (!petInfo.name.trim()) return;
+      trackChecklistStart();
       setStep(1);
       setMaxVisitedStep((prev) => Math.max(prev, 1));
       return;
@@ -545,6 +547,7 @@ export default function ChecklistSection() {
       return;
     }
 
+    trackChecklistComplete({ recommended_tier: tier });
     setRecommendedTier(tier);
     setRecommendedProfileId(savedProfileId);
     setIsAnalyzing(false);

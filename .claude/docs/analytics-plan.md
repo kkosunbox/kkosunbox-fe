@@ -1,7 +1,7 @@
 # GA4 Analytics 추적 계획
 
 > 작성일: 2026-06-25
-> 현재 상태: 기본 세팅 완료, 이벤트 추적 미구현
+> 현재 상태: Priority 1~4 이벤트 전체 구현 완료 (2026-06-26)
 
 ---
 
@@ -14,8 +14,18 @@
 | SPA 라우팅 페이지뷰 자동 추적 | ✅ 완료 | `shared/ui/GoogleAnalyticsTracker.tsx` |
 | 레퍼럴 방문 이벤트 (`referral_visit`) | ✅ 완료 | `shared/ui/GoogleAnalyticsTracker.tsx` |
 | 커스텀 이벤트 헬퍼 (`trackEvent`) | ✅ 완료 | `shared/lib/analytics.ts` |
-
-현재 추적 중인 이벤트는 **페이지뷰 + 레퍼럴 방문 2가지뿐.** 전환 퍼널·인게이지먼트 이벤트는 미구현.
+| `purchase` | ✅ 완료 | `useOrderSectionState.ts` — `proceedSubscription` 성공 후 |
+| `begin_checkout` | ✅ 완료 | `OrderSection.tsx` — 마운트 시 |
+| `select_item` | ✅ 완료 | `PlanPicker.tsx` — `handlePrimaryClick` |
+| `view_item_list` | ✅ 완료 | `SubscribePlansSection.tsx` — 마운트 시 |
+| `login` | ✅ 완료 | `AuthProvider.tsx` (email), `app/auth/callback/[provider]/page.tsx` (소셜) |
+| `sign_up` | ✅ 완료 | `RegisterSection.tsx` — 회원가입 성공 후 |
+| `checklist_start` | ✅ 완료 | `ChecklistSection.tsx` — step 0→1 전환 시 |
+| `checklist_complete` | ✅ 완료 | `ChecklistSection.tsx` — `handleSubmit` 성공 후 |
+| `checklist_cta_click` | ✅ 완료 | `ChecklistResult.tsx` — 제품 상세보기 클릭 |
+| `subscription_cancel_attempt` | ✅ 완료 | `SubscriptionDetailSection.tsx` — `handleCancel` 진입 시 |
+| `subscription_plan_change` | ✅ 완료 | `SubscriptionChangePlansSection.tsx` — `changePlan` 성공 후 |
+| `review_submit` | ✅ 완료 | `ReviewWriteSection.tsx` — 리뷰 등록/수정 성공 후 |
 
 ---
 

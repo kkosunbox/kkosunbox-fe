@@ -10,6 +10,7 @@ import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
+import { trackReviewSubmit } from "@/shared/lib/analytics";
 import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop-renewal.webp";
 import reviewWriteHeroTablet from "../assets/review-write-hero-tablet-renewal.webp";
 import reviewWriteHeroMobile from "../assets/review-write-hero-mobile-renewal.webp";
@@ -260,6 +261,7 @@ export default function ReviewWriteSection({
 
         if (isEditMode && reviewId != null) {
           await updateReview(reviewId, { rating, content: trimmed, imageUrls });
+          trackReviewSubmit({ rating });
           openAlert({
             type: "success",
             title: "리뷰가 수정되었습니다.",
@@ -272,6 +274,7 @@ export default function ReviewWriteSection({
             content: trimmed,
             imageUrls: imageUrls ?? undefined,
           });
+          trackReviewSubmit({ rating });
           openAlert({
             type: "success",
             title: "리뷰가 등록되었습니다.",

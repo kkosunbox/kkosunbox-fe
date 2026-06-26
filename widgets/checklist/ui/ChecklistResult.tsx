@@ -27,6 +27,7 @@ import checklistLetStartPurchase from "@/widgets/checklist/assets/checklist-let-
 import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useModal } from "@/shared/ui";
+import { trackChecklistCtaClick } from "@/shared/lib/analytics";
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -365,9 +366,11 @@ export default function ChecklistResult({
   const reasons = recommendReasons;
   const explainImage = PACKAGE_EXPLAIN_BY_TIER[recommendedPlanTier].src;
 
-  const navigateToDetail = () =>
-    recommendedApiPlan &&
+  const navigateToDetail = () => {
+    if (!recommendedApiPlan) return;
+    trackChecklistCtaClick({ plan_tier: recommendedPkg.name });
     router.push(`/subscribe/detail?planId=${recommendedApiPlan.id}`);
+  };
 
   const sharedCardProps: Omit<CardBodyProps, "onDetailClick"> = {
     petName,

@@ -10,6 +10,7 @@ import {
 } from "@/features/auth/api/authApi";
 import { signupAction } from "@/features/auth/lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
+import { trackSignUp } from "@/shared/lib/analytics";
 import { useAuth } from "@/features/auth";
 import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
@@ -265,6 +266,7 @@ export default function RegisterSection() {
         );
         if (result.error) { showError(result.error); return; }
 
+        trackSignUp();
         if (result.accessToken && result.refreshToken)
           tokenStore.setTokens(result.accessToken, result.refreshToken);
 

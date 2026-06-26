@@ -1,7 +1,7 @@
 ﻿"use client";
 /* eslint-disable @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
@@ -14,6 +14,7 @@ import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subs
 import { PlanPicker } from "@/widgets/package-plans";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
+import { trackViewItemList } from "@/shared/lib/analytics";
 
 interface Props {
   plans: SubscriptionPlanDto[];
@@ -30,6 +31,10 @@ export default function SubscribePlansSection({
   const { isLoggedIn } = useAuth();
   const { profile: clientProfile } = useProfile();
   const [isDismissed, setIsDismissed] = useState(false);
+
+  useEffect(() => {
+    trackViewItemList();
+  }, []);
 
   const profile = clientProfile ?? initialProfile;
   const isChecklistDone = hasChecklistAnswers(profile);

@@ -1,7 +1,9 @@
 ﻿"use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Script from "next/script";
+import { trackBeginCheckout } from "@/shared/lib/analytics";
 import {
   useOrderSectionState,
   type OrderSectionProps,
@@ -17,6 +19,11 @@ import { OrderSummarySection } from "./order-section/OrderSummarySection";
 export type { OrderSectionProps };
 
 export default function OrderSection(props: OrderSectionProps) {
+  useEffect(() => {
+    trackBeginCheckout({ plan_tier: props.plan.name, value: props.plan.monthlyPrice });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const {
     openSections,
     selectedAddress,

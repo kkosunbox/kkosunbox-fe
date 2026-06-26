@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Header } from "@/widgets/header";
 import { FooterSection } from "@/widgets/footer";
+import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const viewport: Viewport = {
   themeColor: "#FFF4EA",
@@ -8,6 +9,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  ...NOINDEX_METADATA,
   appleWebApp: {
     statusBarStyle: "default",
   },

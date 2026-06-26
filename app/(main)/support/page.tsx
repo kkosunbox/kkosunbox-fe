@@ -1,7 +1,18 @@
 ﻿import type { Metadata } from "next";
 import { SupportSection } from "@/widgets/support/faq";
+import { JsonLd } from "@/shared/ui";
+import { SITE_URL } from "@/shared/lib/seo";
 
 const description = "꼬순박스 이용 중 궁금한 점이 있으신가요? 자주 묻는 질문과 1:1 문의를 통해 빠르게 도움드립니다.";
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "홈", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "고객센터", item: `${SITE_URL}/support` },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "고객센터 | 꼬순박스",
@@ -20,5 +31,10 @@ export const metadata: Metadata = {
 };
 
 export default function SupportPage() {
-  return <SupportSection fillViewport />;
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd} />
+      <SupportSection fillViewport />
+    </>
+  );
 }

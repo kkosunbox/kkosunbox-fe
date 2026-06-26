@@ -447,7 +447,7 @@ export function SubscriptionCard({
         <div
           className={[
             "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
-            "max-lg:px-6 max-lg:pl-12 max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
+            "max-lg:px-6 max-lg:pl-10 max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
           ].join(" ")}
         >
           {/* 카드 본문 클릭 — 구독 상세 */}
@@ -551,7 +551,7 @@ export function SubscriptionCard({
           position={position}
           total={total}
           onSelectSlot={goToSlot}
-          className="absolute bottom-4 left-0 right-0"
+          className="max-lg:hidden absolute bottom-4 left-0 right-0"
         />
       </div>
 

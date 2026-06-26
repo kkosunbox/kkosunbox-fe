@@ -14,6 +14,9 @@ import { useLoadingOverlay } from "@/shared/ui";
 const LAST_LOGIN_KEY = "ggosoonbox_last_login";
 type LastLoginMethod = "email" | OAuthProvider;
 
+/** 이메일 형식 검증 (local@domain.tld). 형식이 충족되면 최소 길이(5자)는 자연히 보장된다. */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const LOGO_WIDTH = 156;
 const LOGO_HEIGHT = Math.round((136 * LOGO_WIDTH) / 414);
 
@@ -126,6 +129,8 @@ export default function LoginPage() {
   const { showLoading, hideLoading } = useLoadingOverlay();
   const router = useRouter();
   const searchParams = useSearchParams();
+  // 로그인 버튼 활성화 조건: 이메일 형식 유효 + 비밀번호 3글자 이상
+  const isFormValid = EMAIL_REGEX.test(email.trim()) && password.length >= 3;
   // 폼 제출로 로그인이 진행 중이면 true. login() 콜백이 직접 navigate하므로
   // isLoggedIn useEffect의 redirect가 그것을 덮어쓰지 않도록 막는다.
   const formLoginInProgressRef = useRef(false);
@@ -153,6 +158,7 @@ export default function LoginPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isFormValid || isPending) return;
     setError(null);
     showLoading("로그인 중입니다...");
     formLoginInProgressRef.current = true;
@@ -291,8 +297,8 @@ export default function LoginPage() {
               {lastLoginMethod === "email" && <LastLoginBadge />}
               <button
                 type="submit"
-                disabled={isPending}
-                className="w-full rounded-[12px] bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60
+                disabled={!isFormValid || isPending}
+                className="w-full rounded-[12px] bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60
                   max-lg:h-[48px] max-lg:text-[14px] max-lg:font-semibold max-lg:tracking-[-0.04em]
                   lg:h-[54px] lg:text-subtitle-16-sb lg:tracking-[0.2px]"
               >

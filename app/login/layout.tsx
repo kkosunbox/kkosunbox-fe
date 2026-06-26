@@ -28,11 +28,25 @@ export default function LoginLayout({
 }) {
   return (
     <div data-login-mobile-chrome>
-      {/* 헤더 띠배너와 동일한 패턴: fixed inset-x-0 top-0 z-[51] 베이스 클래스로 iOS 브라우저 상단 크림색 통일 */}
+      {/* P1: 브라우저 안전영역 2색 도색 — 상단=크림 / 하단=파랑.
+          viewport-fit=cover + env(safe-area-inset-*)로 노치·다이내믹 아일랜드/홈 인디케이터
+          영역을 직접 칠한다. 미지원 기기는 globals.css의 단일 크림 캔버스로 폴백된다.
+          헤더 띠배너와 동일한 fixed inset-x-0 z-[51] 베이스 클래스 패턴. */}
       <div
         aria-hidden="true"
-        className="fixed inset-x-0 top-0 z-[51] h-[30px] lg:hidden"
-        style={{ backgroundColor: "var(--color-login-top)" }}
+        className="fixed inset-x-0 top-0 z-[51] lg:hidden"
+        style={{
+          height: "calc(env(safe-area-inset-top) + 30px)",
+          backgroundColor: "var(--color-login-top)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[51] lg:hidden"
+        style={{
+          height: "env(safe-area-inset-bottom)",
+          backgroundColor: "var(--color-login-mobile-chrome)",
+        }}
       />
       <div className="max-lg:hidden">
         <Header />

@@ -6,7 +6,7 @@ import "./globals.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
 import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
-import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider, GoogleAnalyticsTracker } from "@/shared/ui";
+import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider, GoogleAnalyticsTracker, JsonLd } from "@/shared/ui";
 import { GA_ID } from "@/shared/lib/analytics";
 
 const msMadi = Ms_Madi({
@@ -53,6 +53,25 @@ export const metadata: Metadata = {
   },
 };
 
+// 브랜드/사이트 구조화 데이터. 검색엔진의 브랜드 인식·사이트링크 유도를 돕는다.
+// (사이트 내 검색 기능이 없으므로 WebSite SearchAction은 의도적으로 제외)
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "꼬순박스",
+  alternateName: ["kkosunbox", "꼬순 박스"],
+  url: siteUrl,
+  logo: `${siteUrl}/og-image.png`,
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "꼬순박스",
+  alternateName: "kkosunbox",
+  url: siteUrl,
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -80,6 +99,8 @@ export default async function RootLayout({
         />
       </head>
       <body className={`antialiased ${msMadi.variable} ${giveYouGlory.variable} ${gantari.variable}`}>
+        <JsonLd data={organizationJsonLd} />
+        <JsonLd data={websiteJsonLd} />
         {GA_ID && (
           <>
             <Script

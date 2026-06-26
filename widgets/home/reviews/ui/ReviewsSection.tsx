@@ -144,7 +144,12 @@ function CarouselNextButton({
 
 function ReviewCard({ review }: { review: DisplayReview }) {
   return (
-    <div className="relative flex min-h-[366px] min-w-[300px] flex-col items-center rounded-2xl bg-white px-8 pt-[164px] shadow-[0px_4px_16px_rgba(82,82,82,0.2)]">
+    // data-nosnippet: 후기 텍스트가 검색 결과 스니펫(설명)으로 사용되지 않도록 제외한다.
+    // (화면 표시는 그대로, 구글이 meta description을 쓰도록 유도)
+    <div
+      data-nosnippet
+      className="relative flex min-h-[366px] min-w-[300px] flex-col items-center rounded-2xl bg-white px-8 pt-[164px] shadow-[0px_4px_16px_rgba(82,82,82,0.2)]"
+    >
       <div className="absolute -top-[60px] left-1/2 z-30 h-[120px] w-[120px] -translate-x-1/2 overflow-hidden rounded-full border-[8px] border-white">
         <Image
           src={review.profile}

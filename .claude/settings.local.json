@@ -296,7 +296,19 @@
       "PowerShell(\\(Get-Content widgets/checklist/ui/checklist-form/useChecklistForm.ts | Measure-Object -Line\\).Lines; Write-Output \"---FULL VERIFY---\"; npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"lint:\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/ 2>&1 | Select-Object -First 30)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT \\(whole checklist widget\\)---\"; npx eslint widgets/checklist/ 2>&1 | Select-Object -First 30; Write-Output \"DONE\")",
       "Bash(cp \".claude/assets/designs/referral-hero-bg-desktop.png\" \"widgets/home/referral-hero/assets/main-hero-referal-bg.png\")",
-      "Bash(cp \".claude/assets/designs/referral-hero-bg-tablet.png\" \"widgets/home/referral-hero/assets/main-hero-referral-bg-tablet.png\")"
+      "Bash(cp \".claude/assets/designs/referral-hero-bg-tablet.png\" \"widgets/home/referral-hero/assets/main-hero-referral-bg-tablet.png\")",
+      "Bash(npx vitest *)",
+      "Bash(perl -0pi -e 's/await addAuthCookie\\\\\\(page\\\\\\);/await loginByTokens\\(page, TEST_TOKENS\\);/g' tests/e2e/checklist.spec.ts)",
+      "PowerShell(npx eslint tests/e2e/error-boundaries.spec.ts)",
+      "PowerShell(npx playwright test error-boundaries --reporter=line)",
+      "PowerShell(npx playwright test error-boundaries --update-snapshots --reporter=line)",
+      "PowerShell(git check-ignore *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT---\"; npx eslint widgets/order/ui/order-section/OrderPaymentSection.tsx 2>&1 | Select-Object -First 30)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Output \"---LINT---\"; npx eslint shared/config/env.ts 2>&1 | Select-Object -First 20; Write-Output \"---SDK CHECK---\"; if \\(Test-Path \"node_modules/@tosspayments/tosspayments-sdk/package.json\"\\) { \\(Get-Content \"node_modules/@tosspayments/tosspayments-sdk/package.json\" | ConvertFrom-Json\\).version } else { \"NOT FOUND\" })",
+      "WebFetch(domain:docs.tosspayments.com)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT---\"; npx eslint features/billing/lib/requestTossBillingAuth.ts widgets/order/ui/order-section/useOrderSectionState.ts app/payment/billing/success/page.tsx app/payment/billing/fail/page.tsx 2>&1 | Select-Object -First 30)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT---\"; npx eslint widgets/order/ui/order-section/useOrderSectionState.ts 2>&1 | Select-Object -First 30)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Output \"---LINT---\"; npx eslint widgets/order/ui/order-section/useOrderSectionState.ts 2>&1 | Select-Object -First 20)"
     ]
   }
 }

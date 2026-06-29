@@ -51,25 +51,34 @@ export function OrderPaymentSection({
               label={method}
             />
           ))}
-          {/* 등록된 카드 정보 표시 + 카드 변경 버튼 */}
-          {paymentMethod === "신용카드" && billing && (
-            <>
-              <div className="flex items-center gap-3">
-                <CardIcon />
-                <span className="text-body-13-m text-[var(--color-text)]">
-                  {billing.cardCompany} **** {billing.lastFourDigits}
-                </span>
-                <BillingRegisteredIcon />
-              </div>
+          {/* 카드 등록 여부에 따라 분기: 미등록 시 등록 버튼, 등록 시 카드 정보 + 변경 버튼 */}
+          {paymentMethod === "신용카드" &&
+            (billing ? (
+              <>
+                <div className="flex items-center gap-3">
+                  <CardIcon />
+                  <span className="text-body-13-m text-[var(--color-text)]">
+                    {billing.cardCompany} **** {billing.lastFourDigits}
+                  </span>
+                  <BillingRegisteredIcon />
+                </div>
+                <button
+                  type="button"
+                  onClick={onChangeCard}
+                  className={`${actionChipCls} ml-auto`}
+                >
+                  카드 변경
+                </button>
+              </>
+            ) : (
               <button
                 type="button"
                 onClick={onChangeCard}
                 className={`${actionChipCls} ml-auto`}
               >
-                카드 변경
+                카드 등록
               </button>
-            </>
-          )}
+            ))}
         </div>
 
         {/* 쿠폰 사용 */}

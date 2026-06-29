@@ -1,6 +1,40 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { MOCK_ACCESS_TOKEN } from "../helpers/mockApiServer";
-import { loginAndGoTo } from "../helpers/auth";
+import { loginAndGoTo, loginByTokens, TEST_TOKENS } from "../helpers/auth";
+
+/**
+ * 체크리스트 모달을 step 0(펫 프로필 폼)으로 직접 연다. 홈 CTA 분기에 의존하지 않고
+ * isNewProfile/editProfile 옵션을 결정적으로 지정하기 위해 커스텀 이벤트를 디스패치한다.
+ * - 먼저 홈 CTA가 보일 때까지 기다려 하이드레이션(이벤트 리스너 등록)을 보장한다.
+ * - 채널톡 등 다른 dialog가 아니라 체크리스트 펫폼(이름 입력)을 신호로 삼는다.
+ * - 모달이 이미 열렸으면 재디스패치하지 않는다(재디스패치 시 복원 effect가 폼을 리셋함).
+ */
+async function openChecklistForm(
+  page: Page,
+  detail: Record<string, unknown>,
+) {
+  await page
+    .getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" })
+    .first()
+    .waitFor({ state: "visible", timeout: 15_000 });
+  // 프로필 로드 완료를 보장한다. activeProfile이 늦게 도착하면 복원 effect가
+  // step 0에서 재실행되어 입력값을 리셋하므로, 모달을 열기 전에 기다린다.
+  await page
+    .getByRole("button", { name: "프로필 메뉴" })
+    .first()
+    .waitFor({ state: "visible", timeout: 15_000 });
+  const nameInput = page.getByPlaceholder("이름");
+  await expect(async () => {
+    if (!(await nameInput.isVisible())) {
+      await page.evaluate((d) => {
+        window.dispatchEvent(
+          new CustomEvent("ggosoon:open-checklist-form", { detail: d }),
+        );
+      }, detail);
+    }
+    await expect(nameInput).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 15_000 });
+}
 
 test.describe("체크리스트 — 홈 CTA 버튼", () => {
   // CTA 버튼: "10초 진단하고 우리 아이 맞춤 추천 받기"
@@ -133,6 +167,128 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
 
     // next=/ 이므로 홈(/)으로 이동 — 무한 리다이렉트 방지 정책
     await page.waitForURL("/", { timeout: 15_000 });
+  });
+
+});
+
+test.describe("체크리스트 — 모달 내부 흐름 (신규 프로필 작성)", () => {
+
+  test("펫폼 검증 → 질문 응답 → 결과 페이지(tier=standard) 이동", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto("/");
+    await openChecklistForm(page, { isNewProfile: true });
+
+    // step 0: 펫 프로필 폼. 이름 미입력이면 CTA disabled
+    const petForm = page.getByRole("dialog", { name: "프로필 작성" });
+    await expect(petForm).toBeVisible();
+    const startCta = petForm.getByRole("button", { name: "체크리스트 작성하기" });
+    await expect(startCta).toBeDisabled();
+
+    await petForm.getByPlaceholder("이름").fill("테스트강아지");
+    await expect(startCta).toBeEnabled();
+    await startCta.click();
+
+    // step 1: 첫 질문. 미응답이면 "다음" disabled
+    const qModal = page.getByRole("dialog", { name: "체크리스트 작성" });
+    const nextCta = qModal.getByRole("button", { name: "다음", exact: true });
+    await expect(nextCta).toBeDisabled();
+    await qModal.getByRole("button", { name: "육포 간식" }).click();
+    await expect(nextCta).toBeEnabled();
+    await nextCta.click();
+
+    // step 2: 마지막 질문 → CTA "결과보기"
+    const resultCta = qModal.getByRole("button", { name: "결과보기" });
+    await expect(resultCta).toBeDisabled();
+    await qModal.getByRole("button", { name: "알레르기 없음" }).click();
+    await expect(resultCta).toBeEnabled();
+    await resultCta.click();
+
+    // 제출 → 프로필 생성 + 추천 플랜 조회 후 결과 페이지로 이동
+    await page.waitForURL((url) => url.pathname === "/checklist/result", { timeout: 15_000 });
+    expect(new URL(page.url()).searchParams.get("tier")).toBe("standard");
+  });
+
+  test("질문 단계에서 뒤로가기·진행바로 스텝 이동", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto("/");
+    await openChecklistForm(page, { isNewProfile: true });
+
+    const petForm = page.getByRole("dialog", { name: "프로필 작성" });
+    await petForm.getByPlaceholder("이름").fill("이동테스트");
+    await petForm.getByRole("button", { name: "체크리스트 작성하기" }).click();
+
+    const qModal = page.getByRole("dialog", { name: "체크리스트 작성" });
+    // Q1 응답 후 Q2로 진행
+    await qModal.getByRole("button", { name: "육포 간식" }).click();
+    await qModal.getByRole("button", { name: "다음", exact: true }).click();
+    await expect(qModal.getByRole("button", { name: "결과보기" })).toBeVisible();
+
+    // 뒤로가기 → Q1 (마지막이 아니므로 "다음"이 보임)
+    await qModal.getByRole("button", { name: "이전 단계로" }).click();
+    await expect(qModal.getByRole("button", { name: "다음", exact: true })).toBeVisible();
+    // 이전 선택이 유지되어 즉시 진행 가능
+    await expect(qModal.getByRole("button", { name: "다음", exact: true })).toBeEnabled();
+
+    // 진행바로 방문했던 Q2로 점프 → 마지막이므로 "결과보기"
+    await qModal.getByRole("button", { name: "2단계로 이동" }).click();
+    await expect(qModal.getByRole("button", { name: "결과보기" })).toBeVisible();
+  });
+
+  test("질문 단계 미저장 상태에서 닫기 → 확인 모달 → '계속 작성하기'로 유지, '닫기'로 종료", async ({ page }) => {
+    // 미저장 가드는 step>0(질문 단계)부터 변경분을 추적한다(useChecklistDraft.isDirty).
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto("/");
+    await openChecklistForm(page, { isNewProfile: true });
+
+    const petForm = page.getByRole("dialog", { name: "프로필 작성" });
+    await petForm.getByPlaceholder("이름").fill("미저장변경");
+    await petForm.getByRole("button", { name: "체크리스트 작성하기" }).click();
+
+    // 질문 단계 진입 → 입력한 내용이 미저장 상태로 추적됨
+    const qModal = page.getByRole("dialog", { name: "체크리스트 작성" });
+    await expect(qModal.getByRole("button", { name: "다음", exact: true })).toBeVisible();
+
+    // X 버튼 → 미저장 확인 모달
+    await qModal.getByRole("button", { name: "닫기" }).click();
+    const confirm = page.getByRole("dialog", { name: "작성중인 내용이 있습니다!" });
+    await expect(confirm).toBeVisible();
+
+    // "계속 작성하기" → 확인만 닫히고 폼은 유지
+    await confirm.getByRole("button", { name: "계속 작성하기" }).click();
+    await expect(confirm).toBeHidden();
+    await expect(qModal).toBeVisible();
+
+    // 다시 닫기 → "닫기"로 폼 종료
+    await qModal.getByRole("button", { name: "닫기" }).click();
+    await expect(confirm).toBeVisible();
+    await confirm.getByRole("button", { name: "닫기" }).click();
+    await expect(qModal).toBeHidden();
+  });
+
+});
+
+test.describe("체크리스트 — 프로필 편집 저장 모드 (editProfile)", () => {
+
+  test("기존 값 프리필 + '저장' → 프로필 수정 후 모달 닫힘(네비게이션 없음)", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto("/");
+    await openChecklistForm(page, { editProfile: true });
+
+    const petForm = page.getByRole("dialog", { name: "프로필 작성" });
+    await expect(petForm).toBeVisible();
+    // MOCK_PROFILE 이름 "쿠키"로 프리필
+    await expect(petForm.getByPlaceholder("이름")).toHaveValue("쿠키");
+
+    // 편집 모드는 CTA가 "저장"
+    const saveCta = petForm.getByRole("button", { name: "저장", exact: true });
+    await expect(saveCta).toBeVisible();
+
+    await petForm.getByPlaceholder("이름").fill("쿠키수정");
+    await saveCta.click();
+
+    // 저장 후 모달 닫힘 + 결과 페이지로 이동하지 않음
+    await expect(petForm).toBeHidden();
+    await expect(page).toHaveURL("/");
   });
 
 });

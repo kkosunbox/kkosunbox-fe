@@ -16,6 +16,7 @@ import { createSubscription } from "@/features/subscription/api/subscriptionApi"
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { clearStoredInviteCode } from "@/features/referral/lib";
 import { computeOrderPricing } from "@/features/order";
+import { requestTossBillingAuth, isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
 import { isValidKoreanPhone } from "./orderSectionFormatters";
@@ -85,8 +86,21 @@ export function useOrderSectionState({
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
+  // [임시 — Toss 계약 신청용] form 조건 충족 후 결제하기를 누르면
+  // Toss 자동결제 등록창(테스트)을 띄운다. 계약 완료 후 실제 결제 흐름은 별도 연동 예정.
+  async function startTossBillingRegistration() {
+    setSubmitError(null);
+    try {
+      await requestTossBillingAuth({ customerKey: crypto.randomUUID() });
+    } catch (err) {
+      if (isTossUserCancel(err)) return;
+      setSubmitError(getErrorMessage(err, "결제 수단 등록 창을 여는 중 오류가 발생했습니다."));
+    }
+  }
+
   function handlePay() {
     setSubmitError(null);
+
     if (!agreement.agreeAll) {
       setSubmitError("필수 약관에 동의해 주세요.");
       return;
@@ -109,14 +123,14 @@ export function useOrderSectionState({
       }
     }
 
-    if (!payment.billing) {
-      setSubmitError("결제수단을 선택해 주세요.");
-      return;
-    }
-
-    proceedSubscription();
+    // [임시 — Toss 계약 신청용] 백엔드 결제 연동은 계약 전이라 400(인증되지 않은 키)을 반환한다.
+    // 그래서 실제 결제(proceedSubscription) 대신 Toss 자동결제 등록 UI를 띄운다.
+    // 계약 완료 후 아래 startTossBillingRegistration() 제거하고 proceedSubscription() 복원.
+    void startTossBillingRegistration();
+    // proceedSubscription(); // ← Toss 자동결제 계약 완료 후 활성화 (ready)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 계약 완료 후 handlePay에서 복원 (ready)
   function proceedSubscription() {
     showLoading("구독을 처리하고 있습니다...");
     startTransition(async () => {
@@ -194,7 +208,8 @@ export function useOrderSectionState({
     couponInfo: payment.couponInfo,
     couponError: payment.couponError,
     handleSelectPaymentMethod: payment.handleSelectPaymentMethod,
-    handleChangeCard: payment.handleChangeCard,
+    // [임시 — Toss 계약 신청용] "카드 등록/변경" 버튼도 구 NICEPAY 팝업 대신 Toss 빌링 UI를 띄운다.
+    handleChangeCard: () => void startTossBillingRegistration(),
     handleToggleCoupon: payment.handleToggleCoupon,
     handleApplyCoupon: payment.handleApplyCoupon,
 

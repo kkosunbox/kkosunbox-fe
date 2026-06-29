@@ -226,7 +226,7 @@ export default function ReferralHeroSection() {
             variant="primary"
             size="lg"
             style={{
-              background: "var(--color-accent-orange)",
+              background: "var(--color-cta-button)",
               borderRadius: 12,
             }}
             className="text-white font-semibold tracking-[-0.04em] whitespace-nowrap transition-opacity hover:opacity-90 max-md:w-[240px] md:w-[240px] lg:w-[282px] lg:text-[16px]"

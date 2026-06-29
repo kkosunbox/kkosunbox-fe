@@ -1,128 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Button,
-  PROFILE_PET_SUBMIT_BTN,
-  useModal,
-} from "@/shared/ui";
-import { unsavedCloseAlertOptions } from "@/shared/lib/modal/alertPresets";
-import { getErrorMessage } from "@/shared/lib/api/errorMessages";
-import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
-import { useAuth } from "@/features/auth";
-import {
-  createProfile,
-  getChecklistQuestions,
-  updateProfile,
-} from "@/features/profile/api/profileApi";
-import {
-  MAX_PROFILE_COUNT,
-  type ChecklistAnswerInput,
-  type ChecklistQuestion,
-  type CreateProfileRequest,
-  type Profile,
-} from "@/features/profile/api/types";
-import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
-import { tierFromSubscriptionPlan } from "@/entities/package";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { Button, PROFILE_PET_SUBMIT_BTN } from "@/shared/ui";
 import type {
   ChecklistFormOptions,
   OpenChecklistFormDetail,
 } from "@/shared/lib/checklistModal";
 import ChecklistPetForm from "./ChecklistPetForm";
 import ChecklistQuestionStep from "./ChecklistQuestionStep";
-import type { PetInfo, RecommendedTier } from "./types";
-
-/* ── helpers (로컬) ── */
-function parseProfileBirthDate(iso: string | null | undefined): Date | null {
-  if (!iso?.trim()) return null;
-  const day = iso.slice(0, 10);
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
-  if (!m) return null;
-  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-}
-
-function petBirthToIso(date: Date | null): string | null {
-  if (!date) return null;
-  const y = date.getFullYear();
-  const mo = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${mo}-${d}`;
-}
-
-function profileToPetInfo(p: Profile): PetInfo {
-  return {
-    name: p.name?.trim() ?? "",
-    breed: p.breed?.trim() ?? "",
-    specialNotes: p.specialNotes?.trim() ?? "",
-    birthDate: parseProfileBirthDate(p.birthDate),
-    weight:
-      p.weight != null && !Number.isNaN(Number(p.weight)) ? String(p.weight) : "",
-    gender: p.gender ?? null,
-  };
-}
-
-function clonePetInfo(p: PetInfo): PetInfo {
-  return {
-    name: p.name,
-    breed: p.breed,
-    specialNotes: p.specialNotes,
-    birthDate: p.birthDate ? new Date(p.birthDate.getTime()) : null,
-    weight: p.weight,
-    gender: p.gender,
-  };
-}
-
-function petInfoEqual(a: PetInfo, b: PetInfo): boolean {
-  if (
-    a.name !== b.name ||
-    a.breed !== b.breed ||
-    a.specialNotes !== b.specialNotes ||
-    a.weight !== b.weight ||
-    a.gender !== b.gender
-  )
-    return false;
-  return (a.birthDate?.getTime() ?? null) === (b.birthDate?.getTime() ?? null);
-}
-
-function answersEqual(
-  a: Record<number, number[]>,
-  b: Record<number, number[]>,
-): boolean {
-  const keys = new Set(
-    [...Object.keys(a), ...Object.keys(b)].map(Number),
-  );
-  for (const k of keys) {
-    const ak = [...(a[k] ?? [])].sort((x, y) => x - y);
-    const bk = [...(b[k] ?? [])].sort((x, y) => x - y);
-    if (ak.length !== bk.length || !ak.every((x, i) => x === bk[i]))
-      return false;
-  }
-  return true;
-}
-
-function fallbackRecommend(answers: ChecklistAnswerInput[]): RecommendedTier {
-  const n = answers.reduce((s, a) => s + a.optionIds.length, 0);
-  if (n >= 6) return "premium";
-  if (n >= 3) return "standard";
-  return "basic";
-}
-
-const EMPTY_PET_INFO: PetInfo = {
-  name: "",
-  breed: "",
-  specialNotes: "",
-  birthDate: null,
-  weight: "",
-  gender: null,
-};
-
-interface Baseline {
-  petInfo: PetInfo;
-  avatarSrc: string | null;
-  answers: Record<number, number[]>;
-}
+import { useChecklistForm } from "./checklist-form/useChecklistForm";
 
 const CTA_CLASS = `${PROFILE_PET_SUBMIT_BTN} disabled:hover:!opacity-50`;
 
@@ -189,31 +76,30 @@ function ChecklistFormModalInner({
   options: ChecklistFormOptions;
   onClose: () => void;
 }) {
-  const router = useRouter();
-  const { isLoggedIn, user } = useAuth();
   const {
-    profile: activeProfile,
-    profiles,
-    refreshProfile,
-    setActiveProfileId,
-  } = useProfile();
-
-  const [questions, setQuestions] = useState<ChecklistQuestion[] | null>(null);
-  const [questionsError, setQuestionsError] = useState<string | null>(null);
-  const [step, setStep] = useState(0);
-  const stepRef = useRef(0);
-  const [maxVisitedStep, setMaxVisitedStep] = useState(0);
-  const [initReady, setInitReady] = useState(false);
-  const [baseline, setBaseline] = useState<Baseline | null>(null);
-  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
-  const [petInfo, setPetInfo] = useState<PetInfo>(EMPTY_PET_INFO);
-  const [answersByQuestion, setAnswersByQuestion] = useState<
-    Record<number, number[]>
-  >({});
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const avatarFileRef = useRef<File | null>(null);
-  const { openAlert } = useModal();
+    questions,
+    questionsError,
+    initReady,
+    isAnalyzing,
+    step,
+    qLen,
+    maxVisitedStep,
+    petInfo,
+    setPetInfo,
+    avatarSrc,
+    answersByQuestion,
+    userId,
+    headerTitle,
+    ctaLabel,
+    isCtaDisabled,
+    handleCloseRequest,
+    handleAvatarChange,
+    handleAvatarFileSelect,
+    toggleOptionForQuestion,
+    onBack,
+    onStepClick,
+    primaryAction,
+  } = useChecklistForm(options, onClose);
 
   /* body 스크롤 잠금 */
   useEffect(() => {
@@ -222,429 +108,6 @@ function ChecklistFormModalInner({
       document.body.style.overflow = "";
     };
   }, []);
-
-  /* 질문 목록 로드 */
-  useEffect(() => {
-    let cancelled = false;
-    getChecklistQuestions()
-      .then((res) => {
-        if (cancelled) return;
-        const sorted = [...res.questions]
-          .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((q) => ({
-            ...q,
-            options: [...q.options].sort((a, b) => a.sortOrder - b.sortOrder),
-          }));
-        setQuestions(sorted);
-      })
-      .catch(() => {
-        if (!cancelled)
-          setQuestionsError("체크리스트 질문을 불러오지 못했습니다.");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    stepRef.current = step;
-  }, [step]);
-
-  /* 초기 상태 복원 */
-  useEffect(() => {
-    if (questions === null) return;
-    if (stepRef.current > 0) return;
-
-    let cancelled = false;
-
-    void (async () => {
-      let pet = EMPTY_PET_INFO;
-      let av: string | null = null;
-      let restoredAnswers: Record<number, number[]> = {};
-      let initialStep = 0;
-
-      if (options.isNewProfile) {
-        pet = EMPTY_PET_INFO;
-        av = null;
-        restoredAnswers = {};
-        initialStep = 0;
-      } else if (options.editProfile && isLoggedIn && activeProfile) {
-        pet = profileToPetInfo(activeProfile);
-        av = activeProfile.profileImageUrl;
-        initialStep = 0;
-      } else if (isLoggedIn && activeProfile) {
-        pet = profileToPetInfo(activeProfile);
-        av = activeProfile.profileImageUrl;
-        if (activeProfile.checklistAnswers?.length) {
-          restoredAnswers = Object.fromEntries(
-            activeProfile.checklistAnswers.map((a) => [
-              a.questionId,
-              a.selectedOptions.map((o) => o.id),
-            ]),
-          );
-        }
-        if (pet.name.trim()) initialStep = 1;
-      }
-
-      if (cancelled) return;
-
-      if (!options.isNewProfile && !options.editProfile) {
-        if (options.rewrite) {
-          initialStep = 1;
-        }
-
-        if (options.editQuestionId != null) {
-          const idx = questions.findIndex((q) => q.id === options.editQuestionId);
-          if (idx >= 0) initialStep = idx + 1;
-        }
-      }
-
-      setPetInfo(pet);
-      setStep(initialStep);
-      setMaxVisitedStep(initialStep);
-      setAvatarSrc((prev) => {
-        if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-        return av;
-      });
-      setAnswersByQuestion(restoredAnswers);
-      setBaseline({
-        petInfo: clonePetInfo(pet),
-        avatarSrc: av,
-        answers: { ...restoredAnswers },
-      });
-      setInitReady(true);
-      avatarFileRef.current = null;
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [questions, isLoggedIn, activeProfile, options]);
-
-  /* blob URL 정리 */
-  useEffect(() => {
-    return () => {
-      setAvatarSrc((prev) => {
-        if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-        return null;
-      });
-    };
-  }, []);
-
-  const isDirty =
-    questions !== null &&
-    baseline !== null &&
-    (options.editProfile && step === 0
-      ? !petInfoEqual(petInfo, baseline.petInfo) ||
-        avatarSrc !== baseline.avatarSrc
-      : step > 0 &&
-        (!petInfoEqual(petInfo, baseline.petInfo) ||
-          avatarSrc !== baseline.avatarSrc ||
-          !answersEqual(answersByQuestion, baseline.answers)));
-
-  const isDirtyRef = useRef(isDirty);
-  useEffect(() => {
-    isDirtyRef.current = isDirty;
-  });
-
-  /** 미저장 확인 AlertModal(z-[210])이 열려 있을 때 ESC를 ChecklistFormModal이 가로채지 않도록 */
-  const closeConfirmOpenRef = useRef(false);
-
-  const promptCloseConfirm = useCallback(() => {
-    const resetConfirm = () => {
-      closeConfirmOpenRef.current = false;
-    };
-    closeConfirmOpenRef.current = true;
-    const opts = unsavedCloseAlertOptions(() => {
-      resetConfirm();
-      onClose();
-    });
-    openAlert({
-      ...opts,
-      onDismiss: resetConfirm,
-      onSecondary: () => {
-        opts.onSecondary?.();
-        resetConfirm();
-      },
-    });
-  }, [openAlert, onClose]);
-
-  /* ESC 처리 — 캡처 단계에서 가로채 ModalProvider보다 먼저 실행 */
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      if (closeConfirmOpenRef.current) return;
-      e.stopImmediatePropagation();
-      if (isDirtyRef.current) {
-        promptCloseConfirm();
-      } else {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handler, true);
-    return () => window.removeEventListener("keydown", handler, true);
-  }, [onClose, promptCloseConfirm]);
-
-  function handleCloseRequest() {
-    if (isDirtyRef.current) {
-      promptCloseConfirm();
-    } else {
-      onClose();
-    }
-  }
-
-  function handleAvatarChange(src: string | null) {
-    setAvatarSrc((prev) => {
-      if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-      return src;
-    });
-    if (!src) avatarFileRef.current = null;
-  }
-
-  function handleAvatarFileSelect(file: File) {
-    avatarFileRef.current = file;
-  }
-
-  function toggleOptionForQuestion(
-    question: ChecklistQuestion,
-    optionId: number,
-  ) {
-    const { id: questionId, isMultiSelect, options: opts } = question;
-    setAnswersByQuestion((prev) => {
-      const cur = prev[questionId] ?? [];
-      if (!isMultiSelect) return { ...prev, [questionId]: [optionId] };
-      if (cur.includes(optionId))
-        return { ...prev, [questionId]: cur.filter((x) => x !== optionId) };
-      const clicked = opts.find((o) => o.id === optionId);
-      if (clicked?.isExclusive)
-        return { ...prev, [questionId]: [optionId] };
-      const exclusiveIds = new Set(
-        opts.filter((o) => o.isExclusive).map((o) => o.id),
-      );
-      return {
-        ...prev,
-        [questionId]: [...cur.filter((id) => !exclusiveIds.has(id)), optionId],
-      };
-    });
-  }
-
-  const qLen = questions?.length ?? 0;
-  const currentQuestionId =
-    questions && step >= 1 && step <= qLen ? questions[step - 1].id : null;
-  const isCurrentQuestionAnswered =
-    currentQuestionId === null
-      ? true
-      : (answersByQuestion[currentQuestionId] ?? []).length > 0;
-
-  function handleNext() {
-    if (!questions?.length) return;
-    if (step === 0) {
-      if (!petInfo.name.trim()) return;
-      if (options.editProfile) {
-        void handleSaveProfile();
-        return;
-      }
-      setStep(1);
-      setMaxVisitedStep((prev) => Math.max(prev, 1));
-      return;
-    }
-    if (!isCurrentQuestionAnswered) return;
-    if (step < qLen) {
-      const next = step + 1;
-      setStep(next);
-      setMaxVisitedStep((prev) => Math.max(prev, next));
-    }
-  }
-
-  function handleBack() {
-    if (step > 0) setStep((s) => s - 1);
-  }
-
-  function handleStepClick(targetStep: number) {
-    if (
-      targetStep >= 1 &&
-      targetStep <= maxVisitedStep &&
-      targetStep !== step
-    ) {
-      if (targetStep > step && !isCurrentQuestionAnswered) return;
-      setStep(targetStep);
-    }
-  }
-
-  async function handleSaveProfile() {
-    if (!isLoggedIn || !activeProfile) return;
-    const trimmedName = petInfo.name.trim();
-    if (!trimmedName) return;
-
-    setIsSaving(true);
-
-    const trimmedBreed = petInfo.breed.trim();
-    const trimmedNotes = petInfo.specialNotes.trim();
-    const trimmedWeight = petInfo.weight.trim();
-    const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : Number.NaN;
-    const weightValue =
-      trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : null;
-    const birthIso = petBirthToIso(petInfo.birthDate);
-
-    try {
-      let profileImageUrl: string | null | undefined;
-
-      const file = avatarFileRef.current;
-      if (file) {
-        const { uploadUrl, fileUrl } = await getProfileImagePresignedUrl({
-          fileName: file.name,
-          fileType: file.type,
-        });
-        await uploadToS3(uploadUrl, file, file.type);
-        profileImageUrl = fileUrl;
-      }
-
-      await updateProfile(activeProfile.id, {
-        name: trimmedName,
-        breed: trimmedBreed || null,
-        specialNotes: trimmedNotes || null,
-        gender: petInfo.gender,
-        birthDate: birthIso,
-        weight: weightValue,
-        ...(profileImageUrl !== undefined ? { profileImageUrl } : {}),
-      });
-      await refreshProfile();
-      avatarFileRef.current = null;
-      onClose();
-    } catch (e) {
-      openAlert({
-        title: getErrorMessage(e, "저장 중 오류가 발생했습니다. 다시 시도해주세요."),
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }
-
-  async function handleSubmit() {
-    if (!questions?.length) return;
-    const trimmedName = petInfo.name.trim();
-    if (!trimmedName) return;
-    if (!isCurrentQuestionAnswered) return;
-    setIsAnalyzing(true);
-
-    const checklistAnswers: ChecklistAnswerInput[] = questions.map((q) => ({
-      questionId: q.id,
-      optionIds: answersByQuestion[q.id] ?? [],
-    }));
-
-    const trimmedBreed = petInfo.breed.trim();
-    const trimmedNotes = petInfo.specialNotes.trim();
-    const trimmedWeight = petInfo.weight.trim();
-    const parsedWeight = trimmedWeight ? parseFloat(trimmedWeight) : Number.NaN;
-    const weightValue =
-      trimmedWeight && !Number.isNaN(parsedWeight) ? parsedWeight : null;
-    const birthIso = petBirthToIso(petInfo.birthDate);
-
-    let tier: RecommendedTier = fallbackRecommend(checklistAnswers);
-    let savedProfileId: number | null = null;
-    let checklistSaved = false;
-
-    try {
-      if (options.isNewProfile) {
-        if (profiles.length >= MAX_PROFILE_COUNT) {
-          openAlert({
-            type: "info",
-            title: `프로필은 최대 ${MAX_PROFILE_COUNT}개까지 등록할 수 있습니다.`,
-          });
-          setIsAnalyzing(false);
-          return;
-        }
-        const body: CreateProfileRequest = {
-          name: trimmedName,
-          checklistAnswers,
-          ...(trimmedBreed ? { breed: trimmedBreed } : {}),
-          ...(trimmedNotes ? { specialNotes: trimmedNotes } : {}),
-          ...(petInfo.gender ? { gender: petInfo.gender } : {}),
-          ...(birthIso ? { birthDate: birthIso } : {}),
-          ...(weightValue !== null ? { weight: weightValue } : {}),
-        };
-        const newProfile = await createProfile(body);
-        savedProfileId = newProfile.id;
-        setActiveProfileId(newProfile.id);
-        checklistSaved = true;
-      } else if (isLoggedIn && activeProfile) {
-        await updateProfile(activeProfile.id, {
-          checklistAnswers,
-          name: trimmedName,
-          breed: trimmedBreed || null,
-          specialNotes: trimmedNotes || null,
-          gender: petInfo.gender,
-          birthDate: birthIso,
-          weight: weightValue,
-        });
-        savedProfileId = activeProfile.id;
-        checklistSaved = true;
-      } else if (isLoggedIn) {
-        const body: CreateProfileRequest = {
-          name: trimmedName,
-          checklistAnswers,
-          ...(trimmedBreed ? { breed: trimmedBreed } : {}),
-          ...(trimmedNotes ? { specialNotes: trimmedNotes } : {}),
-          ...(petInfo.gender ? { gender: petInfo.gender } : {}),
-          ...(birthIso ? { birthDate: birthIso } : {}),
-          ...(weightValue !== null ? { weight: weightValue } : {}),
-        };
-        const newProfile = await createProfile(body);
-        savedProfileId = newProfile.id;
-        setActiveProfileId(newProfile.id);
-        checklistSaved = true;
-      }
-
-      if (savedProfileId !== null) {
-        await refreshProfile();
-        const planRes = await getSubscriptionPlans(savedProfileId);
-        const rec = planRes.plans.find((p) => p.isRecommended);
-        if (rec) {
-          const pt = tierFromSubscriptionPlan(rec);
-          tier =
-            pt === "Premium"
-              ? "premium"
-              : pt === "Standard"
-                ? "standard"
-                : "basic";
-        }
-      }
-    } catch (e) {
-      console.error("[ChecklistFormModal] save or plan fetch failed", e);
-    }
-
-    if (checklistSaved && user?.id) {
-      localStorage.setItem(`kkosun_checklist_done_${user.id}`, "true");
-    }
-
-    router.push(`/checklist/result?tier=${tier}`);
-  }
-
-  const isStep0NameValid = petInfo.name.trim().length > 0;
-  const lastQuestionStep = qLen;
-  const isEditProfileMode = options.editProfile === true;
-  const ctaLabel =
-    step === 0
-      ? isEditProfileMode
-        ? isSaving
-          ? "저장 중…"
-          : "저장"
-        : "체크리스트 작성하기"
-      : step === lastQuestionStep
-        ? "결과보기"
-        : "다음";
-  const isMobileCtaDisabled =
-    isSaving ||
-    (step === 0 && !isStep0NameValid) ||
-    (step >= 1 && step <= qLen && !isCurrentQuestionAnswered);
-
-  function handleMobileCta() {
-    if (step === 0 && !isStep0NameValid) return;
-    if (step === lastQuestionStep) void handleSubmit();
-    else handleNext();
-  }
-
-  const headerTitle = step === 0 ? "프로필 작성" : "체크리스트 작성";
 
   return (
     <div
@@ -705,7 +168,7 @@ function ChecklistFormModalInner({
                   petInfo={petInfo}
                   setPetInfo={setPetInfo}
                   avatarSrc={avatarSrc}
-                  userId={user?.id ?? null}
+                  userId={userId}
                   onAvatarChange={handleAvatarChange}
                   onAvatarFileSelect={handleAvatarFileSelect}
                 />
@@ -722,9 +185,9 @@ function ChecklistFormModalInner({
                   onToggleOption={(optionId) =>
                     toggleOptionForQuestion(questions[step - 1], optionId)
                   }
-                  onBack={handleBack}
+                  onBack={onBack}
                   maxVisitedStep={maxVisitedStep}
-                  onStepClick={handleStepClick}
+                  onStepClick={onStepClick}
                 />
               ) : null}
             </>
@@ -736,8 +199,8 @@ function ChecklistFormModalInner({
             <div className="md:mx-auto md:max-w-[320px]">
               <Button
                 type="button"
-                onClick={handleMobileCta}
-                disabled={isMobileCtaDisabled}
+                onClick={primaryAction}
+                disabled={isCtaDisabled}
                 variant="primary"
                 size="lg"
                 className={CTA_CLASS}

@@ -283,7 +283,20 @@
       "Bash(cp \"C:/2026/ggosoonbox/.claude/assets/designs/image-005.png\" \"C:/2026/ggosoonbox/widgets/mypage/assets/withdraw-confirm-hero-tablet-renewal.png\")",
       "Bash(npx sharp-cli *)",
       "Bash(Get-Content \"C:\\\\Users\\\\tbrk7\\\\.claude\\\\projects\\\\C--2026-ggosoonbox\\\\52bc3a22-7a84-4312-931f-c37272ed1f65\\\\tool-results\\\\bhvhmrjx8.txt\")",
-      "Bash(Select-Object -Last 40)"
+      "Bash(Select-Object -Last 40)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40; Write-Output \"---LINT---\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/checklistFormHelpers.ts 2>&1 | Select-Object -First 40)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40; Write-Output \"---LINT---\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/hooks/useChecklistQuestions.ts 2>&1 | Select-Object -First 40)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40; Write-Output \"---LINT---\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/hooks/useUnsavedChangesGuard.ts 2>&1 | Select-Object -First 40)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40; Write-Output \"---LINT---\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/hooks/useChecklistSubmit.ts 2>&1 | Select-Object -First 40)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40; Write-Output \"---LINT---\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/useChecklistForm.ts widgets/checklist/ui/checklist-form/hooks/useChecklistDraft.ts widgets/checklist/ui/checklist-form/hooks/useChecklistNavigation.ts widgets/checklist/ui/checklist-form/checklistFormHelpers.ts 2>&1 | Select-Object -First 60)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40; Write-Output \"---LINT---\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/useChecklistForm.ts widgets/checklist/ui/checklist-form/hooks/useChecklistDraft.ts widgets/checklist/ui/checklist-form/hooks/useChecklistNavigation.ts 2>&1 | Select-Object -First 60)",
+      "PowerShell(Get-ChildItem widgets/checklist/ui/ChecklistFormModal.tsx, widgets/checklist/ui/checklist-form/useChecklistForm.ts, widgets/checklist/ui/checklist-form/hooks/useChecklistDraft.ts, widgets/checklist/ui/checklist-form/hooks/useChecklistNavigation.ts, widgets/checklist/ui/checklist-form/hooks/useChecklistSubmit.ts, widgets/checklist/ui/checklist-form/hooks/useChecklistQuestions.ts, widgets/checklist/ui/checklist-form/hooks/useUnsavedChangesGuard.ts, widgets/checklist/ui/checklist-form/checklistFormHelpers.ts | ForEach-Object { \"{0,4}  {1}\" -f \\(Get-Content $_.FullName | Measure-Object -Line\\).Lines, $_.Name })",
+      "PowerShell(\\(Get-Content widgets/checklist/ui/checklist-form/useChecklistForm.ts | Measure-Object -Line\\).Lines)",
+      "PowerShell(\\(Get-Content widgets/checklist/ui/checklist-form/useChecklistForm.ts | Measure-Object -Line\\).Lines; Write-Output \"---TSC+LINT---\"; npx tsc --noEmit 2>&1 | Select-Object -First 30; npx eslint widgets/checklist/ui/checklist-form/useChecklistForm.ts 2>&1 | Select-Object -First 20)",
+      "PowerShell(\\(Get-Content widgets/checklist/ui/checklist-form/useChecklistForm.ts | Measure-Object -Line\\).Lines; Write-Output \"---FULL VERIFY---\"; npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"lint:\"; npx eslint widgets/checklist/ui/ChecklistFormModal.tsx widgets/checklist/ui/checklist-form/ 2>&1 | Select-Object -First 30)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT \\(whole checklist widget\\)---\"; npx eslint widgets/checklist/ 2>&1 | Select-Object -First 30; Write-Output \"DONE\")",
+      "Bash(cp \".claude/assets/designs/referral-hero-bg-desktop.png\" \"widgets/home/referral-hero/assets/main-hero-referal-bg.png\")",
+      "Bash(cp \".claude/assets/designs/referral-hero-bg-tablet.png\" \"widgets/home/referral-hero/assets/main-hero-referral-bg-tablet.png\")"
     ]
   }
 }

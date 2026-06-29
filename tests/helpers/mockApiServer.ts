@@ -35,6 +35,35 @@ export const MOCK_PROFILE = {
   checklistAnswers: [],
 };
 
+// GET /v1/profiles/checklist 응답 — 체크리스트 모달 내부 흐름 E2E용 질문 2개.
+// 옵션 라벨은 CTA/펫폼 텍스트와 겹치지 않게 고유값을 사용한다.
+export const MOCK_CHECKLIST_QUESTIONS = [
+  {
+    id: 101,
+    text: "어떤 간식을 좋아하나요?",
+    shortText: "간식 취향",
+    description: null,
+    isMultiSelect: false,
+    sortOrder: 1,
+    options: [
+      { id: 1001, text: "육포 간식", slug: "jerky", sortOrder: 1, isExclusive: false },
+      { id: 1002, text: "비스킷 간식", slug: "biscuit", sortOrder: 2, isExclusive: false },
+    ],
+  },
+  {
+    id: 102,
+    text: "알레르기가 있나요?",
+    shortText: "알레르기",
+    description: null,
+    isMultiSelect: false,
+    sortOrder: 2,
+    options: [
+      { id: 2001, text: "알레르기 없음", slug: "none", sortOrder: 1, isExclusive: false },
+      { id: 2002, text: "닭고기 알레르기", slug: "chicken", sortOrder: 2, isExclusive: false },
+    ],
+  },
+];
+
 export const MOCK_ADDRESS = {
   id: 1,
   nickname: "우리집",
@@ -229,9 +258,13 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     const url = req.url ?? "";
     const method = req.method ?? "GET";
 
-    // CORS preflight
+    // CORS preflight — PATCH/DELETE는 단순요청이 아니므로 Allow-Methods 명시 필요
     if (method === "OPTIONS") {
-      res.writeHead(204, { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type, Authorization" });
+      res.writeHead(204, {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      });
       res.end();
       return;
     }
@@ -336,6 +369,21 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
+    // POST /v1/profiles — 프로필 생성 (체크리스트 제출의 신규 프로필 경로)
+    // 응답은 생성된 Profile. submit은 응답의 id만 사용한다.
+    if (method === "POST" && url === "/v1/profiles") {
+      const body = (await readBody(req)) as { name?: string };
+      ok(res, { ...MOCK_PROFILE, id: 2, name: body.name ?? MOCK_PROFILE.name });
+      return;
+    }
+
+    // PATCH /v1/profiles/:id — 프로필 수정 (editProfile 저장 / 체크리스트 재작성)
+    if (method === "PATCH" && /^\/v1\/profiles\/\d+$/.test(url)) {
+      const body = (await readBody(req)) as { name?: string };
+      ok(res, { ...MOCK_PROFILE, name: body.name ?? MOCK_PROFILE.name });
+      return;
+    }
+
     // GET /v1/delivery-addresses — order 페이지 배송지 목록
     if (method === "GET" && url === "/v1/delivery-addresses") {
       const auth = req.headers.authorization ?? "";
@@ -408,9 +456,9 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
-    // GET /v1/profiles/checklist — 체크리스트 질문 (비로그인 허용, 없으면 .catch()가 [] 폴백)
+    // GET /v1/profiles/checklist — 체크리스트 질문 (비로그인 허용)
     if (method === "GET" && url === "/v1/profiles/checklist") {
-      ok(res, { questions: [] });
+      ok(res, { questions: MOCK_CHECKLIST_QUESTIONS });
       return;
     }
 

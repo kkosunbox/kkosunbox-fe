@@ -14,7 +14,7 @@
 /coverage
 /test-results/
 /playwright-report/
-/tests/e2e/screenshots/
+# 시각 회귀 baseline(tests/**/*-snapshots/)은 버전 관리 대상이므로 무시하지 않는다.
 
 # next.js
 /.next/

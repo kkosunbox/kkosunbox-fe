@@ -62,7 +62,10 @@ Body: `{ billingInfoId: number, authKey: string, customerKey: string }`
 - [ ] `PaymentManager`: view 흐름 재정비(등록/변경 → Toss 인증으로 분기). `existing-billing` 뷰는 유지 가능.
 - [ ] `/payment/billing/success` 라우트 추가: query에서 authKey·customerKey 추출 → register/update → postMessage → close. 변경 모드면 billingInfoId 전달 필요(팝업 진입 시 state/param으로 보존).
 - [ ] `/payment/billing/fail` 라우트 추가: 에러 메시지 표시 후 닫기/재시도.
-- [ ] `shared/lib/api/errorMessages.ts`: `INVALID_BILLING_KEY`, `NOT_SUPPORTED_METHOD`, `NOT_MATCHES_CUSTOMER_KEY` 등 한국어 매핑 추가.
+- [ ] `shared/lib/api/errorMessages.ts`: 한국어 매핑 추가.
+  - **백엔드(register/update) 응답:** `INVALID_BILLING_KEY`(이미 등록/유효하지 않은 빌링키).
+  - **Toss failUrl 리다이렉트 `code`(클라이언트 인증 단계, 아래 §공식문서 교차검증 참조):** `PAY_PROCESS_CANCELED`(사용자 취소), `PAY_PROCESS_ABORTED`(인증 실패), `REJECT_CARD_COMPANY`(카드 정보 문제). → fail 페이지에서 `getErrorMessage`로 변환.
+  - **참고(백엔드 영역, 프론트 직접 노출 X):** `UNAUTHORIZED_KEY`·`NOT_SUPPORTED_METHOD`(빌링키 발급), `NOT_MATCHES_CUSTOMER_KEY`(자동결제 승인)는 백엔드가 Toss와 통신 시 발생 → 백엔드가 `INVALID_BILLING_KEY` 등으로 정규화해 내려줌. 프론트는 정규화된 코드만 매핑.
 - [ ] `customerKey` 주입: `/payment` 서버 컴포넌트에서 `getAuthUser()` → `user_${id}`.
 - [ ] (확인) "결제하기"(`handlePay`→`createSubscription`)는 변경 없음.
 
@@ -111,3 +114,35 @@ await payment.requestBillingAuth({
 
 ## 남은 구현 세부
 - 변경(update) 시 successUrl까지 `billingInfoId`를 안전하게 보존하는 방법(쿼리 param vs sessionStorage) — 구현 단계에서 결정.
+
+---
+
+## 📚 공식 문서 교차검증 (2026-06-29, Toss integration-guide MCP)
+
+v2 공식 문서(`자동결제(빌링) 결제창 연동하기` ID:8, `JavaScript SDK` ID:67, `자동결제 이해하기` ID:1)와 본 계획을 대조한 결과.
+
+### ✅ 검증 완료 (계획과 일치 — 변경 불필요)
+- **흐름 4단계**: ① SDK `requestBillingAuth({method:"CARD"})` → ② successUrl로 `customerKey`·`authKey` echo → ③ 서버가 빌링키 발급 → ④ 빌링키로 자동결제 승인. 우리 구조(②까지 프론트, ③④ 백엔드)와 정확히 부합.
+- **method**: 자동결제 결제창은 **`CARD`만 지원**. 계좌이체 자동결제는 `TRANSFER`이나 "퀵계좌이체"라는 별도 제품·별도 연동(우리 범위 아님). → 계획의 `method:"CARD"` 확정.
+- **successUrl 쿼리**: `?customerKey={}&authKey={}` 정확. (일반 결제의 `paymentKey`·`amount`·`orderId`와 다름 — 빌링은 **`requestPayment`/`confirm` 플로우를 쓰지 않음**.)
+- **windowTarget**: PC 기본 `iframe`, 모바일 기본 `self`, **모바일은 `iframe` 사용 불가**. 계획 라인 99와 일치.
+- **테스트 환경**: BIN(앞 6자리)만 유효해도 등록, 본인인증 `000000`, 실제 출금 없음. 계획 라인 100과 일치.
+
+### ➕ 보완 — 계획에 없던 공식 사실
+1. **빌링키 발급 엔드포인트(백엔드 내부)**: SDK 방식의 발급은 Toss `POST /v1/billing/authorizations/issue`(body: `{authKey, customerKey}` → `{billingKey, ...}`). 우리 백엔드 `POST /v1/billing/register`가 이걸 래핑하는 것으로 해석됨. → **백엔드 소유자에게 "register 내부가 authorizations/issue 호출이 맞는지" 1줄 확인**하면 명세 확정.
+2. **customerKey 길이 제약이 단계별로 다름** ⚠️:
+   - SDK `tossPayments.payment({customerKey})`: **2~50자**.
+   - 빌링키 발급 API의 customerKey: **2~300자**, `authKey`: **최대 300자**.
+   - → `crypto.randomUUID()`(36자)는 50자 제약 내라 안전. (계획 라인 108 결정 유효성 재확인 완료.)
+3. **failUrl 쿼리 형식**: `/fail?code={ERROR_CODE}&message={ERROR_MESSAGE}`. fail 페이지는 `code`로 분기, `message`는 **직접 노출 금지**(CLAUDE.md 규칙) → `getErrorMessage(code, fallback)`로 변환.
+   - `PAY_PROCESS_CANCELED`: 사용자가 등록창에서 취소(이 경우 `orderId` 미전달).
+   - `PAY_PROCESS_ABORTED`: 인증 실패.
+   - `REJECT_CARD_COMPANY`: 입력 카드 정보 문제.
+4. **`payment.destroy()` 정리 필요(SPA)**: PC iframe 방식에서 React 언마운트/페이지 전환 시 결제창 iframe이 남을 수 있음 → cleanup에서 `payment.destroy()` 호출 권장. 진행 중 요청은 `PAYMENT_REQUEST_ABORTED`로 종료됨. (임시 구현의 order 페이지 iframe 오버레이에서 특히 유의.)
+5. **빌링키 갱신 개념 없음**: 카드 재발급·유효기간 만료 시 **새로 발급**해야 함(빌링키 유효기간 = 카드 유효기간). → 우리 "카드 변경(update)" = 재발급으로 정의하는 게 정책상 맞음.
+6. **정책 제약**: 자동결제는 **리스크 검토 + 추가 계약** 필요, **정기 구독형 서비스만** 허용. 꼬순박스는 정기배송이라 충족. 또한 **국내 발급 카드만** 지원(해외카드·해외결제 불가) — 안내문구 필요 시 반영.
+7. **선택 파라미터(필요 시)**: `requestBillingAuth`에 `selectableCardTypes:["PERSONAL","CORPORATE"]`로 개인/법인 카드 노출 제어 가능. 현재 요구사항엔 불필요.
+
+### 🔭 백엔드 영역(프론트 무관, 참고용)
+- 자동결제 승인은 `POST /v1/billing/{billingKey}`(스케줄링은 직접 구현, Toss 미제공) — 우리 백엔드 크론이 담당.
+- **`BILLING_DELETED` 웹훅**: 구매자 카드사 탈퇴/빌링키 삭제 시 발생 → 백엔드가 구독 상태 동기화에 활용 가능. 프론트는 BillingInfo 재조회로 반영.

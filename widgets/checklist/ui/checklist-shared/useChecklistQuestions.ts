@@ -13,7 +13,7 @@ export interface UseChecklistQuestionsResult {
 /**
  * 체크리스트 질문 목록을 1회 로드하고 sortOrder로 정렬한다.
  * 질문·옵션 모두 정렬하며, 실패 시 한국어 에러 메시지를 노출한다.
- * 모달 내 다른 상태에 의존하지 않는 독립 로더.
+ * 다른 상태에 의존하지 않는 독립 로더(모달·섹션 공용).
  */
 export function useChecklistQuestions(): UseChecklistQuestionsResult {
   const [questions, setQuestions] = useState<ChecklistQuestion[] | null>(null);

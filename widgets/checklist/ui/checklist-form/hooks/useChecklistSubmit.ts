@@ -21,7 +21,7 @@ import {
   buildCreateProfileBody,
   buildUpdateProfileBody,
   fallbackRecommend,
-} from "../checklistFormHelpers";
+} from "../../checklist-shared/checklistDomain";
 
 export interface UseChecklistSubmitResult {
   isAnalyzing: boolean;

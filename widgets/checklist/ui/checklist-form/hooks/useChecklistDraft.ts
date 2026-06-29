@@ -18,8 +18,8 @@ import {
   EMPTY_PET_INFO,
   petInfoEqual,
   type Baseline,
-  type InitialChecklistState,
-} from "../checklistFormHelpers";
+} from "../../checklist-shared/checklistDomain";
+import type { InitialChecklistState } from "../checklistFormHelpers";
 
 export interface UseChecklistDraftResult {
   petInfo: PetInfo;

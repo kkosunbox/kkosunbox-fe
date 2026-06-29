@@ -9,8 +9,8 @@ import {
   getChecklistCtaLabel,
   isChecklistCtaDisabled,
 } from "./checklistFormHelpers";
-import { useChecklistQuestions } from "./hooks/useChecklistQuestions";
-import { useChecklistNavigation } from "./hooks/useChecklistNavigation";
+import { useChecklistQuestions } from "../checklist-shared/useChecklistQuestions";
+import { useChecklistNavigation } from "../checklist-shared/useChecklistNavigation";
 import { useChecklistDraft } from "./hooks/useChecklistDraft";
 import { useChecklistSubmit } from "./hooks/useChecklistSubmit";
 import { useUnsavedChangesGuard } from "./hooks/useUnsavedChangesGuard";

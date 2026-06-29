@@ -8,10 +8,12 @@ import {
   buildCreateProfileBody,
   buildUpdateProfileBody,
   fallbackRecommend,
+  EMPTY_PET_INFO,
+} from "@/widgets/checklist/ui/checklist-shared/checklistDomain";
+import {
   computeInitialState,
   getChecklistCtaLabel,
   isChecklistCtaDisabled,
-  EMPTY_PET_INFO,
 } from "@/widgets/checklist/ui/checklist-form/checklistFormHelpers";
 import type { PetInfo } from "@/widgets/checklist/ui/types";
 import type {

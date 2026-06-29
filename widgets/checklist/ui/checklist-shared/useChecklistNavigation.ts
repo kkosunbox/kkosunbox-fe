@@ -21,7 +21,7 @@ export interface UseChecklistNavigationResult {
 }
 
 /**
- * 체크리스트 스텝 이동만 담당하는 순수 네비게이션 훅.
+ * 체크리스트 스텝 이동만 담당하는 순수 네비게이션 훅(모달·섹션 공용).
  * 저장·제출·검증을 알지 못하며, 진행 가능 여부(canAdvanceForward)는 호출부가 판단해 전달한다.
  */
 export function useChecklistNavigation({

@@ -30,6 +30,7 @@ export default function CursorPaw() {
   }, []);
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- 장식 커서 webp 원본 품질 유지
     <img
       src="/images/cursor-paw.webp"
       alt=""

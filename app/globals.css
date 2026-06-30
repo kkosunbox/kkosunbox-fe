@@ -117,6 +117,7 @@
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-subscription-header-bg: #FEF6EE; /* 구독관리 페이지 상단 배경 밴드 */
   --color-surface-light: #F8F8F8;
+  --color-drawer-item-active: #FFF7EC; /* 모바일 드로워 네비 활성 아이템 배경 (Figma Frame 10597) */
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
   --color-hero-truck-bg: #FEDFA2;     /* Hero 슬라이드1 (트럭) 배경 */
   --color-hero-shape: #F2D0B1;        /* Hero 장식 도형 배경 */
@@ -175,6 +176,7 @@
 
   /* Text */
   --color-text: #2F2F2F;           /* Dark Gray — 기본 본문, UI 텍스트 */
+  --color-text-menu-label: #444444; /* 모바일 드로워 단축 메뉴 라벨 (Figma L mode-80) */
   --color-text-emphasis: #262525;  /* Emphasis — CTA/오버레이 헤드라인 텍스트 */
   --color-text-secondary: #999999; /* Secondary — 보조 텍스트 */
   --color-text-tertiary: #808080;  /* Tertiary — 테이블 헤더, 비활성 UI 텍스트 */
@@ -369,6 +371,7 @@
   --color-surface-peach: var(--color-surface-peach);
   --color-subscription-header-bg: var(--color-subscription-header-bg);
   --color-surface-light: var(--color-surface-light);
+  --color-drawer-item-active: var(--color-drawer-item-active);
   --color-hero-bg: var(--color-hero-bg);
   --color-hero-truck-bg: var(--color-hero-truck-bg);
   --color-why-bg: var(--color-why-bg);
@@ -459,6 +462,7 @@
 
   /* Text */
   --color-text: var(--color-text);
+  --color-text-menu-label: var(--color-text-menu-label);
   --color-text-emphasis: var(--color-text-emphasis);
   --color-text-secondary: var(--color-text-secondary);
   --color-text-tertiary: var(--color-text-tertiary);

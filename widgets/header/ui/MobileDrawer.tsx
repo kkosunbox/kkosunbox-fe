@@ -62,7 +62,7 @@ export function MobileDrawer({
 
       {/* 사이드바 드로워 */}
       <div
-        className={`fixed left-0 top-0 z-[60] flex h-full w-full max-w-[375px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
+        className={`fixed left-0 top-0 z-[60] flex h-full w-full max-w-[375px] flex-col overflow-y-auto bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
         role="dialog"
@@ -138,21 +138,21 @@ export function MobileDrawer({
               className="flex flex-col items-center gap-2"
             >
               <DrawerUserIcon />
-              <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">마이페이지</span>
+              <span className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-menu-label)]">마이페이지</span>
             </button>
             <button
               onClick={() => { onClose(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
               className="flex min-w-[56px] flex-col items-center gap-2"
             >
               <DrawerPinIcon />
-              <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">계정정보</span>
+              <span className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-menu-label)]">계정정보</span>
             </button>
             <button
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage/subscription" : "/login"); }}
               className="flex min-w-[56px] flex-col items-center gap-2"
             >
               <DrawerClipboardIcon />
-              <span className="text-body-14-sb tracking-[-0.02em] text-[var(--color-text)]">구독관리</span>
+              <span className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-menu-label)]">구독관리</span>
             </button>
           </div>
         </div>
@@ -160,54 +160,49 @@ export function MobileDrawer({
         {/* 구분선 */}
         <div className="shrink-0 border-t border-[var(--color-divider-neutral)]" />
 
-        {/* 스크롤 가능 영역 */}
-        <div className="flex flex-1 flex-col overflow-y-auto">
-          <nav className="pt-3">
-            {NAV_ITEMS.map((item) => {
-              const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onClose}
-                  className={[
-                    "mx-7 flex h-[58px] items-center gap-4 rounded-xl px-3",
-                    isActive ? "bg-[var(--color-surface-light)]" : "",
-                  ].join(" ")}
-                >
-                  <DrawerNavIcon type={item.icon} />
-                  <span className={isActive ? "text-body-14-b text-[var(--color-text)]" : "text-body-14-sb text-[var(--color-text)]"}>
-                    {item.label}
-                  </span>
-                </Link>
-              );
-            })}
-          </nav>
+        {/* 네비게이션 */}
+        <nav className="flex shrink-0 flex-col gap-1 pt-3">
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                aria-current={isActive ? "page" : undefined}
+                className={[
+                  "flex h-[58px] items-center gap-4 rounded-xl tracking-[-0.02em]",
+                  isActive ? "mx-3 bg-[var(--color-drawer-item-active)] px-7" : "mx-7 px-3",
+                ].join(" ")}
+              >
+                <DrawerNavIcon type={item.icon} active={isActive} />
+                <span className={isActive ? "text-body-14-b text-[var(--color-primary)]" : "text-body-14-m text-[var(--color-text)]"}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
 
-          <div className="flex-1" />
-
-          {/* 로그아웃 */}
+        {/* 로그아웃 + 하단 배너 — 함께 하단으로 밀되, 화면이 짧으면 드로워 전체가 스크롤된다 */}
+        <div className="mt-auto shrink-0">
           {isLoggedIn && (
-            <div className="mx-7 py-2">
+            <div className="mx-7 mt-2">
               <button
                 onClick={async () => { onClose(); await onLogout(); }}
-                className="flex h-[58px] w-full items-center gap-4 px-3"
+                className="flex h-[58px] w-full items-center gap-4 px-3 tracking-[-0.02em]"
               >
                 <DrawerLogoutIcon />
                 <span className="text-body-14-m text-[var(--color-text-secondary)]">로그아웃</span>
               </button>
             </div>
           )}
-        </div>
-
-        {/* 하단 배너 */}
-        <div className="shrink-0">
           <Image
             src="/images/sidebar-banner-001.webp"
             alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
             width={375}
             height={126}
-            className="w-full"
+            className="mt-2 w-full"
           />
         </div>
       </div>

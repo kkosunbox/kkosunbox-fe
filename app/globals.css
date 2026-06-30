@@ -47,7 +47,8 @@
 
 @font-face {
   font-family: "Griun PolFairness";
-  src: url("/fonts/Griun_PolFairness-Rg.ttf") format("truetype");
+  src: url("/fonts/Griun_PolFairness-Rg.woff2") format("woff2"),
+    url("/fonts/Griun_PolFairness-Rg.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -55,7 +56,8 @@
 /* Regular TTF 1종 — medium/semibold 요청도 동일 파일로 매칭 (미등록 시 Pretendard로 폴백됨) */
 @font-face {
   font-family: "Griun PolFairness";
-  src: url("/fonts/Griun_PolFairness-Rg.ttf") format("truetype");
+  src: url("/fonts/Griun_PolFairness-Rg.woff2") format("woff2"),
+    url("/fonts/Griun_PolFairness-Rg.ttf") format("truetype");
   font-style: normal;
   font-weight: 500 700;
   font-display: swap;

@@ -80,12 +80,39 @@ test.describe("로그인 플로우", () => {
     await expect(passwordInput).toHaveAttribute("type", "password");
   });
 
-  // ── 빈 필드 제출 ────────────────────────────────────────────────
+  // ── 클라이언트 검증 / 자격증명 오류 ──────────────────────────────
 
-  test("이메일/비밀번호 빈 채로 제출 → 에러 메시지 표시 (클라이언트 검증 없음)", async ({ page }) => {
+  test("이메일/비밀번호 미입력·불충분 → 로그인 버튼 비활성화 (클라이언트 검증)", async ({ page }) => {
     await page.goto("/login");
 
-    // 아무것도 입력하지 않고 제출 — required 속성 없어서 API까지 도달함
+    const submit = page.getByRole("button", { name: "로그인", exact: true });
+    const emailInput = page.getByPlaceholder("이메일을 입력하세요");
+    const passwordInput = page.getByPlaceholder("비밀번호를 입력하세요");
+
+    // 빈 폼 → 비활성화 (isFormValid: 이메일 형식 + 비밀번호 3자 이상)
+    await expect(submit).toBeDisabled();
+
+    // 이메일만 유효 입력(비밀번호 미입력) → 여전히 비활성화
+    await emailInput.fill(TEST_CREDENTIALS.email);
+    await expect(submit).toBeDisabled();
+
+    // 비밀번호 3자 미만 → 비활성화
+    await passwordInput.fill("12");
+    await expect(submit).toBeDisabled();
+
+    // 이메일 형식 + 비밀번호 3자 이상 → 활성화
+    await passwordInput.fill("123");
+    await expect(submit).toBeEnabled();
+
+    await expect(page).toHaveURL("/login");
+  });
+
+  test("유효 형식·틀린 자격증명 제출 → '아이디 또는 비밀번호가 올바르지 않습니다.'", async ({ page }) => {
+    await page.goto("/login");
+
+    // 형식은 유효하지만 등록되지 않은 자격증명 → 클라이언트 검증 통과 후 401
+    await page.getByPlaceholder("이메일을 입력하세요").fill("wrong@example.com");
+    await page.getByPlaceholder("비밀번호를 입력하세요").fill("wrongpass");
     await page.getByRole("button", { name: "로그인", exact: true }).click();
 
     await expect(

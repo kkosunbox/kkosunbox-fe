@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo, type ReactNode } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
 import { SupportHero } from "@/widgets/support/shared";

@@ -110,6 +110,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           {/* 프로필 이미지 */}
           <div className="h-[78px] w-[78px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
             {profileImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
               <img
                 src={profileImageUrl}
                 alt="프로필"
@@ -256,6 +257,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
         {/* 프로필 이미지 (배너 상단에 걸쳐있음) */}
         <div className="absolute left-1/2 -top-8 z-10 h-16 w-16 -translate-x-1/2 overflow-hidden rounded-full border border-[var(--color-text-muted)] bg-white">
           {profileImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
             <img
               src={profileImageUrl}
               alt="프로필"
@@ -348,6 +350,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       <section aria-label="탈퇴 페이지 안내">
         {/* 모바일 (<768px) */}
         <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
           <img
             src={withdrawHeroMobile.src}
             alt={HERO_ALT}
@@ -367,6 +370,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
         <div className="max-lg:hidden relative w-full h-[306px]">
           <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
           <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
             <img
               src={withdrawHeroDesktop.src}
               alt={HERO_ALT}

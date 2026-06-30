@@ -29,6 +29,7 @@ export default function WhyChooseSection() {
     >
       <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0 flex flex-col items-center text-center">
         <ScrollReveal variant="fade-up">
+          {/* eslint-disable-next-line @next/next/no-img-element -- 타이틀 이미지 원본 품질 유지 */}
           <img
             src={whyGalleryTitle.src}
             alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"

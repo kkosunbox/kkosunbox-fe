@@ -162,7 +162,6 @@ interface CardBodyProps {
   petName: string;
   avatarSrc: string | null;
   userId?: number | null;
-  effectiveRecommendedTier: RecommendedTier;
   tierColorVar: string;
   tierLabel: string;
   pkg: PackageData;
@@ -175,7 +174,6 @@ function CardBody({
   petName,
   avatarSrc,
   userId,
-  effectiveRecommendedTier,
   tierColorVar,
   tierLabel,
   pkg,
@@ -376,7 +374,6 @@ export default function ChecklistResult({
     petName,
     avatarSrc,
     userId,
-    effectiveRecommendedTier,
     tierColorVar,
     tierLabel,
     pkg: recommendedPkg,

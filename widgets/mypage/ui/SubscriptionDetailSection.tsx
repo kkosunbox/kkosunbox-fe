@@ -519,6 +519,7 @@ export default function SubscriptionDetailSection({ subscription, payments }: Pr
         {/* Plan summary card — 154px tall, no shadow (colored band provides contrast) */}
         <div className="flex overflow-hidden rounded-[20px] bg-white shadow-[0px_4px_12px_0px_#00000014] max-md:h-[150px] md:h-[154px] lg:h-[154px]">
           <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
+            {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
             <img
               src={TIER_BOX_IMAGES[theme.tier].src}
               alt={`${subscription.plan.name} 이미지`}

@@ -315,7 +315,9 @@
       "PowerShell(npx eslint widgets/header/ui/MobileDrawer.tsx widgets/header/ui/icons.tsx)",
       "PowerShell(npm run *)",
       "PowerShell(npm test *)",
-      "PowerShell(npx playwright test tests/e2e/error-boundaries.spec.ts:227 tests/e2e/error-boundaries.spec.ts:254 tests/e2e/login.spec.ts:85 2>&1 | Select-Object -Last 25)"
+      "PowerShell(npx playwright test tests/e2e/error-boundaries.spec.ts:227 tests/e2e/error-boundaries.spec.ts:254 tests/e2e/login.spec.ts:85 2>&1 | Select-Object -Last 25)",
+      "PowerShell(npx playwright test tests/e2e/error-boundaries.spec.ts:227 tests/e2e/error-boundaries.spec.ts:254 --update-snapshots 2>&1 | Select-Object -Last 20)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; if \\($?\\) { \"TSC-DONE\" }; Write-Output \"---LINT\\(support\\)---\"; npx eslint widgets/support/faq/ui/SupportSection.tsx 2>&1; if \\($?\\) { \"SUPPORT-LINT-CLEAN\" })"
     ]
   },
   "disabledMcpjsonServers": [

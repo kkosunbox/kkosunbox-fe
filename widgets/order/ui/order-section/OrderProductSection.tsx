@@ -30,6 +30,7 @@ export function OrderProductSection({
       <div>
         <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
           <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
+            {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
             <img
               src={TIER_BOX_IMAGES[orderPlanTheme.tier].src}
               alt={plan.name}

@@ -14,6 +14,7 @@ export function PackageSummaryThumbnail({
   className,
 }: PackageSummaryThumbnailProps) {
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- 요약 카드 썸네일 원본 PNG 품질 유지
     <img
       src={src.src}
       alt={alt}

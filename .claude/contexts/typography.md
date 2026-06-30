@@ -23,9 +23,6 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 | `Griun PolFairness` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
 | `Griun Fromsol` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
 | `Griun Yuri Daggu` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
-| `GangwonEduAll Light` | 400 only | 금지 | 폰트명은 Light/Bold라도 CSS weight는 400 |
-| `GangwonEduAll Bold` | 400 only | 금지 | 폰트명은 Light/Bold라도 CSS weight는 400 |
-| `GangwonEduPower` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
 | `Ms Madi` | 400 only | 금지 | `next/font/google` weight 400 |
 | `Give You Glory` | 400 only | 금지 | `next/font/google` weight 400 |
 

@@ -74,4 +74,3 @@ widgets/header/
 
 | 컴포넌트 | 설명 |
 |---|---|
-| `UnderConstruction` | 개발 중 페이지 공용 컴포넌트 |

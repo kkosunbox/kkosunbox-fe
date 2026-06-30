@@ -13,29 +13,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "GangwonEduAll Light";
-  src: url("/fonts/GangwonEduAll-Light.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "GangwonEduAll Bold";
-  src: url("/fonts/GangwonEduAll-Bold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "GangwonEduPower";
-  src: url("/fonts/GangwonEduPower.woff") format("woff");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
 
 @font-face {
   font-family: "Griun Fromsol";

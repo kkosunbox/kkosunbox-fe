@@ -32,6 +32,7 @@
 2. **`ChecklistSection.tsx`** (690줄 / state 13 / effect 10) — 위와 쌍둥이 구조. 체크리스트 도메인 전반이 비대.
 3. **`RegisterSection.tsx`** (useState 16개) — 필드별 state 난립. `useReducer`/폼 통합 여지.
 4. **`ProfileManagementSection` / `PointHistorySection`** — 상태 12~13개. fetch/표시/편집 혼재.
+   - 계획: `profile-management-refactor-plan.md`, `point-history-refactor-plan.md`, 통합 TODO `mypage-sections-refactor-todos.md` (2026-06-29 Phase 0)
 
 ### 오해 주의 (리팩토링 우선순위 낮음)
 

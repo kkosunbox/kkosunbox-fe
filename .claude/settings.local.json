@@ -308,7 +308,17 @@
       "WebFetch(domain:docs.tosspayments.com)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT---\"; npx eslint features/billing/lib/requestTossBillingAuth.ts widgets/order/ui/order-section/useOrderSectionState.ts app/payment/billing/success/page.tsx app/payment/billing/fail/page.tsx 2>&1 | Select-Object -First 30)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Output \"---LINT---\"; npx eslint widgets/order/ui/order-section/useOrderSectionState.ts 2>&1 | Select-Object -First 30)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Output \"---LINT---\"; npx eslint widgets/order/ui/order-section/useOrderSectionState.ts 2>&1 | Select-Object -First 20)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Output \"---LINT---\"; npx eslint widgets/order/ui/order-section/useOrderSectionState.ts 2>&1 | Select-Object -First 20)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; if \\($?\\) { \"TSC-DONE\" })",
+      "PowerShell(npx eslint widgets/support/faq/ui/SupportSection.tsx 2>&1 | Select-Object -First 30; if \\($?\\) { \"LINT-DONE\" })",
+      "PowerShell(npx eslint widgets/header/ui/icons.tsx widgets/header/ui/MobileDrawer.tsx)",
+      "PowerShell(npx eslint widgets/header/ui/MobileDrawer.tsx widgets/header/ui/icons.tsx)",
+      "PowerShell(npm run *)",
+      "PowerShell(npm test *)",
+      "PowerShell(npx playwright test tests/e2e/error-boundaries.spec.ts:227 tests/e2e/error-boundaries.spec.ts:254 tests/e2e/login.spec.ts:85 2>&1 | Select-Object -Last 25)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "tosspayments-integration-guide"
+  ]
 }

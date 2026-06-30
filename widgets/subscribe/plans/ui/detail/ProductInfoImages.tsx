@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import type { PackageTier } from "@/entities/package";
 
 interface ProductInfoImagesProps {
@@ -28,8 +29,8 @@ export default function ProductInfoImages({ variant, images, planName, tier }: P
                 src={imageSrc}
                 alt={`${planName} 구독정보 상세 이미지 ${index + 1}`}
                 quality={HIGH_IMAGE_QUALITY}
+                sizes="100vw"
                 className="h-auto w-full"
-                priority={index === 0}
               />
             ))}
           </div>
@@ -48,8 +49,8 @@ export default function ProductInfoImages({ variant, images, planName, tier }: P
             src={imageSrc}
             alt={`${planName} 구독정보 상세 이미지 ${index + 1}`}
             quality={HIGH_IMAGE_QUALITY}
+            sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 800px`}
             className="h-auto w-full"
-            priority={index === 0}
           />
         ))}
       </div>

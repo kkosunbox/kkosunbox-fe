@@ -50,6 +50,16 @@ export function MobileDrawer({
   const router = useRouter();
   const pathname = usePathname();
 
+  // 단축 아이콘 active 경로 (계정정보는 모달이라 경로 active가 없음)
+  const isMyPageActive = pathname === "/mypage";
+  const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
+  const shortcutLabelClass = (active: boolean) =>
+    `tracking-[-0.02em] ${
+      active
+        ? "text-body-14-b text-[var(--color-primary)]"
+        : "text-body-14-m text-[var(--color-text-menu-label)]"
+    }`;
+
   return (
     <>
       {/* 딤 오버레이 */}
@@ -137,22 +147,22 @@ export function MobileDrawer({
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage" : "/login"); }}
               className="flex flex-col items-center gap-2"
             >
-              <DrawerUserIcon />
-              <span className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-menu-label)]">마이페이지</span>
+              <DrawerUserIcon active={isMyPageActive} />
+              <span className={shortcutLabelClass(isMyPageActive)}>마이페이지</span>
             </button>
             <button
               onClick={() => { onClose(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
               className="flex min-w-[56px] flex-col items-center gap-2"
             >
               <DrawerPinIcon />
-              <span className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-menu-label)]">계정정보</span>
+              <span className={shortcutLabelClass(false)}>계정정보</span>
             </button>
             <button
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage/subscription" : "/login"); }}
               className="flex min-w-[56px] flex-col items-center gap-2"
             >
-              <DrawerClipboardIcon />
-              <span className="text-body-14-m tracking-[-0.02em] text-[var(--color-text-menu-label)]">구독관리</span>
+              <DrawerClipboardIcon active={isSubscriptionActive} />
+              <span className={shortcutLabelClass(isSubscriptionActive)}>구독관리</span>
             </button>
           </div>
         </div>

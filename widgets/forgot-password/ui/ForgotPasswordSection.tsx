@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import registerPaw from "@/widgets/register/assets/register-pow.webp";
 import { FieldRow } from "@/widgets/register/ui/register-section/components/FieldRow";
 import { RegisterPasswordToggleIcon } from "@/widgets/register/ui/register-section/components/RegisterPasswordToggleIcon";
@@ -24,6 +25,7 @@ export default function ForgotPasswordSection() {
             <Image
               src={forgotPasswordTitle}
               alt="비밀번호 변경하기"
+              quality={HIGH_IMAGE_QUALITY}
               className="mx-auto w-auto max-w-[194px] md:max-w-[222px] lg:max-w-[222px]"
               priority
             />

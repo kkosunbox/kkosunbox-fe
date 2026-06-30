@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
@@ -156,6 +157,7 @@ function ReviewCard({ review }: { review: DisplayReview }) {
           alt={`${review.name} 프로필`}
           width={120}
           height={120}
+          quality={HIGH_IMAGE_QUALITY}
           className="h-full w-full object-cover"
           style={
             review.profileObjectPosition
@@ -296,6 +298,7 @@ export default function ReviewsSection() {
         src={reviewsBg}
         alt=""
         fill
+        quality={HIGH_IMAGE_QUALITY}
         className="object-cover"
         sizes="100vw"
         priority

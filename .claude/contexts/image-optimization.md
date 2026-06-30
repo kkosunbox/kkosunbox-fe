@@ -24,7 +24,7 @@
 Next.js 16 기준 두 가지가 겹친다.
 
 1. **`images.qualities` allowlist가 Next 16부터 필수.** 미설정 시 기본값은 `[75]` 하나뿐이다.
-   `<Image quality={90}>`을 줘도 허용 목록에 없으면 **가장 가까운 허용값(75)으로 강제 다운**된다.
+   `<Image quality={90}>`을 줘도 허용 목록에 없으면 **가장 가까운 허용값(75)으로 강제 다운됨**.
    → 화질을 올릴 방법이 막혀 있었음.
 2. **이미 최적화한 webp를 Next가 q75로 재인코딩** → 이중 압축. (`formats` 기본값은 `['image/webp']`라
    AVIF는 원인 아님.)
@@ -44,8 +44,10 @@ Next.js 16 기준 두 가지가 겹친다.
      },
    };
    ```
-2. 해당 이미지를 `next/Image`로 바꾸고 `quality={90}` 이상 지정.
+2. 해당 이미지를 `next/Image`로 바꾸고 `quality={HIGH_IMAGE_QUALITY}` 지정 (`shared/config/imageQuality.ts`, 값 90).
 3. `fill` 사용 시 `sizes`를 실제 렌더 크기에 맞게 정확히 지정 (저해상 srcset 선택 방지).
+
+**품질 prop 규칙:** 렌더/명시 크기가 100×100 이상인 `next/Image`에만 `quality={HIGH_IMAGE_QUALITY}`를 붙인다. 그보다 작은 아이콘·장식은 prop을 생략해 Next 기본값(75)을 쓴다.
 
 ### 참고: 최적화 자체를 끄고 원본 그대로 서빙 (옵션 B)
 - 이미지별: `<Image ... unoptimized />`

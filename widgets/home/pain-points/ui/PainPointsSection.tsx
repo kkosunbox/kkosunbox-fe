@@ -2,6 +2,7 @@
 
 import { ScrollReveal } from "@/shared/ui";
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import painPointDogs from "../assets/pain-point-dogs.webp";
 import painPointQuestion from "../assets/pain-point-question.webp";
 
@@ -30,6 +31,7 @@ export default function PainPointsSection() {
             <Image
               src={painPointQuestion}
               alt="이런 고민 있으신가요?"
+              quality={HIGH_IMAGE_QUALITY}
               className="mb-6 h-auto w-full max-w-[258px] md:mb-8 lg:mb-8 md:max-w-[258px] lg:max-w-[387px]"
             />
           </ScrollReveal>
@@ -71,6 +73,7 @@ export default function PainPointsSection() {
           <Image
             src={painPointDogs}
             alt="귀여운 강아지들"
+            quality={HIGH_IMAGE_QUALITY}
             className="object-contain w-full max-w-[320px] md:max-w-[419px] lg:max-w-[495px] h-auto"
           />
         </ScrollReveal>

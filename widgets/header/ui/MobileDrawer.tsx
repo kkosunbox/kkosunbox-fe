@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useRouter, usePathname } from "next/navigation";
 import { useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
@@ -212,6 +213,7 @@ export function MobileDrawer({
             alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
             width={375}
             height={126}
+            quality={HIGH_IMAGE_QUALITY}
             className="mt-2 w-full"
           />
         </div>

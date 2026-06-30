@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Script from "next/script";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { trackBeginCheckout } from "@/shared/lib/analytics";
 import {
   useOrderSectionState,
@@ -166,6 +167,7 @@ export default function OrderSection(props: OrderSectionProps) {
           alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
           width={375}
           height={126}
+          quality={HIGH_IMAGE_QUALITY}
           className="h-auto w-full"
         />
       </div>

@@ -10,6 +10,7 @@ import {
   MEDIA_MAX_LG_SIZES,
   MEDIA_MAX_MD_SIZES,
 } from "@/shared/config/breakpoints";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 
 import introduceHeroRenewalMobileTablet from "../assets/introduce-hero-renewal-mobile-tablet.webp";
 import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.webp";
@@ -22,9 +23,6 @@ import introduceSection403 from "../assets/introduce-section-4-03.webp";
 import aboutCtaBg from "../assets/introduce-cta-bg.webp";
 import aboutCtaProduct from "../assets/about-cta-product-2xl.webp";
 import aboutCtaMobileTabletBg from "../assets/about-cta-mobile-tablet-bg-wide.png";
-
-/** About next/Image 품질 — Next 기본 75 대신 90 (next.config `images.qualities` 등록 필요) */
-const ABOUT_IMAGE_QUALITY = 90;
 
 type FeatureCardProps = {
   image: typeof introduceSection401;
@@ -46,7 +44,7 @@ function FeatureCard({ image, title, description, bgColorVar }: FeatureCardProps
           alt=""
           width={120}
           height={120}
-          quality={ABOUT_IMAGE_QUALITY}
+          quality={HIGH_IMAGE_QUALITY}
           aria-hidden
           className="h-[120px] w-[120px] object-contain"
         />
@@ -246,7 +244,7 @@ export default function AboutSection() {
                   alt="달리는 강아지"
                   width={590}
                   height={590}
-                  quality={ABOUT_IMAGE_QUALITY}
+                  quality={HIGH_IMAGE_QUALITY}
                   className="h-auto w-full max-w-[320px] rounded-[30px] lg:max-w-[360px]"
                   sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), ${MEDIA_MAX_LG_SIZES} 320px, 360px`}
                 />
@@ -255,7 +253,6 @@ export default function AboutSection() {
                   alt=""
                   width={79}
                   height={66}
-                  quality={ABOUT_IMAGE_QUALITY}
                   aria-hidden
                   className="absolute -right-8 top-4"
                   style={{ transform: "rotate(19.28deg)" }}
@@ -318,7 +315,7 @@ export default function AboutSection() {
                     alt="달리는 강아지"
                     width={590}
                     height={590}
-                    quality={ABOUT_IMAGE_QUALITY}
+                    quality={HIGH_IMAGE_QUALITY}
                     className="h-auto w-full max-w-[320px] rounded-[30px]"
                     sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
                   />
@@ -327,7 +324,6 @@ export default function AboutSection() {
                     alt=""
                     width={79}
                     height={66}
-                    quality={ABOUT_IMAGE_QUALITY}
                     aria-hidden
                     className="absolute -right-8 top-4"
                     style={{ transform: "rotate(19.28deg)" }}
@@ -405,7 +401,7 @@ export default function AboutSection() {
                     alt="꼬순박스 제작 과정"
                     width={375}
                     height={330}
-                    quality={ABOUT_IMAGE_QUALITY}
+                    quality={HIGH_IMAGE_QUALITY}
                     className="h-auto w-full max-w-[320px] rounded-[30px]"
                     sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
                   />
@@ -414,7 +410,6 @@ export default function AboutSection() {
                     alt=""
                     width={79}
                     height={66}
-                    quality={ABOUT_IMAGE_QUALITY}
                     aria-hidden
                     className="absolute -right-6 -bottom-4"
                     style={{ transform: "rotate(19.28deg)" }}
@@ -438,7 +433,7 @@ export default function AboutSection() {
                   alt="꼬순박스 제작 과정"
                   width={375}
                   height={330}
-                  quality={ABOUT_IMAGE_QUALITY}
+                  quality={HIGH_IMAGE_QUALITY}
                   className="h-auto w-full max-w-[320px] rounded-[30px] lg:max-w-[375px]"
                   sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), ${MEDIA_MAX_LG_SIZES} 320px, 375px`}
                 />
@@ -447,7 +442,6 @@ export default function AboutSection() {
                   alt=""
                   width={79}
                   height={66}
-                  quality={ABOUT_IMAGE_QUALITY}
                   aria-hidden
                   className="absolute -right-6 -bottom-4"
                   style={{ transform: "rotate(19.28deg)" }}
@@ -539,7 +533,7 @@ export default function AboutSection() {
             src={aboutCtaBg}
             alt=""
             fill
-            quality={ABOUT_IMAGE_QUALITY}
+            quality={HIGH_IMAGE_QUALITY}
             className="object-cover opacity-50 blur-sm"
             style={{ objectPosition: "center 82%" }}
             sizes="100vw"

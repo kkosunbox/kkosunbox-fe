@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import type { PackageTier } from "@/entities/package";
 
 interface ProductInfoImagesProps {
@@ -26,6 +27,7 @@ export default function ProductInfoImages({ variant, images, planName, tier }: P
                 key={`${tier}-${index}`}
                 src={imageSrc}
                 alt={`${planName} 구독정보 상세 이미지 ${index + 1}`}
+                quality={HIGH_IMAGE_QUALITY}
                 className="h-auto w-full"
                 priority={index === 0}
               />
@@ -45,6 +47,7 @@ export default function ProductInfoImages({ variant, images, planName, tier }: P
             key={`${tier}-${index}`}
             src={imageSrc}
             alt={`${planName} 구독정보 상세 이미지 ${index + 1}`}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto w-full"
             priority={index === 0}
           />

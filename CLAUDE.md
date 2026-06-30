@@ -50,9 +50,9 @@ shared/
 
 ### Fonts
 
-- `Pretendard` — `@fontsource/pretendard` (npm), `app/layout.tsx`에서 import
+- `Pretendard` — 셀프호스팅 dynamic-subset (woff2 92분할 `public/fonts/pretendard/`, pretendard@1.3.9), `app/pretendard-subset.css`의 `@font-face` unicode-range 지연로딩 (`app/layout.tsx`에서 import)
 - `Ms Madi`, `Give You Glory` — `next/font/google`, CSS 변수 `--font-ms-madi` / `--font-give-you-glory`
-- 5개 한국어 TTF — `public/fonts/`, `app/globals.css`에 `@font-face` 선언
+- Griun 3종 (`Fromsol`·`YuriDaggu`·`PolFairness`) — `public/fonts/`, `app/globals.css`에 `@font-face` 선언 (`PolFairness`는 woff2 우선 + ttf 폴백)
 
 ### Styling
 

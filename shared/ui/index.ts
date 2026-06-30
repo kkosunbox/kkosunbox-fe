@@ -28,7 +28,6 @@ export {
   PROFILE_PET_DATE_TRIGGER_CLASS,
   PROFILE_PET_WIDGET_CARD,
   PROFILE_PET_WIDGET_HEADER,
-  PROFILE_PET_MODAL_TITLE,
   PROFILE_PET_MODAL_SUBTITLE,
 } from "./profilePetFormStyles";
 export { default as DefaultPetIcon } from "./DefaultPetIcon";

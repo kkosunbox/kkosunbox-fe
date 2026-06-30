@@ -2,16 +2,8 @@
 
 /* Tailwind 클래스 파서가 text-* 유틸을 잘못 분리하는 문제 방지 */
 @source inline("text-title-24-sb-lh42");
-@source inline("text-profile-modal-title");
 @source inline("text-profile-modal-subtitle");
 
-@font-face {
-  font-family: "Pretendard";
-  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
 
 
 @font-face {
@@ -758,34 +750,7 @@ button:disabled {
 @utility text-emoji-40 { font-size: 40px; line-height: 1; }
 @utility text-emoji-44 { font-size: 44px; line-height: 1; }
 
-/* Brand display (GangwonEduPower — size/line-height only, family set via style prop) */
-@utility text-brand-display-14 { font-size: 14px; line-height: 14px; }
-@utility text-brand-display-24 { font-size: 24px; line-height: 25px; }
-
-/* About Introduce — GangwonEduPower 섹션 헤딩 */
-@utility text-introduce-heading {
-  font-family: "GangwonEduPower", "Pretendard", "Apple SD Gothic Neo", sans-serif;
-  font-size: 42px;
-  line-height: 58px;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-}
-@utility text-introduce-heading-sm {
-  font-family: "GangwonEduPower", "Pretendard", "Apple SD Gothic Neo", sans-serif;
-  font-size: 24px;
-  line-height: 130%;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-}
-
-/* 프로필 작성 모달 헤더 (Figma Group 1000005494) */
-@utility text-profile-modal-title {
-  font-family: "GangwonEduPower", "Pretendard", "Apple SD Gothic Neo", sans-serif;
-  font-size: 18px;
-  line-height: 19px;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-}
+/* 프로필 작성 모달 서브헤더 */
 @utility text-profile-modal-subtitle {
   font-family: "Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif;
   font-size: 12px;

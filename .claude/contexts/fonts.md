@@ -4,7 +4,7 @@
 
 | Font Name | CSS Font Family | Tailwind 클래스 | CSS 변수 | Source | 사용 가능 굵기 |
 |---|---|---|---|---|---|
-| Pretendard | `Pretendard` | `font-sans` | `--font-sans` | npm `@fontsource/pretendard` | 100–900 (variable) |
+| Pretendard | `Pretendard` | `font-sans` | `--font-sans` | 셀프호스팅 dynamic-subset `public/fonts/pretendard/` + `app/pretendard-subset.css` (pretendard@1.3.9) | 45–920 (variable) |
 | Griun Fromsol | `Griun Fromsol` | — | — | `public/fonts/Griun_Fromsol-Rg.ttf` | 400 |
 | Griun PolFairness | `Griun PolFairness` | — | — | `public/fonts/Griun_PolFairness-Rg.ttf` | 400 |
 | Griun Yuri Daggu | `Griun Yuri Daggu` | — | — | `public/fonts/Griun_YuriDaggu-Rg.ttf` | 400 |

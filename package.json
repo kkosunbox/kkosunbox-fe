@@ -19,7 +19,6 @@
     "depcruise:report": "depcruise app widgets features entities shared --config .dependency-cruiser.cjs --output-type err-html -f scripts/reports/depcruise.html"
   },
   "dependencies": {
-    "@fontsource/pretendard": "^5.2.5",
     "@tosspayments/payment-widget-sdk": "^0.12.1",
     "@tosspayments/tosspayments-sdk": "^2.7.1",
     "canvas-confetti": "^1.9.4",
@@ -39,6 +38,7 @@
     "dependency-cruiser": "^16.10.4",
     "eslint": "^9",
     "eslint-config-next": "16.1.7",
+    "pretendard": "^1.3.9",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.8"

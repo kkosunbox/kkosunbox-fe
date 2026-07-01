@@ -324,7 +324,19 @@
       "PowerShell(python \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\cada3bf6-8574-48d2-b18c-8c5e8c7b3ce5\\\\scratchpad\\\\convert_griun.py\")",
       "Bash(git status *)",
       "PowerShell(python \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\cada3bf6-8574-48d2-b18c-8c5e8c7b3ce5\\\\scratchpad\\\\gen_pretendard_subset.py\")",
-      "PowerShell(pnpm *)"
+      "PowerShell(pnpm *)",
+      "Bash(npx lighthouse *)",
+      "Bash(echo \"exit:$?\")",
+      "PowerShell(npx playwright test 2>&1 | Select-Object -Last 60)",
+      "PowerShell(npx playwright test \"tests/e2e/checklist.spec.ts:61\" \"tests/e2e/login.spec.ts:174\" \"tests/e2e/login.spec.ts:217\" 2>&1 | Select-Object -Last 80)",
+      "PowerShell(npx playwright test \"tests/e2e/error-boundaries.spec.ts:197\" \"tests/e2e/referral.spec.ts:41\" 2>&1 | Select-Object -Last 80)",
+      "PowerShell(npx playwright test \"tests/e2e/checklist.spec.ts:78\" 2>&1 | Select-Object -Last 40)",
+      "PowerShell(npx playwright test \"tests/e2e/checklist.spec.ts:61\" \"tests/e2e/checklist.spec.ts:78\" 2>&1 | Select-Object -Last 30)",
+      "PowerShell(npx playwright test \"tests/e2e/checklist.spec.ts:61\" \"tests/e2e/checklist.spec.ts:69\" 2>&1 | Select-Object -Last 15)",
+      "PowerShell(npx playwright test 2>&1 | Select-Object -Last 50)",
+      "Bash(ls public/images/sidebar-banner-001.webp)",
+      "PowerShell($pids = \\(netstat -ano | Select-String \":3000\\\\s\" | ForEach-Object { \\($_ -split \"\\\\s+\"\\)[-1] } | Sort-Object -Unique\\); if \\($pids\\) { $pids | ForEach-Object { Write-Host \"Killing PID $_\"; taskkill /PID $_ /F 2>&1 } } else { Write-Host \"No process on port 3000\" })",
+      "Skill(claude-api)"
     ]
   },
   "disabledMcpjsonServers": [

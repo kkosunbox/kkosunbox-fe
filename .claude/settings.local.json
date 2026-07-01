@@ -347,7 +347,18 @@
       "Bash(wmic process *)",
       "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
       "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/checklist-result/lighthouse-07-01-after.report.json\")",
-      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/order/lighthouse-07-01-after.report.json\")"
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/order/lighthouse-07-01-after.report.json\")",
+      "Bash(echo \"login pid $!\")",
+      "Bash(grep -q \"LOGIN_OK\\\\|LOGIN_FAILED\" \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\e8c169d0-1ff5-4c50-bf14-45b6192e0b20\\\\scratchpad\\\\login_perf008.log\")",
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/_diag\")",
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/_diag2\")",
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/_diag3\")",
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/_diag4\")",
+      "Bash(xargs -I{} ls -la {})",
+      "Bash(sort -k5 -rn)",
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/lighthouse-07-01-after.report.json\")",
+      "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/_control\")",
+      "Bash(echo \"exit: $?\")"
     ]
   },
   "disabledMcpjsonServers": [

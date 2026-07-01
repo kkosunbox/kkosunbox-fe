@@ -1,6 +1,5 @@
 ﻿import type { Metadata } from "next";
 import { getServerToken } from "@/features/auth/lib/session";
-import { fetchProfile } from "@/features/profile/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { JsonLd } from "@/shared/ui";
@@ -35,15 +34,12 @@ export const metadata: Metadata = {
 
 export default async function SubscribePage() {
   const token = await getServerToken();
-  const [profile, plans] = await Promise.all([
-    fetchProfile(token),
-    fetchSubscriptionPlans(token),
-  ]);
+  const plans = await fetchSubscriptionPlans(token);
 
   return (
     <>
       <JsonLd data={breadcrumbJsonLd} />
-      <SubscribePlansSection plans={plans} initialProfile={profile} />
+      <SubscribePlansSection plans={plans} />
     </>
   );
 }

@@ -55,9 +55,9 @@
 | | - [x] 상품 이미지 `next/image` sizes·priority → 이미 완비(LCP 이미지) |
 | | - [x] 초기 로드 모달 → `profileKnown` 가드로 flash 방지 (commit `571d4ba`) |
 | | - [x] **LCP element render delay 1,330ms** → PlanPicker `ScrollReveal` 제거 (commit `bcf7a11`, PERF-013) |
-| | - [ ] after 재측정 (dev Lighthouse) → LCP < 2.5s 달성 여부 확인 |
-| **검증** | LCP < 2.5s, document latency 감소 |
-| **진행 상황** | fetchProfile 제거 + ScrollReveal 제거로 핵심 2개 레버 완료. after 측정 필요. |
+| | - [x] after 재측정 → **Perf 92, LCP 1.80s, TBT 34ms, TTFB 131ms** (2026-07-01) |
+| **검증** | ✅ LCP 1.80s (목표 < 2.5s 달성), document latency 510→131ms |
+| **결과** | ✅ **완료**(2026-07-01). Perf 65→92(+27), LCP 4.7→1.80s(−2.9s), TBT 240→34ms. 세 작업 누적: PERF-012 + PERF-002(fetchProfile제거) + PERF-013(ScrollReveal제거). |
 
 ---
 

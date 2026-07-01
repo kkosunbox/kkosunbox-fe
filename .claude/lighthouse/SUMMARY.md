@@ -574,7 +574,7 @@
 |--------|--------|-------|--------|-------|------|
 | main | 2026-06-30 | — | — | — | baseline |
 | about | 2026-06-30 | — | — | — | baseline |
-| subscribe | 2026-06-30 | 측정 필요 | +13 이후 추가작업 | 3.4s→? | PERF-002: fetchProfile제거+PERF-013: ScrollReveal제거 (재측정 필요) |
+| subscribe | 2026-06-30 | 2026-07-01 | **+27** (65→**92**) | **−2.9s** (4.7→**1.80s** ✅) | ✅ PERF-012+PERF-002+PERF-013 (TBT 240→34ms, TTFB 510→131ms) |
 | checklist-result | 2026-06-30 | — | — | — | baseline |
 | inquiry | 2026-06-30 | — | — | — | baseline |
 | mypage | 2026-06-30 | — | — | — | baseline |

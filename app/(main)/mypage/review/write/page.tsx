@@ -1,4 +1,8 @@
-import { ReviewWriteSection } from "@/widgets/mypage";
+import dynamic from "next/dynamic";
+
+const ReviewWriteSection = dynamic(
+  () => import("@/widgets/mypage/ui/ReviewWriteSection"),
+);
 
 export const metadata = { title: "리뷰쓰기 | 꼬순박스" };
 

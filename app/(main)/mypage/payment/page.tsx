@@ -1,7 +1,11 @@
+import dynamic from "next/dynamic";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchActiveSubscription, fetchPaymentHistory } from "@/features/subscription/api/queries";
-import { PaymentManagementSection } from "@/widgets/mypage";
+
+const PaymentManagementSection = dynamic(
+  () => import("@/widgets/mypage/ui/PaymentManagementSection"),
+);
 
 export const metadata = { title: "결제관리 | 꼬순박스" };
 

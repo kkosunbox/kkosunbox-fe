@@ -1,4 +1,8 @@
-import { PasswordManagementSection } from "@/widgets/mypage";
+import dynamic from "next/dynamic";
+
+const PasswordManagementSection = dynamic(
+  () => import("@/widgets/mypage/ui/PasswordManagementSection"),
+);
 
 export const metadata = { title: "비밀번호 변경 | 꼬순박스" };
 

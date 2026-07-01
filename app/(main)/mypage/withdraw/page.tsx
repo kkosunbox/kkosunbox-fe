@@ -1,6 +1,10 @@
+import dynamic from "next/dynamic";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProfile } from "@/features/profile/api/queries";
-import { WithdrawConfirmSection } from "@/widgets/mypage";
+
+const WithdrawConfirmSection = dynamic(
+  () => import("@/widgets/mypage/ui/WithdrawConfirmSection"),
+);
 
 export const metadata = { title: "회원 탈퇴 | 꼬순박스" };
 

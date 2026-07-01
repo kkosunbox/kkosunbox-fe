@@ -275,6 +275,7 @@ function MyPointButton() {
   return (
     <Link
       href="/mypage/point"
+      prefetch={false}
       className="inline-flex h-6 shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-cta-button)] px-2 text-body-13-m text-white transition-opacity hover:opacity-80"
     >
       MY 포인트

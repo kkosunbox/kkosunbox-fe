@@ -1,6 +1,10 @@
+import dynamic from "next/dynamic";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchSubscriptions, fetchSubscriptionPlans } from "@/features/subscription/api/queries";
-import { SubscriptionChangePlansSection } from "@/widgets/mypage";
+
+const SubscriptionChangePlansSection = dynamic(
+  () => import("@/widgets/mypage/ui/SubscriptionChangePlansSection"),
+);
 
 export const metadata = { title: "구독 변경 | 꼬순박스" };
 

@@ -6,7 +6,7 @@
 
 ---
 
-## 이번 스프린트 추천 (Top 9)
+## 이번 스프린트 추천 (Top 10)
 
 | # | 작업 | 페이지 | 예상 효과 | 상태 |
 |---|------|--------|-----------|------|
@@ -14,11 +14,12 @@
 | 2 | subscribe document request latency (TTFB·RSC·API waterfall) | subscribe | ~510ms | todo |
 | 3 | subscribe-detail 상품 이미지 delivery (**1,370 KiB**) | subscribe-detail | 사이트 최대, LCP 3.2s | todo |
 | 4 | order LCP(3.8s) + 폼 A11y + 이미지 125 KiB | order | A11y 85, BP 54, 결제 퍼널 | done |
-| 5 | mypage document request latency + unused JS (526 KiB) | mypage | ~630ms, TBT 220ms | done |
+| 5 | mypage unused JS (526 KiB, dev 아티팩트로 판명) | mypage | dynamic import 적용, prod 실측 정상 확인 | done (PERF-008) |
 | 6 | checklist-result LCP 이미지 + CLS (layout shift culprits) | checklist-result | LCP 4.7s, CLS 0.023 | done |
-| 7 | main 히어로·LCP 이미지 delivery 최적화 | main | ~905 KiB | done |
-| 8 | Header/Footer·무거운 위젯 dynamic import (공통 JS) | 전체 | unused JS ~410–526 KiB | todo |
+| 7 | main 히어로·LCP 이미지 delivery 최적화 | main | ~905 KiB | done (점수 판정 보류 — prod 재측정 필요) |
+| 8 | Header/Footer·무거운 위젯 dynamic import (공통 JS) | 전체 | unused JS ~410–526 KiB | todo (⚠️ 착수 전 prod 대조 필수 — PERF-003 참고) |
 | 9 | subscribe 초기 모달 + subscribe-detail ARIA | subscribe, subscribe-detail | LCP·A11y | todo |
+| 10 | mypage document latency + API waterfall | mypage | ~630ms(dev, 재검증 필요) | todo (PERF-014) |
 
 ---
 
@@ -167,23 +168,38 @@
 
 ---
 
-### PERF-008 · mypage document latency + unused JS
+### PERF-008 · mypage unused JS (dynamic import)
 
 | | |
 |--|--|
 | **페이지** | mypage (`/mypage`) |
-| **원인** | Document request latency **630ms** (10페이지 최대); unused JS **526 KiB** (최대); main-thread work 2.1s |
-| **증상** | Perf 75, TBT 220ms, LCP 2.8s |
+| **원인** | unused JS **526 KiB**(dev 측정) — mypage 서브라우트 9개 섹션이 하나의 공유 청크에 포함 |
+| **증상** | Perf 75(dev), TBT 220ms(dev) |
 | **수정 가능** | ✅ |
 | **액션** | |
 | | - [x] unused JS 526 KiB 원인 특정 → `widgets_ebca89f4._.js` 청크에 mypage 서브라우트 9개 섹션(Payment/Password/Profile/ReviewWrite/SubscriptionChange/SubscriptionDetail/SubscriptionManagement/Withdraw/PointHistory Section) 전부 포함 확인 |
 | | - [x] 8개 서브라우트 정적 import → `next/dynamic()` 전환 |
 | | - [x] 대시보드 카드 서브라우트 `<Link>` 4곳 `prefetch={false}` 추가 (SubscriptionCard 3 + ProfileSection 1) |
 | | - [x] **프로덕션 빌드로 원인 검증** — 수정 전/후 코드 각각 prod 빌드 대조: 둘 다 unused JS 28~46 KiB, Perf 97~100로 **거의 동일**. dev 526 KiB는 Turbopack dev 청크 특성(라우트 무관 공유 청크)이 원인, 실제 prod 이슈 아니었음 |
-| | - [ ] HTML document 지연 630ms — 별도 미검증(이번 라운드에서 다루지 않음, 필요 시 후속) |
-| | - [ ] API 호출 순서·병렬화·캐시 — 별도 미검증 |
 | **검증** | `result/mypage/lighthouse-07-01-after.*` — prod 빌드, unused JS 46 KiB |
-| **결과** | ✅ **완료 + 원인 정정**(2026-07-01). dynamic import·prefetch 차단 코드는 정석 패턴이라 유지하지만, 원래 진단(526 KiB unused JS)은 dev-only 아티팩트였음이 실측으로 확인됨. Perf 75(dev)→97(prod), LCP 2.8s→1.3s, TBT 220ms→0ms. Document latency·API waterfall은 이번 라운드 범위 밖 — 필요 시 별도 착수. |
+| **결과** | ✅ **완료 + 원인 정정**(2026-07-01). dynamic import·prefetch 차단 코드는 정석 패턴이라 유지하지만, 원래 진단(526 KiB unused JS)은 dev-only 아티팩트였음이 실측으로 확인됨. Perf 75(dev)→97(prod), LCP 2.8s→1.3s, TBT 220ms→0ms. Document latency·API waterfall은 범위 밖 — **PERF-014로 분리**. |
+
+---
+
+### PERF-014 · mypage document latency + API waterfall
+
+| | |
+|--|--|
+| **페이지** | mypage (`/mypage`) |
+| **원인** | Document request latency **630ms**(dev 측정, 10페이지 중 최대); main-thread work 2.1s; API 호출 순서·병렬화 미검토 |
+| **증상** | PERF-008에서 분리된 미완료 항목 — LCP 관련 unused JS는 해결됐으나 서버 응답 지연 자체는 미조사 |
+| **수정 가능** | ✅ (단, ⚠️ 아래 참고 — dev 수치 그대로 신뢰 금지) |
+| **액션** | |
+| | - [ ] **prod 빌드로 document latency 먼저 재측정** — PERF-008에서 dev 수치가 아티팩트였던 전례 있음, TTFB가 실제로 느린지부터 확인 |
+| | - [ ] 인증 체크(`getServerToken`)·middleware·SSR waterfall 프로파일 |
+| | - [ ] mypage 대시보드 API 호출(`ProfileSectionLoader`·`SubscriptionCardLoader`·`PaymentCardLoader`·`DeliveryCardLoader`·`InquiryCardLoader`) 순서·병렬화·캐시 검토 |
+| **검증** | `result/mypage/lighthouse-*-after.*` — prod 기준 document latency·TTFB 감소 |
+| **상태** | todo |
 
 ---
 

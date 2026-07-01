@@ -169,6 +169,8 @@ export default function OrderSection(props: OrderSectionProps) {
           height={126}
           quality={HIGH_IMAGE_QUALITY}
           className="h-auto w-full"
+          sizes="(min-width: 1024px) 327px, 100vw"
+          priority
         />
       </div>
     </div>

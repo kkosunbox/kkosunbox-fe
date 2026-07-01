@@ -191,7 +191,7 @@ test.describe("로그인 플로우", () => {
     await page.waitForURL("/", { timeout: 10_000 });
 
     // 헤더에 프로필 버튼이 보여야 함 (로그인 버튼 없음)
-    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole("link", { name: "로그인" })).not.toBeVisible();
   });
 

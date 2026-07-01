@@ -317,7 +317,14 @@
       "PowerShell(npm test *)",
       "PowerShell(npx playwright test tests/e2e/error-boundaries.spec.ts:227 tests/e2e/error-boundaries.spec.ts:254 tests/e2e/login.spec.ts:85 2>&1 | Select-Object -Last 25)",
       "PowerShell(npx playwright test tests/e2e/error-boundaries.spec.ts:227 tests/e2e/error-boundaries.spec.ts:254 --update-snapshots 2>&1 | Select-Object -Last 20)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; if \\($?\\) { \"TSC-DONE\" }; Write-Output \"---LINT\\(support\\)---\"; npx eslint widgets/support/faq/ui/SupportSection.tsx 2>&1; if \\($?\\) { \"SUPPORT-LINT-CLEAN\" })"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; if \\($?\\) { \"TSC-DONE\" }; Write-Output \"---LINT\\(support\\)---\"; npx eslint widgets/support/faq/ui/SupportSection.tsx 2>&1; if \\($?\\) { \"SUPPORT-LINT-CLEAN\" })",
+      "Bash(awk '{print $5, $9}')",
+      "PowerShell($py = \\(Get-Command python -ErrorAction SilentlyContinue\\); if \\($py\\) { python --version; python -c \"import fontTools; print\\('fonttools', fontTools.version\\)\" 2>$null; python -c \"import brotli; print\\('brotli OK'\\)\" 2>$null } else { Write-Output \"python: NOT FOUND\" }; $w2 = \\(Get-Command woff2_compress -ErrorAction SilentlyContinue\\); if \\($w2\\) { Write-Output \"woff2_compress OK\" } else { Write-Output \"woff2_compress: NOT FOUND\" })",
+      "PowerShell(python -m pip install --quiet fonttools brotli 2>&1 | Select-Object -Last 3; python -c \"import fontTools, brotli; print\\('fonttools', fontTools.version, '| brotli OK'\\)\")",
+      "PowerShell(python \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\cada3bf6-8574-48d2-b18c-8c5e8c7b3ce5\\\\scratchpad\\\\convert_griun.py\")",
+      "Bash(git status *)",
+      "PowerShell(python \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\cada3bf6-8574-48d2-b18c-8c5e8c7b3ce5\\\\scratchpad\\\\gen_pretendard_subset.py\")",
+      "PowerShell(pnpm *)"
     ]
   },
   "disabledMcpjsonServers": [

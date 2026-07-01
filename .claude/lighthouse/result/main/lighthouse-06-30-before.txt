@@ -1,0 +1,226 @@
+# Lighthouse Report — main
+# 표준 요약 (AI·SUMMARY 파싱용) — README.md 템플릿 참고
+
+## Meta
+page: main
+url: http://localhost:3000/
+date: 2026-06-30
+time: 14:23 KST
+phase: before
+device: desktop
+mode: dev
+lighthouse: 13.2.0
+chromium: 149.0.0.0
+throttling: custom
+session: single-page, initial-load
+
+## Scores
+performance: 78
+accessibility: 92
+best_practices: 69
+seo: 66
+
+## Metrics
+fcp: 0.3s
+lcp: 2.5s
+tbt: 160ms
+cls: 0.001
+speed_index: 2.3s
+
+## Performance metric weights
+fcp: +10
+lcp: +12
+tbt: +26
+cls: +25
+speed_index: +5
+
+## Insights (opportunities)
+- Render-blocking requests — 50ms
+- Forced reflow
+- LCP request discovery
+- Network dependency tree
+- Use efficient cache lifetimes — 1 KiB
+- Improve image delivery — 905 KiB
+- Legacy JavaScript — 8 KiB
+- Layout shift culprits
+- LCP breakdown
+- 3rd parties
+
+## Diagnostics
+- Reduce JavaScript execution time — 1.8s
+- Minimize main-thread work — 2.8s
+- Minify JavaScript — 216 KiB
+- Page prevented back/forward cache restoration — 6 failure reasons
+- Reduce unused JavaScript — 487 KiB
+- Avoid enormous network payloads — 6,148 KiB
+- Avoid long main-thread tasks — 9 long tasks
+- User Timing marks and measures — 402 user timings
+- Avoid non-composited animations — 5 animated elements
+
+## Accessibility failures
+- [aria-hidden="true"] elements contain focusable descendents
+- Background and foreground colors do not have a sufficient contrast ratio
+
+## Best Practices failures
+- Uses third-party cookies — 1 cookie
+- Browser errors were logged to the console
+- Issues were logged in the Issues panel
+- Missing source maps for large first-party JavaScript
+- Displays images with incorrect aspect ratio
+- Ensure CSP is effective against XSS attacks
+- Use a strong HSTS policy
+- Ensure proper origin isolation with COOP
+- Mitigate clickjacking with XFO or CSP
+- Mitigate DOM-based XSS with Trusted Types
+
+## SEO failures
+- Page is blocked from indexing
+
+## Planned fixes
+# (작업 시작 시 아래에 추가)
+# -
+
+---
+# Raw DevTools Export
+---
+
+78
+Performance
+92
+Accessibility
+69
+Best Practices
+66
+SEO
+78
+FCP
++10
+LCP
++12
+TBT
++26
+CLS
++25
+SI
++5
+Performance
+Values are estimated and may vary. The performance score is calculated directly from these metrics.See calculator.
+0–49
+50–89
+90–100
+Final Screenshot
+
+Metrics
+Expand view
+First Contentful Paint
+0.3 s
+Largest Contentful Paint
+2.5 s
+Total Blocking Time
+160 ms
+Cumulative Layout Shift
+0.001
+Speed Index
+2.3 s
+View Treemap
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Show audits relevant to:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+Insights
+Render-blocking requests Est savings of 50 ms
+Forced reflow
+LCP request discovery
+Network dependency tree
+Use efficient cache lifetimes Est savings of 1 KiB
+Improve image delivery Est savings of 905 KiB
+Legacy JavaScript Est savings of 8 KiB
+Layout shift culprits
+LCP breakdown
+3rd parties
+These insights are also available in the Chrome DevTools Performance Panel - record a trace to view more detailed information.
+Diagnostics
+Reduce JavaScript execution time 1.8 s
+Minimize main-thread work 2.8 s
+Minify JavaScript Est savings of 216 KiB
+Page prevented back/forward cache restoration 6 failure reasons
+Reduce unused JavaScript Est savings of 487 KiB
+Avoid enormous network payloads Total size was 6,148 KiB
+Avoid long main-thread tasks 9 long tasks found
+User Timing marks and measures 402 user timings
+Avoid non-composited animations 5 animated elements found
+More information about the performance of your application. These numbers don't directly affect the Performance score.
+Passed audits (10)
+Show
+92
+Accessibility
+These checks highlight opportunities to improve the accessibility of your web app. Automatic detection can only detect a subset of issues and does not guarantee the accessibility of your web app, so manual testing is also encouraged.
+ARIA
+[aria-hidden="true"] elements contain focusable descendents
+These are opportunities to improve the usage of ARIA in your application which may enhance the experience for users of assistive technology, like a screen reader.
+Contrast
+Background and foreground colors do not have a sufficient contrast ratio.
+These are opportunities to improve the legibility of your content.
+Additional items to manually check (10)
+Show
+These items address areas which an automated testing tool cannot cover. Learn more in our guide on conducting an accessibility review.
+Passed audits (22)
+Show
+Not applicable (39)
+Show
+69
+Best Practices
+General
+Uses third-party cookies 1 cookie found
+Browser errors were logged to the console
+Issues were logged in the Issues panel in Chrome Devtools
+Missing source maps for large first-party JavaScript
+User Experience
+Displays images with incorrect aspect ratio
+Trust and Safety
+Ensure CSP is effective against XSS attacks
+Use a strong HSTS policy
+Ensure proper origin isolation with COOP
+Mitigate clickjacking with XFO or CSP
+Mitigate DOM-based XSS with Trusted Types
+Browser Compatibility
+Baseline Features
+Passed audits (8)
+Show
+Not applicable (2)
+Show
+66
+SEO
+These checks ensure that your page is following basic search engine optimization advice. There are many additional factors Lighthouse does not score here that may affect your search ranking, including performance on Core Web Vitals. Learn more about Google Search Essentials.
+Crawling and Indexing
+Page is blocked from indexing
+To appear in search results, crawlers need access to your app.
+Additional items to manually check (1)
+Show
+Run these additional validators on your site to check additional SEO best practices.
+Passed audits (8)
+Show
+Not applicable (1)
+Show
+Captured at Jun 30, 2026, 2:23 PM GMT+9
+Emulated Desktop with Lighthouse 13.2.0
+Single page session
+Initial page load
+Custom throttling
+Using Chromium 149.0.0.0 with devtools
+Generated by Lighthouse 13.2.0 | File an issue

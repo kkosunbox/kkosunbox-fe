@@ -1,0 +1,230 @@
+# Lighthouse Report — subscribe
+# 표준 요약 (AI·SUMMARY 파싱용) — README.md 템플릿 참고
+
+## Meta
+page: subscribe
+url: http://localhost:3000/subscribe
+date: 2026-06-30
+time: 17:50 KST
+phase: before
+device: desktop
+mode: dev
+lighthouse: 13.2.0
+chromium: 149.0.0.0
+throttling: custom
+session: single-page, initial-load
+note: PERF-011 폰트 일원화 후 재측정 — Pretendard 2MB 전역 preload 제거 반영. subscribe 전용 작업용 새 baseline. (원본 14:39 baseline 수치는 SUMMARY 보존)
+
+## Scores
+performance: 79
+accessibility: 96
+best_practices: 69
+seo: 66
+
+## Metrics
+fcp: 0.6s
+lcp: 3.8s
+tbt: 50ms
+cls: 0
+speed_index: 1.3s
+
+## Performance metric weights
+fcp: +10
+lcp: +5
+tbt: +30
+cls: +25
+speed_index: +9
+
+## 폰트 파급 (원본 14:39 → 현재 17:50, 코드 변경은 전역 폰트뿐)
+- performance: 65 → 79 (+14)
+- LCP: 4.7 → 3.8s (−0.9)
+- TBT: 240 → 50ms
+- CLS: 0.007 → 0
+- Speed Index: 2.0 → 1.3s
+- Avoid enormous network payloads: 5,361 → 3,398 KiB (−1,963 ≈ Pretendard 2MB 모놀리식 전역 preload 제거)
+- Document request latency 510ms: insights에서 사라짐 (dev 변동/render-blocking 완화 영향)
+- a11y: 92 → 96 (role=dialog accessible name 이슈 미표시 — 측정 시 모달 부재 가능성)
+- FCP: 0.3 → 0.6s (소폭 증가)
+
+## Insights (opportunities)
+- Improve image delivery — 450 KiB
+- Legacy JavaScript — 8 KiB
+- LCP request discovery / LCP breakdown
+- Network dependency tree
+- Use efficient cache lifetimes — 9 KiB
+- Render-blocking requests
+- Layout shift culprits
+- 3rd parties
+
+## Diagnostics
+- Minify JavaScript — 220 KiB
+- Reduce unused JavaScript — 525 KiB
+- Page prevented back/forward cache restoration — 6 failure reasons
+- Avoid enormous network payloads — 3,398 KiB
+- Avoid long main-thread tasks — 3 long tasks
+- User Timing marks and measures — 287 user timings
+- Avoid non-composited animations — 5 animated elements
+
+## Accessibility failures
+- Background and foreground colors do not have a sufficient contrast ratio
+# (원본의 role=dialog accessible name 이슈는 이번 측정 미표시)
+
+## Best Practices failures
+- Uses third-party cookies — 1 cookie
+- Browser errors were logged to the console
+- Issues were logged in the Issues panel
+- Missing source maps for large first-party JavaScript
+- Displays images with incorrect aspect ratio
+- Ensure CSP is effective against XSS attacks
+- Use a strong HSTS policy
+- Ensure proper origin isolation with COOP
+- Mitigate clickjacking with XFO or CSP
+- Mitigate DOM-based XSS with Trusted Types
+
+## SEO failures
+- Page is blocked from indexing
+
+## Planned fixes
+# (작업 시작 시 아래에 추가)
+# - Improve image delivery 450 KiB — LCP 후보 이미지 sizes/priority (PERF-010 패턴)
+# - LCP 3.8s 요소 특정 (모달 vs 히어로 vs 플랜 카드 이미지)
+# - Displays images with incorrect aspect ratio — width/height·object-fit
+
+---
+# Raw DevTools Export
+---
+
+79
+Performance
+96
+Accessibility
+69
+Best Practices
+66
+SEO
+79
+FCP
++10
+LCP
++5
+TBT
++30
+CLS
++25
+SI
++9
+Performance
+Values are estimated and may vary. The performance score is calculated directly from these metrics.See calculator.
+0–49
+50–89
+90–100
+Final Screenshot
+
+Metrics
+Expand view
+First Contentful Paint
+0.6 s
+Largest Contentful Paint
+3.8 s
+Total Blocking Time
+50 ms
+Cumulative Layout Shift
+0
+Speed Index
+1.3 s
+View Treemap
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Show audits relevant to:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+Insights
+Improve image delivery Est savings of 450 KiB
+Legacy JavaScript Est savings of 8 KiB
+LCP request discovery
+Network dependency tree
+Use efficient cache lifetimes Est savings of 9 KiB
+Render-blocking requests
+Layout shift culprits
+LCP breakdown
+3rd parties
+These insights are also available in the Chrome DevTools Performance Panel - record a trace to view more detailed information.
+Diagnostics
+Minify JavaScript Est savings of 220 KiB
+Reduce unused JavaScript Est savings of 525 KiB
+Page prevented back/forward cache restoration 6 failure reasons
+Avoid enormous network payloads Total size was 3,398 KiB
+Avoid long main-thread tasks 3 long tasks found
+User Timing marks and measures 287 user timings
+Avoid non-composited animations 5 animated elements found
+More information about the performance of your application. These numbers don't directly affect the Performance score.
+Passed audits (13)
+Show
+96
+Accessibility
+These checks highlight opportunities to improve the accessibility of your web app. Automatic detection can only detect a subset of issues and does not guarantee the accessibility of your web app, so manual testing is also encouraged.
+Contrast
+Background and foreground colors do not have a sufficient contrast ratio.
+These are opportunities to improve the legibility of your content.
+Additional items to manually check (10)
+Show
+These items address areas which an automated testing tool cannot cover. Learn more in our guide on conducting an accessibility review.
+Passed audits (22)
+Show
+Not applicable (40)
+Show
+69
+Best Practices
+General
+Uses third-party cookies 1 cookie found
+Browser errors were logged to the console
+Issues were logged in the Issues panel in Chrome Devtools
+Missing source maps for large first-party JavaScript
+User Experience
+Displays images with incorrect aspect ratio
+Trust and Safety
+Ensure CSP is effective against XSS attacks
+Use a strong HSTS policy
+Ensure proper origin isolation with COOP
+Mitigate clickjacking with XFO or CSP
+Mitigate DOM-based XSS with Trusted Types
+Browser Compatibility
+Baseline Features
+Passed audits (8)
+Show
+Not applicable (2)
+Show
+66
+SEO
+These checks ensure that your page is following basic search engine optimization advice. There are many additional factors Lighthouse does not score here that may affect your search ranking, including performance on Core Web Vitals. Learn more about Google Search Essentials.
+Crawling and Indexing
+Page is blocked from indexing
+To appear in search results, crawlers need access to your app.
+Additional items to manually check (1)
+Show
+Run these additional validators on your site to check additional SEO best practices.
+Passed audits (8)
+Show
+Not applicable (1)
+Show
+Captured at Jun 30, 2026, 5:50 PM GMT+9
+Emulated Desktop with Lighthouse 13.2.0
+Single page session
+Initial page load
+Custom throttling
+Using Chromium 149.0.0.0 with devtools
+Generated by Lighthouse 13.2.0 | File an issue

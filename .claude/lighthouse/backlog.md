@@ -50,11 +50,14 @@
 | **증상** | Perf **65** (10페이지 중 최저) |
 | **수정 가능** | ✅ |
 | **액션** | |
-| | - [ ] LCP 요소가 상품 이미지인지 텍스트/모달인지 확인 |
-| | - [ ] HTML document 지연 원인 (SSR·fetch·middleware) 프로파일 |
-| | - [ ] 상품 이미지 `next/image` sizes·priority |
-| | - [ ] 초기 로드 모달이 LCP를 가리는지 확인 — after 측정 시 동일 조건 유지 |
+| | - [x] LCP 요소 확인 → `package-explain-with-premium`(PlanPicker 설명 이미지, Next/Image+sizes+priority 이미 있음) |
+| | - [x] HTML document 지연 원인 → `fetchProfile` SSR 제거로 API 호출 2→1 단축 (commit `571d4ba`) |
+| | - [x] 상품 이미지 `next/image` sizes·priority → 이미 완비(LCP 이미지) |
+| | - [x] 초기 로드 모달 → `profileKnown` 가드로 flash 방지 (commit `571d4ba`) |
+| | - [x] **LCP element render delay 1,330ms** → PlanPicker `ScrollReveal` 제거 (commit `bcf7a11`, PERF-013) |
+| | - [ ] after 재측정 (dev Lighthouse) → LCP < 2.5s 달성 여부 확인 |
 | **검증** | LCP < 2.5s, document latency 감소 |
+| **진행 상황** | fetchProfile 제거 + ScrollReveal 제거로 핵심 2개 레버 완료. after 측정 필요. |
 
 ---
 
@@ -154,7 +157,7 @@
 | | - [x] **화질**: q90 재인코딩이 미세 softening 유발(옛 plain img는 무재인코딩) → **quality=100**으로 확정(육안 개선 확인). 디자인·치수 불변. q90 대비 썸네일 ~+75 KiB |
 | | - [x] 공유 컴포넌트라 4 소비처(PlanPicker·ReferralPlanPicker·ChecklistResult) 동시 수혜 — 슬롯 모두 `relative`+고정크기라 무수정 |
 | | - [ ] (후속·소ROI) 히어로 `subscribe-plans-hero-renewal`(3810×612→1920×306, 31 KiB)·`please-info-check`(17.8 KiB) plain img |
-| | - [ ] (별건·PERF-013 후보) LCP render delay 1,330ms — PlanPicker 클라이언트 렌더/하이드레이션 조사 |
+| | - [x] (PERF-013) LCP render delay 1,330ms → `ScrollReveal` 제거, SSR 시점 즉시 표시 (commit `bcf7a11`) |
 | **검증** | ① VR/육안 q100에서 화질 개선 확인(사용자) ② image delivery 450→164 KiB(q90 측정; q100 실제 ~+75 KiB) ③ tsc·ESLint·build 통과 |
 | **결과** | ✅ **완료**(2026-06-30). after `lighthouse-06-30-after.txt`(q90 측정). 페이로드 3,406→3,142 KiB(q90)/~3,217(q100). 점수 flat(예상 — LCP가 render delay에 묶임). 커밋: `PackageSummaryThumbnail.tsx`만(라이트하우스 파일 미커밋). |
 

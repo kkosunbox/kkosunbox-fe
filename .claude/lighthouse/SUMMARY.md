@@ -574,7 +574,7 @@
 |--------|--------|-------|--------|-------|------|
 | main | 2026-06-30 | — | — | — | baseline |
 | about | 2026-06-30 | — | — | — | baseline |
-| subscribe | 2026-06-30 | 2026-06-30 | **+13** (65→78) | **−1.3s** (4.7→3.4) | ✅ 폰트일원화+PERF-012 |
+| subscribe | 2026-06-30 | 측정 필요 | +13 이후 추가작업 | 3.4s→? | PERF-002: fetchProfile제거+PERF-013: ScrollReveal제거 (재측정 필요) |
 | checklist-result | 2026-06-30 | — | — | — | baseline |
 | inquiry | 2026-06-30 | — | — | — | baseline |
 | mypage | 2026-06-30 | — | — | — | baseline |

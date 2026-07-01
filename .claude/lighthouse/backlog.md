@@ -14,7 +14,7 @@
 | 2 | subscribe document request latency (TTFB·RSC·API waterfall) | subscribe | ~510ms | todo |
 | 3 | subscribe-detail 상품 이미지 delivery (**1,370 KiB**) | subscribe-detail | 사이트 최대, LCP 3.2s | todo |
 | 4 | order LCP(3.8s) + 폼 A11y + 이미지 125 KiB | order | A11y 85, BP 54, 결제 퍼널 | done |
-| 5 | mypage document request latency + unused JS (526 KiB) | mypage | ~630ms, TBT 220ms | todo |
+| 5 | mypage document request latency + unused JS (526 KiB) | mypage | ~630ms, TBT 220ms | done |
 | 6 | checklist-result LCP 이미지 + CLS (layout shift culprits) | checklist-result | LCP 4.7s, CLS 0.023 | done |
 | 7 | main 히어로·LCP 이미지 delivery 최적화 | main | ~905 KiB | done |
 | 8 | Header/Footer·무거운 위젯 dynamic import (공통 JS) | 전체 | unused JS ~410–526 KiB | todo |
@@ -176,12 +176,14 @@
 | **증상** | Perf 75, TBT 220ms, LCP 2.8s |
 | **수정 가능** | ✅ |
 | **액션** | |
-| | - [ ] HTML document 지연 — 인증 체크·middleware·SSR waterfall 프로파일 |
-| | - [ ] 마이페이지 API 호출 순서·병렬화·캐시 검토 |
-| | - [ ] 마이페이지 전용 위젯 dynamic import (526 KiB unused JS) |
-| | - [ ] LCP request discovery — 대시보드 히어로/LCP 요소 특정 |
-| | - [ ] after 측정 시 **동일 로그인 상태** 유지 |
-| **검증** | `result/mypage/lighthouse-*-after.*` — document latency·TBT·unused JS 감소 |
+| | - [x] unused JS 526 KiB 원인 특정 → `widgets_ebca89f4._.js` 청크에 mypage 서브라우트 9개 섹션(Payment/Password/Profile/ReviewWrite/SubscriptionChange/SubscriptionDetail/SubscriptionManagement/Withdraw/PointHistory Section) 전부 포함 확인 |
+| | - [x] 8개 서브라우트 정적 import → `next/dynamic()` 전환 |
+| | - [x] 대시보드 카드 서브라우트 `<Link>` 4곳 `prefetch={false}` 추가 (SubscriptionCard 3 + ProfileSection 1) |
+| | - [x] **프로덕션 빌드로 원인 검증** — 수정 전/후 코드 각각 prod 빌드 대조: 둘 다 unused JS 28~46 KiB, Perf 97~100로 **거의 동일**. dev 526 KiB는 Turbopack dev 청크 특성(라우트 무관 공유 청크)이 원인, 실제 prod 이슈 아니었음 |
+| | - [ ] HTML document 지연 630ms — 별도 미검증(이번 라운드에서 다루지 않음, 필요 시 후속) |
+| | - [ ] API 호출 순서·병렬화·캐시 — 별도 미검증 |
+| **검증** | `result/mypage/lighthouse-07-01-after.*` — prod 빌드, unused JS 46 KiB |
+| **결과** | ✅ **완료 + 원인 정정**(2026-07-01). dynamic import·prefetch 차단 코드는 정석 패턴이라 유지하지만, 원래 진단(526 KiB unused JS)은 dev-only 아티팩트였음이 실측으로 확인됨. Perf 75(dev)→97(prod), LCP 2.8s→1.3s, TBT 220ms→0ms. Document latency·API waterfall은 이번 라운드 범위 밖 — 필요 시 별도 착수. |
 
 ---
 
@@ -219,7 +221,8 @@
 | | - [ ] 페이지 전용 위젯 `dynamic(() => import(), { ssr })` |
 | | - [ ] Header drawer·모달·캐러셀 등 below-fold 지연 로드 |
 | | - [ ] barrel import (`index.ts`) 과다 re-export 점검 |
-| **검증** | 10페이지 모두 unused JS KiB·TBT 하락 |
+| **검증** | 10페이지 모두 unused JS KiB·TBT 하락 (**prod 빌드 기준으로 측정 — 아래 참고**) |
+| **⚠️ 선행 확인 필요** | PERF-008(mypage) 조사 결과, "unused JS 526 KiB"는 **dev 모드 Turbopack 청크 특성**(같은 디렉터리 클라이언트 컴포넌트를 라우트 무관 공유 청크로 뭉침)이 원인이었고, **프로덕션 빌드에서는 dynamic import 여부와 무관하게 unused JS 28 KiB·Perf 100**로 이미 정상이었음(2026-07-01 실측, mypage before/after 코드 양쪽 다 prod 대조). 나머지 9페이지도 같은 원인일 가능성이 높으므로, **본격적인 dynamic import 리팩토링에 착수하기 전 각 페이지를 prod 빌드로 먼저 재측정**해서 실제 문제인지 확인할 것 — dev 수치만 보고 작업 벌이지 말 것. |
 
 ---
 
@@ -470,6 +473,7 @@
 | PERF-007 | 2026-07-01 | Perf 73→98, LCP 4.7→0.9s, CLS 0.023→0.006 (실측) | ChecklistResultSection profile guard 제거 + 오버레이 스켈레톤 |
 | PERF-009 | 2026-07-01 | Perf 76→97, LCP 3.8→1.3s, A11y 85→87 (실측) | next/image fill + aria-label 8건 |
 | PERF-001 | 2026-07-01 | 코드 적용 확인(fetchPriority·discoverable 통과), 점수 판정 보류 — 프로덕션 재측정 필요 | hero `<picture>` breakpoint 분기 |
+| PERF-008 | 2026-07-01 | Perf 75(dev)→97(prod), LCP 2.8→1.3s, TBT 220→0ms. **원인 정정: dev 전용 아티팩트였음(prod 대조 실측)** | mypage 8개 서브라우트 dynamic import + Link prefetch=false |
 
 ---
 

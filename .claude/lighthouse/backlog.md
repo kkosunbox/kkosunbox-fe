@@ -38,8 +38,8 @@
 | | - [x] `<picture>` breakpoint 분기 — mobile/tablet/desktop 각 1장만 다운로드, 데스크탑 기준 ~265 KB 절감 |
 | | - [x] WebP 이미 적용, srcset은 picture로 대체 |
 | | - [x] inactive 슬라이드 truck `loading="eager"` → `lazy` |
-| **검증** | after 측정 대기 |
-| **결과** | ✅ **완료**(2026-07-01). `<picture>` 도입으로 잉여 breakpoint 이미지 desktop 기준 ~265 KB 절감. fetchPriority="high" → slide 0 LCP 이미지 우선 다운로드. |
+| **검증** | `result/main/lighthouse-07-01-after.*` (CLI headless, 비로그인 — before와 동일 조건) |
+| **결과** | ⚠️ **코드 적용 확인, 점수는 판정 보류**(2026-07-01). lcp-discovery-insight 감사에서 fetchPriority/discoverable/non-lazy 전부 통과 확인. 다만 실측 Perf 78→78, LCP 2.5s→3.2s(측정 도구가 DevTools 패널→CLI headless로 바뀌고 머신 백그라운드 부하 영향 가능 — dev 모드 시뮬레이션 스로틀링 노이즈로 판단, 2회 재현 모두 3.0s대). **프로덕션 빌드 재측정 권장.** |
 
 ---
 
@@ -77,9 +77,9 @@
 | | - [x] CLS — 오버레이 스켈레톤 패턴으로 plans 카드 height 유지 (CLS 기여 0) |
 | | - [x] plans useEffect `if (profileId == null) return` guard → double-fetch 방지 |
 | | - [x] DEFAULT_PET_INFO 상수로 profile 없을 때 빈 state 렌더 |
-| | - [ ] after 측정 시 `tier=premium` 동일 URL 유지 |
-| **검증** | after 측정 대기 |
-| **결과** | ✅ **완료**(2026-07-01). `!profile` guard 제거 → SSR html에 hero `<link rel="preload">` 생성 → LCP 4.7s→개선 기대. CLS: 오버레이 스켈레톤으로 layout shift 차단. |
+| | - [x] after 측정 시 `tier=premium` 동일 URL 유지 |
+| **검증** | `result/checklist-result/lighthouse-07-01-after.*` — LCP 0.9s(<2.5s ✅), CLS 0.006(<0.01 ✅) |
+| **결과** | ✅ **완료 + 실측 확인**(2026-07-01). Perf 73→98, LCP 4.7s→0.9s, CLS 0.023→0.006. A11y는 96→86로 하락했으나 PERF-007과 무관 — before는 비로그인, after는 로그인 상태 측정이라 헤더 UI 차이에서 발생(별도 이슈로 분리 필요). |
 
 ---
 
@@ -201,8 +201,8 @@
 | | - [x] 수량 ±버튼 `aria-label="수량 감소/증가"` + icon span `aria-hidden` |
 | | - [x] 약관 펼치기/접기 ChevronIcon 버튼 `aria-label` 추가 |
 | | - [x] BP 54 insecure request → dev http 환경 한정(Daum 주소 API 등), wontfix |
-| **검증** | after 측정 대기 |
-| **결과** | ✅ **완료**(2026-07-01). 상품 이미지 next/image 전환(sizes 최적화). A11y 수정 8건. BP 54는 dev wontfix. |
+| **검증** | `result/order/lighthouse-07-01-after.*` — LCP 1.3s(<2.5s ✅), A11y 87(목표 92 미달) |
+| **결과** | ✅ **완료 + 실측 확인**(2026-07-01). Perf 76→97, LCP 3.8s→1.3s, A11y 85→87(before/after 둘 다 로그인 상태라 공정 비교). BP 54는 예상대로 변동 없음(dev wontfix). A11y 92 목표엔 아직 못 미침 — 잔여 실패 항목 추가 확인 필요. |
 
 ---
 
@@ -467,9 +467,9 @@
 | PERF-012 | 2026-06-30 | image delivery 450→~164 KiB (q100) | PackageSummaryThumbnail next/image fill |
 | PERF-013 | 2026-06-30 | LCP render delay 1,330ms 제거 | PlanPicker ScrollReveal 제거 |
 | PERF-002 | 2026-07-01 | Perf 65→92, LCP 4.7→1.80s, TBT 240→34ms | fetchProfile SSR 제거 + ScrollReveal 제거 |
-| PERF-007 | 2026-07-01 | LCP 4.7s→개선 기대, CLS 0.023→0 기대 | ChecklistResultSection profile guard 제거 + 오버레이 스켈레톤 |
-| PERF-009 | 2026-07-01 | A11y 85→개선 기대, 이미지 125 KiB 절감 | next/image fill + aria-label 8건 |
-| PERF-001 | 2026-07-01 | 데스크탑 이미지 ~265 KiB 절감, LCP fetchPriority | hero `<picture>` breakpoint 분기 |
+| PERF-007 | 2026-07-01 | Perf 73→98, LCP 4.7→0.9s, CLS 0.023→0.006 (실측) | ChecklistResultSection profile guard 제거 + 오버레이 스켈레톤 |
+| PERF-009 | 2026-07-01 | Perf 76→97, LCP 3.8→1.3s, A11y 85→87 (실측) | next/image fill + aria-label 8건 |
+| PERF-001 | 2026-07-01 | 코드 적용 확인(fetchPriority·discoverable 통과), 점수 판정 보류 — 프로덕션 재측정 필요 | hero `<picture>` breakpoint 분기 |
 
 ---
 

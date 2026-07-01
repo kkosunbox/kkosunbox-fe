@@ -1,0 +1,43 @@
+# Lighthouse Report — order
+# 표준 요약 (AI·SUMMARY 파싱용) — README.md 템플릿 참고
+
+## Meta
+page: order
+url: http://localhost:3000/order?planId=3&quantity=1
+date: 2026-07-01
+time: 15:45 KST
+phase: after
+device: desktop
+mode: dev
+lighthouse: 13.4.0
+chromium: headless (CLI chrome-launcher, CDP attach)
+throttling: custom (lighthouse default simulate)
+session: single-page, initial-load (인증 상태 — 실계정 로그인, before와 동일 조건)
+
+## Scores
+performance: 97
+accessibility: 87
+best_practices: 54
+seo: 66
+
+## Metrics
+fcp: 0.4s
+lcp: 1.3s
+tbt: 0ms
+cls: 0.001
+speed_index: 1.0s
+
+## Before → After
+performance: 76 → 97
+accessibility: 85 → 87
+lcp: 3.8s → 1.3s
+best_practices: 54 → 54 (dev http insecure request, wontfix — 변동 없음 예상대로)
+
+## Caveat
+- before/after 모두 로그인 상태로 측정 — 다른 페이지(main·checklist-result)와 달리 로그인 상태 confound 없음, 공정 비교.
+- 측정 도구 차이(before: DevTools 패널 / after: CLI headless)만 존재.
+
+---
+# Raw DevTools Export
+---
+(CLI 실행 — HTML/JSON 리포트 동일 디렉터리 참고)

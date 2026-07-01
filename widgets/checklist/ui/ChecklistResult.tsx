@@ -321,8 +321,9 @@ export default function ChecklistResult({
   );
 
   useEffect(() => {
+    if (profileId == null) return;
     let cancelled = false;
-    getSubscriptionPlans(profileId ?? undefined)
+    getSubscriptionPlans(profileId)
       .then((res) => {
         if (!cancelled) {
           setApiPlans(res.plans);
@@ -371,6 +372,8 @@ export default function ChecklistResult({
     trackChecklistCtaClick({ plan_tier: recommendedPkg.name });
     router.push(`/subscribe/detail?planId=${recommendedApiPlan.id}`);
   };
+
+  const cardReady = profileId != null && !plansLoading;
 
   const sharedCardProps: Omit<CardBodyProps, "onDetailClick"> = {
     petName,
@@ -436,6 +439,9 @@ export default function ChecklistResult({
             {...sharedCardProps}
             onDetailClick={navigateToDetail}
           />
+          {!cardReady && (
+            <div className="absolute inset-0 animate-pulse rounded-[20px] bg-[var(--color-surface-warm)]" />
+          )}
         </div>
 
         {/* 모바일 전용: 이미지 + 패키지 정보 + 추천이유 */}

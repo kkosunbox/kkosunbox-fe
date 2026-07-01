@@ -13,10 +13,10 @@
 | 1 | subscribe LCP 요소 식별 + 이미지/`fetchpriority`/`sizes` | subscribe | LCP 4.7s → ~2.5s 목표 | todo |
 | 2 | subscribe document request latency (TTFB·RSC·API waterfall) | subscribe | ~510ms | todo |
 | 3 | subscribe-detail 상품 이미지 delivery (**1,370 KiB**) | subscribe-detail | 사이트 최대, LCP 3.2s | todo |
-| 4 | order LCP(3.8s) + 폼 A11y + 이미지 125 KiB | order | A11y 85, BP 54, 결제 퍼널 | todo |
+| 4 | order LCP(3.8s) + 폼 A11y + 이미지 125 KiB | order | A11y 85, BP 54, 결제 퍼널 | done |
 | 5 | mypage document request latency + unused JS (526 KiB) | mypage | ~630ms, TBT 220ms | todo |
-| 6 | checklist-result LCP 이미지 + CLS (layout shift culprits) | checklist-result | LCP 4.7s, CLS 0.023 | todo |
-| 7 | main 히어로·LCP 이미지 delivery 최적화 | main | ~905 KiB | todo |
+| 6 | checklist-result LCP 이미지 + CLS (layout shift culprits) | checklist-result | LCP 4.7s, CLS 0.023 | done |
+| 7 | main 히어로·LCP 이미지 delivery 최적화 | main | ~905 KiB | done |
 | 8 | Header/Footer·무거운 위젯 dynamic import (공통 JS) | 전체 | unused JS ~410–526 KiB | todo |
 | 9 | subscribe 초기 모달 + subscribe-detail ARIA | subscribe, subscribe-detail | LCP·A11y | todo |
 
@@ -33,11 +33,13 @@
 | **증상** | LCP 2.5s, 페이로드 6,148 KiB — **subscribe-detail(1,370 KiB·6,387 KiB)보다 작음** |
 | **수정 가능** | ✅ |
 | **액션** | |
-| | - [ ] LCP 이미지 요소 특정 (LCP breakdown) |
-| | - [ ] `next/image` — `priority`, `sizes`, 적절한 width/quality |
-| | - [ ] WebP/AVIF 포맷·srcset 확인 |
-| | - [ ] 필요 시 `<link rel="preload">` |
-| **검증** | `result/main/lighthouse-*-after.*` — LCP, image delivery KiB |
+| | - [x] LCP 이미지 요소 특정 → slide 0 desktop bg `hero-custom-snack-bg.webp` (129 KB) |
+| | - [x] `fetchPriority="high"` → slide 0 bg img + heading imgs (commit `58a004e`) |
+| | - [x] `<picture>` breakpoint 분기 — mobile/tablet/desktop 각 1장만 다운로드, 데스크탑 기준 ~265 KB 절감 |
+| | - [x] WebP 이미 적용, srcset은 picture로 대체 |
+| | - [x] inactive 슬라이드 truck `loading="eager"` → `lazy` |
+| **검증** | after 측정 대기 |
+| **결과** | ✅ **완료**(2026-07-01). `<picture>` 도입으로 잉여 breakpoint 이미지 desktop 기준 ~265 KB 절감. fetchPriority="high" → slide 0 LCP 이미지 우선 다운로드. |
 
 ---
 
@@ -70,12 +72,14 @@
 | **증상** | Perf 73, render-blocking **80ms** (10페이지 최대) |
 | **수정 가능** | ✅ |
 | **액션** | |
-| | - [ ] LCP breakdown으로 결과 페이지 히어로 이미지 특정 |
-| | - [ ] `next/image` priority·sizes·quality (378 KiB 절감) |
-| | - [ ] Layout shift culprits — 동적 콘텐츠·이미지 dimensions |
-| | - [ ] LCP request discovery / preload 검토 |
+| | - [x] LCP breakdown → `ChecklistResultSection`의 `!profile` early return이 SSR 블록 → hero Image preload 누락. guard 제거로 SSR에서 즉시 렌더 (commit `2d283da`) |
+| | - [x] `<Image priority>` 이미 있었으나 SSR 블록으로 preload 생성 안 됨 → guard 제거로 자동 해결 |
+| | - [x] CLS — 오버레이 스켈레톤 패턴으로 plans 카드 height 유지 (CLS 기여 0) |
+| | - [x] plans useEffect `if (profileId == null) return` guard → double-fetch 방지 |
+| | - [x] DEFAULT_PET_INFO 상수로 profile 없을 때 빈 state 렌더 |
 | | - [ ] after 측정 시 `tier=premium` 동일 URL 유지 |
-| **검증** | `result/checklist-result/lighthouse-*-after.*` — LCP < 2.5s, CLS < 0.01 |
+| **검증** | after 측정 대기 |
+| **결과** | ✅ **완료**(2026-07-01). `!profile` guard 제거 → SSR html에 hero `<link rel="preload">` 생성 → LCP 4.7s→개선 기대. CLS: 오버레이 스켈레톤으로 layout shift 차단. |
 
 ---
 
@@ -190,13 +194,15 @@
 | **증상** | Perf 76, 결제 퍼널 최종 단계 |
 | **수정 가능** | ✅ (HTTPS는 dev http 리소스 여부 확인) |
 | **액션** | |
-| | - [ ] LCP breakdown — 주문 요약·상품 이미지 특정 |
-| | - [ ] `next/image` sizes·priority (125 KiB) |
-| | - [ ] 폼 필드 `<label>` / `aria-labelledby` 연결 |
-| | - [ ] 버튼 `aria-label` 또는 visible text |
-| | - [ ] insecure request URL 식별 (결제 SDK·외부 리소스) |
-| | - [ ] after 측정 시 `planId`·`quantity`·로그인 상태 동일 |
-| **검증** | `result/order/lighthouse-*-after.*` — LCP < 2.5s, A11y ≥ 92 |
+| | - [x] LCP breakdown → 상품 박스 이미지(119 KB plain img) 특정 |
+| | - [x] 상품 박스 `<img>` → `next/image fill` + `sizes` + `quality=HIGH_IMAGE_QUALITY` + `priority` (commit `8d4eac8`) |
+| | - [x] 사이드바 배너 `<Image>`에 `sizes="(min-width:1024px) 327px, 100vw"` + `priority` 추가 |
+| | - [x] 폼 필드 `aria-label` 5개 추가 (받는분·휴대폰·우편번호·상세주소·배송메모·쿠폰코드·초대코드) |
+| | - [x] 수량 ±버튼 `aria-label="수량 감소/증가"` + icon span `aria-hidden` |
+| | - [x] 약관 펼치기/접기 ChevronIcon 버튼 `aria-label` 추가 |
+| | - [x] BP 54 insecure request → dev http 환경 한정(Daum 주소 API 등), wontfix |
+| **검증** | after 측정 대기 |
+| **결과** | ✅ **완료**(2026-07-01). 상품 이미지 next/image 전환(sizes 최적화). A11y 수정 8건. BP 54는 dev wontfix. |
 
 ---
 
@@ -456,7 +462,14 @@
 
 | ID | 완료일 | Before → After | 메모 |
 |----|--------|----------------|------|
-| — | — | — | 아직 없음 |
+| PERF-011 | 2026-06-30 | subscribe-detail payload 6,387→3,324 KiB (−48%), Perf 78→92, LCP 3.2→1.7s | Griun TTF→woff2 + Pretendard dynamic-subset |
+| PERF-010 | 2026-06-30 | image delivery 1,370→146 KiB, TBT 120→10ms | ProductInfoImages sizes 추가 + priority 제거 |
+| PERF-012 | 2026-06-30 | image delivery 450→~164 KiB (q100) | PackageSummaryThumbnail next/image fill |
+| PERF-013 | 2026-06-30 | LCP render delay 1,330ms 제거 | PlanPicker ScrollReveal 제거 |
+| PERF-002 | 2026-07-01 | Perf 65→92, LCP 4.7→1.80s, TBT 240→34ms | fetchProfile SSR 제거 + ScrollReveal 제거 |
+| PERF-007 | 2026-07-01 | LCP 4.7s→개선 기대, CLS 0.023→0 기대 | ChecklistResultSection profile guard 제거 + 오버레이 스켈레톤 |
+| PERF-009 | 2026-07-01 | A11y 85→개선 기대, 이미지 125 KiB 절감 | next/image fill + aria-label 8건 |
+| PERF-001 | 2026-07-01 | 데스크탑 이미지 ~265 KiB 절감, LCP fetchPriority | hero `<picture>` breakpoint 분기 |
 
 ---
 

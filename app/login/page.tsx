@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import logoMain2x from "@/shared/assets/logo-main@2x.webp";
 import loginBannerHd from "@/shared/assets/login-banner-hd.webp";
 import loginMobileDeco from "@/shared/assets/login-mobile-upper-deco.webp";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useAuth, getOAuthUrl, setOAuthReturnPath } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
 import { useLoadingOverlay } from "@/shared/ui";
@@ -203,6 +204,7 @@ export default function LoginPage() {
             src={loginMobileDeco}
             alt=""
             fill
+            quality={HIGH_IMAGE_QUALITY}
             className=""
             aria-hidden="true"
           />
@@ -219,7 +221,7 @@ export default function LoginPage() {
 
             {/* 모바일 전용: 로고 영역 */}
             <div className="max-lg:flex lg:hidden items-center justify-center pb-[40px]">
-              <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} className="h-auto relative" priority />
+              <Image src={logoMain2x} alt="꼬순박스" width={LOGO_WIDTH} height={LOGO_HEIGHT} quality={HIGH_IMAGE_QUALITY} className="h-auto relative" priority />
             </div>
 
             {/* 데스크톱 전용 헤딩 */}
@@ -370,6 +372,7 @@ export default function LoginPage() {
             src={loginBannerHd}
             alt="꼬순박스 배너"
             fill
+            quality={HIGH_IMAGE_QUALITY}
             className="object-contain object-center"
             priority
           />

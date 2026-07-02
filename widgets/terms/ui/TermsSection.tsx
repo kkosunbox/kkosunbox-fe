@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import termsTitle from "../assets/terms-title.webp";
 
 const TERMS_SECTIONS = [
@@ -86,6 +87,7 @@ export default function TermsSection() {
           alt="이용약관"
           width={termsTitle.width}
           height={termsTitle.height}
+          quality={HIGH_IMAGE_QUALITY}
           priority
           className="h-auto w-full max-w-[113px]"
         />

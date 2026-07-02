@@ -1,0 +1,56 @@
+# Lighthouse Report — mypage
+# 표준 요약 (AI·SUMMARY 파싱용) — README.md 템플릿 참고
+
+## Meta
+page: mypage
+url: http://localhost:3000/mypage
+date: 2026-07-01
+time: 17:10 KST
+phase: after
+device: desktop
+mode: production (pnpm build && pnpm start)
+lighthouse: 13.4.0
+chromium: headless (CLI chrome-launcher, CDP attach)
+throttling: custom (lighthouse default simulate)
+session: single-page, initial-load (인증 상태 — 실계정 로그인, before와 동일 로그인 상태)
+
+## Scores
+performance: 97
+accessibility: 86
+best_practices: 73
+seo: 66
+
+## Metrics
+fcp: 0.4s
+lcp: 1.3s
+tbt: 0ms
+cls: 0
+speed_index: 0.7s
+
+## Before → After
+performance: 75(dev) → 97(prod)
+lcp: 2.8s(dev) → 1.3s(prod)
+tbt: 220ms(dev) → 0ms(prod)
+unused_js: 526KiB(dev) → 46KiB(prod)
+
+## ⚠️ 핵심 발견 — "526 KiB unused JS"는 dev 모드 전용 아티팩트였음
+코드 수정(next/dynamic 전환 + Link prefetch=false) 적용 전/후를 **각각 프로덕션 빌드로 직접 대조**한 결과:
+- 수정 전 코드 · 프로덕션 빌드: Perf 100, LCP 0.6s, unused JS 28 KiB
+- 수정 후 코드 · 프로덕션 빌드: Perf 97, LCP 1.3s, unused JS 46 KiB (측정 노이즈 범위 내 — 두 값 모두 우수)
+
+즉 dev 모드에서 관측된 526 KiB unused JS·TBT 220ms·Perf 75는 **Turbopack dev 번들러가 같은 디렉터리의 클라이언트 컴포넌트를 라우트 구분 없이 하나의 공유 청크(`widgets_ebca89f4._.js`)로 뭉치는 dev-only 특성** 때문이었다. Next.js App Router는 프로덕션 빌드에서 라우트별 자동 코드 스플리팅을 이미 수행하므로, `next/dynamic` 전환 여부와 무관하게 프로덕션에서는 문제가 사실상 없었다.
+
+## 코드 변경 사항 (유지함 — 정당성)
+- 8개 mypage 서브라우트(subscription·payment·password·point·review/write·withdraw·subscription/change·subscription/detail) 정적 import → `next/dynamic()` 전환
+- 대시보드 카드의 서브라우트 이동 `<Link>` 4곳(SubscriptionCard 3곳 + ProfileSection 1곳)에 `prefetch={false}` 추가
+- 프로덕션 스코어를 극적으로 개선하진 않았지만(원인이 dev-only였으므로), 대시보드에서 잘 안 쓰는 서브페이지 JS를 뷰포트 진입만으로 선제 prefetch하지 않게 되어 실사용 대역폭 낭비를 줄임. 백로그 액션 항목("마이페이지 전용 위젯 dynamic import")과 부합하는 정석적인 코드 스플리팅 패턴이라 유지.
+- tsc/eslint 통과 확인.
+
+## 결론
+- **PERF-008의 원래 진단(526 KiB unused JS)은 실제 프로덕션 이슈가 아니었다.** before 측정을 prod 기준으로 재확인했어야 함 — 이후 유사 항목(mypage뿐 아니라 dev 측정 전반)도 prod 대조 없이 "unused JS/TBT" 수치를 그대로 신뢰하지 않도록 주의.
+- document request latency 630ms(dev)는 이번 측정에서 별도 검증하지 않음 — prod 서버 TTFB는 이 리포트의 lcp-breakdown 참고.
+
+---
+# Raw DevTools Export
+---
+(CLI 실행 — HTML/JSON 리포트 동일 디렉터리 참고. 대조군(수정 전 코드) 프로덕션 측정치는 raw JSON 미보관 — 위 캡션 수치가 근거.)

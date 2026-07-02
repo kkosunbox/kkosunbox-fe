@@ -1,0 +1,42 @@
+# Lighthouse Report — checklist-result
+# 표준 요약 (AI·SUMMARY 파싱용) — README.md 템플릿 참고
+
+## Meta
+page: checklist-result
+url: http://localhost:3000/checklist/result?tier=premium
+date: 2026-07-01
+time: 15:42 KST
+phase: after
+device: desktop
+mode: dev
+lighthouse: 13.4.0
+chromium: headless (CLI chrome-launcher, CDP attach)
+throttling: custom (lighthouse default simulate)
+session: single-page, initial-load (인증 상태 — 실계정 로그인)
+
+## Scores
+performance: 98
+accessibility: 86
+best_practices: 69
+seo: 66
+
+## Metrics
+fcp: 0.4s
+lcp: 0.9s
+tbt: 0ms
+cls: 0.006
+speed_index: 1.4s
+
+## Before → After
+performance: 73 → 98
+lcp: 4.7s → 0.9s
+cls: 0.023 → 0.006
+
+## Caveat
+- accessibility 96→86: PERF-007 수정과 무관. before는 비로그인, after는 로그인 상태로 측정되어 헤더 UI(다이얼로그·버튼) 차이에서 발생 — main과 동일한 원인. 별도 이슈로 추적 필요.
+- 측정 도구 차이(before: DevTools 패널 / after: CLI headless)는 main과 동일.
+
+---
+# Raw DevTools Export
+---
+(CLI 실행 — HTML/JSON 리포트 동일 디렉터리 참고)

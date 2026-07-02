@@ -188,46 +188,29 @@ export default function HeroSection() {
             }`}
             style={slide.bg ? { background: slide.bg } : undefined}
           >
-            {/* 모바일 배경 이미지 (< 768px) */}
-            {slide.mobileBgImage && (
-              <img
-                src={slide.mobileBgImage}
-                alt=""
-                className="md:hidden absolute inset-0 h-full w-full object-cover object-center"
-                loading={index === 0 ? "eager" : "lazy"}
-                decoding="async"
-              />
-            )}
-
-            {/* 태블릿 배경 이미지 (768-1199px) */}
-            {slide.tabletBgImage && (
-              <img
-                src={slide.tabletBgImage}
-                alt=""
-                className="max-md:hidden lg:hidden absolute inset-0 h-full w-full object-cover object-center"
-                loading={index === 0 ? "eager" : "lazy"}
-                decoding="async"
-              />
-            )}
-
-            {/* 사진 배경 (데스크탑 전용) */}
-            {slide.type === "photo" && (
-              <img
-                src={heroDogBg.src}
-                alt=""
-                className="max-lg:hidden absolute inset-0 h-full w-full object-cover object-center"
-                decoding="async"
-              />
-            )}
-
-            {/* 풀 배경 이미지 (데스크탑 전용) */}
-            {slide.type === "fullBg" && slide.bgImage && (
-              <img
-                src={slide.bgImage}
-                alt=""
-                className="max-lg:hidden absolute inset-0 h-full w-full object-cover object-[70%_center]"
-                decoding="async"
-              />
+            {/* 배경 이미지 — <picture>로 breakpoint별 최적화 (모바일·태블릿·데스크탑 각 1장만 다운로드) */}
+            {(slide.mobileBgImage || slide.bgImage || slide.type === "photo") && (
+              <picture>
+                {slide.mobileBgImage && (
+                  <source media="(max-width: 767px)" srcSet={slide.mobileBgImage} />
+                )}
+                {slide.tabletBgImage && (
+                  <source media="(max-width: 1199px)" srcSet={slide.tabletBgImage} />
+                )}
+                <img
+                  src={slide.type === "photo" ? heroDogBg.src : (slide.bgImage ?? "")}
+                  alt=""
+                  className={[
+                    "absolute inset-0 h-full w-full object-cover",
+                    slide.type === "fullBg"
+                      ? "max-lg:object-center lg:object-[70%_center]"
+                      : "object-center",
+                  ].join(" ")}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                  decoding="async"
+                />
+              </picture>
             )}
 
             <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[90px] h-full lg:min-h-[537px]">
@@ -242,6 +225,7 @@ export default function HeroSection() {
                     alt={slide.headingAlt}
                     className="lg:hidden h-[83px] w-auto"
                     loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
                     decoding="async"
                   />
                   {/* 데스크탑 제목 이미지 */}
@@ -252,6 +236,7 @@ export default function HeroSection() {
                     height={slide.headingH}
                     className={`max-lg:hidden ${slide.headingClass}`}
                     loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
                     decoding="async"
                   />
                 </div>
@@ -294,7 +279,7 @@ export default function HeroSection() {
                     width={460}
                     height={380}
                     className="max-md:max-w-[220px] md:max-lg:w-[275px] md:max-lg:h-[216px] lg:max-w-[460px] w-full object-contain"
-                    loading="eager"
+                    loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                   />
                 </div>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button, ScrollReveal, useModal } from "@/shared/ui";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useAuth } from "@/features/auth";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import ingredientsDetailHappy from "../assets/ingredients-detail-happy.webp";
@@ -36,6 +37,7 @@ export default function IngredientsSection() {
           <Image
             src={ingredientsDetailHappy}
             alt="행복한 강아지와 수제간식 재료"
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto w-full max-md:max-w-[640px] md:max-w-[458px] lg:max-w-[645px] max-md:rounded-[32px] md:rounded-[24px] lg:rounded-[52px] object-cover"
           />
         </ScrollReveal>
@@ -54,6 +56,7 @@ export default function IngredientsSection() {
             <Image
               src={ingredientsDetailProfitPackage}
               alt="맞춤 패키지 박스 찾기"
+              quality={HIGH_IMAGE_QUALITY}
               className="mb-6 h-auto w-full max-w-[220px] md:mb-4 lg:mb-8 md:max-w-[223px] lg:max-w-[318px]"
             />
           </ScrollReveal>

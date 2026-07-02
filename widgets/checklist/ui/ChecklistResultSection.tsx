@@ -28,6 +28,15 @@ function profileToPetInfo(p: Profile): PetInfo {
   };
 }
 
+const DEFAULT_PET_INFO: PetInfo = {
+  name: "",
+  breed: "",
+  specialNotes: "",
+  birthDate: null,
+  weight: "",
+  gender: null,
+};
+
 export default function ChecklistResultSection({
   tier,
 }: {
@@ -36,23 +45,13 @@ export default function ChecklistResultSection({
   const { user } = useAuth();
   const { profile } = useProfile();
 
-  if (!profile) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-body-16-m text-[var(--color-text-secondary)]">
-          불러오는 중…
-        </p>
-      </div>
-    );
-  }
-
   return (
     <ChecklistResult
-      petInfo={profileToPetInfo(profile)}
-      avatarSrc={profile.profileImageUrl}
+      petInfo={profile ? profileToPetInfo(profile) : DEFAULT_PET_INFO}
+      avatarSrc={profile?.profileImageUrl ?? null}
       userId={user?.id ?? null}
       recommendedTier={tier}
-      profileId={profile.id}
+      profileId={profile?.id ?? null}
     />
   );
 }

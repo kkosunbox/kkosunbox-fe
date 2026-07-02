@@ -1,8 +1,12 @@
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchPointBalance, fetchPointHistory } from "@/features/point/api/queries";
 import type { PointLedgerItem } from "@/features/point/api/types";
-import { PointHistorySection } from "@/widgets/mypage";
+
+const PointHistorySection = dynamic(
+  () => import("@/widgets/mypage/ui/PointHistorySection"),
+);
 
 export const metadata = { title: "MY 포인트 | 꼬순박스" };
 

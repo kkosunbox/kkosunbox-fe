@@ -42,5 +42,4 @@ export const PROFILE_PET_WIDGET_HEADER =
   "shrink-0 px-6 max-md:pt-[env(safe-area-inset-top,0px)]";
 
 /** 프로필 작성 모달 헤더 타이포 (Figma — @source inline 필수) */
-export const PROFILE_PET_MODAL_TITLE = "text-profile-modal-title capitalize";
 export const PROFILE_PET_MODAL_SUBTITLE = "text-profile-modal-subtitle";

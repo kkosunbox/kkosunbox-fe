@@ -18,21 +18,6 @@ const fontSamples = [
     family: '"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
   },
   {
-    name: "GangwonEduAll Light",
-    description: "local TTF / GangwonEduAll-Light.ttf",
-    family: '"GangwonEduAll Light", serif',
-  },
-  {
-    name: "GangwonEduAll Bold",
-    description: "local TTF / GangwonEduAll-Bold.ttf",
-    family: '"GangwonEduAll Bold", serif',
-  },
-  {
-    name: "GangwonEduPower",
-    description: "local woff / GangwonEduPower.woff",
-    family: '"GangwonEduPower", sans-serif',
-  },
-  {
     name: "Griun Fromsol",
     description: "local TTF / Griun_Fromsol-Rg.ttf",
     family: '"Griun Fromsol", cursive',

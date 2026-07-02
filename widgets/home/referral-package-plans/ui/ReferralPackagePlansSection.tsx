@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CheckCircleIcon } from "@/shared/ui";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   PACKAGES,
   tierFromSubscriptionPlan,
@@ -87,6 +88,7 @@ export default function ReferralPackagePlansSection() {
                           src={TIER_DETAIL_HERO_IMAGES[t]}
                           alt={`${tPkg?.name ?? t} 대표 이미지`}
                           fill
+                          quality={HIGH_IMAGE_QUALITY}
                           className="object-cover"
                           sizes="100vw"
                           priority={t === "Premium"}

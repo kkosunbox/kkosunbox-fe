@@ -113,6 +113,23 @@ export function useChecklistSubmit({
     let savedProfileId: number | null = null;
     let checklistSaved = false;
 
+    // 아바타 업로드 — 실패해도 프로필 저장은 계속 진행
+    let profileImageUrl: string | undefined;
+    const file = avatarFileRef.current;
+    if (file) {
+      try {
+        const { uploadUrl, fileUrl } = await getProfileImagePresignedUrl({
+          fileName: file.name,
+          fileType: file.type,
+        });
+        await uploadToS3(uploadUrl, file, file.type);
+        profileImageUrl = fileUrl;
+        avatarFileRef.current = null;
+      } catch {
+        // non-fatal: 이미지 없이 저장 진행
+      }
+    }
+
     try {
       if (options.isNewProfile) {
         if (profiles.length >= MAX_PROFILE_COUNT) {
@@ -123,9 +140,10 @@ export function useChecklistSubmit({
           setIsAnalyzing(false);
           return;
         }
-        const newProfile = await createProfile(
-          buildCreateProfileBody(petInfo, checklistAnswers),
-        );
+        const newProfile = await createProfile({
+          ...buildCreateProfileBody(petInfo, checklistAnswers),
+          ...(profileImageUrl ? { profileImageUrl } : {}),
+        });
         savedProfileId = newProfile.id;
         setActiveProfileId(newProfile.id);
         checklistSaved = true;
@@ -133,13 +151,15 @@ export function useChecklistSubmit({
         await updateProfile(activeProfile.id, {
           ...buildUpdateProfileBody(petInfo),
           checklistAnswers,
+          ...(profileImageUrl !== undefined ? { profileImageUrl } : {}),
         });
         savedProfileId = activeProfile.id;
         checklistSaved = true;
       } else if (isLoggedIn) {
-        const newProfile = await createProfile(
-          buildCreateProfileBody(petInfo, checklistAnswers),
-        );
+        const newProfile = await createProfile({
+          ...buildCreateProfileBody(petInfo, checklistAnswers),
+          ...(profileImageUrl ? { profileImageUrl } : {}),
+        });
         savedProfileId = newProfile.id;
         setActiveProfileId(newProfile.id);
         checklistSaved = true;

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import privacyTitle from "../assets/privacy-title.webp";
 
 const PRIVACY_SECTIONS = [
@@ -77,6 +78,7 @@ export default function PrivacySection() {
           alt="개인정보처리방침"
           width={privacyTitle.width}
           height={privacyTitle.height}
+          quality={HIGH_IMAGE_QUALITY}
           priority
           className="h-auto w-full max-w-[217px]"
         />

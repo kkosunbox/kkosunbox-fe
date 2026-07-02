@@ -1,5 +1,6 @@
 ﻿import Image from "next/image";
 import { Text } from "@/shared/ui";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import checklistHeroPcPattern from "../assets/checklist-hero-pc-pattern.webp";
 import checklistHeroMobilePaw from "../assets/checklist-hero-mobile-paw.webp";
 import checklistHeroTitle from "../assets/checklist-hero-title.webp";
@@ -31,6 +32,7 @@ export default function ChecklistHero() {
           alt=""
           width={checklistHeroPcPattern.width}
           height={checklistHeroPcPattern.height}
+          quality={HIGH_IMAGE_QUALITY}
           className="h-auto w-full max-w-[940px] object-contain max-md:hidden"
           sizes="(max-width: 940px) 100vw, 940px"
           priority
@@ -52,6 +54,7 @@ export default function ChecklistHero() {
             alt="체크리스트를 작성해주세요!"
             width={checklistHeroTitle.width}
             height={checklistHeroTitle.height}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto object-contain max-md:hidden md:w-full lg:w-full md:max-w-[347px] lg:max-w-[347px]"
             sizes="(max-width: 767px) 100vw, 347px"
             priority

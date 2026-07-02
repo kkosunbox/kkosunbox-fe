@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
 import {
   PACKAGES,
@@ -223,6 +224,7 @@ function CardBody({
               src={explainImage}
               alt={`${pkg.name} 설명`}
               fill
+              quality={HIGH_IMAGE_QUALITY}
               className="object-cover"
               sizes="(min-width: 1200px) 562px, calc(100vw - 72px)"
               priority
@@ -319,8 +321,9 @@ export default function ChecklistResult({
   );
 
   useEffect(() => {
+    if (profileId == null) return;
     let cancelled = false;
-    getSubscriptionPlans(profileId ?? undefined)
+    getSubscriptionPlans(profileId)
       .then((res) => {
         if (!cancelled) {
           setApiPlans(res.plans);
@@ -369,6 +372,8 @@ export default function ChecklistResult({
     trackChecklistCtaClick({ plan_tier: recommendedPkg.name });
     router.push(`/subscribe/detail?planId=${recommendedApiPlan.id}`);
   };
+
+  const cardReady = profileId != null && !plansLoading;
 
   const sharedCardProps: Omit<CardBodyProps, "onDetailClick"> = {
     petName,
@@ -422,6 +427,7 @@ export default function ChecklistResult({
         <Image
           src={checklistHeroTitle}
           alt="체크리스트 기반 맞춤 추천이 완료되었어요!"
+          quality={HIGH_IMAGE_QUALITY}
           className="relative mx-auto mb-10 h-auto w-full max-w-[462px] max-md:hidden"
           sizes="(min-width: 768px) 462px, 300px"
           priority
@@ -433,6 +439,9 @@ export default function ChecklistResult({
             {...sharedCardProps}
             onDetailClick={navigateToDetail}
           />
+          {!cardReady && (
+            <div className="absolute inset-0 animate-pulse rounded-[20px] bg-[var(--color-surface-warm)]" />
+          )}
         </div>
 
         {/* 모바일 전용: 이미지 + 패키지 정보 + 추천이유 */}
@@ -448,6 +457,7 @@ export default function ChecklistResult({
                 src={TIER_DETAIL_HERO_IMAGES[recommendedPlanTier]}
                 alt={`${recommendedPkg.name} 상품 이미지`}
                 fill
+                quality={HIGH_IMAGE_QUALITY}
                 className="object-cover"
                 sizes="calc(100vw - 48px)"
                 priority
@@ -541,6 +551,7 @@ export default function ChecklistResult({
           <Image
             src={checklistLetStartPurchase}
             alt="꼬순박스 정기구독을 시작해보세요!"
+            quality={HIGH_IMAGE_QUALITY}
             className="mx-auto mb-[48px] h-auto w-full max-w-[380px] max-md:mb-7 max-md:max-w-[260px]"
             sizes="(min-width: 768px) 380px, 260px"
           />

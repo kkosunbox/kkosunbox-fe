@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 
 interface Props {
@@ -28,6 +29,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
           alt="폴더 아이콘"
           width={210}
           height={210}
+          quality={HIGH_IMAGE_QUALITY}
           className="absolute top-0 left-1/2 -translate-x-1/2 z-10
                      max-md:w-[160px] max-md:h-[160px] md:w-[210px] lg:w-[210px] md:h-[210px] lg:h-[210px]"
         />
@@ -59,6 +61,7 @@ export default function ChecklistDeferModal({ onClose }: Props) {
             alt="지금 작성하지 않아도 괜찮아요!"
             width={240}
             height={116}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto"
           />
 

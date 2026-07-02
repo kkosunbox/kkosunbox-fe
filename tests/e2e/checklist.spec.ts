@@ -59,31 +59,17 @@ test.describe("체크리스트 — 홈 CTA 버튼", () => {
   });
 
   test("홈 CTA: 로그인(체크리스트 없음) → 체크리스트 모달 오픈", async ({ page }) => {
-    await page.context().addCookies([{
-      name: "ggosoon-auth",
-      value: MOCK_ACCESS_TOKEN,
-      domain: "localhost",
-      path: "/",
-      httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-    }]);
+    await loginByTokens(page, TEST_TOKENS);
     await page.goto("/");
+    await page.getByRole("button", { name: "프로필 메뉴" }).first().waitFor({ state: "visible", timeout: 10_000 });
     await page.getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" }).first().click();
     await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10_000 });
   });
 
   test("홈 CTA: 로그인 → 체크리스트 모달 오픈 + 홈(/) URL 유지", async ({ page }) => {
-    await page.context().addCookies([{
-      name: "ggosoon-auth",
-      value: MOCK_ACCESS_TOKEN,
-      domain: "localhost",
-      path: "/",
-      httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-    }]);
+    await loginByTokens(page, TEST_TOKENS);
     await page.goto("/");
+    await page.getByRole("button", { name: "프로필 메뉴" }).first().waitFor({ state: "visible", timeout: 10_000 });
     await page.getByRole("button", { name: "10초 진단하고 우리 아이 맞춤 추천 받기" }).first().click();
     await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10_000 });
     await expect(page).toHaveURL("/");

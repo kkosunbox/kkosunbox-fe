@@ -79,6 +79,7 @@ export function OrderSummarySection({
               <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="모두 동의합니다." />
               <button
                 type="button"
+                aria-label={agreeOpen ? "약관 항목 접기" : "약관 항목 펼치기"}
                 onClick={onToggleAgreePanel}
                 aria-expanded={agreeOpen}
                 aria-controls="order-agreements-panel"

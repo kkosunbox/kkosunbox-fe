@@ -453,6 +453,7 @@ export function SubscriptionCard({
           {/* 카드 본문 클릭 — 구독 상세 */}
           <Link
             href={detailHref}
+            prefetch={false}
             aria-label={`${current.plan.name} 구독 상세 보기`}
             className="flex flex-col rounded-[8px] outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white"
           >
@@ -520,6 +521,7 @@ export function SubscriptionCard({
             ) : canReview ? (
               <Link
                 href={`/mypage/review/write?planId=${currentPlanId}`}
+                prefetch={false}
                 className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
                 style={{ color: planTheme.colorVar }}
               >
@@ -541,6 +543,7 @@ export function SubscriptionCard({
         {/* 구독관리 */}
         <Link
           href="/mypage/subscription"
+          prefetch={false}
           className="absolute right-6 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-white underline transition-opacity hover:opacity-80"
         >
           구독관리

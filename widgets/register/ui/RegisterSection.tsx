@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import registerTitle from "../assets/register-title.webp";
 import registerTitleMobi from "../assets/register-title-mobi.webp";
@@ -42,6 +43,7 @@ export default function RegisterSection() {
             <Image
               src={registerTitle}
               alt="회원가입을 완료해주세요!"
+              quality={HIGH_IMAGE_QUALITY}
               className="mx-auto w-auto max-md:hidden md:max-w-[322px] lg:max-w-[322px]"
               priority
             />

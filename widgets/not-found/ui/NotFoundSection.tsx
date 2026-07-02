@@ -1,5 +1,6 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import notFoundImage from "@/public/images/404-not-found.webp";
 
 export default function NotFoundSection() {
@@ -12,6 +13,7 @@ export default function NotFoundSection() {
           alt="404 Not Found"
           width={240}
           height={151}
+          quality={HIGH_IMAGE_QUALITY}
           className="max-md:w-[180px] max-md:h-auto"
           priority
         />

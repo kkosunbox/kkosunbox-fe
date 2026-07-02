@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 
 interface Props {
   onClose: () => void;
@@ -27,6 +28,7 @@ export default function CouponIssuedModal({ onClose }: Props) {
           alt="선물 상자"
           width={210}
           height={210}
+          quality={HIGH_IMAGE_QUALITY}
           className="absolute top-0 left-1/2 -translate-x-1/2 z-10
                      max-md:w-[160px] max-md:h-[160px] md:w-[210px] lg:w-[210px] md:h-[210px] lg:h-[210px]"
         />
@@ -58,6 +60,7 @@ export default function CouponIssuedModal({ onClose }: Props) {
             alt="꼬순박스 할인쿠폰이 발급되었습니다!"
             width={227}
             height={129}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto"
           />
 

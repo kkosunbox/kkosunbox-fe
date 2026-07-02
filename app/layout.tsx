@@ -3,6 +3,7 @@ import { Ms_Madi, Give_You_Glory, Gantari } from "next/font/google";
 import Script from "next/script";
 import { Suspense } from "react";
 import "./globals.css";
+import "./pretendard-subset.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
 import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
@@ -85,16 +86,9 @@ export default async function RootLayout({
         {/* 로그인·랜딩 등 Griun PolFairness 헤드라인의 FOUT(줄바꿈 깜빡임) 완화 */}
         <link
           rel="preload"
-          href="/fonts/PretendardVariable.woff2"
+          href="/fonts/Griun_PolFairness-Rg.woff2"
           as="font"
           type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="/fonts/Griun_PolFairness-Rg.ttf"
-          as="font"
-          type="font/ttf"
           crossOrigin="anonymous"
         />
       </head>

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
@@ -253,6 +254,7 @@ export default function ReferralPlanPicker({
                         src={TIER_DETAIL_HERO_IMAGES[displayTier]}
                         alt={`${activePkg.name} 대표 이미지`}
                         fill
+                        quality={HIGH_IMAGE_QUALITY}
                         className="object-cover transition-opacity duration-500"
                         sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
                         priority
@@ -367,6 +369,7 @@ export default function ReferralPlanPicker({
                 src={activeExplain.src}
                 alt={activeExplain.alt}
                 fill
+                quality={HIGH_IMAGE_QUALITY}
                 className="object-cover transition-opacity duration-500"
                 sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
                 priority

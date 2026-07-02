@@ -209,7 +209,7 @@ export function MobileDrawer({
             </div>
           )}
           <Image
-            src="/images/sidebar-banner-001.webp"
+            src="/images/sidebar-banner-001.png"
             alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
             width={375}
             height={126}

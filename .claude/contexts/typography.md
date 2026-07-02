@@ -19,13 +19,10 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 
 | Font family | 제공 weight | 800 사용 가능 여부 | 비고 |
 |---|---:|---|---|
-| `Pretendard` | 100-900 (`@fontsource`) | 가능 | `app/layout.tsx`에서 700/800/900 명시 로드 |
+| `Pretendard` | 45-920 (variable, dynamic-subset) | 가능 | `app/pretendard-subset.css` unicode-range 92분할 지연로딩 |
 | `Griun PolFairness` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
 | `Griun Fromsol` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
 | `Griun Yuri Daggu` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
-| `GangwonEduAll Light` | 400 only | 금지 | 폰트명은 Light/Bold라도 CSS weight는 400 |
-| `GangwonEduAll Bold` | 400 only | 금지 | 폰트명은 Light/Bold라도 CSS weight는 400 |
-| `GangwonEduPower` | 400 only | 금지 | `globals.css` `@font-face`가 400만 선언됨 |
 | `Ms Madi` | 400 only | 금지 | `next/font/google` weight 400 |
 | `Give You Glory` | 400 only | 금지 | `next/font/google` weight 400 |
 

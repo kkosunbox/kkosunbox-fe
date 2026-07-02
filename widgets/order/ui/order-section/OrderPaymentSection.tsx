@@ -100,6 +100,7 @@ export function OrderPaymentSection({
                     onChange={(e) => setCouponCodeInput(e.target.value)}
                     className={`${inputCls} flex-1 min-w-0`}
                     placeholder="코드 입력"
+                    aria-label="쿠폰 코드"
                   />
                   <button
                     type="button"

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 
 interface Props {
   onClose: () => void;
@@ -28,6 +29,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
           alt="폴더 아이콘"
           width={210}
           height={210}
+          quality={HIGH_IMAGE_QUALITY}
           className="absolute top-0 left-1/2 -translate-x-1/2 z-10
                      max-md:w-[160px] max-md:h-[160px] md:w-[210px] lg:w-[210px] md:h-[210px] lg:h-[210px]
                      animate-float"
@@ -60,6 +62,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
             alt="체크리스트로 맞춤 추천을 받으시겠어요?"
             width={205}
             height={129}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto"
           />
 

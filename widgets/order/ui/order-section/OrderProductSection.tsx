@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
+import Image from "next/image";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import type { PackageTier } from "@/entities/package";
 import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
@@ -29,15 +31,15 @@ export function OrderProductSection({
     <SectionCard title="제품 정보" open={open} onToggle={onToggle}>
       <div>
         <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
-          <div className="flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
-            <img
-              src={TIER_BOX_IMAGES[orderPlanTheme.tier].src}
+          <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
+            <Image
+              src={TIER_BOX_IMAGES[orderPlanTheme.tier]}
               alt={plan.name}
-              width={TIER_BOX_IMAGES[orderPlanTheme.tier].width}
-              height={TIER_BOX_IMAGES[orderPlanTheme.tier].height}
-              decoding="async"
-              className="h-full w-auto max-w-none object-cover object-center scale-105"
+              fill
+              quality={HIGH_IMAGE_QUALITY}
+              className="object-cover object-center scale-105"
+              sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
+              priority
             />
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -56,11 +58,12 @@ export function OrderProductSection({
             <div className="flex items-center gap-3 mt-1">
               <button
                 type="button"
+                aria-label="수량 감소"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 disabled={quantity <= 1}
                 className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
               >
-                <span className="max-md:hidden">−</span>
+                <span className="max-md:hidden" aria-hidden>−</span>
                 <span className="md:hidden">
                   <QuantityMinusIcon />
                 </span>
@@ -70,11 +73,12 @@ export function OrderProductSection({
               </span>
               <button
                 type="button"
+                aria-label="수량 증가"
                 onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                 disabled={quantity >= 99}
                 className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
               >
-                <span className="max-md:hidden">+</span>
+                <span className="max-md:hidden" aria-hidden>+</span>
                 <span className="md:hidden">
                   <QuantityPlusIcon />
                 </span>

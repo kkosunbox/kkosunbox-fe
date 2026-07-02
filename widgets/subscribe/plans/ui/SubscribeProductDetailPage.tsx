@@ -3,6 +3,7 @@
 import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useRouter } from "next/navigation";
 import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.webp";
 import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.webp";
@@ -188,6 +189,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               alt={`${selectedPlan.name} 대표 이미지`}
               fill
               sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 508px`}
+              quality={HIGH_IMAGE_QUALITY}
               className="object-cover"
               priority
             />
@@ -401,6 +403,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   alt={`${selectedPlan.name} 대표 이미지`}
                   fill
                   sizes="508px"
+                  quality={HIGH_IMAGE_QUALITY}
                   className="object-cover"
                   priority
                 />

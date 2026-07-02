@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useRouter } from "next/navigation";
 import { CheckCircleIcon } from "@/shared/ui";
 import {
@@ -209,6 +210,7 @@ export default function PackageDetailView({
               src={TIER_THUMBNAILS[selectedTier]}
               alt={`${pkg.name} 이미지`}
               fill
+              quality={HIGH_IMAGE_QUALITY}
               className={TIER_THUMBNAIL_IMAGE_CLASS}
               sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 327px`}
             />
@@ -293,6 +295,7 @@ export default function PackageDetailView({
                 src={TIER_THUMBNAILS[selectedTier]}
                 alt={`${pkg.name} 이미지`}
                 fill
+                quality={HIGH_IMAGE_QUALITY}
                 className={TIER_THUMBNAIL_IMAGE_CLASS}
                 sizes="327px"
               />

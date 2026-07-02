@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   PACKAGES,
   tierFromSubscriptionPlan,
@@ -45,6 +46,7 @@ export default function PackagePlansSection() {
           <Image
             src={homePackagePlansTitle}
             alt="우리 아이에게 맞는 간식 선택 후 구독하세요!"
+            quality={HIGH_IMAGE_QUALITY}
             className="mx-auto h-auto w-full max-w-[300px] md:max-w-[352px]"
             sizes="(min-width: 768px) 352px, 300px"
             priority
@@ -94,6 +96,7 @@ export default function PackagePlansSection() {
                           src={TIER_DETAIL_HERO_IMAGES[t]}
                           alt={`${tPkg?.name ?? t} 대표 이미지`}
                           fill
+                          quality={HIGH_IMAGE_QUALITY}
                           className="object-cover"
                           sizes="100vw"
                           priority={t === "Premium"}

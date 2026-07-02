@@ -3,8 +3,9 @@
 import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { CheckCircleIcon } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
@@ -239,11 +240,10 @@ export default function PlanPicker({
 
   return (
     <div className="mx-auto w-full max-w-content max-md:px-5 md:px-6 lg:px-0">
-      <ScrollReveal variant="fade-up" delay={150}>
-        <div
-          ref={containerRef}
-          className="relative flex items-stretch justify-center max-md:flex-col max-md:items-center max-md:gap-[46px] max-lg:flex-col max-lg:gap-0 md:max-w-[600px] md:mx-auto md:gap-1 lg:max-w-none lg:mx-0 lg:gap-1"
-        >
+      <div
+        ref={containerRef}
+        className="relative flex items-stretch justify-center max-md:flex-col max-md:items-center max-md:gap-[46px] max-lg:flex-col max-lg:gap-0 md:max-w-[600px] md:mx-auto md:gap-1 lg:max-w-none lg:mx-0 lg:gap-1"
+      >
           {svgBg && (
             <svg
               aria-hidden="true"
@@ -284,6 +284,7 @@ export default function PlanPicker({
                           src={TIER_DETAIL_HERO_IMAGES[tier]}
                           alt={`${pkg?.name ?? tier} 대표 이미지`}
                           fill
+                          quality={HIGH_IMAGE_QUALITY}
                           className="object-cover"
                           sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
                           priority={tier === defaultTier}
@@ -402,6 +403,7 @@ export default function PlanPicker({
                     src={explain.src}
                     alt={explain.alt}
                     fill
+                    quality={HIGH_IMAGE_QUALITY}
                     className="object-cover"
                     sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
                     priority={tier === defaultTier}
@@ -604,8 +606,7 @@ export default function PlanPicker({
               );
             })}
           </div>
-        </div>
-      </ScrollReveal>
+      </div>
     </div>
   );
 }

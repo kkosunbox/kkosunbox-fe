@@ -10,6 +10,7 @@ import {
   MEDIA_MAX_LG_SIZES,
   MEDIA_MAX_MD_SIZES,
 } from "@/shared/config/breakpoints";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 
 import introduceHeroRenewalMobileTablet from "../assets/introduce-hero-renewal-mobile-tablet.webp";
 import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.webp";
@@ -38,7 +39,15 @@ function FeatureCard({ image, title, description, bgColorVar }: FeatureCardProps
     >
       <div className="flex flex-col items-center gap-4 text-center">
         <p className="text-subtitle-20-b tracking-[-0.02em] text-black">{title}</p>
-        <Image src={image} alt="" width={120} height={120} aria-hidden className="h-[120px] w-[120px] object-contain" />
+        <Image
+          src={image}
+          alt=""
+          width={120}
+          height={120}
+          quality={HIGH_IMAGE_QUALITY}
+          aria-hidden
+          className="h-[120px] w-[120px] object-contain"
+        />
         <p className="whitespace-pre-line text-[14px] leading-[140%] tracking-[-0.02em] text-black">
           {description}
         </p>
@@ -48,9 +57,9 @@ function FeatureCard({ image, title, description, bgColorVar }: FeatureCardProps
 }
 
 /*
- * About 페이지 GangwonEduPower 헤딩 — SVG 아웃라인 (2026-06-18)
+ * About 페이지 디스플레이 헤딩 — SVG 아웃라인 (2026-06-18)
  *
- * 아래 h1/h2의 인라인 SVG는 text-introduce-heading 등 폰트 클래스 대신
+ * 아래 h1/h2의 인라인 SVG는 폰트 클래스(웹폰트) 대신
  * Figma 시안 글리프를 직접 렌더링한다. 웹폰트 렌더링이 시안과 달라
  * 의도적으로 SVG로 고정한 것이므로, 리팩터링·타이포 정리 시 텍스트 문단으로
  * 되돌리지 말 것. (대상: "About Us", "믿고 먹일 수 있는 간식…",
@@ -165,7 +174,7 @@ export default function AboutSection() {
             <div className="shrink-0 h-[var(--banner-height)]" aria-hidden />
             <div className="flex h-[601px] items-center mx-auto w-full md:max-w-[var(--max-width-content)] px-0 ">
             <div className="flex-none w-[356px]">
-              {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
+              {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={100}>
                 <h1 className="mb-10" aria-label="About Us">
                   <svg
@@ -235,6 +244,7 @@ export default function AboutSection() {
                   alt="달리는 강아지"
                   width={590}
                   height={590}
+                  quality={HIGH_IMAGE_QUALITY}
                   className="h-auto w-full max-w-[320px] rounded-[30px] lg:max-w-[360px]"
                   sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), ${MEDIA_MAX_LG_SIZES} 320px, 360px`}
                 />
@@ -251,7 +261,7 @@ export default function AboutSection() {
             </ScrollReveal>
 
             <div className="flex w-full flex-col gap-6 max-lg:items-center max-lg:text-center lg:items-end lg:text-right">
-              {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
+              {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={200}>
                 <h2
                   className="max-lg:mx-auto lg:ml-auto"
@@ -305,6 +315,7 @@ export default function AboutSection() {
                     alt="달리는 강아지"
                     width={590}
                     height={590}
+                    quality={HIGH_IMAGE_QUALITY}
                     className="h-auto w-full max-w-[320px] rounded-[30px]"
                     sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
                   />
@@ -336,7 +347,7 @@ export default function AboutSection() {
         <div className="mx-auto max-w-content max-md:px-6 md:px-[20px] lg:px-0">
           <div className="flex flex-col items-center gap-10 lg:flex-row lg:justify-between">
             <div className="flex w-full flex-col gap-6 max-lg:items-center max-lg:text-center lg:items-start lg:text-left">
-              {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
+              {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={200}>
                 <h2
                   className="max-lg:mx-auto"
@@ -390,6 +401,7 @@ export default function AboutSection() {
                     alt="꼬순박스 제작 과정"
                     width={375}
                     height={330}
+                    quality={HIGH_IMAGE_QUALITY}
                     className="h-auto w-full max-w-[320px] rounded-[30px]"
                     sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
                   />
@@ -421,6 +433,7 @@ export default function AboutSection() {
                   alt="꼬순박스 제작 과정"
                   width={375}
                   height={330}
+                  quality={HIGH_IMAGE_QUALITY}
                   className="h-auto w-full max-w-[320px] rounded-[30px] lg:max-w-[375px]"
                   sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), ${MEDIA_MAX_LG_SIZES} 320px, 375px`}
                 />
@@ -442,7 +455,7 @@ export default function AboutSection() {
       {/* Section 4: Feature 카드 */}
       <section className="bg-[var(--color-about-tan-bg)] py-14 lg:pt-[101px] lg:pb-[100px]">
         <div className="mx-auto max-md:max-w-[480px] md:max-w-[var(--max-width-content)] px-6 md:px-0 flex flex-col gap-10 lg:gap-[91px]">
-          {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
+          {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
           <ScrollReveal variant="fade-up">
             <h2
               className="mx-auto flex justify-center"
@@ -520,6 +533,7 @@ export default function AboutSection() {
             src={aboutCtaBg}
             alt=""
             fill
+            quality={HIGH_IMAGE_QUALITY}
             className="object-cover opacity-50 blur-sm"
             style={{ objectPosition: "center 82%" }}
             sizes="100vw"
@@ -549,7 +563,7 @@ export default function AboutSection() {
                 믿고 선택할 수 있도록,
               </p>
             </ScrollReveal>
-            {/* GangwonEduPower 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
+            {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
             <ScrollReveal variant="fade-up" delay={250}>
               <h2
                 className="max-lg:mx-auto"

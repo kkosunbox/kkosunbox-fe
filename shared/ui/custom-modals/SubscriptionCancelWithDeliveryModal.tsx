@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Image from "next/image";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 
 interface Props {
   onClose: () => void;
@@ -26,6 +27,7 @@ export default function SubscriptionCancelWithDeliveryModal({ onClose, onConfirm
           alt="경고 아이콘"
           width={210}
           height={210}
+          quality={HIGH_IMAGE_QUALITY}
           className="absolute top-0 left-1/2 -translate-x-1/2 z-10
                      max-md:w-[160px] max-md:h-[160px] md:w-[210px] lg:w-[210px] md:h-[210px] lg:h-[210px]"
         />
@@ -54,6 +56,7 @@ export default function SubscriptionCancelWithDeliveryModal({ onClose, onConfirm
             alt="잠깐만요! 받지 못하신 상품이 있어요!"
             width={270}
             height={129}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto max-w-full"
           />
 

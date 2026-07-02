@@ -1,0 +1,45 @@
+# Lighthouse Report — main
+# 표준 요약 (AI·SUMMARY 파싱용) — README.md 템플릿 참고
+
+## Meta
+page: main
+url: http://localhost:3000/
+date: 2026-07-01
+time: 15:35 KST
+phase: after
+device: desktop
+mode: dev
+lighthouse: 13.4.0
+chromium: headless (CLI chrome-launcher)
+throttling: custom (lighthouse default simulate)
+session: single-page, initial-load (anonymous, logged-out — matches before)
+
+## Scores
+performance: 78
+accessibility: 86
+best_practices: 69
+seo: 66
+
+## Metrics
+fcp: 0.7s
+lcp: 3.2s
+tbt: 120ms
+cls: 0.001
+speed_index: 1.7s
+
+## PERF-001 code verification (lcp-discovery-insight audit)
+- fetchpriority=high applied: true
+- Request discoverable in initial document: true
+- Not lazy-loaded: true
+- LCP element: hero-custom-snack-bg.webp via <picture> (commit 58a004e) — confirmed serving correct breakpoint image
+
+## Caveat — before/after not directly comparable
+- before(06-30)는 대화형 DevTools Lighthouse 패널 측정, after(07-01)는 CLI(`npx lighthouse`) headless 측정 — 측정 도구가 다름.
+- 측정 시점 머신 백그라운드 부하(에디터 TS 서버 등)가 시뮬레이션 스로틀링 기반 LCP/TBT에 영향 가능. 재현 2회(3.4s, 3.2s) 모두 before보다 높게 나와 노이즈만은 아닐 수 있음.
+- PERF-001 액션 자체(<picture> 분기, fetchPriority)는 코드 레벨에서 정상 적용 확인됨 — 위 lcp-discovery-insight 참고.
+- **권장**: 신뢰 가능한 before/after 비교를 위해 프로덕션 빌드(`pnpm build && pnpm start`) 기준 재측정 필요.
+
+---
+# Raw DevTools Export
+---
+(CLI 실행 — HTML 리포트: lighthouse-07-01-after.report.html, JSON: lighthouse-07-01-after.report.json 참고)

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Text } from "@/shared/ui";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import logoMain2x from "@/shared/assets/logo-main@2x.webp";
 import howItWorksAsset01 from "../assets/how-it-works-asset-01.webp";
 import howItWorksAsset02 from "../assets/how-it-works-asset-02.webp";
@@ -50,6 +51,7 @@ export default function HowItWorksSection() {
             alt="꼬순박스"
             width={LOGO_WIDTH}
             height={LOGO_HEIGHT}
+            quality={HIGH_IMAGE_QUALITY}
             className="h-auto w-[140px] md:w-[208px] lg:w-[208px] max-w-full"
           />
         </h2>
@@ -69,6 +71,9 @@ export default function HowItWorksSection() {
                   alt=""
                   width={step.iconWidth}
                   height={step.iconHeight}
+                  {...(step.iconWidth >= 100 || step.iconHeight >= 100
+                    ? { quality: HIGH_IMAGE_QUALITY }
+                    : {})}
                   className="h-auto max-h-[60px] md:max-h-[76px] lg:max-h-[76px] w-auto max-w-full object-contain"
                 />
               </div>

@@ -29,7 +29,7 @@ export default function SubscribePlansSection({
 }: Props) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
-  const { profile: clientProfile } = useProfile();
+  const { profile: clientProfile, isProfilesReady } = useProfile();
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
@@ -38,7 +38,9 @@ export default function SubscribePlansSection({
 
   const profile = clientProfile ?? initialProfile;
   const isChecklistDone = hasChecklistAnswers(profile);
-  const showModal = showChecklistRecommend && isLoggedIn && !isChecklistDone && !isDismissed;
+  // initialProfile이 없을 때 isProfilesReady 전에 modal이 flash되는 것을 방지
+  const profileKnown = initialProfile !== null || isProfilesReady;
+  const showModal = showChecklistRecommend && isLoggedIn && profileKnown && !isChecklistDone && !isDismissed;
 
   function handleClose() { setIsDismissed(true); }
   function handleConfirm() { setIsDismissed(true); openChecklistForm(); }

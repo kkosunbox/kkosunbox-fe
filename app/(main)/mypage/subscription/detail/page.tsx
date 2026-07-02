@@ -1,10 +1,14 @@
+import dynamic from "next/dynamic";
 import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
 import {
   fetchSubscriptionPaymentHistory,
   fetchSubscriptions,
 } from "@/features/subscription/api/queries";
-import { SubscriptionDetailSection } from "@/widgets/mypage";
+
+const SubscriptionDetailSection = dynamic(
+  () => import("@/widgets/mypage/ui/SubscriptionDetailSection"),
+);
 
 export const metadata = { title: "구독중인 플랜 | 꼬순박스" };
 

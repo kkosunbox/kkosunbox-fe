@@ -78,6 +78,7 @@ export function OrderCustomerSection({
                 onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
                 className={`${inputCls} md:max-w-[220px]`}
                 placeholder="이름"
+                aria-label="받는분"
               />
             </FormRow>
             <FormRow label="휴대폰">
@@ -100,6 +101,7 @@ export function OrderCustomerSection({
                   className={`${inputCls} md:max-w-[220px]`}
                   placeholder="010-0000-0000"
                   inputMode="numeric"
+                  aria-label="휴대폰"
                 />
                 {phoneError && (
                   <p className="text-body-13-m text-red-600 pl-1" role="alert">{phoneError}</p>
@@ -114,6 +116,7 @@ export function OrderCustomerSection({
                 value={newAddr.zipCode}
                 readOnly
                 className={`${inputCls} min-w-0 cursor-default bg-[var(--color-surface-light)] md:max-w-[220px]`}
+                aria-label="우편번호"
               />
               <button
                 type="button"
@@ -148,6 +151,7 @@ export function OrderCustomerSection({
                 onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
                 className={inputCls}
                 placeholder="상세 주소를 입력해주세요"
+                aria-label="상세 주소"
               />
             )}
           </FormRow>
@@ -159,6 +163,7 @@ export function OrderCustomerSection({
               className={`${inputCls} md:max-w-[220px]`}
               placeholder="배송 시 요청사항을 입력해주세요"
               maxLength={50}
+              aria-label="배송메모"
             />
           </FormRow>
         </div>

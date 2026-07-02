@@ -49,6 +49,7 @@ export function OrderInviteSection({
                 disabled={isInviteInputLocked}
                 className={`${inputCls} flex-1 min-w-0 disabled:cursor-not-allowed disabled:opacity-60`}
                 placeholder="초대코드를 입력해주세요."
+                aria-label="초대코드"
               />
               <button
                 type="button"

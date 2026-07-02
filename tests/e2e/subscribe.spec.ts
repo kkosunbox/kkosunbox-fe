@@ -3,9 +3,13 @@ import { MOCK_PLANS } from "../helpers/mockApiServer";
 import { loginAndGoTo } from "../helpers/auth";
 
 async function dismissChecklistRecommendModalIfVisible(page: import("@playwright/test").Page) {
+  // 프로필 로드 후 모달이 뜰 수 있으므로 waitFor로 대기 후 dismiss
   const laterButton = page.getByRole("button", { name: "다음에 하기" });
-  if (await laterButton.isVisible()) {
+  try {
+    await laterButton.waitFor({ state: "visible", timeout: 5_000 });
     await laterButton.click();
+  } catch {
+    // 타임아웃 내 모달 미노출 — 체크리스트 완료 상태 또는 이미 닫힌 경우
   }
 }
 

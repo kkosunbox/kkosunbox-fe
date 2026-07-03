@@ -9,9 +9,7 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import reviewsBg from "../assets/reviews-bg.webp";
 import reviewsTitle from "../assets/reviews-title-new.svg";
-import reviewsTitleMobile from "../assets/reviews-title-mobile.webp";
 import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
@@ -85,59 +83,62 @@ function StarIcon({ fillPercent = 100 }: { fillPercent?: number }) {
   );
 }
 
-function CarouselPrevButton({
+/** 활성(클릭 가능): 불투명 흰 배경 + #999999 화살표 / 비활성: 반투명 흰 배경 + #DADADA 화살표 */
+function CarouselArrowButton({
+  direction,
+  label,
   disabled,
   onClick,
 }: {
+  direction: "prev" | "next";
+  label: string;
   disabled: boolean;
   onClick: () => void;
 }) {
-  return (
-    <button
-      type="button"
-      aria-label="이전 리뷰"
-      disabled={disabled}
-      onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
-      style={{ background: "rgba(255,255,255,0.3)" }}
-    >
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <path
-          d="M11 4L6 9L11 14"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
-  );
-}
+  const filterId = `filter0_d_reviews_${direction}`;
+  const shadowId = `effect1_dropShadow_reviews_${direction}`;
+  const path = direction === "prev" ? "M24 12L15 20L24 28" : "M16 12L25 20L16 28";
 
-function CarouselNextButton({
-  disabled,
-  onClick,
-}: {
-  disabled: boolean;
-  onClick: () => void;
-}) {
   return (
     <button
       type="button"
-      aria-label="다음 리뷰"
+      aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-white shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
-      style={{ background: "rgba(255,255,255,0.3)" }}
+      className="flex h-11 w-11 shrink-0 items-center justify-center transition-opacity disabled:pointer-events-none"
     >
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <path
-          d="M7 4L12 9L7 14"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <g filter={`url(#${filterId})`}>
+          <rect
+            x="2"
+            y="2"
+            width="36"
+            height="36"
+            rx="18"
+            fill="white"
+            fillOpacity={disabled ? 0.3 : 1}
+            shapeRendering="crispEdges"
+          />
+          <path
+            d={path}
+            stroke={disabled ? "#DADADA" : "#999999"}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <defs>
+          <filter id={filterId} x="0" y="0" width="44" height="44" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+            <feOffset dx="2" dy="2" />
+            <feGaussianBlur stdDeviation="2" />
+            <feComposite in2="hardAlpha" operator="out" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
+            <feBlend mode="normal" in2="BackgroundImageFix" result={shadowId} />
+            <feBlend mode="normal" in="SourceGraphic" in2={shadowId} result="shape" />
+          </filter>
+        </defs>
       </svg>
     </button>
   );
@@ -242,7 +243,9 @@ function ReviewsCarousel() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1107px] items-center justify-between gap-3 md:gap-4 lg:gap-6">
-      <CarouselPrevButton
+      <CarouselArrowButton
+        direction="prev"
+        label="이전 리뷰"
         disabled={false}
         onClick={() => setStartIndex(displayIndex === 0 ? maxStart : displayIndex - 1)}
       />
@@ -263,7 +266,9 @@ function ReviewsCarousel() {
           ))}
         </div>
       </div>
-      <CarouselNextButton
+      <CarouselArrowButton
+        direction="next"
+        label="다음 리뷰"
         disabled={false}
         onClick={() => setStartIndex(displayIndex === maxStart ? 0 : displayIndex + 1)}
       />
@@ -292,18 +297,8 @@ export default function ReviewsSection() {
   return (
     <section
       className="relative overflow-hidden py-16 md:py-20 lg:h-[862px] lg:py-0"
-      style={{ background: "var(--color-cta-button)" }}
+      style={{ background: "var(--color-reviews-bg)" }}
     >
-      <Image
-        src={reviewsBg}
-        alt=""
-        fill
-        quality={HIGH_IMAGE_QUALITY}
-        className="object-cover"
-        sizes="100vw"
-        priority
-        aria-hidden="true"
-      />
       <div className="relative z-10 mx-auto max-w-[1107px] max-md:px-6 md:px-6 lg:px-0 lg:pt-[100px]">
         <ScrollReveal variant="fade-up">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -312,23 +307,13 @@ export default function ReviewsSection() {
             alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
             width={reviewsTitle.width}
             height={reviewsTitle.height}
-            className="mx-auto hidden h-auto w-full md:block md:max-w-[760px] lg:max-w-[845px]"
-            loading="eager"
-            decoding="async"
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={reviewsTitleMobile.src}
-            alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
-            width={reviewsTitleMobile.width}
-            height={reviewsTitleMobile.height}
-            className="mx-auto block h-auto max-h-[96px] w-full max-w-[486px] object-contain md:hidden"
+            className="mx-auto h-auto w-full max-w-[486px] md:max-w-[760px] lg:max-w-[845px]"
             loading="eager"
             decoding="async"
           />
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
-          <p className="mt-4 text-center text-[14px] font-medium leading-[18px] tracking-[-0.02em] text-white md:text-[16px] md:leading-[19px]">
+          <p className="mt-4 text-center text-[14px] font-medium leading-[18px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:text-[16px] md:leading-[19px]">
             실제 꼬순박스 패키지를 구매하신 고객님들의 생생한 리뷰입니다.
           </p>
         </ScrollReveal>
@@ -353,7 +338,7 @@ export default function ReviewsSection() {
             <button
               type="button"
               onClick={handleChecklistCtaClick}
-              className="h-12 w-[327px] rounded-[8px] bg-[var(--color-text)] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white md:h-[52px] md:w-[312px] md:text-[16px]"
+              className="h-12 w-[327px] rounded-[12px] bg-[var(--color-hero-cta-bg)] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white [font-feature-settings:'liga'_off] md:h-[52px] md:w-[312px] md:text-[16px]"
             >
               10초 진단하고 우리 아이 맞춤 추천 받기
             </button>

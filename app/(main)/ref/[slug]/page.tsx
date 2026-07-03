@@ -41,11 +41,11 @@ export default async function ReferralLandingPage({ params }: Props) {
       }}
     >
       <div className="pt-[var(--banner-height)]">
-        <div className="sticky top-[var(--banner-height)] z-0">
+        <div className="relative z-0">
           <ReferralHeroSection />
-          <StatsBar />
         </div>
         <div className="relative z-[1]">
+          <StatsBar />
           <ReferralPackagePlansSection />
           <WhyGallerySection />
           <ReviewsSection />

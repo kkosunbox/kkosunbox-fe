@@ -30,11 +30,11 @@ export default function Home() {
       <h1 className="sr-only">
         꼬순박스 — 100% 국내산 휴먼그레이드 강아지 수제간식 정기구독
       </h1>
-      <div className="sticky top-[var(--banner-height)] z-0">
+      <div className="relative z-0">
         <HomeHero />
-        <StatsBar />
       </div>
       <div className="relative z-[1]">
+        <StatsBar />
         <HomePackagePlansSection />
         <WhyGallerySection />
         <ReviewsSection />

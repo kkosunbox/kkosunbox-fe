@@ -83,59 +83,62 @@ function StarIcon({ fillPercent = 100 }: { fillPercent?: number }) {
   );
 }
 
-function CarouselPrevButton({
+/** 활성(클릭 가능): 불투명 흰 배경 + #999999 화살표 / 비활성: 반투명 흰 배경 + #DADADA 화살표 */
+function CarouselArrowButton({
+  direction,
+  label,
   disabled,
   onClick,
 }: {
+  direction: "prev" | "next";
+  label: string;
   disabled: boolean;
   onClick: () => void;
 }) {
-  return (
-    <button
-      type="button"
-      aria-label="이전 리뷰"
-      disabled={disabled}
-      onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-[var(--color-text)] shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
-      style={{ background: "rgba(255,255,255,0.7)" }}
-    >
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <path
-          d="M11 4L6 9L11 14"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
-  );
-}
+  const filterId = `filter0_d_reviews_${direction}`;
+  const shadowId = `effect1_dropShadow_reviews_${direction}`;
+  const path = direction === "prev" ? "M24 12L15 20L24 28" : "M16 12L25 20L16 28";
 
-function CarouselNextButton({
-  disabled,
-  onClick,
-}: {
-  disabled: boolean;
-  onClick: () => void;
-}) {
   return (
     <button
       type="button"
-      aria-label="다음 리뷰"
+      aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] text-[var(--color-text)] shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity disabled:pointer-events-none disabled:opacity-35"
-      style={{ background: "rgba(255,255,255,0.7)" }}
+      className="flex h-11 w-11 shrink-0 items-center justify-center transition-opacity disabled:pointer-events-none"
     >
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-        <path
-          d="M7 4L12 9L7 14"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <g filter={`url(#${filterId})`}>
+          <rect
+            x="2"
+            y="2"
+            width="36"
+            height="36"
+            rx="18"
+            fill="white"
+            fillOpacity={disabled ? 0.3 : 1}
+            shapeRendering="crispEdges"
+          />
+          <path
+            d={path}
+            stroke={disabled ? "#DADADA" : "#999999"}
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </g>
+        <defs>
+          <filter id={filterId} x="0" y="0" width="44" height="44" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+            <feOffset dx="2" dy="2" />
+            <feGaussianBlur stdDeviation="2" />
+            <feComposite in2="hardAlpha" operator="out" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
+            <feBlend mode="normal" in2="BackgroundImageFix" result={shadowId} />
+            <feBlend mode="normal" in="SourceGraphic" in2={shadowId} result="shape" />
+          </filter>
+        </defs>
       </svg>
     </button>
   );
@@ -240,7 +243,9 @@ function ReviewsCarousel() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1107px] items-center justify-between gap-3 md:gap-4 lg:gap-6">
-      <CarouselPrevButton
+      <CarouselArrowButton
+        direction="prev"
+        label="이전 리뷰"
         disabled={false}
         onClick={() => setStartIndex(displayIndex === 0 ? maxStart : displayIndex - 1)}
       />
@@ -261,7 +266,9 @@ function ReviewsCarousel() {
           ))}
         </div>
       </div>
-      <CarouselNextButton
+      <CarouselArrowButton
+        direction="next"
+        label="다음 리뷰"
         disabled={false}
         onClick={() => setStartIndex(displayIndex === maxStart ? 0 : displayIndex + 1)}
       />

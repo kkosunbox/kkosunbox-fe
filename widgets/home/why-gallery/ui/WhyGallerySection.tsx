@@ -8,8 +8,8 @@ import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { GalleryCTALogo } from "./GalleryCTALogo";
 import { GalleryLogoMark } from "./GalleryLogoMark";
 import { GalleryMutedLogo } from "./GalleryMutedLogo";
-import whyGalleryTitle from "../assets/why-gallery-title.webp";
-import whyGalleryTitleMobile from "../assets/why-gallery-title-mobile.webp";
+import whyGalleryTitle from "../assets/why-gallery-title.svg";
+import whyGalleryTitlePawDeco from "../assets/why-gallery-title-paw-deco.webp";
 import pawsPatternWithBg from "../assets/paws-patterns-with-bg.webp";
 import galleryDogsUpper001 from "./gallery-dogs-upper-001.webp";
 import galleryDogsUpper002 from "./gallery-dogs-upper-002.webp";
@@ -166,8 +166,8 @@ function GalleryTile({ item }: { item: GalleryItem }) {
 
 const ROW_1_BASE: GalleryItem[] = [
   { type: "image", src: galleryDogsUpper001, alt: "노란 배경에서 간식을 먹는 강아지" },
-  { type: "image", src: galleryDogsUpper002, alt: "간식을 기다리는 골든 리트리버" },
-  { type: "image", src: galleryDogsUpper003, alt: "주황 배경에서 간식을 먹는 강아지" },
+  { type: "image", src: galleryDogsUpper002, alt: "꼬순박스 간식과 함께 있는 웰시코기" },
+  { type: "image", src: galleryDogsUpper003, alt: "혀를 내밀고 웃는 하얀 말티즈" },
   {
     type: "cta",
     bg: "var(--color-gallery-cta-peach)",
@@ -186,10 +186,10 @@ const ROW_2_BASE: GalleryItem[] = [
     text: "우리 아이 수제 간식 구독 패키지,\n간편하게 시작하기",
     wide: true,
   },
-  { type: "image", src: galleryDogsDowner001, alt: "길 위에서 뛰는 강아지들" },
-  { type: "image", src: galleryDogsDowner002, alt: "꼬순박스 간식과 패키지" },
-  { type: "image", src: galleryDogsDowner003, alt: "간식 재료 앞에 앉은 강아지" },
-  { type: "logo", bg: "var(--color-gallery-peach-light)" },
+  { type: "image", src: galleryDogsDowner001, alt: "꼬순박스 프리미엄 간식과 함께 있는 강아지" },
+  { type: "image", src: galleryDogsDowner002, alt: "혀를 내밀고 웃는 갈색 푸들" },
+  { type: "image", src: galleryDogsDowner003, alt: "꼬순박스 간식과 패키지" },
+  { type: "logo", bg: "var(--color-gallery-sage-light)" },
 ];
 
 export default function WhyGallerySection() {
@@ -244,69 +244,77 @@ export default function WhyGallerySection() {
   }
 
   return (
-    <section className="overflow-hidden pb-10 md:pb-14 lg:pb-16" style={{ background: "var(--color-why-bg)" }}>
-      <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={whyGalleryTitle.src}
-          alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
-          width={whyGalleryTitle.width}
-          height={whyGalleryTitle.height}
-          className="mb-8 hidden h-auto w-full md:block md:mb-10 md:max-w-[466px] lg:mb-[64px]"
-          loading="eager"
-          decoding="async"
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={whyGalleryTitleMobile.src}
-          alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
-          width={whyGalleryTitleMobile.width}
-          height={whyGalleryTitleMobile.height}
-          className="mb-7 block h-auto max-h-[96px] w-full max-w-[320px] object-contain md:hidden"
-          loading="eager"
-          decoding="async"
-        />
-        {/* 모바일 — Figma Group 1000005556 */}
-        <p className="mb-11 max-w-[271px] text-center text-[14px] leading-[20px] tracking-[-0.02em] text-white md:hidden">
-          <span className="font-bold">
-            모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
-          </span>
-          <br />
-          <br />
-          <span className="font-medium">
-            <span className="font-bold text-[var(--color-cta-button)]">우리 아이의 취향</span>과{" "}
-            <span className="font-bold text-[var(--color-cta-button)]">건강 상태를 반영</span>한
+    <section className="bg-white max-md:px-4 md:px-5 lg:px-16 max-md:pb-12 md:pb-16 lg:pb-[92px]">
+      <div
+        className="mx-auto max-lg:max-w-content lg:max-w-none overflow-hidden rounded-[24px] pb-10 md:rounded-[40px] md:pb-14 lg:rounded-[64px] lg:pb-16"
+        style={{ background: "var(--color-why-choose-bg)" }}
+      >
+        <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
+          <div className="relative mb-7 md:mb-10 lg:mb-[64px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={whyGalleryTitle.src}
+              alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
+              width={whyGalleryTitle.width}
+              height={whyGalleryTitle.height}
+              className="h-auto w-full max-w-[320px] md:max-w-[466px]"
+              loading="eager"
+              decoding="async"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={whyGalleryTitlePawDeco.src}
+              alt=""
+              aria-hidden="true"
+              width={whyGalleryTitlePawDeco.width}
+              height={whyGalleryTitlePawDeco.height}
+              className="pointer-events-none absolute right-full top-[-48px] mr-[14px] h-auto w-[52px] select-none max-md:hidden"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          {/* 모바일 — Figma Group 1000005556 */}
+          <p className="mb-11 max-w-[271px] text-center text-[14px] leading-[20px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:hidden">
+            <span className="font-bold">
+              모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
+            </span>
             <br />
-            맞춤형 수제 간식을 꼬순박스가 제안합니다.
-          </span>
-        </p>
-        {/* 태블릿·데스크탑 */}
-        <p className="mb-8 hidden max-w-[464px] text-center text-[18px] leading-[28px] tracking-[-0.02em] text-white md:mb-10 md:block md:text-[24px] md:leading-[32px]">
-          <span className="font-bold">
-            모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
-          </span>
-          <br />
-          <br />
-          <span className="font-medium">
-            <span className="font-bold text-[var(--color-cta-button)]">우리 아이의 취향</span>과{" "}
-            <span className="font-bold text-[var(--color-cta-button)]">건강 상태를 반영</span>한
             <br />
-            맞춤형 수제 간식을 꼬순박스가 제안합니다.
-          </span>
-        </p>
-        <button
-          type="button"
-          onClick={handleChecklistClick}
-          className="h-10 w-[230px] rounded-[8px] text-center text-[13px] font-semibold leading-[30px] tracking-[-0.04em] text-white [font-feature-settings:'liga'_off] transition-opacity hover:opacity-90 md:h-[56px] md:w-[288px] md:text-[16px]"
-          style={{ background: "var(--color-cta-button)" }}
-        >
-          체크리스트 작성 후 구독하러 가기
-        </button>
-      </div>
+            <span className="font-medium">
+              <span className="font-bold text-[var(--color-cta-button)]">우리 아이의 취향</span>과{" "}
+              <span className="font-bold text-[var(--color-cta-button)]">건강 상태를 반영</span>한
+              <br />
+              맞춤형 수제 간식을 꼬순박스가 제안합니다.
+            </span>
+          </p>
+          {/* 태블릿·데스크탑 */}
+          <p className="mb-8 hidden max-w-[464px] text-center text-[18px] leading-[28px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:mb-10 md:block md:text-[24px] md:leading-[32px]">
+            <span className="font-bold">
+              모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
+            </span>
+            <br />
+            <br />
+            <span className="font-medium">
+              <span className="font-bold text-[var(--color-cta-button)]">우리 아이의 취향</span>과{" "}
+              <span className="font-bold text-[var(--color-cta-button)]">건강 상태를 반영</span>한
+              <br />
+              맞춤형 수제 간식을 꼬순박스가 제안합니다.
+            </span>
+          </p>
+          <button
+            type="button"
+            onClick={handleChecklistClick}
+            className="h-10 w-[230px] rounded-[12px] text-center text-[13px] font-semibold leading-[30px] tracking-[-0.04em] text-white [font-feature-settings:'liga'_off] transition-opacity hover:opacity-90 md:h-[52px] md:w-[288px] md:text-[16px]"
+            style={{ background: "var(--color-cta-button)" }}
+          >
+            체크리스트 작성 후 구독하러 가기
+          </button>
+        </div>
 
-      <div className="flex flex-col gap-8 md:gap-4 lg:gap-6 xl:gap-8">
-        {renderRollingRow(ROW_1_BASE, "r1", "right")}
-        {renderRollingRow(ROW_2_BASE, "r2", "left")}
+        <div className="flex flex-col gap-8 md:gap-4 lg:gap-6 xl:gap-8">
+          {renderRollingRow(ROW_1_BASE, "r1", "right")}
+          {renderRollingRow(ROW_2_BASE, "r2", "left")}
+        </div>
       </div>
     </section>
   );

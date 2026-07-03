@@ -12,7 +12,6 @@ import heroCustomSnackBg from "../assets/hero-custom-snack-bg.webp";
 import heroCustomSnackHeading from "../assets/hero-custom-snack-heading.svg";
 import heroCustomSnackBgMobile from "../assets/hero-custom-snack-bg-mobile.webp";
 import heroCustomSnackBgTablet from "../assets/hero-custom-snack-bg-tablet.webp";
-import heroCustomSnackHeadingMobile from "../assets/hero-custom-snack-heading-mobile.webp";
 import heroDogBg from "../assets/hero-dog-bg.webp";
 import heroDogBgMobile from "../assets/hero-dog-bg-mobile.webp";
 import heroDogBgTablet from "../assets/hero-dog-bg-tablet.webp";
@@ -53,15 +52,13 @@ const slides: HeroSlide[] = [
     mobileBgImage: heroCustomSnackBgMobile.src,
     tabletBgImage: heroCustomSnackBgTablet.src,
     headingImg: heroCustomSnackHeading.src,
-    mobileHeadingImg: heroCustomSnackHeadingMobile.src,
+    mobileHeadingImg: heroCustomSnackHeading.src,
     headingAlt: "우리 아이를 위한 맞춤 건강간식",
     headingW: 333,
     headingH: 103,
     headingClass: "w-[333px] h-auto",
     subtext: "꼬순박스를 첫 구독하시는 분들께 드리는 혜택!",
     tags: "#꼬순박스맞춤간식, #우리아이 건강간식, #반려견간식",
-    subtextClass:
-      "font-medium text-white max-lg:text-[14px] max-lg:leading-[17px] lg:text-[18px] lg:leading-[21px]",
     tagsClass:
       "font-medium text-[14px] leading-[17px] text-[var(--color-hero-third-tagline)]",
     ctaBg: "var(--color-hero-third-cta)",

@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import logoMono from "@/shared/assets/logo-mono.webp";
+import logoMono from "@/shared/assets/logo-mono.svg";
 
 const FOOTER_LINKS = [
   { href: "/support", label: "FAQ" },

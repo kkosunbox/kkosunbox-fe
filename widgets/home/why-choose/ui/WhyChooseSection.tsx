@@ -5,7 +5,7 @@ import { ScrollReveal } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import whyGalleryTitle from "../../why-gallery/assets/why-gallery-title.webp";
+import whyGalleryTitle from "../../why-gallery/assets/why-gallery-title.svg";
 
 export default function WhyChooseSection() {
   const { isLoggedIn } = useAuth();

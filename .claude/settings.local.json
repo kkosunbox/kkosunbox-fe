@@ -358,7 +358,17 @@
       "Bash(sort -k5 -rn)",
       "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/lighthouse-07-01-after.report.json\")",
       "Bash(export LHJSON=\"/c/2026/ggosoonbox/.claude/lighthouse/result/mypage/_control\")",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(git *)",
+      "Bash(./node_modules/.bin/playwright screenshot *)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(pkill -f \"next-server\")",
+      "Read(//c/Users/tbrk7/Downloads/**)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 14.png\" ./gallery-dogs-upper-002.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 13.png\" ./gallery-dogs-upper-003.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 14.png\" ./gallery-dogs-downer-001.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 13.png\" ./gallery-dogs-downer-002.png)",
+      "Bash(xargs -I{} sh -c 'printf \"%s\\\\t%s\\\\n\" \"$\\(du -h \"{}\" 2>/dev/null | cut -f1\\)\" \"{}\"')"
     ]
   },
   "disabledMcpjsonServers": [

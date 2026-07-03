@@ -98,10 +98,16 @@
   --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-support-hero-side-bg: #88745F; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
-  --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 */
-  --color-footer-bg: #4A4440;     /* Footer 배경 (Figma Footer 3) */
-  --color-footer-divider: #6F6969; /* Footer 상·하단 구분선 */
-  --color-footer-text: #999999;   /* Footer 본문·링크·SNS 아이콘 */
+  --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 (구 다크 버전, 리디자인 후 미사용 — 다른 참조 없어 보존만) */
+  --color-stats-caption: #584B40;    /* Home StatsBar 캡션 텍스트 (웜 브라운) */
+  --color-stats-icon-blue: #5FA2C2;  /* Home StatsBar 1번 아이콘·강조 텍스트 (블루) */
+  --color-stats-icon-green: #6AA564; /* Home StatsBar 3번 아이콘·강조 텍스트 (그린) */
+  --color-why-choose-bg: #FFF2D8;    /* WhyChoose 텍스트 블록 라운드 컨테이너 배경 (크림/피치) — 섹션 자체 배경은 흰색, 안쪽 카드만 이 색 */
+  --color-why-choose-text: #43270B;  /* WhyChoose 헤딩·서브텍스트 (딥 브라운, 피치 배경 위) */
+  --color-reviews-bg: #EDF5FF;       /* Reviews 섹션 배경 (연블루, 리디자인 — 구 오렌지 대체) */
+  --color-footer-bg: #F89602;     /* Footer 배경 (리디자인 — 오렌지, 구 #4A4440 다크브라운 대체, 사이트 전역 적용) */
+  --color-footer-divider: rgba(255, 255, 255, 0.3); /* Footer 상·하단 구분선 */
+  --color-footer-text: #F6E1CD;   /* Footer 본문·링크·SNS 아이콘 (리디자인 — 크림, 구 #999999 대체) */
   --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
@@ -211,7 +217,7 @@
   --color-gallery-cta-peach: #FFE2C8;   /* Gallery CTA 카드 A 배경 (피치) */
   --color-gallery-peach-soft: #FFD6B0;  /* WhyGallery upper 단색 타일 */
   --color-gallery-peach-warm: #FFC086;  /* WhyGallery upper 단색 타일 */
-  --color-gallery-peach-light: #FFEBD9; /* WhyGallery 단색 타일 (로고 데코) */
+  --color-gallery-sage-light: #E1E9CA;  /* WhyGallery 단색 타일 (로고 데코, 리디자인 — 구 peach-light 대체) */
   --color-gallery-sage-muted: #8C9075;  /* WhyGallery downer 단색 타일 */
   --color-gallery-text: #3E3021;        /* Gallery CTA 카드 헤딩 텍스트 (딥 브라운) */
 
@@ -358,7 +364,7 @@
   --color-gallery-cta-peach: var(--color-gallery-cta-peach);
   --color-gallery-peach-soft: var(--color-gallery-peach-soft);
   --color-gallery-peach-warm: var(--color-gallery-peach-warm);
-  --color-gallery-peach-light: var(--color-gallery-peach-light);
+  --color-gallery-sage-light: var(--color-gallery-sage-light);
   --color-gallery-sage-muted: var(--color-gallery-sage-muted);
   --color-gallery-text: var(--color-gallery-text);
   --color-hero-shape: var(--color-hero-shape);
@@ -368,6 +374,12 @@
   --color-support-banner-heading: var(--color-support-banner-heading);
   --color-support-hero-side-bg: var(--color-support-hero-side-bg);
   --color-stats-bar-bg: var(--color-stats-bar-bg);
+  --color-stats-caption: var(--color-stats-caption);
+  --color-stats-icon-blue: var(--color-stats-icon-blue);
+  --color-stats-icon-green: var(--color-stats-icon-green);
+  --color-why-choose-bg: var(--color-why-choose-bg);
+  --color-why-choose-text: var(--color-why-choose-text);
+  --color-reviews-bg: var(--color-reviews-bg);
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);
   --color-footer-text: var(--color-footer-text);
@@ -612,6 +624,7 @@ button:disabled {
 @utility text-body-20-b  { font-size: 20px; line-height: 24px; font-weight: 700; }
 @utility text-body-20-m  { font-size: 20px; line-height: 24px; font-weight: 500; }
 @utility text-body-18-sb { font-size: 18px; line-height: 28px; font-weight: 550; }
+@utility text-body-18-b  { font-size: 18px; line-height: 160%; font-weight: 700; letter-spacing: -0.02em; }
 @utility text-body-18-r  { font-size: 18px; line-height: 28px; font-weight: 400; letter-spacing: -0.04em; }
 @utility text-body-16-b  { font-size: 16px; line-height: 24px; font-weight: 700; }
 @utility text-body-16-r-lh130 { font-size: 16px; line-height: 130%; font-weight: 400; }
@@ -685,6 +698,7 @@ button:disabled {
   letter-spacing: -0.04em;
 }
 @utility text-body-15-m  { font-size: 15px; line-height: 20px; font-weight: 500; }
+@utility text-body-15-sb { font-size: 15px; line-height: 160%; font-weight: 550; letter-spacing: -0.02em; }
 @utility text-body-14-sb { font-size: 14px; line-height: 22px; font-weight: 550; }
 @utility text-body-14-sb-tight { font-size: 14px; line-height: 17px; font-weight: 550; letter-spacing: -0.02em; }
 @utility text-body-14-b  { font-size: 14px; line-height: 22px; font-weight: 700; }

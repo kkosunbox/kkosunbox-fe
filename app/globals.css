@@ -114,16 +114,15 @@
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
-  --color-about-hero-bg: #825732; /* About Hero 섹션 배경 (웜 브라운) */
-  --color-about-hero-mobile-fill: #E0AE82; /* About Hero 모바일·태블릿 이미지 양옆 채움 색상 */
+  --color-about-hero-bg: #FFF2D8; /* About Hero 섹션 배경 */
+  --color-about-hero-mobile-fill: #FFF2D8; /* About Hero 모바일·태블릿 이미지 양옆 채움 색상 */
   --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
   --color-about-hero-text: #2F2F2F;        /* About Hero 본문 텍스트 (갱신 이미지 배경 대응) */
   --color-about-hero-text-accent: #964B00; /* About Hero 강조 문구 (갱신 이미지 배경 대응) */
   --color-about-feature-heading: #49403B; /* About Feature 섹션 헤딩 */
   --color-about-tan-bg: #87684C;   /* About Feature 카드 섹션 다크 탄 배경 (Figma Rectangle 4282) */
-  --color-about-peach-bg: #FBE9DA; /* About 피치 섹션 배경 */
-  --color-about-cta-bg: #FDEBD8; /* About CTA 섹션 배경 */
-  --color-about-cta-mobile-fill: #FEF5EB; /* About CTA 모바일·태블릿 이미지 양옆 채움 색상 */
+  --color-about-peach-bg: #FFF2D8; /* About 피치 섹션 배경 */
+  --color-about-cta-bg: #FCF4E7; /* About CTA 섹션 배경 */
   --color-feature-card-warm: #FFDBB7;  /* Section 4 카드 1 배경 (건강한 재료) */
   --color-feature-card-peach: #FEEAD5; /* Section 4 카드 2 배경 (수제간식) */
   --color-feature-card-sage: #E7F2CA;  /* Section 4 카드 3 배경 (맞춤 간식) */
@@ -402,7 +401,6 @@
   --color-about-tan-bg: var(--color-about-tan-bg);
   --color-about-peach-bg: var(--color-about-peach-bg);
   --color-about-cta-bg: var(--color-about-cta-bg);
-  --color-about-cta-mobile-fill: var(--color-about-cta-mobile-fill);
   --color-feature-card-warm: var(--color-feature-card-warm);
   --color-feature-card-peach: var(--color-feature-card-peach);
   --color-feature-card-sage: var(--color-feature-card-sage);

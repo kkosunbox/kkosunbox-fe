@@ -43,7 +43,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* Upper solid color band — mobile 367px / desktop 258px */}
-      <div className="absolute left-0 right-0 top-0 max-md:h-[296px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
+      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:h-[296px] md:h-[258px] bg-[var(--color-subscription-detail-header-bg)]" />
 
       {/* Hero — plan card fits entirely within the 258px band */}
       <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-8 pb-6">
@@ -58,7 +58,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
         </button>
 
         {/* Plan summary card — 154px tall, no shadow (colored band provides contrast) */}
-        <div className="flex overflow-hidden rounded-[20px] bg-white shadow-[0px_4px_12px_0px_#00000014] max-md:h-[150px] md:h-[154px] lg:h-[154px]">
+        <div className="flex overflow-hidden rounded-[20px] bg-white max-md:h-[150px] md:h-[154px] lg:h-[154px]">
           <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
             <img
@@ -114,14 +114,14 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="inline-flex h-8 w-[99px] items-center justify-center rounded-[4px] bg-[var(--color-text-muted)] text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
                   >
                     구독 취소
                   </button>
                   <button
                     type="button"
                     onClick={handleChangeSubscription}
-                    className="inline-flex h-8 w-[99px] items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
                   >
                     구독 변경
                   </button>
@@ -131,14 +131,14 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   <button
                     type="button"
                     onClick={handleDeleteRecord}
-                    className="inline-flex h-8 w-[99px] items-center justify-center rounded-[4px] bg-[var(--color-text-muted)] text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
                   >
                     삭제
                   </button>
                   <button
                     type="button"
                     onClick={handleResubscribe}
-                    className="inline-flex h-8 w-[99px] items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-14-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
                   >
                     구독 재시작
                   </button>
@@ -162,7 +162,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
               <button
                 type="button"
                 onClick={handleChangeSubscription}
-                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
               >
                 구독 변경
               </button>

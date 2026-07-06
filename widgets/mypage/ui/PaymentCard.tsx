@@ -2,7 +2,7 @@
 
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Text } from "@/shared/ui";
-import { DashboardCard, PAYMENT_REGISTER_CHIP_BUTTON_CLASS, SectionHeader } from "../lib/dashboard-shared";
+import { DashboardCard, PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS, SectionHeader } from "../lib/dashboard-shared";
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 
@@ -81,7 +81,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
             <button
               type="button"
               onClick={handleOpenPayment}
-              className={PAYMENT_REGISTER_CHIP_BUTTON_CLASS}
+              className={PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS}
             >
               결제등록/변경
             </button>

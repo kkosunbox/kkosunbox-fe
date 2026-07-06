@@ -382,7 +382,9 @@
       "Bash(disown)",
       "Bash(echo \"started, pid $!\")",
       "Bash(wc -l /tmp_diff_rest.txt)",
-      "Bash(pnpm test:e2e:update tests/e2e/error-boundaries.spec.ts)"
+      "Bash(pnpm test:e2e:update tests/e2e/error-boundaries.spec.ts)",
+      "Bash(pip show *)",
+      "Bash(pip install *)"
     ]
   },
   "disabledMcpjsonServers": [

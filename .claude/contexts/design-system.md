@@ -78,9 +78,8 @@
 | `--color-cta-logo-bg` | `#F9D5B4` | About CTA 로고 카드 배경 |
 | `--color-cta-sage-bg` | `#D3E2BE` | About CTA 텍스트 카드 배경 |
 | `--color-text-cta` | `#595045` | About CTA 헤딩/본문 텍스트 |
-| `--color-about-cta-bg` | `#FDEBD8` | About CTA 섹션 배경 |
-| `--color-about-cta-mobile-fill` | `#FEF5EB` | About CTA 모바일·태블릿 이미지 양옆 채움 색상 |
-| `--color-about-hero-bg` | `#825732` | About Hero 섹션 배경 |
+| `--color-about-cta-bg` | `#FCF4E7` | About CTA 섹션 배경 |
+| `--color-about-hero-bg` | `#FFF2D8` | About Hero 섹션 배경 |
 | `--color-about-hero-accent` | `#FFA348` | About Hero 강조 문구 |
 | `--color-about-feature-heading` | `#49403B` | About Feature 섹션 헤딩 |
 

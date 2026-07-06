@@ -149,7 +149,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden lg:hidden">
-        <div className="mb-3 w-full" style={{ background: "var(--color-why-bg)" }}>
+        <div className="mb-3 w-full" style={{ background: "var(--color-top-band-bg)" }}>
           <div className="flex h-[46px] w-full min-w-0 items-center max-sm:gap-2 max-sm:px-4 sm:gap-3 sm:px-6">
             <span className="max-sm:mr-1 max-sm:shrink-0 max-sm:text-body-12-m sm:mr-2 sm:shrink-0 sm:text-body-14-sb text-[var(--color-text-muted)]">
               구독선택
@@ -298,8 +298,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <button
               type="button"
               onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] text-subtitle-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ background: "var(--color-why-bg)" }}
+              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+              style={{ background: "var(--color-cta-button)" }}
             >
               구독하기
             </button>
@@ -368,7 +368,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       {/* Desktop layout */}
       <div className="max-md:hidden">
         {/* Plan selector — full-width dark tab bar */}
-        <div className="mb-[44px] w-full" style={{ background: "var(--color-why-bg)" }}>
+        <div className="mb-[44px] w-full" style={{ background: "var(--color-top-band-bg)" }}>
           <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3 md:px-6 lg:px-0">
             <span className="text-body-14-sb text-[var(--color-text-muted)] mr-6">구독선택</span>
             <div className="flex flex-wrap gap-2">
@@ -506,8 +506,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <button
                   type="button"
                   onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[8px] text-subtitle-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: "var(--color-why-bg)" }}
+                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+                  style={{ background: "var(--color-cta-button)" }}
                 >
                   구독하기
                 </button>

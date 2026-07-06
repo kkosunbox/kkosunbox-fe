@@ -105,7 +105,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   const desktopLayout = (
     <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pb-[104px]">
       {/* 프로필 배너 */}
-      <div className="overflow-hidden rounded-[20px] bg-[var(--color-support-faq-surface)] px-14 py-7">
+      <div className="overflow-hidden rounded-[20px] bg-[var(--color-withdraw-profile-bg)] px-14 py-7">
         <div className="flex items-center gap-9">
           {/* 프로필 이미지 */}
           <div className="h-[78px] w-[78px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
@@ -212,7 +212,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           type="button"
           onClick={handleWithdraw}
           disabled={!canSubmit || isPending}
-          className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중..." : "탈퇴하기"}
         </button>
@@ -227,7 +227,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
       {/* 프로필 배너 */}
       <div className="relative mt-6">
         {/* 배너 본체 */}
-        <div className="relative h-[115px] overflow-hidden rounded-[20px] bg-[var(--color-support-faq-surface)]">
+        <div className="relative h-[115px] overflow-hidden rounded-[20px] bg-[var(--color-withdraw-profile-bg)]">
           {/* 메시지 */}
           <p
             className="absolute inset-x-0 text-center text-[var(--color-text)]"
@@ -334,7 +334,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           type="button"
           onClick={handleWithdraw}
           disabled={!canSubmit || isPending}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중..." : "탈퇴하기"}
         </button>
@@ -367,15 +367,17 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
           />
         </div>
         {/* 데스크톱 (≥1200px) */}
-        <div className="max-lg:hidden relative w-full h-[306px]">
-          <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
-          <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
-            <img
-              src={withdrawHeroDesktop.src}
-              alt={HERO_ALT}
-              className="absolute inset-0 h-full w-full object-cover object-center"
-            />
+        <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
+          <div className="relative w-full h-[306px]">
+            <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+            <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
+              <img
+                src={withdrawHeroDesktop.src}
+                alt={HERO_ALT}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
+            </div>
           </div>
         </div>
       </section>

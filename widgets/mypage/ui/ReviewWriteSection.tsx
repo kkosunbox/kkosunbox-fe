@@ -49,7 +49,7 @@ const fieldClass =
   "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]";
 
 const submitButtonClass =
-  "inline-flex h-12 w-full max-w-[320px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-6 py-[13px] text-body-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:opacity-50";
+  "inline-flex h-12 w-full max-w-[320px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 py-[13px] text-body-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:opacity-50";
 
 function PaperclipIcon() {
   return (
@@ -336,16 +336,18 @@ export default function ReviewWriteSection({
           />
         </div>
         {/* 데스크톱 (≥1200px) */}
-        <div className="max-lg:hidden relative w-full h-[306px]">
-          <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
-          <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-            <img
-              src={reviewWriteHeroDesktop.src}
-              alt={HERO_ALT}
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-              fetchPriority="high"
-              decoding="async"
-            />
+        <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
+          <div className="relative w-full h-[306px]">
+            <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+            <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
+              <img
+                src={reviewWriteHeroDesktop.src}
+                alt={HERO_ALT}
+                className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
       </section>

@@ -1,6 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
-import { ORDER_ACTION_CHIP_CLASS as actionChipCls, ORDER_INPUT_CLASS as inputCls } from "./orderSectionStyles";
+import {
+  ORDER_ACTION_CHIP_CLASS as actionChipCls,
+  ORDER_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
+  ORDER_INPUT_CLASS as inputCls,
+} from "./orderSectionStyles";
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "./orderSectionFormatters";
 import { OrderCheckCircleIcon as CheckCircleIcon } from "./OrderSectionIcons";
 import { SectionCard, FormRow } from "./OrderSectionFormParts";
@@ -55,7 +59,7 @@ export function OrderCustomerSection({
             <button
               type="button"
               onClick={onChangeAddress}
-              className={actionChipCls}
+              className={actionChipSmallCls}
             >
               배송지 변경
             </button>

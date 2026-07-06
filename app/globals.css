@@ -99,7 +99,7 @@
   --color-support-faq-surface: #FFF7E8;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --color-withdraw-profile-bg: #FDF5E7;   /* 탈퇴 확인 페이지 프로필 배너 배경 */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
-  --color-support-hero-side-bg: #88745F; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
+  --color-support-hero-side-bg: #FFF2D8; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
   --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 (구 다크 버전, 리디자인 후 미사용 — 다른 참조 없어 보존만) */
   --color-stats-caption: #584B40;    /* Home StatsBar 캡션 텍스트 (웜 브라운) */
   --color-stats-icon-blue: #5FA2C2;  /* Home StatsBar 1번 아이콘·강조 텍스트 (블루) */

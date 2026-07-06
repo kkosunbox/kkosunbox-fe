@@ -1,6 +1,10 @@
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { CouponInfo } from "@/features/subscription/api/types";
-import { ORDER_ACTION_CHIP_CLASS as actionChipCls, ORDER_INPUT_CLASS as inputCls } from "./orderSectionStyles";
+import {
+  ORDER_ACTION_CHIP_CLASS as actionChipCls,
+  ORDER_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
+  ORDER_INPUT_CLASS as inputCls,
+} from "./orderSectionStyles";
 import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
 import { SectionCard, RadioButton, Checkbox } from "./OrderSectionFormParts";
 import { CardIcon, BillingRegisteredIcon } from "./OrderSectionIcons";
@@ -65,7 +69,7 @@ export function OrderPaymentSection({
                 <button
                   type="button"
                   onClick={onChangeCard}
-                  className={`${actionChipCls} ml-auto`}
+                  className={`${actionChipSmallCls} ml-auto`}
                 >
                   카드 변경
                 </button>

@@ -16,7 +16,7 @@ export function OrderPriceSummaryBar({ basePrice, totalDiscount, total }: OrderP
   ] as const;
 
   return (
-    <div className="w-full bg-[var(--color-why-bg)]">
+    <div className="w-full bg-[var(--color-top-band-bg)]">
       <div className="mx-auto flex w-full max-w-[806px] items-center justify-between px-8 max-md:h-[81px] md:h-[58px]">
         {priceSummaryItems.map((item, index) => (
           <Fragment key={item.label}>
@@ -30,7 +30,7 @@ export function OrderPriceSummaryBar({ basePrice, totalDiscount, total }: OrderP
                 className={[
                   "whitespace-nowrap tracking-[-0.04em]",
                   item.emphasis
-                    ? "text-body-13-m text-[var(--color-accent-orange)] md:text-subtitle-16-b"
+                    ? "text-body-13-m text-[var(--color-banner-bg)] md:text-subtitle-16-b"
                     : "text-body-13-m text-white md:text-subtitle-16-sb",
                 ].join(" ")}
               >
@@ -40,7 +40,7 @@ export function OrderPriceSummaryBar({ basePrice, totalDiscount, total }: OrderP
                 className={[
                   "whitespace-nowrap tracking-[-0.04em]",
                   item.emphasis
-                    ? "text-body-14-sb text-[var(--color-accent-orange)] md:text-subtitle-20-b"
+                    ? "text-body-14-sb text-[var(--color-banner-bg)] md:text-subtitle-20-b"
                     : "text-body-14-sb text-white md:text-subtitle-16-sb",
                 ].join(" ")}
               >

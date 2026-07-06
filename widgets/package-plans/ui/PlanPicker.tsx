@@ -126,6 +126,8 @@ export interface PlanPickerProps {
   summaryOrder?: PackageTier[];
   /** 모바일(<768px) 슬롯. 제공 시 기본 셰브론+도트 네비를 대체한다. onTierSelect는 재탭 시 primary 버튼과 동일 동작. */
   mobileSlot?: (tier: PackageTier, onTierSelect: (tier: PackageTier) => void, order: PackageTier[]) => ReactNode;
+  /** primary 버튼(제품 상세보기 등) 색상 변형. "orange"는 --color-cta-button 배경 + 48px 높이. 기본값: "default" (다크 웜 브라운, 기존 스타일) */
+  primaryButtonVariant?: "default" | "orange";
 }
 
 export default function PlanPicker({
@@ -137,6 +139,7 @@ export default function PlanPicker({
   getPrimaryButton,
   summaryOrder = DEFAULT_SUMMARY_ORDER,
   mobileSlot,
+  primaryButtonVariant = "default",
 }: PlanPickerProps) {
   const sortedPlans = useMemo(
     () => [...plans].sort(comparePlansForDisplayOrder),
@@ -223,12 +226,15 @@ export default function PlanPicker({
       );
     }
 
+    const primaryBgClass =
+      primaryButtonVariant === "orange" ? "bg-[var(--color-cta-button)]" : "bg-[var(--color-btn-dark-warm)]";
+
     return (
       <button
         type="button"
         onClick={handlePrimaryClick}
         disabled={!activePlan || activePrimaryButton.disabled}
-        className={`${className} bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
+        className={`${className} ${primaryBgClass} text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
       >
         {activePrimaryButton.label}
       </button>
@@ -373,7 +379,9 @@ export default function PlanPicker({
                     ) : null}
 
                     {renderPrimaryAction(
-                      "mt-4 flex h-12 w-full items-center justify-center rounded-[8px] text-center text-body-14-sb tracking-[-0.02em]",
+                      primaryButtonVariant === "orange"
+                        ? "mt-4 flex h-12 w-full items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]"
+                        : "mt-4 flex h-12 w-full items-center justify-center rounded-[8px] text-center text-body-14-sb tracking-[-0.02em]",
                     )}
                   </div>
                 ) : null}
@@ -421,7 +429,7 @@ export default function PlanPicker({
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">
                 {renderPrimaryAction(
-                  "flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
+                  `flex ${primaryButtonVariant === "orange" ? "h-12" : "h-10"} w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]`,
                 )}
               </div>
             </div>

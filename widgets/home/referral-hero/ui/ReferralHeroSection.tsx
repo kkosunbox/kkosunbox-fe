@@ -20,6 +20,7 @@ import referralHeroNonPcRightTopTwinkle from "../assets/main-hero-referral-non-p
 import referralHeroNonPcRightBottomTwinkle from "../assets/main-hero-referral-non-pc-right-bottom-twinkle.png";
 import referralHeroLeftTwinkle from "../assets/main-hero-referal-left-twinkle.svg";
 import referralHeroRightTwinkle from "../assets/main-hero-referal-right-twinkle.svg";
+import referralHeroRightTwinkleExtra from "../assets/main-hero-referal-right-twinkle-extra.svg";
 
 export default function ReferralHeroSection() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function ReferralHeroSection() {
   const showProfile = !!profileImageUrl && !profileError;
 
   return (
-    <section className="relative overflow-hidden max-lg:h-[585px] lg:h-[594px]">
+    <section className="relative overflow-hidden max-lg:h-[585px] lg:h-[674px]">
       {/* 배경 이미지 — 모바일 (< 768px) */}
       <img
         src={referralHeroBgMobile.src}
@@ -203,15 +204,26 @@ export default function ReferralHeroSection() {
                   decoding="async"
                 />
               </div>
-              <img
-                src={referralHeroRightTwinkle.src}
-                alt=""
-                width={35}
-                height={41}
-                className="w-[35px] h-auto"
-                style={{ animation: "referralFloat 3s ease-in-out 0.6s infinite" }}
-                decoding="async"
-              />
+              <div className="relative">
+                <img
+                  src={referralHeroRightTwinkle.src}
+                  alt=""
+                  width={35}
+                  height={41}
+                  className="relative w-[35px] h-auto"
+                  style={{ top: -6, animation: "referralFloat 3s ease-in-out 0.6s infinite" }}
+                  decoding="async"
+                />
+                <img
+                  src={referralHeroRightTwinkleExtra.src}
+                  alt=""
+                  width={18}
+                  height={21}
+                  className="absolute w-[18px] h-auto"
+                  style={{ left: -24, top: 42, animation: "referralTwinklePulse 2.2s ease-in-out 0.3s infinite" }}
+                  decoding="async"
+                />
+              </div>
             </div>
           </div>
 

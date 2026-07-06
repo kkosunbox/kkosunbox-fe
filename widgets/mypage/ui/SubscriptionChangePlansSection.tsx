@@ -91,14 +91,16 @@ export default function SubscriptionChangePlansSection({
               />
             </div>
             {/* 데스크톱 (≥1200px) */}
-            <div className="max-lg:hidden relative w-full h-[306px]">
-              <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
-              <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-                <img
-                  src={subscriptionChangeHeroDesktop.src}
-                  alt={heroAlt}
-                  className="absolute inset-0 h-full w-full object-cover object-center"
-                />
+            <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
+              <div className="relative w-full h-[306px]">
+                <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+                <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
+                  <img
+                    src={subscriptionChangeHeroDesktop.src}
+                    alt={heroAlt}
+                    className="absolute inset-0 h-full w-full object-cover object-center"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -122,6 +124,7 @@ export default function SubscriptionChangePlansSection({
             plans={plans}
             initialSelectedTier={initialSelectedTier}
             isCurrentPlan={checkIsCurrentPlan}
+            primaryButtonVariant="orange"
             getPrimaryButton={(plan) => {
               const isCurrent = checkIsCurrentPlan(plan);
               return {

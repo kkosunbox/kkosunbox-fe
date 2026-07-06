@@ -86,7 +86,8 @@
   --color-checklist-fallback-bg: #F5F3EC; /* 마이페이지 체크리스트 미작성 폴백 오버레이 배경 */
   --color-checklist-summary-scrollbar-thumb: #C4C4C4; /* 마이페이지 체크리스트 요약 스크롤 thumb */
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
-  --color-subscription-header-bg: #FEF6EE; /* 구독관리 페이지 상단 배경 밴드 */
+  --color-subscription-header-bg: #FFF2D899; /* 구독관리 페이지 상단 배경 밴드 */
+  --color-subscription-detail-header-bg: #FFF7E8; /* 구독상세 페이지 상단 배경 밴드 */
   --color-surface-light: #F8F8F8;
   --color-drawer-item-active: #FFF7EC; /* 모바일 드로워 네비 활성 아이템 배경 (Figma Frame 10597) */
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
@@ -95,7 +96,8 @@
   --color-hero-heading: #464646;      /* Hero Premium Package 텍스트 */
   --color-hero-subtext: #6C411F;      /* Hero 서브카피 텍스트 */
   --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
-  --color-support-faq-surface: #FFF7EF;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
+  --color-support-faq-surface: #FFF7E8;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
+  --color-withdraw-profile-bg: #FDF5E7;   /* 탈퇴 확인 페이지 프로필 배너 배경 */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-support-hero-side-bg: #88745F; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
   --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 (구 다크 버전, 리디자인 후 미사용 — 다른 참조 없어 보존만) */
@@ -206,7 +208,8 @@
 
   /* WhyChoose + Gallery 섹션 */
   --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */
-  --color-plan-chip-inactive: #6B645F;  /* 플랜 선택 탭바 비활성 칩 배경 */
+  --color-top-band-bg: #8E6642;         /* 주문 가격합산 띠 · 구독상세 플랜선택 띠 배경 */
+  --color-plan-chip-inactive: #9C836D;  /* 플랜 선택 탭바 비활성 칩 배경 */
   --color-badge-warm-bg: #FFF1CD;       /* 상품 뱃지 '가장 리뷰 많은' 배경 */
   --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 리뷰 많은' 텍스트 */
   --color-badge-best-bg: #DFEEF7;       /* 상품 뱃지 'BEST' 배경 */
@@ -347,11 +350,13 @@
   --color-checklist-summary-scrollbar-thumb: var(--color-checklist-summary-scrollbar-thumb);
   --color-surface-peach: var(--color-surface-peach);
   --color-subscription-header-bg: var(--color-subscription-header-bg);
+  --color-subscription-detail-header-bg: var(--color-subscription-detail-header-bg);
   --color-surface-light: var(--color-surface-light);
   --color-drawer-item-active: var(--color-drawer-item-active);
   --color-hero-bg: var(--color-hero-bg);
   --color-hero-truck-bg: var(--color-hero-truck-bg);
   --color-why-bg: var(--color-why-bg);
+  --color-top-band-bg: var(--color-top-band-bg);
   --color-plan-chip-inactive: var(--color-plan-chip-inactive);
   --color-badge-warm-bg: var(--color-badge-warm-bg);
   --color-badge-warm-text: var(--color-badge-warm-text);
@@ -371,6 +376,7 @@
   --color-hero-heading: var(--color-hero-heading);
   --color-hero-subtext: var(--color-hero-subtext);
   --color-support-faq-surface: var(--color-support-faq-surface);
+  --color-withdraw-profile-bg: var(--color-withdraw-profile-bg);
   --color-support-banner-heading: var(--color-support-banner-heading);
   --color-support-hero-side-bg: var(--color-support-hero-side-bg);
   --color-stats-bar-bg: var(--color-stats-bar-bg);

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import pawsImg from "../assets/subscription-management-paws.webp";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";
@@ -12,7 +11,7 @@ import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
 } from "@/entities/package";
-import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "../lib/dashboard-shared";
+import { PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS } from "../lib/dashboard-shared";
 
 type SubscriptionFilter = "all" | "active" | "ended";
 
@@ -109,7 +108,7 @@ function SubscriptionsSummaryCard({
   }, [activeSubscriptions]);
 
   return (
-    <div className="relative overflow-hidden max-md:p-5 md:flex-1 lg:flex-1 md:px-8 lg:px-8 md:py-8 lg:py-8">
+    <div className="max-md:p-5 md:flex-1 lg:flex-1 md:px-8 lg:px-8 md:py-8 lg:py-8">
       {aggregatedPlans.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           {aggregatedPlans.map(({ plan, totalQuantity }) => {
@@ -150,14 +149,6 @@ function SubscriptionsSummaryCard({
           <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
         </div>
       )}
-
-      {/* eslint-disable-next-line @next/next/no-img-element -- 장식 webp 원본 품질 유지 */}
-      <img
-        src={pawsImg.src}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-3 right-4 h-[72px] w-auto select-none opacity-90 md:bottom-4 lg:bottom-4 md:right-6 lg:right-6 md:h-[88px] lg:h-[88px]"
-      />
     </div>
   );
 }
@@ -221,7 +212,7 @@ function PaymentInfoCard({
             <button
               type="button"
               onClick={handleOpenPayment}
-              className={PAYMENT_REGISTER_CHIP_BUTTON_CLASS}
+              className={PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS}
             >
               결제등록/변경
             </button>
@@ -481,7 +472,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* Upper solid color band — mobile 367px / desktop 258px */}
-      <div className="absolute left-0 right-0 top-0 max-md:h-[367px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
+      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:h-[367px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
       {/* Hero content — overlaps the 258px boundary */}
       <div className="relative mx-auto max-w-content max-md:px-4 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">

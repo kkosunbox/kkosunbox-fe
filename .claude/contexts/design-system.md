@@ -37,10 +37,12 @@
 | `--color-surface-warm` | `#FFF8F2` | Warm Light — 따뜻한 섹션 배경 |
 | `--color-checklist-bg` | `#FFFDF3` | 마이페이지 체크리스트 패널 배경 (Figma Rectangle 974) |
 | `--color-surface-peach` | `#FFF3E6` | Warm Peach — 구독관리 상단 배경 |
-| `--color-subscription-header-bg` | `#FEF6EE` | 구독관리 페이지 상단 배경 밴드 |
+| `--color-subscription-header-bg` | `#FFF2D899` | 구독관리 페이지 상단 배경 밴드 |
+| `--color-subscription-detail-header-bg` | `#FFF7E8` | 구독상세 페이지 상단 배경 밴드 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-drawer-item-active` | `#FFF7EC` | 모바일 드로워 네비 활성 아이템 배경 |
-| `--color-support-faq-surface` | `#FFF7EF` | 고객센터 FAQ 패널 배경 |
+| `--color-support-faq-surface` | `#FFF7E8` | 고객센터 FAQ 패널 배경 |
+| `--color-withdraw-profile-bg` | `#FDF5E7` | 탈퇴 확인 페이지 프로필 배너 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
 | `--color-recommend-reason-bg` | `#FFFBE9` | 체크리스트 추천이유 패널 배경 |
 | `--color-recommend-reason-title` | `#AB4B00` | 체크리스트 추천이유 ✔ 제목 색상 |
@@ -50,6 +52,7 @@
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
 | `--color-beige` | `#E8CFB9` | Beige — 테두리, 불릿, 서클 bg 등 장식 요소 |
 | `--color-why-bg` | `#584B40` | WhyGallery 섹션 배경 |
+| `--color-top-band-bg` | `#8E6642` | 주문 가격합산 띠 · 구독상세 플랜선택 띠 배경 |
 | `--color-gallery-cta-peach` | `#FFE2C8` | WhyGallery 하단 단색 타일 |
 | `--color-gallery-peach-soft` | `#FFD6B0` | WhyGallery 상단 단색 타일 |
 | `--color-gallery-peach-warm` | `#FFC086` | WhyGallery 상단 단색 타일 |

@@ -368,7 +368,20 @@
       "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 13.png\" ./gallery-dogs-upper-003.png)",
       "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 14.png\" ./gallery-dogs-downer-001.png)",
       "Bash(cp \"/c/Users/tbrk7/Downloads/Gemini_Generated_Image_c07vxrc07vxrc07v 13.png\" ./gallery-dogs-downer-002.png)",
-      "Bash(xargs -I{} sh -c 'printf \"%s\\\\t%s\\\\n\" \"$\\(du -h \"{}\" 2>/dev/null | cut -f1\\)\" \"{}\"')"
+      "Bash(xargs -I{} sh -c 'printf \"%s\\\\t%s\\\\n\" \"$\\(du -h \"{}\" 2>/dev/null | cut -f1\\)\" \"{}\"')",
+      "Bash(cd C:\\\\2026\\\\ggosoonbox *)",
+      "Bash(rm introduce-hero-renewal-pc-web.webp)",
+      "Bash(rm introduce-hero-renewal-pc-web-new.png)",
+      "Bash(mv introduce-hero-renewal-pc-web-new.webp introduce-hero-renewal-pc-web.webp)",
+      "Bash(rm introduce-hero-renewal-mobile-tablet.webp)",
+      "Bash(rm introduce-hero-renewal-mobile-tablet-new.png)",
+      "Bash(mv introduce-hero-renewal-mobile-tablet-new.webp introduce-hero-renewal-mobile-tablet.webp)",
+      "Bash(cp \"C:\\\\Users\\\\tbrk7\\\\Downloads\\\\Group 1000005847-2x.png\" widgets/about/assets/introduce-hero-renewal-pc-web.png)",
+      "Bash(cp \"C:\\\\Users\\\\tbrk7\\\\Downloads\\\\Group 1000005849-2x.png\" widgets/about/assets/introduce-hero-renewal-mobile-tablet.png)",
+      "Bash(nohup pnpm dev)",
+      "Bash(disown)",
+      "Bash(echo \"started, pid $!\")",
+      "Bash(wc -l /tmp_diff_rest.txt)"
     ]
   },
   "disabledMcpjsonServers": [

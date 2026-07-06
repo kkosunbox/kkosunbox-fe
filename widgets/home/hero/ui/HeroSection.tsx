@@ -168,7 +168,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="overflow-hidden relative max-lg:h-[640px] lg:min-h-[537px] cursor-grab active:cursor-grabbing select-none"
+      className="overflow-hidden relative max-lg:h-[640px] lg:min-h-[644px] cursor-grab active:cursor-grabbing select-none"
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -210,7 +210,7 @@ export default function HeroSection() {
               </picture>
             )}
 
-            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[90px] h-full lg:min-h-[537px]">
+            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[90px] h-full lg:min-h-[644px]">
               {/* 좌측: 텍스트 */}
               <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left lg:pl-0">
                 {/* 슬라이드별 마케팅 헤딩(이미지). 페이지의 시맨틱 h1은 page.tsx의 단일 h1이 담당하므로

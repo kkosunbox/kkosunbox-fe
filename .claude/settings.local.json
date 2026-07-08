@@ -384,7 +384,24 @@
       "Bash(wc -l /tmp_diff_rest.txt)",
       "Bash(pnpm test:e2e:update tests/e2e/error-boundaries.spec.ts)",
       "Bash(pip show *)",
-      "Bash(pip install *)"
+      "Bash(pip install *)",
+      "Bash(pnpm test:e2e tests/e2e/mypage.spec.ts tests/e2e/error-boundaries.spec.ts)",
+      "Bash(npx --version)",
+      "Read(//c//**)",
+      "Bash(npx --yes sharp-cli --version)",
+      "Bash(npx --yes sharp-cli -i \"widgets/about/assets/introduce-hero-renewal-pc-web.webp\" metadata)",
+      "Bash(npx --yes sharp-cli -i \"C:\\\\Users\\\\tbrk7\\\\Downloads\\\\Group 1000005847.png\" metadata)",
+      "Bash(npx --yes sharp-cli --help)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\8ac53af8-775a-4151-b3ee-6add4361792a\\\\scratchpad\\\\imgtool\")",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(echo \"started with pid $!\")",
+      "Bash(cp \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\8ac53af8-775a-4151-b3ee-6add4361792a\\\\scratchpad\\\\imgtool\\\\shot.mjs\" ./shot-tmp.mjs)",
+      "Bash(rm shot-tmp.mjs)",
+      "Bash(sed -i 's/from \"playwright\"/from \"@playwright\\\\/test\"/' \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\8ac53af8-775a-4151-b3ee-6add4361792a\\\\scratchpad\\\\imgtool\\\\shot.mjs\")",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\('C:\\\\Users\\\\tbrk7\\\\Downloads\\\\ChatGPT Image 2026년 7월 3일 오전 10_58_50 1.png'\\); \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",
+      "Bash(pnpm test:e2e tests/e2e/login.spec.ts tests/e2e/referral.spec.ts)",
+      "Bash(pnpm test:e2e tests/e2e/referral.spec.ts)"
     ]
   },
   "disabledMcpjsonServers": [

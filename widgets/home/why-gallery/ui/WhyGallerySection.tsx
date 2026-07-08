@@ -244,9 +244,9 @@ export default function WhyGallerySection() {
   }
 
   return (
-    <section className="bg-white max-md:px-4 md:px-5 lg:px-16 max-md:pb-12 md:pb-16 lg:pb-[92px]">
+    <section className="bg-white max-md:px-0 md:px-5 lg:px-16 max-md:pb-12 md:pb-16 lg:pb-[92px]">
       <div
-        className="mx-auto max-lg:max-w-content lg:max-w-none overflow-hidden rounded-[24px] pb-10 md:rounded-[40px] md:pb-14 lg:rounded-[64px] lg:pb-16"
+        className="mx-auto max-lg:max-w-content lg:max-w-none overflow-hidden max-md:rounded-none pb-10 md:rounded-[40px] md:pb-14 lg:rounded-[64px] lg:pb-16"
         style={{ background: "var(--color-why-choose-bg)" }}
       >
         <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">

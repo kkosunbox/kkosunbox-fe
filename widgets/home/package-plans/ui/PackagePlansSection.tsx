@@ -47,7 +47,7 @@ export default function PackagePlansSection() {
             src={homePackagePlansTitle}
             alt="우리 아이에게 맞는 간식 선택 후 구독하세요!"
             quality={HIGH_IMAGE_QUALITY}
-            className="mx-auto h-auto w-full max-w-[300px] md:max-w-[352px]"
+            className="mx-auto max-lg:h-[64px] max-lg:w-auto lg:h-auto lg:w-full lg:max-w-[352px]"
             sizes="(min-width: 768px) 352px, 300px"
             priority
           />

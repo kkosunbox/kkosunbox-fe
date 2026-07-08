@@ -9,6 +9,7 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
+import { ReviewsTitleMobile } from "./ReviewsTitleMobile";
 import reviewsTitle from "../assets/reviews-title-new.svg";
 import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
@@ -298,13 +299,14 @@ export default function ReviewsSection() {
       <div className="relative z-10 mx-auto max-w-[1107px] max-md:px-6 md:px-6 lg:px-0 lg:pt-[100px]">
         <ScrollReveal variant="fade-up">
           <div className="relative mx-auto w-full max-w-[486px] md:max-w-[760px] lg:max-w-[845px]">
+            <ReviewsTitleMobile className="mx-auto h-[108px] w-auto md:hidden" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={reviewsTitle.src}
               alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
               width={reviewsTitle.width}
               height={reviewsTitle.height}
-              className="mx-auto h-auto w-full"
+              className="max-md:hidden mx-auto h-auto w-full"
               loading="eager"
               decoding="async"
             />
@@ -315,7 +317,7 @@ export default function ReviewsSection() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
-              className="pointer-events-none absolute -right-[26px] -top-[16px] h-6 w-6 select-none md:-right-[30px] md:-top-[20px] md:h-8 md:w-8 lg:-right-[42px] lg:-top-[32px] lg:h-[50px] lg:w-[50px]"
+              className="pointer-events-none absolute -right-[26px] -top-[16px] h-6 w-6 select-none max-md:hidden md:-right-[30px] md:-top-[20px] md:h-8 md:w-8 lg:-right-[42px] lg:-top-[32px] lg:h-[50px] lg:w-[50px]"
             >
               <path d="M24.72 38.1949C23.656 38.2011 22.9459 39.605 23.1619 40.4126C23.3537 41.1308 24.4091 42.3558 25.3854 42.4317C29.9366 42.7939 40.7674 43.5588 40.9821 40.859C41.114 39.203 38.9827 38.0984 37.6309 38.1081L24.7193 38.1899L24.72 38.1949Z" fill="#EC7700" />
               <path d="M5.45745 21.5642C5.31397 22.6319 6.256 23.9747 7.0469 24.3517C7.83779 24.7288 9.29672 24.3754 9.53861 23.5325C10.653 19.6457 11.5008 16.0368 12.313 11.9873C12.4397 11.356 11.4615 9.98131 10.8546 9.63576C10.2162 9.27625 9.07282 9.10432 8.35352 9.33037C7.06132 13.2703 6.05677 17.1493 5.45962 21.5621L5.45745 21.5642Z" fill="#EC7700" />
@@ -324,12 +326,12 @@ export default function ReviewsSection() {
           </div>
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
-          <p className="mt-4 text-center text-[14px] font-medium leading-[18px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:text-[16px] md:leading-[19px]">
+          <p className="mt-[25px] text-center text-[14px] font-medium leading-[18px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:text-[16px] md:leading-[19px]">
             실제 꼬순박스 패키지를 구매하신 고객님들의 생생한 리뷰입니다.
           </p>
         </ScrollReveal>
 
-        <ScrollReveal variant="fade-up" delay={300} className="mt-6 w-full">
+        <ScrollReveal variant="fade-up" delay={300} className="mt-10 w-full">
           <div className="md:hidden mx-auto flex w-full max-w-[360px] flex-col gap-[84px] pt-[60px]">
             {REVIEWS.map((review, i) => (
               <ReviewCard key={`${review.name}-mobile-${i}`} review={review} />

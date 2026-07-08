@@ -280,7 +280,7 @@ export default function HeroSection() {
                     "text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 lg:h-[52px] lg:w-[282px] lg:text-[16px]",
                     slide.id === "custom-snack"
                       ? "max-lg:hidden"
-                      : "max-lg:h-[40px] max-lg:w-[260px] max-lg:text-[13px]",
+                      : "max-lg:h-[40px] max-lg:w-[230px] max-lg:text-[13px]",
                   ].join(" ")}
                 >
                   10초 진단하고 우리 아이 맞춤 추천 받기
@@ -289,13 +289,13 @@ export default function HeroSection() {
 
               {/* 우측: 트럭 이미지 (solid 슬라이드 전용) */}
               {slide.type === "solid" && (
-                <div className="flex flex-1 items-center justify-center max-lg:mb-4 lg:py-10">
+                <div className="flex flex-1 items-center max-lg:justify-end lg:justify-center lg:py-10">
                   <img
                     src={heroTruckImage.src}
                     alt="꼬순박스 배송 트럭"
                     width={460}
                     height={380}
-                    className="max-md:max-w-[220px] md:max-lg:w-[275px] md:max-lg:h-[216px] lg:max-w-[460px] w-full object-contain"
+                    className="max-md:max-w-[275px] md:max-lg:w-[275px] md:max-lg:h-[216px] lg:max-w-[460px] w-full object-contain"
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                   />

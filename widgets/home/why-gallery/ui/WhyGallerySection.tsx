@@ -276,7 +276,7 @@ export default function WhyGallerySection() {
             />
           </div>
           {/* 모바일 — Figma Group 1000005556 */}
-          <p className="mb-11 max-w-[271px] text-center text-[14px] leading-[20px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:hidden">
+          <p className="mb-11 max-w-[271px] text-center text-body-13-r tracking-[-0.02em] text-[var(--color-why-choose-text)] md:hidden">
             <span className="font-bold">
               모든 강아지는 다르니까, 간식도 맞춤이어야 합니다.
             </span>

@@ -17,6 +17,7 @@ import introduceHeroRenewalPcWeb from "../assets/introduce-hero-renewal-pc-web.w
 import introducePuppyRunRenewal from "../assets/introduce-puppy-run-renewal.png";
 import introduceMakeBox from "../assets/introduce-make-box.webp";
 import introduceDecoPaws from "../assets/introduce-deco-paws.svg";
+import introduceDecoPawsMobile from "../assets/introduce-deco-paws-mobile.svg";
 import introduceSection401 from "../assets/introduce-section-4-01.webp";
 import introduceSection402 from "../assets/introduce-section-4-02.webp";
 import introduceSection403 from "../assets/introduce-section-4-03.webp";
@@ -33,11 +34,13 @@ type FeatureCardProps = {
 function FeatureCard({ image, title, description, bgColorVar }: FeatureCardProps) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-4 rounded-[32px] px-6 py-[42px] shadow-[0px_2px_8px_rgba(0,0,0,0.08)] lg:h-[298px]"
+      className="flex flex-col items-center justify-center gap-4 rounded-[32px] px-6 max-md:h-[245px] max-md:py-6 md:py-[42px] shadow-[0px_2px_8px_rgba(0,0,0,0.08)] lg:h-[298px]"
       style={{ background: bgColorVar }}
     >
-      <div className="flex flex-col items-center gap-4 text-center">
-        <p className="text-subtitle-20-b tracking-[-0.02em] text-black">{title}</p>
+      <div className="flex flex-col items-center max-md:gap-3 md:gap-4 text-center">
+        <p className="max-md:text-[16px] max-md:leading-[19px] max-md:font-bold md:text-subtitle-20-b tracking-[-0.02em] text-black">
+          {title}
+        </p>
         <Image
           src={image}
           alt=""
@@ -47,7 +50,7 @@ function FeatureCard({ image, title, description, bgColorVar }: FeatureCardProps
           aria-hidden
           className="h-[120px] w-[120px] object-contain"
         />
-        <p className="whitespace-pre-line text-[14px] leading-[140%] tracking-[-0.02em] text-black">
+        <p className="whitespace-pre-line text-[14px] max-md:leading-[120%] md:leading-[140%] tracking-[-0.02em] text-black">
           {description}
         </p>
       </div>
@@ -228,7 +231,7 @@ export default function AboutSection() {
       </section>
 
       {/* Section 2: 믿고 먹일 수 있는 간식, 생각보다 어렵습니다. */}
-      <section className="bg-white py-14 lg:pt-[48px] lg:pb-[55px]">
+      <section className="bg-white max-lg:pt-14 max-md:pb-[68px] md:max-lg:pb-14 lg:pt-[48px] lg:pb-[55px]">
         <div className="mx-auto max-w-content max-md:px-6 md:px-[20px] lg:px-0">
           <div className="flex flex-col items-center gap-10 lg:flex-row lg:justify-between">
             {/* 데스크탑: 좌측 이미지 (모바일에서는 제목 아래로 이동) */}
@@ -259,7 +262,7 @@ export default function AboutSection() {
               </div>
             </ScrollReveal>
 
-            <div className="flex w-full flex-col gap-6 max-lg:items-center max-lg:text-center lg:items-end lg:text-right">
+            <div className="flex w-full flex-col gap-9 max-lg:items-center max-lg:text-center lg:items-end lg:text-right">
               {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={200}>
                 <h2
@@ -319,18 +322,30 @@ export default function AboutSection() {
                     sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
                   />
                   <Image
+                    src={introduceDecoPawsMobile}
+                    alt=""
+                    width={64}
+                    height={59}
+                    aria-hidden
+                    className="absolute -right-4 -top-6 max-md:block md:hidden"
+                  />
+                  <Image
                     src={introduceDecoPaws}
                     alt=""
                     width={79}
                     height={66}
                     aria-hidden
-                    className="absolute -right-8 top-4"
+                    className="absolute -right-8 top-4 max-md:hidden md:block"
                     style={{ transform: "rotate(19.28deg)" }}
                   />
                 </div>
               </ScrollReveal>
               <ScrollReveal variant="fade-up" delay={350}>
-                <p className="max-w-[272px] font-medium text-[var(--color-text)] max-md:text-[14px] max-md:leading-[140%] md:text-[20px] md:leading-[160%] tracking-[-0.04em]">
+                <p className="max-w-[272px] font-medium text-[var(--color-text)] max-md:text-[14px] max-md:leading-[140%] max-md:-mt-3 max-md:block md:hidden tracking-[-0.04em]">
+                  좋은 재료여도 맞지 않을 수 있고,<br />
+                  수제 간식도 매번 고르기 쉽지 않습니다.
+                </p>
+                <p className="max-w-[272px] font-medium text-[var(--color-text)] md:text-[20px] md:leading-[160%] max-md:hidden md:block tracking-[-0.04em]">
                   우리 아이가 먹는 수제 간식<br />
                   좋은 재료여도 맞지 않을 수 있고,<br />
                   재료도 매번 고르기 쉽지 않습니다.
@@ -342,7 +357,7 @@ export default function AboutSection() {
       </section>
 
       {/* Section 3: 그래서 꼬순박스는 기준을 만들었습니다. */}
-      <section className="bg-[var(--color-about-peach-bg)] py-14 lg:pt-[81px] lg:pb-[81px]">
+      <section className="bg-[var(--color-about-peach-bg)] max-md:pt-[59px] max-md:pb-[58px] md:max-lg:pt-14 md:max-lg:pb-14 lg:pt-[81px] lg:pb-[81px]">
         <div className="mx-auto max-w-content max-md:px-6 md:px-[20px] lg:px-0">
           <div className="flex flex-col items-center gap-10 lg:flex-row lg:justify-between">
             <div className="flex w-full flex-col gap-6 max-lg:items-center max-lg:text-center lg:items-start lg:text-left">
@@ -393,7 +408,11 @@ export default function AboutSection() {
                 </h2>
               </ScrollReveal>
               {/* 모바일: 제목 → 이미지 → 설명 순서 */}
-              <ScrollReveal variant="scale-in" duration={800} className="flex-none lg:hidden">
+              <ScrollReveal
+                variant="scale-in"
+                duration={800}
+                className="flex-none lg:hidden max-md:mt-3"
+              >
                 <div className="relative">
                   <Image
                     src={introduceMakeBox}
@@ -401,8 +420,8 @@ export default function AboutSection() {
                     width={375}
                     height={330}
                     quality={HIGH_IMAGE_QUALITY}
-                    className="h-auto w-full max-w-[320px] rounded-[30px]"
-                    sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 320px), 320px`}
+                    className="h-auto w-full max-md:max-w-[295px] md:max-w-[320px] rounded-[30px]"
+                    sizes={`${MEDIA_MAX_MD_SIZES} min(100vw - 48px, 295px), 320px`}
                   />
                   <Image
                     src={introduceDecoPaws}
@@ -410,7 +429,7 @@ export default function AboutSection() {
                     width={79}
                     height={66}
                     aria-hidden
-                    className="absolute -right-6 -bottom-4"
+                    className="absolute -right-6 -bottom-4 max-md:hidden md:block"
                     style={{ transform: "rotate(19.28deg)" }}
                   />
                 </div>
@@ -465,7 +484,7 @@ export default function AboutSection() {
           />
         </div>
 
-        <div className="relative z-10 mx-auto max-md:max-w-[480px] md:max-w-[var(--max-width-content)] px-6 md:px-0 flex flex-col gap-10 lg:gap-[91px]">
+        <div className="relative z-10 mx-auto max-md:max-w-[480px] md:max-w-[var(--max-width-content)] max-md:px-[40px] md:px-0 flex flex-col gap-10 lg:gap-[91px]">
           {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
           <ScrollReveal variant="fade-up">
             <h2
@@ -505,7 +524,7 @@ export default function AboutSection() {
             </h2>
           </ScrollReveal>
 
-          <div className="grid w-full grid-cols-1 gap-5 md:max-w-[680px] md:mx-auto lg:max-w-none lg:mx-0 lg:grid-cols-3 lg:items-start">
+          <div className="grid w-full grid-cols-1 max-md:gap-6 md:gap-5 md:max-w-[680px] md:mx-auto lg:max-w-none lg:mx-0 lg:grid-cols-3 lg:items-start">
             {[
               { image: introduceSection401, title: "건강한 재료", desc: "반려견에게 안전하고 건강한\n재료만 사용합니다.", bg: "var(--color-feature-card-warm)", stagger: false },
               { image: introduceSection402, title: "정성 가득 수제간식", desc: "대량 생산이 아닌,\n직접 만든 간식만 담습니다.", bg: "var(--color-feature-card-peach)", stagger: true },
@@ -609,7 +628,7 @@ export default function AboutSection() {
               <button
                 type="button"
                 onClick={handleChecklistClick}
-                className="mt-2 inline-flex h-[52px] w-full max-w-[312px] items-center justify-center rounded-xl bg-[var(--color-cta-button)] px-6 text-[16px] font-semibold leading-[30px] tracking-[-0.04em] text-white"
+                className="max-md:mt-7 md:mt-2 inline-flex h-[52px] w-full max-w-[312px] items-center justify-center rounded-xl bg-[var(--color-cta-button)] px-6 text-[16px] font-semibold leading-[30px] tracking-[-0.04em] text-white"
               >
                 10초 만에 우리 아이 맞춤 추천 받기
               </button>

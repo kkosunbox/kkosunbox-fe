@@ -87,7 +87,7 @@ export function PlanTierDots({
   onTierSelect: (tier: PackageTier) => void;
 }) {
   return (
-    <div className="mt-6 flex justify-center gap-3">
+    <div className="mt-4 flex justify-center gap-3">
       {order.map((t) => {
         const pkg = PACKAGES.find((p) => p.tier === t)!;
         const isActive = tier === t;

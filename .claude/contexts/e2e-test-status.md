@@ -3,6 +3,20 @@
 > 최초 작성: 2026-06-11 · 작성 계기: `/test-commit` 워크플로우 도입 중 `pnpm test` 결과 확인
 > 측정: 프로덕션 빌드(`pnpm build && pnpm start`, port 3001) + mock API(port 3099), chromium 1 worker
 
+## 2026-07-08 업데이트 — 91개 중 3 failed / 88 passed
+
+`/test-commit`으로 About 페이지 모바일 반응형 작업(Section 2~5) 커밋 전 `pnpm test` 실행. 최초 작성(2026-06-11, 27 failed) 대비 대부분 해소되어 **3건만 남음**. 이번 세션 변경(About 페이지 CSS/레이아웃, 푸터·리뷰·Why갤러리 스타일)과 **무관** — 아래 3건 모두 `/about`이 아닌 다른 페이지(login, subscribe)의 인증/세션·스냅샷 이슈다.
+
+| # | Spec | 증상 | 추정 원인 |
+|---|---|---|---|
+| 1 | `error-boundaries.spec.ts:206` `subscribe-07-plans-error` | 시각회귀 스냅샷 0.02% 픽셀 diff(17120px) | 폰트 서브셋 로딩 타이밍 등 사소한 렌더 흔들림으로 추정. 레이아웃 구조 변경 아님 |
+| 2 | `login.spec.ts:174` SSR 쿠키 로그인 상태 `/login` 접근 → `/`로 리다이렉트 | `프로필 메뉴` 버튼 10s 타임아웃, 못 찾음 | 분류 B(인증 경로) 연장선 — SSR 쿠키 세션 인식 실패 추정 |
+| 3 | `login.spec.ts:217` localStorage refreshToken만 있을 때 `/login` → 세션 복구 후 `/` | `waitForURL("/")` 15s 타임아웃, `/login`에 계속 머무름 | 분류 B(인증 경로) 연장선 — 클라이언트 세션 복구 흐름 문제 추정 |
+
+이번 세션은 정적 검증(tsc/lint 신규 오류 0건)만 커밋 게이트로 삼고, 위 3건은 기존 baseline 이슈로 보고 커밋을 진행한다(사용자 승인).
+
+---
+
 ## 요약
 
 `pnpm test`는 현재 **결정론적으로 27 failed / 27 passed** (총 54). 부하·플래키가 아니라 **매 실행 동일**하다(서로 다른 환경에서 2회 측정, 결과·실패 spec 동일).

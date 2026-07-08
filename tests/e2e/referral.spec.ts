@@ -43,9 +43,18 @@ test.describe("레퍼럴 랜딩 페이지 (/ref/[slug])", () => {
     // 레퍼럴 히어로가 보일 때까지 대기 (hydration + useEffect 완료 기준)
     await expect(page.getByRole("button", { name: CTA_LABEL })).toBeVisible({ timeout: 10_000 });
 
-    const cookies = await page.context().cookies();
-    const refCookie = cookies.find((c) => c.name === "ggosoon-ref");
-    expect(refCookie?.value).toBe(encodeURIComponent(MOCK_VALID_REFERRAL_CODE));
+    // 버튼의 "보임"은 SSR HTML만으로도 만족되어, 쿠키를 세팅하는 client useEffect가
+    // 아직 커밋되지 않은 시점에 즉시 읽으면 레이스가 난다(부하가 큰 풀스위트 실행에서 재현).
+    // 쿠키 값이 채워질 때까지 폴링해 hydration 완료를 실질적으로 기다린다.
+    await expect
+      .poll(
+        async () => {
+          const cookies = await page.context().cookies();
+          return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+        },
+        { timeout: 10_000 },
+      )
+      .toBe(encodeURIComponent(MOCK_VALID_REFERRAL_CODE));
   });
 
   test("CTA 버튼 클릭 → /subscribe 이동", async ({ page }) => {

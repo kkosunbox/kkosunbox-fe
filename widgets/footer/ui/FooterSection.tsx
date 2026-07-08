@@ -15,6 +15,12 @@ const COMPANY_INFO_LINES = [
   "Gimpo-si, Gyeonggi-do, Republic of Korea",
 ] as const;
 
+const CONTACT_PHONE = {
+  label: "Contact",
+  number: "010-4390-2416",
+  href: "tel:01043902416",
+} as const;
+
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */
 const SOCIAL_LINKS = [
   {
@@ -75,6 +81,9 @@ export default function FooterSection() {
             </Fragment>
           ))}
         </p>
+        <p className="mt-2 text-center text-caption-12-m text-[var(--color-footer-text)]">
+          {CONTACT_PHONE.label}: <a href={CONTACT_PHONE.href} className="transition-opacity hover:opacity-80">{CONTACT_PHONE.number}</a>
+        </p>
         <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5 flex flex-col items-center gap-2">
           <div className="flex items-center gap-2">
             {SOCIAL_LINKS.map((social) => (
@@ -124,6 +133,9 @@ export default function FooterSection() {
                   {line}
                 </p>
               ))}
+              <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
+                {CONTACT_PHONE.label}: <a href={CONTACT_PHONE.href} className="transition-opacity hover:opacity-80">{CONTACT_PHONE.number}</a>
+              </p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3 self-center">

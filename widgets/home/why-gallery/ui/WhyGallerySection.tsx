@@ -8,6 +8,7 @@ import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { GalleryCTALogo } from "./GalleryCTALogo";
 import { GalleryLogoMark } from "./GalleryLogoMark";
 import { GalleryMutedLogo } from "./GalleryMutedLogo";
+import { GalleryTitleMobile } from "./GalleryTitleMobile";
 import whyGalleryTitle from "../assets/why-gallery-title.svg";
 import whyGalleryTitlePawDeco from "../assets/why-gallery-title-paw-deco.webp";
 import pawsPatternWithBg from "../assets/paws-patterns-with-bg.webp";
@@ -244,20 +245,21 @@ export default function WhyGallerySection() {
   }
 
   return (
-    <section className="bg-white max-md:px-0 md:px-5 lg:px-16 max-md:pb-12 md:pb-16 lg:pb-[92px]">
+    <section className="bg-white max-md:px-0 md:px-5 lg:px-16 max-md:pb-0 md:pb-16 lg:pb-[92px]">
       <div
-        className="mx-auto max-lg:max-w-content lg:max-w-none overflow-hidden max-md:rounded-none pb-10 md:rounded-[40px] md:pb-14 lg:rounded-[64px] lg:pb-16"
+        className="mx-auto max-lg:max-w-content lg:max-w-none overflow-hidden max-md:rounded-none pb-[52px] md:rounded-[40px] md:pb-14 lg:rounded-[64px] lg:pb-16"
         style={{ background: "var(--color-why-choose-bg)" }}
       >
-        <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-16 text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
+        <div className="mx-auto flex max-w-content flex-col items-center px-5 pb-16 pt-[50px] text-center md:px-6 md:pb-14 md:pt-20 lg:px-0 lg:pb-[98px] lg:pt-24">
           <div className="relative mb-7 md:mb-10 lg:mb-[64px]">
+            <GalleryTitleMobile className="h-auto w-full max-w-[320px] md:hidden" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={whyGalleryTitle.src}
               alt="왜 우리 아이를 위해 꼬순박스를 선택해야할까요?"
               width={whyGalleryTitle.width}
               height={whyGalleryTitle.height}
-              className="h-auto w-full max-w-[320px] md:max-w-[466px]"
+              className="max-md:hidden h-auto w-full md:max-w-[466px]"
               loading="eager"
               decoding="async"
             />

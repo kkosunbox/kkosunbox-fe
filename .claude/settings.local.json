@@ -401,7 +401,10 @@
       "Bash(sed -i 's/from \"playwright\"/from \"@playwright\\\\/test\"/' \"C:\\\\Users\\\\tbrk7\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--2026-ggosoonbox\\\\8ac53af8-775a-4151-b3ee-6add4361792a\\\\scratchpad\\\\imgtool\\\\shot.mjs\")",
       "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\('C:\\\\Users\\\\tbrk7\\\\Downloads\\\\ChatGPT Image 2026년 7월 3일 오전 10_58_50 1.png'\\); \"$\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\))",
       "Bash(pnpm test:e2e tests/e2e/login.spec.ts tests/e2e/referral.spec.ts)",
-      "Bash(pnpm test:e2e tests/e2e/referral.spec.ts)"
+      "Bash(pnpm test:e2e tests/e2e/referral.spec.ts)",
+      "Bash(command -v chromium-cli)",
+      "Bash(timeout 60 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
+      "Bash(NODE_PATH=\"C:/2026/ggosoonbox/node_modules\" node screenshot-reviews.mjs)"
     ]
   },
   "disabledMcpjsonServers": [

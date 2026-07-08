@@ -73,29 +73,48 @@ const STATS = [
 
 export default function StatsBar() {
   return (
-    <section className="relative z-20 -mt-8 max-md:-mt-6 md:-mt-10 lg:-mt-12">
-      <div className="mx-auto max-w-content max-md:max-w-[343px] px-4 md:px-5 lg:px-0">
-        <div className="flex items-center justify-between rounded-[24px] md:rounded-[32px] lg:rounded-[36px] bg-white shadow-[0px_4px_12px_3px_rgba(0,0,0,0.12)] max-md:gap-1 md:gap-4 lg:gap-0 max-md:px-3 max-md:py-4 md:px-8 md:py-6 lg:px-[72px] lg:py-8">
+    <>
+      {/* 모바일 전용 — 좌우 여백 없이 화면 전체 폭으로 확장되는 단일 섹션 */}
+      <section className="md:hidden relative z-20 -mt-6 bg-white shadow-[0px_4px_8px_4px_rgba(0,0,0,0.09)]">
+        <div className="mx-auto flex h-[75px] w-[320px] items-center justify-center gap-10">
           {STATS.map((item, i) => (
             <ScrollReveal key={item.label} variant="fade-up" delay={i * 150} duration={500}>
-              <div className="flex items-center max-md:gap-1 md:gap-3 lg:gap-4 lg:w-[192px]">
+              <div className="flex w-20 flex-col items-center gap-0">
                 {item.icon}
-                <div className="flex flex-col">
-                  <span className="max-md:text-body-11-sb md:text-body-13-sb lg:text-body-15-sb text-[var(--color-stats-caption)] tracking-[-0.02em] break-keep">
-                    {item.caption}
-                  </span>
-                  <span
-                    className="max-md:text-body-13-b md:text-body-16-b lg:text-body-18-b tracking-[-0.02em] break-keep"
-                    style={{ color: item.accent }}
-                  >
-                    {item.label}
-                  </span>
-                </div>
+                <span className="text-[13px] font-semibold leading-[160%] tracking-[-0.02em] text-center text-[var(--color-stats-caption)]">
+                  {item.label}
+                </span>
               </div>
             </ScrollReveal>
           ))}
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* 태블릿·데스크탑 — 기존 카드형 레이아웃 유지 */}
+      <section className="max-md:hidden relative z-20 md:-mt-10 lg:-mt-12">
+        <div className="mx-auto max-w-content px-5 lg:px-0">
+          <div className="flex items-center justify-between rounded-[32px] lg:rounded-[36px] bg-white shadow-[0px_4px_12px_3px_rgba(0,0,0,0.12)] gap-4 lg:gap-0 px-8 py-6 lg:px-[72px] lg:py-8">
+            {STATS.map((item, i) => (
+              <ScrollReveal key={item.label} variant="fade-up" delay={i * 150} duration={500}>
+                <div className="flex items-center gap-3 lg:gap-4 lg:w-[192px]">
+                  {item.icon}
+                  <div className="flex flex-col">
+                    <span className="text-body-13-sb lg:text-body-15-sb text-[var(--color-stats-caption)] tracking-[-0.02em] break-keep">
+                      {item.caption}
+                    </span>
+                    <span
+                      className="text-body-16-b lg:text-body-18-b tracking-[-0.02em] break-keep"
+                      style={{ color: item.accent }}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

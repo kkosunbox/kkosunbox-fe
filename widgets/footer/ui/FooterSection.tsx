@@ -85,20 +85,6 @@ export default function FooterSection() {
           {CONTACT_PHONE.label}: <a href={CONTACT_PHONE.href} className="transition-opacity hover:opacity-80">{CONTACT_PHONE.number}</a>
         </p>
         <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5 flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2">
-            {SOCIAL_LINKS.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center transition-opacity hover:opacity-80 [&>svg]:w-5 [&>svg]:h-5"
-                aria-label={social.label}
-              >
-                {social.icon}
-              </a>
-            ))}
-          </div>
           <nav className="flex items-center" aria-label="Footer policy and support links">
             {FOOTER_LINKS.map((item, idx) => (
               <Fragment key={item.href}>
@@ -117,6 +103,20 @@ export default function FooterSection() {
           <p className="text-caption-12-m text-[var(--color-footer-text)]">
             Copyright © Kkosunbox {year}. All rights reserved.
           </p>
+          <div className="flex items-center gap-2">
+            {SOCIAL_LINKS.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center transition-opacity hover:opacity-80 [&>svg]:w-5 [&>svg]:h-5"
+                aria-label={social.label}
+              >
+                {social.icon}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 

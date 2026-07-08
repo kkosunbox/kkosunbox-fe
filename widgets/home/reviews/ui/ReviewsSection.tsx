@@ -146,6 +146,11 @@ function CarouselArrowButton({
 }
 
 function ReviewCard({ review }: { review: DisplayReview }) {
+  const spaceIndex = review.subscription.indexOf(" ");
+  const subscriptionDate =
+    spaceIndex === -1 ? review.subscription : review.subscription.slice(0, spaceIndex);
+  const subscriptionRest = spaceIndex === -1 ? "" : review.subscription.slice(spaceIndex + 1);
+
   return (
     // data-nosnippet: 후기 텍스트가 검색 결과 스니펫(설명)으로 사용되지 않도록 제외한다.
     // (화면 표시는 그대로, 구글이 meta description을 쓰도록 유도)
@@ -175,16 +180,17 @@ function ReviewCard({ review }: { review: DisplayReview }) {
         ))}
       </div>
 
-      <p className="h-[100px] w-full whitespace-pre-line text-[14px] font-normal leading-[140%] text-[var(--color-review-text)]">
+      <p className="h-[100px] w-full whitespace-pre-line text-body-13-r text-[var(--color-review-text)]">
         {review.review}
       </p>
 
-      <div className="absolute bottom-8 left-8 right-8 flex h-[46px] flex-col items-center gap-2 text-center">
+      <div className="absolute bottom-6 left-8 right-8 flex flex-col items-center gap-1 text-center">
         <span className="text-[18px] font-bold leading-[21px] text-[var(--color-review-text)]">
           {review.name}
         </span>
         <div className="text-[14px] font-medium leading-[17px] text-[var(--color-text-label)]">
-          {review.subscription}
+          {subscriptionDate} <br className="md:hidden" />
+          {subscriptionRest}
         </div>
       </div>
     </div>
@@ -351,9 +357,9 @@ export default function ReviewsSection() {
             <button
               type="button"
               onClick={handleChecklistCtaClick}
-              className="h-12 w-[327px] rounded-[12px] bg-[var(--color-hero-cta-bg)] text-center text-[14px] font-semibold leading-[30px] tracking-[-0.04em] text-white [font-feature-settings:'liga'_off] md:h-[52px] md:w-[312px] md:text-[16px]"
+              className="h-10 w-[230px] rounded-[8px] bg-[var(--color-hero-cta-bg)] text-center text-[13px] font-semibold leading-[30px] tracking-[-0.04em] text-white [font-feature-settings:'liga'_off] md:h-[52px] md:w-[312px] md:rounded-[12px] md:text-[16px]"
             >
-              10초 진단하고 우리 아이 맞춤 추천 받기
+              체크리스트 작성 후 구독하러 가기
             </button>
           </div>
         </ScrollReveal>

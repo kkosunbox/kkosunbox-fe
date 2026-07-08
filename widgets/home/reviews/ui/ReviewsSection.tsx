@@ -150,7 +150,7 @@ function ReviewCard({ review }: { review: DisplayReview }) {
     // (화면 표시는 그대로, 구글이 meta description을 쓰도록 유도)
     <div
       data-nosnippet
-      className="relative flex min-h-[366px] min-w-[300px] flex-col items-center rounded-2xl bg-white px-8 pt-[164px] shadow-[0px_4px_16px_rgba(82,82,82,0.2)]"
+      className="relative flex min-h-[334px] min-w-[300px] flex-col items-center rounded-2xl bg-white px-8 pt-[132px] shadow-[0px_4px_16px_rgba(82,82,82,0.2)]"
     >
       <div className="absolute -top-[60px] left-1/2 z-30 h-[120px] w-[120px] -translate-x-1/2 overflow-hidden rounded-full border-[8px] border-white">
         <Image
@@ -168,13 +168,7 @@ function ReviewCard({ review }: { review: DisplayReview }) {
         />
       </div>
 
-      <span
-        className="absolute left-1/2 top-[76px] z-10 flex h-6 min-w-[85px] -translate-x-1/2 items-center justify-center rounded-[30px] bg-review-chip px-3 py-1 text-[14px] font-semibold leading-[17px] text-white"
-      >
-        {review.subscriptionBadge}
-      </span>
-
-      <div className="absolute left-1/2 top-[108px] z-10 flex h-6 w-[120px] -translate-x-1/2 gap-0">
+      <div className="absolute left-1/2 top-[84px] z-10 flex h-6 w-[120px] -translate-x-1/2 gap-0">
         {Array.from({ length: 5 }).map((_, i) => (
           <StarIcon key={i} fillPercent={Math.max(0, Math.min(100, (review.rating - i) * 100))} />
         ))}
@@ -249,21 +243,23 @@ function ReviewsCarousel() {
         disabled={false}
         onClick={() => setStartIndex(displayIndex === 0 ? maxStart : displayIndex - 1)}
       />
-      <div ref={viewportRef} className="min-w-0 w-full max-w-[1011px] overflow-hidden pt-[60px] max-md:max-w-[640px] max-md:mx-auto">
-        <div
-          ref={trackRef}
-          className="flex gap-9 transition-transform duration-300 ease-out"
-          style={stepPx > 0 ? { transform: `translateX(-${displayIndex * stepPx}px)` } : undefined}
-        >
-          {REVIEWS.map((review, i) => (
-            <div
-              key={review.name + i}
-              className="shrink-0"
-              style={metrics.slide > 0 ? { width: metrics.slide } : undefined}
-            >
-              <ReviewCard review={review} />
-            </div>
-          ))}
+      <div ref={viewportRef} className="min-w-0 w-full max-w-[1011px] max-md:max-w-[640px] max-md:mx-auto">
+        <div className="-mx-5 overflow-hidden px-5 pt-[76px] pb-6">
+          <div
+            ref={trackRef}
+            className="flex gap-9 transition-transform duration-300 ease-out"
+            style={stepPx > 0 ? { transform: `translateX(-${displayIndex * stepPx}px)` } : undefined}
+          >
+            {REVIEWS.map((review, i) => (
+              <div
+                key={review.name + i}
+                className="shrink-0"
+                style={metrics.slide > 0 ? { width: metrics.slide } : undefined}
+              >
+                <ReviewCard review={review} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <CarouselArrowButton
@@ -301,16 +297,31 @@ export default function ReviewsSection() {
     >
       <div className="relative z-10 mx-auto max-w-[1107px] max-md:px-6 md:px-6 lg:px-0 lg:pt-[100px]">
         <ScrollReveal variant="fade-up">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={reviewsTitle.src}
-            alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
-            width={reviewsTitle.width}
-            height={reviewsTitle.height}
-            className="mx-auto h-auto w-full max-w-[486px] md:max-w-[760px] lg:max-w-[845px]"
-            loading="eager"
-            decoding="async"
-          />
+          <div className="relative mx-auto w-full max-w-[486px] md:max-w-[760px] lg:max-w-[845px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={reviewsTitle.src}
+              alt="꼬순박스를 구독한 구독자들의 실제 후기를 확인하세요!"
+              width={reviewsTitle.width}
+              height={reviewsTitle.height}
+              className="mx-auto h-auto w-full"
+              loading="eager"
+              decoding="async"
+            />
+            <svg
+              width="50"
+              height="50"
+              viewBox="0 0 50 50"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-[26px] -top-[16px] h-6 w-6 select-none md:-right-[30px] md:-top-[20px] md:h-8 md:w-8 lg:-right-[42px] lg:-top-[32px] lg:h-[50px] lg:w-[50px]"
+            >
+              <path d="M24.72 38.1949C23.656 38.2011 22.9459 39.605 23.1619 40.4126C23.3537 41.1308 24.4091 42.3558 25.3854 42.4317C29.9366 42.7939 40.7674 43.5588 40.9821 40.859C41.114 39.203 38.9827 38.0984 37.6309 38.1081L24.7193 38.1899L24.72 38.1949Z" fill="#EC7700" />
+              <path d="M5.45745 21.5642C5.31397 22.6319 6.256 23.9747 7.0469 24.3517C7.83779 24.7288 9.29672 24.3754 9.53861 23.5325C10.653 19.6457 11.5008 16.0368 12.313 11.9873C12.4397 11.356 11.4615 9.98131 10.8546 9.63576C10.2162 9.27625 9.07282 9.10432 8.35352 9.33037C7.06132 13.2703 6.05677 17.1493 5.45962 21.5621L5.45745 21.5642Z" fill="#EC7700" />
+              <path d="M21.0334 25.5283C20.1083 26.3895 20.2391 27.8909 20.891 28.7318C21.543 29.5726 23.1686 29.5792 24.1042 28.7772C27.7161 25.6706 30.9804 22.6967 34.3055 19.3194C34.8773 18.7418 34.5673 17.0072 34.0896 16.4161C33.4741 15.655 31.8604 15.4389 30.9841 16.2571L21.0307 25.531L21.0334 25.5283Z" fill="#EC7700" />
+            </svg>
+          </div>
         </ScrollReveal>
         <ScrollReveal variant="fade-up" delay={150}>
           <p className="mt-4 text-center text-[14px] font-medium leading-[18px] tracking-[-0.02em] text-[var(--color-why-choose-text)] md:text-[16px] md:leading-[19px]">
@@ -318,7 +329,7 @@ export default function ReviewsSection() {
           </p>
         </ScrollReveal>
 
-        <ScrollReveal variant="fade-up" delay={300} className="mt-[34px] w-full md:mt-[64px] lg:mt-[94px]">
+        <ScrollReveal variant="fade-up" delay={300} className="mt-6 w-full">
           <div className="md:hidden mx-auto flex w-full max-w-[360px] flex-col gap-[84px] pt-[60px]">
             {REVIEWS.map((review, i) => (
               <ReviewCard key={`${review.name}-mobile-${i}`} review={review} />
@@ -329,7 +340,7 @@ export default function ReviewsSection() {
         <ScrollReveal
           variant="fade-up"
           delay={300}
-          className="mt-[34px] hidden w-full md:mt-[64px] md:block lg:mt-[94px]"
+          className="mt-6 hidden w-full md:block"
         >
           <ReviewsCarousel />
         </ScrollReveal>

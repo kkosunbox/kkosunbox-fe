@@ -10,6 +10,7 @@ import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import heroCustomSnackBg from "../assets/hero-custom-snack-bg.webp";
 import heroCustomSnackHeading from "../assets/hero-custom-snack-heading.svg";
+import heroCustomSnackHeadingMobile from "../assets/hero-custom-snack-heading-mobile.svg";
 import heroCustomSnackBgMobile from "../assets/hero-custom-snack-bg-mobile.webp";
 import heroCustomSnackBgTablet from "../assets/hero-custom-snack-bg-tablet.webp";
 import heroDogBg from "../assets/hero-dog-bg.webp";
@@ -52,7 +53,7 @@ const slides: HeroSlide[] = [
     mobileBgImage: heroCustomSnackBgMobile.src,
     tabletBgImage: heroCustomSnackBgTablet.src,
     headingImg: heroCustomSnackHeading.src,
-    mobileHeadingImg: heroCustomSnackHeading.src,
+    mobileHeadingImg: heroCustomSnackHeadingMobile.src,
     headingAlt: "우리 아이를 위한 맞춤 건강간식",
     headingW: 333,
     headingH: 103,
@@ -201,7 +202,7 @@ export default function HeroSection() {
                     "absolute inset-0 h-full w-full object-cover",
                     slide.type === "fullBg"
                       ? "max-lg:object-center lg:object-[70%_center]"
-                      : "object-center",
+                      : "max-lg:object-[70%_center] lg:object-center",
                   ].join(" ")}
                   loading={index === 0 ? "eager" : "lazy"}
                   fetchPriority={index === 0 ? "high" : "auto"}
@@ -210,12 +211,12 @@ export default function HeroSection() {
               </picture>
             )}
 
-            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[90px] h-full lg:min-h-[644px]">
+            <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[82px] h-full lg:min-h-[644px]">
               {/* 좌측: 텍스트 */}
               <div className="flex flex-1 flex-col max-lg:items-center max-lg:text-center lg:items-start lg:text-left lg:pl-0">
                 {/* 슬라이드별 마케팅 헤딩(이미지). 페이지의 시맨틱 h1은 page.tsx의 단일 h1이 담당하므로
                     캐러셀로 중복 생성되는 것을 막기 위해 div로 둔다. 텍스트는 각 img의 alt로 제공. */}
-                <div className="max-lg:mb-4 lg:mb-6 lg:h-[110px] lg:overflow-hidden">
+                <div className="max-lg:mb-[18px] lg:mb-6 lg:h-[110px] lg:overflow-hidden">
                   {/* 모바일 제목 이미지 (< 1200px) */}
                   <img
                     src={slide.mobileHeadingImg}
@@ -238,7 +239,7 @@ export default function HeroSection() {
                   />
                 </div>
                 <p
-                  className={`max-lg:mb-2 lg:mb-3 lg:h-[30px] lg:overflow-hidden max-lg:h-[20px] max-lg:overflow-hidden max-lg:text-[14px] max-lg:leading-[20px] ${
+                  className={`max-lg:mb-1 lg:mb-3 lg:h-[30px] lg:overflow-hidden max-lg:h-[17px] max-lg:overflow-hidden max-lg:text-[14px] max-lg:leading-[17px] ${
                     slide.subtextClass ??
                     "max-lg:text-[14px] max-lg:font-medium lg:text-[20px] lg:font-medium text-[var(--color-hero-subtext)]"
                   }`}
@@ -246,13 +247,27 @@ export default function HeroSection() {
                   {slide.subtext}
                 </p>
                 <p
-                  className={`max-lg:mb-6 lg:mb-[52px] lg:h-[24px] lg:overflow-hidden max-lg:h-[16px] max-lg:overflow-hidden max-lg:text-[13px] max-lg:leading-[20px] ${
+                  className={`max-lg:mb-[26px] lg:mb-[52px] lg:h-[24px] lg:overflow-hidden max-lg:h-[16px] max-lg:overflow-hidden max-lg:text-[13px] max-lg:leading-[16px] ${
                     slide.tagsClass ??
                     "text-[var(--color-hero-tagline)] max-lg:text-body-13-r lg:text-body-14-m"
                   }`}
                 >
                   {slide.tags}
                 </p>
+                {slide.id === "custom-snack" && (
+                  <Button
+                    onClick={handleCta}
+                    variant="primary"
+                    size="lg"
+                    style={{
+                      background: "var(--color-cta-button)",
+                      borderRadius: 8,
+                    }}
+                    className="lg:hidden text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 max-lg:h-[40px] max-lg:w-[230px] max-lg:text-[13px]"
+                  >
+                    10초 진단하고 우리 아이 맞춤 추천 받기
+                  </Button>
+                )}
                 <Button
                   onClick={handleCta}
                   variant="primary"
@@ -261,7 +276,12 @@ export default function HeroSection() {
                     background: slide.ctaBg ?? "var(--color-cta-button)",
                     borderRadius: 12,
                   }}
-                  className="text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 max-lg:h-[40px] max-lg:w-[260px] max-lg:text-[13px] lg:h-[52px] lg:w-[282px] lg:text-[16px]"
+                  className={[
+                    "text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 lg:h-[52px] lg:w-[282px] lg:text-[16px]",
+                    slide.id === "custom-snack"
+                      ? "max-lg:hidden"
+                      : "max-lg:h-[40px] max-lg:w-[260px] max-lg:text-[13px]",
+                  ].join(" ")}
                 >
                   10초 진단하고 우리 아이 맞춤 추천 받기
                 </Button>

@@ -86,10 +86,10 @@ export function DeliveryCard({ summary }: DeliveryCardProps) {
           const count = summary[step.key];
           return (
             <div key={step.label} className="flex flex-col items-center text-center">
-              <div className="flex h-10 w-10 items-center justify-center text-[var(--color-text-secondary)] max-lg:mb-4 lg:mb-2 [&_svg]:h-10 [&_svg]:w-10">
+              <div className="flex h-10 w-10 items-center justify-center text-[var(--color-text-secondary)] max-lg:mb-4 lg:mb-4 [&_svg]:h-10 [&_svg]:w-10">
                 <Icon />
               </div>
-              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-lg:mb-3 lg:mb-1.5">
+              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-lg:mb-3 lg:mb-2.5">
                 {step.label}
               </Text>
               <button

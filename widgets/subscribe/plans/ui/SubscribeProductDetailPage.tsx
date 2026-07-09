@@ -149,7 +149,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden lg:hidden">
-        <div className="mb-3 w-full" style={{ background: "var(--color-top-band-bg)" }}>
+        <div className="mb-6 w-full" style={{ background: "var(--color-top-band-bg)" }}>
           <div className="flex h-[46px] w-full min-w-0 items-center max-sm:gap-2 max-sm:px-4 sm:gap-3 sm:px-6">
             <span className="max-sm:mr-1 max-sm:shrink-0 max-sm:text-body-12-m sm:mr-2 sm:shrink-0 sm:text-body-14-sb text-[var(--color-text-muted)]">
               구독선택
@@ -198,7 +198,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
             />
           </div>
-          <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
+          <p className="mt-2 text-center text-[10px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
           </p>
 
@@ -257,7 +257,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   우체국택배
                 </p>
                 <p className="mt-2 text-[13px] font-normal leading-[140%] text-[var(--color-text-secondary)]">
-                  월~목 배송 / 오전 11시 이후 주문 시 익일 발송
+                  월~목 배송
+                  <br />
+                  오전 11시 이후 주문 시 익일 발송
                 </p>
               </div>
             </div>

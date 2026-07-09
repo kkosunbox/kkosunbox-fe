@@ -258,7 +258,11 @@ export default function SupportSection({
   return (
     <div className={fillViewport ? "flex min-h-full flex-1 flex-col" : "bg-white"}>
       {showBanner && <SupportHero />}
-      <div className={`max-md:py-6 md:pb-10${fillViewport ? " flex flex-1 flex-col" : ""}`}>
+      <div
+        className={`${fillViewport ? "max-md:pt-8 max-md:pb-6" : "max-md:py-6"} md:pb-10${
+          fillViewport ? " flex flex-1 flex-col" : ""
+        }`}
+      >
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
         {/* ── 모바일·태블릿 (< 1200px): 문의하기 CTA (히어로 아래) ── */}
         {showBanner && (

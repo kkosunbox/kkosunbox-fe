@@ -80,7 +80,8 @@ export default function PrivacySection() {
           height={privacyTitle.height}
           quality={HIGH_IMAGE_QUALITY}
           priority
-          className="h-auto w-full max-w-[217px]"
+          className="max-w-[217px]"
+          style={{ width: "100%", height: "auto" }}
         />
         <p className="mt-5 text-body-16-r max-md:text-body-14-r text-[var(--color-text-secondary)]">
           본 방침은 임시 게시본이며, 추후 서비스 정책에 따라 변경될 수 있습니다.

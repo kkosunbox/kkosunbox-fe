@@ -214,7 +214,8 @@ export function MobileDrawer({
             width={375}
             height={126}
             quality={HIGH_IMAGE_QUALITY}
-            className="mt-2 w-full"
+            className="mt-2"
+            style={{ width: "100%", height: "auto" }}
           />
         </div>
       </div>

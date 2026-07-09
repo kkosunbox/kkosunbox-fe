@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import {
   PACKAGES,
   tierFromSubscriptionPlan,
@@ -101,7 +102,7 @@ export default function PackagePlansSection() {
                         fill
                         quality={HIGH_IMAGE_QUALITY}
                         className="object-cover"
-                        sizes="100vw"
+                        sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
                         priority={t === "Premium"}
                         style={{
                           opacity: tier === t ? 1 : 0,

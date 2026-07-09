@@ -45,7 +45,7 @@ export function LogoWhiteIcon() {
 export function DrawerUserIcon({ active = false }: { active?: boolean }) {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3.9375 14.3626H14H24.5M20.4167 10.0619H20.5625M17.0625 10.0619H17.2083M7 22.1663H21C22.933 22.1663 24.5 20.5993 24.5 18.6663V9.33301C24.5 7.40001 22.933 5.83301 21 5.83301H14H7C5.067 5.83301 3.5 7.40001 3.5 9.33301V18.6663C3.5 20.5993 5.067 22.1663 7 22.1663Z" stroke={active ? "var(--color-primary)" : "#F5D7B3"} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M3.9375 14.3626H14H24.5M20.4167 10.0619H20.5625M17.0625 10.0619H17.2083M7 22.1663H21C22.933 22.1663 24.5 20.5993 24.5 18.6663V9.33301C24.5 7.40001 22.933 5.83301 21 5.83301H14H7C5.067 5.83301 3.5 7.40001 3.5 9.33301V18.6663C3.5 20.5993 5.067 22.1663 7 22.1663Z" stroke={active ? "var(--color-primary)" : "#F5D7B3"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -53,7 +53,7 @@ export function DrawerUserIcon({ active = false }: { active?: boolean }) {
 export function DrawerPinIcon({ active = false }: { active?: boolean }) {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5.97454 20.771C8.34478 19.4313 11.0831 18.6667 14 18.6667C16.9169 18.6667 19.6552 19.4313 22.0255 20.771M17.5 11.6667C17.5 13.5997 15.933 15.1667 14 15.1667C12.067 15.1667 10.5 13.5997 10.5 11.6667C10.5 9.73367 12.067 8.16667 14 8.16667C15.933 8.16667 17.5 9.73367 17.5 11.6667ZM24.5 14C24.5 19.799 19.799 24.5 14 24.5C8.20101 24.5 3.5 19.799 3.5 14C3.5 8.20101 8.20101 3.5 14 3.5C19.799 3.5 24.5 8.20101 24.5 14Z" stroke={active ? "var(--color-primary)" : "#F5D7B3"} stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M5.97454 20.771C8.34478 19.4313 11.0831 18.6667 14 18.6667C16.9169 18.6667 19.6552 19.4313 22.0255 20.771M17.5 11.6667C17.5 13.5997 15.933 15.1667 14 15.1667C12.067 15.1667 10.5 13.5997 10.5 11.6667C10.5 9.73367 12.067 8.16667 14 8.16667C15.933 8.16667 17.5 9.73367 17.5 11.6667ZM24.5 14C24.5 19.799 19.799 24.5 14 24.5C8.20101 24.5 3.5 19.799 3.5 14C3.5 8.20101 8.20101 3.5 14 3.5C19.799 3.5 24.5 8.20101 24.5 14Z" stroke={active ? "var(--color-primary)" : "#F5D7B3"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -102,7 +102,7 @@ function DrawerHeartIcon() {
 export function DrawerLogoutIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15.7258 7.97852V4.97852C15.7258 3.87395 14.8303 2.97852 13.7257 2.97852L5.99991 2.9996C4.89534 2.9996 3.99991 3.89503 3.99991 4.9996V18.9996C3.99991 20.1042 4.89534 20.9996 5.99991 20.9996L13.7257 20.9785C14.8303 20.9785 15.7258 20.0831 15.7258 18.9785V15.9785M19 8.9998L22.15 11.9998L19 14.9998M22.15 11.9998L11.65 11.9998" stroke="#B0B0B0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M15.7258 7.97852V4.97852C15.7258 3.87395 14.8303 2.97852 13.7257 2.97852L5.99991 2.9996C4.89534 2.9996 3.99991 3.89503 3.99991 4.9996V18.9996C3.99991 20.1042 4.89534 20.9996 5.99991 20.9996L13.7257 20.9785C14.8303 20.9785 15.7258 20.0831 15.7258 18.9785V15.9785M19 8.9998L22.15 11.9998L19 14.9998M22.15 11.9998L11.65 11.9998" stroke="#B0B0B0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

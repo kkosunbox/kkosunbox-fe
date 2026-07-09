@@ -338,7 +338,7 @@ export default function PlanPicker({
                 </div>
 
                 {activePkg ? (
-                  <div className="mt-4">
+                  <div className="mt-6">
                     <p
                       className="text-subtitle-17-b-lh22"
                       style={{ color: activePkg.colorVar }}
@@ -358,30 +358,32 @@ export default function PlanPicker({
                     </ul>
 
                     {activePlan ? (
-                      <div className="mt-4 border-t border-[var(--color-border-light)] pt-4">
-                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <div className="mt-6 border-t border-[var(--color-border-light)] pt-4">
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
                             월 요금제
                           </span>
-                          <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {inviteEligible ? combinedDiscountPct(activePlan) : activePlan.discountRate}%
-                          </span>
-                          <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(activePlan.originalPrice)}
-                          </span>
-                          <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {inviteEligible
-                              ? formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))
-                              : formatMonthlyPrice(activePlan.monthlyPrice)}
-                          </span>
+                          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                            <span className="text-price-16-sb text-[var(--color-cta-button)]">
+                              {inviteEligible ? combinedDiscountPct(activePlan) : activePlan.discountRate}%
+                            </span>
+                            <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
+                              {formatMonthlyPrice(activePlan.originalPrice)}
+                            </span>
+                            <span className="text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
+                              {inviteEligible
+                                ? formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))
+                                : formatMonthlyPrice(activePlan.monthlyPrice)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ) : null}
 
                     {renderPrimaryAction(
                       primaryButtonVariant === "orange"
-                        ? "mt-4 flex h-12 w-full items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]"
-                        : "mt-4 flex h-12 w-full items-center justify-center rounded-[8px] text-center text-body-14-sb tracking-[-0.02em]",
+                        ? "mt-6 flex h-12 w-full items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]"
+                        : "mt-6 flex h-12 w-full items-center justify-center rounded-[8px] text-center text-body-14-sb tracking-[-0.02em]",
                     )}
                   </div>
                 ) : null}

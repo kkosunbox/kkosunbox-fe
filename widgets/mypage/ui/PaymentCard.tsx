@@ -11,9 +11,17 @@ interface PaymentCardProps {
   subscription: UserSubscriptionDto | null;
 }
 
-function PaymentRow({ label, children }: { label: string; children: ReactNode }) {
+function PaymentRow({
+  label,
+  children,
+  align = "center",
+}: {
+  label: string;
+  children: ReactNode;
+  align?: "center" | "start";
+}) {
   return (
-    <div className="flex items-center gap-4">
+    <div className={`flex ${align === "start" ? "items-start" : "items-center"} gap-4`}>
       <Text
         variant="body-13-r"
         className="w-[64px] shrink-0 font-medium text-[var(--color-text-secondary)] lg:w-[88px]"
@@ -70,7 +78,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
           </Text>
         </PaymentRow>
 
-        <PaymentRow label="카드 정보">
+        <PaymentRow label="카드 정보" align="start">
           <div className="flex min-w-0 items-center gap-2 max-lg:flex-wrap lg:flex-nowrap">
             <Text
               variant="body-13-r"

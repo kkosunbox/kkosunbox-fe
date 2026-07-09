@@ -103,7 +103,6 @@ export default function PackagePlansSection() {
                         quality={HIGH_IMAGE_QUALITY}
                         className="object-cover"
                         sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
-                        priority={t === "Premium"}
                         style={{
                           opacity: tier === t ? 1 : 0,
                           filter: tier === t ? "blur(0px)" : "blur(6px)",

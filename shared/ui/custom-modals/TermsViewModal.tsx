@@ -216,8 +216,6 @@ const MODAL_CONTENT: Record<AgreementKey, Section[]> = {
   marketing: MARKETING_CONTENT,
 };
 
-const SCROLL_THRESHOLD = 0.8;
-
 interface Props {
   type: AgreementKey;
   onClose: () => void;
@@ -231,7 +229,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
 
   const checkScroll = useCallback((el: HTMLDivElement) => {
     const { scrollTop, scrollHeight, clientHeight } = el;
-    if (scrollHeight <= clientHeight || scrollTop + clientHeight >= scrollHeight * SCROLL_THRESHOLD) {
+    if (scrollHeight <= clientHeight || scrollTop > 0) {
       setHasScrolledEnough(true);
     }
   }, []);

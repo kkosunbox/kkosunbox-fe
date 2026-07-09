@@ -3,6 +3,22 @@
 > 최초 작성: 2026-06-11 · 작성 계기: `/test-commit` 워크플로우 도입 중 `pnpm test` 결과 확인
 > 측정: 프로덕션 빌드(`pnpm build && pnpm start`, port 3001) + mock API(port 3099), chromium 1 worker
 
+## 2026-07-09 업데이트 — 91개 중 91 passed (100%), 근본원인 3건 모두 해결
+
+2026-07-08에 남았던 3건 + `/test-commit` 실행 중 새로 관측된 2건(checklist.spec.ts:69, login.spec.ts:208 세션복구)까지 총 5건을 근본 원인까지 추적해 전부 해결. `pnpm test` 3회 연속 91/91 통과로 결정론성 확인.
+
+| # | Spec | 실제 근본 원인 | 조치 |
+|---|---|---|---|
+| 1 | `error-boundaries.spec.ts` `subscribe-07-plans-error` (및 전체 시각회귀 스크린샷) | "폰트 로딩 타이밍" 추정은 틀림 — **ChannelTalk(`#ch-plugin`, cdn.channel.io)가 실제 라이브 CDN 상담 위젯**이라 마케팅 팝업("궁금한 건 채팅으로 문의하세요…") 노출 여부·타이밍이 매 실행 달라짐. `role="dialog"`로 렌더되어 `getByRole("dialog")` strict-mode 충돌까지 유발(아래 #5) | `tests/helpers/fixtures.ts`에 공통 `page` 픽스처 추가, `cdn.channel.io/**` 요청을 전 스펙에서 차단(`page.route(...).abort()`). error-boundaries 11개 baseline 전량 재생성(위젯 없는 화면 기준) |
+| 2 | `login.spec.ts:174` SSR 쿠키 `/login` 접근 → `/` 리다이렉트 | 쿠키만 주입하고 localStorage refreshToken을 주입하지 않아, 클라 accessToken 부트스트랩이 느린 서버 액션 경로(`bootstrapClientAccessTokenAction`)를 탐 — 그 사이 홈의 다른 위젯이 미인증 API 호출 → 401 → 자동 로그아웃 레이스 | 기존에 이미 있던 `loginByTokens(page, TEST_TOKENS)` 헬퍼로 교체(쿠키+refreshToken 동시 주입, "타이밍 이슈 없음"이라고 헬퍼 자체에 문서화되어 있었음) |
+| 3 | `login.spec.ts:217`(현 208) localStorage refreshToken만 있을 때 세션 복구 | `goto("/") → evaluate(localStorage 주입) → goto("/login")` 패턴이 레이스 유발: 홈 페이지의 AuthProvider가 막 주입된 토큰으로 refresh를 먼저 시도했다가 곧이은 `/login` 내비게이션에 취소(`net::ERR_ABORTED`)당함. `tryRefresh()`(`shared/lib/api/client.ts`)가 이 취소를 실패로 오인해 `tokenStore.clear()`로 방금 주입한 토큰을 지워버려 영구 대기 | `page.addInitScript`로 페이지 로드 **이전**에 토큰 주입(실제 사용자 조건과 동일, 경쟁 자체가 성립 안 함)으로 변경. 6/6 재현 → 수정 후 다회 재검증 통과 |
+| 4 | `checklist.spec.ts:69` 홈 CTA → 체크리스트 모달 오픈 | `getByRole("dialog")`가 우리 체크리스트 모달과 ChannelTalk의 "Channel Talk pop-up"(role="dialog") **2개**에 매치되어 strict-mode 위반 | #1과 동일한 fixtures.ts 위젯 차단으로 해결(위젯 자체가 안 뜨므로 두 번째 dialog가 없음) |
+| 5 | (참고) `#ch-plugin`은 shadow DOM에 `position:fixed`로 렌더 | 조사 중 `#ch-plugin`의 bounding rect가 `{width:1280, height:0}`으로 나와 단순 좌표 mask로는 툴팁 풍선까지 못 가림을 확인 | 좌표 마스킹 대신 스크립트 자체를 네트워크 레벨에서 차단하는 방식으로 최종 결정(더 견고·더 빠름·CDN 의존 제거) |
+
+**남겨둔 이슈(제품 코드, 이번 스코프 밖):** `tryRefresh()`가 "리프레시 토큰이 실제로 무효"와 "요청이 네비게이션 등으로 취소됨"을 구분하지 않고 둘 다 `tokenStore.clear()`로 처리한다. 실사용자가 페이지 로드 도중(느린 네트워크 등) 빠르게 다른 페이지로 이동하면 이론상 스퓨리어스 로그아웃이 발생할 수 있다. 테스트는 이 경쟁이 아예 발생하지 않도록 우회했지만, 제품 코드 자체의 견고성 개선은 별도 판단 필요.
+
+**공통 인프라 변경:** `tests/helpers/fixtures.ts` 신설(전 스펙이 `@playwright/test` 대신 여기서 `test`/`expect` import). ChannelTalk 차단을 한 곳에서 관리.
+
 ## 2026-07-08 업데이트 — 91개 중 3 failed / 88 passed
 
 `/test-commit`으로 About 페이지 모바일 반응형 작업(Section 2~5) 커밋 전 `pnpm test` 실행. 최초 작성(2026-06-11, 27 failed) 대비 대부분 해소되어 **3건만 남음**. 이번 세션 변경(About 페이지 CSS/레이아웃, 푸터·리뷰·Why갤러리 스타일)과 **무관** — 아래 3건 모두 `/about`이 아닌 다른 페이지(login, subscribe)의 인증/세션·스냅샷 이슈다.

@@ -162,7 +162,7 @@ function ChecklistPanel({
       <div
         className={
           isMobile
-            ? "relative mb-2.5"
+            ? "relative mb-4"
             : "mb-2.5 flex items-center justify-between"
         }
       >

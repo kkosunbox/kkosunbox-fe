@@ -345,7 +345,7 @@ export default function AboutSection() {
                   좋은 재료여도 맞지 않을 수 있고,<br />
                   수제 간식도 매번 고르기 쉽지 않습니다.
                 </p>
-                <p className="max-w-[272px] font-medium text-[var(--color-text)] md:text-[20px] md:leading-[160%] max-md:hidden md:block tracking-[-0.04em]">
+                <p className="max-w-[272px] font-medium text-[var(--color-text)] md:text-[16px] lg:text-[20px] md:leading-[160%] max-md:hidden md:block tracking-[-0.04em]">
                   우리 아이가 먹는 수제 간식<br />
                   좋은 재료여도 맞지 않을 수 있고,<br />
                   재료도 매번 고르기 쉽지 않습니다.
@@ -435,7 +435,7 @@ export default function AboutSection() {
                 </div>
               </ScrollReveal>
               <ScrollReveal variant="fade-up" delay={350}>
-                <p className="font-medium text-[var(--color-text)] max-md:text-[14px] max-md:leading-[140%] md:text-[20px] md:leading-[160%] tracking-[-0.04em]">
+                <p className="font-medium text-[var(--color-text)] max-md:text-[14px] max-md:leading-[140%] md:text-[16px] lg:text-[20px] md:leading-[160%] tracking-[-0.04em]">
                   제대로 확인된 재료,<br className="lg:hidden" />
                   믿을 수 있는 과정,<br />
                   그리고 우리 아이에게 맞는 선택.
@@ -559,7 +559,7 @@ export default function AboutSection() {
 
           <div className="flex flex-col gap-4 max-lg:items-center max-lg:text-center lg:items-start lg:gap-6">
             <ScrollReveal variant="fade-up" delay={100}>
-              <p className="font-bold text-[var(--color-text)] max-md:text-[18px] md:text-[24px] leading-[160%] tracking-[-0.04em]">
+              <p className="font-bold text-[var(--color-text)] max-md:text-[18px] md:text-[18px] lg:text-[24px] leading-[160%] tracking-[-0.04em]">
                 믿고 선택할 수 있도록,
               </p>
             </ScrollReveal>

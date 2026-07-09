@@ -333,9 +333,9 @@ function SubscriptionFilterTabs({
             <button
               type="button"
               onClick={() => onChange(item.key)}
-              className={`px-2 text-body-16-m transition-colors ${
+              className={`px-2 max-md:text-body-13-m text-body-16-m transition-colors ${
                 selected
-                  ? "text-body-16-sb text-[var(--color-text)]"
+                  ? "max-md:text-body-13-sb text-body-16-sb text-[var(--color-text)]"
                   : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
               }`}
             >
@@ -475,7 +475,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
       <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:h-[367px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
       {/* Hero content — overlaps the 258px boundary */}
-      <div className="relative mx-auto max-w-content max-md:px-4 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
+      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
         {/* Back + title */}
         <button
           type="button"
@@ -498,7 +498,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
       </div>
 
       {/* Subscription list — 구독 전체보기 */}
-      <div className="relative mx-auto max-w-content max-md:px-4 md:px-6 lg:px-0 pt-8 pb-10">
+      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-8 pb-10">
         <div className="md:px-0 lg:px-0">
           <div className="mb-6">
             <div className="flex items-center justify-between gap-3 max-md:mb-3">

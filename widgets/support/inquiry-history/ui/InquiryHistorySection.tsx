@@ -144,7 +144,7 @@ export default function InquiryHistorySection() {
   return (
     <div className="flex min-h-full flex-1 flex-col">
       <SupportHero />
-      <div className="flex flex-1 flex-col max-md:py-6 md:pb-10">
+      <div className="flex flex-1 flex-col max-md:py-6 md:max-lg:pt-6 md:pb-10">
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
         <section
           className="flex min-h-[592px] flex-1 flex-col rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-8 lg:pt-8"

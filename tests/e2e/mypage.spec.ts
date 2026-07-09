@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/fixtures";
 import { NO_PROFILE_CREDENTIALS } from "../helpers/mockApiServer";
 import { loginAndGoTo } from "../helpers/auth";
 

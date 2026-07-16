@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { test, expect } from "../helpers/fixtures";
 import { MOCK_ACCESS_TOKEN } from "../helpers/mockApiServer";
 import { loginAndGoTo, loginByTokens, TEST_TOKENS } from "../helpers/auth";
 

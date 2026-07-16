@@ -13,8 +13,8 @@ export function PointHistoryView({ balanceCardProps, ledger }: PointHistorySecti
 
       {/* ━━━━━━━━ 모바일 ━━━━━━━━ */}
       <div className="md:hidden">
-        {/* 상단 웜 섹션 — mobile: #FFF9F3(background), px-6, pt-6/pb-6 */}
-        <div className="bg-[var(--color-background)] px-6 pb-6 pt-6">
+        {/* 상단 웜 섹션 — mobile: #FFF8F2(surface-warm), px-6, pt-6/pb-6 */}
+        <div className="bg-[var(--color-surface-warm)] px-6 pb-6 pt-6">
           <div className="mb-4 flex items-center gap-2">
             <Link
               href="/mypage"
@@ -42,7 +42,7 @@ export function PointHistoryView({ balanceCardProps, ledger }: PointHistorySecti
                 {ledger.pageItems.map((item, idx) => {
                   const dateRange = fmtDate(item.createdAt);
                   return (
-                    <li key={item.id} className="border-b border-[var(--color-text-muted)] py-4 last:border-b-0">
+                    <li key={item.id} className="border-b border-[var(--color-text-muted)] pb-4 pt-4 first:pt-0">
                       <div className="flex items-start justify-between gap-3">
                         <span className="text-body-14-m text-[var(--color-text)]">{item.description}</span>
                         <span className="shrink-0 text-body-16-b text-[var(--color-text)]">

@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/", label: "홈", icon: "home" as const },
   { href: "/about", label: "꼬순박스 소개", icon: "document" as const },
   { href: "/subscribe", label: "구독 시작하기", icon: "check-circle" as const },
+  { href: "/shop", label: "간식 스토어", icon: "cart" as const },
   { href: "/support", label: "고객센터", icon: "heart" as const },
 ];
 
@@ -214,7 +215,8 @@ export function MobileDrawer({
             width={375}
             height={126}
             quality={HIGH_IMAGE_QUALITY}
-            className="mt-2 w-full"
+            className="mt-2"
+            style={{ width: "100%", height: "auto" }}
           />
         </div>
       </div>

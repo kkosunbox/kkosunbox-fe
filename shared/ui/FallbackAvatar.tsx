@@ -39,7 +39,14 @@ export default function FallbackAvatar({ userId, size, className }: FallbackAvat
         background: "var(--color-avatar-fallback)",
       }}
     >
-      <Image src={src} alt="" fill className="object-cover" aria-hidden />
+      <Image
+        src={src}
+        alt=""
+        fill
+        className="object-cover"
+        aria-hidden
+        sizes={`${size ?? 80}px`}
+      />
     </div>
   );
 }

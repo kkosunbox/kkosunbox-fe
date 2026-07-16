@@ -431,7 +431,7 @@ export default function PlanPicker({
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">
                 {renderPrimaryAction(
-                  `flex ${primaryButtonVariant === "orange" ? "h-12" : "h-10"} w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]`,
+                  "flex h-10 w-[180px] flex-row items-center justify-center gap-[10px] rounded-[8px] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em]",
                 )}
               </div>
             </div>

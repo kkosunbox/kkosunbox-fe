@@ -19,8 +19,8 @@
  * ⚠️ 스크린샷은 OS·렌더링 환경에 민감하다. CI(예: Linux) 도입 시 그 환경에서 baseline을
  *    다시 생성해야 한다(Playwright가 파일명에 플랫폼 suffix를 붙여 분리 관리).
  */
-import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
+import { test, expect } from "../helpers/fixtures";
 import { loginAndGoTo } from "../helpers/auth";
 
 const MOCK_API = "http://localhost:3099";
@@ -78,6 +78,7 @@ async function waitForShell(page: Page) {
 }
 
 // ── 공통 설정 ─────────────────────────────────────────────────────────────────
+// ChannelTalk 스크립트 차단은 tests/helpers/fixtures.ts의 공통 page 픽스처가 처리한다.
 
 test.afterEach(async () => {
   // 다음 테스트에 영향을 주지 않도록 주입된 에러 경로를 항상 초기화

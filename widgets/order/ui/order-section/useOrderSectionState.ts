@@ -2,11 +2,10 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useAgreementState } from "./hooks/useAgreementState";
-import { useAddressState } from "./hooks/useAddressState";
-import { useExternalMessages } from "./hooks/useExternalMessages";
 import { useInviteState } from "./hooks/useInviteState";
 import { usePaymentState } from "./hooks/usePaymentState";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import { useRouter } from "next/navigation";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -19,8 +18,8 @@ import { computeOrderPricing } from "@/features/order";
 import { requestTossBillingAuth, isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
-import { isValidKoreanPhone } from "./orderSectionFormatters";
-export type { NewAddrState } from "./hooks/useAddressState";
+import { isValidKoreanPhone } from "@/shared/lib/format";
+export type { NewAddrState } from "@/features/delivery-address/lib";
 
 export interface OrderSectionProps {
   plan: SubscriptionPlanDto;

@@ -74,6 +74,13 @@ module.exports = {
       from: { path: "^widgets/subscribe/" },
       to: { path: "^widgets/support/" },
     },
+    {
+      name: "widget-shop-order-coupling",
+      comment: "widgets/shop must not import widgets/order — 공용 파트는 shared/ui·shared/lib·features/delivery-address 경유 (2026-07-16 리팩토링으로 0건 달성)",
+      severity: "error",
+      from: { path: "^widgets/shop/" },
+      to: { path: "^widgets/order/" },
+    },
   ],
   options: {
     doNotFollow: {

@@ -60,34 +60,40 @@ export default function ReviewImageLightbox({
           {index + 1} / {urls.length}
         </span>
       ) : null}
+      {urls.length > 1 ? (
+        <button
+          type="button"
+          aria-label="이전 사진"
+          className="absolute max-lg:left-3 lg:left-10 top-1/2 z-10 flex h-10 w-10 shrink-0 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30"
+          disabled={index <= 0}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNavigate(index - 1);
+          }}
+        >
+          ‹
+        </button>
+      ) : null}
+      {urls.length > 1 ? (
+        <button
+          type="button"
+          aria-label="다음 사진"
+          className="absolute max-lg:right-3 lg:right-10 top-1/2 z-10 flex h-10 w-10 shrink-0 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30"
+          disabled={index >= urls.length - 1}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNavigate(index + 1);
+          }}
+        >
+          ›
+        </button>
+      ) : null}
       <div
         className="relative flex max-h-[90vh] max-w-full items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        {urls.length > 1 ? (
-          <button
-            type="button"
-            aria-label="이전 사진"
-            className="absolute left-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-left-1 md:-left-14 lg:-left-14"
-            disabled={index <= 0}
-            onClick={() => onNavigate(index - 1)}
-          >
-            ‹
-          </button>
-        ) : null}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={url} alt={`리뷰 사진 ${index + 1}`} className="max-h-[85vh] max-w-full object-contain" />
-        {urls.length > 1 ? (
-          <button
-            type="button"
-            aria-label="다음 사진"
-            className="absolute right-0 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-30 max-md:-right-1 md:-right-14 lg:-right-14"
-            disabled={index >= urls.length - 1}
-            onClick={() => onNavigate(index + 1)}
-          >
-            ›
-          </button>
-        ) : null}
       </div>
     </div>
   );

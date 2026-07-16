@@ -97,9 +97,6 @@ async function request<T>(
     } catch {
       // 응답 바디가 없는 경우 무시
     }
-    if (process.env.NODE_ENV === "development") {
-      console.warn(`[api] ${method} ${path} ${res.status}`, errorBody ?? res.statusText);
-    }
     // 401 UNAUTHORIZED: 액세스 토큰 + 리프레시 토큰 모두 만료/무효 → 강제 로그아웃 신호.
     // skipRefresh(리프레시 요청 자체) 또는 token(SSR 직접 주입) 케이스는 제외한다.
     if (
@@ -120,16 +117,10 @@ async function request<T>(
 
   // 204 No Content
   if (res.status === 204 || res.headers.get("content-length") === "0") {
-    if (process.env.NODE_ENV === "development") {
-      console.log(`[api] ${method} ${path}`, "(no content)");
-    }
     return undefined as T;
   }
 
   const json: ApiResponse<T> = await res.json();
-  if (process.env.NODE_ENV === "development") {
-    console.log(`[api] ${method} ${path}`, json.data);
-  }
   return json.data;
 }
 

@@ -3,16 +3,10 @@
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import type { NewAddrState } from "@/features/delivery-address/lib";
 import { digitsOnly } from "@/shared/lib/format";
 
-export type NewAddrState = {
-  receiverName: string;
-  phoneNumber: string;
-  zipCode: string;
-  address: string;
-  addressDetail: string;
-  memo: string;
-};
+export type { NewAddrState };
 
 export interface AddressStateResult {
   selectedAddress: DeliveryAddress | null;

@@ -6,8 +6,8 @@ import {
   SHOP_PRODUCTS,
   SHOP_CATEGORIES,
   SHOP_FREE_SHIPPING_THRESHOLD,
-  formatShopPrice,
 } from "@/entities/product";
+import { formatKrwPrice } from "@/shared/lib/format";
 import { ShopProductArt } from "./ShopProductArt";
 
 type Category = (typeof SHOP_CATEGORIES)[number];
@@ -32,7 +32,7 @@ export default function ShopListSection() {
           <p className="max-md:text-body-14-r md:text-body-16-r text-[var(--color-text-secondary)]">
             구독 박스에 담기는 수제간식을 필요한 만큼만 구매할 수 있어요.
             {" "}
-            {formatShopPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송.
+            {formatKrwPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송.
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export default function ShopListSection() {
                   {product.description}
                 </span>
                 <span className="mt-1 text-price-16-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                  {formatShopPrice(product.price)}
+                  {formatKrwPrice(product.price)}
                 </span>
               </div>
             </Link>

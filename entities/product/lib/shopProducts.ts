@@ -114,7 +114,3 @@ export const SHOP_SHIPPING_FEE = 3000;
 export function getShopProduct(id: string): ShopProduct | undefined {
   return SHOP_PRODUCTS.find((p) => p.id === id);
 }
-
-export function formatShopPrice(n: number): string {
-  return n.toLocaleString("ko-KR") + "원";
-}

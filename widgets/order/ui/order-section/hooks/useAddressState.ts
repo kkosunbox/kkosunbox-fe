@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
-import { digitsOnly } from "../orderSectionFormatters";
+import { digitsOnly } from "@/shared/lib/format";
 
 export type NewAddrState = {
   receiverName: string;

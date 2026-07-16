@@ -1,7 +1,3 @@
-export function formatOrderPrice(n: number) {
-  return n.toLocaleString("ko-KR") + "원";
-}
-
 export function digitsOnly(s: string) {
   return s.replace(/\D/g, "");
 }

@@ -5,7 +5,7 @@ import {
   ORDER_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
   ORDER_INPUT_CLASS as inputCls,
 } from "./orderSectionStyles";
-import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "./orderSectionFormatters";
+import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
 import { OrderCheckCircleIcon as CheckCircleIcon } from "./OrderSectionIcons";
 import { SectionCard, FormRow } from "./OrderSectionFormParts";
 import type { NewAddrState } from "./useOrderSectionState";

@@ -5,17 +5,13 @@ import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/shared/ui";
 import {
-  formatShopPrice,
   SHOP_FREE_SHIPPING_THRESHOLD,
   SHOP_SHIPPING_FEE,
   type ShopProduct,
 } from "@/entities/product";
+import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
 import { OrderCustomerSection } from "@/widgets/order/ui/order-section/OrderCustomerSection";
 import { SectionCard, Checkbox, RadioButton } from "@/widgets/order/ui/order-section/OrderSectionFormParts";
-import {
-  digitsOnly,
-  isValidKoreanPhone,
-} from "@/widgets/order/ui/order-section/orderSectionFormatters";
 import type { NewAddrState } from "@/widgets/order/ui/order-section/useOrderSectionState";
 import { ShopProductArt } from "./ShopProductArt";
 
@@ -152,7 +148,7 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
                       {product.name} ({product.weight})
                     </span>
                     <span className="text-price-16-eb text-[var(--color-surface-dark)]">
-                      {formatShopPrice(product.price)}
+                      {formatKrwPrice(product.price)}
                     </span>
                     <div className="mt-1 flex items-center gap-3">
                       <button
@@ -215,23 +211,23 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
                 <div className="flex flex-col gap-3 pb-1">
                   <div className="flex items-center justify-between">
                     <span className="text-body-13-m text-[var(--color-text-body-warm)]">상품 금액</span>
-                    <span className="text-price-14-sb text-[var(--color-text)]">{formatShopPrice(basePrice)}</span>
+                    <span className="text-price-14-sb text-[var(--color-text)]">{formatKrwPrice(basePrice)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-body-13-m text-[var(--color-text-body-warm)]">배송비</span>
                     <span className="text-price-14-sb text-[var(--color-text)]">
-                      {shippingFee === 0 ? "무료" : formatShopPrice(shippingFee)}
+                      {shippingFee === 0 ? "무료" : formatKrwPrice(shippingFee)}
                     </span>
                   </div>
                   {shippingFee > 0 ? (
                     <p className="text-caption-12-r text-[var(--color-text-secondary)]">
-                      {formatShopPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송
+                      {formatKrwPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송
                     </p>
                   ) : null}
                   <div className="flex items-center justify-between border-t border-[var(--color-border-light)] pt-3">
                     <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">총 결제 금액</span>
                     <span className="text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                      {formatShopPrice(total)}
+                      {formatKrwPrice(total)}
                     </span>
                   </div>
 
@@ -262,7 +258,7 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
                     onClick={handlePay}
                     className="mt-1 flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
                   >
-                    {formatShopPrice(total)} 결제하기
+                    {formatKrwPrice(total)} 결제하기
                   </button>
                   <p className="text-center text-caption-12-r text-[var(--color-text-secondary)]">
                     심사용 데모 화면으로, 실제 결제가 진행되지 않습니다.

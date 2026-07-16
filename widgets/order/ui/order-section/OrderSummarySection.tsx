@@ -1,4 +1,4 @@
-import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
+import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
 import { SectionCard, Checkbox, CollapsiblePanel } from "./OrderSectionFormParts";
 import { ChevronIcon } from "./OrderSectionIcons";
 

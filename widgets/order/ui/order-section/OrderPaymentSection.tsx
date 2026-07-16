@@ -5,7 +5,7 @@ import {
   ORDER_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
   ORDER_INPUT_CLASS as inputCls,
 } from "./orderSectionStyles";
-import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
+import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
 import { SectionCard, RadioButton, Checkbox } from "./OrderSectionFormParts";
 import { CardIcon, BillingRegisteredIcon } from "./OrderSectionIcons";
 

@@ -19,7 +19,7 @@ import { computeOrderPricing } from "@/features/order";
 import { requestTossBillingAuth, isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
-import { isValidKoreanPhone } from "./orderSectionFormatters";
+import { isValidKoreanPhone } from "@/shared/lib/format";
 export type { NewAddrState } from "./hooks/useAddressState";
 
 export interface OrderSectionProps {

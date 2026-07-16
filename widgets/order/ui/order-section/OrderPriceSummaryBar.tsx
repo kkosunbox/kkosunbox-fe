@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
+import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
 
 interface OrderPriceSummaryBarProps {
   basePrice: number;

@@ -319,9 +319,6 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
                   >
                     {isPaying ? "결제 요청 중…" : `${formatKrwPrice(total)} 결제하기`}
                   </button>
-                  <p className="text-center text-caption-12-r text-[var(--color-text-secondary)]">
-                    Toss 결제위젯 테스트 연동입니다. 실제 금액이 청구되지 않습니다.
-                  </p>
                 </div>
               </SectionCard>
             </div>

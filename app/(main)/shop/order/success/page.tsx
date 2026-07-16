@@ -93,10 +93,6 @@ export default async function ShopOrderSuccessPage({
           </p>
         ) : null}
 
-        <p className="text-caption-12-r text-[var(--color-text-secondary)]">
-          Toss 결제위젯 테스트 연동입니다. 실제 결제가 진행되지 않았습니다.
-        </p>
-
         <Link href="/shop" className="mt-4 text-body-14-sb text-[var(--color-primary)] hover:underline">
           ← 스토어로 돌아가기
         </Link>

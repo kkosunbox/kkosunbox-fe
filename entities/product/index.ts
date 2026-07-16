@@ -5,4 +5,5 @@ export {
   SHOP_SHIPPING_FEE,
   getShopProduct,
 } from "./lib/shopProducts";
-export type { ShopProduct, ShopCategory, ShopGlyph } from "./lib/shopProducts";
+export type { ShopProduct, ShopCategory } from "./lib/shopProducts";
+export { SHOP_PRODUCT_IMAGES } from "./lib/productImages";

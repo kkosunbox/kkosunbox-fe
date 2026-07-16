@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
 import {
@@ -14,13 +15,14 @@ import {
 import {
   SHOP_FREE_SHIPPING_THRESHOLD,
   SHOP_SHIPPING_FEE,
+  SHOP_PRODUCT_IMAGES,
   type ShopProduct,
 } from "@/entities/product";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
 import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
-import { ShopProductArt } from "./ShopProductArt";
 
 const PAYMENT_METHODS = ["신용·체크카드", "카카오페이", "네이버페이"] as const;
 type PaymentMethod = (typeof PAYMENT_METHODS)[number];
@@ -118,7 +120,14 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
               <SectionCard title="제품 정보" open={openSections.product} onToggle={() => toggleSection("product")}>
                 <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
                   <div className="relative shrink-0 overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
-                    <ShopProductArt glyph={product.glyph} colorVar={product.colorVar} />
+                    <Image
+                      src={SHOP_PRODUCT_IMAGES[product.id]}
+                      alt={product.name}
+                      fill
+                      quality={HIGH_IMAGE_QUALITY}
+                      className="object-cover"
+                      sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
+                    />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-3">
                     <span

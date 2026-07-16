@@ -1,8 +1,5 @@
 export type ShopCategory = "간식" | "껌" | "화식";
 
-/** placeholder 일러스트 글리프 종류 — 실사진 자산 확보 시 image 필드로 교체 */
-export type ShopGlyph = "ball" | "stick" | "chip" | "bone" | "riceball" | "bowl";
-
 export interface ShopProduct {
   id: string;
   name: string;
@@ -10,7 +7,6 @@ export interface ShopProduct {
   weight: string;
   price: number;
   category: ShopCategory;
-  glyph: ShopGlyph;
   colorVar: string;
   badge?: string;
 }
@@ -29,7 +25,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "60g",
     price: 8900,
     category: "간식",
-    glyph: "ball",
     colorVar: "var(--color-primary)",
     badge: "베스트",
   },
@@ -40,7 +35,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "15g × 4개입",
     price: 6900,
     category: "간식",
-    glyph: "stick",
     colorVar: "var(--color-plus)",
   },
   {
@@ -50,7 +44,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "40g",
     price: 7900,
     category: "간식",
-    glyph: "chip",
     colorVar: "var(--color-basic)",
   },
   {
@@ -60,7 +53,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "40g",
     price: 7900,
     category: "간식",
-    glyph: "chip",
     colorVar: "var(--color-accent-orange)",
   },
   {
@@ -70,7 +62,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "70g",
     price: 9900,
     category: "껌",
-    glyph: "bone",
     colorVar: "var(--color-primary)",
     badge: "베스트",
   },
@@ -81,7 +72,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "50g",
     price: 5900,
     category: "껌",
-    glyph: "bone",
     colorVar: "var(--color-plus)",
   },
   {
@@ -91,7 +81,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "80g",
     price: 8500,
     category: "간식",
-    glyph: "riceball",
     colorVar: "var(--color-basic)",
   },
   {
@@ -101,7 +90,6 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
     weight: "150g",
     price: 12900,
     category: "화식",
-    glyph: "bowl",
     colorVar: "var(--color-accent-orange)",
     badge: "프리미엄",
   },

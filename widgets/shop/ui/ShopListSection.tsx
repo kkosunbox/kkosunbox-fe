@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   SHOP_PRODUCTS,
   SHOP_CATEGORIES,
   SHOP_FREE_SHIPPING_THRESHOLD,
+  SHOP_PRODUCT_IMAGES,
 } from "@/entities/product";
 import { formatKrwPrice } from "@/shared/lib/format";
-import { ShopProductArt } from "./ShopProductArt";
+import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 
 type Category = (typeof SHOP_CATEGORIES)[number];
 
@@ -71,7 +73,14 @@ export default function ShopListSection() {
                 className="relative aspect-square w-full overflow-hidden rounded-[20px]"
                 style={{ boxShadow: "var(--shadow-card-soft)" }}
               >
-                <ShopProductArt glyph={product.glyph} colorVar={product.colorVar} />
+                <Image
+                  src={SHOP_PRODUCT_IMAGES[product.id]}
+                  alt={product.name}
+                  fill
+                  quality={HIGH_IMAGE_QUALITY}
+                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  sizes="(max-width: 767px) 50vw, (max-width: 1199px) 33vw, 235px"
+                />
                 {product.badge ? (
                   <span
                     className="absolute left-3 top-3 rounded-full px-3 py-1 text-body-13-sb text-white"

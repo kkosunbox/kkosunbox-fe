@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import type { DeliveryAddress } from "../api/types";
 import {
   FORM_ACTION_CHIP_CLASS as actionChipCls,
   FORM_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
@@ -8,10 +8,10 @@ import {
   FormRow,
 } from "@/shared/ui";
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
-import { OrderCheckCircleIcon as CheckCircleIcon } from "./OrderSectionIcons";
-import type { NewAddrState } from "./useOrderSectionState";
+import { CheckoutAddressCheckIcon as CheckCircleIcon } from "./CheckoutAddressIcon";
+import type { NewAddrState } from "../lib";
 
-interface OrderCustomerSectionProps {
+interface CheckoutAddressSectionProps {
   open: boolean;
   onToggle: () => void;
   selectedAddress: DeliveryAddress | null;
@@ -23,7 +23,7 @@ interface OrderCustomerSectionProps {
   onSearchAddress: () => void;
 }
 
-export function OrderCustomerSection({
+export function CheckoutAddressSection({
   open,
   onToggle,
   selectedAddress,
@@ -33,7 +33,7 @@ export function OrderCustomerSection({
   phoneError,
   setPhoneError,
   onSearchAddress,
-}: OrderCustomerSectionProps) {
+}: CheckoutAddressSectionProps) {
   return (
     <SectionCard title="주문고객 / 배송지 정보" open={open} onToggle={onToggle}>
       {selectedAddress ? (

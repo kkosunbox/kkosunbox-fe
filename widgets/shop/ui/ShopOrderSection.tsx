@@ -10,21 +10,12 @@ import {
   type ShopProduct,
 } from "@/entities/product";
 import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
-import { OrderCustomerSection } from "@/widgets/order/ui/order-section/OrderCustomerSection";
-import type { NewAddrState } from "@/widgets/order/ui/order-section/useOrderSectionState";
+import { CheckoutAddressSection } from "@/features/delivery-address/ui";
+import { EMPTY_ADDR_STATE, type NewAddrState } from "@/features/delivery-address/lib";
 import { ShopProductArt } from "./ShopProductArt";
 
 const PAYMENT_METHODS = ["신용·체크카드", "카카오페이", "네이버페이"] as const;
 type PaymentMethod = (typeof PAYMENT_METHODS)[number];
-
-const EMPTY_ADDR: NewAddrState = {
-  receiverName: "",
-  phoneNumber: "",
-  zipCode: "",
-  address: "",
-  addressDetail: "",
-  memo: "",
-};
 
 interface ShopOrderSectionProps {
   product: ShopProduct;
@@ -41,7 +32,7 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
     summary: true,
   });
   const [quantity, setQuantity] = useState(1);
-  const [newAddr, setNewAddr] = useState<NewAddrState>(EMPTY_ADDR);
+  const [newAddr, setNewAddr] = useState<NewAddrState>(EMPTY_ADDR_STATE);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("신용·체크카드");
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -176,7 +167,7 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
                 </div>
               </SectionCard>
 
-              <OrderCustomerSection
+              <CheckoutAddressSection
                 open={openSections.customer}
                 onToggle={() => toggleSection("customer")}
                 selectedAddress={null}

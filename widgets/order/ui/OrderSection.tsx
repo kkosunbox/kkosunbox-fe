@@ -9,9 +9,9 @@ import {
   useOrderSectionState,
   type OrderSectionProps,
 } from "./order-section/useOrderSectionState";
+import { CheckoutAddressSection } from "@/features/delivery-address/ui";
 import { OrderPriceSummaryBar } from "./order-section/OrderPriceSummaryBar";
 import { OrderProductSection } from "./order-section/OrderProductSection";
-import { OrderCustomerSection } from "./order-section/OrderCustomerSection";
 import { OrderPaymentSection } from "./order-section/OrderPaymentSection";
 import { OrderInviteSection } from "./order-section/OrderInviteSection";
 import { OrderDeliveryMethodSection } from "./order-section/OrderDeliveryMethodSection";
@@ -89,7 +89,7 @@ export default function OrderSection(props: OrderSectionProps) {
         quantity={quantity}
         setQuantity={setQuantity}
       />
-      <OrderCustomerSection
+      <CheckoutAddressSection
         open={openSections.customer}
         onToggle={() => toggleSection("customer")}
         selectedAddress={selectedAddress}

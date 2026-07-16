@@ -3,7 +3,14 @@
 import { useState } from "react";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
-import { useModal, SectionCard, Checkbox, RadioButton } from "@/shared/ui";
+import {
+  useModal,
+  SectionCard,
+  Checkbox,
+  RadioButton,
+  QuantityMinusIcon,
+  QuantityPlusIcon,
+} from "@/shared/ui";
 import {
   SHOP_FREE_SHIPPING_THRESHOLD,
   SHOP_SHIPPING_FEE,
@@ -11,7 +18,8 @@ import {
 } from "@/entities/product";
 import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
-import { EMPTY_ADDR_STATE, type NewAddrState } from "@/features/delivery-address/lib";
+import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
+import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { ShopProductArt } from "./ShopProductArt";
 
 const PAYMENT_METHODS = ["신용·체크카드", "카카오페이", "네이버페이"] as const;
@@ -19,9 +27,10 @@ type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 interface ShopOrderSectionProps {
   product: ShopProduct;
+  initialAddresses: DeliveryAddress[];
 }
 
-export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
+export default function ShopOrderSection({ product, initialAddresses }: ShopOrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
 
@@ -32,12 +41,13 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
     summary: true,
   });
   const [quantity, setQuantity] = useState(1);
-  const [newAddr, setNewAddr] = useState<NewAddrState>(EMPTY_ADDR_STATE);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const address = useAddressState({ initialAddresses });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("신용·체크카드");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useExternalMessages({ onAddressSelected: address.handleAddressSelected });
 
   const agreeAll = agreeTerms && agreePrivacy;
 
@@ -47,25 +57,6 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
 
   function toggleSection(key: keyof typeof openSections) {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  }
-
-  function handleSearchAddress() {
-    if (typeof window !== "undefined" && window.daum) {
-      const postcode = new window.daum.Postcode({
-        oncomplete(data: {
-          zonecode: string;
-          roadAddress: string;
-          jibunAddress: string;
-          addressType: string;
-        }) {
-          const addr = data.addressType === "R" ? data.roadAddress : data.jibunAddress;
-          setNewAddr((s) => ({ ...s, zipCode: data.zonecode, address: addr }));
-        },
-        width: "100%",
-        height: "100%",
-      });
-      postcode.open();
-    }
   }
 
   function handleAgreeAll() {
@@ -82,19 +73,21 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
       return;
     }
 
-    const rawPhone = digitsOnly(newAddr.phoneNumber);
-    if (
-      !newAddr.receiverName.trim() ||
-      !rawPhone ||
-      !newAddr.zipCode.trim() ||
-      !newAddr.address.trim()
-    ) {
-      setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
-      return;
-    }
-    if (!isValidKoreanPhone(rawPhone)) {
-      setPhoneError("올바른 전화번호 형식이 아닙니다.");
-      return;
+    if (!address.selectedAddress) {
+      const rawPhone = digitsOnly(address.newAddr.phoneNumber);
+      if (
+        !address.newAddr.receiverName.trim() ||
+        !rawPhone ||
+        !address.newAddr.zipCode.trim() ||
+        !address.newAddr.address.trim()
+      ) {
+        setSubmitError("배송지 정보(받는분, 연락처, 우편번호, 주소)를 입력해 주세요.");
+        return;
+      }
+      if (!isValidKoreanPhone(rawPhone)) {
+        address.setPhoneError("올바른 전화번호 형식이 아닙니다.");
+        return;
+      }
     }
 
     // 실제 PG 연동 전 데모 — 결제 API 연동 시 이 블록을 교체한다.
@@ -148,7 +141,10 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
                         disabled={quantity <= 1}
                         className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[var(--color-border)] text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
                       >
-                        −
+                        <span className="max-md:hidden" aria-hidden>−</span>
+                        <span className="md:hidden">
+                          <QuantityMinusIcon />
+                        </span>
                       </button>
                       <span className="min-w-[20px] text-center text-body-14-sb text-[var(--color-text)]">
                         {quantity}
@@ -160,7 +156,10 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
                         disabled={quantity >= 99}
                         className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[var(--color-border)] text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
                       >
-                        +
+                        <span className="max-md:hidden" aria-hidden>+</span>
+                        <span className="md:hidden">
+                          <QuantityPlusIcon />
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -170,13 +169,13 @@ export default function ShopOrderSection({ product }: ShopOrderSectionProps) {
               <CheckoutAddressSection
                 open={openSections.customer}
                 onToggle={() => toggleSection("customer")}
-                selectedAddress={null}
-                onChangeAddress={() => {}}
-                newAddr={newAddr}
-                setNewAddr={setNewAddr}
-                phoneError={phoneError}
-                setPhoneError={setPhoneError}
-                onSearchAddress={handleSearchAddress}
+                selectedAddress={address.selectedAddress}
+                onChangeAddress={address.handleChangeAddress}
+                newAddr={address.newAddr}
+                setNewAddr={address.setNewAddr}
+                phoneError={address.phoneError}
+                setPhoneError={address.setPhoneError}
+                onSearchAddress={address.handleSearchAddress}
               />
 
               <SectionCard title="결제 수단" open={openSections.payment} onToggle={() => toggleSection("payment")}>

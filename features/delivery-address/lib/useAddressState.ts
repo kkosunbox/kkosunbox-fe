@@ -1,12 +1,11 @@
 "use client";
 
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
-import { createDeliveryAddress } from "@/features/delivery-address/api/deliveryAddressApi";
-import type { DeliveryAddress } from "@/features/delivery-address/api/types";
-import type { NewAddrState } from "@/features/delivery-address/lib";
+import { createDeliveryAddress } from "../api/deliveryAddressApi";
+import type { DeliveryAddress } from "../api/types";
+import { EMPTY_ADDR_STATE, type NewAddrState } from "./addressFormState";
+import { openAddressSearchPopup } from "./openAddressSearchPopup";
 import { digitsOnly } from "@/shared/lib/format";
-
-export type { NewAddrState };
 
 export interface AddressStateResult {
   selectedAddress: DeliveryAddress | null;
@@ -36,14 +35,7 @@ export function useAddressState({
     [addresses, selectedAddressId],
   );
 
-  const [newAddr, setNewAddr] = useState<NewAddrState>({
-    receiverName: "",
-    phoneNumber: "",
-    zipCode: "",
-    address: "",
-    addressDetail: "",
-    memo: "",
-  });
+  const [newAddr, setNewAddr] = useState<NewAddrState>(EMPTY_ADDR_STATE);
 
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
@@ -68,22 +60,7 @@ export function useAddressState({
   }
 
   function handleSearchAddress() {
-    if (typeof window !== "undefined" && window.daum) {
-      const postcode = new window.daum.Postcode({
-        oncomplete(data: {
-          zonecode: string;
-          roadAddress: string;
-          jibunAddress: string;
-          addressType: string;
-        }) {
-          const addr = data.addressType === "R" ? data.roadAddress : data.jibunAddress;
-          setNewAddr((s) => ({ ...s, zipCode: data.zonecode, address: addr }));
-        },
-        width: "100%",
-        height: "100%",
-      });
-      postcode.open();
-    }
+    openAddressSearchPopup(setNewAddr);
   }
 
   const createAddress = useCallback(async (): Promise<number> => {

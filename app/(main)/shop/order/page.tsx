@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ShopOrderSection } from "@/widgets/shop";
 import { getShopProduct } from "@/entities/product";
+import { getServerToken } from "@/features/auth/lib/session";
+import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata: Metadata = {
@@ -21,5 +23,9 @@ export default async function ShopOrderPage({
     redirect("/shop");
   }
 
-  return <ShopOrderSection product={product} />;
+  // 비로그인 방문자도 구매 가능 — 토큰이 없으면 fetchDeliveryAddresses가 빈 배열을 반환한다.
+  const token = await getServerToken();
+  const addresses = await fetchDeliveryAddresses(token);
+
+  return <ShopOrderSection product={product} initialAddresses={addresses} />;
 }

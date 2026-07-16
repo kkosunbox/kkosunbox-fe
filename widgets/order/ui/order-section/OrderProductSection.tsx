@@ -5,8 +5,7 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import type { PackageTier } from "@/entities/package";
 import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
-import { QuantityMinusIcon, QuantityPlusIcon } from "./OrderSectionIcons";
-import { SectionCard } from "@/shared/ui";
+import { SectionCard, QuantityMinusIcon, QuantityPlusIcon } from "@/shared/ui";
 
 interface OrderProductSectionProps {
   plan: SubscriptionPlanDto;

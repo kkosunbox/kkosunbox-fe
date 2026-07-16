@@ -404,7 +404,12 @@
       "Bash(pnpm test:e2e tests/e2e/referral.spec.ts)",
       "Bash(command -v chromium-cli)",
       "Bash(timeout 60 bash -c 'until curl -sf http://localhost:3000 >/dev/null; do sleep 1; done')",
-      "Bash(NODE_PATH=\"C:/2026/ggosoonbox/node_modules\" node screenshot-reviews.mjs)"
+      "Bash(NODE_PATH=\"C:/2026/ggosoonbox/node_modules\" node screenshot-reviews.mjs)",
+      "Bash(echo \"no debug files: $?\")",
+      "Bash(ls -la .env*)",
+      "Bash(grep -r \"NEXT_PUBLIC_API_URL\" .env*)",
+      "Bash(rm C:/2026/ggosoonbox/tests/e2e/_tmp-gap-check.spec.ts)",
+      "Bash(rm -rf C:/2026/ggosoonbox/.tmp-scratch C:/2026/ggosoonbox/test-results)"
     ]
   },
   "disabledMcpjsonServers": [

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState, type ReactNode } from "react";
-import { ChevronIcon, CheckIcon, RadioCheckedIcon } from "./OrderSectionIcons";
+import { ChevronIcon, CheckIcon, RadioCheckedIcon } from "./FormPartsIcons";
 
 export function CollapsiblePanel({
   open,

@@ -1,12 +1,14 @@
 import type { BillingInfo } from "@/features/billing/api/types";
 import type { CouponInfo } from "@/features/subscription/api/types";
 import {
-  ORDER_ACTION_CHIP_CLASS as actionChipCls,
-  ORDER_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
-  ORDER_INPUT_CLASS as inputCls,
-} from "./orderSectionStyles";
-import { formatOrderPrice as formatPrice } from "./orderSectionFormatters";
-import { SectionCard, RadioButton, Checkbox } from "./OrderSectionFormParts";
+  FORM_ACTION_CHIP_CLASS as actionChipCls,
+  FORM_ACTION_CHIP_SMALL_CLASS as actionChipSmallCls,
+  FORM_INPUT_CLASS as inputCls,
+  SectionCard,
+  RadioButton,
+  Checkbox,
+} from "@/shared/ui";
+import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
 import { CardIcon, BillingRegisteredIcon } from "./OrderSectionIcons";
 
 interface OrderPaymentSectionProps {

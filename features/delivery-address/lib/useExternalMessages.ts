@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import type { DeliveryAddress } from "../api/types";
 import type { BillingInfo } from "@/features/billing/api/types";
 
 interface ExternalMessagesOptions {
   onAddressSelected: (addr: DeliveryAddress) => void;
-  onPaymentSelected: (method: string, billing: BillingInfo | undefined) => void;
+  onPaymentSelected?: (method: string, billing: BillingInfo | undefined) => void;
 }
 
 export function useExternalMessages({
@@ -21,7 +21,7 @@ export function useExternalMessages({
       }
       if (e.data?.type === "PAYMENT_SELECTED") {
         const { method, billing } = e.data as { method: string; billing?: BillingInfo };
-        onPaymentSelected(method, billing);
+        onPaymentSelected?.(method, billing);
       }
     }
     window.addEventListener("message", handleMessage);

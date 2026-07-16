@@ -1,11 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../helpers/fixtures";
 import {
   TEST_CREDENTIALS,
   TRIGGER_SERVER_ERROR_EMAIL,
-  MOCK_ACCESS_TOKEN,
   MOCK_REFRESH_TOKEN,
 } from "../helpers/mockApiServer";
-import { loginAndGoTo } from "../helpers/auth";
+import { loginAndGoTo, loginByTokens, TEST_TOKENS } from "../helpers/auth";
 
 test.describe("로그인 플로우", () => {
   // ── 성공 케이스 ──────────────────────────────────────────────────
@@ -172,18 +171,10 @@ test.describe("로그인 플로우", () => {
   // ── 이미 로그인된 사용자의 /login 접근 (프로덕션 버그 재현) ──────
 
   test("SSR 쿠키로 로그인 상태인 사용자가 /login 접근 → / 로 리다이렉트", async ({ page }) => {
-    // ggosoon-auth 쿠키를 직접 주입해 SSR이 로그인 상태를 인식하도록 설정
-    await page.context().addCookies([
-      {
-        name: "ggosoon-auth",
-        value: MOCK_ACCESS_TOKEN,
-        domain: "localhost",
-        path: "/",
-        httpOnly: true,
-        secure: false,
-        sameSite: "Lax",
-      },
-    ]);
+    // SSR이 읽는 인증 쿠키 + 클라이언트 accessToken 부트스트랩용 refreshToken을 함께 주입한다.
+    // 쿠키만 주입하면 클라 부트스트랩이 서버 액션 왕복(bootstrapClientAccessTokenAction)을 타 느려지고,
+    // 그 사이 홈의 다른 위젯이 미인증 상태로 API를 먼저 호출해 401 → 자동 로그아웃 레이스가 발생한다.
+    await loginByTokens(page, TEST_TOKENS);
 
     await page.goto("/login");
 
@@ -215,10 +206,14 @@ test.describe("로그인 플로우", () => {
   });
 
   test("localStorage refreshToken만 있는 경우 /login 접근 → 세션 복구 후 / 로 리다이렉트", async ({ page }) => {
-    // localStorage에 refreshToken 주입 (SSR 쿠키는 없음 — 만료된 것처럼 시뮬레이션)
-    await page.goto("/");
-    await page.evaluate(
-      ([key, token]) => localStorage.setItem(key, token),
+    // localStorage에 refreshToken 주입 (SSR 쿠키는 없음 — 만료된 것처럼 시뮬레이션).
+    // addInitScript로 페이지 로드 전에 주입해야 한다: goto("/") 후 evaluate로 주입하면
+    // 홈 페이지의 AuthProvider가 그 사이 refresh를 먼저 시도했다가 곧이은 /login
+    // 내비게이션에 취소(net::ERR_ABORTED)당하고, tryRefresh()가 그 취소를 실패로 오인해
+    // tokenStore.clear()로 방금 주입한 토큰을 지워버리는 레이스가 있다(실제 사용자는
+    // 페이지 로드 전에 이미 토큰을 갖고 있으므로 이런 경쟁이 발생하지 않는다).
+    await page.addInitScript(
+      ([key, token]) => window.localStorage.setItem(key, token),
       ["ggosoon:refresh_token", MOCK_REFRESH_TOKEN],
     );
 

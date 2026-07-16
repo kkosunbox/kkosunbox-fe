@@ -42,7 +42,7 @@ export function BalanceCard({
   };
 
   const pointInfo = (
-    <div className={["flex flex-col gap-1 transition-opacity", isLoading ? "opacity-50" : ""].join(" ")}>
+    <div className={["flex flex-col gap-0 transition-opacity", isLoading ? "opacity-50" : ""].join(" ")}>
       <span className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)]">
         적립 포인트
       </span>
@@ -61,8 +61,8 @@ export function BalanceCard({
     return (
       <div className="overflow-visible rounded-[20px] bg-white">
         <MonthBanner bannerPadding="px-6" {...bannerProps} />
-        <div className="rounded-b-[20px] bg-white px-6 pt-6 pb-6">
-          <div className="mb-4">{pointInfo}</div>
+        <div className="rounded-b-[20px] bg-white px-6 pt-4 pb-6">
+          {pointInfo}
         </div>
       </div>
     );

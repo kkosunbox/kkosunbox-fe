@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Script from "next/script";
-import { useRouter } from "next/navigation";
 import {
-  useModal,
+  loadPaymentWidget,
+  type PaymentWidgetInstance,
+} from "@tosspayments/payment-widget-sdk";
+import {
   SectionCard,
   Checkbox,
-  RadioButton,
   QuantityMinusIcon,
   QuantityPlusIcon,
 } from "@/shared/ui";
@@ -23,9 +24,13 @@ import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/for
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
 import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import { isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
 
-const PAYMENT_METHODS = ["신용·체크카드", "카카오페이", "네이버페이"] as const;
-type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+// 문서용 테스트 키 (Toss 결제위젯 SDK v1, 일반/단건 결제) — /test/toss와 동일한 Toss 공식 문서 테스트 키.
+// 자동결제(빌링) 계약 상태와 무관하게 동작하며, 실제 금액이 청구되지 않는다.
+const WIDGET_CLIENT_KEY = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+
+type PaymentMethodsWidget = ReturnType<PaymentWidgetInstance["renderPaymentMethods"]>;
 
 interface ShopOrderSectionProps {
   product: ShopProduct;
@@ -33,9 +38,6 @@ interface ShopOrderSectionProps {
 }
 
 export default function ShopOrderSection({ product, initialAddresses }: ShopOrderSectionProps) {
-  const router = useRouter();
-  const { openAlert } = useModal();
-
   const [openSections, setOpenSections] = useState({
     product: true,
     customer: true,
@@ -44,10 +46,14 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
   });
   const [quantity, setQuantity] = useState(1);
   const address = useAddressState({ initialAddresses });
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("신용·체크카드");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isPaying, setIsPaying] = useState(false);
+
+  const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
+  const [paymentReady, setPaymentReady] = useState(false);
+  const paymentMethodsWidgetRef = useRef<PaymentMethodsWidget | null>(null);
 
   useExternalMessages({ onAddressSelected: address.handleAddressSelected });
 
@@ -56,6 +62,47 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
   const basePrice = product.price * quantity;
   const shippingFee = basePrice >= SHOP_FREE_SHIPPING_THRESHOLD ? 0 : SHOP_SHIPPING_FEE;
   const total = basePrice + shippingFee;
+
+  // 결제위젯 SDK는 페이지 진입 시 미리 로드해 둔다.
+  useEffect(() => {
+    let mounted = true;
+    const customerKey =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `shop-${Date.now()}`;
+    (async () => {
+      try {
+        const widget = await loadPaymentWidget(WIDGET_CLIENT_KEY, customerKey);
+        if (mounted) setPaymentWidget(widget);
+      } catch (err) {
+        console.error("결제위젯 로드 실패:", err);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // 위젯 로드 완료 시 결제수단/약관 UI를 렌더링한다.
+  useEffect(() => {
+    if (!paymentWidget) return;
+
+    const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+      "#shop-payment-widget",
+      { value: total },
+      { variantKey: "DEFAULT" },
+    );
+    paymentWidget.renderAgreement("#shop-payment-agreement", { variantKey: "AGREEMENT" });
+
+    paymentMethodsWidget.on("ready", () => setPaymentReady(true));
+    paymentMethodsWidgetRef.current = paymentMethodsWidget;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 최초 렌더 1회만 수행, 금액 갱신은 아래 이펙트가 담당
+  }, [paymentWidget]);
+
+  // 수량 변경에 따른 결제 금액 갱신
+  useEffect(() => {
+    paymentMethodsWidgetRef.current?.updateAmount(total);
+  }, [total]);
 
   function toggleSection(key: keyof typeof openSections) {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -67,7 +114,7 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
     setAgreePrivacy(next);
   }
 
-  function handlePay() {
+  async function handlePay() {
     setSubmitError(null);
 
     if (!agreeAll) {
@@ -92,14 +139,28 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
       }
     }
 
-    // 실제 PG 연동 전 데모 — 결제 API 연동 시 이 블록을 교체한다.
-    openAlert({
-      type: "success",
-      title: "주문이 완료되었습니다",
-      description: `${product.name} ${quantity}개 주문이 접수되었어요.\n(심사용 데모로 실제 결제는 진행되지 않아요)`,
-      primaryLabel: "확인",
-      onPrimary: () => router.push("/shop"),
-    });
+    if (!paymentWidget) {
+      setSubmitError("결제 UI를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    const receiverName = address.selectedAddress?.receiverName ?? address.newAddr.receiverName;
+
+    setIsPaying(true);
+    try {
+      await paymentWidget.requestPayment({
+        orderId: crypto.randomUUID(),
+        orderName: `${product.name} ${quantity}개`,
+        customerName: receiverName.trim() || undefined,
+        successUrl: `${window.location.origin}/shop/order/success?productId=${product.id}&quantity=${quantity}`,
+        failUrl: `${window.location.origin}/shop/order/fail?productId=${product.id}`,
+      });
+    } catch (err) {
+      if (isTossUserCancel(err)) return;
+      setSubmitError("결제 요청 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsPaying(false);
+    }
   }
 
   return (
@@ -189,14 +250,13 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
 
               <SectionCard title="결제 수단" open={openSections.payment} onToggle={() => toggleSection("payment")}>
                 <div className="flex flex-col gap-4 pb-1">
-                  {PAYMENT_METHODS.map((method) => (
-                    <RadioButton
-                      key={method}
-                      checked={paymentMethod === method}
-                      onChange={() => setPaymentMethod(method)}
-                      label={method}
-                    />
-                  ))}
+                  <div id="shop-payment-widget" />
+                  <div id="shop-payment-agreement" />
+                  {!paymentReady ? (
+                    <p className="text-center text-body-13-m text-[var(--color-text-secondary)]">
+                      결제 UI를 불러오는 중…
+                    </p>
+                  ) : null}
                 </div>
               </SectionCard>
             </div>
@@ -253,14 +313,12 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
 
                   <button
                     type="button"
-                    onClick={handlePay}
-                    className="mt-1 flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80"
+                    onClick={() => void handlePay()}
+                    disabled={!paymentReady || isPaying}
+                    className="mt-1 flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50"
                   >
-                    {formatKrwPrice(total)} 결제하기
+                    {isPaying ? "결제 요청 중…" : `${formatKrwPrice(total)} 결제하기`}
                   </button>
-                  <p className="text-center text-caption-12-r text-[var(--color-text-secondary)]">
-                    심사용 데모 화면으로, 실제 결제가 진행되지 않습니다.
-                  </p>
                 </div>
               </SectionCard>
             </div>

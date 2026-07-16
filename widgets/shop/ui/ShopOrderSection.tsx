@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
-import { useModal } from "@/shared/ui";
+import { useModal, SectionCard, Checkbox, RadioButton } from "@/shared/ui";
 import {
   SHOP_FREE_SHIPPING_THRESHOLD,
   SHOP_SHIPPING_FEE,
@@ -11,7 +11,6 @@ import {
 } from "@/entities/product";
 import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
 import { OrderCustomerSection } from "@/widgets/order/ui/order-section/OrderCustomerSection";
-import { SectionCard, Checkbox, RadioButton } from "@/widgets/order/ui/order-section/OrderSectionFormParts";
 import type { NewAddrState } from "@/widgets/order/ui/order-section/useOrderSectionState";
 import { ShopProductArt } from "./ShopProductArt";
 

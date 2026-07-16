@@ -1,6 +1,9 @@
 import type { InviteSectionMode } from "@/features/order";
-import { ORDER_ACTION_CHIP_CLASS as actionChipCls, ORDER_INPUT_CLASS as inputCls } from "./orderSectionStyles";
-import { SectionCard } from "./OrderSectionFormParts";
+import {
+  FORM_ACTION_CHIP_CLASS as actionChipCls,
+  FORM_INPUT_CLASS as inputCls,
+  SectionCard,
+} from "@/shared/ui";
 
 interface OrderInviteSectionProps {
   open: boolean;

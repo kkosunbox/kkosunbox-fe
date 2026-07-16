@@ -1,6 +1,6 @@
 import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
-import { SectionCard, Checkbox, CollapsiblePanel } from "./OrderSectionFormParts";
-import { ChevronIcon } from "./OrderSectionIcons";
+import { SectionCard, Checkbox, CollapsiblePanel } from "@/shared/ui";
+import { ChevronIcon } from "@/shared/ui/FormPartsIcons";
 
 interface OrderSummarySectionProps {
   open: boolean;

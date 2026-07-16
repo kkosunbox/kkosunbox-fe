@@ -1,4 +1,4 @@
-import { SectionCard } from "./OrderSectionFormParts";
+import { SectionCard } from "@/shared/ui";
 
 interface OrderDeliveryMethodSectionProps {
   open: boolean;

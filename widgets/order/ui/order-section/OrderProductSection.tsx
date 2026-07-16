@@ -6,7 +6,7 @@ import { TIER_BOX_IMAGES } from "@/entities/package";
 import type { PackageTier } from "@/entities/package";
 import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
 import { QuantityMinusIcon, QuantityPlusIcon } from "./OrderSectionIcons";
-import { SectionCard } from "./OrderSectionFormParts";
+import { SectionCard } from "@/shared/ui";
 
 interface OrderProductSectionProps {
   plan: SubscriptionPlanDto;

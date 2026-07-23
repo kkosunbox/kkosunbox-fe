@@ -6,6 +6,7 @@ import {
   createDeliveryAddress,
   updateDeliveryAddress,
 } from "../api/deliveryAddressApi";
+import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
 
 interface Props {
   editingAddress: DeliveryAddress | null;
@@ -20,22 +21,6 @@ const LABEL_CLS = "w-[72px] shrink-0 text-body-14-sb text-[var(--color-text)]";
 /** Text input height: 40px — see `shared/config/input.ts` */
 const INPUT_CLS =
   "h-10 flex-1 min-w-0 rounded-[4px] border border-[var(--color-text-muted)] bg-white px-3 text-body-14-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-btn-dark-warm)]";
-const PHONE_NUMBER_PATTERN = /^01[0-9]\d{7,8}$/;
-
-function toPhoneDigits(value: string) {
-  return value.replace(/\D/g, "").slice(0, 11);
-}
-
-function formatPhoneNumber(value: string) {
-  const digits = toPhoneDigits(value);
-
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 3)} - ${digits.slice(3)}`;
-  if (digits.length <= 10) {
-    return `${digits.slice(0, 3)} - ${digits.slice(3, 6)} - ${digits.slice(6)}`;
-  }
-  return `${digits.slice(0, 3)} - ${digits.slice(3, 7)} - ${digits.slice(7)}`;
-}
 
 export default function AddressFormView({
   editingAddress,
@@ -55,7 +40,7 @@ export default function AddressFormView({
   );
   const [nickname, setNickname] = useState(editingAddress?.nickname ?? "");
   const [phoneNumber, setPhoneNumber] = useState(
-    formatPhoneNumber(editingAddress?.phoneNumber ?? ""),
+    formatPhoneNumber(digitsOnly(editingAddress?.phoneNumber ?? "")),
   );
   const [memo, setMemo] = useState(editingAddress?.memo ?? "");
 
@@ -68,7 +53,7 @@ export default function AddressFormView({
 
   async function handleSubmit() {
     setError(null);
-    const phoneDigits = toPhoneDigits(phoneNumber);
+    const phoneDigits = digitsOnly(phoneNumber);
 
     if (!receiverName.trim()) {
       setError("받는분을 입력해주세요.");
@@ -82,8 +67,8 @@ export default function AddressFormView({
       setError("휴대폰 번호를 입력해주세요.");
       return;
     }
-    if (!PHONE_NUMBER_PATTERN.test(phoneDigits)) {
-      setError("휴대폰 번호를 정확히 입력해주세요. (숫자 10~11자리)");
+    if (!isValidKoreanPhone(phoneDigits)) {
+      setError("올바른 전화번호 형식이 아닙니다.");
       return;
     }
 
@@ -169,10 +154,9 @@ export default function AddressFormView({
             id="addr-phone"
             type="tel"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+            onChange={(e) => setPhoneNumber(formatPhoneNumber(digitsOnly(e.target.value)))}
             inputMode="numeric"
-            maxLength={17}
-            placeholder="-를 제외한 숫자만 입력해주세요"
+            placeholder="010-0000-0000"
             className={INPUT_CLS}
           />
         </div>

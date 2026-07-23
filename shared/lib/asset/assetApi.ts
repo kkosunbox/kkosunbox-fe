@@ -21,3 +21,14 @@ export function getProfileImagePresignedUrl(body: PresignedUrlRequest) {
     body,
   );
 }
+
+/**
+ * 리뷰 이미지 업로드용 Presigned URL 발급
+ * 허용 확장자: jpg, jpeg, png, webp — 그 외 400 INVALID_FILE_FORMAT
+ */
+export function getReviewImagePresignedUrl(body: PresignedUrlRequest) {
+  return apiClient.post<PresignedUrlResponse>(
+    "/v1/asset/review-image/presigned-url",
+    body,
+  );
+}

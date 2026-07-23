@@ -198,7 +198,7 @@ export default function AccountInfoModal({ onClose }: Props) {
                 <button
                   type="button"
                   onClick={() => setView("password-change")}
-                  className="h-8 w-[87px] rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-13-m-tight text-white transition-opacity hover:opacity-90"
+                  className="inline-flex h-8 w-[87px] items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-13-m-tight text-white transition-opacity hover:opacity-90"
                 >
                   비밀번호 변경
                 </button>

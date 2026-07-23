@@ -31,6 +31,13 @@ export function billingDayLabel(dateStr: string): string {
   return `매달 ${day}일`;
 }
 
+export function billingDayFromDate(dateStr: string): number {
+  return parseInt(dateStr.slice(8, 10), 10);
+}
+
+// 말일(29~31일) 결제일은 매달 실제 일수가 달라 스킵/보정 문제가 생기므로 선택지에서 제외
+export const BILLING_DAY_OPTIONS = Array.from({ length: 28 }, (_, i) => i + 1);
+
 export function deriveStartDate(payments: SubscriptionPaymentDto[], fallback: string): string {
   const completed = payments
     .filter((p) => p.status === "completed" && (p.approvedAt ?? p.createdAt))

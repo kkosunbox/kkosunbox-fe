@@ -289,7 +289,7 @@ export default function HeroSection() {
 
               {/* 우측: 트럭 이미지 (solid 슬라이드 전용) */}
               {slide.type === "solid" && (
-                <div className="flex flex-1 items-center max-lg:justify-end lg:justify-center lg:py-10">
+                <div className="flex flex-1 items-center justify-center max-lg:pb-10 lg:py-10">
                   <img
                     src={heroTruckImage.src}
                     alt="꼬순박스 배송 트럭"

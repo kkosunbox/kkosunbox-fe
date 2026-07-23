@@ -450,6 +450,23 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
+    // POST /v1/inquiries — 문의 등록 (연락처 검증은 프론트 책임, 목서버는 그대로 수용)
+    if (method === "POST" && url === "/v1/inquiries") {
+      const body = await readBody(req) as { title: string; content: string; contact?: string };
+      ok(res, {
+        inquiry: {
+          id: 9001,
+          title: body.title,
+          content: body.content,
+          status: "pending",
+          isAnswered: false,
+          createdAt: new Date().toISOString(),
+          contact: body.contact,
+        },
+      });
+      return;
+    }
+
     // DELETE /v1/inquiries/:id — 문의 삭제
     if (method === "DELETE" && /^\/v1\/inquiries\/\d+$/.test(url)) {
       ok(res, {});

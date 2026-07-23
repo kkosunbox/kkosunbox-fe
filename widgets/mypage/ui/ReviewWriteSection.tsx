@@ -9,7 +9,7 @@ import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
-import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
+import { getReviewImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { trackReviewSubmit } from "@/shared/lib/analytics";
 import reviewWriteHeroDesktop from "../assets/review-write-hero-desktop-renewal.webp";
 import reviewWriteHeroTablet from "../assets/review-write-hero-tablet-renewal.webp";
@@ -21,7 +21,8 @@ const HERO_ALT =
 const MAX_CONTENT_LENGTH = 500;
 const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024; // 5MB
 const MAX_ATTACHMENTS = 5; // 사진 최대 첨부 개수
-const ACCEPT_ATTACHMENT = "image/jpeg,image/png,image/webp,image/gif";
+// 백엔드 review-image presigned-url이 허용하는 확장자: jpg, jpeg, png, webp (gif 미지원)
+const ACCEPT_ATTACHMENT = "image/jpeg,image/png,image/webp";
 
 /** 첨부 이미지 — 기존(업로드 완료된 URL) 또는 신규(업로드 대기 File) */
 type Attachment =
@@ -247,7 +248,7 @@ export default function ReviewWriteSection({
               continue;
             }
             const fileType = att.file.type || "application/octet-stream";
-            const { uploadUrl, fileUrl } = await getAttachmentPresignedUrl({
+            const { uploadUrl, fileUrl } = await getReviewImagePresignedUrl({
               fileName: att.file.name,
               fileType,
             });

@@ -2,9 +2,9 @@
 
 import { Text } from "@/shared/ui";
 import { TIER_BOX_IMAGES } from "@/entities/package";
-import { ROW_GRID } from "./helpers";
+import { BILLING_DAY_OPTIONS, ROW_GRID } from "./helpers";
 import type { SubscriptionDetailViewModel } from "./useSubscriptionDetailSection";
-import { ChevronLeftIcon } from "./components/icons";
+import { ChevronLeftIcon, CloseIcon, PencilIcon } from "./components/icons";
 import { Pagination } from "./components/Pagination";
 import { RecordRow } from "./components/RecordRow";
 
@@ -20,7 +20,8 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
     currentPage,
     totalPages,
     formatDate,
-    billingDayLabel,
+    billingDay,
+    isEditingBillingDay,
     handleDeleteRecord,
     handleResubscribe,
     handleCancel,
@@ -28,6 +29,9 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
     handleCancelPayment,
     handleChangeSubscription,
     handleReceiptDownload,
+    handleStartEditBillingDay,
+    handleCancelEditBillingDay,
+    handleSelectBillingDay,
     goBack,
     goToPrevPage,
     goToNextPage,
@@ -82,9 +86,47 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                     {formatDate(startDate)} ~
                   </Text>
-                  <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                    결제일 : {billingDayLabel(subscription.nextBillingDate)}
-                  </Text>
+                  {isEditingBillingDay ? (
+                    <div className="flex max-sm:flex-wrap items-center max-sm:gap-1 sm:gap-1.5">
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                        결제일 :
+                      </Text>
+                      <select
+                        value={billingDay}
+                        onChange={(e) => handleSelectBillingDay(Number(e.target.value))}
+                        aria-label="결제일 선택"
+                        className="h-7 shrink-0 rounded-[6px] border border-[var(--color-border-light)] bg-white px-2 text-body-14-m text-[var(--color-text)] outline-none"
+                      >
+                        {BILLING_DAY_OPTIONS.map((day) => (
+                          <option key={day} value={day}>
+                            {day}일
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={handleCancelEditBillingDay}
+                        aria-label="결제일 수정 취소"
+                        className="flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-text-secondary)] hover:opacity-70"
+                      >
+                        <CloseIcon />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex max-sm:flex-wrap items-center max-sm:gap-1 sm:gap-1.5">
+                      <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                        결제일 : 매달 {billingDay}일
+                      </Text>
+                      <button
+                        type="button"
+                        onClick={handleStartEditBillingDay}
+                        aria-label="결제일 수정"
+                        className="flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-text-secondary)] hover:opacity-70"
+                      >
+                        <PencilIcon />
+                      </button>
+                    </div>
+                  )}
                   <button
                     type="button"
                     onClick={handleTogglePause}

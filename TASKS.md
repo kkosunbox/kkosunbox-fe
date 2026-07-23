@@ -1,6 +1,6 @@
 # 꼬순박스 — 잔여 개발 태스크
 
-> 최종 업데이트: 2026-04-08  
+> 최종 업데이트: 2026-07-23  
 > 우선순위: P0(즉시) → P1(마이페이지 완성) → P2(구독 플로우) → P3(기타)
 
 ---
@@ -21,8 +21,8 @@
 - [x] **InquiryCard** — `GET /v1/inquiries` 연동 (3건씩 페이지네이션)
 - [x] **SubscriptionManagementSection** (`/mypage/subscription`) — 구독 취소 / 플랜 변경 / 재활성화 연결
 - [x] **PaymentManagementSection** (`/mypage/payment`) — 결제수단 표시, 결제 내역 연결, 영수증 URL 다운로드
-- [~] **ProfileManagementSection** (`/mypage/profile`) — 프로필 생성/수정 완료. 아래 1개 미완료:
-  - [ ] **비밀번호 변경** — `changePassword(currentPassword, newPassword)` 연결 + UI (현재 섹션 자체 없음)
+- [x] **ProfileManagementSection** (`/mypage/profile`) — 프로필 생성/수정 완료.
+  - [x] **비밀번호 변경** — `changePassword(currentPassword, newPassword)` 연결 완료. `PasswordManagementSection`(`/mypage/password` 전용 페이지)과 `AccountInfoModal`(계정 정보 모달 내 "비밀번호 변경" 버튼 → 폼 전환) 두 경로로 제공됨
   - [x] **회원 탈퇴** — `withdraw(reason)` + `MemberWithdrawModal` (확인 시 탈퇴 후 로그아웃)
 
 ---
@@ -31,7 +31,7 @@
 
 - [ ] **`/subscribe` 플랜 목록** — `getSubscriptionPlans()` 연동, 추천 플랜 표시
 - [ ] **`/order` 구독 신청** — `createSubscription()` 연결 (플랜 선택 → 배송지 선택 → 쿠폰 입력 → 결제)
-- [ ] **나이스페이 결제수단 등록** — `registerBilling()` + 나이스페이 SDK 연동 (별도 검토 필요)
+- [ ] **Toss 빌링(자동결제) 연동** — 나이스페이에서 Toss로 교체 확정, 계약 완료(2026-07). 클라이언트 키 전달 대기 중이라 실제 세팅은 아직 못 함. SDK 설치·`/payment/billing/success|fail` 라우트 골격 등 코드 준비는 되어 있음 — 상세는 `.claude/contexts/toss-billing-integration-plan.md` 참고
 - [ ] **체크리스트 연동** — `/checklist` 결과를 프로필에 저장 (`updateProfile`의 `checklistAnswers`)
 
 ---

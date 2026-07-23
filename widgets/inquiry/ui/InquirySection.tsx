@@ -10,6 +10,7 @@ import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import { getAttachmentPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
+import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
 import { SupportHero } from "@/widgets/support/shared";
 
 const MAX_TITLE_LENGTH = 50;
@@ -91,6 +92,7 @@ export default function InquirySection() {
   });
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [termsModal, setTermsModal] = useState<"terms" | "privacy" | null>(null);
+  const [contactError, setContactError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -105,6 +107,18 @@ export default function InquirySection() {
 
   const handleCheckbox = (field: "agreeTerms" | "agreePrivacy") => {
     setForm((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContactError(null);
+    setForm((prev) => ({ ...prev, contact: formatPhoneNumber(digitsOnly(e.target.value)) }));
+  };
+
+  const handleContactBlur = () => {
+    const raw = digitsOnly(form.contact);
+    if (raw && !isValidKoreanPhone(raw)) {
+      setContactError("올바른 전화번호 형식이 아닙니다.");
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +155,12 @@ export default function InquirySection() {
     const content = form.content.trim();
     if (!title || !content || !form.agreeTerms || !form.agreePrivacy) return;
 
+    const contactDigits = digitsOnly(form.contact);
+    if (contactDigits && !isValidKoreanPhone(contactDigits)) {
+      setContactError("올바른 전화번호 형식이 아닙니다.");
+      return;
+    }
+
     const contact = form.contact.trim().slice(0, 100) || undefined;
 
     startTransition(async () => {
@@ -173,7 +193,8 @@ export default function InquirySection() {
     form.title.trim() &&
     form.content.trim() &&
     form.agreeTerms &&
-    form.agreePrivacy;
+    form.agreePrivacy &&
+    !contactError;
 
   if (!isLoggedIn) return null;
 
@@ -302,11 +323,16 @@ export default function InquirySection() {
                   id="contact"
                   name="contact"
                   type="text"
-                  placeholder="연락처를 작성해주세요"
+                  inputMode="numeric"
+                  placeholder="010-0000-0000"
                   value={form.contact}
-                  onChange={handleChange}
+                  onChange={handleContactChange}
+                  onBlur={handleContactBlur}
                   className={fieldClass}
                 />
+                {contactError && (
+                  <p className="text-body-13-m text-red-600 pl-1" role="alert">{contactError}</p>
+                )}
               </div>
             </div>
 

@@ -61,7 +61,7 @@ const [fieldError, setFieldError] = useState<string | null>(null);
 | `sendPasswordResetCode` | /forgot-password | 미가입 이메일 | 모달 | todo — 현재 setError 인라인 |
 | `verifyPasswordResetCode` | /forgot-password | INVALID_OTP, OTP_EXPIRED | 모달 | todo — 현재 setError 인라인 |
 | `resetPassword` | /forgot-password | RESET_TOKEN_EXPIRED | 모달 | todo — 현재 setError 인라인 |
-| `changePassword` | /mypage/profile | INVALID_PASSWORD | 인라인 | todo — 미구현 |
+| `changePassword` | /mypage/password, AccountInfoModal | INVALID_PASSWORD | 인라인 | done |
 | `getUser` | 전역 (AuthProvider) | 401 | 무시 (자동 로그아웃) | done |
 | `agreeToTerms` | (미사용) | — | — | — |
 | `withdraw` | /mypage | 탈퇴 실패 | 모달 | todo |

@@ -16,7 +16,12 @@ import {
 } from "@/features/subscription/api/subscriptionApi";
 import { packageThemeForPlan } from "@/entities/package";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
-import { ITEMS_PER_PAGE, billingDayLabel, deriveStartDate, formatDate } from "./helpers";
+import {
+  ITEMS_PER_PAGE,
+  billingDayFromDate,
+  deriveStartDate,
+  formatDate,
+} from "./helpers";
 
 /**
  * 구독 상세 Section의 조정자(Coordinator).
@@ -34,6 +39,8 @@ export function useSubscriptionDetailSection({
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [, startTransition] = useTransition();
   const [page, setPage] = useState(1);
+  const [isEditingBillingDay, setIsEditingBillingDay] = useState(false);
+  const [billingDay, setBillingDay] = useState(() => billingDayFromDate(subscription.nextBillingDate));
 
   const isActive = subscription.isActive;
   const theme = packageThemeForPlan(subscription.plan);
@@ -203,6 +210,26 @@ export function useSubscriptionDetailSection({
     });
   }
 
+  function handleStartEditBillingDay() {
+    setIsEditingBillingDay(true);
+  }
+
+  function handleCancelEditBillingDay() {
+    setIsEditingBillingDay(false);
+  }
+
+  // TODO(백엔드): 결제일 변경 엔드포인트가 아직 없어 화면 표시만 갱신함.
+  // 엔드포인트 확정되면 여기서 실제 요청으로 교체.
+  function handleSelectBillingDay(day: number) {
+    setBillingDay(day);
+    setIsEditingBillingDay(false);
+    openAlert({
+      type: "success",
+      title: "결제일이 변경되었습니다.",
+      description: `다음 결제일부터 매달 ${day}일에 결제돼요.`,
+    });
+  }
+
   function handleReceiptDownload(paymentId: number) {
     startTransition(async () => {
       try {
@@ -237,7 +264,8 @@ export function useSubscriptionDetailSection({
     currentPage,
     totalPages,
     formatDate,
-    billingDayLabel,
+    billingDay,
+    isEditingBillingDay,
     handleDeleteRecord,
     handleResubscribe,
     handleCancel,
@@ -245,6 +273,9 @@ export function useSubscriptionDetailSection({
     handleCancelPayment,
     handleChangeSubscription,
     handleReceiptDownload,
+    handleStartEditBillingDay,
+    handleCancelEditBillingDay,
+    handleSelectBillingDay,
     goBack,
     goToPrevPage,
     goToNextPage,

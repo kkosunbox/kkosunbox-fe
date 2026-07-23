@@ -13,10 +13,6 @@ if (!_apiUrl) throw new Error("환경변수 NEXT_PUBLIC_API_URL 가 설정되지
 export const env = {
   apiUrl: _apiUrl.replace(/\/$/, ""),
 
-  // asset 모듈의 attachment presigned-url 발급에 사용되는 x-project-id 헤더 값.
-  // 백엔드 팀에서 값이 내려오면 .env.local 의 NEXT_PUBLIC_PROJECT_ID 에 설정.
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID ?? "",
-
   // Toss Payments 자동결제(빌링) — requestBillingAuth 호출용 클라이언트 키.
   // 시크릿 키/빌링키 발급은 백엔드 전용. 미계약 키는 NOT_SUPPORTED_METHOD 에러.
   tossClientKey: process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "",

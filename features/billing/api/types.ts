@@ -7,7 +7,8 @@ export interface BillingInfo {
   userId: number;
   lastFourDigits: string | null;
   cardCompany: string | null;
-  cardType: string;
+  /** "신용" | "체크" | "기프트" 등. 카드사명이 없을 때 표시 라벨로 사용한다. */
+  cardType: string | null;
   ownerType: string;
   authenticatedAt: string;
   isActive: boolean;

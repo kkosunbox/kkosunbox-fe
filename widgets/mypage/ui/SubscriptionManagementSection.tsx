@@ -7,7 +7,7 @@ import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { useBillingUpdated } from "@/features/billing/lib/billingSync";
-import { getCardCompany, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
+import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {
   comparePlansForDisplayOrder,
@@ -196,7 +196,7 @@ function PaymentInfoCard({
   }
 
   const cardDisplay = billingInfo
-    ? `${getCardCompany(billingInfo)} (${getLastFourDigits(billingInfo)})`
+    ? `${getCardName(billingInfo)} (${getLastFourDigits(billingInfo)})`
     : "미등록";
   const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
   const nextDateDisplay = nextBillingDate ? `${formatDate(nextBillingDate)} (카드결제)` : "-";

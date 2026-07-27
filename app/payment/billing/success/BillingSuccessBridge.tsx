@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import type { BillingInfo } from "@/features/billing/api/types";
 import { notifyBillingUpdated } from "@/features/billing/lib/billingSync";
-import { getCardCompany, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
+import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 
 // 카드 등록/변경 완료 후처리.
 // 1) 같은 오리진의 모든 창에 브로드캐스트 — 카드사 인증 과정에서 opener가 끊겨도 마이페이지가 갱신된다.
@@ -28,7 +28,7 @@ export default function BillingSuccessBridge({ billing }: { billing: BillingInfo
       <div className="mx-auto flex max-w-xl flex-col gap-4">
         <h1 className="text-2xl font-bold">카드 등록이 완료되었습니다</h1>
         <p className="text-zinc-600">
-          {getCardCompany(billing)} **** {getLastFourDigits(billing)}
+          {getCardName(billing)} **** {getLastFourDigits(billing)}
         </p>
         <Link
           href="/subscribe"

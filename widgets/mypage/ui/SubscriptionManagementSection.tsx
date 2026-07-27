@@ -191,7 +191,7 @@ function PaymentInfoCard({
     window.open(
       `/payment?method=${encodeURIComponent("신용카드")}`,
       "paymentPopup",
-      "width=480,height=700,scrollbars=yes",
+      "width=650,height=700,scrollbars=yes",
     );
   }
 

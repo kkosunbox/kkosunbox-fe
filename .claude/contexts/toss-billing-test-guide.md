@@ -281,16 +281,24 @@ S3 수행 시 실제로 얼마나 어색한지 확인하고, 필요하면 개선
 **정상 등록인데 카드사명이 비는 건 백엔드/Toss 응답 매핑 문제**다.
 어떤 카드에서 null이 나오는지(테스트 카드 vs 실카드, 카드사별) 기록해 백엔드에 전달할 것.
 
-### 3-6. 팝업(480px)보다 Toss 카드 입력창이 넓어 좌우가 잘리던 문제 → `windowTarget: "self"` 적용 (2026-07-27)
+### 3-6. 팝업(480px)보다 Toss 카드 입력창이 넓어 좌우가 잘리던 문제 → `windowTarget: "self"` + 팝업 650px 적용 (2026-07-27)
 
 우리 결제 팝업은 `width=480,height=700`인데 PC에서 Toss 기본값 `windowTarget: "iframe"` 은
 **고정 폭 데스크탑 레이아웃**이라 카드번호 입력칸 오른쪽과 안내 문구가 잘렸다.
 
-→ `requestTossBillingAuth`에 `windowTarget: "self"` 를 지정해, iframe 오버레이 대신
-**팝업 창 자체가 Toss 호스팅 페이지로 이동**하도록 바꿨다. Toss 페이지가 반응형이라 창 폭에 맞춰진다.
-팝업 크기(480×700)와 우리 UI는 그대로 두고, 모바일과도 동작이 통일된다.
+1. `requestTossBillingAuth`에 `windowTarget: "self"` 를 지정 — iframe 오버레이 대신
+   **팝업 창 자체가 Toss 호스팅 페이지로 이동**한다. Toss 페이지는 반응형이라 창 폭에 맞춰진다.
+2. 그래도 480px에서는 Toss 페이지 레이아웃이 옹색해 보여, 결제 팝업 4곳
+   (`usePaymentState`, `PaymentCard`, `PaymentManagementSection`, `SubscriptionManagementSection`)의
+   `window.open` 폭을 **650px로 확대**했다. 배송지 검색 팝업(`useAddressState`)은 이번 변경과
+   무관해 480px 그대로 둠.
 
-부수 효과 — **취소 시 오버레이만 닫히고 제자리에 남던 동작이 사라지고 failUrl로 이동한다.**
+**부수 효과 1** — 우리 자체 화면(방식 선택·기존 카드·카드 등록 트리거)은 `app/payment/layout.tsx`의
+`max-w-[400px]` 중앙 정렬 wrapper를 그대로 쓰므로, 650px 창에서는 **좌우로 흰 여백이 생긴 채
+가운데 정렬된 좁은 카드** 형태로 보인다. 의도된 결과지만 실물로 봤을 때 여백이 과하다 싶으면
+`app/payment/layout.tsx`의 `max-w-[400px]`를 조정해서 맞추면 된다.
+
+**부수 효과 2** — 취소 시 오버레이만 닫히고 제자리에 남던 동작이 사라지고 failUrl로 이동한다.
 그래서 fail 페이지에 팝업용 [다시 시도]/[닫기] 버튼(`BillingFailActions.tsx`)을 함께 추가했다(S3-a 참고).
 
 ### 3-5. 카드 삭제 UI 없음

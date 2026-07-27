@@ -66,11 +66,15 @@ Toss는 **프론트 클라이언트 키**와 **백엔드 시크릿 키**의 환�
 **확인 포인트**
 - [ ] 팝업이 자동으로 닫히는가 (`BillingSuccessBridge`가 `postMessage` 후 `window.close()`)
 - [ ] 부모 창 결제수단 표시가 즉시 갱신되는가
+- [ ] **카드사명이 "null"로 보이지 않는가** — 백엔드가 카드사명을 못 주면 "신용카드"로 표시되는 게 정상
+- [ ] **인증이 새 창/카드사 앱으로 넘어가 팝업이 자동으로 안 닫힌 경우에도** 마이페이지 창이 갱신되는가
+      (2026-07-27 수정: opener가 끊겨도 BroadcastChannel로 알리고 수신 측이 서버에서 재조회한다)
 - [ ] Network 탭에 `POST /v1/billing/register` 가 **서버에서만** 호출됨 — 브라우저 Network 탭에는 이 요청이 **보이지 않는 게 정상**이다(Server Component에서 호출). 브라우저 탭에 보이면 회귀다.
 - [ ] 480×700 팝업 안에서 Toss 오버레이가 잘리지 않는가 (좁은 창이라 육안 확인 필요)
 
 **실패 시 의심 지점**
-- 팝업이 안 닫히고 "카드 등록이 완료되었습니다" 화면에 머문다 → `window.opener`가 유실됨. Toss 리다이렉트가 새 탭으로 갔는지 확인
+- 팝업이 안 닫히고 "카드 등록이 완료되었습니다" 화면에 머문다 → `window.opener` 유실. **이 자체는 정상 동작 범위**이며(카드사 인증이 새 창을 거치면 흔함), 이 경우에도 마이페이지는 BroadcastChannel로 갱신돼야 한다. 마이페이지까지 안 바뀌면 `features/billing/lib/billingSync.ts` 확인
+- 등록은 됐는데 마이페이지가 그대로 → 수신 측 `useBillingUpdated(() => router.refresh())` 미연결, 또는 `initialBillingInfo` prop 동기화 effect 누락
 - "카드 등록에 실패했습니다" + 에러 메시지 → 백엔드 register 실패. §0 키 짝 확인
 - "로그인이 필요합니다" → 팝업에 세션 쿠키가 안 실림. `getServerToken()` / 쿠키 SameSite 확인
 
@@ -237,7 +241,14 @@ S3 수행 시 실제로 얼마나 어색한지 확인하고, 필요하면 개선
 `useOrderSectionState.ts:96`의 `billingInfoId: payment.billing?.id`는 `payment.billing`이 없을 때만
 호출되는 함수 안에 있어 **항상 undefined**다. 동작에는 영향 없음.
 
-### 3-4. 카드 삭제 UI 없음
+### 3-4. 카드사명 null — 프론트는 폴백, 원인은 백엔드에 확인 필요
+
+2026-07-27 실카드 등록 중 `cardCompany`가 null로 내려와 화면에 "null"이 노출되는 걸 확인했다.
+프론트는 `formatBillingLabel`에서 "신용카드"로 대체하도록 막아뒀지만(끝 4자리 없으면 `****`),
+**정상 등록인데 카드사명이 비는 건 백엔드/Toss 응답 매핑 문제**다.
+어떤 카드에서 null이 나오는지(테스트 카드 vs 실카드, 카드사별) 기록해 백엔드에 전달할 것.
+
+### 3-5. 카드 삭제 UI 없음
 
 `deleteBilling()`은 구현돼 있으나 호출하는 화면이 없다. 테스트 초기화가 불편한 원인(§0).
 
@@ -249,7 +260,8 @@ S3 수행 시 실제로 얼마나 어색한지 확인하고, 필요하면 개선
 |---|---|
 | 등록창이 안 뜬다 / 키 에러 | `features/billing/lib/requestTossBillingAuth.ts`, `shared/config/env.ts` |
 | 등록 후 팝업이 안 닫힌다 | `app/payment/billing/success/BillingSuccessBridge.tsx` |
-| 등록은 됐는데 부모 화면이 안 바뀐다 | `widgets/mypage/ui/PaymentCard.tsx`, `PaymentManagementSection.tsx` (message 리스너) |
+| 등록은 됐는데 부모 화면이 안 바뀐다 | `features/billing/lib/billingSync.ts` (브로드캐스트), 수신 측 `widgets/mypage/ui/PaymentCard.tsx`·`PaymentManagementSection.tsx`·`SubscriptionManagementSection.tsx` |
+| 카드사명이 "null"·빈칸으로 보인다 | `features/billing/lib/formatBillingLabel.ts` |
 | register/update 실패 | `features/billing/api/queries.ts`, `app/payment/billing/success/page.tsx` |
 | 에러 문구가 이상하다 | `shared/lib/api/errorMessages.ts` (`ERROR_MESSAGES`, `getMessageByCode`) |
 | 팝업 뷰 전환이 이상하다 | `features/billing/ui/PaymentManager.tsx` |

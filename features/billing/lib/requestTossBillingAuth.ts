@@ -4,10 +4,14 @@ import { env } from "@/shared/config/env";
 /**
  * Toss 자동결제(빌링) 카드 등록창을 띄운다. (브라우저 전용)
  *
- * PC는 기본 iframe 오버레이로 등록창이 열리고, 모바일은 현재 창이 이동한다.
- * 인증 완료 시 항상 successUrl(`?authKey=...&customerKey=...`)로 전체 페이지가
- * 리다이렉트된다(iframe이어도 마찬가지). 그 값으로 서버가
- * `POST /v1/billing/register` 또는 `PUT /v1/billing/update`를 호출해 빌링키를 발급한다.
+ * `windowTarget: "self"` — 현재 창을 Toss 등록 페이지로 이동시킨다.
+ * PC 기본값인 `"iframe"`은 고정 폭 데스크탑 레이아웃이라 480px 결제 팝업 안에서
+ * 좌우가 잘린다. `"self"`는 Toss가 호스팅하는 반응형 페이지로 이동하므로 창 폭에 맞춰진다.
+ * (모바일은 애초에 iframe을 쓸 수 없어 self가 기본값 — 양쪽 동작이 통일된다)
+ *
+ * 인증 완료 시 successUrl(`?authKey=...&customerKey=...`)로 리다이렉트되고, 그 값으로
+ * 서버가 `POST /v1/billing/register` 또는 `PUT /v1/billing/update`를 호출해 빌링키를 발급한다.
+ * 취소·실패하면 failUrl로 이동한다(iframe처럼 오버레이만 닫히고 제자리에 남지 않는다).
  *
  * customerKey: Toss 권장대로 무작위 UUID. 예측 가능한 값(연속 숫자·이메일 등)은
  * Toss가 안전하지 않다고 명시하므로 사용하지 않는다. successUrl로 그대로 echo 되어
@@ -28,6 +32,7 @@ export async function requestTossBillingAuth(params: {
   }
   await payment.requestBillingAuth({
     method: "CARD",
+    windowTarget: "self",
     successUrl: successUrl.toString(),
     failUrl: `${window.location.origin}/payment/billing/fail`,
     customerName: params.customerName,

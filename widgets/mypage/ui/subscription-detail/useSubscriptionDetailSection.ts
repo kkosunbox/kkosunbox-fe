@@ -8,6 +8,7 @@ import { trackSubscriptionCancelAttempt } from "@/shared/lib/analytics";
 import {
   cancelPayment,
   cancelSubscription,
+  changeBillingDay,
   deleteSubscriptionRecord,
   getPaymentReceipt,
   pauseSubscription,
@@ -21,6 +22,7 @@ import {
   billingDayFromDate,
   deriveStartDate,
   formatDate,
+  formatKoreanDate,
 } from "./helpers";
 
 /**
@@ -218,15 +220,24 @@ export function useSubscriptionDetailSection({
     setIsEditingBillingDay(false);
   }
 
-  // TODO(백엔드): 결제일 변경 엔드포인트가 아직 없어 화면 표시만 갱신함.
-  // 엔드포인트 확정되면 여기서 실제 요청으로 교체.
   function handleSelectBillingDay(day: number) {
-    setBillingDay(day);
     setIsEditingBillingDay(false);
-    openAlert({
-      type: "success",
-      title: "결제일이 변경되었습니다.",
-      description: `다음 결제일부터 매달 ${day}일에 결제돼요.`,
+    showLoading("결제일을 변경하고 있습니다...");
+    startTransition(async () => {
+      try {
+        const updated = await changeBillingDay(subscription.id, { billingDay: day });
+        setBillingDay(billingDayFromDate(updated.nextBillingDate));
+        openAlert({
+          type: "success",
+          title: `결제일이 매달 ${billingDayFromDate(updated.nextBillingDate)}일로 변경되었습니다.`,
+          description: `다음 결제일: ${formatKoreanDate(updated.nextBillingDate)}`,
+        });
+        router.refresh();
+      } catch (err) {
+        openAlert({ title: getErrorMessage(err, "결제일 변경 처리 중 오류가 발생했습니다.") });
+      } finally {
+        hideLoading();
+      }
     });
   }
 

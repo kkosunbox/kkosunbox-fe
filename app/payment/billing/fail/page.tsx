@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { getMessageByCode } from "@/shared/lib/api";
+import BillingFailActions from "./BillingFailActions";
 // TODO(billing-debug): dev 실연동 검증용 임시 로그 — 검증 끝나면 import·호출부 제거
 import { logBillingNote } from "@/features/billing/lib/billingDebugLog";
 
@@ -32,12 +32,7 @@ export default async function BillingFailPage({
           {getMessageByCode(code, "카드 등록 처리 중 오류가 발생했습니다.")}
         </p>
 
-        <Link
-          href="/subscribe"
-          className="text-sm font-medium text-zinc-500 hover:underline"
-        >
-          ← 구독으로 돌아가기
-        </Link>
+        <BillingFailActions />
       </div>
     </main>
   );

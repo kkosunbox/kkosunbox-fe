@@ -113,6 +113,11 @@ export interface ChangeDeliveryAddressRequest {
   deliveryAddressId: number;
 }
 
+export interface ChangeBillingDayRequest {
+  /** 새 결제일 (매달 1~31일) */
+  billingDay: number;
+}
+
 export interface GetCouponInfoRequest {
   code: string; // 최대 30자, 대소문자 구분 안함
 }

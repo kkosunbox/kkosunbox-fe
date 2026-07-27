@@ -9,7 +9,7 @@ export default function PaymentLayout({
 }) {
   return (
     <div className="flex min-h-screen justify-center bg-white">
-      <div className="w-full max-w-[400px]">{children}</div>
+      <div className="w-full max-w-[540px]">{children}</div>
     </div>
   );
 }

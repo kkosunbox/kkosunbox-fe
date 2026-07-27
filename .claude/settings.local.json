@@ -438,7 +438,15 @@
       "Bash(cp 'C:\\\\Users\\\\tbrk7/AppData/Local/Temp/claude-chrome-screenshots-x9Hcvw/screenshot-1784868451246-2.jpg' 'C:\\\\Users\\\\tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/edb41cbf-d557-4407-865e-5cef7e4657e9/scratchpad/toss-billing-screens/3_billing-fail-default.jpg')",
       "Bash(cp 'C:\\\\Users\\\\tbrk7/AppData/Local/Temp/claude-chrome-screenshots-x9Hcvw/screenshot-1784868451246-3.jpg' 'C:\\\\Users\\\\tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/edb41cbf-d557-4407-865e-5cef7e4657e9/scratchpad/toss-billing-screens/4_billing-fail-code-PAY_PROCESS_CANCELED.jpg')",
       "Bash(cp 'C:\\\\Users\\\\tbrk7/AppData/Local/Temp/claude-chrome-screenshots-x9Hcvw/screenshot-1784868479587-5.jpg' 'C:\\\\Users\\\\tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/edb41cbf-d557-4407-865e-5cef7e4657e9/scratchpad/toss-billing-screens/5_existing-billing-view-unchanged.jpg')",
-      "PowerShell(git *)"
+      "PowerShell(git *)",
+      "PowerShell($b=[IO.File]::ReadAllBytes\\('C:\\\\2026\\\\ggosoonbox\\\\.env.local'\\); $hits=@\\(\\); for\\($i=1;$i -lt $b.Length-2;$i++\\){ if\\($b[$i] -eq 0xEF -and $b[$i+1] -eq 0xBB -and $b[$i+2] -eq 0xBF\\){ $hits += $i } }; \"stray BOM count: $\\($hits.Count\\)\"; $t=[Text.Encoding]::UTF8.GetString\\($b\\); \\($t -split \"`n\" | Select-Object -Last 3\\) -join \" | \")",
+      "PowerShell($p='C:\\\\2026\\\\ggosoonbox\\\\.env.example'; $c=[IO.File]::ReadAllText\\($p, [Text.Encoding]::UTF8\\); if \\($c -notmatch 'BILLING_DEBUG_LOG'\\) { $add = \"`n# 🧪 Toss 빌링 디버그 로그 \\(임시\\) ─────────────────────────────`n# 1로 두면 카드 등록/변경 요청·응답이 서버 로그에만 출력된다\\(브라우저에는 노출되지 않음\\).`n# authKey·customerKey 원문이 남으므로 운영\\(live\\) 환경에서는 켜지 않는다. dev 검증 후 제거 예정.`nBILLING_DEBUG_LOG=`n\"; [IO.File]::AppendAllText\\($p, $add, \\(New-Object Text.UTF8Encoding $false\\)\\); \"added\" } else { \"already present\" })",
+      "Bash(seq 1 60)",
+      "Bash(echo \"DEV READY\")",
+      "Bash(sleep 1)",
+      "Bash(tail -5 /c/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/c5e0d7a6-2787-4c35-851d-25b4e57b9a9d/tasks/byk5ti3r4.output)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/payment/billing/fail?code=PAY_PROCESS_CANCELED\" -UseBasicParsing -TimeoutSec 10; \"STATUS: $\\($r.StatusCode\\)\"; if \\($r.Content -match '카드 등록이 취소되었습니다'\\) { \"문구 매핑 OK\" } elseif \\($r.Content -match '카드 등록에 실패'\\) { \"제목만 매치 — 문구 확인 필요\" } } catch { \"ERR: \" + $_.Exception.Message })",
+      "PowerShell(git -C C:\\\\2026\\\\ggosoonbox commit -F \"$env:TEMP\\\\claude\\\\C--2026-ggosoonbox\\\\c5e0d7a6-2787-4c35-851d-25b4e57b9a9d\\\\scratchpad\\\\commitmsg.txt\")"
     ]
   },
   "disabledMcpjsonServers": [

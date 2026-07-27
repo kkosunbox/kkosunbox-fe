@@ -55,7 +55,7 @@ export function usePaymentState({
 
   function openPaymentPopup(method: string) {
     const url = `/payment?method=${encodeURIComponent(method)}`;
-    window.open(url, "paymentPopup", "width=480,height=700,scrollbars=yes");
+    window.open(url, "paymentPopup", "width=650,height=700,scrollbars=yes");
   }
 
   function handleChangeCard() {

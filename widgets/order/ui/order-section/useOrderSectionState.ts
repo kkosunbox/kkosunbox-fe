@@ -85,12 +85,16 @@ export function useOrderSectionState({
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  // [임시 — Toss 계약 신청용] form 조건 충족 후 결제하기를 누르면
-  // Toss 자동결제 등록창(테스트)을 띄운다. 계약 완료 후 실제 결제 흐름은 별도 연동 예정.
+  // 카드 미등록 상태에서 결제하기를 누르면 Toss 자동결제 등록창을 띄운다.
+  // 등록 완료(성공 시 successUrl 리다이렉트)까지는 팝업이 아닌 페이지 자체 이동이라
+  // 주문 폼 상태가 소실된다 — 등록 후에는 /subscribe로 돌아가 다시 결제해야 한다(별도 팝업 아키텍처 재구성 예정).
   async function startTossBillingRegistration() {
     setSubmitError(null);
     try {
-      await requestTossBillingAuth({ customerKey: crypto.randomUUID() });
+      await requestTossBillingAuth({
+        customerKey: crypto.randomUUID(),
+        billingInfoId: payment.billing?.id,
+      });
     } catch (err) {
       if (isTossUserCancel(err)) return;
       setSubmitError(getErrorMessage(err, "결제 수단 등록 창을 여는 중 오류가 발생했습니다."));
@@ -122,14 +126,14 @@ export function useOrderSectionState({
       }
     }
 
-    // [임시 — Toss 계약 신청용] 백엔드 결제 연동은 계약 전이라 400(인증되지 않은 키)을 반환한다.
-    // 그래서 실제 결제(proceedSubscription) 대신 Toss 자동결제 등록 UI를 띄운다.
-    // 계약 완료 후 아래 startTossBillingRegistration() 제거하고 proceedSubscription() 복원.
-    void startTossBillingRegistration();
-    // proceedSubscription(); // ← Toss 자동결제 계약 완료 후 활성화 (ready)
+    // 카드 등록된 유저는 바로 구독 생성(즉시 결제), 미등록 유저는 Toss 카드 등록부터 진행.
+    if (payment.billing) {
+      proceedSubscription();
+    } else {
+      void startTossBillingRegistration();
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 계약 완료 후 handlePay에서 복원 (ready)
   function proceedSubscription() {
     showLoading("구독을 처리하고 있습니다...");
     startTransition(async () => {

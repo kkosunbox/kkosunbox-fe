@@ -1,4 +1,5 @@
 import type { BillingInfo } from "@/features/billing/api/types";
+import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 import type { CouponInfo } from "@/features/subscription/api/types";
 import {
   FORM_ACTION_CHIP_CLASS as actionChipCls,
@@ -64,7 +65,7 @@ export function OrderPaymentSection({
                 <div className="flex items-center gap-3">
                   <CardIcon />
                   <span className="text-body-13-m text-[var(--color-text)]">
-                    {billing.cardCompany} **** {billing.lastFourDigits}
+                    {getCardName(billing)} **** {getLastFourDigits(billing)}
                   </span>
                   <BillingRegisteredIcon />
                 </div>

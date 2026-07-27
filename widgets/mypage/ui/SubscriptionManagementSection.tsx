@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
 import type { BillingInfo } from "@/features/billing/api/types";
+import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {
   comparePlansForDisplayOrder,
@@ -163,7 +165,16 @@ function PaymentInfoCard({
   billingInfo: BillingInfo | null;
   nextBillingDate: string | null;
 }) {
+  const router = useRouter();
   const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
+
+  // 서버 재조회(router.refresh) 결과가 로컬 state를 덮어쓰도록 동기화한다.
+  useEffect(() => {
+    setBillingInfo(initialBillingInfo);
+  }, [initialBillingInfo]);
+
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
+  useBillingUpdated(() => router.refresh());
 
   useEffect(() => {
     function handlePaymentMessage(e: MessageEvent) {
@@ -185,7 +196,7 @@ function PaymentInfoCard({
   }
 
   const cardDisplay = billingInfo
-    ? `${billingInfo.cardCompany} (${billingInfo.lastFourDigits})`
+    ? `${getCardName(billingInfo)} (${getLastFourDigits(billingInfo)})`
     : "미등록";
   const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
   const nextDateDisplay = nextBillingDate ? `${formatDate(nextBillingDate)} (카드결제)` : "-";

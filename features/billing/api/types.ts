@@ -1,11 +1,14 @@
 // ── BillingInfo ───────────────────────────────────────────────────
 
+// 카드사명·끝 4자리는 백엔드에서 null로 내려오는 경우가 확인됨 → 표시할 땐
+// features/billing/lib/formatBillingLabel의 헬퍼를 거친다(화면에 "null" 노출 방지).
 export interface BillingInfo {
   id: number;
   userId: number;
-  lastFourDigits: string;
-  cardCompany: string;
-  cardType: string;
+  lastFourDigits: string | null;
+  cardCompany: string | null;
+  /** "신용" | "체크" | "기프트" 등. 카드사명이 없을 때 표시 라벨로 사용한다. */
+  cardType: string | null;
   ownerType: string;
   authenticatedAt: string;
   isActive: boolean;
@@ -24,21 +27,15 @@ export interface BillingTermsResponse {
   content: string;
 }
 
-// ── 카드 정보 (등록/변경 공통) ────────────────────────────────────
+// ── Toss 자동결제(빌링) 등록/변경 공통 ──────────────────────────
+// authKey: Toss 카드 등록 인증 완료 후 successUrl로 전달받는 값.
+// customerKey: SDK requestBillingAuth 호출 시 사용한 값과 동일해야 함.
 
-interface CardInfo {
-  cardNo: string;    // 16자리 카드번호
-  expYear: string;   // 만료 연도 2자리 (예: "25")
-  expMonth: string;  // 만료 월 2자리 (예: "12")
-  idNo: string;      // 생년월일 6자리 또는 사업자등록번호 10자리
-  cardPw: string;    // 카드 비밀번호 앞 2자리
-  buyerName?: string;
-  buyerEmail?: string;
-  buyerTel?: string; // - 없이 숫자만
+export interface RegisterBillingRequest {
+  authKey: string;
+  customerKey: string;
 }
 
-export type RegisterBillingRequest = CardInfo;
-
-export interface UpdateBillingRequest extends CardInfo {
+export interface UpdateBillingRequest extends RegisterBillingRequest {
   billingInfoId: number;
 }

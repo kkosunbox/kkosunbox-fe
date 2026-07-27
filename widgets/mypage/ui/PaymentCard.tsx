@@ -1,9 +1,12 @@
 "use client";
 
 import { ReactNode, useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Text } from "@/shared/ui";
 import { DashboardCard, PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS, SectionHeader } from "../lib/dashboard-shared";
 import type { BillingInfo } from "@/features/billing/api/types";
+import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { formatCardLabel } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 
 interface PaymentCardProps {
@@ -34,7 +37,16 @@ function PaymentRow({
 }
 
 export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: PaymentCardProps) {
+  const router = useRouter();
   const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
+
+  // 서버 재조회(router.refresh) 결과가 로컬 state를 덮어쓰도록 동기화한다.
+  useEffect(() => {
+    setBillingInfo(initialBillingInfo);
+  }, [initialBillingInfo]);
+
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
+  useBillingUpdated(() => router.refresh());
 
   const handlePaymentMessage = useCallback((e: MessageEvent) => {
     if (e.origin !== window.location.origin) return;
@@ -57,9 +69,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
   }
 
   const hasMethod = billingInfo !== null;
-  const cardLabel = hasMethod
-    ? `${billingInfo.cardCompany} (****-****-****-${billingInfo.lastFourDigits})`
-    : "미등록";
+  const cardLabel = hasMethod ? formatCardLabel(billingInfo) : "미등록";
   const nextDate = subscription?.nextBillingDate
     ? `${subscription.nextBillingDate.replace(/-/g, ".")} (카드결제)`
     : "-";

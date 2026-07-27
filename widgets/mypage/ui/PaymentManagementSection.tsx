@@ -7,6 +7,8 @@ import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { getPaymentReceipt, cancelSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { BillingInfo } from "@/features/billing/api/types";
+import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { formatCardLabel } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 import { PAYMENT_REGISTER_CHIP_BUTTON_CLASS } from "../lib/dashboard-shared";
 
@@ -160,6 +162,14 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
 
   const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
 
+  // 서버 재조회(router.refresh) 결과가 로컬 state를 덮어쓰도록 동기화한다.
+  useEffect(() => {
+    setBillingInfo(initialBillingInfo);
+  }, [initialBillingInfo]);
+
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
+  useBillingUpdated(() => router.refresh());
+
   useEffect(() => {
     function handlePaymentMessage(e: MessageEvent) {
       if (e.origin !== window.location.origin) return;
@@ -195,9 +205,7 @@ export default function PaymentManagementSection({ billingInfo: initialBillingIn
   };
 
   /* 카드 표시 */
-  const cardDisplay = billingInfo
-    ? `${billingInfo.cardCompany} (****-****-****-${billingInfo.lastFourDigits})`
-    : "등록된 결제수단 없음";
+  const cardDisplay = billingInfo ? formatCardLabel(billingInfo) : "등록된 결제수단 없음";
   const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
   const simplePaymentDisplay = billingInfo ? cardDisplay : "미등록";
 

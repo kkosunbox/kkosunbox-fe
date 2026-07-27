@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { BillingInfo } from "@/features/billing/api/types";
+import { useBillingUpdated } from "@/features/billing/lib/billingSync";
 import { getCouponInfo } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo } from "@/features/subscription/api/types";
 import { getErrorMessage } from "@/shared/lib/api";
@@ -26,8 +28,18 @@ export function usePaymentState({
 }: {
   initialBilling: BillingInfo | null;
 }): PaymentStateResult {
+  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState<string>("신용카드");
   const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
+
+  // 서버 재조회(router.refresh) 결과가 로컬 state를 덮어쓰도록 동기화한다.
+  useEffect(() => {
+    setBilling(initialBilling);
+  }, [initialBilling]);
+
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
+  // router.refresh()는 Server Component만 다시 그리므로 입력 중인 주문 폼 상태는 유지된다.
+  useBillingUpdated(() => router.refresh());
   const [couponEnabled, setCouponEnabled] = useState(false);
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);

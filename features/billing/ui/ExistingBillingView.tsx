@@ -1,6 +1,7 @@
 "use client";
 
 import type { BillingInfo } from "../api/types";
+import { getCardCompany, getLastFourDigits } from "../lib/formatBillingLabel";
 
 interface Props {
   billing: BillingInfo;
@@ -76,10 +77,10 @@ export default function ExistingBillingView({
           </svg>
           <div className="flex flex-col gap-0.5">
             <span className="text-body-14-sb text-[var(--color-text)]">
-              {billing.cardCompany}
+              {getCardCompany(billing)}
             </span>
             <span className="text-body-13-r text-[var(--color-text-secondary)]">
-              **** **** **** {billing.lastFourDigits}
+              **** **** **** {getLastFourDigits(billing)}
             </span>
           </div>
           <svg

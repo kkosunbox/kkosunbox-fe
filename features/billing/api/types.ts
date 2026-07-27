@@ -1,10 +1,12 @@
 // ── BillingInfo ───────────────────────────────────────────────────
 
+// 카드사명·끝 4자리는 백엔드에서 null로 내려오는 경우가 확인됨 → 표시할 땐
+// features/billing/lib/formatBillingLabel의 헬퍼를 거친다(화면에 "null" 노출 방지).
 export interface BillingInfo {
   id: number;
   userId: number;
-  lastFourDigits: string;
-  cardCompany: string;
+  lastFourDigits: string | null;
+  cardCompany: string | null;
   cardType: string;
   ownerType: string;
   authenticatedAt: string;

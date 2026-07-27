@@ -34,6 +34,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   INVALID_ACCESS_TOKEN: "로그인이 만료되었습니다. 다시 로그인해주세요.",
   BAD_REQUEST: "요청 정보를 확인해주세요.",
 
+  // Toss 자동결제(빌링) 등록 — 클라이언트 인증 단계 실패 코드 (failUrl 리다이렉트)
+  PAY_PROCESS_CANCELED: "카드 등록이 취소되었습니다.",
+  PAY_PROCESS_ABORTED: "카드 인증에 실패했습니다. 다시 시도해주세요.",
+  REJECT_CARD_COMPANY: "카드 정보를 확인해주세요.",
+
   // 구독
   SUBSCRIPTION_NOT_FOUND: "구독 정보를 찾을 수 없습니다.",
   SUBSCRIPTION_PLAN_NOT_FOUND: "구독 플랜을 찾을 수 없습니다.",
@@ -98,4 +103,17 @@ export function getErrorMessage(
  */
 export function isErrorCode(error: unknown, code: string): boolean {
   return error instanceof ApiError && error.code === code;
+}
+
+/**
+ * 에러 코드 문자열로 메시지를 조회한다.
+ * catch로 감싸지 못하는 리다이렉트 쿼리(예: Toss failUrl `code`)처럼
+ * 에러 객체가 아닌 코드 문자열만 있을 때 사용한다.
+ */
+export function getMessageByCode(
+  code: string | undefined,
+  fallback: string = DEFAULT_FALLBACK,
+): string {
+  if (!code) return fallback;
+  return ERROR_MESSAGES[code] ?? fallback;
 }

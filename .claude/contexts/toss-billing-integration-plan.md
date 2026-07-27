@@ -54,20 +54,25 @@ Body: `{ billingInfoId: number, authKey: string, customerKey: string }`
 - [ ] **Toss 빌링 계약 클라이언트 키** — *현재 미보유(2026-06-29 확인).* 자동결제 계약 전이므로 실제 동작 테스트 불가. → 우선 placeholder/문서용 키로 **코드만 완성**, 실키 확보 시 `.env.local`의 `NEXT_PUBLIC_TOSS_CLIENT_KEY`만 교체.
 
 ### 코드
-- [ ] `@tosspayments/tosspayments-sdk`(v2) 의존성 추가. (기존 `payment-widget-sdk`는 일회성 결제용 — 빌링 인증 미지원)
-- [ ] `shared/config/env.ts`에 `tossClientKey: process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY` 추가.
-- [ ] `features/billing/api/types.ts`: `RegisterBillingRequest = { authKey, customerKey }`, `UpdateBillingRequest = { billingInfoId, authKey, customerKey }`로 교체. `CardInfo` 제거.
-- [ ] `features/billing/api/billingApi.ts`: 주석/시그니처 갱신(엔드포인트는 동일).
-- [ ] `CardInputView`(카드번호 원문 폼) 제거 → Toss `requestBillingAuth` 트리거 화면으로 교체.
-- [ ] `PaymentManager`: view 흐름 재정비(등록/변경 → Toss 인증으로 분기). `existing-billing` 뷰는 유지 가능.
-- [ ] `/payment/billing/success` 라우트 추가: query에서 authKey·customerKey 추출 → register/update → postMessage → close. 변경 모드면 billingInfoId 전달 필요(팝업 진입 시 state/param으로 보존).
-- [ ] `/payment/billing/fail` 라우트 추가: 에러 메시지 표시 후 닫기/재시도.
-- [ ] `shared/lib/api/errorMessages.ts`: 한국어 매핑 추가.
+- [x] `@tosspayments/tosspayments-sdk`(v2) 의존성 추가. (기존 `payment-widget-sdk`는 일회성 결제용 — 빌링 인증 미지원)
+- [x] `shared/config/env.ts`에 `tossClientKey: process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY` 추가.
+- [x] `features/billing/api/types.ts`: `RegisterBillingRequest = { authKey, customerKey }`, `UpdateBillingRequest = { billingInfoId, authKey, customerKey }`로 교체. `CardInfo` 제거. (2026-07-24)
+- [x] `features/billing/api/billingApi.ts`: register/update를 `queries.ts`(server-only)로 이전 — authKey·customerKey는 successUrl 리다이렉트로만 전달되므로 서버(Server Component)에서만 소비하고 클라이언트로 내려보내지 않음. (2026-07-24, 아래 §customerKey HTML 노출 수정 참고)
+- [x] `CardInputView`(카드번호 원문 폼) 제거 → Toss `requestBillingAuth` 트리거 화면으로 교체. (2026-07-24)
+- [x] `PaymentManager`: `card-input`은 이제 로컬 콜백(onConfirm) 없이 Toss 인증 트리거만 담당(결과는 별도 페이지 이동으로 옴). `existing-billing` 뷰는 그대로 유지. (2026-07-24)
+- [x] `/payment/billing/success` 라우트: query에서 authKey·customerKey 추출 → **서버에서** register/update 호출 → `BillingSuccessBridge`(client)가 opener 있으면 postMessage+close, 없으면(주문 페이지 임시 인라인 흐름) 완료 화면 표시. billingInfoId는 successUrl 쿼리로 왕복. (2026-07-24)
+- [x] `/payment/billing/fail` 라우트: Toss `message` 원문 노출 제거 → `code`를 중앙 에러 맵으로 변환. (2026-07-24)
+- [x] `shared/lib/api/errorMessages.ts`: 한국어 매핑 추가.
   - **백엔드(register/update) 응답:** `INVALID_BILLING_KEY`(이미 등록/유효하지 않은 빌링키).
-  - **Toss failUrl 리다이렉트 `code`(클라이언트 인증 단계, 아래 §공식문서 교차검증 참조):** `PAY_PROCESS_CANCELED`(사용자 취소), `PAY_PROCESS_ABORTED`(인증 실패), `REJECT_CARD_COMPANY`(카드 정보 문제). → fail 페이지에서 `getErrorMessage`로 변환.
+  - **Toss failUrl 리다이렉트 `code`:** `PAY_PROCESS_CANCELED`(사용자 취소), `PAY_PROCESS_ABORTED`(인증 실패), `REJECT_CARD_COMPANY`(카드 정보 문제) — 추가 완료. 코드 문자열만 있고 에러 객체가 없는 케이스를 위해 `getMessageByCode(code, fallback)` 헬퍼 신설.
   - **참고(백엔드 영역, 프론트 직접 노출 X):** `UNAUTHORIZED_KEY`·`NOT_SUPPORTED_METHOD`(빌링키 발급), `NOT_MATCHES_CUSTOMER_KEY`(자동결제 승인)는 백엔드가 Toss와 통신 시 발생 → 백엔드가 `INVALID_BILLING_KEY` 등으로 정규화해 내려줌. 프론트는 정규화된 코드만 매핑.
-- [ ] `customerKey` 주입: `/payment` 서버 컴포넌트에서 `getAuthUser()` → `user_${id}`.
-- [ ] (확인) "결제하기"(`handlePay`→`createSubscription`)는 변경 없음.
+- [x] `customerKey`: **`user_${id}` 대신 `crypto.randomUUID()` 확정 유지**(§customerKey 문단 참고 — Toss가 예측 가능한 값을 안전하지 않다고 명시). 호출부(`useOrderSectionState`, `CardInputView`)에서 매 시도마다 생성.
+- [x] (확인) "결제하기"(`handlePay`→`createSubscription`)는 변경 없음.
+
+### ✅ customerKey HTML 노출 수정 (2026-07-24)
+- **문제**: `/payment/billing/success` 페이지가 authKey·customerKey를 그대로 화면에 텍스트로 렌더링(디버그용 임시 구현)하고 있었음. 클라이언트 키 실교체로 실연동이 진행되는 시점이라 위험.
+- **조치**: register/update 호출을 **Server Component에서만** 수행하도록 이전(`features/billing/api/queries.ts`에 `registerBillingKey`/`updateBillingKey` 추가, `getServerToken()` 사용). authKey·customerKey는 서버 지역 변수로만 존재하며 React 트리(props/RSC payload)로 클라이언트에 전달되지 않음 → HTML/DOM 어디에도 값이 실리지 않음. 성공 시 안전한 결과(`BillingInfo` — 카드사·끝 4자리)만 클라이언트 브릿지 컴포넌트로 전달.
+- 같은 이유로 `/payment/billing/fail`의 Toss `message` 원문 노출도 함께 제거(코드 기반 중앙 매핑으로 교체).
 
 ### 검증
 - [ ] 신규 계정: 카드 등록 → BillingInfo 반영 → 결제하기 → 구독 생성.

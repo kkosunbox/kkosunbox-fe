@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { getMessageByCode } from "@/shared/lib/api";
 
 // Toss 자동결제(빌링) 카드 등록 실패/취소 리다이렉트.
-// query로 에러 code·message를 받는다.
+// Toss가 내려주는 message는 백엔드 에러와 동일하게 사용자에게 직접 노출하지 않고,
+// code를 중앙 에러 맵(shared/lib/api/errorMessages.ts)으로 변환해 보여준다.
 
 type SearchParams = {
   code?: string;
-  message?: string;
 };
 
 export default async function BillingFailPage({
@@ -13,17 +14,15 @@ export default async function BillingFailPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { code, message } = await searchParams;
+  const { code } = await searchParams;
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-950">
       <div className="mx-auto flex max-w-xl flex-col gap-4">
-        <h1 className="text-2xl font-bold">빌링 카드 등록 실패</h1>
-
-        <div className="flex flex-col gap-1 text-zinc-700">
-          <p>에러 코드: {code ?? "(없음)"}</p>
-          <p>실패 사유: {message ?? "(없음)"}</p>
-        </div>
+        <h1 className="text-2xl font-bold">카드 등록에 실패했습니다</h1>
+        <p className="text-zinc-600">
+          {getMessageByCode(code, "카드 등록 처리 중 오류가 발생했습니다.")}
+        </p>
 
         <Link
           href="/subscribe"

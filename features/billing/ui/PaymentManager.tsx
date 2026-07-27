@@ -30,7 +30,7 @@ export default function PaymentManager({ initialMethod, initialBilling }: Props)
 
   const [view, setView] = useState<View>("method");
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>(initial);
-  const [billing, setBilling] = useState<BillingInfo | null>(initialBilling);
+  const [billing] = useState<BillingInfo | null>(initialBilling);
 
   const closeWindow = useCallback(() => {
     window.close();
@@ -47,11 +47,6 @@ export default function PaymentManager({ initialMethod, initialBilling }: Props)
       // 신용카드 외 결제수단은 바로 선택 결과 전달
       sendResult({ method: selectedMethod });
     }
-  }
-
-  function handleCardConfirm(registeredBilling: BillingInfo) {
-    setBilling(registeredBilling);
-    sendResult({ method: "신용카드", billing: registeredBilling });
   }
 
   function handleExistingConfirm(selectedBilling: BillingInfo) {
@@ -97,7 +92,6 @@ export default function PaymentManager({ initialMethod, initialBilling }: Props)
       return (
         <CardInputView
           existingBilling={billing}
-          onConfirm={handleCardConfirm}
           onBack={() => (billing ? setView("existing-billing") : setView("method"))}
           onClose={closeWindow}
         />

@@ -1,36 +1,25 @@
 import Link from "next/link";
+import { getServerToken } from "@/features/auth/lib/session";
+import { registerBillingKey, updateBillingKey } from "@/features/billing/api/queries";
+import { getErrorMessage } from "@/shared/lib/api";
+import BillingSuccessBridge from "./BillingSuccessBridge";
 
-// Toss 자동결제(빌링) 카드 등록 성공 리다이렉트.
-// query로 authKey·customerKey를 받는다. 계약 완료 후:
-//   백엔드 POST /v1/billing/register {authKey, customerKey} 호출 → 빌링키 발급.
-// 현재(계약 전)는 값 확인용으로만 표시한다.
+// Toss 자동결제(빌링) 카드 등록 인증 완료 리다이렉트.
+// authKey·customerKey는 여기(서버)에서만 소비해 백엔드 발급을 완료하며,
+// 클라이언트로 내려보내거나 화면에 렌더링하지 않는다.
 
 type SearchParams = {
   authKey?: string;
   customerKey?: string;
+  billingInfoId?: string;
 };
 
-export default async function BillingSuccessPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
-  const { authKey, customerKey } = await searchParams;
-
+function StatusPage({ title, message }: { title: string; message: string }) {
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-950">
       <div className="mx-auto flex max-w-xl flex-col gap-4">
-        <h1 className="text-2xl font-bold">빌링 카드 등록 인증 완료</h1>
-        <p className="text-zinc-600">
-          Toss 자동결제 카드 등록 인증이 완료되었습니다. 아래 값으로 백엔드 빌링키
-          발급(<code>POST /v1/billing/register</code>)을 진행하면 됩니다.
-        </p>
-
-        <div className="flex flex-col gap-1 break-all text-zinc-700">
-          <p>authKey: {authKey ?? "(없음)"}</p>
-          <p>customerKey: {customerKey ?? "(없음)"}</p>
-        </div>
-
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <p className="text-zinc-600">{message}</p>
         <Link
           href="/subscribe"
           className="text-sm font-medium text-zinc-500 hover:underline"
@@ -40,4 +29,53 @@ export default async function BillingSuccessPage({
       </div>
     </main>
   );
+}
+
+export default async function BillingSuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const { authKey, customerKey, billingInfoId } = await searchParams;
+
+  const token = await getServerToken();
+  if (!token) {
+    return (
+      <StatusPage
+        title="로그인이 필요합니다"
+        message="다시 로그인한 뒤 카드를 등록해 주세요."
+      />
+    );
+  }
+
+  if (!authKey || !customerKey) {
+    return (
+      <StatusPage
+        title="카드 등록에 실패했습니다"
+        message="인증 정보를 확인할 수 없습니다. 다시 시도해 주세요."
+      />
+    );
+  }
+
+  const parsedBillingInfoId = billingInfoId ? Number(billingInfoId) : undefined;
+  const isUpdate = parsedBillingInfoId !== undefined && Number.isFinite(parsedBillingInfoId);
+
+  let billing;
+  try {
+    billing = isUpdate
+      ? await updateBillingKey(
+          { billingInfoId: parsedBillingInfoId, authKey, customerKey },
+          token,
+        )
+      : await registerBillingKey({ authKey, customerKey }, token);
+  } catch (err) {
+    return (
+      <StatusPage
+        title="카드 등록에 실패했습니다"
+        message={getErrorMessage(err, "카드 등록 처리 중 오류가 발생했습니다.")}
+      />
+    );
+  }
+
+  return <BillingSuccessBridge billing={billing} />;
 }

@@ -1,7 +1,5 @@
 export {
   getBillingInfos,
-  registerBilling,
-  updateBilling,
   deleteBilling,
   getBillingTerms,
 } from "./billingApi";

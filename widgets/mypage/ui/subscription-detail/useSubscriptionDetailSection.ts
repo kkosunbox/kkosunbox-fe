@@ -19,8 +19,10 @@ import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/sub
 import {
   ITEMS_PER_PAGE,
   billingDayFromDate,
+  computeNextBillingDate,
   deriveStartDate,
   formatDate,
+  formatKoreanDate,
 } from "./helpers";
 
 /**
@@ -223,10 +225,11 @@ export function useSubscriptionDetailSection({
   function handleSelectBillingDay(day: number) {
     setBillingDay(day);
     setIsEditingBillingDay(false);
+    const nextBillingDate = computeNextBillingDate(day);
     openAlert({
       type: "success",
-      title: "결제일이 변경되었습니다.",
-      description: `다음 결제일부터 매달 ${day}일에 결제돼요.`,
+      title: `결제일이 매달 ${day}일로 변경되었습니다.`,
+      description: `다음 결제일: ${formatKoreanDate(nextBillingDate)}`,
     });
   }
 

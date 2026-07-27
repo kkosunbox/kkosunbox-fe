@@ -35,6 +35,17 @@ export function billingDayFromDate(dateStr: string): number {
   return parseInt(dateStr.slice(8, 10), 10);
 }
 
+/** 오늘(from) 기준으로 매달 day일의 다음 도래일을 계산한다. 이번 달에 아직 안 지났으면 이번 달, 지났으면 다음 달. */
+export function computeNextBillingDate(day: number, from: Date = new Date()): Date {
+  const targetMonth = from.getDate() <= day ? from.getMonth() : from.getMonth() + 1;
+  return new Date(from.getFullYear(), targetMonth, day);
+}
+
+/** `2026년 8월 15일` 형식으로 포맷한다. */
+export function formatKoreanDate(date: Date): string {
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
 // 말일(29~31일) 결제일은 매달 실제 일수가 달라 스킵/보정 문제가 생기므로 선택지에서 제외
 export const BILLING_DAY_OPTIONS = Array.from({ length: 28 }, (_, i) => i + 1);
 

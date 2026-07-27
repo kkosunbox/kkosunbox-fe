@@ -12,6 +12,7 @@ export {
   cancelPayment,
   changePlan,
   changeDeliveryAddress,
+  changeBillingDay,
   getPaymentReceipt,
   getCouponInfo,
 } from "./subscriptionApi";
@@ -30,6 +31,7 @@ export type {
   CreateSubscriptionRequest,
   ChangePlanRequest,
   ChangeDeliveryAddressRequest,
+  ChangeBillingDayRequest,
   GetCouponInfoRequest,
   GetPaymentHistoryParams,
   SubscriptionPlanListResponse,

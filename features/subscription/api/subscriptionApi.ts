@@ -1,6 +1,7 @@
 import { apiClient } from "@/shared/lib/api";
 import type {
   CancelPaymentRequest,
+  ChangeBillingDayRequest,
   ChangePlanRequest,
   ChangePlanResponse,
   ChangeDeliveryAddressRequest,
@@ -117,6 +118,17 @@ export function changeDeliveryAddress(
 ) {
   return apiClient.patch<UserSubscriptionDto>(
     `/v1/subscriptions/${subscriptionId}/delivery-address`,
+    body,
+  );
+}
+
+/**
+ * 구독 결제일 변경 (매달 1~31일).
+ * 변경된 결제일이 오늘 이전이거나 같으면 다음 달부터, 오늘 이후면 이번 달부터 적용된다.
+ */
+export function changeBillingDay(subscriptionId: number, body: ChangeBillingDayRequest) {
+  return apiClient.patch<UserSubscriptionDto>(
+    `/v1/subscriptions/${subscriptionId}/billing-day`,
     body,
   );
 }

@@ -53,18 +53,19 @@ export function usePaymentState({
     [],
   );
 
-  function openPaymentPopup(method: string) {
-    const url = `/payment?method=${encodeURIComponent(method)}`;
+  function openPaymentPopup(url: string) {
     window.open(url, "paymentPopup", "width=650,height=700,scrollbars=yes");
   }
 
+  // 주문 페이지까지 온 사용자가 직접 "카드 등록/변경"을 누른 것이므로 팝업에서 다시 묻지 않고
+  // 곧바로 Toss 카드 입력 화면을 띄운다(mode=direct).
   function handleChangeCard() {
-    openPaymentPopup(paymentMethod);
+    openPaymentPopup("/payment?mode=direct");
   }
 
   function handleSelectPaymentMethod(method: string) {
     setPaymentMethod(method);
-    openPaymentPopup(method);
+    openPaymentPopup(`/payment?method=${encodeURIComponent(method)}`);
   }
 
   function handleToggleCoupon() {

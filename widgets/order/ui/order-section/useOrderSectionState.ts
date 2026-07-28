@@ -211,8 +211,9 @@ export function useOrderSectionState({
     couponInfo: payment.couponInfo,
     couponError: payment.couponError,
     handleSelectPaymentMethod: payment.handleSelectPaymentMethod,
-    // [임시 — Toss 계약 신청용] "카드 등록/변경" 버튼도 구 NICEPAY 팝업 대신 Toss 빌링 UI를 띄운다.
-    handleChangeCard: () => void startTossBillingRegistration(),
+    // "카드 등록/변경"은 팝업(`/payment?mode=direct`)에서 처리한다. 현재 창을 Toss로 이동시키면
+    // 입력 중이던 주문 폼이 통째로 날아가므로 인라인 리다이렉트를 쓰지 않는다.
+    handleChangeCard: payment.handleChangeCard,
     handleToggleCoupon: payment.handleToggleCoupon,
     handleApplyCoupon: payment.handleApplyCoupon,
 

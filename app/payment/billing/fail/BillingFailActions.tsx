@@ -32,7 +32,7 @@ export default function BillingFailActions() {
   return (
     <div className="flex gap-2">
       <Link
-        href={`/payment?method=${encodeURIComponent("신용카드")}`}
+        href="/payment?mode=change"
         className="flex h-11 flex-1 items-center justify-center rounded-lg bg-zinc-900 text-sm font-medium text-white hover:opacity-90"
       >
         다시 시도

@@ -446,7 +446,9 @@
       "Bash(sleep 1)",
       "Bash(tail -5 /c/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/c5e0d7a6-2787-4c35-851d-25b4e57b9a9d/tasks/byk5ti3r4.output)",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/payment/billing/fail?code=PAY_PROCESS_CANCELED\" -UseBasicParsing -TimeoutSec 10; \"STATUS: $\\($r.StatusCode\\)\"; if \\($r.Content -match '카드 등록이 취소되었습니다'\\) { \"문구 매핑 OK\" } elseif \\($r.Content -match '카드 등록에 실패'\\) { \"제목만 매치 — 문구 확인 필요\" } } catch { \"ERR: \" + $_.Exception.Message })",
-      "PowerShell(git -C C:\\\\2026\\\\ggosoonbox commit -F \"$env:TEMP\\\\claude\\\\C--2026-ggosoonbox\\\\c5e0d7a6-2787-4c35-851d-25b4e57b9a9d\\\\scratchpad\\\\commitmsg.txt\")"
+      "PowerShell(git -C C:\\\\2026\\\\ggosoonbox commit -F \"$env:TEMP\\\\claude\\\\C--2026-ggosoonbox\\\\c5e0d7a6-2787-4c35-851d-25b4e57b9a9d\\\\scratchpad\\\\commitmsg.txt\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/payment/billing/fail?code=PAY_PROCESS_CANCELED\" -UseBasicParsing -TimeoutSec 20; \"STATUS: $\\($r.StatusCode\\)\"; if \\($r.Content -match '카드 등록이 취소되었습니다'\\) { \"메시지 OK\" }; if \\($r.Content -match '구독으로 돌아가기'\\) { \"일반 탭 액션 OK \\(SSR 기본\\)\" }; if \\($r.Content -match '다시 시도'\\) { \"팝업 액션 마크업 포함\" } } catch { \"ERR: \" + $_.Exception.Message })",
+      "PowerShell(git status --short --untracked-files=no; git commit -F \"$env:TEMP\\\\claude\\\\C--2026-ggosoonbox\\\\8a01a96d-0cae-460d-a17a-f496b2205653\\\\scratchpad\\\\commit2.txt\")"
     ]
   },
   "disabledMcpjsonServers": [

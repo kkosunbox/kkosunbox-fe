@@ -60,9 +60,10 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
     return () => window.removeEventListener("message", handlePaymentMessage);
   }, [handlePaymentMessage]);
 
+  // 결제수단 변경 팝업. 등록된 카드가 있으면 확인 1단계, 없으면 곧바로 Toss 카드 등록창이 뜬다.
   function handleOpenPayment() {
     window.open(
-      `/payment?method=${encodeURIComponent("신용카드")}`,
+      "/payment?mode=change",
       "paymentPopup",
       "width=650,height=700,scrollbars=yes",
     );

@@ -444,7 +444,7 @@ function ProfileSectionDesktop({
   hasChecklist: boolean;
 }) {
   return (
-    <div className="relative hidden h-full pl-10 lg:flex lg:items-center lg:px-7 lg:py-[26px]">
+    <div className="relative max-lg:hidden h-full lg:flex lg:items-center lg:px-7 lg:py-[26px]">
       <div className="relative flex w-full items-center gap-0">
         {/* 구분선(h-148px) 상단과 맞춤 — 행 items-center 유지, 버튼만 절대 위치 */}
         <button

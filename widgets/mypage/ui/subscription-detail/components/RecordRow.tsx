@@ -49,7 +49,7 @@ export function RecordRow({
                 onClick={() => onCancelPayment(record.id)}
                 className="shrink-0 text-right text-body-13-sb leading-[130%] text-[var(--color-btn-dark-warm)] underline hover:opacity-80"
               >
-                구독취소
+                결제취소
               </button>
             )}
             <button
@@ -101,7 +101,7 @@ export function RecordRow({
                 onClick={() => onCancelPayment(record.id)}
                 className="shrink-0 text-right text-body-13-sb leading-[130%] text-[var(--color-btn-dark-warm)] underline hover:opacity-80"
               >
-                구독취소
+                결제취소
               </button>
             )}
           </div>

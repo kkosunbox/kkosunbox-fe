@@ -5,6 +5,8 @@ import type { BillingInfo } from "../api/types";
 import PaymentMethodView from "./PaymentMethodView";
 import CardInputView from "./CardInputView";
 import ExistingBillingView from "./ExistingBillingView";
+import BillingChangeView from "./BillingChangeView";
+import type { PaymentPopupMode } from "../lib/paymentPopupMode";
 
 type View = "method" | "card-input" | "existing-billing";
 
@@ -21,9 +23,10 @@ const PAYMENT_METHODS: PaymentMethod[] = [
 interface Props {
   initialMethod: string;
   initialBilling: BillingInfo | null;
+  mode: PaymentPopupMode | null;
 }
 
-export default function PaymentManager({ initialMethod, initialBilling }: Props) {
+export default function PaymentManager({ initialMethod, initialBilling, mode }: Props) {
   const initial = PAYMENT_METHODS.includes(initialMethod as PaymentMethod)
     ? (initialMethod as PaymentMethod)
     : "신용카드";
@@ -35,6 +38,17 @@ export default function PaymentManager({ initialMethod, initialBilling }: Props)
   const closeWindow = useCallback(() => {
     window.close();
   }, []);
+
+  // 결제수단 변경 진입은 선택 흐름을 타지 않고 곧바로 카드 변경 화면을 보여준다.
+  if (mode) {
+    return (
+      <BillingChangeView
+        billing={billing}
+        autoStart={mode === "direct"}
+        onClose={closeWindow}
+      />
+    );
+  }
 
   function handleMethodNext() {
     if (selectedMethod === "신용카드") {

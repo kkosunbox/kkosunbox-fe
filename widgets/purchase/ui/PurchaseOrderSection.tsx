@@ -10,10 +10,10 @@ import {
 import {
   SectionCard,
   Checkbox,
+  CollapsiblePanel,
+  ChevronIcon,
   QuantityMinusIcon,
   QuantityPlusIcon,
-  FORM_INPUT_CLASS,
-  FORM_ACTION_CHIP_CLASS,
 } from "@/shared/ui";
 import {
   TIER_BOX_IMAGES,
@@ -24,15 +24,16 @@ import {
 import { SHOP_FREE_SHIPPING_THRESHOLD, SHOP_SHIPPING_FEE } from "@/entities/product";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
-import { getErrorMessage } from "@/shared/lib/api";
 import { TOSS_WIDGET_CLIENT_KEY } from "@/shared/lib/payments/tossWidgetClient";
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
 import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
-import { getCouponInfo } from "@/features/subscription/api/subscriptionApi";
-import type { CouponInfo } from "@/features/subscription/api/types";
 import { computeOrderPricing } from "@/features/order/lib/orderPricing";
+import { createProductOrder } from "@/features/product/api/productApi";
+import { getErrorMessage } from "@/shared/lib/api";
+import { OrderPriceSummaryBar } from "@/widgets/order/ui/order-section/OrderPriceSummaryBar";
+import { OrderDeliveryMethodSection } from "@/widgets/order/ui/order-section/OrderDeliveryMethodSection";
 
 type PaymentMethodsWidget = ReturnType<PaymentWidgetInstance["renderPaymentMethods"]>;
 
@@ -40,31 +41,30 @@ interface PurchaseOrderSectionProps {
   pkg: PackageData;
   purchaseProduct: PackagePurchaseProduct;
   initialAddresses: DeliveryAddress[];
+  /** 백엔드 상품 카탈로그에서 매칭된 실제 상품 ID. 카탈로그가 비어있으면 null — 결제 시 안내 후 차단 */
+  productId: number | null;
 }
 
 export default function PurchaseOrderSection({
   pkg,
   purchaseProduct,
   initialAddresses,
+  productId,
 }: PurchaseOrderSectionProps) {
   const [openSections, setOpenSections] = useState({
     product: true,
     customer: true,
-    coupon: true,
     payment: true,
+    delivery: true,
     summary: true,
   });
   const [quantity, setQuantity] = useState(1);
   const address = useAddressState({ initialAddresses });
+  const [agreeOpen, setAgreeOpen] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState(false);
-
-  const [couponEnabled, setCouponEnabled] = useState(false);
-  const [couponCodeInput, setCouponCodeInput] = useState("");
-  const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
-  const [couponError, setCouponError] = useState<string | null>(null);
 
   const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
   const [paymentReady, setPaymentReady] = useState(false);
@@ -76,13 +76,15 @@ export default function PurchaseOrderSection({
 
   const agreeAll = agreeTerms && agreePrivacy;
 
-  const { basePrice, couponDiscount, total: discountedProductTotal } = computeOrderPricing({
+  // 단건 구매는 쿠폰 적용이 불가능하다 — couponRatePercent를 전달하지 않아 totalDiscount는 항상 0
+  const { basePrice, totalDiscount, total: productTotal } = computeOrderPricing({
     unitPrice: purchaseProduct.price,
     quantity,
-    couponRatePercent: couponInfo?.canUse ? couponInfo.discountRate : null,
   });
-  const shippingFee = basePrice >= SHOP_FREE_SHIPPING_THRESHOLD ? 0 : SHOP_SHIPPING_FEE;
-  const total = discountedProductTotal + shippingFee;
+  // 단건 구매 무료배송 이벤트 — 원래 배송비는 취소선으로만 표시하고 실제로는 0원 청구
+  const originalShippingFee = basePrice >= SHOP_FREE_SHIPPING_THRESHOLD ? 0 : SHOP_SHIPPING_FEE;
+  const shippingFee = 0;
+  const total = productTotal + shippingFee;
 
   const loadWidget = useCallback(async () => {
     setWidgetLoadError(null);
@@ -141,36 +143,6 @@ export default function PurchaseOrderSection({
     setAgreePrivacy(next);
   }
 
-  function handleToggleCoupon() {
-    const next = !couponEnabled;
-    setCouponEnabled(next);
-    if (!next) {
-      setCouponCodeInput("");
-      setCouponInfo(null);
-      setCouponError(null);
-    }
-  }
-
-  async function handleApplyCoupon() {
-    setCouponError(null);
-    const code = couponCodeInput.trim();
-    if (!code) {
-      setCouponError("쿠폰 코드를 입력해 주세요.");
-      setCouponInfo(null);
-      return;
-    }
-    try {
-      const info = await getCouponInfo({ code });
-      setCouponInfo(info);
-      if (!info.canUse) {
-        setCouponError(info.unavailableReason ?? "사용할 수 없는 쿠폰입니다.");
-      }
-    } catch (err) {
-      setCouponInfo(null);
-      setCouponError(getErrorMessage(err, "쿠폰 확인에 실패했습니다."));
-    }
-  }
-
   async function handlePay() {
     setSubmitError(null);
 
@@ -201,20 +173,36 @@ export default function PurchaseOrderSection({
       return;
     }
 
+    if (productId === null) {
+      setSubmitError("현재 이 상품은 준비 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
     const receiverName = address.selectedAddress?.receiverName ?? address.newAddr.receiverName;
 
     setIsPaying(true);
     try {
+      const deliveryAddressId = address.selectedAddressId ?? (await address.createAddress());
+      if (deliveryAddressId === null) {
+        setSubmitError("배송지를 선택하거나 입력해 주세요.");
+        return;
+      }
+
+      const order = await createProductOrder(productId, { deliveryAddressId, quantity });
+
+      // 결제위젯에 바인딩된 금액을 백엔드가 계산한 실제 금액으로 맞춘다 — confirm 시 금액 불일치(PRODUCT_ORDER_AMOUNT_MISMATCH) 방지
+      paymentMethodsWidgetRef.current?.updateAmount(order.amount);
+
       await paymentWidget.requestPayment({
-        orderId: crypto.randomUUID(),
-        orderName: `${pkg.name} ${quantity}개`,
+        orderId: order.orderId,
+        orderName: order.orderName,
         customerName: receiverName.trim() || undefined,
-        successUrl: `${window.location.origin}/purchase/order/success?tier=${pkg.tier}&quantity=${quantity}`,
-        failUrl: `${window.location.origin}/purchase/order/fail?tier=${pkg.tier}`,
+        successUrl: `${window.location.origin}/purchase/order/success`,
+        failUrl: `${window.location.origin}/purchase/order/fail`,
       });
     } catch (err) {
       if (isTossUserCancel(err)) return;
-      setSubmitError("결제 요청 중 오류가 발생했습니다. 다시 시도해주세요.");
+      setSubmitError(getErrorMessage(err, "결제 요청 중 오류가 발생했습니다. 다시 시도해주세요."));
     } finally {
       setIsPaying(false);
     }
@@ -227,13 +215,21 @@ export default function PurchaseOrderSection({
         strategy="afterInteractive"
       />
 
+      <OrderPriceSummaryBar
+        basePrice={basePrice}
+        totalDiscount={totalDiscount}
+        shippingFee={shippingFee}
+        originalShippingFee={originalShippingFee}
+        total={total}
+      />
+
       <div className="bg-white">
         <div
           className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:px-0"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
           <div className="grid items-start max-md:gap-y-9 md:grid-cols-[55%_1px_1fr] md:gap-x-6 lg:grid-cols-[1fr_1px_327px] lg:gap-x-8">
-            {/* 좌측 — 제품 · 배송지 · 결제수단 */}
+            {/* 좌측 — 제품 · 배송지 · 결제수단 · 배송방법 */}
             <div className="flex flex-col max-md:gap-9 md:gap-4">
               <SectionCard title="제품 정보" open={openSections.product} onToggle={() => toggleSection("product")}>
                 <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
@@ -305,43 +301,6 @@ export default function PurchaseOrderSection({
                 onSearchAddress={address.handleSearchAddress}
               />
 
-              <SectionCard title="쿠폰" open={openSections.coupon} onToggle={() => toggleSection("coupon")}>
-                <div className="flex flex-col gap-3 pb-1">
-                  <Checkbox checked={couponEnabled} onChange={handleToggleCoupon} label="쿠폰사용" />
-                  {couponEnabled && (
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-start gap-0 md:items-center md:gap-4">
-                        <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px] md:pt-0">
-                          쿠폰입력
-                        </span>
-                        <div className="flex min-w-0 flex-1 items-center gap-3">
-                          <input
-                            value={couponCodeInput}
-                            onChange={(e) => setCouponCodeInput(e.target.value)}
-                            className={`${FORM_INPUT_CLASS} min-w-0 flex-1`}
-                            placeholder="코드 입력"
-                            aria-label="쿠폰 코드"
-                          />
-                          <button type="button" onClick={() => void handleApplyCoupon()} className={FORM_ACTION_CHIP_CLASS}>
-                            쿠폰적용
-                          </button>
-                        </div>
-                        {couponInfo?.canUse ? (
-                          <span className="shrink-0 text-body-13-m text-[var(--color-text-secondary)]">
-                            {couponInfo.name ?? "할인쿠폰"} {couponInfo.discountRate}% -{formatKrwPrice(couponDiscount)}
-                          </span>
-                        ) : null}
-                      </div>
-                      {couponError ? (
-                        <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]" role="alert">
-                          {couponError}
-                        </p>
-                      ) : null}
-                    </div>
-                  )}
-                </div>
-              </SectionCard>
-
               <SectionCard title="결제 수단" open={openSections.payment} onToggle={() => toggleSection("payment")}>
                 <div className="flex flex-col gap-4 pb-1">
                   {widgetLoadError ? (
@@ -370,47 +329,67 @@ export default function PurchaseOrderSection({
                   )}
                 </div>
               </SectionCard>
+
+              <OrderDeliveryMethodSection
+                open={openSections.delivery}
+                onToggle={() => toggleSection("delivery")}
+              />
             </div>
 
             <div className="max-md:hidden self-stretch bg-[var(--color-text-muted)]" />
 
-            {/* 우측 — 결제 금액 · 약관 · 결제 버튼 */}
+            {/* 우측 — 결제 정보 · 약관 · 결제 버튼 */}
             <div className="flex flex-col max-md:gap-9 md:gap-4">
-              <SectionCard title="결제 금액" open={openSections.summary} onToggle={() => toggleSection("summary")}>
-                <div className="flex flex-col gap-3 pb-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-body-13-m text-[var(--color-text-body-warm)]">상품 금액</span>
-                    <span className="text-price-14-sb text-[var(--color-text)]">{formatKrwPrice(basePrice)}</span>
-                  </div>
-                  {couponDiscount > 0 ? (
+              <SectionCard title="결제정보" open={openSections.summary} onToggle={() => toggleSection("summary")}>
+                <div className="flex flex-col max-md:gap-4 md:gap-8">
+                  <div className="flex flex-col max-md:gap-4 md:gap-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-body-13-m text-[var(--color-text-body-warm)]">쿠폰 할인</span>
-                      <span className="text-price-14-sb text-[var(--color-cta-button)]">
-                        -{formatKrwPrice(couponDiscount)}
+                      <span className="text-body-13-m text-[var(--color-text)]">주문상품금액</span>
+                      <span className="text-body-13-m text-[var(--color-text)]">{formatKrwPrice(basePrice)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-body-13-m text-[var(--color-text)]">총 쿠폰 할인금액</span>
+                      <span className="text-body-13-m text-[var(--color-text)]">-{formatKrwPrice(totalDiscount)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-body-13-m text-[var(--color-text)]">총 배송비</span>
+                      <span className="text-body-13-m text-[var(--color-text)]">
+                        {originalShippingFee > shippingFee && (
+                          <span className="mr-1 text-[var(--color-text-secondary)] line-through">
+                            -{formatKrwPrice(originalShippingFee)}
+                          </span>
+                        )}
+                        -{formatKrwPrice(shippingFee)}
                       </span>
                     </div>
-                  ) : null}
-                  <div className="flex items-center justify-between">
-                    <span className="text-body-13-m text-[var(--color-text-body-warm)]">배송비</span>
-                    <span className="text-price-14-sb text-[var(--color-text)]">
-                      {shippingFee === 0 ? "무료" : formatKrwPrice(shippingFee)}
-                    </span>
-                  </div>
-                  {shippingFee > 0 ? (
-                    <p className="text-caption-12-r text-[var(--color-text-secondary)]">
-                      {formatKrwPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송
-                    </p>
-                  ) : null}
-                  <div className="flex items-center justify-between border-t border-[var(--color-border-light)] pt-3">
-                    <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">총 결제 금액</span>
-                    <span className="text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                      {formatKrwPrice(total)}
-                    </span>
                   </div>
 
-                  <div className="mt-2 flex flex-col gap-3 border-t border-[var(--color-border-light)] pt-4">
-                    <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="아래 약관에 모두 동의합니다." />
-                    <div className="flex flex-col gap-2 pl-7">
+                  <div className="border-t border-[var(--color-border-light)]" />
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-body-14-b text-[var(--color-text)]">단품구매</span>
+                    <span className="text-price-20-eb text-[var(--color-text)]">{formatKrwPrice(total)}</span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="모두 동의합니다." />
+                      <button
+                        type="button"
+                        aria-label={agreeOpen ? "약관 항목 접기" : "약관 항목 펼치기"}
+                        onClick={() => setAgreeOpen((v) => !v)}
+                        aria-expanded={agreeOpen}
+                        aria-controls="purchase-agreements-panel"
+                      >
+                        <ChevronIcon open={agreeOpen} size={20} />
+                      </button>
+                    </div>
+                    <CollapsiblePanel
+                      id="purchase-agreements-panel"
+                      open={agreeOpen}
+                      className="mt-3"
+                      innerClassName="flex flex-col gap-2.5 border-t border-[var(--color-border-light)] pt-3 pl-1"
+                    >
                       <Checkbox
                         checked={agreeTerms}
                         onChange={() => setAgreeTerms((v) => !v)}
@@ -421,7 +400,7 @@ export default function PurchaseOrderSection({
                         onChange={() => setAgreePrivacy((v) => !v)}
                         label="(필수) 개인정보 수집·이용 동의"
                       />
-                    </div>
+                    </CollapsiblePanel>
                   </div>
 
                   {submitError ? (
@@ -436,10 +415,22 @@ export default function PurchaseOrderSection({
                     disabled={!paymentReady || isPaying}
                     className="mt-1 flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50"
                   >
-                    {isPaying ? "결제 요청 중…" : `${formatKrwPrice(total)} 결제하기`}
+                    {isPaying ? "결제 요청 중…" : "결제하기"}
                   </button>
                 </div>
               </SectionCard>
+
+              <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
+                <Image
+                  src="/images/sidebar-banner-001.png"
+                  alt="꼬순박스 배너"
+                  width={375}
+                  height={126}
+                  quality={HIGH_IMAGE_QUALITY}
+                  className="h-auto w-full"
+                  sizes="(min-width: 1024px) 327px, 100vw"
+                />
+              </div>
             </div>
           </div>
         </div>

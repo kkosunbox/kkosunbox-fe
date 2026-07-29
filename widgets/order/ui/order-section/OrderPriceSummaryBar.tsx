@@ -1,19 +1,38 @@
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
 
 interface OrderPriceSummaryBarProps {
   basePrice: number;
   totalDiscount: number;
+  shippingFee: number;
+  /** 제공되고 shippingFee보다 크면 취소선 원가로 함께 표시 (무료배송 이벤트 등) */
+  originalShippingFee?: number;
   total: number;
 }
 
-export function OrderPriceSummaryBar({ basePrice, totalDiscount, total }: OrderPriceSummaryBarProps) {
-  const priceSummaryItems = [
+export function OrderPriceSummaryBar({
+  basePrice,
+  totalDiscount,
+  shippingFee,
+  originalShippingFee,
+  total,
+}: OrderPriceSummaryBarProps) {
+  const showShippingWaiver = originalShippingFee !== undefined && originalShippingFee > shippingFee;
+  const shippingValue: ReactNode = showShippingWaiver ? (
+    <>
+      <span className="mr-1 opacity-60 line-through">{formatPrice(originalShippingFee)}</span>
+      {formatPrice(shippingFee)}
+    </>
+  ) : (
+    formatPrice(shippingFee)
+  );
+
+  const priceSummaryItems: { label: string; value: ReactNode; emphasis: boolean }[] = [
     { label: "주문상품금액", value: formatPrice(basePrice), emphasis: false },
     { label: "총 할인금액", value: formatPrice(totalDiscount), emphasis: false },
-    { label: "총 배송비", value: "0원", emphasis: false },
+    { label: "총 배송비", value: shippingValue, emphasis: false },
     { label: "총 주문금액", value: formatPrice(total), emphasis: true },
-  ] as const;
+  ];
 
   return (
     <div className="w-full bg-[var(--color-top-band-bg)]">

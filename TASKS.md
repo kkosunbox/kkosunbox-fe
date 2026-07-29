@@ -1,7 +1,7 @@
 # 꼬순박스 — 잔여 개발 태스크
 
-> 최종 업데이트: 2026-07-23  
-> 우선순위: P0(즉시) → P1(마이페이지 완성) → P2(구독 플로우) → P3(기타)
+> 최종 업데이트: 2026-07-29  
+> 우선순위: P0(즉시) → P1(마이페이지 완성) → P2(구독 플로우) → P3(기타) → P4(단건 구매)
 
 ---
 
@@ -43,6 +43,17 @@
 - [ ] **배송 API 확인** — `DeliveryCard` 현재 항상 0 카운트. 배송 상태 API 존재 여부 백엔드 확인 필요
 - [ ] **소셜 로그인** — 카카오/네이버/구글 OAuth redirect 처리 (`/auth/callback` 라우트 구현)
 - [x] **비밀번호 찾기** — `/forgot-password` — `sendPasswordResetCode` → `verifyPasswordResetCode` → `resetPassword` 플로우
+
+---
+
+## P4 — 단건 구매(Product) 연동
+
+- [x] **API 선언·타입 작성** — `features/product/api/{productApi.ts,types.ts,index.ts}`. 상품 목록/상세, 주문 생성/목록/상세/확정/취소/영수증 8개 함수 + 타입. dev 서버(`api-dev.kkosunbox.com`)에서 8개 엔드포인트 전부 스펙대로 응답하는 것 curl로 확인(2026-07-29). 에러 코드(`PRODUCT_NOT_FOUND`, `PRODUCT_ORDER_AMOUNT_MISMATCH`, `PRODUCT_ORDER_PAYMENT_FAILED`) `errorMessages.ts`에 등록 완료. 웹훅(`POST /v1/products/webhook/toss`)은 Toss→백엔드 서버 간 통신이라 프론트 선언 대상 아님
+- [x] **"구매관리" 단일 페이지로 통합** — 처음엔 목록(카드그리드)+상세 2페이지로 만들었다가, 마이페이지 캐러셀 카드가 이미 허브 역할이라 판단해 `/mypage/purchase`(`?productId=` 쿼리, 없으면 첫 상품 그룹) 단일 페이지로 재통합(2026-07-29). `PurchaseManagementSection.tsx`·`/mypage/purchase/detail` 라우트 삭제. `PurchaseDetailSection.tsx`에 히어로카드(이미지+상품명+구매일+"단품구매"+**리뷰쓰기 버튼**) 추가 — 기획 이미지 대조 후 라벨도 정정(제품명/배송/구매일자/환불하기/상품준비중, `subscription-detail` 페이지 라벨 규칙과 통일). 리뷰쓰기는 `product.relatedPlanId` 기준으로 구독 리뷰 시스템(`fetchEligiblePlans`/`fetchMyReviews`) 재사용해서 실제로 작동함. `SubscriptionCard.tsx`의 구매 슬라이드 링크(카드클릭+"구매관리")도 전부 `/mypage/purchase?productId=`로 통일. 빌드/타입체크/린트 통과, 브라우저로 빈 상태(구매 0건) 확인 완료 — 실 주문 데이터로는 아직 미확인(아래 블로커 참고)
+- [x] **`/purchase/order/success`·`/fail` 결과 페이지 제거 → 리다이렉트+모달** — 기존엔 성공/실패 각각 별도 페이지(주문번호·에러코드 노출)였는데, 실패 시 그대로 남아있는 게 어색하다는 피드백으로 개편(2026-07-29). 이제 둘 다 페이지를 렌더링하지 않고: 실패 → `/purchase?confirmError=CODE`로 리다이렉트 후 `PurchasePaymentErrorNotice`가 모달로 안내, 성공 → `/mypage/purchase`로 바로 이동. 브라우저로 실패 모달 동작 확인 완료
+- [x] **`createProductOrder()`/`confirmProductOrder()` 실제 연동** — `features/product/lib/resolvePurchaseProduct.ts`(상품명 매칭, 카탈로그에 1개뿐이면 그걸로 간주) 신설. `app/(main)/purchase/order/page.tsx`가 `fetchProducts()`로 productId를 resolve해서 내려줌. `PurchaseOrderSection.tsx` `handlePay()`가 이제 ①`productId===null`이면 Toss 위젯 열기 전에 "상품 준비 중" 안내 후 차단 ②주소 없으면 생성 ③`createProductOrder()`로 진짜 orderId/orderName/amount 발급받음 ④위젯 바인딩 금액을 백엔드 amount로 재조정(금액 불일치 방지) ⑤그 값으로 `requestPayment()`. `/purchase/order/success`는 `confirmTossPayment`(Toss 직접, 공유 테스트키) 대신 신설한 `confirmProductOrderServer()`(우리 백엔드, `features/product/api/queries.ts`)로 승인 후 응답의 productId로 `/mypage/purchase?productId=` 이동(2026-07-29). **dev 서버 상품이 여전히 0건이라 실 결제 확인은 아직 불가** — 브라우저로 "상품 준비중" 차단 동작만 확인. 상품 등록되면 코드 수정 없이 바로 동작할 것
+- [ ] **entities/product 더미 카탈로그 교체** — `/purchase`(목록) 화면 자체는 여전히 `PACKAGES`/`PACKAGE_PURCHASE_PRODUCTS` 더미로 렌더링 중. 결제 플로우는 이제 실제 `getProducts()`로 productId를 찾아 쓰지만(위 항목), 목록 표시 자체를 실 API로 바꾸는 건 별개 — dev 서버 상품 등록 후 진행
+- [ ] **[보류] Toss 웹훅 인프라 설정 확인** — 프론트 작업 범위 아님. 백엔드 배포/Toss 개발자센터 웹훅 URL 등록 여부 별도 확인 필요
 
 ---
 

@@ -66,6 +66,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   PAYMENT_CANCELLATION_NOT_ALLOWED: "결제 취소가 불가능한 결제 건입니다.\n결제 완료 후 배송 전 상태에서만 취소할 수 있습니다.",
   PAYMENT_ALREADY_CANCELLED: "이미 취소된 결제 건입니다.",
 
+  // 단건 구매(product)
+  PRODUCT_NOT_FOUND: "상품을 찾을 수 없습니다.",
+  PRODUCT_ORDER_AMOUNT_MISMATCH: "결제 금액이 일치하지 않습니다.",
+  PRODUCT_ORDER_PAYMENT_FAILED: "결제에 실패했습니다. 다시 시도해주세요.",
+
   // 파일 업로드
   INVALID_FILE_FORMAT: "지원하지 않는 파일 형식입니다.",
 

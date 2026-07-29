@@ -4,6 +4,8 @@ import { PurchaseOrderSection } from "@/widgets/purchase";
 import { PACKAGES, CURRENT_PURCHASE_TIER, getPackagePurchaseProduct } from "@/entities/package";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
+import { fetchProducts } from "@/features/product/api/queries";
+import { resolvePurchaseProduct } from "@/features/product/lib/resolvePurchaseProduct";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata: Metadata = {
@@ -27,9 +29,19 @@ export default async function PurchaseOrderPage({
 
   // 비로그인 방문자도 구매 가능 — 토큰이 없으면 fetchDeliveryAddresses가 빈 배열을 반환한다.
   const token = await getServerToken();
-  const addresses = await fetchDeliveryAddresses(token);
+  const [addresses, products] = await Promise.all([
+    fetchDeliveryAddresses(token),
+    fetchProducts(token),
+  ]);
+  // 백엔드 상품 카탈로그가 아직 비어있을 수 있음 — 그 경우 결제 시점에 안내 후 차단(PurchaseOrderSection 참고)
+  const product = resolvePurchaseProduct(products, pkg.name);
 
   return (
-    <PurchaseOrderSection pkg={pkg} purchaseProduct={purchaseProduct} initialAddresses={addresses} />
+    <PurchaseOrderSection
+      pkg={pkg}
+      purchaseProduct={purchaseProduct}
+      initialAddresses={addresses}
+      productId={product?.id ?? null}
+    />
   );
 }

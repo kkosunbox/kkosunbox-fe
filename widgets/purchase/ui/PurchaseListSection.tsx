@@ -9,7 +9,7 @@ import {
   TIER_BOX_IMAGES,
   PlanRatingStars,
 } from "@/entities/package";
-import { SHOP_FREE_SHIPPING_THRESHOLD } from "@/entities/product";
+import type { ProductDto } from "@/features/product/api/types";
 import { ChevronIcon } from "@/shared/ui";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
@@ -17,9 +17,17 @@ import PurchaseHeroImage from "../assets/purchase-hero.webp";
 import PurchaseHeroImageTablet from "../assets/purchase-hero-tablet.webp";
 import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
 
-export default function PurchaseListSection() {
+interface PurchaseListSectionProps {
+  /** 백엔드 카탈로그에서 매칭된 실제 상품 (없으면 더미 데이터로 폴백) */
+  product: ProductDto | null;
+}
+
+export default function PurchaseListSection({ product: apiProduct }: PurchaseListSectionProps) {
   const pkg = PACKAGES.find((p) => p.tier === CURRENT_PURCHASE_TIER)!;
-  const product = getPackagePurchaseProduct(CURRENT_PURCHASE_TIER)!;
+  // 평점·티어 뱃지·박스 이미지는 백엔드가 아직 제공하지 않아 더미 유지 — 안정화되면 더미 통째로 제거 예정
+  const dummyProduct = getPackagePurchaseProduct(CURRENT_PURCHASE_TIER)!;
+  const displayName = apiProduct?.name ?? pkg.name;
+  const displayPrice = apiProduct?.price ?? dummyProduct.price;
 
   return (
     <div>
@@ -70,40 +78,33 @@ export default function PurchaseListSection() {
         </div>
       </section>
 
-      <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:py-8 md:py-12 lg:py-16">
-        {/* 안내 */}
-        <p className="max-md:text-body-14-r md:text-body-16-r text-[var(--color-text-secondary)]">
-          구독 제품을 단품으로 구매하실 수 있습니다.
-          {" "}
-          {formatKrwPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송.
-        </p>
-
+      <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:py-8 md:py-0 lg:py-0 lg:pb-12">
         {/* 상품 — 현재는 프리미엄 단품만 판매 */}
-        <Link href={`/purchase/order?tier=${pkg.tier}`} className="group mt-8 flex w-[272px] flex-col md:mt-10 lg:mt-12">
+        <Link href={`/purchase/order?tier=${pkg.tier}`} className="group mt-8 flex w-[272px] flex-col md:mt-2 lg:mt-4">
           <div
             className="relative aspect-[272/252] w-full overflow-hidden rounded-[16px]"
             style={{ boxShadow: "var(--shadow-card-soft)" }}
           >
             <Image
               src={TIER_BOX_IMAGES[pkg.tier]}
-              alt={pkg.name}
+              alt={displayName}
               fill
               quality={HIGH_IMAGE_QUALITY}
-              className="object-cover transition-transform duration-300 group-hover:scale-110"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="272px"
             />
           </div>
           <div className="flex flex-col gap-2 pt-6">
             <span className="text-subtitle-18-sb text-[var(--color-text-emphasis)] group-hover:text-[var(--color-primary)] transition-colors">
-              {pkg.name}
+              {displayName}
             </span>
             <div className="flex items-baseline gap-2">
               <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
               <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
-                {formatKrwPrice(product.price)}
+                {formatKrwPrice(displayPrice)}
               </span>
             </div>
-            <PlanRatingStars rating={product.rating} size={16} />
+            <PlanRatingStars rating={dummyProduct.rating} size={16} />
           </div>
         </Link>
 

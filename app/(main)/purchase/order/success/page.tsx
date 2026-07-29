@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { PACKAGES, type PackageTier } from "@/entities/package";
-import { formatKrwPrice } from "@/shared/lib/format";
-import { confirmTossPayment } from "@/shared/lib/payments/tossPaymentConfirm";
+import { redirect } from "next/navigation";
+import { getServerToken } from "@/features/auth/lib/session";
+import { confirmProductOrderServer } from "@/features/product/api/queries";
+import { ApiError } from "@/shared/lib/api";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata = {
-  title: "결제 완료 | 꼬순박스",
+  title: "결제 처리중 | 꼬순박스",
   ...NOINDEX_METADATA,
 };
 
@@ -13,61 +13,35 @@ type SearchParams = {
   paymentKey?: string;
   orderId?: string;
   amount?: string;
-  tier?: string;
-  quantity?: string;
 };
 
+// 결과를 별도 페이지로 보여주지 않고 바로 처리 후 리다이렉트한다.
+// 성공 → 마이페이지 구매관리(해당 상품 상세, 허브 역할), 실패 → 구매하기 페이지에서 모달로 안내.
 export default async function PurchaseOrderSuccessPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { paymentKey, orderId, amount, tier, quantity } = await searchParams;
+  const { paymentKey, orderId, amount } = await searchParams;
 
   if (!paymentKey || !orderId || !amount) {
-    return (
-      <div className="pt-[var(--header-offset)]">
-        <div className="mx-auto flex max-w-xl flex-col gap-2 px-6 py-16">
-          <h1 className="text-title-24-b text-[var(--color-text-emphasis)]">잘못된 접근입니다</h1>
-          <p className="text-body-14-r text-[var(--color-text-secondary)]">결제 파라미터가 없습니다.</p>
-          <Link href="/purchase" className="mt-4 text-body-14-sb text-[var(--color-primary)] hover:underline">
-            ← 구매하기로 돌아가기
-          </Link>
-        </div>
-      </div>
-    );
+    redirect("/purchase?confirmError=BAD_REQUEST");
   }
 
-  const { ok, body } = await confirmTossPayment({ paymentKey, orderId, amount });
-  const pkg = tier ? PACKAGES.find((p) => p.tier === (tier as PackageTier)) : undefined;
+  const token = await getServerToken();
 
-  return (
-    <div className="pt-[var(--header-offset)]">
-      <div className="mx-auto flex max-w-xl flex-col gap-4 px-6 py-16">
-        <h1 className="text-title-24-b text-[var(--color-text-emphasis)]">
-          {ok ? "결제가 완료되었습니다" : "결제 승인에 실패했습니다"}
-        </h1>
+  let redirectTo: string;
+  try {
+    const order = await confirmProductOrderServer(token, {
+      orderId,
+      paymentKey,
+      amount: Number(amount),
+    });
+    redirectTo = `/mypage/purchase?productId=${order.productId}`;
+  } catch (err) {
+    const code = err instanceof ApiError ? err.code : "UNKNOWN_ERROR";
+    redirectTo = `/purchase?confirmError=${encodeURIComponent(code)}`;
+  }
 
-        <div className="flex flex-col gap-1 text-body-14-r text-[var(--color-text-secondary)]">
-          {pkg ? (
-            <p>
-              {pkg.name} {quantity ?? 1}개
-            </p>
-          ) : null}
-          <p>결제 금액: {formatKrwPrice(Number(amount))}</p>
-          <p>주문번호: {orderId}</p>
-        </div>
-
-        {!ok ? (
-          <p className="text-body-13-m text-red-600" role="alert">
-            {body?.code}: {body?.message}
-          </p>
-        ) : null}
-
-        <Link href="/purchase" className="mt-4 text-body-14-sb text-[var(--color-primary)] hover:underline">
-          ← 구매하기로 돌아가기
-        </Link>
-      </div>
-    </div>
-  );
+  redirect(redirectTo);
 }

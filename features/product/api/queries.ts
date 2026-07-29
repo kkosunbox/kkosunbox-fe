@@ -4,7 +4,7 @@
  */
 import "server-only";
 import { apiClient } from "@/shared/lib/api";
-import { logProductFetch } from "../lib/productDebugLog";
+import { logProductFetch, logConfirmRequest, logConfirmSuccess, logConfirmFailure } from "../lib/productDebugLog";
 import type { ConfirmProductOrderRequest, GetProductOrdersParams, ProductDto, ProductOrderDto } from "./types";
 
 function serverOpts(token?: string) {
@@ -44,5 +44,17 @@ export async function confirmProductOrderServer(
   token: string | undefined,
   body: ConfirmProductOrderRequest,
 ): Promise<ProductOrderDto> {
-  return apiClient.post<ProductOrderDto>("/v1/products/orders/confirm", body, serverOpts(token));
+  logConfirmRequest(body);
+  try {
+    const order = await apiClient.post<ProductOrderDto>(
+      "/v1/products/orders/confirm",
+      body,
+      serverOpts(token),
+    );
+    logConfirmSuccess(order);
+    return order;
+  } catch (err) {
+    logConfirmFailure(err);
+    throw err;
+  }
 }

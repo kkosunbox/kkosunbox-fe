@@ -35,11 +35,14 @@ export default async function PurchaseOrderPage({
   ]);
   // 백엔드 상품 카탈로그가 아직 비어있을 수 있음 — 그 경우 결제 시점에 안내 후 차단(PurchaseOrderSection 참고)
   const product = resolvePurchaseProduct(products, pkg.name);
+  // 화면에 보이는 가격과 실제 청구 금액이 다르면 안 되므로, 매칭된 실제 상품이 있으면 가격을 그걸로 덮어쓴다.
+  // (productId만 넘기고 가격은 더미로 두면 결제 직전 위젯 금액만 몰래 바뀌는 꼴이 된다 — 화면·청구 불일치)
+  const effectivePurchaseProduct = { ...purchaseProduct, price: product?.price ?? purchaseProduct.price };
 
   return (
     <PurchaseOrderSection
       pkg={pkg}
-      purchaseProduct={purchaseProduct}
+      purchaseProduct={effectivePurchaseProduct}
       initialAddresses={addresses}
       productId={product?.id ?? null}
     />

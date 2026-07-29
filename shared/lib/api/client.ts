@@ -112,6 +112,7 @@ async function request<T>(
       res.status,
       errorBody?.code ?? "UNKNOWN_ERROR",
       errorBody?.message ?? res.statusText,
+      errorBody?.traceId ?? null,
     );
   }
 

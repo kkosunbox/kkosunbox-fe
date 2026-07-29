@@ -190,8 +190,9 @@ export default function PurchaseOrderSection({
 
       const order = await createProductOrder(productId, { deliveryAddressId, quantity });
 
-      // 결제위젯에 바인딩된 금액을 백엔드가 계산한 실제 금액으로 맞춘다 — confirm 시 금액 불일치(PRODUCT_ORDER_AMOUNT_MISMATCH) 방지
-      paymentMethodsWidgetRef.current?.updateAmount(order.amount);
+      // 결제위젯에 바인딩된 금액을 백엔드가 계산한 실제 금액으로 맞춘다 — confirm 시 금액 불일치(PRODUCT_ORDER_AMOUNT_MISMATCH) 방지.
+      // requestPayment() 전에 위젯 상태가 완전히 갱신되도록 await한다.
+      await paymentMethodsWidgetRef.current?.updateAmount(order.amount);
 
       await paymentWidget.requestPayment({
         orderId: order.orderId,

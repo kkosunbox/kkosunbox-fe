@@ -6,7 +6,8 @@
  * 상품명·가격·개수 등 민감 정보가 아니라 billing-debug와 달리 항상 출력한다(환경변수 게이트 없음).
  */
 import "server-only";
-import type { ProductDto } from "../api/types";
+import type { ApiError } from "@/shared/lib/api";
+import type { ConfirmProductOrderRequest, ProductDto, ProductOrderDto } from "../api/types";
 
 const PREFIX = "[product-debug]";
 
@@ -39,5 +40,32 @@ export function logProductResolve(
   console.info(
     `${PREFIX} ${stamp()} resolvePurchaseProduct("${packageName}") →`,
     JSON.stringify({ resolvedId: resolved?.id ?? null, resolvedName: resolved?.name ?? null, reason }),
+  );
+}
+
+/** POST /v1/products/orders/confirm 요청 직전 — 무엇으로 승인 요청하는지 */
+export function logConfirmRequest(body: ConfirmProductOrderRequest): void {
+  console.info(`${PREFIX} ${stamp()} → POST /v1/products/orders/confirm`, JSON.stringify(body));
+}
+
+/** confirm 성공 응답 */
+export function logConfirmSuccess(order: ProductOrderDto): void {
+  console.info(
+    `${PREFIX} ${stamp()} ✓ confirm 성공`,
+    JSON.stringify({ id: order.id, productId: order.productId, status: order.status, amount: order.amount }),
+  );
+}
+
+/** confirm 실패 — statusCode·code·message·traceId 원문. traceId는 백엔드 로그 대조용 */
+export function logConfirmFailure(err: unknown): void {
+  const apiErr = err as Partial<ApiError> & { message?: string };
+  console.error(
+    `${PREFIX} ${stamp()} ✗ confirm 실패`,
+    JSON.stringify({
+      statusCode: apiErr?.statusCode ?? null,
+      code: apiErr?.code ?? null,
+      message: apiErr?.message ?? String(err),
+      traceId: apiErr?.traceId ?? null,
+    }),
   );
 }

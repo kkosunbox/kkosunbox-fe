@@ -24,14 +24,32 @@ export function getProduct(id: number) {
 }
 
 /** 단건 주문 생성 (Pending 상태로 생성, 반환된 orderId/amount로 토스 결제위젯을 오픈한다) */
-export function createProductOrder(
+export async function createProductOrder(
   id: number,
   body: CreateProductOrderRequest,
 ) {
-  return apiClient.post<CreateProductOrderResponse>(
-    `/v1/products/${id}/orders`,
-    body,
-  );
+  // TODO(product-debug): 카탈로그 안정화되면 이 로그 제거. 브라우저 콘솔(F12)에서 확인 — 클라이언트에서 직접 호출해 서버 로그엔 안 남는다.
+  console.info(`[product-debug] → POST /v1/products/${id}/orders`, JSON.stringify(body));
+  try {
+    const order = await apiClient.post<CreateProductOrderResponse>(
+      `/v1/products/${id}/orders`,
+      body,
+    );
+    console.info(`[product-debug] ✓ POST /v1/products/${id}/orders 성공`, JSON.stringify(order));
+    return order;
+  } catch (err) {
+    const apiErr = err as { statusCode?: number; code?: string; message?: string; traceId?: string | null };
+    console.error(
+      `[product-debug] ✗ POST /v1/products/${id}/orders 실패`,
+      JSON.stringify({
+        statusCode: apiErr?.statusCode ?? null,
+        code: apiErr?.code ?? null,
+        message: apiErr?.message ?? String(err),
+        traceId: apiErr?.traceId ?? null,
+      }),
+    );
+    throw err;
+  }
 }
 
 /** 내 단건 주문 목록 조회 */

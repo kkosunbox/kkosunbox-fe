@@ -7,6 +7,8 @@ import {
   MOCK_REFRESH_TOKEN,
   MOCK_NO_PROFILE_ACCESS_TOKEN,
   MOCK_NO_PROFILE_REFRESH_TOKEN,
+  MOCK_BILLING_ACCESS_TOKEN,
+  MOCK_BILLING_REFRESH_TOKEN,
 } from "./mockApiServer";
 
 type Credentials = { email: string; password: string };
@@ -15,6 +17,11 @@ export const TEST_TOKENS = { accessToken: MOCK_ACCESS_TOKEN, refreshToken: MOCK_
 export const NO_PROFILE_TOKENS = {
   accessToken: MOCK_NO_PROFILE_ACCESS_TOKEN,
   refreshToken: MOCK_NO_PROFILE_REFRESH_TOKEN,
+};
+/** 결제수단(카드)이 이미 등록된 유저 — 약관 동의 등 카드 등록과 무관한 결제하기 활성화 조건 검증용 */
+export const BILLING_TOKENS = {
+  accessToken: MOCK_BILLING_ACCESS_TOKEN,
+  refreshToken: MOCK_BILLING_REFRESH_TOKEN,
 };
 
 /**

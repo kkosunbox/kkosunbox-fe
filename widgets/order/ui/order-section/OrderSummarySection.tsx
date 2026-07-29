@@ -20,6 +20,7 @@ interface OrderSummarySectionProps {
   handleAgreeAll: () => void;
   submitError: string | null;
   isPending: boolean;
+  hasBilling: boolean;
   handlePay: () => void;
 }
 
@@ -42,6 +43,7 @@ export function OrderSummarySection({
   handleAgreeAll,
   submitError,
   isPending,
+  hasBilling,
   handlePay,
 }: OrderSummarySectionProps) {
   return (
@@ -110,6 +112,12 @@ export function OrderSummarySection({
             </CollapsiblePanel>
           </div>
 
+          {!hasBilling ? (
+            <p className="text-body-13-m text-[var(--color-text-secondary)]" role="status">
+              결제 수단을 등록해야 결제할 수 있어요.
+            </p>
+          ) : null}
+
           {submitError ? (
             <p className="text-body-13-m text-red-600" role="alert">
               {submitError}
@@ -118,7 +126,7 @@ export function OrderSummarySection({
 
           <button
             type="button"
-            disabled={!agreeAll || isPending}
+            disabled={!agreeAll || isPending || !hasBilling}
             onClick={handlePay}
             className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-body-16-sb tracking-[-0.02em] disabled:opacity-50"
           >

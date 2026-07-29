@@ -15,7 +15,6 @@ import { createSubscription } from "@/features/subscription/api/subscriptionApi"
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { clearStoredInviteCode } from "@/features/referral/lib";
 import { computeOrderPricing } from "@/features/order";
-import { requestTossBillingAuth, isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
 import { isValidKoreanPhone } from "@/shared/lib/format";
@@ -85,24 +84,14 @@ export function useOrderSectionState({
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  // 카드 미등록 상태에서 결제하기를 누르면 Toss 자동결제 등록창을 띄운다.
-  // 등록 완료(성공 시 successUrl 리다이렉트)까지는 팝업이 아닌 페이지 자체 이동이라
-  // 주문 폼 상태가 소실된다 — 등록 후에는 /subscribe로 돌아가 다시 결제해야 한다(별도 팝업 아키텍처 재구성 예정).
-  async function startTossBillingRegistration() {
-    setSubmitError(null);
-    try {
-      await requestTossBillingAuth({
-        customerKey: crypto.randomUUID(),
-        billingInfoId: payment.billing?.id,
-      });
-    } catch (err) {
-      if (isTossUserCancel(err)) return;
-      setSubmitError(getErrorMessage(err, "결제 수단 등록 창을 여는 중 오류가 발생했습니다."));
-    }
-  }
-
   function handlePay() {
     setSubmitError(null);
+
+    // 카드 미등록 시 버튼 자체가 disabled라 정상 UI로는 여기 도달하지 않는다. 방어적 가드.
+    if (!payment.billing) {
+      setSubmitError("결제 수단을 먼저 등록해 주세요.");
+      return;
+    }
 
     if (!agreement.agreeAll) {
       setSubmitError("필수 약관에 동의해 주세요.");
@@ -126,12 +115,7 @@ export function useOrderSectionState({
       }
     }
 
-    // 카드 등록된 유저는 바로 구독 생성(즉시 결제), 미등록 유저는 Toss 카드 등록부터 진행.
-    if (payment.billing) {
-      proceedSubscription();
-    } else {
-      void startTossBillingRegistration();
-    }
+    proceedSubscription();
   }
 
   function proceedSubscription() {

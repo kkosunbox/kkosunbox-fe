@@ -159,6 +159,7 @@ export default function OrderSection(props: OrderSectionProps) {
         handleAgreeAll={handleAgreeAll}
         submitError={submitError}
         isPending={isPending}
+        hasBilling={billing !== null}
         handlePay={handlePay}
       />
       <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">

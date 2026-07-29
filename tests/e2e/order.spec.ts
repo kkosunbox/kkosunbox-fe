@@ -5,7 +5,7 @@ import {
   MOCK_VALID_COUPON_CODE,
   MOCK_VALID_REFERRAL_CODE,
 } from "../helpers/mockApiServer";
-import { loginByTokens, TEST_TOKENS, NO_PROFILE_TOKENS } from "../helpers/auth";
+import { loginByTokens, TEST_TOKENS, NO_PROFILE_TOKENS, BILLING_TOKENS } from "../helpers/auth";
 
 const REFERRAL_COOKIE = "ggosoon-ref";
 
@@ -66,7 +66,8 @@ test.describe("주문 페이지 (/order)", () => {
   // ── 약관 동의 ────────────────────────────────────────────────────
 
   test("결제하기 버튼 초기 비활성화 + 전체동의 클릭 → 활성화", async ({ page }) => {
-    await loginByTokens(page, TEST_TOKENS);
+    // 약관 동의만으로 활성화되는지 보는 테스트라 카드는 이미 등록된 유저로 로그인한다.
+    await loginByTokens(page, BILLING_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
 
     // 약관 미동의 → disabled
@@ -81,7 +82,7 @@ test.describe("주문 페이지 (/order)", () => {
   });
 
   test("전체동의 후 개별 약관 해제 → 결제하기 비활성화", async ({ page }) => {
-    await loginByTokens(page, TEST_TOKENS);
+    await loginByTokens(page, BILLING_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
 
     // 전체동의
@@ -273,23 +274,58 @@ test.describe("주문 페이지 초대코드 섹션 (레퍼럴)", () => {
   });
 });
 
+// ── 카드 등록 팝업 흐름 ───────────────────────────────────────────
+// 실제 Toss 카드 인증은 외부 호스팅 페이지라 e2e 범위 밖 — 팝업이 우리 앱의
+// /payment?mode=direct로 열리는지, 등록 완료 브릿지(/payment/billing/success)로
+// "돌아왔을 때" 메인 탭의 billing이 갱신되어 결제하기가 활성화되는지까지만 검증한다.
+test.describe("카드 등록 팝업 흐름", () => {
+  test("카드 미등록 상태 → 결제하기 비활성화, 카드 등록 완료 후 활성화", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto(`/order?planId=${VALID_PLAN_ID}`);
+
+    await clickCheckbox(page, "모두 동의합니다.");
+    const payButton = page.getByRole("button", { name: "결제하기" }).first();
+    // 약관에 모두 동의해도 카드 미등록이면 결제하기는 계속 비활성 — 팝업으로 유도하지 않는다.
+    await expect(payButton).toBeDisabled();
+    await expect(visibleText(page, "결제 수단을 등록해야 결제할 수 있어요.")).toBeVisible();
+
+    const [popup] = await Promise.all([
+      page.waitForEvent("popup"),
+      page.getByRole("button", { name: "카드 등록" }).first().click(),
+    ]);
+    await popup.waitForLoadState("domcontentloaded");
+    expect(popup.url()).toContain("/payment?mode=direct");
+
+    // 등록 완료 후 돌아오는 성공 브릿지로 바로 이동해 "Toss 인증 완료"를 시뮬레이션한다.
+    // 이 페이지는 로드되자마자 스스로 window.close()를 호출하므로 "load"까지 기다리면 레이스로 끊긴다.
+    await popup.goto(
+      "/payment/billing/success?authKey=mock-auth-key&customerKey=mock-customer-key",
+      { waitUntil: "commit" },
+    );
+    await popup.waitForEvent("close", { timeout: 10_000 });
+
+    // 팝업이 브로드캐스트로 알리면 메인 탭이 billing을 다시 조회해 결제하기가 활성화된다.
+    await expect(payButton).toBeEnabled({ timeout: 10_000 });
+  });
+});
+
 // ── 레퍼럴 링크 캡처 (미들웨어 proxy.ts) ────────────────────────────
 test.describe("레퍼럴 링크 캡처 (미들웨어)", () => {
-  test("?ref=CODE 진입 → ref 제거 리다이렉트 + 쿠키 저장", async ({ page }) => {
-    await page.goto("/?ref=ABC123");
+  test("?r=CODE 진입 → r 제거 리다이렉트 + 쿠키 저장", async ({ page }) => {
+    await page.goto("/?r=ABC123");
 
     await expect(page).toHaveURL(/localhost:\d+\/$/);
-    expect(page.url()).not.toContain("ref");
+    expect(page.url()).not.toContain("r=");
 
     const cookies = await page.context().cookies();
     expect(cookies.find((c) => c.name === REFERRAL_COOKIE)?.value).toBe("ABC123");
   });
 
-  test("형식이 잘못된 ?ref → 쿠키 미저장(ref만 제거)", async ({ page }) => {
-    await page.goto("/?ref=bad%20code");
+  test("형식이 잘못된 ?r → 쿠키 미저장(r만 제거)", async ({ page }) => {
+    await page.goto("/?r=bad%20code");
 
     await expect(page).toHaveURL(/localhost:\d+\/$/);
-    expect(page.url()).not.toContain("ref");
+    expect(page.url()).not.toContain("r=");
 
     const cookies = await page.context().cookies();
     expect(cookies.find((c) => c.name === REFERRAL_COOKIE)).toBeUndefined();

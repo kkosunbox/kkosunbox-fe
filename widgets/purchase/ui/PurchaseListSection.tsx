@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element -- GangwonEduPower는 웹 미지원 폰트라 outline SVG로 대체 */
+/* eslint-disable @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */
 
 import Image from "next/image";
 import Link from "next/link";
@@ -13,33 +13,70 @@ import { SHOP_FREE_SHIPPING_THRESHOLD } from "@/entities/product";
 import { ChevronIcon } from "@/shared/ui";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import purchaseHeroTitle from "../assets/purchase-hero-title.svg";
+import PurchaseHeroImage from "../assets/purchase-hero.webp";
+import PurchaseHeroImageTablet from "../assets/purchase-hero-tablet.webp";
+import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
 
 export default function PurchaseListSection() {
   const pkg = PACKAGES.find((p) => p.tier === CURRENT_PURCHASE_TIER)!;
   const product = getPackagePurchaseProduct(CURRENT_PURCHASE_TIER)!;
 
   return (
-    <div className="pt-[var(--header-offset)]">
-      <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:py-8 md:py-12 lg:py-16">
-        {/* 타이틀 */}
-        <div className="flex flex-col gap-2">
-          <span className="text-body-14-sb text-[var(--color-primary)]">구매하기</span>
+    <div>
+      {/* Hero */}
+      <section className="relative w-full overflow-hidden" aria-label="구매하기">
+        {/* 모바일 (< 768px) */}
+        <div className="flex h-[calc(156px+var(--banner-height))] w-full items-end overflow-hidden md:hidden">
           <img
-            src={purchaseHeroTitle.src}
-            alt="꼬순박스를 부담 없이 먼저 경험해 보세요."
-            width={441}
-            height={25}
-            className="h-auto max-md:w-[260px] md:w-[360px] lg:w-[420px]"
-            loading="eager"
+            src={PurchaseHeroImageMobile.src}
+            alt="꼬순박스를 부담없이 먼저 경험해 보세요."
+            width={PurchaseHeroImageMobile.width}
+            height={PurchaseHeroImageMobile.height}
+            className="h-[156px] w-full shrink-0 object-cover object-center"
+            fetchPriority="high"
             decoding="async"
           />
-          <p className="max-md:text-body-14-r md:text-body-16-r text-[var(--color-text-secondary)]">
-            구독 제품을 단품으로 구매하실 수 있습니다.
-            {" "}
-            {formatKrwPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송.
-          </p>
         </div>
+
+        {/* 태블릿 (768px~1199px) */}
+        <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] w-full items-end overflow-hidden">
+          <img
+            src={PurchaseHeroImageTablet.src}
+            alt="꼬순박스를 부담없이 먼저 경험해 보세요."
+            width={PurchaseHeroImageTablet.width}
+            height={PurchaseHeroImageTablet.height}
+            className="h-[156px] w-full shrink-0 object-cover object-center"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+
+        {/* 데스크톱 (≥ 1200px) */}
+        <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
+          <div className="relative w-full h-[306px]">
+            <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+            <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
+              <img
+                src={PurchaseHeroImage.src}
+                alt="꼬순박스를 부담없이 먼저 경험해 보세요. 구독 제품을 단품으로 구매하실 수 있습니다."
+                width={PurchaseHeroImage.width}
+                height={PurchaseHeroImage.height}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:py-8 md:py-12 lg:py-16">
+        {/* 안내 */}
+        <p className="max-md:text-body-14-r md:text-body-16-r text-[var(--color-text-secondary)]">
+          구독 제품을 단품으로 구매하실 수 있습니다.
+          {" "}
+          {formatKrwPrice(SHOP_FREE_SHIPPING_THRESHOLD)} 이상 구매 시 무료배송.
+        </p>
 
         {/* 상품 — 현재는 프리미엄 단품만 판매 */}
         <Link href={`/purchase/order?tier=${pkg.tier}`} className="group mt-8 flex w-[272px] flex-col md:mt-10 lg:mt-12">

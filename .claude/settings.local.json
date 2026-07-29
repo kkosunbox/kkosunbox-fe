@@ -452,7 +452,9 @@
       "PowerShell(python -c \"import numpy; print\\('numpy ok', numpy.__version__\\)\")",
       "Bash(xargs -n1 basename)",
       "Bash(xargs -I{} echo {})",
-      "WebFetch(domain:api-dev.kkosunbox.com)"
+      "WebFetch(domain:api-dev.kkosunbox.com)",
+      "Bash(sed -i 's#/ref/\\\\[slug\\\\]#/r/[slug]#g; s#dev.kkosunbox.com/ref/#dev.kkosunbox.com/r/#g' tests/e2e/referral.spec.ts)",
+      "Bash(sed -i 's#/ref/{slug}#/r/{slug}#g' features/referral/model/ReferralProvider.tsx)"
     ]
   },
   "disabledMcpjsonServers": [

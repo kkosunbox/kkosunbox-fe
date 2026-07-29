@@ -454,7 +454,11 @@
       "Bash(xargs -I{} echo {})",
       "WebFetch(domain:api-dev.kkosunbox.com)",
       "Bash(sed -i 's#/ref/\\\\[slug\\\\]#/r/[slug]#g; s#dev.kkosunbox.com/ref/#dev.kkosunbox.com/r/#g' tests/e2e/referral.spec.ts)",
-      "Bash(sed -i 's#/ref/{slug}#/r/{slug}#g' features/referral/model/ReferralProvider.tsx)"
+      "Bash(sed -i 's#/ref/{slug}#/r/{slug}#g' features/referral/model/ReferralProvider.tsx)",
+      "Bash(npm ls *)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Group 1000005900.png\" \"widgets/purchase/assets/purchase-hero.png\")",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Group 1000005913.png\" \"widgets/purchase/assets/purchase-hero-tablet.png\")",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Group 1000005914.png\" \"widgets/purchase/assets/purchase-hero-mobile.png\")"
     ]
   },
   "disabledMcpjsonServers": [

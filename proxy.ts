@@ -12,6 +12,12 @@ const PROTECTED = ["/mypage", "/order"];
 /** 이미 로그인 상태에서 접근 시 홈으로 보낼 라우트 */
 const AUTH_ONLY = ["/login", "/register"];
 
+/**
+ * 잠정 비활성화 라우트 — 광고 집행 전까지 주소창 직접 접근을 홈으로 리다이렉트한다.
+ * 헤더 진입점만 없앤 상태이며, 정책이 바뀔 수 있어 페이지 코드 자체는 삭제하지 않는다.
+ */
+const DISABLED_ROUTES = ["/shop"];
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -36,6 +42,13 @@ export function proxy(request: NextRequest) {
       });
     }
     return res;
+  }
+
+  if (DISABLED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.search = "";
+    return NextResponse.redirect(url);
   }
 
   const token  = request.cookies.get(COOKIE_NAME)?.value;

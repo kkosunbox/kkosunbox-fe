@@ -127,7 +127,7 @@ export const MOCK_REFERRAL_PAGE = {
 export const MOCK_MY_REFERRAL_CODE = {
   referralCode: MOCK_VALID_REFERRAL_CODE,
   slug: MOCK_ACTIVE_SLUG,
-  referralLink: `https://dev.kkosunbox.com/ref/${MOCK_ACTIVE_SLUG}`,
+  referralLink: `https://dev.kkosunbox.com/r/${MOCK_ACTIVE_SLUG}`,
 };
 
 // GET /v1/points/balance 응답

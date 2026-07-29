@@ -70,7 +70,7 @@ export function ReferralProvider({
     const data = initialDataRef.current;
 
     if (data) {
-      // /ref/{slug} 랜딩 진입 시: 쿠키 저장으로 구독 흐름 전체에 코드 유지
+      // /r/{slug} 랜딩 진입 시: 쿠키 저장으로 구독 흐름 전체에 코드 유지
       document.cookie = `${INVITE_CODE_COOKIE}=${encodeURIComponent(data.refCode)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
       document.cookie = `${INVITE_SLUG_COOKIE}=${encodeURIComponent(data.slug)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
       return () => { isMounted.current = false; };

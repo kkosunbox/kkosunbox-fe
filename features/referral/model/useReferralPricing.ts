@@ -8,7 +8,7 @@ export interface ReferralPricing {
   /** 레퍼럴 추가 할인율(%) */
   additionalDiscountPct: number;
   isReferral: boolean;
-  /** true = 현재 세션에서 초대코드 할인 적용 가능. /ref/{slug}: 항상 true. 다른 페이지: isReferral && !hasSubscriptionHistory */
+  /** true = 현재 세션에서 초대코드 할인 적용 가능. /r/{slug}: 항상 true. 다른 페이지: isReferral && !hasSubscriptionHistory */
   inviteEligible: boolean;
 }
 

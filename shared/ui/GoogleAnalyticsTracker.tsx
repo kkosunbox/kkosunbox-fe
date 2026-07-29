@@ -18,7 +18,7 @@ export default function GoogleAnalyticsTracker() {
 
     trackPageView(url);
 
-    const ref = searchParams.get("ref");
+    const ref = searchParams.get("r");
     if (ref) {
       trackEvent("referral_visit", { referral_code: ref, page_path: url });
     }

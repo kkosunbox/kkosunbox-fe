@@ -21,9 +21,13 @@ const visiblePlaceholder = (page: Page, ph: string) =>
 const visibleText = (page: Page, text: string) =>
   page.getByText(text).filter({ visible: true }).first();
 // sr-only <input type="checkbox"> 직접 클릭은 Playwright의 pointer-interception 이슈가 있다.
-// 부모 <label>을 클릭하면 native browser behavior로 checkbox가 toggle되어 안정적이다.
+// <label> 전체를 클릭하면 native browser behavior로 checkbox가 toggle되지만,
+// 라벨 텍스트에 "보기" 링크(<a target="_blank">)가 붙은 항목(이용약관/개인정보)은
+// label의 중앙 클릭 좌표가 그 링크 위에 걸려 토글이 안 될 수 있다.
+// label 안의 decorative 체크박스 박스(span[aria-hidden])를 직접 클릭하면
+// 링크와 겹치지 않으면서도 label의 암묵적 토글은 그대로 발생해 안정적이다.
 const clickCheckbox = (page: Page, label: string) =>
-  page.locator("label").filter({ hasText: label }).click();
+  page.locator("label").filter({ hasText: label }).locator('span[aria-hidden="true"]').click();
 
 test.describe("주문 페이지 (/order)", () => {
 

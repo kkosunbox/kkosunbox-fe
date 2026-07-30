@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
+import { TIER_BOX_IMAGES, CURRENT_PURCHASE_TIER } from "@/entities/package";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
 import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
@@ -74,15 +75,6 @@ function ChevronIcon({ dir }: { dir: "left" | "right" }) {
       ) : (
         <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       )}
-    </svg>
-  );
-}
-
-function ProductPlaceholderIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="7" width="18" height="13" rx="2" stroke="var(--color-border)" strokeWidth="1.5" />
-      <path d="M3 10h18M8 7V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" stroke="var(--color-border)" strokeWidth="1.5" />
     </svg>
   );
 }
@@ -364,16 +356,15 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
 
         <div className="flex overflow-hidden rounded-[20px] bg-white max-md:h-[150px] md:h-[154px] lg:h-[154px]">
           <div className="relative flex shrink-0 items-center justify-center bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
-            {group.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={group.imageUrl}
-                alt={group.productName}
-                className="absolute inset-0 h-full w-full object-cover object-center"
-              />
-            ) : (
-              <ProductPlaceholderIcon />
-            )}
+            {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
+            <img
+              src={TIER_BOX_IMAGES[CURRENT_PURCHASE_TIER].src}
+              alt={group.productName}
+              width={TIER_BOX_IMAGES[CURRENT_PURCHASE_TIER].width}
+              height={TIER_BOX_IMAGES[CURRENT_PURCHASE_TIER].height}
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover object-center scale-105"
+            />
           </div>
 
           <div className="flex flex-1 flex-col justify-center gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8 md:py-5 lg:py-5">

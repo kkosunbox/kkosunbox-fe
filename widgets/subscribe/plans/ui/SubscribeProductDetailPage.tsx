@@ -24,6 +24,7 @@ import {
   TIER_DETAIL_HERO_IMAGES,
   comparePlansForDisplayOrder,
   packageThemeForPlan,
+  formatPackageContentsLabel,
   PACKAGES,
   tierFromSubscriptionPlan,
   type PackageTier,
@@ -246,7 +247,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 className="max-w-[220px] text-left text-[14px] font-bold leading-[17px]"
                 style={{ color: selectedTheme.colorVar }}
               >
-                {selectedPackage.contents.join(" ")}
+                {formatPackageContentsLabel(selectedPackage.contents)}
               </span>
             </div>
 
@@ -459,7 +460,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품구성</span>
                     <span className="justify-self-start max-w-[240px] text-left text-body-14-b leading-[17px]" style={{ color: selectedTheme.colorVar }}>
-                      {selectedPackage.contents.join(" ")}
+                      {formatPackageContentsLabel(selectedPackage.contents)}
                     </span>
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">

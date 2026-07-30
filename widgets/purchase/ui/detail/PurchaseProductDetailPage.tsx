@@ -10,6 +10,7 @@ import { ChevronIcon } from "@/shared/ui";
 import {
   TIER_BOX_IMAGES,
   TIER_LABEL,
+  formatPackageContentsLabel,
   type PackageData,
   type PackagePurchaseProduct,
 } from "@/entities/package";
@@ -97,7 +98,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
     });
   }
 
-  const contentsLabel = pkg.contents.join(" ");
+  const contentsLabel = formatPackageContentsLabel(pkg.contents);
   const total = purchaseProduct.price * quantity;
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 

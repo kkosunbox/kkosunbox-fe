@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default async function PurchaseOrderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tier?: string }>;
+  searchParams: Promise<{ tier?: string; quantity?: string }>;
 }) {
-  const { tier } = await searchParams;
+  const { tier, quantity: quantityStr } = await searchParams;
   // 현재는 CURRENT_PURCHASE_TIER(프리미엄)만 단품 판매 중 — 그 외 티어는 주소 조작으로도 접근 불가.
   const pkg = tier === CURRENT_PURCHASE_TIER ? PACKAGES.find((p) => p.tier === tier) : undefined;
   const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;
@@ -26,6 +26,11 @@ export default async function PurchaseOrderPage({
   if (!pkg || !purchaseProduct) {
     redirect("/purchase");
   }
+
+  // 1~99 범위 외 또는 정수 아님 → 기본값 1로 폴백 (상세 페이지를 거치지 않고 직접 접근해도 안전)
+  const parsedQuantity = quantityStr ? Number(quantityStr) : 1;
+  const initialQuantity =
+    Number.isInteger(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= 99 ? parsedQuantity : 1;
 
   // 비로그인 방문자도 구매 가능 — 토큰이 없으면 fetchDeliveryAddresses가 빈 배열을 반환한다.
   const token = await getServerToken();
@@ -45,6 +50,7 @@ export default async function PurchaseOrderPage({
       purchaseProduct={effectivePurchaseProduct}
       initialAddresses={addresses}
       productId={product?.id ?? null}
+      initialQuantity={initialQuantity}
     />
   );
 }

@@ -1,3 +1,4 @@
+// ⚠️ 비활성 라우트(/shop) — proxy.ts DISABLED_ROUTES 참고. 상세는 tossPaymentConfirm.ts 상단 주석.
 import Link from "next/link";
 import { getShopProduct } from "@/entities/product";
 import { formatKrwPrice } from "@/shared/lib/format";

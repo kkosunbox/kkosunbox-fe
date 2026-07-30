@@ -43,6 +43,8 @@ interface PurchaseOrderSectionProps {
   initialAddresses: DeliveryAddress[];
   /** 백엔드 상품 카탈로그에서 매칭된 실제 상품 ID. 카탈로그가 비어있으면 null — 결제 시 안내 후 차단 */
   productId: number | null;
+  /** 상세 페이지에서 이어받은 초기 수량 (1~99, 기본 1) */
+  initialQuantity?: number;
 }
 
 export default function PurchaseOrderSection({
@@ -50,6 +52,7 @@ export default function PurchaseOrderSection({
   purchaseProduct,
   initialAddresses,
   productId,
+  initialQuantity = 1,
 }: PurchaseOrderSectionProps) {
   const [openSections, setOpenSections] = useState({
     product: true,
@@ -58,7 +61,7 @@ export default function PurchaseOrderSection({
     delivery: true,
     summary: true,
   });
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const address = useAddressState({ initialAddresses });
   const [agreeOpen, setAgreeOpen] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -119,7 +122,7 @@ export default function PurchaseOrderSection({
     const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
       "#purchase-payment-widget",
       { value: total },
-      { variantKey: "DEFAULT" },
+      { variantKey: "widgetK" },
     );
     paymentWidget.renderAgreement("#purchase-payment-agreement", { variantKey: "AGREEMENT" });
 
@@ -394,12 +397,36 @@ export default function PurchaseOrderSection({
                       <Checkbox
                         checked={agreeTerms}
                         onChange={() => setAgreeTerms((v) => !v)}
-                        label="(필수) 구매조건 및 결제진행 동의"
+                        label={
+                          <span className="inline-flex items-center gap-1.5">
+                            이용약관 동의 (필수)
+                            <a
+                              href="/terms"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[var(--color-text-secondary)] underline"
+                            >
+                              보기
+                            </a>
+                          </span>
+                        }
                       />
                       <Checkbox
                         checked={agreePrivacy}
                         onChange={() => setAgreePrivacy((v) => !v)}
-                        label="(필수) 개인정보 수집·이용 동의"
+                        label={
+                          <span className="inline-flex items-center gap-1.5">
+                            개인정보 수집·이용 동의 (필수)
+                            <a
+                              href="/privacy"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[var(--color-text-secondary)] underline"
+                            >
+                              보기
+                            </a>
+                          </span>
+                        }
                       />
                     </CollapsiblePanel>
                   </div>

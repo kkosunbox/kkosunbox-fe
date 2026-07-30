@@ -8,6 +8,7 @@ import type {
   ProductDto,
   ProductListResponse,
   ProductOrderDto,
+  ProductOrderPlanSummariesResponse,
   ProductOrderReceiptResponse,
 } from "./types";
 
@@ -61,6 +62,13 @@ export function getProductOrders(params?: GetProductOrdersParams) {
   const query = parts.length > 0 ? `?${parts.join("&")}` : "";
   return apiClient.get<PaginatedProductOrderResponse>(
     `/v1/products/orders${query}`,
+  );
+}
+
+/** relatedPlanId별 단건 주문 요약 (누적결제금액, 주문건수, 리뷰 작성 가능 여부 등) */
+export function getProductOrderPlanSummaries() {
+  return apiClient.get<ProductOrderPlanSummariesResponse>(
+    "/v1/products/orders/plan-summaries",
   );
 }
 

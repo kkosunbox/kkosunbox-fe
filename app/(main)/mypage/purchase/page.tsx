@@ -1,8 +1,11 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { getServerToken } from "@/features/auth/lib/session";
-import { fetchProductOrders, fetchProducts } from "@/features/product/api/queries";
-import { fetchEligiblePlans, fetchMyReviews } from "@/features/review/api/queries";
+import {
+  fetchProductOrders,
+  fetchProducts,
+  fetchProductOrderPlanSummaries,
+} from "@/features/product/api/queries";
 import { groupOrdersByProduct } from "@/features/product/lib/groupOrdersByProduct";
 
 const PurchaseDetailSection = dynamic(
@@ -18,11 +21,10 @@ interface PageProps {
 export default async function PurchaseManagementPage({ searchParams }: PageProps) {
   const { productId } = await searchParams;
   const token = await getServerToken();
-  const [orders, products, eligiblePlans, myReviews] = await Promise.all([
+  const [orders, products, planSummaries] = await Promise.all([
     fetchProductOrders(token, { limit: 100 }),
     fetchProducts(token),
-    fetchEligiblePlans(token),
-    fetchMyReviews(token),
+    fetchProductOrderPlanSummaries(token),
   ]);
   const groups = groupOrdersByProduct(orders, products);
 
@@ -53,8 +55,7 @@ export default async function PurchaseManagementPage({ searchParams }: PageProps
       group={group}
       product={product}
       orders={productOrders}
-      eligiblePlans={eligiblePlans}
-      myReviews={myReviews}
+      planSummaries={planSummaries}
     />
   );
 }

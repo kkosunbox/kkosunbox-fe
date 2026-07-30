@@ -5,9 +5,8 @@ import Link from "next/link";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
-import type { ProductDto, ProductOrderDto } from "@/features/product/api/types";
+import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
-import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
 
 /* ── 상수 ────────────────────────────────────────────────── */
 type DisplayStatus = "예정" | "완료" | "실패" | "환불";
@@ -173,12 +172,11 @@ interface Props {
   group: ProductPurchaseGroup;
   product: ProductDto | null;
   orders: ProductOrderDto[];
-  eligiblePlans: PlanReviewEligibility[];
-  myReviews: ReviewResponse[];
+  planSummaries: ProductOrderPlanSummaryDto[];
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
-export default function PurchaseDetailSection({ group, product, orders, eligiblePlans, myReviews }: Props) {
+export default function PurchaseDetailSection({ group, product, orders, planSummaries }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
   const { openAlert } = useModal();
@@ -203,9 +201,9 @@ export default function PurchaseDetailSection({ group, product, orders, eligible
 
   // 리뷰는 상품에 연결된 구독 플랜(relatedPlanId) 기준으로 구독 리뷰 시스템을 그대로 재사용한다.
   const relatedPlanId = product?.relatedPlanId ?? null;
-  const eligibility = relatedPlanId !== null ? eligiblePlans.find((p) => p.planId === relatedPlanId) : undefined;
-  const myReview = relatedPlanId !== null ? myReviews.find((r) => r.planId === relatedPlanId) ?? null : null;
-  const canReview = eligibility?.canReview ?? false;
+  const planSummary = relatedPlanId !== null ? planSummaries.find((s) => s.planId === relatedPlanId) : undefined;
+  const canReview = planSummary?.canReview ?? false;
+  const myReviewId = planSummary?.hasReview ? planSummary.reviewId ?? null : null;
 
   function handleUnavailableReviewClick() {
     openAlert({
@@ -251,9 +249,9 @@ export default function PurchaseDetailSection({ group, product, orders, eligible
 
   function ReviewButton({ className }: { className: string }) {
     if (relatedPlanId === null) return null;
-    if (myReview) {
+    if (myReviewId !== null) {
       return (
-        <Link href={`/mypage/review/write?planId=${relatedPlanId}&reviewId=${myReview.id}`} className={className}>
+        <Link href={`/mypage/review/write?planId=${relatedPlanId}&reviewId=${myReviewId}`} className={className}>
           리뷰쓰기
         </Link>
       );

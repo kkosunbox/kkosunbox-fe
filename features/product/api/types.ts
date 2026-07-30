@@ -86,3 +86,28 @@ export interface ProductOrderReceiptResponse {
   /** 영수증 PDF URL */
   receiptUrl: string;
 }
+
+// ── ProductOrderPlanSummary ───────────────────────────────────────
+
+export interface ProductOrderPlanSummaryDto {
+  /** 연관 구독 플랜 ID */
+  planId: number;
+  /** 플랜명 */
+  planName: string;
+  /** 결제완료 주문 건수 */
+  orderCount: number;
+  /** 결제완료 누적 금액 */
+  totalPaidAmount: number;
+  /** 리뷰 작성 가능 여부 (구독/단건 배송완료 공유 자격 + 미작성) */
+  canReview: boolean;
+  /** 리뷰 작성 완료 여부 */
+  hasReview: boolean;
+  /** 리뷰 수정 가능 여부 (작성 후 24시간 이내) */
+  isEditable: boolean;
+  /** 작성한 리뷰 ID (없으면 null) */
+  reviewId?: number | null;
+}
+
+export interface ProductOrderPlanSummariesResponse {
+  summaries: ProductOrderPlanSummaryDto[];
+}

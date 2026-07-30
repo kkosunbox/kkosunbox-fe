@@ -5,7 +5,13 @@
 import "server-only";
 import { apiClient } from "@/shared/lib/api";
 import { logProductFetch, logConfirmRequest, logConfirmSuccess, logConfirmFailure } from "../lib/productDebugLog";
-import type { ConfirmProductOrderRequest, GetProductOrdersParams, ProductDto, ProductOrderDto } from "./types";
+import type {
+  ConfirmProductOrderRequest,
+  GetProductOrdersParams,
+  ProductDto,
+  ProductOrderDto,
+  ProductOrderPlanSummaryDto,
+} from "./types";
 
 function serverOpts(token?: string) {
   return { token, skipRefresh: true } as const;
@@ -34,6 +40,19 @@ export async function fetchProductOrders(
     .get<{ orders: ProductOrderDto[] }>(`/v1/products/orders${query}`, serverOpts(token))
     .catch(() => ({ orders: [] as ProductOrderDto[] }));
   return data.orders;
+}
+
+/** relatedPlanId별 단건 주문 요약 (누적결제금액, 주문건수, 리뷰 작성 가능 여부 등) */
+export async function fetchProductOrderPlanSummaries(
+  token?: string,
+): Promise<ProductOrderPlanSummaryDto[]> {
+  const data = await apiClient
+    .get<{ summaries: ProductOrderPlanSummaryDto[] }>(
+      "/v1/products/orders/plan-summaries",
+      serverOpts(token),
+    )
+    .catch(() => ({ summaries: [] as ProductOrderPlanSummaryDto[] }));
+  return data.summaries;
 }
 
 /**

@@ -1,3 +1,4 @@
+// ⚠️ 비활성 라우트(/shop) — proxy.ts DISABLED_ROUTES 참고. 상세는 widgets/shop/ui/ShopOrderSection.tsx 상단 주석.
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ShopOrderSection } from "@/widgets/shop";

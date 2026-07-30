@@ -1,5 +1,13 @@
 "use client";
 
+/**
+ * ⚠️ 비활성 라우트(/shop) 전용 — proxy.ts의 DISABLED_ROUTES가 /shop 전체를 "/"로 리다이렉트해
+ * 현재 실사용자는 접근 불가(광고 집행 전 잠정 비활성화). SHOP_PRODUCTS(entities/product)도 백엔드
+ * 미연동 더미 데이터고, 아래 orderId는 백엔드 주문 생성 없이 클라이언트가 즉석 발급한다 —
+ * /purchase/order(PurchaseOrderSection.tsx)처럼 createProductOrder()→백엔드 confirm을 타지 않는다.
+ * 재활성화하려면 /shop 상품을 백엔드 Product 카탈로그에 먼저 등록해야 한다.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Script from "next/script";

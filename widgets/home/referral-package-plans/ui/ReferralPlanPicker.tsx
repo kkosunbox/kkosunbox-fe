@@ -327,7 +327,7 @@ export default function ReferralPlanPicker({
                             {combinedDiscountPct(activePlan)}%
                           </span>
                           <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(activePlan.originalPrice)}
+                            {formatMonthlyPrice(activePlan.originalPrice ?? activePlan.monthlyPrice)}
                           </span>
                           <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
                             {formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))}
@@ -453,7 +453,7 @@ export default function ReferralPlanPicker({
                             {combinedDiscountPct(plan)}%
                           </span>
                           <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(plan.originalPrice)}
+                            {formatMonthlyPrice(plan.originalPrice ?? plan.monthlyPrice)}
                           </span>
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
@@ -533,7 +533,7 @@ export default function ReferralPlanPicker({
                             {combinedDiscountPct(plan)}%
                           </span>
                           <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(plan.originalPrice)}
+                            {formatMonthlyPrice(plan.originalPrice ?? plan.monthlyPrice)}
                           </span>
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">

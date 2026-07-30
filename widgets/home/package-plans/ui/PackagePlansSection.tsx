@@ -18,7 +18,7 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
 
-const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Basic", "Standard"];
+const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
 export default function PackagePlansSection() {
   const router = useRouter();

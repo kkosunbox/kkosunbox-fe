@@ -108,11 +108,11 @@ UTM은 GA가 자동으로 읽는 "트래픽 출처 라벨"로, 별도 코드 구
 
 ### 레퍼럴 코드와 UTM 동시 운용
 
-자체 `?ref=` 레퍼럴 코드와 UTM은 독립적으로 동작하므로 함께 사용 가능.
+자체 `?r=` 레퍼럴 코드와 UTM은 독립적으로 동작하므로 함께 사용 가능.
 
 ```
 # 인플루언서 링크 예시
-https://ggosoonbox.com/?ref=INFLUENCER01&utm_source=instagram&utm_medium=social&utm_campaign=influencer_jun
+https://ggosoonbox.com/?r=INFLUENCER01&utm_source=instagram&utm_medium=social&utm_campaign=influencer_jun
 ```
 
 - GA → 채널 분석 (인스타그램 소셜 유입)

@@ -8,7 +8,7 @@ import {
 import { loginAndGoTo, loginAsInfluencer } from "../helpers/auth";
 
 // ──────────────────────────────────────────────────────────────────────────────
-// A. 레퍼럴 랜딩 페이지 (/ref/[slug])
+// A. 레퍼럴 랜딩 페이지 (/r/[slug])
 //
 // GET /v1/referral/pages/{slug} (공개 API, 토큰 불필요)
 //   - MOCK_ACTIVE_SLUG   → { isActive: true, displayName, discountRate: 0.1 }
@@ -21,12 +21,12 @@ import { loginAndGoTo, loginAsInfluencer } from "../helpers/auth";
 //                             마운트 후 ggosoon-ref 쿠키 설정 (client-side)
 // ──────────────────────────────────────────────────────────────────────────────
 
-const REFERRAL_LANDING = `/ref/${MOCK_ACTIVE_SLUG}`;
+const REFERRAL_LANDING = `/r/${MOCK_ACTIVE_SLUG}`;
 const INFLUENCER_NAME_TEXT = `[${MOCK_REFERRAL_PAGE.displayName}]`;
 const DISCOUNT_PCT = Math.round(MOCK_REFERRAL_PAGE.discountRate * 100);
 const CTA_LABEL = `꼬순박스 ${DISCOUNT_PCT}% 할인받기`;
 
-test.describe("레퍼럴 랜딩 페이지 (/ref/[slug])", () => {
+test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
   test("활성 slug → 인플루언서 이름 표시", async ({ page }) => {
     await page.goto(REFERRAL_LANDING);
     // 모바일·데스크탑 레이아웃이 동시에 렌더되어 같은 텍스트가 2개 존재함 → .first()
@@ -64,13 +64,13 @@ test.describe("레퍼럴 랜딩 페이지 (/ref/[slug])", () => {
   });
 
   test("isActive=false slug → / 리다이렉트", async ({ page }) => {
-    await page.goto(`/ref/${MOCK_INACTIVE_SLUG}`);
+    await page.goto(`/r/${MOCK_INACTIVE_SLUG}`);
     // SSR redirect: 브라우저가 / 에 도달한 후 기준 URL 확인
     await expect(page).toHaveURL("/", { timeout: 10_000 });
   });
 
   test("존재하지 않는 slug → / 리다이렉트", async ({ page }) => {
-    await page.goto("/ref/this-slug-does-not-exist");
+    await page.goto("/r/this-slug-does-not-exist");
     await expect(page).toHaveURL("/", { timeout: 10_000 });
   });
 });
@@ -79,7 +79,7 @@ test.describe("레퍼럴 랜딩 페이지 (/ref/[slug])", () => {
 // B. 홈 화면 히어로
 //
 // HomeHero는 항상 일반 HeroSection을 렌더한다.
-// 레퍼럴 히어로(ReferralHeroSection)는 /ref/[slug] 페이지에서만 표시된다.
+// 레퍼럴 히어로(ReferralHeroSection)는 /r/[slug] 페이지에서만 표시된다.
 //
 // 일반 히어로 판별: "10초 진단하고 우리 아이 맞춤 추천 받기" 버튼 (슬라이드 #1)
 // ──────────────────────────────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ test.describe("홈 화면 히어로", () => {
     });
   });
 
-  test("유효 코드 쿠키 설정 후 홈 방문 → 일반 히어로 유지 (레퍼럴 히어로는 /ref/[slug] 전용)", async ({ page }) => {
+  test("유효 코드 쿠키 설정 후 홈 방문 → 일반 히어로 유지 (레퍼럴 히어로는 /r/[slug] 전용)", async ({ page }) => {
     await page.context().addCookies([
       {
         name: "ggosoon-ref",
@@ -138,7 +138,7 @@ test.describe("홈 화면 히어로", () => {
 //   GET /v1/points/balance        → MOCK_POINT_BALANCE
 //   GET /v1/points?limit=200      → { items: [] } → DUMMY_ITEMS 폴백
 //   GET /v1/referral/me           → MOCK_MY_REFERRAL_CODE
-//       └ referralCode: FRIEND10, referralLink: https://dev.kkosunbox.com/ref/test-influencer
+//       └ referralCode: FRIEND10, referralLink: https://dev.kkosunbox.com/r/test-influencer
 //
 // UI 검증 포인트:
 //   - "MY 포인트" 헤딩

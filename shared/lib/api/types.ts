@@ -18,6 +18,8 @@ export class ApiError extends Error {
     /** 백엔드 에러 코드 (예: "UNAUTHORIZED", "ALREADY_EXISTS") */
     public readonly code: string,
     message: string,
+    /** 백엔드 응답의 traceId — 백엔드 로그와 대조할 때 사용 */
+    public readonly traceId: string | null = null,
   ) {
     super(message);
     this.name = "ApiError";

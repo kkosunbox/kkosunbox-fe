@@ -2,6 +2,7 @@ const TRANSPARENT_ROUTES = [
   "/",
   "/about",
   "/subscribe",
+  "/purchase",
   "/support",
   "/inquiry",
   "/mypage/review/write",
@@ -12,7 +13,7 @@ const TRANSPARENT_ROUTES = [
 export function isTransparentRoute(pathname: string): boolean {
   return (
     TRANSPARENT_ROUTES.includes(pathname) ||
-    pathname.startsWith("/ref/") ||
+    pathname.startsWith("/r/") ||
     pathname.startsWith("/support/")
   );
 }

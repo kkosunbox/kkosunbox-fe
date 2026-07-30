@@ -123,11 +123,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
   const { referralPrice, additionalDiscountPct, inviteEligible } = useReferralPricing();
 
-  const originalPrice = selectedPlan.originalPrice;
+  const originalPrice = selectedPlan.originalPrice ?? selectedPlan.monthlyPrice;
   const discountedUnitPrice = inviteEligible
     ? referralPrice(selectedPlan.monthlyPrice)
     : selectedPlan.monthlyPrice;
-  const hasDiscount = inviteEligible || selectedPlan.discountRate > 0;
+  const hasDiscount = inviteEligible || (selectedPlan.discountRate ?? 0) > 0;
   const salePrice = discountedUnitPrice * quantity;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {

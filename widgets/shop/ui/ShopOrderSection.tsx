@@ -21,14 +21,11 @@ import {
 } from "@/entities/product";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { digitsOnly, isValidKoreanPhone, formatKrwPrice } from "@/shared/lib/format";
+import { TOSS_WIDGET_CLIENT_KEY } from "@/shared/lib/payments/tossWidgetClient";
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
 import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
-
-// 문서용 테스트 키 (Toss 결제위젯 SDK v1, 일반/단건 결제) — /test/toss와 동일한 Toss 공식 문서 테스트 키.
-// 자동결제(빌링) 계약 상태와 무관하게 동작하며, 실제 금액이 청구되지 않는다.
-const WIDGET_CLIENT_KEY = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
 type PaymentMethodsWidget = ReturnType<PaymentWidgetInstance["renderPaymentMethods"]>;
 
@@ -72,7 +69,7 @@ export default function ShopOrderSection({ product, initialAddresses }: ShopOrde
         : `shop-${Date.now()}`;
     (async () => {
       try {
-        const widget = await loadPaymentWidget(WIDGET_CLIENT_KEY, customerKey);
+        const widget = await loadPaymentWidget(TOSS_WIDGET_CLIENT_KEY, customerKey);
         if (mounted) setPaymentWidget(widget);
       } catch (err) {
         console.error("결제위젯 로드 실패:", err);

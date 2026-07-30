@@ -3,7 +3,9 @@ import Link from "next/link";
 // 결제 승인(confirm)을 서버에서 처리하는 테스트용 성공 페이지.
 // 시크릿 키는 서버 컴포넌트에서만 사용되어 클라이언트에 노출되지 않는다.
 
-// 문서용 테스트 시크릿 키 (결제위젯 연동 키)
+// ⚠️ Toss 공식 문서 공유 샘플 키(TossPaymentTest.tsx의 WIDGET_CLIENT_KEY와 짝) — 우리 실 계정 시크릿키 아님.
+// 실제 체크아웃과 무관한 데모 전용. 다른 곳에 복붙 금지 — /shop/order/success의 시크릿키 불일치 버그가
+// 이 패턴(실 클라이언트키 + 이 문서 시크릿키)을 잘못 섞어 쓰다 생긴 것.
 const WIDGET_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
 
 type SearchParams = {

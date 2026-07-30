@@ -408,9 +408,10 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
 
     // GET /v1/delivery-addresses — order 페이지 배송지 목록
+    // MOCK_ACCESS_TOKEN·MOCK_BILLING_ACCESS_TOKEN(카드+배송지 모두 있는 결제 플로우 e2e용) → 배송지 1건
     if (method === "GET" && url === "/v1/delivery-addresses") {
       const auth = req.headers.authorization ?? "";
-      if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {
+      if (auth === `Bearer ${MOCK_ACCESS_TOKEN}` || auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}`) {
         ok(res, { addresses: [MOCK_ADDRESS] });
       } else {
         ok(res, { addresses: [] });

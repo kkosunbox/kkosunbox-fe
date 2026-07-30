@@ -460,7 +460,8 @@
       "Bash(cp \"/c/Users/tbrk7/Downloads/Group 1000005913.png\" \"widgets/purchase/assets/purchase-hero-tablet.png\")",
       "Bash(cp \"/c/Users/tbrk7/Downloads/Group 1000005914.png\" \"widgets/purchase/assets/purchase-hero-mobile.png\")",
       "Bash(rm features/review/hooks/usePlanRatings.ts features/review/index.ts)",
-      "Bash(rmdir features/review/hooks)"
+      "Bash(rmdir features/review/hooks)",
+      "Bash(pnpm vitest *)"
     ]
   },
   "disabledMcpjsonServers": [

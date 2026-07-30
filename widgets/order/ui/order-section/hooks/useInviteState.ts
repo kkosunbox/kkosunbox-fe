@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { validateReferralCode } from "@/features/referral/api";
-import { clearStoredInviteCode, getStoredInviteCode } from "@/features/referral/lib";
+import { clearStoredInviteCode, clearStoredInviteSlug, getStoredInviteCode } from "@/features/referral/lib";
 import {
   getInviteSectionMode,
   isStaleValidationRequest,
@@ -153,6 +153,7 @@ export function useInviteState({
   function handleDismissStoredInviteCode() {
     validateRequestIdRef.current += 1;
     clearStoredInviteCode();
+    clearStoredInviteSlug();
     setInviteDismissed(true);
     setInviteCodeInput("");
     setInviteStatus("idle");

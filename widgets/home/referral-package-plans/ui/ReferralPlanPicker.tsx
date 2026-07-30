@@ -132,7 +132,7 @@ export default function ReferralPlanPicker({
     [plans],
   );
 
-  const { referralPrice, combinedDiscountPct, additionalDiscountPct } =
+  const { referralPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
     useReferralPricing();
 
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
@@ -267,10 +267,12 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    <ReferralAdditionalDiscountChip
-                      pct={additionalDiscountPct}
-                      className="left-3 top-3"
-                    />
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-3 top-3"
+                      />
+                    ) : null}
                   </div>
 
                   {/* 좌우 네비 — 이전/다음 패키지 (이미지 세로 중앙) */}
@@ -430,10 +432,12 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    <ReferralAdditionalDiscountChip
-                      pct={additionalDiscountPct}
-                      className="left-2 top-2"
-                    />
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-2 top-2"
+                      />
+                    ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
                     <p
@@ -512,10 +516,12 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    <ReferralAdditionalDiscountChip
-                      pct={additionalDiscountPct}
-                      className="left-2 top-2"
-                    />
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-2 top-2"
+                      />
+                    ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
                     <p

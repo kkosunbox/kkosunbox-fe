@@ -39,7 +39,7 @@ export function CheckoutPage() {
 
     paymentWidget.renderAgreement(
       "#agreement",
-      { variantKey: "AGREEMENT" }
+      { variantKey: "widgetK" }
     );
 
     paymentMethodsWidgetRef.current = paymentMethodsWidget;

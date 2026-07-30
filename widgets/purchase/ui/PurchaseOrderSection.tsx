@@ -122,7 +122,7 @@ export default function PurchaseOrderSection({
     const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
       "#purchase-payment-widget",
       { value: total },
-      { variantKey: "DEFAULT" },
+      { variantKey: "widgetK" },
     );
     paymentWidget.renderAgreement("#purchase-payment-agreement", { variantKey: "AGREEMENT" });
 

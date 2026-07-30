@@ -22,7 +22,7 @@ import ReferralTitleSvg from "./ReferralTitleSvg";
 
 export default function ReferralPackagePlansSection() {
   const router = useRouter();
-  const { influencerName, discountRate } = useReferral();
+  const { influencerName, discountRate, inviteEligible } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
 
@@ -100,10 +100,12 @@ export default function ReferralPackagePlansSection() {
                         />
                       );
                     })}
-                    <ReferralAdditionalDiscountChip
-                      pct={additionalDiscountPct}
-                      className="left-3 top-3"
-                    />
+                    {inviteEligible ? (
+                      <ReferralAdditionalDiscountChip
+                        pct={additionalDiscountPct}
+                        className="left-3 top-3"
+                      />
+                    ) : null}
                   </div>
                   <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
                 </div>

@@ -13,7 +13,8 @@ import type { BillingInfo } from "@/features/billing/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { createSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { clearStoredInviteCode } from "@/features/referral/lib";
+import { clearStoredInviteCode, clearStoredInviteSlug } from "@/features/referral/lib";
+import { useReferral } from "@/features/referral/model";
 import { computeOrderPricing } from "@/features/order";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
@@ -43,6 +44,7 @@ export function useOrderSectionState({
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const { profile } = useProfile();
+  const { markInviteConsumed } = useReferral();
   const [isPending, startTransition] = useTransition();
   const agreement = useAgreementState();
   const address = useAddressState({ initialAddresses });
@@ -159,6 +161,10 @@ export function useOrderSectionState({
 
         // 구독 생성 완료 → 소비된 초대 코드를 정리해 재적용을 방지한다.
         clearStoredInviteCode();
+        clearStoredInviteSlug();
+        // 쿠키가 사라지면 layout이 구독이력 재계산 자체를 스킵해 router.refresh()만으로는
+        // inviteEligible이 false로 갱신되지 않는다 — 여기서 즉시 확정한다.
+        markInviteConsumed();
 
         router.refresh();
         router.push("/mypage/subscription?welcome=1");

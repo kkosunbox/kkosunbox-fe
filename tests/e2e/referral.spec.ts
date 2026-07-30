@@ -1,11 +1,20 @@
+import type { Page } from "@playwright/test";
 import { test, expect } from "../helpers/fixtures";
 import {
   MOCK_VALID_REFERRAL_CODE,
   MOCK_ACTIVE_SLUG,
   MOCK_INACTIVE_SLUG,
   MOCK_REFERRAL_PAGE,
+  MOCK_SUBSCRIPTION,
+  MOCK_PLANS,
 } from "../helpers/mockApiServer";
-import { loginAndGoTo, loginAsInfluencer } from "../helpers/auth";
+import {
+  loginAndGoTo,
+  loginAsInfluencer,
+  loginByTokens,
+  TEST_TOKENS,
+  BILLING_TOKENS,
+} from "../helpers/auth";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // A. 레퍼럴 랜딩 페이지 (/r/[slug])
@@ -177,5 +186,110 @@ test.describe("/mypage/point (인플루언서 전용)", () => {
     // 미인증 → redirect → "MY 포인트" 헤딩 없음
     await expect(page.getByRole("heading", { name: "MY 포인트" })).not.toBeVisible();
     await expect(page.getByText("초대링크")).not.toBeVisible();
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// D. 첫 달 할인 배지 — 구독 이력 여부에 따른 노출 (ReferralPlanPicker / ReferralPackagePlansSection)
+//
+// hasSubscriptionHistory = fetchSubscriptions(token).length > 0 (취소 건 포함) —
+// /r/[slug] 페이지가 서버에서 직접 계산해 ReferralProvider에 전달한다.
+//   TEST_TOKENS(MOCK_ACCESS_TOKEN)         → 구독 1건 → 이력 있음 → 배지 숨김
+//   BILLING_TOKENS(MOCK_BILLING_ACCESS_TOKEN) → 구독 0건 → 이력 없음 → 배지 표시
+//
+// 2026-07-30 이전에는 ReferralPlanPicker/ReferralPackagePlansSection이
+// inviteEligible을 전혀 체크하지 않아 이력과 무관하게 항상 배지가 떴던 회귀 버그가 있었다.
+// ──────────────────────────────────────────────────────────────────────────────
+
+const BADGE_TEXT = `첫 달 ${DISCOUNT_PCT}%추가할인`;
+// 배지는 브레이크포인트별 반응형 변형이 동시에 DOM에 존재하고 CSS로만 숨겨지므로,
+// 순수 .first()는 숨겨진 변형을 집을 수 있다 — 보임 단정에는 visible 필터가 필요하다.
+const visibleBadge = (page: Page) => page.getByText(BADGE_TEXT).filter({ visible: true }).first();
+
+test.describe("첫 달 할인 배지 (/r/[slug]) — 구독 이력 게이팅", () => {
+  test("구독 이력 없는 로그인 유저 → 배지 표시", async ({ page }) => {
+    await loginByTokens(page, BILLING_TOKENS);
+    await page.goto(REFERRAL_LANDING);
+    await expect(visibleBadge(page)).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("구독 이력 있는 로그인 유저 → 배지 숨김", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto(REFERRAL_LANDING);
+    // 페이지 자체(인플루언서 이름)는 정상 로드되지만 배지는 숨겨져야 한다
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(BADGE_TEXT)).not.toBeVisible();
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// E. 자기 감지 — 인플루언서 본인이 초대코드 쿠키 없이 접근했을 때도 구독 이력을 반영하는지
+//
+// 초대코드 쿠키가 없으면 ReferralProvider가 getMyReferralCode()로 "로그인된 인플루언서인지"
+// 자체 감지한다. layout.tsx는 쿠키가 없으면 hasSubscriptionHistory 계산 자체를 스킵하므로
+// (기본값 false), 이 경로는 자기 감지 성공 시점에 클라이언트에서 별도로 getSubscriptions()를
+// 호출해 실제 이력을 확인하도록 2026-07-30에 보강했다. 홈의 PlanPicker가 같은 배지
+// 컴포넌트를 쓰므로 여기서 검증한다.
+// ──────────────────────────────────────────────────────────────────────────────
+
+test.describe("자기 감지 — 인플루언서 본인 접근", () => {
+  test("이미 구독 중인 인플루언서가 초대코드 쿠키 없이 홈 방문 → 배지 숨김", async ({ page }) => {
+    // GET /v1/subscriptions는 인플루언서 토큰에 기본적으로 빈 배열을 반환하므로
+    // 이 테스트에서만 구독 이력이 있는 것으로 오버라이드한다.
+    await page.route("**/v1/subscriptions", async (route) => {
+      if (route.request().method() !== "GET") return route.continue();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ result: true, data: { subscriptions: [MOCK_SUBSCRIPTION] } }),
+      });
+    });
+
+    await loginAsInfluencer(page);
+    // loginAsInfluencer는 이미 "/"까지 이동을 기다린다 — 자기 감지 완료(배지 부재)를 폴링한다.
+    await expect(page.getByText(BADGE_TEXT)).not.toBeVisible({ timeout: 10_000 });
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// F. 구독 완료 시점 — 초대코드 소비 후 즉시 배지·쿠키 정리 (같은 세션, 하드 리로드 없음)
+//
+// 버그였던 부분: 구독 완료 시 초대코드 쿠키를 지우면 layout이 hasSubscriptionHistory
+// 재계산 자체를 스킵해(쿠키 없음 → 기본값 false) router.refresh()만으로는 오히려 배지가
+// 다시 나타날 수 있었다. markInviteConsumed()로 클라이언트에서 즉시 확정하도록
+// 2026-07-30에 수정 — 이 테스트는 하드 리로드 없이(router.push로만 이동) 배지가
+// 사라지는지, 쿠키 2종(code+slug)이 모두 정리되는지 검증한다.
+// ──────────────────────────────────────────────────────────────────────────────
+
+test.describe("구독 완료 시점 — 초대코드 소비", () => {
+  test("초대링크로 구독 완료 → 쿠키 정리 + 같은 세션에서 배지 즉시 숨김", async ({ page }) => {
+    // 배송지·카드 모두 등록된 BILLING_TOKENS로 로그인 — 주소는 서버 컴포넌트가 SSR로
+    // 가져오므로 page.route()로는 가로챌 수 없어 목서버(mockApiServer.ts)에서 보강했다.
+    await loginByTokens(page, BILLING_TOKENS);
+    await page.context().addCookies([
+      { name: "ggosoon-ref", value: MOCK_VALID_REFERRAL_CODE, domain: "localhost", path: "/" },
+      { name: "ggosoon-ref-slug", value: MOCK_ACTIVE_SLUG, domain: "localhost", path: "/" },
+    ]);
+
+    await page.goto(`/subscribe/detail?planId=${MOCK_PLANS[0].id}`);
+    await expect(visibleBadge(page)).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole("button", { name: "구독하기" }).first().click();
+    await page.waitForURL(/\/order\?planId=/, { timeout: 10_000 });
+
+    await page.locator("label").filter({ hasText: "모두 동의합니다." }).click();
+    const payButton = page.getByRole("button", { name: "결제하기" }).first();
+    await expect(payButton).toBeEnabled({ timeout: 10_000 });
+    await payButton.click();
+
+    await page.waitForURL(/\/mypage\/subscription\?welcome=1/, { timeout: 15_000 });
+
+    const cookies = await page.context().cookies();
+    expect(cookies.find((c) => c.name === "ggosoon-ref")).toBeUndefined();
+    expect(cookies.find((c) => c.name === "ggosoon-ref-slug")).toBeUndefined();
+
+    // 하드 리로드 없이(헤더 로고 클릭 = client-side 이동) 배지가 사라졌는지 확인
+    await page.getByRole("link", { name: "꼬순박스 홈" }).click();
+    await expect(page.getByText(BADGE_TEXT)).not.toBeVisible({ timeout: 10_000 });
   });
 });

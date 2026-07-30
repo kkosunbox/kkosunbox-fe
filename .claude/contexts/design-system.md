@@ -53,6 +53,8 @@
 | `--color-beige` | `#E8CFB9` | Beige — 테두리, 불릿, 서클 bg 등 장식 요소 |
 | `--color-why-bg` | `#584B40` | WhyGallery 섹션 배경 |
 | `--color-top-band-bg` | `#8E6642` | 주문 가격합산 띠 · 구독상세 플랜선택 띠 배경 |
+| `--color-top-band-label` | `#D8D8D8` | 상단 info 띠 라벨 텍스트 (예: '단품 구매') |
+| `--color-top-band-highlight` | `#FFB56B` | 상단 info 띠 강조 텍스트 (제품구성 등) |
 | `--color-gallery-cta-peach` | `#FFE2C8` | WhyGallery 하단 단색 타일 |
 | `--color-gallery-peach-soft` | `#FFD6B0` | WhyGallery 상단 단색 타일 |
 | `--color-gallery-peach-warm` | `#FFC086` | WhyGallery 상단 단색 타일 |

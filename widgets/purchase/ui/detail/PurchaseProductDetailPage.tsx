@@ -107,15 +107,13 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   }
 
   const TopBar = (
-    <div className="flex h-[46px] w-full min-w-0 items-center gap-2 px-4 sm:gap-3 sm:px-6 md:px-0">
-      <span className="shrink-0 text-body-12-m text-[var(--color-text-muted)] sm:text-body-14-sb">
+    <div className="flex h-[46px] w-full min-w-0 items-center px-4 sm:px-6 md:px-0">
+      <span className="mr-8 shrink-0 max-sm:text-body-12-m sm:text-[14px] sm:font-semibold sm:leading-[17px] text-[var(--color-top-band-label)]">
         단품 구매
       </span>
-      <span className="h-3 w-px shrink-0 bg-white/30" aria-hidden />
-      <span className="min-w-0 flex-1 truncate text-body-12-m text-white sm:text-body-14-sb">
+      <span className="mr-3 truncate max-sm:text-body-12-m sm:text-[14px] sm:font-bold sm:leading-[17px] text-[var(--color-top-band-highlight)]">
         {contentsLabel}
       </span>
-      <span className="h-3 w-px shrink-0 bg-white/30" aria-hidden />
       <span className="shrink-0 text-body-12-sb text-white sm:text-body-14-sb">
         {formatKrwPrice(purchaseProduct.price)}
       </span>

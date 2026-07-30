@@ -43,6 +43,8 @@ interface PurchaseOrderSectionProps {
   initialAddresses: DeliveryAddress[];
   /** 백엔드 상품 카탈로그에서 매칭된 실제 상품 ID. 카탈로그가 비어있으면 null — 결제 시 안내 후 차단 */
   productId: number | null;
+  /** 상세 페이지에서 이어받은 초기 수량 (1~99, 기본 1) */
+  initialQuantity?: number;
 }
 
 export default function PurchaseOrderSection({
@@ -50,6 +52,7 @@ export default function PurchaseOrderSection({
   purchaseProduct,
   initialAddresses,
   productId,
+  initialQuantity = 1,
 }: PurchaseOrderSectionProps) {
   const [openSections, setOpenSections] = useState({
     product: true,
@@ -58,7 +61,7 @@ export default function PurchaseOrderSection({
     delivery: true,
     summary: true,
   });
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(initialQuantity);
   const address = useAddressState({ initialAddresses });
   const [agreeOpen, setAgreeOpen] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);

@@ -80,7 +80,7 @@ export default function PurchaseListSection({ product: apiProduct }: PurchaseLis
 
       <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:py-8 md:py-0 lg:py-0 lg:pb-12">
         {/* 상품 — 현재는 프리미엄 단품만 판매 */}
-        <Link href={`/purchase/order?tier=${pkg.tier}`} className="group mt-8 flex w-[272px] flex-col md:mt-2 lg:mt-4">
+        <Link href={`/purchase/detail?tier=${pkg.tier}`} className="group mt-8 flex w-[272px] flex-col md:mt-2 lg:mt-4">
           <div
             className="relative aspect-[272/252] w-full overflow-hidden rounded-[16px]"
             style={{ boxShadow: "var(--shadow-card-soft)" }}

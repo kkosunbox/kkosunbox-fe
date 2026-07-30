@@ -461,7 +461,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 )}
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
-                <div className="space-y-6 md:space-y-8 lg:space-y-8">
+                <div className="space-y-4">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품구성</span>
                     <span className="justify-self-start max-w-[240px] text-left text-body-14-b leading-[17px]" style={{ color: selectedTheme.colorVar }}>

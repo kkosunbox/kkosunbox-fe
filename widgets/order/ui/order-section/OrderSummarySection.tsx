@@ -97,12 +97,36 @@ export function OrderSummarySection({
                 <Checkbox
                   checked={agreeTerms}
                   onChange={onToggleTerms}
-                  label="이용약관 동의 (필수)"
+                  label={
+                    <span className="inline-flex items-center gap-1.5">
+                      이용약관 동의 (필수)
+                      <a
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--color-text-secondary)] underline"
+                      >
+                        보기
+                      </a>
+                    </span>
+                  }
                 />
                 <Checkbox
                   checked={agreePrivacy}
                   onChange={onTogglePrivacy}
-                  label="개인정보 수집·이용 동의 (필수)"
+                  label={
+                    <span className="inline-flex items-center gap-1.5">
+                      개인정보 수집·이용 동의 (필수)
+                      <a
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--color-text-secondary)] underline"
+                      >
+                        보기
+                      </a>
+                    </span>
+                  }
                 />
                 <Checkbox
                   checked={agreeAge}

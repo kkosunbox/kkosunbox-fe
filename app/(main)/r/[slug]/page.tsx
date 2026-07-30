@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchReferralPage } from "@/features/referral/api/queries";
 import { ReferralProvider } from "@/features/referral/model";
+import { getServerToken } from "@/features/auth/lib/session";
+import { fetchSubscriptions } from "@/features/subscription/api/queries";
 import { ReferralHeroSection } from "@/widgets/home/referral-hero";
 import { StatsBar } from "@/widgets/home/stats-bar";
 import { ReferralPackagePlansSection } from "@/widgets/home/referral-package-plans";
@@ -30,6 +32,11 @@ export default async function ReferralLandingPage({ params }: Props) {
     redirect("/");
   }
 
+  // 이미 구독 이력이 있는 방문자(본인 링크 재방문 포함)에게는 첫 달 할인 배지를 보여주지 않는다.
+  const token = await getServerToken().catch(() => null);
+  const subscriptions = token ? await fetchSubscriptions(token).catch(() => []) : [];
+  const hasSubscriptionHistory = subscriptions.length > 0;
+
   return (
     <ReferralProvider
       initialData={{
@@ -39,6 +46,7 @@ export default async function ReferralLandingPage({ params }: Props) {
         influencerName: data.displayName,
         profileImageUrl: data.profileImageUrl,
       }}
+      hasSubscriptionHistory={hasSubscriptionHistory}
     >
       <div className="pt-[var(--banner-height)]">
         <div className="relative z-0">

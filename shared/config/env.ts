@@ -17,6 +17,11 @@ export const env = {
   // 시크릿 키/빌링키 발급은 백엔드 전용. 미계약 키는 NOT_SUPPORTED_METHOD 에러.
   tossClientKey: process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "",
 
+  // Toss Payments 결제위젯(SDK v1, 단건 결제) 전용 클라이언트 키 — 자동결제 키와 별도 상품이라 공유 불가.
+  // (2026-07-30) 자동결제 키를 재사용했더니 "결제위젯" 상품 미활성화 계정이라
+  // GET /v1/payment-widget/widget-groups/keys 가 404 나는 문제 발견 → 전용 키로 분리.
+  tossPurchaseClientKey: process.env.NEXT_PUBLIC_TOSS_PURCHASE_CLIENT_KEY ?? "",
+
   oauth: {
     google: { clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "" },
     naver:  { clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID  ?? "" },

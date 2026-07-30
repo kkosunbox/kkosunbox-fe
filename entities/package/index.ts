@@ -15,6 +15,12 @@ export type {
   PackageData,
 } from "./lib/packageData";
 export {
+  PACKAGE_PURCHASE_PRODUCTS,
+  getPackagePurchaseProduct,
+  CURRENT_PURCHASE_TIER,
+} from "./lib/packagePurchaseProducts";
+export type { PackagePurchaseProduct } from "./lib/packagePurchaseProducts";
+export {
   TIER_THUMBNAILS,
   TIER_BOX_IMAGES,
   TIER_DETAIL_HERO_IMAGES,

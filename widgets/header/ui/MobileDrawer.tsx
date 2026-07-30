@@ -21,7 +21,9 @@ const NAV_ITEMS = [
   { href: "/", label: "홈", icon: "home" as const },
   { href: "/about", label: "꼬순박스 소개", icon: "document" as const },
   { href: "/subscribe", label: "구독 시작하기", icon: "check-circle" as const },
-  { href: "/shop", label: "간식 스토어", icon: "cart" as const },
+  { href: "/purchase", label: "구매하기", icon: "cart" as const },
+  // 간식 스토어 — 광고 집행 전 잠정 비활성화. 라우트 접근 차단은 proxy.ts DISABLED_ROUTES 참고.
+  // { href: "/shop", label: "간식 스토어", icon: "cart" as const },
   { href: "/support", label: "고객센터", icon: "heart" as const },
 ];
 

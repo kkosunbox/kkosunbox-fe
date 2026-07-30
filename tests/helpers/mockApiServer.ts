@@ -21,6 +21,11 @@ export const MOCK_REFRESH_TOKEN = "mock-refresh-token-for-testing";
 export const MOCK_NO_PROFILE_ACCESS_TOKEN = "mock-no-profile-access-token-for-testing";
 export const MOCK_NO_PROFILE_REFRESH_TOKEN = "mock-no-profile-refresh-token-for-testing";
 
+// 결제수단(카드)이 이미 등록된 유저 — order 페이지의 "카드 등록 필요" 분기와 분리해서
+// 약관 동의 등 다른 결제하기 활성화 조건만 검증할 때 사용
+export const MOCK_BILLING_ACCESS_TOKEN = "mock-billing-access-token-for-testing";
+export const MOCK_BILLING_REFRESH_TOKEN = "mock-billing-refresh-token-for-testing";
+
 export const MOCK_PROFILE = {
   id: 1,
   name: "쿠키",
@@ -77,6 +82,19 @@ export const MOCK_ADDRESS = {
   updatedAt: "2026-01-01T00:00:00.000Z",
 };
 
+// POST /v1/billing/register, PUT /v1/billing/update 응답 — 카드 등록 팝업 완료 시뮬레이션용
+export const MOCK_BILLING_INFO = {
+  id: 1,
+  userId: 1,
+  lastFourDigits: "1234",
+  cardCompany: "테스트카드",
+  cardType: "신용",
+  ownerType: "individual",
+  authenticatedAt: "2026-01-01T00:00:00.000Z",
+  isActive: true,
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
 // 유효한 쿠폰 코드 — 10% 할인
 export const MOCK_VALID_COUPON_CODE = "TEST10";
 
@@ -109,7 +127,7 @@ export const MOCK_REFERRAL_PAGE = {
 export const MOCK_MY_REFERRAL_CODE = {
   referralCode: MOCK_VALID_REFERRAL_CODE,
   slug: MOCK_ACTIVE_SLUG,
-  referralLink: `https://dev.kkosunbox.com/ref/${MOCK_ACTIVE_SLUG}`,
+  referralLink: `https://dev.kkosunbox.com/r/${MOCK_ACTIVE_SLUG}`,
 };
 
 // GET /v1/points/balance 응답
@@ -322,7 +340,7 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     // GET /v1/auth/user — called by getAuthUser() (server-side) on each page render
     if (method === "GET" && url === "/v1/auth/user") {
       const auth = req.headers.authorization ?? "";
-      if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {
+      if (auth === `Bearer ${MOCK_ACCESS_TOKEN}` || auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}`) {
         ok(res, MOCK_USER);
       } else if (auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}`) {
         ok(res, MOCK_NO_PROFILE_USER);
@@ -350,6 +368,11 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
         ok(res, {
           accessToken: MOCK_INFLUENCER_ACCESS_TOKEN,
           refreshToken: MOCK_INFLUENCER_REFRESH_TOKEN,
+        });
+      } else if (body.refreshToken === MOCK_BILLING_REFRESH_TOKEN) {
+        ok(res, {
+          accessToken: MOCK_BILLING_ACCESS_TOKEN,
+          refreshToken: MOCK_BILLING_REFRESH_TOKEN,
         });
       } else {
         err(res, 401, "UNAUTHORIZED");
@@ -395,9 +418,25 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
-    // GET /v1/billing — order 페이지 결제수단 (없음 → null)
+    // GET /v1/billing — order 페이지 결제수단. MOCK_BILLING_ACCESS_TOKEN만 등록된 카드 있음.
     if (method === "GET" && url === "/v1/billing") {
-      ok(res, { billingInfos: [] });
+      const auth = req.headers.authorization ?? "";
+      if (auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}`) {
+        ok(res, { billingInfos: [MOCK_BILLING_INFO] });
+      } else {
+        ok(res, { billingInfos: [] });
+      }
+      return;
+    }
+
+    // POST /v1/billing/register, PUT /v1/billing/update — 카드 등록 팝업(/payment/billing/success)이 호출.
+    // authKey·customerKey 값은 검증하지 않고(실제 Toss 인증은 e2e 범위 밖) 항상 성공 응답한다.
+    if (method === "POST" && url === "/v1/billing/register") {
+      ok(res, MOCK_BILLING_INFO);
+      return;
+    }
+    if (method === "PUT" && url === "/v1/billing/update") {
+      ok(res, MOCK_BILLING_INFO);
       return;
     }
 
@@ -425,9 +464,10 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
-    // POST /v1/subscriptions — 구독 생성 (referralCode 포함 가능). 응답 본문은 사용하지 않음.
+    // POST /v1/subscriptions — 구독 생성 (referralCode 포함 가능).
+    // trackPurchase가 응답의 subscription.id를 바로 읽으므로 null이면 안 된다.
     if (method === "POST" && url === "/v1/subscriptions") {
-      ok(res, { subscription: null });
+      ok(res, { subscription: { ...MOCK_SUBSCRIPTION, id: 2 } });
       return;
     }
 
@@ -480,13 +520,14 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
 
     // GET /v1/subscriptions/plans — subscribe 페이지 플랜 목록
-    // 인증된 토큰(일반·NO_PROFILE 모두)이면 동일한 플랜 목록 반환,
+    // 인증된 토큰(일반·NO_PROFILE·BILLING 모두)이면 동일한 플랜 목록 반환,
     // 그 외에는 401 → fetchSubscriptionPlans의 .catch()가 빈 배열로 폴백
     if (method === "GET" && url.startsWith("/v1/subscriptions/plans")) {
       const auth = req.headers.authorization ?? "";
       if (
         auth === `Bearer ${MOCK_ACCESS_TOKEN}` ||
-        auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}`
+        auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}` ||
+        auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}`
       ) {
         ok(res, { plans: MOCK_PLANS });
       } else {

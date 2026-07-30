@@ -12,17 +12,23 @@ const PROTECTED = ["/mypage", "/order"];
 /** 이미 로그인 상태에서 접근 시 홈으로 보낼 라우트 */
 const AUTH_ONLY = ["/login", "/register"];
 
+/**
+ * 잠정 비활성화 라우트 — 광고 집행 전까지 주소창 직접 접근을 홈으로 리다이렉트한다.
+ * 헤더 진입점만 없앤 상태이며, 정책이 바뀔 수 있어 페이지 코드 자체는 삭제하지 않는다.
+ */
+const DISABLED_ROUTES = ["/shop"];
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 레퍼럴 캡처 — 인증 가드보다 먼저 처리한다.
-  // `?ref=CODE`로 진입하면 코드를 쿠키에 저장하고 ref를 제거한 깨끗한 URL로 보낸다.
+  // `?r=CODE`로 진입하면 코드를 쿠키에 저장하고 r을 제거한 깨끗한 URL로 보낸다.
   // 인증과 독립된 non-httpOnly 쿠키이므로 로그인/로그아웃에도 유지되고,
   // 비로그인 상태로 보호 라우트에 진입해도 이 리다이렉트 후 followup 요청에서 로그인 가드가 적용된다.
-  const ref = request.nextUrl.searchParams.get("ref");
+  const ref = request.nextUrl.searchParams.get("r");
   if (ref) {
     const url = request.nextUrl.clone();
-    url.searchParams.delete("ref");
+    url.searchParams.delete("r");
     const res = NextResponse.redirect(url);
 
     const code = ref.trim();
@@ -36,6 +42,13 @@ export function proxy(request: NextRequest) {
       });
     }
     return res;
+  }
+
+  if (DISABLED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.search = "";
+    return NextResponse.redirect(url);
   }
 
   const token  = request.cookies.get(COOKIE_NAME)?.value;

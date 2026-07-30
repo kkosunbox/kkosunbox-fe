@@ -19,7 +19,6 @@ import {
   PackageNutritionGuide,
   type PackageTier,
 } from "@/entities/package";
-import { usePlanRatings } from "@/features/review";
 import { useReferralPricing } from "@/features/referral/model";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -36,6 +35,20 @@ const ALL_TIERS: PackageTier[] = ["Premium", "Standard", "Basic"];
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
+}
+
+/** 할인 표시 정보 (할인율·정가). 할인이 없는 플랜(discountRate 없음 + 초대코드 미적용)이면 null. */
+function planDiscountInfo(
+  plan: Pick<SubscriptionPlanDto, "monthlyPrice" | "originalPrice" | "discountRate">,
+  inviteEligible: boolean,
+  combinedDiscountPct: (p: { monthlyPrice: number; originalPrice?: number | null }) => number,
+): { pct: number; original: number } | null {
+  const hasDiscount = inviteEligible || (plan.discountRate ?? 0) > 0;
+  if (!hasDiscount) return null;
+  return {
+    pct: inviteEligible ? combinedDiscountPct(plan) : (plan.discountRate ?? 0),
+    original: plan.originalPrice ?? plan.monthlyPrice,
+  };
 }
 
 /** 이미지 전환 인라인 스타일 — blur focus-in + 비대칭 타이밍 */
@@ -145,7 +158,6 @@ export default function PlanPicker({
     () => [...plans].sort(comparePlansForDisplayOrder),
     [plans],
   );
-  const planRatings = usePlanRatings(sortedPlans.map((plan) => plan.id));
 
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
     initialSelectedTier ?? summaryOrder[0],
@@ -158,6 +170,7 @@ export default function PlanPicker({
 
   const { referralPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
     useReferralPricing();
+  const activeDiscount = activePlan ? planDiscountInfo(activePlan, inviteEligible, combinedDiscountPct) : null;
 
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
@@ -364,12 +377,16 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                            <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                              {inviteEligible ? combinedDiscountPct(activePlan) : activePlan.discountRate}%
-                            </span>
-                            <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                              {formatMonthlyPrice(activePlan.originalPrice)}
-                            </span>
+                            {activeDiscount ? (
+                              <>
+                                <span className="text-price-16-sb text-[var(--color-cta-button)]">
+                                  {activeDiscount.pct}%
+                                </span>
+                                <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                  {formatMonthlyPrice(activeDiscount.original)}
+                                </span>
+                              </>
+                            ) : null}
                             <span className="text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
                               {inviteEligible
                                 ? formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))
@@ -454,6 +471,7 @@ export default function PlanPicker({
               const isSelected = selectedTier === tier;
               const showSelectionState = showSelectedCardHighlight;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
+              const discount = plan ? planDiscountInfo(plan, inviteEligible, combinedDiscountPct) : null;
 
               return (
                 <button
@@ -498,12 +516,16 @@ export default function PlanPicker({
                     {plan ? (
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                          <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
-                            {inviteEligible ? combinedDiscountPct(plan) : plan.discountRate}%
-                          </span>
-                          <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(plan.originalPrice)}
-                          </span>
+                          {discount ? (
+                            <>
+                              <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
+                                {discount.pct}%
+                              </span>
+                              <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                {formatMonthlyPrice(discount.original)}
+                              </span>
+                            </>
+                          ) : null}
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="max-md:text-price-14-b md:text-price-16-b-tight text-[var(--color-text-body-warm)]">
@@ -515,8 +537,8 @@ export default function PlanPicker({
                               : formatMonthlyPrice(plan.monthlyPrice)}
                           </span>
                         </div>
-                        {planRatings[plan.id] > 0 ? (
-                          <PlanRatingStars rating={planRatings[plan.id]} size={16} />
+                        {plan.averageRating > 0 ? (
+                          <PlanRatingStars rating={plan.averageRating} size={16} />
                         ) : null}
                       </>
                     ) : (
@@ -540,6 +562,7 @@ export default function PlanPicker({
               const img = PACKAGE_SUMMARY_IMAGES[tier];
               const isSelected = selectedTier === tier;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
+              const discount = plan ? planDiscountInfo(plan, inviteEligible, combinedDiscountPct) : null;
 
               return (
                 <button
@@ -582,12 +605,16 @@ export default function PlanPicker({
                     {plan ? (
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                          <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {inviteEligible ? combinedDiscountPct(plan) : plan.discountRate}%
-                          </span>
-                          <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(plan.originalPrice)}
-                          </span>
+                          {discount ? (
+                            <>
+                              <span className="text-price-16-sb text-[var(--color-cta-button)]">
+                                {discount.pct}%
+                              </span>
+                              <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                {formatMonthlyPrice(discount.original)}
+                              </span>
+                            </>
+                          ) : null}
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
@@ -604,8 +631,8 @@ export default function PlanPicker({
                               : formatMonthlyPrice(plan.monthlyPrice)}
                           </span>
                         </div>
-                        {planRatings[plan.id] > 0 ? (
-                          <PlanRatingStars rating={planRatings[plan.id]} size={16} />
+                        {plan.averageRating > 0 ? (
+                          <PlanRatingStars rating={plan.averageRating} size={16} />
                         ) : null}
                       </>
                     ) : (

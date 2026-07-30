@@ -19,7 +19,6 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import { PackageNutritionGuide } from "@/entities/package";
-import { usePlanRatings } from "@/features/review";
 import { CheckCircleIcon, FallbackAvatar } from "@/shared/ui";
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
@@ -369,8 +368,6 @@ export default function ChecklistResult({
     };
   }, [profileId]);
 
-  const planRatings = usePlanRatings(sortedPlans.map((p) => p.id));
-
   const apiRecommendedPlan = sortedPlans.find((plan) => plan.isRecommended);
   const apiRecommendedTier = apiRecommendedPlan
     ? (packageThemeForPlan(apiRecommendedPlan).tier.toLowerCase() as RecommendedTier)
@@ -596,17 +593,19 @@ export default function ChecklistResult({
                         {pkg.name}
                       </p>
                       {/* 할인율 + 정가(취소선) */}
-                      <div className="flex items-center gap-[6px] max-md:mb-[2px] md:mb-[2px]">
-                        <span
-                          className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] max-md:text-[12px] max-md:leading-[15px]"
-                          style={{ color: "var(--color-cta-button)" }}
-                        >
-                          {plan.discountRate}%
-                        </span>
-                        <span className="text-[var(--color-text-secondary)] line-through max-md:text-[12px] max-md:font-semibold max-md:leading-[15px] max-md:tracking-[-0.05em] md:text-[14px] md:font-semibold md:leading-[17px] md:tracking-[-0.05em]">
-                          {formatMonthlyPrice(plan.originalPrice)}
-                        </span>
-                      </div>
+                      {plan.discountRate ? (
+                        <div className="flex items-center gap-[6px] max-md:mb-[2px] md:mb-[2px]">
+                          <span
+                            className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] max-md:text-[12px] max-md:leading-[15px]"
+                            style={{ color: "var(--color-cta-button)" }}
+                          >
+                            {plan.discountRate}%
+                          </span>
+                          <span className="text-[var(--color-text-secondary)] line-through max-md:text-[12px] max-md:font-semibold max-md:leading-[15px] max-md:tracking-[-0.05em] md:text-[14px] md:font-semibold md:leading-[17px] md:tracking-[-0.05em]">
+                            {formatMonthlyPrice(plan.originalPrice ?? plan.monthlyPrice)}
+                          </span>
+                        </div>
+                      ) : null}
                       {/* 월 요금제 + 할인가 */}
                       <div className="flex items-baseline gap-[8px] max-md:mb-[2px] md:mb-[6px]">
                         <span className="text-[var(--color-text-body-warm)] max-md:text-[13px] max-md:font-bold max-md:leading-[16px] max-md:tracking-[-0.05em] md:text-[16px] md:font-bold md:leading-[19px] md:tracking-[-0.05em]">
@@ -618,12 +617,12 @@ export default function ChecklistResult({
                       </div>
                       {/* 별점 */}
                       <div className="flex items-center gap-[8px]">
-                        <PlanStarRating score={planRatings[plan.id] ?? 0} />
+                        <PlanStarRating score={plan.averageRating} />
                         <span
                           className="text-[16px] font-semibold leading-[21px] tracking-[-0.02em] max-md:text-[13px] max-md:leading-[16px]"
                           style={{ color: "var(--color-cta-button)" }}
                         >
-                          {(planRatings[plan.id] ?? 0).toFixed(1)}
+                          {plan.averageRating.toFixed(1)}
                         </span>
                       </div>
                     </div>

@@ -3,7 +3,7 @@
 export interface MyReferralCode {
   referralCode: string;
   slug: string | null;       // 초대 페이지 slug (미설정 시 null)
-  referralLink: string | null; // 레퍼럴 링크 (slug 설정 시 /ref/{slug}, 미설정 시 null)
+  referralLink: string | null; // 레퍼럴 링크 (slug 설정 시 /r/{slug}, 미설정 시 null)
 }
 
 // ── 인플루언서 초대 페이지 (공개) ─────────────────────────────────

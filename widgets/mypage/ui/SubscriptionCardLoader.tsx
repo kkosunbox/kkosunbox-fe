@@ -2,22 +2,28 @@ import "server-only";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchSubscriptions } from "@/features/subscription/api/queries";
 import { fetchEligiblePlans, fetchMyReviews } from "@/features/review/api/queries";
+import { fetchProductOrders, fetchProducts } from "@/features/product/api/queries";
+import { groupOrdersByProduct } from "@/features/product/lib/groupOrdersByProduct";
 import { SubscriptionCard } from "./SubscriptionCard";
 
 export async function SubscriptionCardLoader() {
   const token = await getServerToken();
-  const [allSubscriptions, eligiblePlans, myReviews] = await Promise.all([
+  const [allSubscriptions, eligiblePlans, myReviews, productOrders, products] = await Promise.all([
     fetchSubscriptions(token),
     fetchEligiblePlans(token),
     fetchMyReviews(token),
+    fetchProductOrders(token, { limit: 100 }),
+    fetchProducts(token),
   ]);
   const active = allSubscriptions.filter((s) => s.isActive);
+  const purchaseGroups = groupOrdersByProduct(productOrders, products);
 
   return (
     <SubscriptionCard
       subscriptions={active}
       eligiblePlans={eligiblePlans}
       myReviews={myReviews}
+      purchaseGroups={purchaseGroups}
     />
   );
 }

@@ -13,8 +13,7 @@ import { validateReferralCode, getReferralPage, getMyReferralCode } from "@/feat
 interface ReferralState {
   refCode: string | null;
   isReferral: boolean;
-  /** true = 현재 세션에서 초대코드 할인을 받을 수 있음.
-   * /ref/{slug}: 항상 true. 다른 페이지: isReferral && !hasSubscriptionHistory */
+  /** true = 현재 세션에서 초대코드 할인을 받을 수 있음. 모든 경로에서 isReferral && !hasSubscriptionHistory. */
   inviteEligible: boolean;
   discountRate: number;
   influencerName: string;
@@ -55,7 +54,7 @@ export function ReferralProvider({
       ? {
           refCode: initialData.refCode,
           isReferral: true,
-          inviteEligible: true,
+          inviteEligible: !hasSubscriptionHistory,
           discountRate: initialData.discountRate,
           influencerName: initialData.influencerName,
           profileImageUrl: initialData.profileImageUrl,
@@ -71,7 +70,7 @@ export function ReferralProvider({
     const data = initialDataRef.current;
 
     if (data) {
-      // /ref/{slug} 랜딩 진입 시: 쿠키 저장으로 구독 흐름 전체에 코드 유지
+      // /r/{slug} 랜딩 진입 시: 쿠키 저장으로 구독 흐름 전체에 코드 유지
       document.cookie = `${INVITE_CODE_COOKIE}=${encodeURIComponent(data.refCode)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
       document.cookie = `${INVITE_SLUG_COOKIE}=${encodeURIComponent(data.slug)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
       return () => { isMounted.current = false; };

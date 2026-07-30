@@ -159,6 +159,7 @@ export default function OrderSection(props: OrderSectionProps) {
         handleAgreeAll={handleAgreeAll}
         submitError={submitError}
         isPending={isPending}
+        hasBilling={billing !== null}
         handlePay={handlePay}
       />
       <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
@@ -182,7 +183,7 @@ export default function OrderSection(props: OrderSectionProps) {
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
         strategy="afterInteractive"
       />
-      <OrderPriceSummaryBar basePrice={basePrice} totalDiscount={totalDiscount} total={total} />
+      <OrderPriceSummaryBar basePrice={basePrice} totalDiscount={totalDiscount} shippingFee={0} total={total} />
 
       <div className="bg-white lg:overflow-x-auto">
         <div

@@ -397,12 +397,36 @@ export default function PurchaseOrderSection({
                       <Checkbox
                         checked={agreeTerms}
                         onChange={() => setAgreeTerms((v) => !v)}
-                        label="(필수) 구매조건 및 결제진행 동의"
+                        label={
+                          <span className="inline-flex items-center gap-1.5">
+                            이용약관 동의 (필수)
+                            <a
+                              href="/terms"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[var(--color-text-secondary)] underline"
+                            >
+                              보기
+                            </a>
+                          </span>
+                        }
                       />
                       <Checkbox
                         checked={agreePrivacy}
                         onChange={() => setAgreePrivacy((v) => !v)}
-                        label="(필수) 개인정보 수집·이용 동의"
+                        label={
+                          <span className="inline-flex items-center gap-1.5">
+                            개인정보 수집·이용 동의 (필수)
+                            <a
+                              href="/privacy"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[var(--color-text-secondary)] underline"
+                            >
+                              보기
+                            </a>
+                          </span>
+                        }
                       />
                     </CollapsiblePanel>
                   </div>

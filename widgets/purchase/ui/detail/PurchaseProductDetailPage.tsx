@@ -208,6 +208,11 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
             </div>
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
+              <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">배송비</span>
+              <span className="text-[13px] font-medium leading-[140%] text-[var(--color-text)]">무료</span>
+            </div>
+
+            <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
               <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">제품수량</span>
               <div className="flex h-[34px] w-[102px] items-center justify-between rounded-[5px] border border-[var(--color-text-muted)] bg-white px-3">
                 <button
@@ -364,7 +369,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                 </span>
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] px-2 pt-7">
-                <div className="space-y-6 md:space-y-8 lg:space-y-8">
+                <div className="space-y-4">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
                     <span className="leading-[1.1] text-[var(--color-text)]">제품구성</span>
                     <span
@@ -382,6 +387,10 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                         월~목 배송 / 오전 11시 이후 주문 시 익일 발송
                       </p>
                     </div>
+                  </div>
+                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
+                    <span className="leading-[1.1] text-[var(--color-text)]">배송비</span>
+                    <span className="justify-self-start text-body-13-m leading-[140%] text-[var(--color-text)]">무료</span>
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
                     <span className="leading-[1.1] text-[var(--color-text)]">제품수량</span>

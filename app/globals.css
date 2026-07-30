@@ -208,6 +208,8 @@
   /* WhyChoose + Gallery 섹션 */
   --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */
   --color-top-band-bg: #8E6642;         /* 주문 가격합산 띠 · 구독상세 플랜선택 띠 배경 */
+  --color-top-band-label: #D8D8D8;      /* 상단 info 띠 라벨 텍스트 (예: '단품 구매') */
+  --color-top-band-highlight: #FFB56B;  /* 상단 info 띠 강조 텍스트 (제품구성 등) */
   --color-plan-chip-inactive: #9C836D;  /* 플랜 선택 탭바 비활성 칩 배경 */
   --color-badge-warm-bg: #FFF1CD;       /* 상품 뱃지 '가장 리뷰 많은' 배경 */
   --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 리뷰 많은' 텍스트 */
@@ -356,6 +358,8 @@
   --color-hero-truck-bg: var(--color-hero-truck-bg);
   --color-why-bg: var(--color-why-bg);
   --color-top-band-bg: var(--color-top-band-bg);
+  --color-top-band-label: var(--color-top-band-label);
+  --color-top-band-highlight: var(--color-top-band-highlight);
   --color-plan-chip-inactive: var(--color-plan-chip-inactive);
   --color-badge-warm-bg: var(--color-badge-warm-bg);
   --color-badge-warm-text: var(--color-badge-warm-text);

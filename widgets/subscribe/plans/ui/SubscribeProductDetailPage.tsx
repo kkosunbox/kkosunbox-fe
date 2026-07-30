@@ -24,6 +24,7 @@ import {
   TIER_DETAIL_HERO_IMAGES,
   comparePlansForDisplayOrder,
   packageThemeForPlan,
+  formatPackageContentsLabel,
   PACKAGES,
   tierFromSubscriptionPlan,
   type PackageTier,
@@ -246,7 +247,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 className="max-w-[220px] text-left text-[14px] font-bold leading-[17px]"
                 style={{ color: selectedTheme.colorVar }}
               >
-                {selectedPackage.contents.join(" ")}
+                {formatPackageContentsLabel(selectedPackage.contents)}
               </span>
             </div>
 
@@ -262,6 +263,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   오전 11시 이후 주문 시 익일 발송
                 </p>
               </div>
+            </div>
+
+            <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
+              <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">배송비</span>
+              <span className="text-[13px] font-medium leading-[140%] text-[var(--color-text)]">무료</span>
             </div>
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
@@ -455,11 +461,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 )}
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
-                <div className="space-y-6 md:space-y-8 lg:space-y-8">
+                <div className="space-y-4">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품구성</span>
                     <span className="justify-self-start max-w-[240px] text-left text-body-14-b leading-[17px]" style={{ color: selectedTheme.colorVar }}>
-                      {selectedPackage.contents.join(" ")}
+                      {formatPackageContentsLabel(selectedPackage.contents)}
                     </span>
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
@@ -470,6 +476,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                         월~목 배송 / 오전 11시 이후 주문 시 익일 발송
                       </p>
                     </div>
+                  </div>
+                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
+                    <span className="text-[var(--color-text)] leading-[1.1]">배송비</span>
+                    <span className="justify-self-start text-body-13-m leading-[140%] text-[var(--color-text)]">무료</span>
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품수량</span>

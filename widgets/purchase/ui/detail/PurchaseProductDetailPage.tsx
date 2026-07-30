@@ -10,6 +10,7 @@ import { ChevronIcon } from "@/shared/ui";
 import {
   TIER_BOX_IMAGES,
   TIER_LABEL,
+  formatPackageContentsLabel,
   type PackageData,
   type PackagePurchaseProduct,
 } from "@/entities/package";
@@ -97,7 +98,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
     });
   }
 
-  const contentsLabel = pkg.contents.join(" ");
+  const contentsLabel = formatPackageContentsLabel(pkg.contents);
   const total = purchaseProduct.price * quantity;
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 
@@ -106,15 +107,13 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   }
 
   const TopBar = (
-    <div className="flex h-[46px] w-full min-w-0 items-center gap-2 px-4 sm:gap-3 sm:px-6 md:px-0">
-      <span className="shrink-0 text-body-12-m text-[var(--color-text-muted)] sm:text-body-14-sb">
+    <div className="flex h-[46px] w-full min-w-0 items-center px-4 sm:px-6 md:px-0">
+      <span className="mr-8 shrink-0 max-sm:text-body-12-m sm:text-[14px] sm:font-semibold sm:leading-[17px] text-[var(--color-top-band-label)]">
         단품 구매
       </span>
-      <span className="h-3 w-px shrink-0 bg-white/30" aria-hidden />
-      <span className="min-w-0 flex-1 truncate text-body-12-m text-white sm:text-body-14-sb">
+      <span className="mr-3 truncate max-sm:text-body-12-m sm:text-[14px] sm:font-bold sm:leading-[17px] text-[var(--color-top-band-highlight)]">
         {contentsLabel}
       </span>
-      <span className="h-3 w-px shrink-0 bg-white/30" aria-hidden />
       <span className="shrink-0 text-body-12-sb text-white sm:text-body-14-sb">
         {formatKrwPrice(purchaseProduct.price)}
       </span>
@@ -205,6 +204,11 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   오전 11시 이후 주문 시 익일 발송
                 </p>
               </div>
+            </div>
+
+            <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
+              <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">배송비</span>
+              <span className="text-[13px] font-medium leading-[140%] text-[var(--color-text)]">무료</span>
             </div>
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
@@ -364,7 +368,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                 </span>
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] px-2 pt-7">
-                <div className="space-y-6 md:space-y-8 lg:space-y-8">
+                <div className="space-y-4">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
                     <span className="leading-[1.1] text-[var(--color-text)]">제품구성</span>
                     <span
@@ -382,6 +386,10 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                         월~목 배송 / 오전 11시 이후 주문 시 익일 발송
                       </p>
                     </div>
+                  </div>
+                  <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
+                    <span className="leading-[1.1] text-[var(--color-text)]">배송비</span>
+                    <span className="justify-self-start text-body-13-m leading-[140%] text-[var(--color-text)]">무료</span>
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
                     <span className="leading-[1.1] text-[var(--color-text)]">제품수량</span>

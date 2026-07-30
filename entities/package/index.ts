@@ -4,6 +4,7 @@ export {
   comparePlansForDisplayOrder,
   tierLabel,
   packageThemeForPlan,
+  formatPackageContentsLabel,
   PACKAGES,
   COMPARE_PACKAGES,
   SUBSCRIBE_PLAN_CARD_FEATURES,

@@ -97,6 +97,16 @@ export const PACKAGES: PackageData[] = [
   },
 ];
 
+/**
+ * `contents`의 각 배열 원소는 의도된 줄바꿈 단위(그룹)다.
+ * 그룹 내부 공백은 줄바꿈 불가 공백(NBSP)으로 바꿔 그룹이 항상 붙어 있게 하고,
+ * 그룹 사이에는 일반 공백을 둬 화면 너비가 부족할 때만 그 지점에서 개행되게 한다.
+ * 고정 너비 없이 반응형으로 동작한다.
+ */
+export function formatPackageContentsLabel(contents: readonly string[]): string {
+  return contents.map((group) => group.replace(/ /g, " ")).join(" ");
+}
+
 const COMPARE_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 export const COMPARE_PACKAGES = COMPARE_ORDER.map(
   (t) => PACKAGES.find((p) => p.tier === t)!

@@ -448,11 +448,11 @@ pnpm test:e2e tests/e2e/error-boundaries.spec.ts    # 시각 회귀 ← order-08
 
 ### A. `/shop` 자체 개선 (리뷰 지적사항)
 
-- [ ] **A-1. 동작하지 않는 결제수단 정리** — `ShopOrderSection.tsx:22`가 카카오페이·네이버페이를 선택 가능하게 노출하나 분기 로직이 없다. 실제 `/order`는 `OrderPaymentSection.tsx:50`에서 `신용카드`만 두고 나머지는 TODO 주석 처리 상태. `/order`와 동일하게 줄이거나 disabled + "준비 중" 처리. **비용 낮음 / 효과 높음 — 먼저 할 것**
-- [ ] **A-2. 저장된 배송지 사용** — `ShopOrderSection.tsx:187-188`이 `selectedAddress={null}`, `onChangeAddress={() => {}}`를 고정으로 넘겨 로그인 사용자도 배송지를 매번 재입력해야 한다. `/order`는 `fetchDeliveryAddresses`로 불러온다(`app/(main)/order/page.tsx:5`). `/shop/order`도 동일하게. **리팩토링으로 `CheckoutAddressSection`이 features로 내려가면 이게 훨씬 자연스러워진다**
+- [x] **A-1. 동작하지 않는 결제수단 정리** — Toss 결제위젯 SDK 연동(B-4)으로 `renderPaymentMethods`가 결제수단 선택 UI를 대신하면서 자연 해소됨(2026-07-31 재확인)
+- [x] **A-2. 저장된 배송지 사용** — 현재 `ShopOrderSection.tsx`가 `address.selectedAddress`/`address.handleChangeAddress`를 실제로 바인딩함(2026-07-31 재확인, 더 이상 `null` 고정 아님)
 - [ ] **A-3. 무료배송 문구 정합성** — 목록에 "3만원 이상 무료배송"(`ShopListSection.tsx:35`)을 걸었으나 장바구니가 없어 단일 상품만 담긴다. 가장 비싼 화식(12,900원)도 3개, 요거트볼은 4개를 사야 도달. B-1(장바구니) 결정에 종속되므로 그 다음에
 - [ ] **A-4. `generateMetadata` 추가** — `/shop/order`의 제목이 상품과 무관하게 "주문/결제" 고정
-- [ ] **A-5. 죽은 클래스 제거** — `ShopProductArt.tsx:78`의 `group-hover:scale-110`은 `ShopOrderSection`에서 `group` 조상이 없어 무효
+- [x] **A-5. 죽은 클래스 제거** — 대상 `ShopProductArt.tsx` 자체가 삭제되고 실제 상품 이미지로 교체됨(2026-07-31 재확인, 항목 소멸)
 - [ ] **A-6. `tests/e2e/shop.spec.ts` 추가** — `order.spec.ts`가 선례
 - [ ] **A-7. 컨테이너 폭 표기 통일** — 목록은 `max-w-content`, 주문서는 `style={{ maxWidth: "var(--max-width-content)" }}`(`ShopOrderSection.tsx:134`). 후자는 `OrderSection.tsx:190`에서 복사된 것이라 order와 함께 정리
 
@@ -461,7 +461,7 @@ pnpm test:e2e tests/e2e/error-boundaries.spec.ts    # 시각 회귀 ← order-08
 - [ ] **B-1. 장바구니 도입 여부** — 현재 카드 클릭 시 `/shop/order`로 직행(`ShopListSection.tsx:67`). 상품 상세 없음, 다중 상품 주문 불가. A-3이 여기 종속. **먼저 결정할 것**
 - [ ] **B-2. 상품 상세 페이지** — B-1과 함께 "목록 → 상세 → 장바구니 → 주문" 중 어디까지 갈지 결정
 - [ ] **B-3. 실제 상품 API 연동** — `SHOP_PRODUCTS`(`shopProducts.ts:24`)는 더미. 교체 시 `colorVar`/`glyph`는 서버가 안 내려주므로 `entities/package`의 `packageData.ts` + `packageThumbnails.ts` 분리 패턴 참고
-- [ ] **B-4. PG 연동** — `ShopOrderSection.tsx:114-121`이 데모 alert. 구독 쪽 Toss 연동(`.claude/contexts/toss-billing-integration-plan.md`)과 방식 통일 필요. 단건 결제는 빌링키 방식과 다르므로 별도 검토
+- [x] **B-4. PG 연동** — Toss 결제위젯 SDK로 실연동 완료(2026-07-31 재확인). 데모 alert 아님, 구독 쪽과 별도로 단건 결제위젯 방식 적용됨
 
 ### C. 중복 제거 (§1-3에서 드러난 것 — 이번 리팩토링이 착지점을 만들어줌)
 

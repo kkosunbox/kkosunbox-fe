@@ -4,7 +4,7 @@
 > 대상: `widgets/purchase/ui/PurchaseOrderSection.tsx` (468줄 / useState **10** / useEffect 3 / useRef 2)
 > 출처 진단: `.claude/contexts/god-component-audit.md` §0 (2026-07-31 재감사) 1순위 후보
 > 참고 패턴: `widgets/register/ui/register-section/` (Coordinator + 도메인 훅 + View)
-> 계보 문서: `point-history-refactor-plan.md`, `profile-management-refactor-plan.md`, `shop-order-fsd-refactor-plan.md`
+> 계보 문서: `shop-order-fsd-refactor-plan.md` (동일 패턴의 선행 리팩토링 완료·정리됨)
 > 결제 회귀 테스트 절차: `purchase-order-section-test-guide.md` (§7의 W1~W6·P1~P12를 실제 조작 순서로 풀어씀)
 > 선행: 없음. 후속(선택): `widgets/shop/ui/ShopOrderSection.tsx` — `/shop`은 현재 비활성 라우트라 우선순위 낮음
 > 전제: `CLAUDE.md`, `.claude/contexts/design-system.md` 규칙 준수

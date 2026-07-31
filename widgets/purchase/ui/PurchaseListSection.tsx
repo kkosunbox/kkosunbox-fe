@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  PACKAGES,
+  COMPARE_PACKAGES,
   getPackagePurchaseProduct,
   TIER_BOX_IMAGES,
   TIER_LABEL,
@@ -73,9 +73,9 @@ export default function PurchaseListSection({ productsByTier }: PurchaseListSect
       </section>
 
       <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:pt-1 md:max-lg:pt-2 lg:pt-0 max-md:pb-8 md:pb-0 lg:pb-12">
-        {/* 상품 그리드 — Basic·Standard·Premium 단품 */}
+        {/* 상품 그리드 — Premium·Standard·Basic 단품 (다른 비교 화면과 동일하게 프리미엄 우선 정렬) */}
         <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
-          {PACKAGES.map((pkg) => {
+          {COMPARE_PACKAGES.map((pkg) => {
             const apiProduct = productsByTier[pkg.tier];
             const dummyProduct = getPackagePurchaseProduct(pkg.tier)!;
             const displayName = apiProduct?.name ?? pkg.name;

@@ -23,10 +23,7 @@ import { useReferralPricing } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 
-/** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
-const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
-
-/** 데스크탑 카드 열·모바일 네비 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
+/** 데스크탑 카드 열·모바일 네비·태블릿 가로 카드 공통 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
 const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
 const TIER_RATINGS: Record<PackageTier, number> = {
@@ -486,8 +483,7 @@ export default function ReferralPlanPicker({
             ref={tabletCardColumnRef}
             className="max-md:hidden md:flex lg:hidden w-full justify-between items-start"
           >
-            {TABLET_SUMMARY_ORDER.map((tier) => {
-              const i = summaryOrder.indexOf(tier);
+            {summaryOrder.map((tier, i) => {
               const pkg = PACKAGES.find((p) => p.tier === tier)!;
               const plan = planForTier(sortedPlans, tier);
               const img = PACKAGE_SUMMARY_IMAGES[tier];

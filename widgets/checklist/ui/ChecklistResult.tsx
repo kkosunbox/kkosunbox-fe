@@ -14,6 +14,7 @@ import {
   PACKAGE_SUMMARY_IMAGES,
   PACKAGE_EXPLAIN_BY_TIER,
   PackageSummaryThumbnail,
+  PlanRatingStars,
   TIER_DETAIL_HERO_IMAGES,
   type PackageData,
   type PackageTier,
@@ -59,38 +60,6 @@ function ChecklistStartSubscriptionTitleSvg({ className }: { className?: string 
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
-}
-
-const STAR_PATH =
-  "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
-
-function PlanStarRating({ score }: { score: number }) {
-  const full = Math.floor(score);
-  const hasHalf = score - full >= 0.25;
-
-  return (
-    <div className="flex items-center">
-      {Array.from({ length: 5 }, (_, i) => {
-        const isFull = i < full;
-        const isHalf = !isFull && i === full && hasHalf;
-        return (
-          <svg key={i} width="20" height="20" viewBox="0 0 24 24" aria-hidden>
-            <path
-              d={STAR_PATH}
-              fill={isFull || isHalf ? "var(--color-star)" : "var(--color-text-muted)"}
-            />
-            {isHalf && (
-              <path
-                d={STAR_PATH}
-                fill="var(--color-text-muted)"
-                style={{ clipPath: "inset(0 0 0 50%)" }}
-              />
-            )}
-          </svg>
-        );
-      })}
-    </div>
-  );
 }
 
 const TIER_LABEL: Record<RecommendedTier, string> = {
@@ -569,7 +538,8 @@ export default function ChecklistResult({
           <ChecklistStartSubscriptionTitleSvg className="mx-auto mb-[48px] h-auto w-full max-w-[380px] max-md:mb-7 max-md:max-w-[260px]" />
 
           <div className="flex max-md:flex-col max-md:gap-6 md:justify-center md:gap-6 lg:justify-between lg:gap-0">
-              {sortedPlans.map((plan) => {
+              {/* 프리미엄부터 노출 — sortedPlans는 베이직→프리미엄 오름차순이라 역순으로 뒤집는다 */}
+              {[...sortedPlans].reverse().map((plan) => {
                 const tier = tierFromSubscriptionPlan(plan);
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const pkg = PACKAGES.find((p) => p.tier === tier);
@@ -616,15 +586,7 @@ export default function ChecklistResult({
                         </span>
                       </div>
                       {/* 별점 */}
-                      <div className="flex items-center gap-[8px]">
-                        <PlanStarRating score={plan.averageRating} />
-                        <span
-                          className="text-[16px] font-semibold leading-[21px] tracking-[-0.02em] max-md:text-[13px] max-md:leading-[16px]"
-                          style={{ color: "var(--color-cta-button)" }}
-                        >
-                          {plan.averageRating.toFixed(1)}
-                        </span>
-                      </div>
+                      <PlanRatingStars rating={plan.averageRating} size={16} />
                     </div>
                   </Link>
                 );

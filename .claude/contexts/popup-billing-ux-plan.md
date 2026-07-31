@@ -1,7 +1,7 @@
 # 팝업·결제수단 UX 개편 계획
 
 작성일: 2026-07-28
-관련 컨텍스트: `toss-billing-integration-plan.md`, `toss-billing-test-guide.md`
+관련 컨텍스트: `toss-billing-test-guide.md`
 
 ---
 

@@ -31,7 +31,7 @@
 
 - [ ] **`/subscribe` 플랜 목록** — `getSubscriptionPlans()` 연동, 추천 플랜 표시
 - [ ] **`/order` 구독 신청** — `createSubscription()` 연결 (플랜 선택 → 배송지 선택 → 쿠폰 입력 → 결제)
-- [ ] **Toss 빌링(자동결제) 연동** — 나이스페이에서 Toss로 교체 확정, 계약 완료(2026-07). 클라이언트 키 전달 대기 중이라 실제 세팅은 아직 못 함. SDK 설치·`/payment/billing/success|fail` 라우트 골격 등 코드 준비는 되어 있음 — 상세는 `.claude/contexts/toss-billing-integration-plan.md` 참고
+- [x] **Toss 빌링(자동결제) 연동** — 나이스페이에서 Toss로 교체 완료. 실카드 테스트까지 통과(2026-07-27) — 상세는 `.claude/contexts/toss-billing-test-guide.md` 참고
 - [ ] **체크리스트 연동** — `/checklist` 결과를 프로필에 저장 (`updateProfile`의 `checklistAnswers`)
 
 ---

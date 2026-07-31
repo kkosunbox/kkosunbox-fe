@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
-import { TIER_BOX_IMAGES, CURRENT_PURCHASE_TIER } from "@/entities/package";
+import { TIER_BOX_IMAGES, CURRENT_PURCHASE_TIER, type PackageTier } from "@/entities/package";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
 import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
@@ -165,10 +165,12 @@ interface Props {
   product: ProductDto | null;
   orders: ProductOrderDto[];
   planSummaries: ProductOrderPlanSummaryDto[];
+  /** relatedPlanId로 역매핑된 실제 구매 티어. 매칭 실패 시 null(썸네일은 기본 티어로 폴백) */
+  tier: PackageTier | null;
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
-export default function PurchaseDetailSection({ group, product, orders, planSummaries }: Props) {
+export default function PurchaseDetailSection({ group, product, orders, planSummaries, tier }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
   const { openAlert } = useModal();
@@ -339,6 +341,8 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
     );
   }
 
+  const boxImage = TIER_BOX_IMAGES[tier ?? CURRENT_PURCHASE_TIER];
+
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* 상단 컬러 밴드 */}
@@ -358,10 +362,10 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
           <div className="relative flex shrink-0 items-center justify-center bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
             <img
-              src={TIER_BOX_IMAGES[CURRENT_PURCHASE_TIER].src}
+              src={boxImage.src}
               alt={group.productName}
-              width={TIER_BOX_IMAGES[CURRENT_PURCHASE_TIER].width}
-              height={TIER_BOX_IMAGES[CURRENT_PURCHASE_TIER].height}
+              width={boxImage.width}
+              height={boxImage.height}
               decoding="async"
               className="absolute inset-0 h-full w-full object-cover object-center scale-105"
             />

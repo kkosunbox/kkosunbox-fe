@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   PACKAGES,
-  CURRENT_PURCHASE_TIER,
   getPackagePurchaseProduct,
   TIER_BOX_IMAGES,
+  TIER_LABEL,
   PlanRatingStars,
+  type PackageTier,
 } from "@/entities/package";
 import type { ProductDto } from "@/features/product/api/types";
-import { ChevronIcon } from "@/shared/ui";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import PurchaseHeroImage from "../assets/purchase-hero.webp";
@@ -18,17 +18,11 @@ import PurchaseHeroImageTablet from "../assets/purchase-hero-tablet.webp";
 import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
 
 interface PurchaseListSectionProps {
-  /** 백엔드 카탈로그에서 매칭된 실제 상품 (없으면 더미 데이터로 폴백) */
-  product: ProductDto | null;
+  /** 티어별로 백엔드 카탈로그에서 매칭된 실제 상품 (없으면 더미 데이터로 폴백) */
+  productsByTier: Record<PackageTier, ProductDto | null>;
 }
 
-export default function PurchaseListSection({ product: apiProduct }: PurchaseListSectionProps) {
-  const pkg = PACKAGES.find((p) => p.tier === CURRENT_PURCHASE_TIER)!;
-  // 평점·티어 뱃지·박스 이미지는 백엔드가 아직 제공하지 않아 더미 유지 — 안정화되면 더미 통째로 제거 예정
-  const dummyProduct = getPackagePurchaseProduct(CURRENT_PURCHASE_TIER)!;
-  const displayName = apiProduct?.name ?? pkg.name;
-  const displayPrice = apiProduct?.price ?? dummyProduct.price;
-
+export default function PurchaseListSection({ productsByTier }: PurchaseListSectionProps) {
   return (
     <div>
       {/* Hero */}
@@ -79,44 +73,54 @@ export default function PurchaseListSection({ product: apiProduct }: PurchaseLis
       </section>
 
       <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:pt-1 md:max-lg:pt-2 lg:pt-0 max-md:pb-8 md:pb-0 lg:pb-12">
-        {/* 상품 — 현재는 프리미엄 단품만 판매 */}
-        <Link href={`/purchase/detail?tier=${pkg.tier}`} className="group mt-0 flex w-[272px] flex-col">
-          <div
-            className="relative aspect-[272/252] w-full overflow-hidden rounded-[16px]"
-            style={{ boxShadow: "var(--shadow-card-soft)" }}
-          >
-            <Image
-              src={TIER_BOX_IMAGES[pkg.tier]}
-              alt={displayName}
-              fill
-              quality={HIGH_IMAGE_QUALITY}
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-              sizes="272px"
-            />
-          </div>
-          <div className="flex flex-col gap-2 pt-6">
-            <span className="text-subtitle-18-sb text-[var(--color-text-emphasis)] group-hover:text-[var(--color-primary)] transition-colors">
-              {displayName}
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
-              <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
-                {formatKrwPrice(displayPrice)}
-              </span>
-            </div>
-            <PlanRatingStars rating={dummyProduct.rating} size={16} />
-          </div>
-        </Link>
+        {/* 상품 그리드 — Basic·Standard·Premium 단품 */}
+        <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
+          {PACKAGES.map((pkg) => {
+            const apiProduct = productsByTier[pkg.tier];
+            const dummyProduct = getPackagePurchaseProduct(pkg.tier)!;
+            const displayName = apiProduct?.name ?? pkg.name;
+            const displayPrice = apiProduct?.price ?? dummyProduct.price;
 
-        {/* 페이지네이션 — 현재 단품만 판매해 비활성 상태로만 노출 (목업 대비 기능은 대기) */}
-        <div className="mt-10 flex items-center justify-center gap-3" aria-hidden>
-          <span className="flex h-6 w-6 items-center justify-center opacity-30">
-            <span className="rotate-90 inline-flex"><ChevronIcon open={false} size={20} /></span>
-          </span>
-          <span className="text-body-14-m text-[var(--color-text)]">1</span>
-          <span className="flex h-6 w-6 items-center justify-center opacity-30">
-            <span className="-rotate-90 inline-flex"><ChevronIcon open={false} size={20} /></span>
-          </span>
+            return (
+              <Link
+                key={pkg.tier}
+                href={`/purchase/detail?tier=${pkg.tier}`}
+                className="group flex w-full flex-col"
+              >
+                <div
+                  className="relative aspect-[272/252] w-full overflow-hidden rounded-[16px]"
+                  style={{ boxShadow: "var(--shadow-card-soft)" }}
+                >
+                  <Image
+                    src={TIER_BOX_IMAGES[pkg.tier]}
+                    alt={displayName}
+                    fill
+                    quality={HIGH_IMAGE_QUALITY}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 33vw"
+                  />
+                  <span
+                    className="absolute left-3 top-3 inline-flex items-center justify-center rounded-[30px] px-3 py-1 text-body-13-sb text-white"
+                    style={{ background: pkg.colorVar }}
+                  >
+                    {TIER_LABEL[pkg.tier]}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-2 pt-6">
+                  <span className="text-subtitle-18-sb text-[var(--color-text-emphasis)] group-hover:text-[var(--color-primary)] transition-colors">
+                    {displayName}
+                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
+                    <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
+                      {formatKrwPrice(displayPrice)}
+                    </span>
+                  </div>
+                  <PlanRatingStars rating={dummyProduct.rating} size={16} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

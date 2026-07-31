@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
-import { PACKAGES, CURRENT_PURCHASE_TIER } from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
-import { resolvePurchaseProduct } from "@/features/product/lib/resolvePurchaseProduct";
+import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
+import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata: Metadata = {
@@ -12,16 +12,15 @@ export const metadata: Metadata = {
 };
 
 export default async function PurchasePage() {
-  const pkg = PACKAGES.find((p) => p.tier === CURRENT_PURCHASE_TIER)!;
-  const products = await fetchProducts();
-  const product = resolvePurchaseProduct(products, pkg.name);
+  const [products, plans] = await Promise.all([fetchProducts(), fetchSubscriptionPlans()]);
+  const productsByTier = resolveProductsByTier(products, plans);
 
   return (
     <>
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>
-      <PurchaseListSection product={product} />
+      <PurchaseListSection productsByTier={productsByTier} />
     </>
   );
 }

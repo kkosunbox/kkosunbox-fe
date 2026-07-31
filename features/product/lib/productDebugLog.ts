@@ -23,24 +23,11 @@ export function logProductFetch(products: ProductDto[]): void {
   );
 }
 
-/** 상품명 매칭 결과 — 매칭 성공 / 카탈로그 1건뿐이라 폴백 / 매칭 실패(더미 데이터로 폴백) */
-export function logProductResolve(
-  packageName: string,
-  products: ProductDto[],
-  resolved: ProductDto | null,
+/** relatedPlanId 기반 티어별 상품 매칭 결과 — 어떤 티어가 어떤 상품/근거로 매칭됐는지 */
+export function logProductResolveByTier(
+  resolved: Record<string, { id: number; name: string; reason: string } | null>,
 ): void {
-  const reason =
-    products.length === 0
-      ? "카탈로그 0건 — 더미로 폴백"
-      : resolved && resolved.name === packageName
-        ? "이름 매칭 성공"
-        : resolved
-          ? "카탈로그 1건뿐이라 그걸로 간주"
-          : "카탈로그 2건 이상인데 이름 불일치 — 더미로 폴백";
-  console.info(
-    `${PREFIX} ${stamp()} resolvePurchaseProduct("${packageName}") →`,
-    JSON.stringify({ resolvedId: resolved?.id ?? null, resolvedName: resolved?.name ?? null, reason }),
-  );
+  console.info(`${PREFIX} ${stamp()} resolveProductsByTier →`, JSON.stringify(resolved));
 }
 
 /** POST /v1/products/orders/confirm 요청 직전 — 무엇으로 승인 요청하는지 */

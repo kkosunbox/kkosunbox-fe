@@ -6,7 +6,9 @@ import {
   fetchProducts,
   fetchProductOrderPlanSummaries,
 } from "@/features/product/api/queries";
+import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { groupOrdersByProduct } from "@/features/product/lib/groupOrdersByProduct";
+import { resolveProductTier } from "@/features/product/lib/resolveProductsByTier";
 
 const PurchaseDetailSection = dynamic(
   () => import("@/widgets/mypage/ui/PurchaseDetailSection"),
@@ -21,10 +23,11 @@ interface PageProps {
 export default async function PurchaseManagementPage({ searchParams }: PageProps) {
   const { productId } = await searchParams;
   const token = await getServerToken();
-  const [orders, products, planSummaries] = await Promise.all([
+  const [orders, products, planSummaries, plans] = await Promise.all([
     fetchProductOrders(token, { limit: 100 }),
     fetchProducts(token),
     fetchProductOrderPlanSummaries(token),
+    fetchSubscriptionPlans(token),
   ]);
   const groups = groupOrdersByProduct(orders, products);
 
@@ -49,6 +52,7 @@ export default async function PurchaseManagementPage({ searchParams }: PageProps
 
   const productOrders = orders.filter((order) => order.productId === group.productId);
   const product = products.find((p) => p.id === group.productId) ?? null;
+  const tier = product ? resolveProductTier(product, plans) : null;
 
   return (
     <PurchaseDetailSection
@@ -56,6 +60,7 @@ export default async function PurchaseManagementPage({ searchParams }: PageProps
       product={product}
       orders={productOrders}
       planSummaries={planSummaries}
+      tier={tier}
     />
   );
 }

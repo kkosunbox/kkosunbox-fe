@@ -5,7 +5,7 @@ export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "
     return (
       <div className="px-6 py-10">
         <h3 className="text-[20px] font-semibold leading-6 tracking-[-0.04em] text-[var(--color-text-emphasis)]">
-          배송정보
+          배송/교환/반품 정보
         </h3>
         <div className="mt-6 space-y-8 pl-2">
           {DELIVERY_INFO_SECTIONS.map((section) => (
@@ -33,7 +33,7 @@ export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "
 
   return (
     <div className="mx-auto max-w-[815px] py-20 md:px-6 lg:px-0">
-      <h3 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">배송정보</h3>
+      <h3 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">배송/교환/반품 정보</h3>
       <div className="mt-8 space-y-10 pl-2">
         {DELIVERY_INFO_SECTIONS.map((section) => (
           <section key={section.title}>

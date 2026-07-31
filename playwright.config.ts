@@ -48,24 +48,24 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: /visual-regression-tablet\.spec\.ts/,
+      testIgnore: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
     // 태블릿 구간(768–1199px, CLAUDE.md 반응형 표 기준) 경계값 3종.
-    // 기존 기능 스펙에는 영향 없도록 visual-regression-tablet.spec.ts만 실행한다.
+    // 기존 기능 스펙에는 영향 없도록 visual-regression-tablet*.spec.ts만 실행한다.
     {
       name: "tablet-768",
       use: { ...devices["Desktop Chrome"], viewport: { width: 768, height: 1024 } },
-      testMatch: /visual-regression-tablet\.spec\.ts/,
+      testMatch: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
     {
       name: "tablet-1024",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1024, height: 1000 } },
-      testMatch: /visual-regression-tablet\.spec\.ts/,
+      testMatch: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
     {
       name: "tablet-1199",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1199, height: 1000 } },
-      testMatch: /visual-regression-tablet\.spec\.ts/,
+      testMatch: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
   ],
 });

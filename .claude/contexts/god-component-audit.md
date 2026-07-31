@@ -1,12 +1,31 @@
 # God Component & TODO 조사 보고서
 
-> 작성일: 2026-06-26
+> 작성일: 2026-06-26 (최초) / 2026-07-31 재감사
 > 대상: `app/`, `widgets/`, `features/`, `shared/`, `entities/` (node_modules·.next·.claude 제외)
 > 판정 기준: **줄 수만이 아니라 책임 집중도(useState·useEffect·핸들러 수)** 를 함께 평가
 
 ---
 
-## 1. God Component 분석
+## 0. 2026-07-31 재감사 결과
+
+**6/26 우선순위 1~4번(ChecklistFormModal·ChecklistSection·RegisterSection·ProfileManagementSection·PointHistorySection) 전부 리팩토링 완료·커밋됨.** 더 이상 state 12개 이상의 god component는 없음.
+
+새로 눈에 띄는 후보 (state/effect 밀도 기준):
+
+| 파일 | 줄 | useState | useEffect | 판정 |
+|---|---|---|---|---|
+| `widgets/purchase/ui/PurchaseOrderSection.tsx` | 468 | 7 | 3 | 🟡 후보 — `/purchase` 활성 라우트, agreements+quantity+payment flow 뒤섞임 |
+| `widgets/shop/ui/ShopOrderSection.tsx` | 359 | 6 | 3 | 🟡 후보 — Purchase와 구조 판박이(`openSections`/`quantity`/`agreeTerms·Privacy`/`isPaying`/`paymentReady`/`handleAgreeAll`/`handlePay` 동일). 단 `/shop` 라우트 현재 잠정 비활성화라 우선순위 낮음 |
+
+**제안:** `widgets/register/ui/register-section/`의 Coordinator + 단위 훅(`useAgreements` 등) 패턴을 그대로 재사용해 `PurchaseOrderSection` 먼저 손보고, 같은 패턴을 `ShopOrderSection`에도 적용. 두 파일 구조가 동일하므로 공용 훅 추출(`useOrderAgreements`, `useOrderPayment` 등)로 중복 제거도 함께 가능.
+
+**계획 문서 확정(2026-07-31, Opus):** `.claude/contexts/purchase-order-section-refactor-plan.md`. Phase 1~5가 `PurchaseOrderSection` 완결 단위, Phase 6(`ShopOrderSection` 적용)·Phase 7(`useOrderAgreements` → `features/order/lib` 승격)은 선택적 후속. 전수 대조 결과 두 파일 중 진짜 동일한 건 약관 동의 4개뿐이라 지금은 공용화하지 않기로 결정.
+
+**보류(오탐 아님, 그냥 로직 적음):** `PasswordManagementSection`(state 6이지만 필드 3개+토글 3개 단순 반복), `PlanPicker`/`AboutSection`/`ProfileSection`(6/26에도 이미 ⚪ 표현형 판정, 여전히 유효).
+
+---
+
+## 1. God Component 분석 (2026-06-26 최초 스냅샷 — 현재는 §0 참고)
 
 핵심: **줄 수만으로는 오판한다.** 정적 JSX가 많아 길 뿐인 컴포넌트(예: `AboutSection` 627줄, state 0)는 god component가 아니다. 상태·이펙트가 한 컴포넌트에 몰린 것이 진짜 문제다.
 

@@ -1,19 +1,19 @@
 "use client";
 
 import { Fragment, useRef, useState } from "react";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { ChevronIcon } from "@/shared/ui";
 import {
+  PACKAGE_DETAIL_IMAGES,
   TIER_BOX_IMAGES,
   TIER_LABEL,
   formatPackageContentsLabel,
   type PackageData,
   type PackagePurchaseProduct,
-  type PackageTier,
 } from "@/entities/package";
 import Stars from "@/widgets/subscribe/plans/ui/reviews/Stars";
 import ReviewImageLightbox from "@/widgets/subscribe/plans/ui/reviews/ReviewImageLightbox";
@@ -22,27 +22,6 @@ import ProductReviewList from "@/widgets/subscribe/plans/ui/reviews/ProductRevie
 import ProductInfoImages from "@/widgets/subscribe/plans/ui/detail/ProductInfoImages";
 import ProductDeliveryInfo from "@/widgets/subscribe/plans/ui/detail/ProductDeliveryInfo";
 import ProductSupportTab from "@/widgets/subscribe/plans/ui/detail/ProductSupportTab";
-import purchaseDetail02 from "./assets/purchase-detail-02.webp";
-import purchaseDetail03 from "./assets/purchase-detail-03.webp";
-import purchaseDetail04 from "./assets/purchase-detail-04.webp";
-import purchaseDetail05 from "./assets/purchase-detail-05.webp";
-import purchaseDetail06 from "./assets/purchase-detail-06.webp";
-import purchaseDetail07 from "./assets/purchase-detail-07.webp";
-import purchaseDetail08 from "./assets/purchase-detail-08.webp";
-import standardDetail01 from "./assets/purchase-detail-standard-01.webp";
-import standardDetail02 from "./assets/purchase-detail-standard-02.webp";
-import standardDetail03 from "./assets/purchase-detail-standard-03.webp";
-import standardDetail04 from "./assets/purchase-detail-standard-04.webp";
-import standardDetail05 from "./assets/purchase-detail-standard-05.webp";
-import standardDetail06 from "./assets/purchase-detail-standard-06.webp";
-import standardDetail07 from "./assets/purchase-detail-standard-07.webp";
-import basicDetail01 from "./assets/purchase-detail-basic-01.webp";
-import basicDetail02 from "./assets/purchase-detail-basic-02.webp";
-import basicDetail03 from "./assets/purchase-detail-basic-03.webp";
-import basicDetail04 from "./assets/purchase-detail-basic-04.webp";
-import basicDetail05 from "./assets/purchase-detail-basic-05.webp";
-import basicDetail06 from "./assets/purchase-detail-basic-06.webp";
-import basicDetail07 from "./assets/purchase-detail-basic-07.webp";
 
 interface Props {
   pkg: PackageData;
@@ -50,36 +29,6 @@ interface Props {
   /** 리뷰 조회용 — 백엔드 카탈로그 매칭 전이면 null(평점·리뷰 UI 숨김) */
   relatedPlanId: number | null;
 }
-
-const DETAIL_IMAGES_BY_TIER: Record<PackageTier, readonly StaticImageData[]> = {
-  Premium: [
-    purchaseDetail02,
-    purchaseDetail03,
-    purchaseDetail04,
-    purchaseDetail05,
-    purchaseDetail06,
-    purchaseDetail07,
-    purchaseDetail08,
-  ],
-  Standard: [
-    standardDetail01,
-    standardDetail02,
-    standardDetail03,
-    standardDetail04,
-    standardDetail05,
-    standardDetail06,
-    standardDetail07,
-  ],
-  Basic: [
-    basicDetail01,
-    basicDetail02,
-    basicDetail03,
-    basicDetail04,
-    basicDetail05,
-    basicDetail06,
-    basicDetail07,
-  ],
-};
 
 type TabKey = "info" | "review" | "delivery" | "support";
 
@@ -134,7 +83,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   }
 
   const contentsLabel = formatPackageContentsLabel(pkg.contents);
-  const detailImages = DETAIL_IMAGES_BY_TIER[pkg.tier];
+  const detailImages = PACKAGE_DETAIL_IMAGES[pkg.tier];
   const total = purchaseProduct.price * quantity;
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 
@@ -325,7 +274,6 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
             images={detailImages}
             planName={pkg.name}
             tier={pkg.tier}
-            hideDisclaimer
           />
         )}
 
@@ -505,7 +453,6 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
               images={detailImages}
               planName={pkg.name}
               tier={pkg.tier}
-              hideDisclaimer
             />
           )}
 

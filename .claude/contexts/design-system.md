@@ -104,6 +104,7 @@
 | Token | HEX | 용도 |
 |---|---|---|
 | `--color-brown-dark` | `#5C4634` | 웜 배경 위 메인 헤딩 |
+| `--color-auth-hint` | `#553922` | 로그인/회원가입 카드 — "계정이 없으신가요?" 등 안내 텍스트 |
 | `--color-brown` | `#9B5825` | 브랜드 중간 브라운 헤딩 |
 | `--color-brown-light` | `#D29A6F` | 라이트 브라운 서브텍스트 |
 | `--color-amber` | `#A15300` | 앰버 — 재료/포인트 서브헤딩 |
@@ -135,6 +136,7 @@
 | `--color-accent-rust` | `#DC5200` | Burnt Orange — hero Ms Madi 장식 텍스트 |
 | `--color-divider-warm` | `#F3DFCF` | Warm Peach — 모바일 섹션 구분선 |
 | `--color-divider-neutral` | `#EAEAEA` | Neutral — 프로필 카드 모바일 구분선 등 |
+| `--color-input-underline` | `#D9D9D9` | Input underline — 로그인/회원가입 밑줄형 입력창 구분선 |
 | `--color-link-warm` | `#C3824E` | 로그인 회원가입하기 링크 |
 | `--color-link-blue` | `#1C67D4` | 체크리스트 모달 본문 강조 링크 |
 | `--color-sage` | `#87AB7D` | Sage Green — About CTA 카드 배경 |

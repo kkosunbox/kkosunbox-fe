@@ -1,14 +1,4 @@
-import { Header } from "@/widgets/header";
-import { FooterSection } from "@/widgets/footer";
-
+/** 회원가입 페이지 레이아웃 — Header·Footer 모두 로그인 페이지와 동일하게 모든 화면에서 미노출 */
 export default function RegisterLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <Header />
-      <main>{children}</main>
-      <div className="max-md:hidden">
-        <FooterSection />
-      </div>
-    </>
-  );
+  return <main>{children}</main>;
 }

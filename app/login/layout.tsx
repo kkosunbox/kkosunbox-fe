@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Header } from "@/widgets/header";
-import { FooterSection } from "@/widgets/footer";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const viewport: Viewport = {
@@ -17,11 +15,7 @@ export const metadata: Metadata = {
 
 /**
  * 로그인 페이지 레이아웃
- * - 모바일·태블릿: Header/Footer 미노출 (전체화면 앱 스타일)
- * - 데스크톱(lg+): Header/Footer 노출
- *
- * `display: none`은 position: fixed 자식 포함 하위 요소 전체를
- * 렌더링 트리에서 제거하므로 max-lg:hidden 감싸기가 정상 동작한다.
+ * - Header·Footer: 모든 화면에서 미노출 (로그인·회원가입 공통 방침 — 이탈 유도 요소 제거)
  */
 export default function LoginLayout({
   children,
@@ -50,13 +44,7 @@ export default function LoginLayout({
           backgroundColor: "var(--color-login-mobile-chrome)",
         }}
       />
-      <div className="max-lg:hidden">
-        <Header />
-      </div>
       {children}
-      <div className="max-lg:hidden">
-        <FooterSection />
-      </div>
     </div>
   );
 }

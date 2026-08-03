@@ -146,6 +146,7 @@
 
   /* Brown scale — 웜 배경 위 텍스트/장식 */
   --color-brown-dark: #5C4634;    /* 웜 배경 위 메인 헤딩 */
+  --color-auth-hint: #553922;     /* 로그인/회원가입 카드 — "계정이 없으신가요?" 등 안내 텍스트 */
   --color-brown-deep: #70380C;    /* About Hero 마지막 문장 강조 브라운 */
   --color-brown: #9B5825;         /* 브랜드 중간 브라운 헤딩 */
   --color-brown-light: #D29A6F;   /* 라이트 브라운 서브텍스트 */
@@ -167,6 +168,7 @@
   --color-text-caption: #C8C8C8;   /* Caption — 이미지 연출 면책 문구 등 부가 캡션 */
   --color-border: #B0B0B0;         /* Light border — 비활성 라디오·체크박스 테두리 */
   --color-border-light: #EEEEEE;   /* Light divider — 섹션 구분선 */
+  --color-input-underline: #D9D9D9; /* Input underline — 로그인/회원가입 밑줄형 입력창 구분선 */
   --color-ui-disabled: #D0D0D0;    /* Disabled — 비활성 UI 요소 (페이지네이션 화살표 등) */
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
@@ -423,6 +425,7 @@
 
   /* Brown scale */
   --color-brown-dark: var(--color-brown-dark);
+  --color-auth-hint: var(--color-auth-hint);
   --color-brown-deep: var(--color-brown-deep);
   --color-brown: var(--color-brown);
   --color-brown-light: var(--color-brown-light);
@@ -465,6 +468,7 @@
   --color-text-caption: var(--color-text-caption);
   --color-border: var(--color-border);
   --color-border-light: var(--color-border-light);
+  --color-input-underline: var(--color-input-underline);
   --color-ui-disabled: var(--color-ui-disabled);
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);

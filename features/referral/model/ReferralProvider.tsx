@@ -10,6 +10,7 @@ import {
 } from "@/features/referral/lib";
 import { validateReferralCode, getReferralPage, getMyReferralCode } from "@/features/referral/api";
 import { getSubscriptions } from "@/features/subscription/api";
+import { useAuth } from "@/features/auth";
 
 interface ReferralData {
   refCode: string | null;
@@ -80,7 +81,9 @@ export function ReferralProvider({
   const [inviteConsumed, setInviteConsumed] = useState(false);
   const isMounted = useRef(true);
   const initialDataRef = useRef(initialData);
+  const { isLoggedIn } = useAuth();
 
+  // 초대코드 쿠키 처리 — 로그인 여부와 무관하게 항상 한 번만 실행한다.
   useEffect(() => {
     isMounted.current = true;
     const initial = initialDataRef.current;
@@ -93,70 +96,80 @@ export function ReferralProvider({
     }
 
     const code = getStoredInviteCode();
-    if (!code) {
-      // 쿠키 없음 — 로그인된 인플루언서인지 확인
-      getMyReferralCode()
-        .then((myCode) => {
-          if (!isMounted.current || !myCode.slug) return;
-          const mySlug = myCode.slug;
-          return Promise.all([
-            getReferralPage(mySlug),
-            getSubscriptions().catch(() => ({ subscriptions: [] })),
-          ]).then(([pageData, subs]) => {
-            if (!isMounted.current || !pageData.isActive) return;
-            document.cookie = `${INVITE_CODE_COOKIE}=${encodeURIComponent(myCode.referralCode)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
-            document.cookie = `${INVITE_SLUG_COOKIE}=${encodeURIComponent(mySlug)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
-            setSelfDetectedHistory(subs.subscriptions.length > 0);
-            setData({
-              refCode: myCode.referralCode,
-              isReferral: true,
-              discountRate: pageData.discountRate,
-              influencerName: pageData.displayName,
-              profileImageUrl: pageData.profileImageUrl,
-            });
-          });
-        })
-        .catch(() => {});
-      return () => { isMounted.current = false; };
-    }
-
-    const slug = getStoredInviteSlug();
-    if (slug) {
-      getReferralPage(slug)
-        .then((pageData) => {
-          if (!isMounted.current) return;
-          if (pageData.isActive && pageData.referralCode === code) {
-            setData({
-              refCode: code,
-              isReferral: true,
-              discountRate: pageData.discountRate,
-              influencerName: pageData.displayName,
-              profileImageUrl: pageData.profileImageUrl,
-            });
-          }
-        })
-        .catch(() => {});
-    } else {
-      validateReferralCode(code)
-        .then((apiData) => {
-          if (!isMounted.current) return;
-          if (apiData.isApplicable) {
-            setData({
-              refCode: code,
-              isReferral: true,
-              discountRate: apiData.discountRate,
-              influencerName: DEFAULT_DATA.influencerName,
-              profileImageUrl: null,
-            });
-          }
-        })
-        .catch(() => {});
+    if (code) {
+      const slug = getStoredInviteSlug();
+      if (slug) {
+        getReferralPage(slug)
+          .then((pageData) => {
+            if (!isMounted.current) return;
+            if (pageData.isActive && pageData.referralCode === code) {
+              setData({
+                refCode: code,
+                isReferral: true,
+                discountRate: pageData.discountRate,
+                influencerName: pageData.displayName,
+                profileImageUrl: pageData.profileImageUrl,
+              });
+            }
+          })
+          .catch(() => {});
+      } else {
+        validateReferralCode(code)
+          .then((apiData) => {
+            if (!isMounted.current) return;
+            if (apiData.isApplicable) {
+              setData({
+                refCode: code,
+                isReferral: true,
+                discountRate: apiData.discountRate,
+                influencerName: DEFAULT_DATA.influencerName,
+                profileImageUrl: null,
+              });
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     return () => {
       isMounted.current = false;
     };
   }, []);
+
+  // 본인이 인플루언서인지 자체 감지 — 초대코드 쿠키가 없고 "로그인된" 유저에 한해서만 시도한다.
+  // isLoggedIn 게이팅 없이는 비로그인 방문자(사이트 트래픽 대다수)까지 매번 /v1/referral/me를
+  // 호출하게 되어 거의 항상 헛수고였다.
+  useEffect(() => {
+    if (initialDataRef.current || getStoredInviteCode() || !isLoggedIn) return;
+
+    let cancelled = false;
+    getMyReferralCode()
+      .then((myCode) => {
+        if (cancelled || !myCode.slug) return;
+        const mySlug = myCode.slug;
+        return Promise.all([
+          getReferralPage(mySlug),
+          getSubscriptions().catch(() => ({ subscriptions: [] })),
+        ]).then(([pageData, subs]) => {
+          if (cancelled || !pageData.isActive) return;
+          document.cookie = `${INVITE_CODE_COOKIE}=${encodeURIComponent(myCode.referralCode)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
+          document.cookie = `${INVITE_SLUG_COOKIE}=${encodeURIComponent(mySlug)}; Max-Age=${INVITE_CODE_MAX_AGE_SEC}; path=/; SameSite=Lax`;
+          setSelfDetectedHistory(subs.subscriptions.length > 0);
+          setData({
+            refCode: myCode.referralCode,
+            isReferral: true,
+            discountRate: pageData.discountRate,
+            influencerName: pageData.displayName,
+            profileImageUrl: pageData.profileImageUrl,
+          });
+        });
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn]);
 
   // hasSubscriptionHistory prop은 서버 컴포넌트(layout 등)가 매 렌더 다시 계산해 내려준다 —
   // router.refresh() 직후에도 여기서 매 렌더 다시 파생시켜야 최신 값이 즉시 반영된다.

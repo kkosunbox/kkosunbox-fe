@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { signupAction } from "@/features/auth/lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
@@ -20,9 +20,17 @@ import { useAgreements } from "./hooks/useAgreements";
 export function useRegisterSection() {
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { login: authLogin } = useAuth();
+  const { login: authLogin, isLoggedIn } = useAuth();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
+
+  // 이미 로그인된 상태면 홈으로 이동 — proxy는 검증되지 않은 쿠키 존재만으로 접근을 막을 수
+  // 없으므로(무효 쿠키에도 /register가 열려버림), app/login/page.tsx와 동일하게 검증된
+  // isLoggedIn으로 클라이언트에서 가드한다.
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    router.replace("/");
+  }, [isLoggedIn, router]);
 
   /* 단일 isPending — 인증코드 발송·OTP 확인·회원가입 버튼 라벨을 모두 제어 */
   const [isPending, start] = useTransition();

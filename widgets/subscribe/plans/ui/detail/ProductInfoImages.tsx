@@ -9,18 +9,10 @@ interface ProductInfoImagesProps {
   images: readonly StaticImageData[];
   planName: string;
   tier: PackageTier;
-  /** 이미지 자체에 동일 문구가 이미 포함된 경우 하단 중복 안내 문구를 숨긴다 (기본 false) */
-  hideDisclaimer?: boolean;
 }
 
-export default function ProductInfoImages({
-  variant,
-  images,
-  planName,
-  tier,
-  hideDisclaimer = false,
-}: ProductInfoImagesProps) {
-  const disclaimer = hideDisclaimer ? null : (
+export default function ProductInfoImages({ variant, images, planName, tier }: ProductInfoImagesProps) {
+  const disclaimer = (
     <p
       className={`py-6 text-center font-medium leading-[17px] text-[var(--color-text-caption)] ${
         variant === "mobile" ? "text-[10px]" : "text-[14px]"

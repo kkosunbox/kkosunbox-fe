@@ -27,6 +27,7 @@ export {
   TIER_DETAIL_HERO_IMAGES,
   TIER_THUMBNAIL_IMAGE_CLASS,
 } from "./lib/packageThumbnails";
+export { PACKAGE_DETAIL_IMAGES } from "./lib/packageDetailImages";
 export {
   PACKAGE_SUMMARY_IMAGES,
   PACKAGE_EXPLAIN_BY_TIER,

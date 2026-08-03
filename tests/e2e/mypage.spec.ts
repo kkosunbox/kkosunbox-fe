@@ -74,6 +74,25 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
     await page.waitForURL(/\/login/, { timeout: 10_000 });
   });
 
+  test("위조/무효 쿠키로 접근 → /login 리다이렉트 (mypage 레이아웃이 실제 검증)", async ({ page }) => {
+    // proxy의 PROTECTED 게이트는 쿠키 존재 여부만 보므로 통과시키지만,
+    // mypage/layout.tsx는 getAuthUser()로 실제 검증해 무효 토큰이면 차단해야 한다.
+    await page.context().addCookies([
+      {
+        name: "ggosoon-auth",
+        value: "bogus-invalid-token",
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+      },
+    ]);
+
+    await page.goto("/mypage");
+    await page.waitForURL(/\/login/, { timeout: 10_000 });
+  });
+
   test("인증 유저 → 대시보드 주요 섹션 렌더링", async ({ page }) => {
     await loginAndGoTo(page, "/mypage");
 

@@ -293,3 +293,26 @@ test.describe("구독 완료 시점 — 초대코드 소비", () => {
     await expect(page.getByText(BADGE_TEXT)).not.toBeVisible({ timeout: 10_000 });
   });
 });
+
+// ──────────────────────────────────────────────────────────────────────────────
+// G. 비로그인 방문자 — 자기 감지 호출 자체를 하지 않아야 함
+//
+// (main) 레이아웃이 사이트 거의 전체를 감싸므로, isLoggedIn 게이팅이 없으면 비로그인
+// 방문자(트래픽 대다수) 전원이 매 방문마다 /v1/referral/me를 호출하게 된다(2026-08-03 버그
+// 수정). 이 테스트는 그 게이팅이 실제로 호출 자체를 막는지 확인한다.
+// ──────────────────────────────────────────────────────────────────────────────
+
+test.describe("비로그인 방문자 — 자기 감지 호출 안 함", () => {
+  test("초대코드 쿠키 없이 홈 방문 → /v1/referral/me 호출 안 함", async ({ page }) => {
+    let calledReferralMe = false;
+    await page.route("**/v1/referral/me", async (route) => {
+      calledReferralMe = true;
+      await route.continue();
+    });
+
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    expect(calledReferralMe).toBe(false);
+  });
+});

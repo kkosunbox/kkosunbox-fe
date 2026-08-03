@@ -9,9 +9,6 @@ import {
 /** 로그인 없이 접근 불가한 라우트 */
 const PROTECTED = ["/mypage", "/order"];
 
-/** 이미 로그인 상태에서 접근 시 홈으로 보낼 라우트 */
-const AUTH_ONLY = ["/login", "/register"];
-
 /**
  * 잠정 비활성화 라우트 — 광고 집행 전까지 주소창 직접 접근을 홈으로 리다이렉트한다.
  * 헤더 진입점만 없앤 상태이며, 정책이 바뀔 수 있어 페이지 코드 자체는 삭제하지 않는다.
@@ -59,13 +56,6 @@ export function proxy(request: NextRequest) {
     url.pathname = "/login";
     const returnTo = `${pathname}${request.nextUrl.search}`;
     url.searchParams.set("next", returnTo);
-    return NextResponse.redirect(url);
-  }
-
-  if (AUTH_ONLY.some((r) => pathname.startsWith(r)) && authed) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    url.searchParams.delete("next");
     return NextResponse.redirect(url);
   }
 

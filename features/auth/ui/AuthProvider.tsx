@@ -61,6 +61,11 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 
     const hasRefresh = Boolean(tokenStore.getRefresh());
     if (!hasRefresh && !initialUser) {
+      // SSR도 세션이 없다고 판단했다. localStorage에 남은 게 없어도, 이미 만료·무효화된
+      // accessToken 쿠키만 홀로 남아있을 수 있다(쿠키 maxAge는 실제 토큰 수명과 별개로
+      // 7일 고정이라 그 사이 계속 재검증만 되고 정리는 안 됨). 있어도 없어도 idempotent한
+      // 삭제이므로 무조건 정리해 다음 페이지 로드부터 불필요한 SSR 재검증을 줄인다.
+      void logoutAction().catch(() => {});
       setIsAuthLoading(false);
       return;
     }

@@ -225,6 +225,72 @@ test.describe("로그인 플로우", () => {
     await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible();
   });
 
+  test("위조/무효 accessToken 쿠키만 있는 경우 → /login 진입 가능해야 함 (proxy는 쿠키를 검증하지 않으므로)", async ({
+    page,
+  }) => {
+    // SSR이 읽는 쿠키에 백엔드가 절대 인정하지 않을 값을 주입한다(localStorage refreshToken은 없음).
+    // getAuthUser()가 /v1/auth/user 호출 → 401 → initialUser=null 로 fail-closed 되어야 하고,
+    // proxy는 쿠키 유효성을 검증하지 않으므로(존재 여부만 봄) /login 접근 자체를 막아선 안 된다.
+    await page.context().addCookies([
+      {
+        name: "ggosoon-auth",
+        value: "bogus-invalid-token",
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+      },
+    ]);
+
+    await page.goto("/login");
+
+    // 홈으로 튕기지 않고 로그인 폼이 그대로 보여야 함
+    await expect(page).toHaveURL("/login");
+    await expect(page.getByPlaceholder("이메일을 입력하세요")).toBeVisible();
+  });
+
+  test("이미 로그인 상태에서 /register 접근 → / 로 리다이렉트", async ({ page }) => {
+    // proxy에는 더 이상 /register 게이트가 없으므로, useRegisterSection의 클라이언트
+    // isLoggedIn 가드(app/login/page.tsx와 동일 패턴)가 이 리다이렉트를 책임져야 한다.
+    await loginByTokens(page, TEST_TOKENS);
+
+    await page.goto("/register");
+
+    await page.waitForURL("/", { timeout: 10_000 });
+  });
+
+  test("무효 쿠키만 있고 refreshToken 없음 → 클라이언트가 백그라운드에서 쿠키를 정리해야 함", async ({
+    page,
+  }) => {
+    // AuthProvider의 early-return 분기(hasRefresh 없음 + initialUser 없음)에서
+    // logoutAction()으로 남은 무효 쿠키를 정리하는지 확인한다 — 그래야 다음 방문부터
+    // 불필요한 SSR 재검증(getAuthUser → 401)이 반복되지 않는다.
+    await page.context().addCookies([
+      {
+        name: "ggosoon-auth",
+        value: "bogus-invalid-token",
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+        secure: false,
+        sameSite: "Lax",
+      },
+    ]);
+
+    await page.goto("/");
+
+    await expect
+      .poll(
+        async () => {
+          const cookies = await page.context().cookies();
+          return cookies.some((c) => c.name === "ggosoon-auth");
+        },
+        { timeout: 5_000 },
+      )
+      .toBe(false);
+  });
+
   // ── 버튼 비활성화 ────────────────────────────────────────────────
 
   test("로그인 요청 중 버튼 비활성화 (이중 제출 방지)", async ({ page }) => {

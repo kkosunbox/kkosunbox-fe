@@ -2,32 +2,16 @@
 
 import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import type { StaticImageData } from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useRouter } from "next/navigation";
-import subscribeItem01A from "@/widgets/subscribe/plans/assets/subscribe-item-01-A.webp";
-import subscribeItem01B from "@/widgets/subscribe/plans/assets/subscribe-item-01-B.webp";
-import subscribeItem01BB from "@/widgets/subscribe/plans/assets/subscribe-item-01-BB.webp";
-import subscribeItem01C from "@/widgets/subscribe/plans/assets/subscribe-item-01-C.webp";
-import subscribeItem01D from "@/widgets/subscribe/plans/assets/subscribe-item-01-D.webp";
-import subscribeItem02A from "@/widgets/subscribe/plans/assets/subscribe-item-02-A.webp";
-import subscribeItem02B from "@/widgets/subscribe/plans/assets/subscribe-item-02-B.webp";
-import subscribeItem02BB from "@/widgets/subscribe/plans/assets/subscribe-item-02-BB.webp";
-import subscribeItem02C from "@/widgets/subscribe/plans/assets/subscribe-item-02-C.webp";
-import subscribeItem02D from "@/widgets/subscribe/plans/assets/subscribe-item-02-D.webp";
-import subscribeItem03A from "@/widgets/subscribe/plans/assets/subscribe-item-03-A.webp";
-import subscribeItem03B from "@/widgets/subscribe/plans/assets/subscribe-item-03-B.webp";
-import subscribeItem03BB from "@/widgets/subscribe/plans/assets/subscribe-item-03-BB.webp";
-import subscribeItem03C from "@/widgets/subscribe/plans/assets/subscribe-item-03-C.webp";
-import subscribeItem03D from "@/widgets/subscribe/plans/assets/subscribe-item-03-D.webp";
 import {
+  PACKAGE_DETAIL_IMAGES,
   TIER_DETAIL_HERO_IMAGES,
   comparePlansForDisplayOrder,
   packageThemeForPlan,
   formatPackageContentsLabel,
   PACKAGES,
   tierFromSubscriptionPlan,
-  type PackageTier,
 } from "@/entities/package";
 import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
 import { useReferralPricing } from "@/features/referral/model";
@@ -75,15 +59,6 @@ function PlanImageBadges({
   );
 }
 
-const DETAIL_ASSET_IMAGES: Record<
-  PackageTier,
-  readonly [StaticImageData, StaticImageData, StaticImageData, StaticImageData, StaticImageData]
-> = {
-  Premium: [subscribeItem01A, subscribeItem01B, subscribeItem01BB, subscribeItem01C, subscribeItem01D],
-  Standard: [subscribeItem02A, subscribeItem02B, subscribeItem02BB, subscribeItem02C, subscribeItem02D],
-  Basic: [subscribeItem03A, subscribeItem03B, subscribeItem03BB, subscribeItem03C, subscribeItem03D],
-};
-
 type TabKey = "info" | "review" | "delivery" | "support";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
@@ -119,7 +94,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const selectedTheme = packageThemeForPlan(selectedPlan);
   const selectedTier = tierFromSubscriptionPlan(selectedPlan);
   const selectedPackage = PACKAGES.find((pkg) => pkg.tier === selectedTier) ?? PACKAGES[0];
-  const detailImages = DETAIL_ASSET_IMAGES[selectedTier];
+  const detailImages = PACKAGE_DETAIL_IMAGES[selectedTier];
   const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
   const { referralPrice, additionalDiscountPct, inviteEligible } = useReferralPricing();

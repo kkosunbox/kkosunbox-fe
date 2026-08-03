@@ -24,10 +24,7 @@ import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { trackSelectItem } from "@/shared/lib/analytics";
 
-/** 태블릿 하단 가로 카드 노출 순서 — 베이직→스탠다드→프리미엄 (home과 동일) */
-const TABLET_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
-
-/** 데스크탑 카드 열·모바일 네비 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
+/** 데스크탑 카드 열·모바일 네비·태블릿 가로 카드 공통 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
 const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
 /** 이미지 blur+opacity crossfade에 사용할 전체 티어 목록 */
@@ -555,8 +552,7 @@ export default function PlanPicker({
             ref={tabletCardColumnRef}
             className="max-md:hidden md:flex lg:hidden w-full justify-between items-start"
           >
-            {TABLET_SUMMARY_ORDER.map((tier) => {
-              const i = summaryOrder.indexOf(tier);
+            {summaryOrder.map((tier, i) => {
               const pkg = PACKAGES.find((p) => p.tier === tier)!;
               const plan = planForTier(sortedPlans, tier);
               const img = PACKAGE_SUMMARY_IMAGES[tier];

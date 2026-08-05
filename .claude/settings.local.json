@@ -463,7 +463,12 @@
       "Bash(rmdir features/review/hooks)",
       "Bash(pnpm vitest *)",
       "Bash(cp widgets/purchase/ui/detail/PurchaseProductDetailPage.tsx /tmp/purchase_final.tsx)",
-      "Bash(cp widgets/subscribe/plans/ui/SubscribeProductDetailPage.tsx /tmp/subscribe_final.tsx)"
+      "Bash(cp widgets/subscribe/plans/ui/SubscribeProductDetailPage.tsx /tmp/subscribe_final.tsx)",
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell(npx eslint widgets/mypage/ui/PurchaseDetailSection.tsx)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing -TimeoutSec 5; \"dev server up: $\\($r.StatusCode\\)\" } catch { \"dev server not reachable: $\\($_.Exception.Message\\)\" })",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; \"stopped dev server\" } else { \"nothing on :3000\" })",
+      "Bash(NEXT_PUBLIC_TMP_DISABLE_FIX=1 npx playwright test tests/e2e/login.spec.ts -g \"소셜 로그인 콜백\" --reporter=line)"
     ]
   },
   "disabledMcpjsonServers": [

@@ -272,7 +272,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
 
     if (!desktop) {
       return (
-        <li className="border-b border-[var(--color-text-muted)] last:border-b-0">
+        <li className="border-b border-[var(--color-text-muted)]">
           <div className="py-4 flex flex-col gap-1.5">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-body-14-m text-[var(--color-text)]">{record.productName}</span>
@@ -338,6 +338,31 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
           </div>
         </div>
       </li>
+    );
+  }
+
+  /* ── 구독 유도 배너 ──────────────────────────────────
+     같은 상품에 연결된 구독 플랜(relatedPlanId)으로 수량 1 고정 주문 페이지로 보낸다.
+     연결 플랜을 특정할 수 없으면("같은 꼬순박스를" 문구가 성립하지 않으므로) 배너를 렌더하지 않는다. */
+  function SubscribePromoBanner() {
+    if (relatedPlanId === null) return null;
+    return (
+      <div className="mt-6 flex justify-between rounded-[12px] bg-[var(--color-subscribe-promo-bg)] max-md:flex-col max-md:gap-3 max-md:px-5 max-md:py-5 md:h-[84px] md:items-center md:gap-4 md:px-8">
+        <div className="flex flex-col gap-1">
+          <Text variant="body-16-b" mobileVariant="body-14-sb" className="text-[var(--color-text)]">
+            잠깐! 구독하면 15% 더 저렴해요 🎉
+          </Text>
+          <Text variant="body-14-r" mobileVariant="body-13-r" className="text-[var(--color-primary)]">
+            같은 꼬순박스를, 구독으로 시작하면 최대 15%를 절약할 수 있어요.
+          </Text>
+        </div>
+        <Link
+          href={`/order?planId=${relatedPlanId}&quantity=1`}
+          className="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-5 text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 max-md:w-full"
+        >
+          구독하러 가기
+        </Link>
+      </div>
     );
   }
 
@@ -444,6 +469,8 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
             </>
           )}
         </div>
+
+        <SubscribePromoBanner />
       </div>
     </div>
   );

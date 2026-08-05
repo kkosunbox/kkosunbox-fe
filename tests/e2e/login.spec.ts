@@ -448,3 +448,37 @@ test.describe("로그아웃 플로우", () => {
     await expect(page.getByRole("button", { name: "프로필 메뉴" })).not.toBeVisible();
   });
 });
+
+test.describe("소셜 로그인 콜백", () => {
+  // 회귀 방지: 콜백 페이지가 socialLoginAction으로 심은 인증 쿠키를, 같은 시점에 마운트된
+  // AuthProvider의 "비로그인 세션 정리" 부트스트랩(logoutAction = 쿠키 삭제)이 지워버려
+  // 로그인은 성공했는데 보호 라우트가 비로그인으로 판정되던 버그.
+  test("콜백 성공 → 인증 쿠키 유지 + 보호 라우트(/mypage) 진입 가능", async ({ page }) => {
+    await page.goto("/auth/callback/google?code=test-auth-code");
+
+    // 콜백은 returnPath가 없으면 홈으로 보낸다
+    await page.waitForURL("/", { timeout: 15_000 });
+    await expect(page.getByRole("button", { name: "프로필 메뉴" })).toBeVisible({ timeout: 10_000 });
+
+    // 서버 세션의 근거인 쿠키가 살아있어야 한다
+    const cookies = await page.context().cookies();
+    expect(cookies.some((c) => c.name === "ggosoon-auth")).toBe(true);
+
+    // 새로고침 없이 곧바로 보호 라우트로 이동 가능해야 한다 (버그 시엔 /login 경유 후 홈으로 튕김)
+    await page.goto("/mypage");
+    await page.waitForURL("/mypage", { timeout: 15_000 });
+  });
+
+  test("보호 라우트에서 튕겨 온 뒤 소셜 로그인 → 원래 목적지로 복귀", async ({ page }) => {
+    // proxy가 /login?next=/mypage 로 보내고, 로그인 페이지가 next를 sessionStorage에 저장한다
+    await page.goto("/mypage");
+    await page.waitForURL(/\/login\?next=%2Fmypage/, { timeout: 10_000 });
+
+    await page.evaluate(() =>
+      sessionStorage.setItem("ggosoon-oauth-return", "/mypage"),
+    );
+    await page.goto("/auth/callback/google?code=test-auth-code");
+
+    await page.waitForURL("/mypage", { timeout: 15_000 });
+  });
+});

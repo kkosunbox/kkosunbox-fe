@@ -14,6 +14,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
     payments,
     theme,
     isActive,
+    isScheduled,
     startDate,
     endDate,
     records,
@@ -78,7 +79,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
           <div className="flex flex-1 flex-col justify-center gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8 md:py-5 lg:py-5">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <Text variant="subtitle-16-sb" mobileVariant="body-14-sb" className="tracking-[-0.04em] text-[var(--color-text)]">
-                {subscription.plan.name}{isActive ? " 구독중" : ""}
+                {subscription.plan.name}{isActive ? (isScheduled ? " 구독예정" : " 구독중") : ""}
               </Text>
 
               {isActive ? (
@@ -86,7 +87,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                     {formatDate(startDate)} ~
                   </Text>
-                  {isEditingBillingDay ? (
+                  {isScheduled ? null : isEditingBillingDay ? (
                     <div className="flex max-sm:flex-wrap items-center max-sm:gap-1 sm:gap-1.5">
                       <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                         결제일 :
@@ -127,13 +128,15 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                       </button>
                     </div>
                   )}
-                  <button
-                    type="button"
-                    onClick={handleTogglePause}
-                    className="shrink-0 self-start text-right text-body-13-sb leading-[130%] text-[var(--color-accent)] underline hover:opacity-80 transition-opacity"
-                  >
-                    {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
-                  </button>
+                  {isScheduled ? null : (
+                    <button
+                      type="button"
+                      onClick={handleTogglePause}
+                      className="shrink-0 self-start text-right text-body-13-sb leading-[130%] text-[var(--color-accent)] underline hover:opacity-80 transition-opacity"
+                    >
+                      {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
+                    </button>
+                  )}
                 </>
               ) : (
                 <>
@@ -160,13 +163,15 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   >
                     구독 취소
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleChangeSubscription}
-                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-                  >
-                    구독 변경
-                  </button>
+                  {isScheduled ? null : (
+                    <button
+                      type="button"
+                      onClick={handleChangeSubscription}
+                      className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                    >
+                      구독 변경
+                    </button>
+                  )}
                 </>
               ) : (
                 <>
@@ -191,7 +196,10 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
         </div>
 
         {/* Mobile-only action buttons */}
-        <div className="md:hidden lg:hidden mt-3 grid gap-2" style={{ gridTemplateColumns: "1fr 1fr" }}>
+        <div
+          className="md:hidden lg:hidden mt-3 grid gap-2"
+          style={{ gridTemplateColumns: isActive && isScheduled ? "1fr" : "1fr 1fr" }}
+        >
           {isActive ? (
             <>
               <button
@@ -201,13 +209,15 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
               >
                 구독 취소
               </button>
-              <button
-                type="button"
-                onClick={handleChangeSubscription}
-                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-              >
-                구독 변경
-              </button>
+              {isScheduled ? null : (
+                <button
+                  type="button"
+                  onClick={handleChangeSubscription}
+                  className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                >
+                  구독 변경
+                </button>
+              )}
             </>
           ) : (
             <>

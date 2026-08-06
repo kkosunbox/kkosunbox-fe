@@ -7,6 +7,8 @@ import { DashboardCard, PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS, SectionHeader
 import type { BillingInfo } from "@/features/billing/api/types";
 import { useBillingUpdated } from "@/features/billing/lib/billingSync";
 import { formatCardLabel } from "@/features/billing/lib/formatBillingLabel";
+import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
+import { formatDateToYMD } from "@/features/order";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 
 interface PaymentCardProps {
@@ -71,9 +73,11 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
 
   const hasMethod = billingInfo !== null;
   const cardLabel = hasMethod ? formatCardLabel(billingInfo) : "미등록";
-  const nextDate = subscription?.nextBillingDate
-    ? `${subscription.nextBillingDate.replace(/-/g, ".")} (카드결제)`
-    : "-";
+  const nextDateLabel = getNextBillingDateLabel(
+    subscription?.nextBillingDate ?? null,
+    formatDateToYMD(new Date()),
+  );
+  const nextDate = nextDateLabel === "-" ? "-" : `${nextDateLabel} (카드결제)`;
 
   return (
     <DashboardCard className="lg:h-[186px]">

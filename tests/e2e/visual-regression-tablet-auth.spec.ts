@@ -49,7 +49,6 @@ const AUTH_ROUTES: Array<{ name: string; path: string; maxDiffPixelRatio?: numbe
   { name: "delivery", path: "/delivery" },
   { name: "mypage", path: "/mypage" },
   { name: "mypage-password", path: "/mypage/password" },
-  { name: "mypage-payment", path: "/mypage/payment" },
   { name: "mypage-point", path: "/mypage/point" },
   { name: "mypage-review-write", path: "/mypage/review/write" },
   { name: "mypage-subscription", path: "/mypage/subscription" },

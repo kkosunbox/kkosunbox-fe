@@ -7,7 +7,7 @@ import type { SubscriptionStatus } from "../api/types";
  * 아직 첫 결제 전)를 false로 내려준다 — 이걸 그대로 쓰면 시작 전 구독이 "구독종료"로
  * 잘못 표시된다. 표시 목적의 분류는 반드시 이 함수(=status 기준)로 판단할 것.
  *
- * - active·scheduled → "active" (전체보기 "구독중" 탭, scheduled는 "구독예정" 배지로 구분)
+ * - active·scheduled → "active" (전체보기 "구독중" 탭, scheduled도 문구는 "구독중"으로 통일)
  * - cancelled·paymentFailed·suspended → "ended" ("구독종료" 탭)
  */
 export type SubscriptionDisplayBucket = "active" | "ended";

@@ -25,6 +25,16 @@ export type ProductDeliveryStatus =
   | "DeliveryInProgress"
   | "DeliveryCompleted";
 
+/** status/deliveryStatus를 조합한 통합 표시 상태 */
+export type ProductOrderDisplayStatus =
+  | "pending"
+  | "failed"
+  | "preparing"
+  | "shipping"
+  | "delivered"
+  | "refunded"
+  | "partially_refunded";
+
 export interface ProductOrderDto {
   id: number;
   productId: number;
@@ -32,8 +42,11 @@ export interface ProductOrderDto {
   quantity: number;
   amount: number;
   status: ProductOrderStatus;
+  displayStatus: ProductOrderDisplayStatus;
   deliveryStatus?: ProductDeliveryStatus;
   trackingNumber?: string | null;
+  /** 결제 방법 (예: 카드, 가상계좌, 계좌이체) */
+  method?: string | null;
   deliveredAt?: string | null; // date-time
   approvedAt?: string | null; // date-time
   createdAt: string; // date-time

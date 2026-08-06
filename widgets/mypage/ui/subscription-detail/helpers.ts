@@ -1,9 +1,13 @@
 import type { SubscriptionPaymentDto } from "@/features/subscription/api/types";
 
-export const DELIVERY_STATUS_LABEL: Record<string, string> = {
-  PendingDelivery: "상품준비중",
-  DeliveryInProgress: "배송중",
-  DeliveryCompleted: "배송완료",
+export const DISPLAY_STATUS_LABEL: Record<SubscriptionPaymentDto["displayStatus"], string> = {
+  pending: "결제대기",
+  failed: "결제실패",
+  preparing: "상품준비중",
+  shipping: "배송중",
+  delivered: "배송완료",
+  refunded: "환불완료",
+  partially_refunded: "부분환불",
 };
 
 export const EPOST_TRACKING_BASE =
@@ -15,8 +19,6 @@ export const ROW_GRID =
   "grid max-lg:grid-cols-[1fr_120px_130px_152px_72px] lg:grid-cols-[1fr_120px_130px_152px_140px] items-center";
 
 export const ROW_HEIGHT = "h-[49px]";
-
-export type DisplayStatus = "예정" | "완료" | "실패" | "환불";
 
 export function formatDate(iso: string): string {
   return iso.slice(0, 10).replace(/-/g, ".");
@@ -50,11 +52,4 @@ export function deriveStartDate(payments: SubscriptionPaymentDto[], fallback: st
     .map((p) => (p.approvedAt ?? p.createdAt).slice(0, 10))
     .sort();
   return completed[0] ?? fallback;
-}
-
-export function toDisplayStatus(status: SubscriptionPaymentDto["status"]): DisplayStatus {
-  if (status === "pending") return "예정";
-  if (status === "completed") return "완료";
-  if (status === "refunded" || status === "partially_refunded") return "환불";
-  return "실패";
 }

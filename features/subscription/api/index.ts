@@ -27,6 +27,7 @@ export type {
   PaymentStatus,
   PaymentType,
   DeliveryStatus,
+  SubscriptionPaymentDisplayStatus,
   CancelPaymentRequest,
   CreateSubscriptionRequest,
   ChangePlanRequest,

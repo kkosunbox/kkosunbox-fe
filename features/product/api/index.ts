@@ -14,6 +14,7 @@ export type {
   ProductDto,
   ProductOrderStatus,
   ProductDeliveryStatus,
+  ProductOrderDisplayStatus,
   ProductOrderDto,
   GetProductOrdersParams,
   CreateProductOrderRequest,

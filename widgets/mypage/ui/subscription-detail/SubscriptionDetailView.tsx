@@ -240,7 +240,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
         <div className="max-md:hidden">
           <div className={`${ROW_GRID} h-11 rounded-lg bg-[var(--color-surface-light)] pl-[30px] pr-2`}>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">구독</span>
-            <span className="text-body-16-m text-[var(--color-text-tertiary)]">배송</span>
+            <span className="text-body-16-m text-[var(--color-text-tertiary)]">상태</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">금액</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">직접입력</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">영수증</span>

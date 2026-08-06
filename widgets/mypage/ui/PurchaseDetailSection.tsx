@@ -8,6 +8,7 @@ import { TIER_BOX_IMAGES, CURRENT_PURCHASE_TIER, type PackageTier } from "@/enti
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
 import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
+import { ORDER_ENTRY_FROM_PARAM, ORDER_ENTRY_FROM_PURCHASE_PROMO } from "@/features/order";
 
 /* ── 상수 ────────────────────────────────────────────────── */
 const DISPLAY_STATUS_LABEL: Record<ProductOrderDto["displayStatus"], string> = {
@@ -357,7 +358,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
           </Text>
         </div>
         <Link
-          href={`/order?planId=${relatedPlanId}&quantity=1`}
+          href={`/order?planId=${relatedPlanId}&quantity=1&${ORDER_ENTRY_FROM_PARAM}=${ORDER_ENTRY_FROM_PURCHASE_PROMO}`}
           className="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-5 text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 max-md:w-full"
         >
           구독하러 가기

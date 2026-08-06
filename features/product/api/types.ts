@@ -65,12 +65,18 @@ export interface CreateProductOrderRequest {
   /** 배송지 ID */
   deliveryAddressId: number;
   quantity: number;
+  /** 할인 쿠폰 코드 (선택). 주문 총액에 할인율이 적용된다. */
+  couponCode?: string;
 }
 
 export interface ConfirmProductOrderRequest {
   orderId: string;
   paymentKey: string;
   amount: number;
+}
+
+export interface GetProductCouponInfoRequest {
+  code: string; // 최대 30자, 대소문자 구분 안함
 }
 
 // ── 응답 ──────────────────────────────────────────────────────────
@@ -98,6 +104,20 @@ export interface CreateProductOrderResponse {
 export interface ProductOrderReceiptResponse {
   /** 영수증 PDF URL */
   receiptUrl: string;
+}
+
+// ── ProductCoupon ────────────────────────────────────────────────
+
+export interface ProductCouponInfo {
+  name?: string;
+  description?: string;
+  discountRate: number;   // 1~100 (%)
+  /** 최대 할인 금액 (원, null이면 제한 없음) */
+  maxDiscountAmount?: number | null;
+  startDate?: string;     // date-time, null이면 제한 없음
+  endDate?: string;       // date-time, null이면 제한 없음
+  canUse: boolean;
+  unavailableReason?: string;
 }
 
 // ── ProductOrderPlanSummary ───────────────────────────────────────

@@ -239,7 +239,9 @@ export const PURCHASE_AGREEMENTS_PANEL_ID = "purchase-agreements-panel";
 **1-2.** `computePurchaseTotals({ unitPrice, quantity })` — 현재 82–90줄을 **그대로** 옮긴다.
 ```ts
 // 반환: { basePrice, totalDiscount, productTotal, originalShippingFee, shippingFee, total }
-// 단건 구매는 쿠폰 불가 → couponRatePercent 미전달(totalDiscount 항상 0). 주석 그대로 유지.
+// 단건 구매는 쿠폰 불가 → couponRatePercent 미전달(totalDiscount 항상 0). (이 계획 작성 당시 기준)
+// ⚠️ 2026-08-06 정책 변경: 런칭 프로모션 목적으로 단건 구매도 쿠폰 적용 가능해짐 → 구현 완료(§10-B).
+//    `computePurchaseTotals`에 couponRatePercent 파라미터 추가, `usePurchaseCoupon` 훅 신설.
 // 무료배송 이벤트 → shippingFee는 상수 0, originalShippingFee는 취소선 표시 전용. 정리 금지.
 ```
 
@@ -484,6 +486,7 @@ Phase 3·4는 되돌릴 지점이 반드시 필요하다. **절대 한 커밋에
 - **`widgets/purchase` → `widgets/order` 딥 임포트 해소** — `OrderPriceSummaryBar`, `OrderDeliveryMethodSection` 2개(35–36줄). `shop→order`와 동일 위반 클래스이며 depcruise 규칙이 아직 없다. 해소 시 `.dependency-cruiser.cjs`에 `widget-purchase-order-coupling`(severity `error`) 추가
 - **`tests/e2e/purchase.spec.ts` 신설** — `order.spec.ts`가 선례. 이 리팩토링에 자동 안전망이 없었던 근본 원인
 - **`/purchase/order` 픽셀 스냅샷 추가** — `error-boundaries.spec.ts`의 `order-08-baseline` 패턴
+- ~~단건 구매 쿠폰 적용 구현~~ **완료(2026-08-06)** (정책 변경, 런칭 프로모션 목적) — `computePurchaseTotals`에 `couponRatePercent` 연결, `usePurchaseCoupon` 훅 신설(구독 `usePaymentState`의 쿠폰 슬라이스와 동일 패턴), `PurchasePaymentMethodCard`에 쿠폰 입력 UI 복원(2026-07-29 커밋 93d233a에서 제거됐던 UI), `CreateProductOrderRequest.couponCode` 전달까지 연결. §Phase 1의 "쿠폰 불가" 전제는 더는 유효하지 않음
 
 ### C. 조건부 (§5-3 조건 충족 시)
 - Phase 6: `ShopOrderSection` 동일 패턴 적용 (단, `/shop` 재활성화 결정 이후가 효율적)

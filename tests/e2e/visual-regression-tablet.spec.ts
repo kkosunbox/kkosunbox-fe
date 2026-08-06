@@ -19,7 +19,6 @@ const PUBLIC_ROUTES: Array<{ name: string; path: string }> = [
   { name: "support", path: "/support" },
   { name: "privacy", path: "/privacy" },
   { name: "terms", path: "/terms" },
-  { name: "shop", path: "/shop" },
   { name: "purchase", path: "/purchase" },
   { name: "purchase-detail-basic", path: "/purchase/detail?tier=basic" },
   { name: "purchase-detail-standard", path: "/purchase/detail?tier=standard" },

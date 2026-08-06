@@ -1,11 +1,14 @@
 import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
-import { confirmProductOrderServer } from "@/features/product/api/queries";
+import { confirmProductOrderServer, fetchProducts } from "@/features/product/api/queries";
+import { resolveProductTier } from "@/features/product/lib/resolveProductsByTier";
+import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
+import { OrderCompleteSection } from "@/widgets/purchase";
 import { ApiError } from "@/shared/lib/api";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const metadata = {
-  title: "결제 처리중 | 꼬순박스",
+  title: "주문 완료 | 꼬순박스",
   ...NOINDEX_METADATA,
 };
 
@@ -15,8 +18,8 @@ type SearchParams = {
   amount?: string;
 };
 
-// 결과를 별도 페이지로 보여주지 않고 바로 처리 후 리다이렉트한다.
-// 성공 → 마이페이지 구매관리(해당 상품 상세, 허브 역할), 실패 → 구매하기 페이지에서 모달로 안내.
+// 결제 승인 후 이 화면에서 주문완료 요약을 바로 보여준다.
+// 실패 시에는 화면을 그리지 않고 구매하기 페이지에서 모달로 안내한다.
 export default async function PurchaseOrderSuccessPage({
   searchParams,
 }: {
@@ -30,18 +33,31 @@ export default async function PurchaseOrderSuccessPage({
 
   const token = await getServerToken();
 
-  let redirectTo: string;
+  let order, tier;
   try {
-    const order = await confirmProductOrderServer(token, {
-      orderId,
-      paymentKey,
-      amount: Number(amount),
-    });
-    redirectTo = `/mypage/purchase?productId=${order.productId}`;
+    const [confirmedOrder, products, plans] = await Promise.all([
+      confirmProductOrderServer(token, { orderId, paymentKey, amount: Number(amount) }),
+      fetchProducts(token),
+      fetchSubscriptionPlans(token),
+    ]);
+    const product = products.find((p) => p.id === confirmedOrder.productId) ?? null;
+    order = confirmedOrder;
+    tier = product ? resolveProductTier(product, plans) : null;
   } catch (err) {
     const code = err instanceof ApiError ? err.code : "UNKNOWN_ERROR";
-    redirectTo = `/purchase?confirmError=${encodeURIComponent(code)}`;
+    redirect(`/purchase?confirmError=${encodeURIComponent(code)}`);
   }
 
-  redirect(redirectTo);
+  return (
+    <OrderCompleteSection
+      orderId={orderId}
+      createdAt={order.createdAt}
+      productName={order.productName}
+      quantity={order.quantity}
+      amount={order.amount}
+      productId={order.productId}
+      method={order.method}
+      tier={tier}
+    />
+  );
 }

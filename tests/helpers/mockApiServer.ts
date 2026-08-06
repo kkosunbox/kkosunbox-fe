@@ -341,6 +341,25 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
+    // POST /v1/auth/{google|naver|kakao} — 소셜 로그인 (OAuth code 교환)
+    // 실제 백엔드는 외부 IdP 왕복이 있어 느리다. 그 지연이 콜백 페이지의 서버 액션과
+    // AuthProvider 부트스트랩 사이의 순서를 결정하므로, 재현을 위해 약간의 지연을 둔다.
+    if (method === "POST" && /^\/v1\/auth\/(google|naver|kakao)$/.test(url)) {
+      const body = await readBody(req) as Record<string, string>;
+      if (!body.code) {
+        err(res, 400, "BAD_REQUEST", "code is required");
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 150));
+      ok(res, {
+        accessToken: MOCK_ACCESS_TOKEN,
+        refreshToken: MOCK_REFRESH_TOKEN,
+        user: MOCK_USER,
+        isNewUser: false,
+      });
+      return;
+    }
+
     // GET /v1/auth/user — called by getAuthUser() (server-side) on each page render
     if (method === "GET" && url === "/v1/auth/user") {
       const auth = req.headers.authorization ?? "";

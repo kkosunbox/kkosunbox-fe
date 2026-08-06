@@ -12,7 +12,9 @@ import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { packageThemeForPlan, PACKAGES, CURRENT_PURCHASE_TIER } from "@/entities/package";
 import { TIER_BOX_IMAGES } from "@/entities/package";
+import type { SubscriptionPlanLike } from "@/entities/package";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
+import type { ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import MyReviewModal from "./MyReviewModal";
 
 /* 도트 인디케이터 슬라이드 설정 */
@@ -21,6 +23,18 @@ const DOT_WINDOW = 4; // 활성 기준 좌우로 렌더링할 슬롯 수(가장�
 const DOT_VIEW_WIDTH = 7 * DOT_PITCH; // 뷰포트 너비 — 가운데 기준 ±3.5칸 노출
 const SLIDE_MS = 320;
 const DOT_STATIC_MAX = 19; // 이 개수 이하는 전통적 dot 표시, 초과 시 무한 슬라이딩 방식
+const NAV_DEBOUNCE_MS = 60; // 화살표·스와이프·도트 연타 시 동일 프레임 수준 중복 입력만 무시
+const CARD_TRANSITION_GAP_PX = 32; // 전환 중 나가는/들어오는 카드 사이에 유지할 간격
+
+/**
+ * 나가는/들어오는 두 카드를 간격(CARD_TRANSITION_GAP_PX)만큼 띄운 채 한 덩어리로 미는 translateX.
+ * sign: 이동 방향(+1/-1), progress: 0(제자리)~1(한 칸 이동 완료).
+ */
+function slideTransform(sign: number, progress: number): string {
+  const pct = sign * progress * 100;
+  const gapPx = sign * progress * CARD_TRANSITION_GAP_PX;
+  return `translateX(calc(${pct}% + ${gapPx}px))`;
+}
 
 /** 단건 구매(product) 슬라이드 배경색 — 현재 판매 중인 티어(CURRENT_PURCHASE_TIER) 색상 재사용 */
 const PURCHASE_SLIDE_COLOR_VAR = PACKAGES.find((p) => p.tier === CURRENT_PURCHASE_TIER)!.colorVar;
@@ -199,7 +213,7 @@ function SubscriptionCarouselIndicator({
 
 interface ReviewState {
   review: ReviewResponse;
-  plan: UserSubscriptionDto["plan"];
+  plan: SubscriptionPlanLike;
   isEditable: boolean;
 }
 
@@ -208,16 +222,194 @@ type CarouselSlide =
   | { kind: "subscription"; subscription: UserSubscriptionDto }
   | { kind: "purchase"; group: ProductPurchaseGroup };
 
+/** 슬라이드 하나를 렌더링하는 데 필요한 값 — 구독/구매 분기를 미리 해석해 둔 형태 */
+interface SlideView {
+  colorVar: string;
+  detailHref: string;
+  detailAriaLabel: string;
+  manageHref: string;
+  manageLabel: string;
+  paymentAmount: number | null;
+  boxQuantity: number | null;
+  planId: number | null;
+  canReview: boolean;
+  myReview: ReviewResponse | null;
+}
+
+/**
+ * 캐러셀 카드 한 장의 본문(배경색+텍스트+리뷰버튼+관리 링크).
+ * 평상시엔 1장만, 전환 중엔 나가는/들어오는 슬라이드 2장이 동시에 렌더되어 좌우로 밀린다.
+ */
+function SlidePanel({
+  slide,
+  view,
+  transform,
+  opacity = 1,
+  hidden,
+  onWrittenReviewClick,
+  onUnavailableReviewClick,
+}: {
+  slide: CarouselSlide;
+  view: SlideView;
+  transform: string;
+  /** 들어오는 카드가 "안착"하는 느낌을 주는 옵션 마무리 효과. 기본 1(효과 없음) — 롤백 시 호출부의 opacity prop만 지우면 됨 */
+  opacity?: number;
+  hidden: boolean;
+  onWrittenReviewClick: (review: ReviewResponse | null) => void;
+  onUnavailableReviewClick: () => void;
+}) {
+  const isSubscriptionSlide = slide.kind === "subscription";
+  const subscription = slide.kind === "subscription" ? slide.subscription : null;
+  const group = slide.kind === "purchase" ? slide.group : null;
+
+  return (
+    <div
+      className={["absolute inset-0 flex", hidden ? "pointer-events-none" : ""].join(" ")}
+      style={{ background: view.colorVar, transform, opacity }}
+      aria-hidden={hidden}
+      inert={hidden}
+    >
+      {/* 좌측 본문 — 텍스트 영역(상세 이동) + 리뷰 버튼 */}
+      <div
+        className={[
+          "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
+          "max-lg:px-6 max-lg:pl-10 max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
+        ].join(" ")}
+      >
+        {/* 카드 본문 클릭 — 구독/구매 상세 */}
+        <Link
+          href={view.detailHref}
+          prefetch={false}
+          tabIndex={hidden ? -1 : undefined}
+          aria-label={view.detailAriaLabel}
+          className="flex flex-col rounded-[8px] outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white"
+        >
+          {/* 텍스트 정보 */}
+          <div className="flex flex-col max-lg:gap-1 lg:gap-1.5">
+            {/* 모바일·태블릿: 뱃지 독립 행 */}
+            {view.boxQuantity !== null && (
+              <span className="lg:hidden inline-flex self-start h-[14px] items-center rounded-[4px] bg-white/30 px-1 text-body-12-sb leading-[14px] tracking-[-0.04em] text-white uppercase">
+                {view.boxQuantity} BOX
+              </span>
+            )}
+            {/* 타이틀 행 — 데스크탑에서는 뱃지도 함께 표시 */}
+            <div className="flex flex-wrap items-center gap-[10px]">
+              <Text
+                variant="subtitle-16-sb"
+                mobileVariant="body-14-sb"
+                className="max-lg:text-body-14-sb leading-tight tracking-[-0.04em] text-white"
+              >
+                {isSubscriptionSlide
+                  ? `${subscription!.plan.name} 구독중`
+                  : `${group!.productName} 구매`}
+              </Text>
+              {view.boxQuantity !== null && (
+                <span className="max-lg:hidden inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-sb capitalize leading-[19px] tracking-[-0.04em] text-white">
+                  {view.boxQuantity} BOX
+                </span>
+              )}
+            </div>
+            {isSubscriptionSlide ? (
+              <>
+                <Text
+                  variant="body-16-m"
+                  mobileVariant="body-13-m"
+                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                >
+                  결제일 : {billingDayLabel(subscription!.nextBillingDate)}
+                </Text>
+                <Text
+                  variant="body-16-m"
+                  mobileVariant="body-13-m"
+                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                >
+                  결제금액 : {view.paymentAmount!.toLocaleString("ko-KR")}원
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text
+                  variant="body-16-m"
+                  mobileVariant="body-13-m"
+                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                >
+                  총 주문 : {group!.orderCount}건
+                </Text>
+                <Text
+                  variant="body-16-m"
+                  mobileVariant="body-13-m"
+                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                >
+                  최근 주문일 : {formatDate(group!.latestOrder.createdAt)}
+                </Text>
+              </>
+            )}
+          </div>
+        </Link>
+
+        {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성. 연관 플랜이 없는 구매(단건)는 노출하지 않음 */}
+        {view.planId !== null && (
+          <div className="max-lg:mt-2 lg:mt-2.5">
+            {view.myReview ? (
+              <button
+                type="button"
+                tabIndex={hidden ? -1 : undefined}
+                onClick={() => onWrittenReviewClick(view.myReview)}
+                className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
+                style={{ color: view.colorVar }}
+              >
+                내 리뷰보러가기 →
+              </button>
+            ) : view.canReview ? (
+              <Link
+                href={`/mypage/review/write?planId=${view.planId}`}
+                prefetch={false}
+                tabIndex={hidden ? -1 : undefined}
+                className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
+                style={{ color: view.colorVar }}
+              >
+                리뷰쓰러가기 →
+              </Link>
+            ) : (
+              <button
+                type="button"
+                tabIndex={hidden ? -1 : undefined}
+                onClick={onUnavailableReviewClick}
+                className="inline-flex h-6 items-center rounded-full bg-white/40 px-3 text-body-14-sb leading-[17px] text-white/80 transition-opacity hover:opacity-90"
+                aria-label="리뷰쓰러가기 — 배송 완료 후 작성 가능"
+              >
+                리뷰쓰러가기
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* 구독관리 / 구매관리 */}
+      <Link
+        href={view.manageHref}
+        prefetch={false}
+        tabIndex={hidden ? -1 : undefined}
+        className="absolute right-6 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-white underline transition-opacity hover:opacity-80"
+      >
+        {view.manageLabel}
+      </Link>
+    </div>
+  );
+}
+
 export function SubscriptionCard({
   subscriptions,
   eligiblePlans = [],
   myReviews = [],
   purchaseGroups = [],
+  productPlanSummaries = [],
 }: {
   subscriptions: UserSubscriptionDto[];
   eligiblePlans?: PlanReviewEligibility[];
   myReviews?: ReviewResponse[];
   purchaseGroups?: ProductPurchaseGroup[];
+  productPlanSummaries?: ProductOrderPlanSummaryDto[];
 }) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -247,12 +439,74 @@ export function SubscriptionCard({
     return map;
   }, [myReviews]);
 
-  // planId → plan (리뷰 모달에서 플랜 정보를 조회)
-  const planById = useMemo(() => {
-    const map = new Map<number, UserSubscriptionDto["plan"]>();
-    for (const s of subscriptions) map.set(s.plan.id, s.plan);
+  // relatedPlanId(단건 구매) → 리뷰 작성 가능 여부 요약
+  const productSummaryByPlan = useMemo(() => {
+    const map = new Map<number, ProductOrderPlanSummaryDto>();
+    for (const s of productPlanSummaries) map.set(s.planId, s);
     return map;
-  }, [subscriptions]);
+  }, [productPlanSummaries]);
+
+  // planId → plan (리뷰 모달에서 플랜 정보를 조회). 구독 중이 아닌 단건 구매 연관 플랜도 포함
+  const planById = useMemo(() => {
+    const map = new Map<number, SubscriptionPlanLike>();
+    for (const s of subscriptions) map.set(s.plan.id, s.plan);
+    for (const s of productPlanSummaries) {
+      if (!map.has(s.planId)) map.set(s.planId, { id: s.planId, name: s.planName, sortOrder: 0 });
+    }
+    return map;
+  }, [subscriptions, productPlanSummaries]);
+
+  // 슬라이드(구독/구매) → 렌더링에 필요한 값 일괄 계산. 평상시엔 현재 슬라이드 1번,
+  // 전환 중엔 나가는/들어오는 슬라이드 각각 1번씩 호출된다.
+  function viewForSlide(slide: CarouselSlide): SlideView {
+    const isSubscriptionSlide = slide.kind === "subscription";
+    const subscription = slide.kind === "subscription" ? slide.subscription : null;
+    const group = slide.kind === "purchase" ? slide.group : null;
+
+    // 단건 구매 슬라이드도 연관 플랜(relatedPlanId)을 찾을 수 있으면 패키지 종류별 색상을 쓴다.
+    // 매칭 실패 시에만 PURCHASE_SLIDE_COLOR_VAR로 폴백.
+    const purchasePlan = group?.relatedPlanId != null ? planById.get(group.relatedPlanId) ?? null : null;
+    const theme = subscription
+      ? packageThemeForPlan(subscription.plan)
+      : purchasePlan
+        ? packageThemeForPlan(purchasePlan)
+        : null;
+    const colorVar = theme ? theme.colorVar : PURCHASE_SLIDE_COLOR_VAR;
+
+    // 구매는 별도 허브 페이지 없이 마이페이지 카드 자체가 허브 역할 — 카드 클릭/구매관리 링크 모두 상품별 상세로 직행
+    const purchaseHref = group ? `/mypage/purchase?productId=${group.productId}` : "/mypage/purchase";
+    const detailHref = subscription
+      ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
+      : purchaseHref;
+    const detailAriaLabel = isSubscriptionSlide
+      ? `${subscription!.plan.name} 구독 상세 보기`
+      : `${group!.productName} 구매 내역 보기`;
+    const manageHref = isSubscriptionSlide ? "/mypage/subscription" : purchaseHref;
+    const manageLabel = isSubscriptionSlide ? "구독관리" : "구매관리";
+
+    const paymentAmount = subscription ? subscriptionPaymentAmount(subscription) : null;
+    const boxQuantity = subscription && subscription.quantity > 1 ? subscription.quantity : null;
+
+    // 리뷰 상태 (리뷰는 플랜당 1개 단위). 구독 슬라이드는 plan.id, 구매 슬라이드는 상품의 relatedPlanId 기준
+    const planId = subscription?.plan.id ?? group?.relatedPlanId ?? null;
+    const canReview = isSubscriptionSlide
+      ? eligibilityByPlan.get(planId ?? -1)?.canReview ?? false
+      : productSummaryByPlan.get(planId ?? -1)?.canReview ?? false;
+    const myReview = planId !== null ? reviewByPlan.get(planId) ?? null : null;
+
+    return {
+      colorVar,
+      detailHref,
+      detailAriaLabel,
+      manageHref,
+      manageLabel,
+      paymentAmount,
+      boxQuantity,
+      planId,
+      canReview,
+      myReview,
+    };
+  }
 
   // 모달에서 이전/다음으로 순회할 수 있는 내 리뷰 목록
   const reviewStates = useMemo<ReviewState[]>(() => {
@@ -263,23 +517,34 @@ export function SubscriptionCard({
       states.push({
         review: r,
         plan,
-        isEditable: eligibilityByPlan.get(r.planId)?.isEditable ?? false,
+        isEditable:
+          eligibilityByPlan.get(r.planId)?.isEditable ??
+          productSummaryByPlan.get(r.planId)?.isEditable ??
+          false,
       });
     }
     return states;
-  }, [myReviews, planById, eligibilityByPlan]);
+  }, [myReviews, planById, eligibilityByPlan, productSummaryByPlan]);
 
   // "내 리뷰보러가기"로 띄우는 모달 — reviewStates 내 활성 인덱스
   const [reviewIndex, setReviewIndex] = useState<number | null>(null);
 
-  // 활성 슬라이드 인덱스(0..total-1) — 카드 내용의 단일 소스
+  // 활성 슬라이드 인덱스(0..total-1) — 카드 내용의 단일 소스(전환 중이 아닐 때)
   const [activeIndex, setActiveIndex] = useState(0);
   // 도트 슬라이드용 연속 위치(언바운드). 활성 슬롯 = round(position).
   const [position, setPosition] = useState(0);
+  // 메인 카드 2패널(나가는/들어오는) 슬라이드 전환 상태 — null이면 정지 상태(패널 1장만 렌더)
+  const [transition, setTransition] = useState<{
+    fromIndex: number;
+    toIndex: number;
+    dir: 1 | -1;
+    t: number;
+  } | null>(null);
 
   const targetRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const tweenRef = useRef<{ from: number; to: number; start: number } | null>(null);
+  const lastNavAtRef = useRef(0);
 
   const touchStartX = useRef<number | null>(null);
   const didSwipe = useRef(false);
@@ -300,34 +565,10 @@ export function SubscriptionCard({
 
   const hasMultiple = total > 1;
   const current = slides[wrapIndex(activeIndex, total)];
-  const isSubscriptionSlide = current.kind === "subscription";
-  const currentSubscription = current.kind === "subscription" ? current.subscription : null;
-  const currentGroup = current.kind === "purchase" ? current.group : null;
 
-  const planTheme = currentSubscription ? packageThemeForPlan(currentSubscription.plan) : null;
-  const cardColorVar = planTheme ? planTheme.colorVar : PURCHASE_SLIDE_COLOR_VAR;
-
-  // 구매는 별도 허브 페이지 없이 마이페이지 카드 자체가 허브 역할 — 카드 클릭/구매관리 링크 모두 상품별 상세로 직행
-  const purchaseHref = currentGroup ? `/mypage/purchase?productId=${currentGroup.productId}` : "/mypage/purchase";
-  const detailHref = currentSubscription
-    ? `/mypage/subscription/detail?subscriptionId=${currentSubscription.id}`
-    : purchaseHref;
-  const manageHref = isSubscriptionSlide ? "/mypage/subscription" : purchaseHref;
-  const manageLabel = isSubscriptionSlide ? "구독관리" : "구매관리";
-
-  const paymentAmount = currentSubscription ? subscriptionPaymentAmount(currentSubscription) : null;
-  const boxQuantity = currentSubscription && currentSubscription.quantity > 1 ? currentSubscription.quantity : null;
-
-  // 현재 카드 플랜의 리뷰 상태 (리뷰는 플랜당 1개 단위, 구독 슬라이드에서만 존재)
-  // TODO: 단건 구매 리뷰 — 백엔드가 주문별 리뷰 가능 여부 플래그를 스펙에 포함할 예정. 확정되면 구매 슬라이드에도 리뷰 버튼 연결.
-  const currentPlanId = currentSubscription?.plan.id ?? null;
-  const eligibility = currentPlanId !== null ? eligibilityByPlan.get(currentPlanId) : undefined;
-  const myReview = currentPlanId !== null ? reviewByPlan.get(currentPlanId) ?? null : null;
-  const canReview = eligibility?.canReview ?? false;
-
-  function handleWrittenReviewClick() {
-    if (!myReview) return;
-    const idx = reviewStates.findIndex((s) => s.review.id === myReview.id);
+  function handleWrittenReviewClick(review: ReviewResponse | null) {
+    if (!review) return;
+    const idx = reviewStates.findIndex((s) => s.review.id === review.id);
     if (idx >= 0) setReviewIndex(idx);
   }
 
@@ -395,35 +636,68 @@ export function SubscriptionCard({
     );
   }
 
-  /* 연속 위치를 target까지 부드럽게 보간 (rAF) */
+  /*
+   * 카드 슬라이드 전환. 급하게 여러 번 눌러도 절대 내용이 꼬이지 않도록 "스냅 후 재시작" 방식을 쓴다:
+   * 이미 진행 중인 전환이 있으면 그 자리에서 즉시 완료 상태로 확정(스냅)한 뒤, 그 지점을 새 출발점 삼아
+   * 새 전환을 처음부터 깨끗하게 시작한다. 큐에 쌓아뒀다가 나중에 몰아 재생하지 않으므로 항상 최종 목표로
+   * 빠르게 수렴하고, 전환 중인 패널의 내용이 도중에 바뀌는 일이 없다.
+   */
   function animateTo(target: number) {
+    if (!hasMultiple) return;
+
+    const now = performance.now();
+    if (now - lastNavAtRef.current < NAV_DEBOUNCE_MS) return; // 동일 프레임 수준 중복 입력(터치+클릭 등) 방지
+    lastNavAtRef.current = now;
+
+    const wasAnimating = tweenRef.current !== null;
     if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
+
+    const settledFrom = targetRef.current; // 직전 전환의 목표 = 스냅할 기준점
+    tweenRef.current = null;
     targetRef.current = target;
+
+    if (wasAnimating) {
+      // 진행 중이던 전환을 즉시 완료 상태로 스냅 — 배치되는 다음 setState들과 한 프레임에 반영되어
+      // 화면 깜빡임 없이 "이미 끝난 것처럼" 보이고, 그 위에서 새 전환이 바로 이어진다.
+      setPosition(settledFrom);
+      setActiveIndex(wrapIndex(settledFrom, total));
+    }
+
+    if (settledFrom === target) {
+      setTransition(null);
+      return;
+    }
 
     if (prefersReducedMotion()) {
       setPosition(target);
       setActiveIndex(wrapIndex(target, total));
+      setTransition(null);
       return;
     }
 
-    tweenRef.current = { from: position, to: target, start: performance.now() };
+    const dir: 1 | -1 = target > settledFrom ? 1 : -1;
+    setTransition({ fromIndex: settledFrom, toIndex: target, dir, t: 0 });
+    tweenRef.current = { from: settledFrom, to: target, start: now };
 
-    const tick = (now: number) => {
+    const tick = (frameNow: number) => {
       const tween = tweenRef.current;
       if (!tween) return;
-      const t = Math.min(1, (now - tween.start) / SLIDE_MS);
-      const eased = 1 - Math.pow(1 - t, 3);
+      const raw = Math.min(1, (frameNow - tween.start) / SLIDE_MS);
+      const eased = 1 - Math.pow(1 - raw, 3);
       setPosition(tween.from + (tween.to - tween.from) * eased);
+      setTransition((prev) => (prev ? { ...prev, t: eased } : prev));
 
-      if (t < 1) {
+      if (raw < 1) {
         rafRef.current = requestAnimationFrame(tick);
       } else {
         rafRef.current = null;
+        tweenRef.current = null;
         setPosition(tween.to);
         setActiveIndex(wrapIndex(tween.to, total));
+        setTransition(null);
       }
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -473,138 +747,44 @@ export function SubscriptionCard({
   return (
     <>
     <div className="relative flex max-lg:h-[144px] flex-col lg:h-[186px]">
-      {/* 컬러 카드 */}
+      {/* 컬러 카드 — 뷰포트(overflow-hidden). 실제 배경·본문은 안쪽 SlidePanel(들)이 담당 */}
       <div
-        className="relative z-0 flex flex-1 rounded-[20px] max-lg:rounded-[16px]"
-        style={{ background: cardColorVar }}
+        className="relative z-0 flex-1 overflow-hidden rounded-[20px] max-lg:rounded-[16px]"
         onClickCapture={handleClickCapture}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* 좌측 본문 — 텍스트 영역(상세 이동) + 리뷰 버튼 */}
-        <div
-          className={[
-            "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
-            "max-lg:px-6 max-lg:pl-10 max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
-          ].join(" ")}
-        >
-          {/* 카드 본문 클릭 — 구독/구매 상세 */}
-          <Link
-            href={detailHref}
-            prefetch={false}
-            aria-label={
-              isSubscriptionSlide
-                ? `${currentSubscription!.plan.name} 구독 상세 보기`
-                : `${currentGroup!.productName} 구매 내역 보기`
-            }
-            className="flex flex-col rounded-[8px] outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white"
-          >
-            {/* 텍스트 정보 */}
-            <div className="flex flex-col max-lg:gap-1 lg:gap-1.5">
-              {/* 모바일·태블릿: 뱃지 독립 행 */}
-              {boxQuantity !== null && (
-                <span className="lg:hidden inline-flex self-start h-[14px] items-center rounded-[4px] bg-white/30 px-1 text-body-12-sb leading-[14px] tracking-[-0.04em] text-white uppercase">
-                  {boxQuantity} BOX
-                </span>
-              )}
-              {/* 타이틀 행 — 데스크탑에서는 뱃지도 함께 표시 */}
-              <div className="flex flex-wrap items-center gap-[10px]">
-                <Text
-                  variant="subtitle-16-sb"
-                  mobileVariant="body-14-sb"
-                  className="max-lg:text-body-14-sb leading-tight tracking-[-0.04em] text-white"
-                >
-                  {isSubscriptionSlide
-                    ? `${currentSubscription!.plan.name} 구독중`
-                    : `${currentGroup!.productName} 구매`}
-                </Text>
-                {boxQuantity !== null && (
-                  <span className="max-lg:hidden inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-sb capitalize leading-[19px] tracking-[-0.04em] text-white">
-                    {boxQuantity} BOX
-                  </span>
-                )}
-              </div>
-              {isSubscriptionSlide ? (
-                <>
-                  <Text
-                    variant="body-16-m"
-                    mobileVariant="body-13-m"
-                    className="max-lg:text-body-13-m leading-tight text-white/80"
-                  >
-                    결제일 : {billingDayLabel(currentSubscription!.nextBillingDate)}
-                  </Text>
-                  <Text
-                    variant="body-16-m"
-                    mobileVariant="body-13-m"
-                    className="max-lg:text-body-13-m leading-tight text-white/80"
-                  >
-                    결제금액 : {paymentAmount!.toLocaleString("ko-KR")}원
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text
-                    variant="body-16-m"
-                    mobileVariant="body-13-m"
-                    className="max-lg:text-body-13-m leading-tight text-white/80"
-                  >
-                    총 주문 : {currentGroup!.orderCount}건
-                  </Text>
-                  <Text
-                    variant="body-16-m"
-                    mobileVariant="body-13-m"
-                    className="max-lg:text-body-13-m leading-tight text-white/80"
-                  >
-                    최근 주문일 : {formatDate(currentGroup!.latestOrder.createdAt)}
-                  </Text>
-                </>
-              )}
-            </div>
-          </Link>
-
-          {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성. 구매 슬라이드는 리뷰 API 확정 전까지 노출하지 않음 */}
-          {isSubscriptionSlide && (
-            <div className="max-lg:mt-2 lg:mt-2.5">
-              {myReview ? (
-                <button
-                  type="button"
-                  onClick={handleWrittenReviewClick}
-                  className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
-                  style={{ color: cardColorVar }}
-                >
-                  내 리뷰보러가기 →
-                </button>
-              ) : canReview ? (
-                <Link
-                  href={`/mypage/review/write?planId=${currentPlanId}`}
-                  prefetch={false}
-                  className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
-                  style={{ color: cardColorVar }}
-                >
-                  리뷰쓰러가기 →
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleUnavailableReviewClick}
-                  className="inline-flex h-6 items-center rounded-full bg-white/40 px-3 text-body-14-sb leading-[17px] text-white/80 transition-opacity hover:opacity-90"
-                  aria-label="리뷰쓰러가기 — 배송 완료 후 작성 가능"
-                >
-                  리뷰쓰러가기
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* 구독관리 / 구매관리 */}
-        <Link
-          href={manageHref}
-          prefetch={false}
-          className="absolute right-6 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-white underline transition-opacity hover:opacity-80"
-        >
-          {manageLabel}
-        </Link>
+        {transition ? (
+          <>
+            <SlidePanel
+              slide={slides[wrapIndex(transition.fromIndex, total)]}
+              view={viewForSlide(slides[wrapIndex(transition.fromIndex, total)])}
+              transform={slideTransform(-transition.dir, transition.t)}
+              hidden
+              onWrittenReviewClick={handleWrittenReviewClick}
+              onUnavailableReviewClick={handleUnavailableReviewClick}
+            />
+            {/* 들어오는 카드 "안착" 마무리 효과 — 롤백하려면 이 스케일/오퍼시티 두 줄만 지우면 됨 */}
+            <SlidePanel
+              slide={slides[wrapIndex(transition.toIndex, total)]}
+              view={viewForSlide(slides[wrapIndex(transition.toIndex, total)])}
+              transform={`${slideTransform(transition.dir, 1 - transition.t)} scale(${0.98 + 0.02 * transition.t})`}
+              opacity={0.7 + 0.3 * transition.t}
+              hidden={false}
+              onWrittenReviewClick={handleWrittenReviewClick}
+              onUnavailableReviewClick={handleUnavailableReviewClick}
+            />
+          </>
+        ) : (
+          <SlidePanel
+            slide={current}
+            view={viewForSlide(current)}
+            transform="translateX(0%)"
+            hidden={false}
+            onWrittenReviewClick={handleWrittenReviewClick}
+            onUnavailableReviewClick={handleUnavailableReviewClick}
+          />
+        )}
 
         {/* 도트 인디케이터 — 카드 하단 (모바일·데스크톱 공통) */}
         <SubscriptionCarouselIndicator

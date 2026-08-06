@@ -8,7 +8,7 @@ import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { ChevronIcon } from "@/shared/ui";
 import {
-  PACKAGE_DETAIL_IMAGES,
+  PACKAGE_DETAIL_IMAGES_PURCHASE,
   TIER_BOX_IMAGES,
   TIER_LABEL,
   formatPackageContentsLabel,
@@ -83,7 +83,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   }
 
   const contentsLabel = formatPackageContentsLabel(pkg.contents);
-  const detailImages = PACKAGE_DETAIL_IMAGES[pkg.tier];
+  const detailImages = PACKAGE_DETAIL_IMAGES_PURCHASE[pkg.tier];
   const total = purchaseProduct.price * quantity;
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 

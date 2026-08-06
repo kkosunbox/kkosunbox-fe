@@ -7,8 +7,11 @@ const CALLBACK_BASE =
     ? window.location.origin
     : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+/** 소셜 로그인 콜백 라우트 prefix — 이 경로에서는 콜백 페이지가 인증 핸드셰이크를 단독으로 소유한다. */
+export const OAUTH_CALLBACK_PATH_PREFIX = "/auth/callback";
+
 export function getCallbackUrl(provider: OAuthProvider) {
-  return `${CALLBACK_BASE}/auth/callback/${provider}`;
+  return `${CALLBACK_BASE}${OAUTH_CALLBACK_PATH_PREFIX}/${provider}`;
 }
 
 // ── Google ────────────────────────────────────────────────────────

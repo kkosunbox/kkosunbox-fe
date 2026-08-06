@@ -102,6 +102,7 @@ weight : b(Bold·700) | m(Medium·500) | r(Regular·400) | sb(SemiBold·600)
 |---|---|---|---|---|
 | `text-price-14-eb` | 14px | 17px | 800 | -0.05em |
 | `text-price-16-b` | 16px | 1 | 700 | -0.04em |
+| `text-price-16-m` | 16px | 19px | 500 | -0.05em |
 | `text-price-16-eb` | 16px | 19px | 800 | -0.05em |
 | `text-price-20-b` | 20px | 24px | 700 | -0.05em |
 | `text-price-20-eb` | 20px | 1 | 800 | -0.05em |

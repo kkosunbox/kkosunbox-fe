@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useAgreementState } from "./hooks/useAgreementState";
 import { useInviteState } from "./hooks/useInviteState";
 import { usePaymentState } from "./hooks/usePaymentState";
+import { useStartDateState } from "./hooks/useStartDateState";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import { useRouter } from "next/navigation";
@@ -15,7 +16,7 @@ import { createSubscription } from "@/features/subscription/api/subscriptionApi"
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { clearStoredInviteCode, clearStoredInviteSlug } from "@/features/referral/lib";
 import { useReferral } from "@/features/referral/model";
-import { computeOrderPricing } from "@/features/order";
+import { computeOrderPricing, formatDateToYMD } from "@/features/order";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
 import { isValidKoreanPhone } from "@/shared/lib/format";
@@ -30,6 +31,8 @@ export interface OrderSectionProps {
   hasSubscriptionHistory: boolean;
   /** ?ref로 캡처된 초대 코드 (쿠키, 서버에서 검증·전달). 없으면 null */
   initialInviteCode: string | null;
+  /** 단건 구매 관리의 구독 유도 배너를 통해 진입한 경우에만 true — "구독 시작일" 필드 노출 */
+  showStartDateOption?: boolean;
 }
 
 export function useOrderSectionState({
@@ -39,6 +42,7 @@ export function useOrderSectionState({
   initialQuantity = 1,
   hasSubscriptionHistory,
   initialInviteCode,
+  showStartDateOption = false,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -50,9 +54,11 @@ export function useOrderSectionState({
   const address = useAddressState({ initialAddresses });
   const payment = usePaymentState({ initialBilling });
   const invite = useInviteState({ initialInviteCode, hasSubscriptionHistory });
+  const startDate = useStartDateState();
 
   const [openSections, setOpenSections] = useState({
     product: true,
+    startDate: true,
     customer: true,
     payment: true,
     invite: true,
@@ -97,6 +103,11 @@ export function useOrderSectionState({
 
     if (!agreement.agreeAll) {
       setSubmitError("필수 약관에 동의해 주세요.");
+      return;
+    }
+
+    if (showStartDateOption && startDate.startDateMode === "scheduled" && !startDate.scheduledDate) {
+      setSubmitError("구독 시작일을 선택해 주세요.");
       return;
     }
 
@@ -150,6 +161,10 @@ export function useOrderSectionState({
             invite.inviteStatus === "applicable" && invite.inviteCodeInput.trim()
               ? invite.inviteCodeInput.trim()
               : undefined,
+          startDate:
+            showStartDateOption && startDate.startDateMode === "scheduled" && startDate.scheduledDate
+              ? formatDateToYMD(startDate.scheduledDate)
+              : undefined,
         });
 
         trackPurchase({
@@ -191,6 +206,15 @@ export function useOrderSectionState({
     setPhoneError: address.setPhoneError,
     handleChangeAddress: address.handleChangeAddress,
     handleSearchAddress: address.handleSearchAddress,
+
+    // ── start date ──
+    showStartDateOption,
+    startDateMode: startDate.startDateMode,
+    scheduledDate: startDate.scheduledDate,
+    minScheduledDate: startDate.minScheduledDate,
+    maxScheduledDate: startDate.maxScheduledDate,
+    handleStartDateModeChange: startDate.handleStartDateModeChange,
+    handleScheduledDateChange: startDate.handleScheduledDateChange,
 
     // ── payment ──
     paymentMethod: payment.paymentMethod,

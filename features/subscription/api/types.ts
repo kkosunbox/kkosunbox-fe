@@ -117,6 +117,8 @@ export interface CreateSubscriptionRequest {
   // billingDate?: string; // YYYY-MM-DD — 백엔드에서 더 이상 요구하지 않아 미사용
   couponCode?: string;
   referralCode?: string; // 추천인 레퍼럴 코드 (선택). ?ref로 진입한 첫 구독자에 한해 서버가 할인 적용
+  /** 구독 시작 예약일 (YYYY-MM-DD, 선택). 전달 시 즉시결제 없이 이 날짜부터 구독이 시작되며, 오늘 이후 날짜만 가능 */
+  startDate?: string;
 }
 
 export interface ChangePlanRequest {

@@ -88,16 +88,16 @@ export default function OrderCompleteSection({
         <div className="mt-6 flex flex-col overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] md:flex-row">
           {/* 주문상품 정보 */}
           <div className="flex-1 p-6 md:px-9 md:py-6">
-            <h2 className="text-subtitle-18-b text-[var(--color-text-emphasis)]">주문상품 정보</h2>
+            <h2 className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text-emphasis)]">주문상품 정보</h2>
             <div className="mt-5 flex items-center gap-4 sm:gap-6 md:gap-9">
-              <div className="relative shrink-0 overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px]">
+              <div className="relative shrink-0 overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] lg:h-[148px] lg:w-[160px]">
                 <Image
                   src={boxImage}
                   alt={productName}
                   fill
                   quality={HIGH_IMAGE_QUALITY}
                   className="object-cover"
-                  sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
+                  sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, (max-width: 1199px) 117px, 160px"
                 />
               </div>
               <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -113,12 +113,12 @@ export default function OrderCompleteSection({
                   {productName}
                 </span>
                 <span className="text-price-16-eb text-[var(--color-surface-dark)]">단품구매</span>
-                <span className="text-body-14-m text-[var(--color-text-secondary)]">수량 {quantity}개</span>
+                <span className="text-price-16-m text-[var(--color-text-secondary)]">수량 {quantity}개</span>
               </div>
             </div>
           </div>
 
-          <div className="max-md:border-t md:border-l border-[var(--color-text-muted)]" />
+          <div className="max-md:border-t md:h-[200px] md:self-center md:border-l border-[var(--color-text-muted)]" />
 
           {/* 결제정보 */}
           <div className="flex-1 p-6 md:px-9 md:py-6">
@@ -152,7 +152,7 @@ export default function OrderCompleteSection({
         </div>
 
         {/* 배송 안내 */}
-        <div className="mt-6 flex items-center gap-4 rounded-[12px] bg-[var(--color-subscribe-promo-bg)] px-6 py-5 max-sm:flex-col max-sm:text-center">
+        <div className="mt-6 flex items-center gap-4 lg:gap-[41px] rounded-[12px] bg-[var(--color-subscribe-promo-bg)] px-6 lg:pl-[58px] py-5 max-sm:flex-col max-sm:text-center">
           <Image src={orderCompleteDeliveryIcon} alt="" aria-hidden="true" width={32} height={32} />
           <p className="text-body-14-m text-[var(--color-primary)]">
             배송이 시작되면 알림톡 또는 문자로 배송 정보를 알려드릴게요.

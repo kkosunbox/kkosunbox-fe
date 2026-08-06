@@ -147,6 +147,54 @@ test.describe("주문 페이지 (/order)", () => {
   });
 });
 
+// ── 구독 시작일 (from=purchase 진입) ─────────────────────────────────
+// 단건 구매 관리의 구독 유도 배너(SubscribePromoBanner)를 통해 진입했을 때만
+// (?planId=..&from=purchase) 노출되는 필드. 일반 진입에는 렌더되지 않는다.
+test.describe("주문 페이지 구독 시작일 섹션", () => {
+  test("일반 진입(from 파라미터 없음) → 구독 시작일 섹션 렌더되지 않음", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto(`/order?planId=${VALID_PLAN_ID}`);
+    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText("구독 시작일", { exact: true })).toHaveCount(0);
+  });
+
+  test("from=purchase 진입 → 구독 시작일 섹션 렌더, 날짜 선택기는 기본 비활성", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto(`/order?planId=${VALID_PLAN_ID}&from=purchase`);
+
+    await expect(visibleText(page, "구독 시작일")).toBeVisible({ timeout: 10_000 });
+    await expect(visibleText(page, "지금 바로 첫 구독 상품 받기")).toBeVisible();
+    await expect(visibleText(page, "다음 배송부터 시작")).toBeVisible();
+
+    // 기본값은 "지금 바로 첫 구독 상품 받기" → 날짜 선택기 비활성
+    await expect(page.getByRole("button", { name: "배송 날짜" })).toBeDisabled();
+  });
+
+  test("다음 배송부터 시작 선택 → 날짜 선택기 활성화", async ({ page }) => {
+    await loginByTokens(page, TEST_TOKENS);
+    await page.goto(`/order?planId=${VALID_PLAN_ID}&from=purchase`);
+
+    await visibleText(page, "다음 배송부터 시작").click();
+    await expect(page.getByRole("button", { name: "배송 날짜" })).toBeEnabled();
+  });
+
+  test("다음 배송부터 시작 선택 + 날짜 미선택 → 결제하기 클릭 시 에러 메시지", async ({ page }) => {
+    // 카드·배송지가 모두 등록된 계정으로, 구독 시작일 검증만 단독으로 관찰한다.
+    await loginByTokens(page, BILLING_TOKENS);
+    await page.goto(`/order?planId=${VALID_PLAN_ID}&from=purchase`);
+
+    await clickCheckbox(page, "모두 동의합니다.");
+    await visibleText(page, "다음 배송부터 시작").click();
+
+    await page.getByRole("button", { name: "결제하기" }).first().click();
+    await expect(visibleText(page, "구독 시작일을 선택해 주세요.")).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+});
+
 // ── 초대코드 섹션 (레퍼럴) ─────────────────────────────────────────
 // 노출/잠금은 (초대링크 진입 여부) × (구독 이력 여부)로 결정된다.
 //  - TEST_TOKENS 계정(test@example.com)   → 구독 1건 존재 = 이력 있음

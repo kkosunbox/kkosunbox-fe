@@ -79,7 +79,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
           <div className="flex flex-1 flex-col justify-center gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8 md:py-5 lg:py-5">
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <Text variant="subtitle-16-sb" mobileVariant="body-14-sb" className="tracking-[-0.04em] text-[var(--color-text)]">
-                {subscription.plan.name}{isActive ? (isScheduled ? " 구독예정" : " 구독중") : ""}
+                {subscription.plan.name}{isActive ? " 구독중" : ""}
               </Text>
 
               {isActive ? (

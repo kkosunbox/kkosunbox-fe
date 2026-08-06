@@ -8,20 +8,24 @@ export {
   confirmProductOrder,
   cancelProductOrder,
   getProductOrderReceipt,
+  getProductCouponInfo,
 } from "./productApi";
 
 export type {
   ProductDto,
   ProductOrderStatus,
   ProductDeliveryStatus,
+  ProductOrderDisplayStatus,
   ProductOrderDto,
   GetProductOrdersParams,
   CreateProductOrderRequest,
   ConfirmProductOrderRequest,
+  GetProductCouponInfoRequest,
   ProductListResponse,
   PaginatedProductOrderResponse,
   CreateProductOrderResponse,
   ProductOrderReceiptResponse,
+  ProductCouponInfo,
   ProductOrderPlanSummaryDto,
   ProductOrderPlanSummariesResponse,
 } from "./types";

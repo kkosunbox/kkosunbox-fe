@@ -9,6 +9,7 @@ import { createProductOrder } from "@/features/product/api/productApi";
 import { getErrorMessage } from "@/shared/lib/api";
 import { computePurchaseTotals, validatePurchaseCheckout } from "./purchaseOrderHelpers";
 import { useOrderAgreements } from "./hooks/useOrderAgreements";
+import { usePurchaseCoupon } from "./hooks/usePurchaseCoupon";
 import { usePurchasePaymentWidget } from "./hooks/usePurchasePaymentWidget";
 
 interface UsePurchaseOrderSectionParams {
@@ -35,6 +36,7 @@ export function usePurchaseOrderSection({
     product: true,
     customer: true,
     payment: true,
+    coupon: true,
     delivery: true,
     summary: true,
   });
@@ -50,14 +52,16 @@ export function usePurchaseOrderSection({
     toggleTerms,
     togglePrivacy,
   } = useOrderAgreements();
+  const coupon = usePurchaseCoupon();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState(false);
 
   useExternalMessages({ onAddressSelected: address.handleAddressSelected });
 
-  const { basePrice, totalDiscount, originalShippingFee, shippingFee, total } = computePurchaseTotals({
+  const { basePrice, couponDiscount, totalDiscount, originalShippingFee, shippingFee, total } = computePurchaseTotals({
     unitPrice: purchaseProduct.price,
     quantity,
+    couponRatePercent: coupon.couponInfo?.canUse ? coupon.couponInfo.discountRate : null,
   });
 
   const { paymentWidget, paymentReady, widgetLoadError, reloadWidget, updateAmount } =
@@ -97,7 +101,14 @@ export function usePurchaseOrderSection({
       }
 
       // productId·paymentWidget은 위 validatePurchaseCheckout 가드를 통과했으므로 non-null이 보장된다.
-      const order = await createProductOrder(productId!, { deliveryAddressId, quantity });
+      const order = await createProductOrder(productId!, {
+        deliveryAddressId,
+        quantity,
+        couponCode:
+          coupon.couponInfo?.canUse && coupon.couponCodeInput.trim()
+            ? coupon.couponCodeInput.trim()
+            : undefined,
+      });
 
       // 결제위젯에 바인딩된 금액을 백엔드가 계산한 실제 금액으로 맞춘다 — confirm 시 금액 불일치(PRODUCT_ORDER_AMOUNT_MISMATCH) 방지.
       // requestPayment() 전에 위젯 상태가 완전히 갱신되도록 await한다.
@@ -135,10 +146,18 @@ export function usePurchaseOrderSection({
     submitError,
     isPaying,
     basePrice,
+    couponDiscount,
     totalDiscount,
     originalShippingFee,
     shippingFee,
     total,
+    couponEnabled: coupon.couponEnabled,
+    couponCodeInput: coupon.couponCodeInput,
+    setCouponCodeInput: coupon.setCouponCodeInput,
+    couponInfo: coupon.couponInfo,
+    couponError: coupon.couponError,
+    handleToggleCoupon: coupon.handleToggleCoupon,
+    handleApplyCoupon: coupon.handleApplyCoupon,
     paymentWidget,
     paymentReady,
     widgetLoadError,

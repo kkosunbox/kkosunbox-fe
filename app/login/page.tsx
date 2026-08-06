@@ -75,11 +75,14 @@ export default function LoginPage() {
     setLastLoginMethod(saved);
   }, []);
 
-  // 이미 로그인된 상태(SSR 초기값 또는 클라이언트 세션 복구 완료)면 홈으로 이동
+  // 이미 로그인된 상태(SSR 초기값 또는 클라이언트 세션 복구 완료)면 원래 가려던 곳으로 이동.
+  // next가 없을 때만 홈으로 보낸다 — 보호 라우트에서 튕겨온 경우(`/login?next=/mypage`)까지
+  // 홈으로 보내면 사용자가 목적지에 영영 도달하지 못한다.
   useEffect(() => {
     if (!isLoggedIn || formLoginInProgressRef.current) return;
-    router.replace("/");
-  }, [isLoggedIn, router]);
+    const next = searchParams.get("next");
+    router.replace(next?.startsWith("/") ? next : "/");
+  }, [isLoggedIn, router, searchParams]);
 
   function handleSocialLogin(provider: OAuthProvider) {
     const next = searchParams.get("next");
@@ -120,7 +123,7 @@ export default function LoginPage() {
     >
 
       {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
-      <div className="flex flex-1 flex-col lg:hidden">
+      <div className="max-lg:flex flex-1 flex-col lg:hidden">
         {/* 그라데이션 배경 + 장식 레이어 */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div

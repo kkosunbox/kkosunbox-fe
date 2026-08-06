@@ -3,8 +3,10 @@ import type {
   ConfirmProductOrderRequest,
   CreateProductOrderRequest,
   CreateProductOrderResponse,
+  GetProductCouponInfoRequest,
   GetProductOrdersParams,
   PaginatedProductOrderResponse,
+  ProductCouponInfo,
   ProductDto,
   ProductListResponse,
   ProductOrderDto,
@@ -92,4 +94,9 @@ export function getProductOrderReceipt(id: number) {
   return apiClient.get<ProductOrderReceiptResponse>(
     `/v1/products/orders/${id}/receipt`,
   );
+}
+
+/** 단건 구매 쿠폰 코드 조회 */
+export function getProductCouponInfo(body: GetProductCouponInfoRequest) {
+  return apiClient.post<ProductCouponInfo>("/v1/products/coupon/info", body);
 }

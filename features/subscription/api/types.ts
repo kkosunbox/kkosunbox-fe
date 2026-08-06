@@ -65,10 +65,21 @@ export type PaymentStatus =
 export type PaymentType = "initial" | "renewal" | "upgrade";
 export type DeliveryStatus = "PendingDelivery" | "DeliveryInProgress" | "DeliveryCompleted";
 
+/** status/deliveryStatus를 조합한 통합 표시 상태 */
+export type SubscriptionPaymentDisplayStatus =
+  | "pending"
+  | "failed"
+  | "preparing"
+  | "shipping"
+  | "delivered"
+  | "refunded"
+  | "partially_refunded";
+
 export interface SubscriptionPaymentDto {
   id: number;
   subscriptionId: number;
   status: PaymentStatus;
+  displayStatus: SubscriptionPaymentDisplayStatus;
   amount: number;       // 최종 결제 금액 (부가세 포함)
   baseAmount: number;   // 기본 금액 (부가세 제외)
   taxAmount: number;    // 부가세 금액 (10%)

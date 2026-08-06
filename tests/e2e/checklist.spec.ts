@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import { test, expect } from "../helpers/fixtures";
 import { MOCK_ACCESS_TOKEN } from "../helpers/mockApiServer";
-import { loginAndGoTo, loginByTokens, TEST_TOKENS } from "../helpers/auth";
+import { loginAndGoTo, loginByTokens, loginEmailInput, loginPasswordInput, TEST_TOKENS } from "../helpers/auth";
 
 /**
  * 체크리스트 모달을 step 0(펫 프로필 폼)으로 직접 연다. 홈 CTA 분기에 의존하지 않고
@@ -56,7 +56,7 @@ test.describe("체크리스트 — 홈 CTA 버튼", () => {
     await page.waitForURL((url) => url.pathname === "/login", { timeout: 10_000 });
     // 로그인 후 체크리스트 흐름으로 이어지도록 next=/checklist
     expect(new URL(page.url()).searchParams.get("next")).toBe("/checklist");
-    await expect(page.getByPlaceholder("이메일을 입력하세요")).toBeVisible();
+    await expect(loginEmailInput(page)).toBeVisible();
   });
 
   test("홈 CTA: 로그인(체크리스트 없음) → 체크리스트 모달 오픈", async ({ page }) => {
@@ -144,10 +144,10 @@ test.describe("체크리스트 페이지 (/checklist) — 인증 가드", () => 
     await page.waitForURL((url) => url.pathname === "/login", { timeout: 10_000 });
 
     // 로그인 수행
-    await page.getByPlaceholder("이메일을 입력하세요").fill(
+    await loginEmailInput(page).fill(
       (await import("../helpers/mockApiServer")).TEST_CREDENTIALS.email
     );
-    await page.getByPlaceholder("비밀번호를 입력하세요").fill(
+    await loginPasswordInput(page).fill(
       (await import("../helpers/mockApiServer")).TEST_CREDENTIALS.password
     );
     await page.getByRole("button", { name: "로그인", exact: true }).click();

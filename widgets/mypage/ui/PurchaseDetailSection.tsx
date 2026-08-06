@@ -10,19 +10,14 @@ import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
 
 /* ── 상수 ────────────────────────────────────────────────── */
-type DisplayStatus = "예정" | "완료" | "실패" | "환불";
-
-function toDisplayStatus(status: ProductOrderDto["status"]): DisplayStatus {
-  if (status === "pending") return "예정";
-  if (status === "completed") return "완료";
-  if (status === "refunded" || status === "partially_refunded") return "환불";
-  return "실패";
-}
-
-const DELIVERY_STATUS_LABEL: Record<NonNullable<ProductOrderDto["deliveryStatus"]>, string> = {
-  PendingDelivery: "상품준비중",
-  DeliveryInProgress: "배송중",
-  DeliveryCompleted: "배송완료",
+const DISPLAY_STATUS_LABEL: Record<ProductOrderDto["displayStatus"], string> = {
+  pending: "결제대기",
+  failed: "결제실패",
+  preparing: "상품준비중",
+  shipping: "배송중",
+  delivered: "배송완료",
+  refunded: "환불완료",
+  partially_refunded: "부분환불",
 };
 
 function canCancel(order: ProductOrderDto): boolean {
@@ -80,31 +75,38 @@ function ChevronIcon({ dir }: { dir: "left" | "right" }) {
 }
 
 /* ── 상태 뱃지 ───────────────────────────────────────────── */
-function StatusBadge({ status }: { status: DisplayStatus }) {
-  if (status === "예정") {
+function StatusBadge({ status }: { status: ProductOrderDto["displayStatus"] }) {
+  if (status === "pending" || status === "shipping") {
     return (
-      <span className="inline-flex items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending)]">
-        예정
+      <span className="inline-flex w-fit shrink-0 justify-self-start items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending)]">
+        {DISPLAY_STATUS_LABEL[status]}
       </span>
     );
   }
-  if (status === "실패") {
+  if (status === "failed") {
     return (
-      <span className="inline-flex items-center rounded-full px-3 py-0.5 text-btn-12-m bg-red-50 text-red-500">
-        실패
+      <span className="inline-flex w-fit shrink-0 justify-self-start items-center rounded-full px-3 py-0.5 text-btn-12-m bg-red-50 text-red-500">
+        {DISPLAY_STATUS_LABEL[status]}
       </span>
     );
   }
-  if (status === "환불") {
+  if (status === "preparing") {
     return (
-      <span className="inline-flex items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-text-muted)] text-[var(--color-text-secondary)]">
-        환불
+      <span className="inline-flex w-fit shrink-0 justify-self-start items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-status-waiting-bg)] text-[var(--color-status-waiting)]">
+        {DISPLAY_STATUS_LABEL[status]}
+      </span>
+    );
+  }
+  if (status === "delivered") {
+    return (
+      <span className="inline-flex w-fit shrink-0 justify-self-start items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-status-success-bg)] text-[var(--color-status-success)]">
+        {DISPLAY_STATUS_LABEL[status]}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-status-done-bg)] text-[var(--color-status-done)]">
-      완료
+    <span className="inline-flex w-fit shrink-0 justify-self-start items-center rounded-full px-3 py-0.5 text-btn-12-m bg-[var(--color-text-muted)] text-[var(--color-text-secondary)]">
+      {DISPLAY_STATUS_LABEL[status]}
     </span>
   );
 }
@@ -266,17 +268,15 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
 
   /* ── 구매내역 행 렌더 (공통) ─────────────────────────── */
   function RecordRow({ record, desktop }: { record: ProductOrderDto; desktop: boolean }) {
-    const displayStatus = toDisplayStatus(record.status);
     const dateStr = formatDate(record.approvedAt ?? record.createdAt);
-    const deliveryLabel = record.deliveryStatus ? DELIVERY_STATUS_LABEL[record.deliveryStatus] : null;
 
     if (!desktop) {
       return (
-        <li className="border-b border-[var(--color-text-muted)] last:border-b-0">
+        <li className="border-b border-[var(--color-text-muted)]">
           <div className="py-4 flex flex-col gap-1.5">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-body-14-m text-[var(--color-text)]">{record.productName}</span>
-              <StatusBadge status={displayStatus} />
+              <StatusBadge status={record.displayStatus} />
               {canCancel(record) && (
                 <button
                   type="button"
@@ -299,7 +299,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
               <span className="text-body-14-m text-[var(--color-text)]">
                 {record.amount.toLocaleString("ko-KR")}원 · {record.quantity}개
               </span>
-              <span className="text-body-14-m text-[var(--color-text-tertiary)]">{deliveryLabel ?? dateStr}</span>
+              <span className="text-body-14-m text-[var(--color-text-tertiary)]">{dateStr}</span>
             </div>
           </div>
         </li>
@@ -321,7 +321,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
               </button>
             )}
           </div>
-          <span className="text-body-14-m text-[var(--color-text)]">{deliveryLabel ?? "-"}</span>
+          <StatusBadge status={record.displayStatus} />
           <span className="text-body-14-m text-[var(--color-text)]">
             {record.amount.toLocaleString("ko-KR")}원
           </span>
@@ -338,6 +338,31 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
           </div>
         </div>
       </li>
+    );
+  }
+
+  /* ── 구독 유도 배너 ──────────────────────────────────
+     같은 상품에 연결된 구독 플랜(relatedPlanId)으로 수량 1 고정 주문 페이지로 보낸다.
+     연결 플랜을 특정할 수 없으면("같은 꼬순박스를" 문구가 성립하지 않으므로) 배너를 렌더하지 않는다. */
+  function SubscribePromoBanner() {
+    if (relatedPlanId === null) return null;
+    return (
+      <div className="mt-6 flex justify-between rounded-[12px] bg-[var(--color-subscribe-promo-bg)] max-md:flex-col max-md:gap-3 max-md:px-5 max-md:py-5 md:h-[84px] md:items-center md:gap-4 md:px-8">
+        <div className="flex flex-col gap-1">
+          <Text variant="body-16-b" mobileVariant="body-14-sb" className="text-[var(--color-text)]">
+            잠깐! 구독하면 15% 더 저렴해요 🎉
+          </Text>
+          <Text variant="body-14-r" mobileVariant="body-13-r" className="text-[var(--color-primary)]">
+            같은 꼬순박스를, 구독으로 시작하면 최대 15%를 절약할 수 있어요.
+          </Text>
+        </div>
+        <Link
+          href={`/order?planId=${relatedPlanId}&quantity=1`}
+          className="inline-flex h-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-5 text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 max-md:w-full"
+        >
+          구독하러 가기
+        </Link>
+      </div>
     );
   }
 
@@ -405,7 +430,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
         <div className="max-md:hidden">
           <div className="grid grid-cols-[1fr_100px_90px_130px_56px] items-center rounded-lg bg-[var(--color-surface-light)] px-8 py-3">
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">제품명</span>
-            <span className="text-body-16-m text-[var(--color-text-tertiary)]">배송</span>
+            <span className="text-body-16-m text-[var(--color-text-tertiary)]">상태</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">금액</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">구매일자</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)] text-center">영수증</span>
@@ -444,6 +469,8 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
             </>
           )}
         </div>
+
+        <SubscribePromoBanner />
       </div>
     </div>
   );

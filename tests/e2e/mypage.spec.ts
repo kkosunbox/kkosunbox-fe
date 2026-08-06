@@ -1,6 +1,6 @@
 import { test, expect } from "../helpers/fixtures";
 import { NO_PROFILE_CREDENTIALS } from "../helpers/mockApiServer";
-import { loginAndGoTo } from "../helpers/auth";
+import { loginAndGoTo, loginEmailInput, loginPasswordInput } from "../helpers/auth";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // A. 비밀번호 변경 (/mypage/password)
@@ -114,8 +114,8 @@ test.describe("마이페이지 대시보드 (/mypage)", () => {
 
   test("구독 없는 유저 → '아직 구독 전이시군요!' 표시", async ({ page }) => {
     await page.goto("/login");
-    await page.getByPlaceholder("이메일을 입력하세요").fill(NO_PROFILE_CREDENTIALS.email);
-    await page.getByPlaceholder("비밀번호를 입력하세요").fill(NO_PROFILE_CREDENTIALS.password);
+    await loginEmailInput(page).fill(NO_PROFILE_CREDENTIALS.email);
+    await loginPasswordInput(page).fill(NO_PROFILE_CREDENTIALS.password);
     await page.getByRole("button", { name: "로그인", exact: true }).click();
     await page.waitForURL("/", { timeout: 15_000 });
     await page.goto("/mypage");
@@ -168,8 +168,8 @@ test.describe("애견 프로필 수정 (마이페이지 정보변경)", () => {
 test.describe("구독 변경 (/mypage/subscription/change)", () => {
   test("구독 없는 유저 접근 → 플랜 선택 화면 렌더링 (리다이렉트 없음)", async ({ page }) => {
     await page.goto("/login");
-    await page.getByPlaceholder("이메일을 입력하세요").fill(NO_PROFILE_CREDENTIALS.email);
-    await page.getByPlaceholder("비밀번호를 입력하세요").fill(NO_PROFILE_CREDENTIALS.password);
+    await loginEmailInput(page).fill(NO_PROFILE_CREDENTIALS.email);
+    await loginPasswordInput(page).fill(NO_PROFILE_CREDENTIALS.password);
     await page.getByRole("button", { name: "로그인", exact: true }).click();
     await page.waitForURL("/", { timeout: 15_000 });
     await page.goto("/mypage/subscription/change");

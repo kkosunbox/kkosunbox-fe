@@ -12,6 +12,7 @@ export const PURCHASE_AGREEMENTS_PANEL_ID = "purchase-agreements-panel";
 
 export interface PurchaseTotals {
   basePrice: number;
+  couponDiscount: number;
   totalDiscount: number;
   productTotal: number;
   originalShippingFee: number;
@@ -22,21 +23,24 @@ export interface PurchaseTotals {
 export function computePurchaseTotals({
   unitPrice,
   quantity,
+  couponRatePercent,
 }: {
   unitPrice: number;
   quantity: number;
+  /** 쿠폰 할인율(%) — 적용 가능할 때만 전달. 미적용 시 null/undefined */
+  couponRatePercent?: number | null;
 }): PurchaseTotals {
-  // 단건 구매는 쿠폰 적용이 불가능하다 — couponRatePercent를 전달하지 않아 totalDiscount는 항상 0
-  const { basePrice, totalDiscount, total: productTotal } = computeOrderPricing({
+  const { basePrice, couponDiscount, totalDiscount, total: productTotal } = computeOrderPricing({
     unitPrice,
     quantity,
+    couponRatePercent,
   });
   // 단건 구매 무료배송 이벤트 — 원래 배송비는 취소선으로만 표시하고 실제로는 0원 청구
   const originalShippingFee = basePrice >= SHOP_FREE_SHIPPING_THRESHOLD ? 0 : SHOP_SHIPPING_FEE;
   const shippingFee = 0;
   const total = productTotal + shippingFee;
 
-  return { basePrice, totalDiscount, productTotal, originalShippingFee, shippingFee, total };
+  return { basePrice, couponDiscount, totalDiscount, productTotal, originalShippingFee, shippingFee, total };
 }
 
 export type CheckoutGuardResult =

@@ -5,11 +5,13 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { loginAction, logoutAction, syncAuthCookieAction } from "../lib/actions";
+import { OAUTH_CALLBACK_PATH_PREFIX } from "../lib/oauth";
 import { tokenStore } from "@/shared/lib/api/token";
 import type { AuthContextValue, AuthUser } from "../model/types";
 import { toAuthUser } from "../lib/mapUser";
@@ -36,6 +38,18 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
    */
   const [isAuthLoading, setIsAuthLoading] = useState(() => Boolean(initialUser));
   const router = useRouter();
+  const pathname = usePathname();
+  /**
+   * 소셜 로그인 콜백 페이지에서는 아래 부트스트랩을 돌리지 않는다.
+   *
+   * 콜백 페이지는 "쿠키·토큰 없음" 상태로 풀 로드되므로 부트스트랩이 세션 정리 분기로 들어가
+   * `logoutAction()`(= 쿠키 삭제) 또는 실패 시 `tokenStore.clear()`를 호출한다. 그런데 그 시점은
+   * 같은 페이지가 실행한 `socialLoginAction`이 쿠키를 심는 시점과 겹친다(자식 effect가 먼저 돌아
+   * 서버 액션 큐에 socialLogin → logout 순으로 쌓인다). 결과적으로 방금 발급된 인증 쿠키가
+   * 지워져, 로그인은 성공했는데 `/mypage` SSR 가드는 비로그인으로 판정 → `/login` → 홈으로 튕긴다.
+   * 이 경로의 인증 핸드셰이크는 콜백 페이지가 단독으로 소유한다.
+   */
+  const isOAuthCallback = pathname?.startsWith(OAUTH_CALLBACK_PATH_PREFIX) ?? false;
   const logoutInProgress = useRef(false);
   // user state의 최신값을 이벤트 핸들러에서 읽기 위한 ref.
   // 클로저 안에 user를 캡처하면 stale 참조가 된다.
@@ -54,6 +68,11 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   // 1) refreshToken 있음 → /auth/refresh 로 복구 (401 없이)
   // 2) SSR initialUser + httpOnly 쿠키 → 서버 액션으로 메모리에 올림
   useEffect(() => {
+    if (isOAuthCallback) {
+      setIsAuthLoading(false);
+      return;
+    }
+
     if (tokenStore.getAccess()) {
       setIsAuthLoading(false);
       return;
@@ -108,7 +127,9 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     return () => {
       cancelled = true;
     };
-  }, [initialUser]);
+    // 콜백 페이지를 벗어나면(isOAuthCallback: true → false) 재실행되지만,
+    // 그때는 콜백이 이미 메모리에 accessToken을 올려둔 상태라 위 early return으로 빠진다.
+  }, [initialUser, isOAuthCallback]);
 
   const login = useCallback(
     async (email: string, password: string, next?: string) => {
@@ -149,11 +170,15 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     return () => window.removeEventListener("ggosoon:unauthorized", handleUnauthorized);
   }, [logout]);
 
-  return (
-    <AuthContext.Provider value={{ user, isLoggedIn: user !== null, isAuthLoading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+  // usePathname 구독으로 이 Provider는 이제 매 내비게이션마다 리렌더된다(아래 isOAuthCallback 계산에
+  // 필요). value를 메모이즈하지 않으면 매번 새 객체가 되어, 트리 전역(22곳+)의 useAuth() 소비자가
+  // 라우트만 바뀌어도 전부 리렌더된다 — user/isAuthLoading이 실제로 안 바뀌었어도.
+  const value = useMemo<AuthContextValue>(
+    () => ({ user, isLoggedIn: user !== null, isAuthLoading, login, logout, setUser }),
+    [user, isAuthLoading, login, logout],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {

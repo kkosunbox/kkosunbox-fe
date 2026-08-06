@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { socialLoginAction, getCallbackUrl, consumeOAuthReturnPath } from "@/features/auth";
+import { socialLoginAction, getCallbackUrl, consumeOAuthReturnPath, useAuth } from "@/features/auth";
 import { tokenStore } from "@/shared/lib/api/token";
 import { LoadingOverlay } from "@/shared/ui";
 import type { OAuthProvider } from "@/features/auth";
@@ -30,6 +30,7 @@ export default function OAuthCallbackPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const provider = params.provider as string;
   const code = searchParams.get("code");
@@ -55,13 +56,14 @@ export default function OAuthCallbackPage() {
         if (result.accessToken && result.refreshToken) {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
         }
+        if (result.user) setUser(result.user);
         router.replace(consumeOAuthReturnPath() ?? "/");
       },
       () => {
         setApiError("소셜 로그인 중 오류가 발생했습니다.");
       },
     );
-  }, [provider, code, validationError, router]);
+  }, [provider, code, validationError, router, setUser]);
 
   const error = validationError ?? apiError;
 

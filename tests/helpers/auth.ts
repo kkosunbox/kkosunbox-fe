@@ -13,6 +13,22 @@ import {
 
 type Credentials = { email: string; password: string };
 
+/**
+ * /login 페이지는 모바일·데스크톱 마크업이 뷰포트와 무관하게 항상 함께 DOM에 존재하고
+ * (하나는 CSS로만 숨김) 플레이스홀더 문구가 동일해서, 스코프 없는 getByPlaceholder는
+ * strict mode violation(2 elements)으로 항상 실패한다. 실제로 보이는 쪽만 골라야 한다.
+ */
+export function loginEmailInput(page: Page) {
+  return page.locator('input[placeholder="이메일을 입력하세요"]:visible');
+}
+export function loginPasswordInput(page: Page) {
+  return page.locator('input[placeholder="비밀번호를 입력하세요"]:visible');
+}
+/** 위와 같은 이유로, /login 폼 에러 메시지도 실제로 보이는 쪽만 골라야 한다. */
+export function loginErrorMessage(page: Page, text: string) {
+  return page.locator("p:visible", { hasText: text });
+}
+
 export const TEST_TOKENS = { accessToken: MOCK_ACCESS_TOKEN, refreshToken: MOCK_REFRESH_TOKEN };
 export const NO_PROFILE_TOKENS = {
   accessToken: MOCK_NO_PROFILE_ACCESS_TOKEN,
@@ -59,8 +75,8 @@ export async function loginByTokens(
 /** 지정 계정으로 로그인하고 홈(/)에 도달할 때까지 기다린다. */
 export async function login(page: Page, creds: Credentials): Promise<void> {
   await page.goto("/login");
-  await page.getByPlaceholder("이메일을 입력하세요").fill(creds.email);
-  await page.getByPlaceholder("비밀번호를 입력하세요").fill(creds.password);
+  await loginEmailInput(page).fill(creds.email);
+  await loginPasswordInput(page).fill(creds.password);
   await page.getByRole("button", { name: "로그인", exact: true }).click();
   await page.waitForURL("/", { timeout: 15_000 });
   // refreshToken이 localStorage에 저장될 때까지 대기 (UI 로그인 타이밍 이슈 방지)

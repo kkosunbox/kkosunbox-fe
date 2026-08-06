@@ -123,7 +123,7 @@ export default function LoginPage() {
     >
 
       {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
-      <div className="flex flex-1 flex-col lg:hidden">
+      <div className="max-lg:flex flex-1 flex-col lg:hidden">
         {/* 그라데이션 배경 + 장식 레이어 */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div

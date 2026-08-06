@@ -33,7 +33,7 @@ export function AuthDesktopShell({
   return (
     // 좌우 여백 48px(px-12) — 1804px(890+890+gap) 도달 전까지는 이 여백이 바깥쪽에서 콘텐츠를 밀어주고,
     // 뷰포트가 1804+96(=1900)px를 넘어서면 안쪽 max-w-[1804px]가 먼저 막아서 더는 안 벌어진다.
-    <div className="hidden lg:block lg:px-12">
+    <div className="max-lg:hidden lg:px-12">
       <div className="mx-auto flex w-full max-w-[1804px] items-stretch gap-6 py-10">
         {/* 좌측 — 배너. 높이 837px 고정, 너비 702~890px 가변. 뷰포트가 좁아질 때 우측 폼보다
             천천히(shrink-[1]) 줄어들도록 — 좌상단 문구가 화면 밖으로 밀리지 않게 한다 */}

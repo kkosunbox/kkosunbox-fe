@@ -8,7 +8,6 @@ import { OrderDeliveryMethodSection } from "@/widgets/order/ui/order-section/Ord
 import { QUANTITY_MIN, QUANTITY_MAX } from "./purchaseOrderHelpers";
 import { PurchaseProductInfoCard } from "./components/PurchaseProductInfoCard";
 import { PurchasePaymentMethodCard } from "./components/PurchasePaymentMethodCard";
-import { PurchaseCouponCard } from "./components/PurchaseCouponCard";
 import { PurchaseOrderSummaryCard } from "./components/PurchaseOrderSummaryCard";
 import type { usePurchaseOrderSection } from "./usePurchaseOrderSection";
 
@@ -70,13 +69,6 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
                 widgetLoadError={vm.widgetLoadError}
                 paymentReady={vm.paymentReady}
                 onRetry={vm.reloadWidget}
-              />
-
-              <PurchaseCouponCard
-                open={vm.openSections.coupon}
-                onToggle={() => vm.toggleSection("coupon")}
-                couponEnabled={vm.couponEnabled}
-                onToggleCoupon={vm.handleToggleCoupon}
                 couponCodeInput={vm.couponCodeInput}
                 setCouponCodeInput={vm.setCouponCodeInput}
                 couponInfo={vm.couponInfo}

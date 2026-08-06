@@ -284,7 +284,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
                   onClick={() => handleCancelOrder(record.id)}
                   className="text-body-14-m text-[var(--color-accent)] underline"
                 >
-                  환불하기
+                  주문취소
                 </button>
               )}
               <button
@@ -318,7 +318,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
                 onClick={() => handleCancelOrder(record.id)}
                 className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
               >
-                환불하기
+                주문취소
               </button>
             )}
           </div>

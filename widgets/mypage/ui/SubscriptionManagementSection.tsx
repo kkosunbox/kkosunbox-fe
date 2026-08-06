@@ -306,7 +306,7 @@ function SubscriptionRow({
             className={`truncate ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
           >
             {isActive
-              ? `${plan.name} ${isScheduled ? "구독예정" : isPaused ? "구독 쉬는 중" : "구독중"}`
+              ? `${plan.name} ${isPaused ? "구독 쉬는 중" : "구독중"}`
               : plan.name}
           </Text>
           <span className="shrink-0 text-[var(--color-text-secondary)]" aria-hidden="true">
@@ -324,7 +324,7 @@ function SubscriptionRow({
           {!isActive
             ? "구독종료"
             : isScheduled
-              ? `결제 예정일 : ${formatDate(subscription.nextBillingDate)}`
+              ? `결제일 : ${formatDate(subscription.nextBillingDate)}`
               : `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`}
         </Text>
         <Text

@@ -11,20 +11,9 @@ import { getErrorMessage } from "@/shared/lib/api";
  * 엔드포인트만 `getProductCouponInfo`(단건)로 교체.
  */
 export function usePurchaseCoupon() {
-  const [couponEnabled, setCouponEnabled] = useState(false);
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponInfo, setCouponInfo] = useState<ProductCouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
-
-  function handleToggleCoupon() {
-    const next = !couponEnabled;
-    setCouponEnabled(next);
-    if (!next) {
-      setCouponCodeInput("");
-      setCouponInfo(null);
-      setCouponError(null);
-    }
-  }
 
   async function handleApplyCoupon() {
     setCouponError(null);
@@ -47,12 +36,10 @@ export function usePurchaseCoupon() {
   }
 
   return {
-    couponEnabled,
     couponCodeInput,
     setCouponCodeInput,
     couponInfo,
     couponError,
-    handleToggleCoupon,
     handleApplyCoupon,
   };
 }

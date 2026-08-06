@@ -12,6 +12,7 @@ import {
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
 import { OrderPriceSummaryBar } from "./order-section/OrderPriceSummaryBar";
 import { OrderProductSection } from "./order-section/OrderProductSection";
+import { OrderStartDateSection } from "./order-section/OrderStartDateSection";
 import { OrderPaymentSection } from "./order-section/OrderPaymentSection";
 import { OrderInviteSection } from "./order-section/OrderInviteSection";
 import { OrderDeliveryMethodSection } from "./order-section/OrderDeliveryMethodSection";
@@ -68,6 +69,13 @@ export default function OrderSection(props: OrderSectionProps) {
     handlePay,
     handleChangeAddress,
     handleSearchAddress,
+    showStartDateOption,
+    startDateMode,
+    scheduledDate,
+    minScheduledDate,
+    maxScheduledDate,
+    handleStartDateModeChange,
+    handleScheduledDateChange,
     handleApplyInviteCode,
     handleRetryInviteValidation,
     handleDismissStoredInviteCode,
@@ -89,6 +97,18 @@ export default function OrderSection(props: OrderSectionProps) {
         quantity={quantity}
         setQuantity={setQuantity}
       />
+      {showStartDateOption && (
+        <OrderStartDateSection
+          open={openSections.startDate}
+          onToggle={() => toggleSection("startDate")}
+          startDateMode={startDateMode}
+          onStartDateModeChange={handleStartDateModeChange}
+          scheduledDate={scheduledDate}
+          onScheduledDateChange={handleScheduledDateChange}
+          minScheduledDate={minScheduledDate}
+          maxScheduledDate={maxScheduledDate}
+        />
+      )}
       <CheckoutAddressSection
         open={openSections.customer}
         onToggle={() => toggleSection("customer")}

@@ -33,7 +33,8 @@ export type SubscriptionStatus =
   | "active"
   | "cancelled"
   | "paymentFailed"
-  | "suspended";
+  | "suspended"
+  | "scheduled";
 
 export interface UserSubscriptionDto {
   id: number;

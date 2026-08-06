@@ -4,6 +4,7 @@
  */
 import "server-only";
 import { apiClient } from "@/shared/lib/api";
+import { getSubscriptionDisplayBucket } from "../lib/subscriptionDisplayBucket";
 import type {
   UserSubscriptionDto,
   SubscriptionPlanDto,
@@ -17,12 +18,18 @@ function serverOpts(token?: string) {
   return { token, skipRefresh: true } as const;
 }
 
-/** 활성 구독 반환 (없으면 null) */
+/**
+ * 활성 구독 반환 (없으면 null).
+ *
+ * isActive는 안 쓴다 — "지금 결제 중인가"만 나타내 scheduled(시작 예약, 첫 결제 전)도
+ * false로 내려오는데, 정상적으로 결제가 이뤄지고 있거나 이뤄질 예정인 구독(active·scheduled)은
+ * 여전히 대표로 보여줄 가치가 있다. paymentFailed·suspended·cancelled는 제외.
+ */
 export async function fetchActiveSubscription(token?: string): Promise<UserSubscriptionDto | null> {
   const data = await apiClient
     .get<{ subscriptions: UserSubscriptionDto[] }>("/v1/subscriptions", serverOpts(token))
     .catch(() => ({ subscriptions: [] as UserSubscriptionDto[] }));
-  return data.subscriptions.find((s) => s.isActive) ?? null;
+  return data.subscriptions.find((s) => getSubscriptionDisplayBucket(s.status) === "active") ?? null;
 }
 
 /** 전체 구독 목록 */
@@ -49,22 +56,6 @@ export async function fetchSubscriptionPlans(
     if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
     return a.id - b.id;
   });
-}
-
-/** 결제 내역 (deliveryStatus 필터, 페이지네이션 지원) */
-export async function fetchPaymentHistory(
-  token?: string,
-  params?: GetPaymentHistoryParams,
-): Promise<SubscriptionPaymentDto[]> {
-  const parts: string[] = [];
-  if (params?.deliveryStatus) parts.push(`deliveryStatus=${params.deliveryStatus}`);
-  if (params?.page !== undefined) parts.push(`page=${params.page}`);
-  if (params?.limit !== undefined) parts.push(`limit=${params.limit}`);
-  const query = parts.length > 0 ? `?${parts.join("&")}` : "";
-  const data = await apiClient
-    .get<{ payments: SubscriptionPaymentDto[] }>(`/v1/subscriptions/payments${query}`, serverOpts(token))
-    .catch(() => ({ payments: [] as SubscriptionPaymentDto[] }));
-  return data.payments;
 }
 
 /** 배송 상태 요약 조회 */

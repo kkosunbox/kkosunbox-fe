@@ -481,7 +481,9 @@
       "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-003.png\" ./purchase-detail-standard-promo.png)",
       "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-004.png\" ./purchase-detail-standard-03.png)",
       "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-005.png\" ./purchase-detail-standard-04.png)",
-      "Bash(diff /tmp_productApi_head.ts features/product/api/productApi.ts)"
+      "Bash(diff /tmp_productApi_head.ts features/product/api/productApi.ts)",
+      "Bash(pnpm test:unit -- subscriptionDisplayBucket)",
+      "Bash(pnpm test:unit -- nextBillingDateLabel subscriptionDisplayBucket)"
     ]
   },
   "disabledMcpjsonServers": [

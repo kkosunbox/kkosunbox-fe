@@ -16,6 +16,10 @@ import {
   resumeSubscription,
 } from "@/features/subscription/api/subscriptionApi";
 import { packageThemeForPlan } from "@/entities/package";
+import {
+  getSubscriptionDisplayBucket,
+  isScheduledSubscription,
+} from "@/features/subscription/lib/subscriptionDisplayBucket";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 import {
   ITEMS_PER_PAGE,
@@ -44,7 +48,9 @@ export function useSubscriptionDetailSection({
   const [isEditingBillingDay, setIsEditingBillingDay] = useState(false);
   const [billingDay, setBillingDay] = useState(() => billingDayFromDate(subscription.nextBillingDate));
 
-  const isActive = subscription.isActive;
+  // isActive는 scheduled(시작 예약, 첫 결제 전)를 false로 내려주므로 화면 분기엔 쓰지 않는다.
+  const isActive = getSubscriptionDisplayBucket(subscription.status) === "active";
+  const isScheduled = isScheduledSubscription(subscription.status);
   const theme = packageThemeForPlan(subscription.plan);
   const startDate = deriveStartDate(payments, subscription.nextBillingDate);
   const endDate = subscription.cancelledAt
@@ -269,6 +275,7 @@ export function useSubscriptionDetailSection({
     payments,
     theme,
     isActive,
+    isScheduled,
     startDate,
     endDate,
     records,

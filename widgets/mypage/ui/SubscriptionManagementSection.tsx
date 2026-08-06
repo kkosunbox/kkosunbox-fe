@@ -10,6 +10,12 @@ import { useBillingUpdated } from "@/features/billing/lib/billingSync";
 import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {
+  getSubscriptionDisplayBucket,
+  isScheduledSubscription,
+} from "@/features/subscription/lib/subscriptionDisplayBucket";
+import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
+import { formatDateToYMD } from "@/features/order";
+import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
 } from "@/entities/package";
@@ -83,14 +89,19 @@ function earliestNextBillingDate(subs: UserSubscriptionDto[]): string | null {
 ───────────────────────────── */
 function SubscriptionsSummaryCard({
   activeSubscriptions,
+  billableSubscriptions,
+  nextBillingDateLabel,
   hasPlans,
 }: {
   activeSubscriptions: UserSubscriptionDto[];
+  /** 쉬는 중(isPaused)이 아닌, 이번 주기에 실제로 청구되는 구독만. "예상 결제 금액" 계산 전용 */
+  billableSubscriptions: UserSubscriptionDto[];
+  /** "다음 결제일" 표시용, getNextBillingDateLabel로 이미 과거 날짜 방어까지 끝낸 최종 문자열 */
+  nextBillingDateLabel: string;
   hasPlans: boolean;
 }) {
   const count = activeSubscriptions.length;
-  const nextDate = earliestNextBillingDate(activeSubscriptions);
-  const totalAmount = activeSubscriptions.reduce(
+  const totalAmount = billableSubscriptions.reduce(
     (sum, s) => sum + s.plan.monthlyPrice * (s.quantity || 1),
     0,
   );
@@ -147,7 +158,7 @@ function SubscriptionsSummaryCard({
 
       {hasPlans && (
         <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
-          <p>다음 결제일 : {nextDate ? formatDate(nextDate) : "-"}</p>
+          <p>다음 결제일 : {nextBillingDateLabel}</p>
           <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
         </div>
       )}
@@ -160,10 +171,11 @@ function SubscriptionsSummaryCard({
 ───────────────────────────── */
 function PaymentInfoCard({
   billingInfo: initialBillingInfo,
-  nextBillingDate,
+  nextBillingDateLabel,
 }: {
   billingInfo: BillingInfo | null;
-  nextBillingDate: string | null;
+  /** "다음 결제일" 표시용, getNextBillingDateLabel로 이미 과거 날짜 방어까지 끝낸 최종 문자열 */
+  nextBillingDateLabel: string;
 }) {
   const router = useRouter();
   const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
@@ -200,7 +212,8 @@ function PaymentInfoCard({
     ? `${getCardName(billingInfo)} (${getLastFourDigits(billingInfo)})`
     : "미등록";
   const methodDisplay = billingInfo ? "신용카드 결제" : "미등록";
-  const nextDateDisplay = nextBillingDate ? `${formatDate(nextBillingDate)} (카드결제)` : "-";
+  const nextDateDisplay =
+    nextBillingDateLabel === "-" ? "-" : `${nextBillingDateLabel} (카드결제)`;
 
   const labelCls = "w-[80px] shrink-0 text-body-14-m text-[var(--color-text-label)]";
   const valueCls = "text-body-14-sb text-[var(--color-text)]";
@@ -248,7 +261,11 @@ function SubscriptionRow({
 }: {
   subscription: UserSubscriptionDto;
 }) {
-  const { plan, isActive, isPaused } = subscription;
+  const { plan, isPaused } = subscription;
+  // isActive는 "지금 결제 중인가"만 나타내 scheduled(시작 예약, 첫 결제 전)를 false로 내려준다.
+  // 표시 분류는 반드시 status 기준(getSubscriptionDisplayBucket)으로 판단한다.
+  const isActive = getSubscriptionDisplayBucket(subscription.status) === "active";
+  const isScheduled = isScheduledSubscription(subscription.status);
   const theme = packageThemeForPlan(plan);
   const boxQuantity = subscription.quantity || 1;
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
@@ -288,7 +305,9 @@ function SubscriptionRow({
             mobileVariant="body-14-sb"
             className={`truncate ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
           >
-            {isActive ? `${plan.name} ${isPaused ? "구독 쉬는 중" : "구독중"}` : plan.name}
+            {isActive
+              ? `${plan.name} ${isScheduled ? "구독예정" : isPaused ? "구독 쉬는 중" : "구독중"}`
+              : plan.name}
           </Text>
           <span className="shrink-0 text-[var(--color-text-secondary)]" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -302,9 +321,11 @@ function SubscriptionRow({
           mobileVariant="body-13-m"
           className={isActive ? "text-[var(--color-text-label)]" : "text-[var(--color-text-secondary)]"}
         >
-          {isActive
-            ? `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`
-            : "구독종료"}
+          {!isActive
+            ? "구독종료"
+            : isScheduled
+              ? `결제 예정일 : ${formatDate(subscription.nextBillingDate)}`
+              : `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`}
         </Text>
         <Text
           variant="body-16-m"
@@ -454,21 +475,36 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // isActive는 scheduled(시작 예약, 첫 결제 전)를 false로 내려주므로 탭 분류엔 쓰지 않는다.
+  // "구독중"/"구독종료" 판단은 항상 status 기반 getSubscriptionDisplayBucket을 거친다.
   const activeSubscriptions = useMemo(
-    () => subscriptions.filter((s) => s.isActive),
+    () => subscriptions.filter((s) => getSubscriptionDisplayBucket(s.status) === "active"),
     [subscriptions],
+  );
+
+  // 쉬는 중(isPaused)인 구독은 이번 결제 주기에 청구되지 않는다 — "다음 결제일"/"예상 결제
+  // 금액" 계산에 넣으면 지나간 결제일이 최솟값으로 잡히는 등 실제와 다른 값이 나온다.
+  const billableSubscriptions = useMemo(
+    () => activeSubscriptions.filter((s) => !s.isPaused),
+    [activeSubscriptions],
   );
 
   const sortedSubscriptions = useMemo(() => {
     return [...subscriptions].sort((a, b) => {
-      if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+      const aActive = getSubscriptionDisplayBucket(a.status) === "active";
+      const bActive = getSubscriptionDisplayBucket(b.status) === "active";
+      if (aActive !== bActive) return aActive ? -1 : 1;
       return comparePlansForDisplayOrder(a.plan, b.plan);
     });
   }, [subscriptions]);
 
   const filteredSubscriptions = useMemo(() => {
-    if (filter === "active") return sortedSubscriptions.filter((s) => s.isActive);
-    if (filter === "ended") return sortedSubscriptions.filter((s) => !s.isActive);
+    if (filter === "active") {
+      return sortedSubscriptions.filter((s) => getSubscriptionDisplayBucket(s.status) === "active");
+    }
+    if (filter === "ended") {
+      return sortedSubscriptions.filter((s) => getSubscriptionDisplayBucket(s.status) === "ended");
+    }
     return sortedSubscriptions;
   }, [sortedSubscriptions, filter]);
 
@@ -478,7 +514,11 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
     currentPage * PAGE_SIZE,
   );
 
-  const earliestBillingDate = earliestNextBillingDate(activeSubscriptions);
+  const earliestBillingDate = earliestNextBillingDate(billableSubscriptions);
+  const nextBillingDateLabel = getNextBillingDateLabel(
+    earliestBillingDate,
+    formatDateToYMD(new Date()),
+  );
   const hasPlans = plans.length > 0;
 
   return (
@@ -500,12 +540,17 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
 
         {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
         <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white max-md:shadow-[0px_4px_12px_0px_#00000014] md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_12px_0px_#00000014] lg:shadow-[0px_4px_12px_0px_#00000014]">
-          <SubscriptionsSummaryCard activeSubscriptions={activeSubscriptions} hasPlans={hasPlans} />
+          <SubscriptionsSummaryCard
+            activeSubscriptions={activeSubscriptions}
+            billableSubscriptions={billableSubscriptions}
+            nextBillingDateLabel={nextBillingDateLabel}
+            hasPlans={hasPlans}
+          />
           {/* Mobile: horizontal divider */}
           <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
           {/* Desktop: vertical divider */}
           <div className="max-md:hidden w-px shrink-0 bg-[var(--color-border-light)] my-10" />
-          <PaymentInfoCard billingInfo={billingInfo} nextBillingDate={earliestBillingDate} />
+          <PaymentInfoCard billingInfo={billingInfo} nextBillingDateLabel={nextBillingDateLabel} />
         </div>
       </div>
 

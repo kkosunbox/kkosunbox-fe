@@ -4,6 +4,7 @@ import premiumDetail02 from "../assets/purchase-detail-premium-02.webp";
 import premiumDetail03 from "../assets/purchase-detail-premium-03.webp";
 import premiumDetail04 from "../assets/purchase-detail-premium-04.webp";
 import premiumDetail05 from "../assets/purchase-detail-premium-05.webp";
+import premiumDetail06 from "../assets/purchase-detail-premium-06.webp";
 import premiumDetailPromo from "../assets/purchase-detail-premium-promo.webp";
 import standardDetail01 from "../assets/purchase-detail-standard-01.webp";
 import standardDetail02 from "../assets/purchase-detail-standard-02.webp";
@@ -30,7 +31,15 @@ import type { PackageTier } from "./packageData";
  * 별도 하단 disclaimer 문단은 제거했다 — 중복 노출 방지.
  */
 export const PACKAGE_DETAIL_IMAGES: Record<PackageTier, readonly StaticImageData[]> = {
-  Premium: [premiumDetail01, premiumDetail02, premiumDetail03, premiumDetail04, premiumDetail05, feedingGuide],
+  Premium: [
+    premiumDetail01,
+    premiumDetail02,
+    premiumDetail03,
+    premiumDetail04,
+    premiumDetail05,
+    premiumDetail06,
+    feedingGuide,
+  ],
   Standard: [standardDetail01, standardDetail02, standardDetail03, standardDetail04, standardDetail05, standardDetail06, feedingGuide],
   Basic: [basicDetail01, basicDetail02, basicDetail03, basicDetail04, basicDetail05, basicDetail06, feedingGuide],
 };
@@ -47,6 +56,7 @@ export const PACKAGE_DETAIL_IMAGES_PURCHASE: Record<PackageTier, readonly Static
     premiumDetail03,
     premiumDetail04,
     premiumDetail05,
+    premiumDetail06,
     feedingGuide,
   ],
   Standard: [

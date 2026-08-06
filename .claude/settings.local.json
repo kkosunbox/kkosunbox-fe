@@ -468,7 +468,20 @@
       "PowerShell(npx eslint widgets/mypage/ui/PurchaseDetailSection.tsx)",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/\" -UseBasicParsing -TimeoutSec 5; \"dev server up: $\\($r.StatusCode\\)\" } catch { \"dev server not reachable: $\\($_.Exception.Message\\)\" })",
       "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }; \"stopped dev server\" } else { \"nothing on :3000\" })",
-      "Bash(NEXT_PUBLIC_TMP_DISABLE_FIX=1 npx playwright test tests/e2e/login.spec.ts -g \"소셜 로그인 콜백\" --reporter=line)"
+      "Bash(NEXT_PUBLIC_TMP_DISABLE_FIX=1 npx playwright test tests/e2e/login.spec.ts -g \"소셜 로그인 콜백\" --reporter=line)",
+      "Bash(xargs -I{} basename {})",
+      "Bash(identify \"C:\\\\Users\\\\tbrk7\\\\Downloads\\\\Group 1000005971.png\")",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-premium-001.png\" ./purchase-detail-premium-01.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-premium-002.png\" ./purchase-detail-premium-02.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-premium-003.png\" ./purchase-detail-premium-promo.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-premium-004.png\" ./purchase-detail-premium-03.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-premium-005.png\" ./purchase-detail-premium-04.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-001.png\" ./purchase-detail-standard-01.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-002.png\" ./purchase-detail-standard-02.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-003.png\" ./purchase-detail-standard-promo.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-004.png\" ./purchase-detail-standard-03.png)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/new-detail-standard-005.png\" ./purchase-detail-standard-04.png)",
+      "Bash(diff /tmp_productApi_head.ts features/product/api/productApi.ts)"
     ]
   },
   "disabledMcpjsonServers": [

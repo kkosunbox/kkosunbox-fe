@@ -31,22 +31,22 @@ export function OrderStartDateSection({
         <RadioButton
           checked={startDateMode === "immediate"}
           onChange={() => onStartDateModeChange("immediate")}
-          label="지금 바로 첫 구독 상품 받기"
+          label="지금 바로 첫 구독 상품 결제하기"
         />
         <div className="flex items-center gap-6">
           <RadioButton
             checked={startDateMode === "scheduled"}
             onChange={() => onStartDateModeChange("scheduled")}
-            label="다음 배송부터 시작"
+            label="다음 결제부터 시작"
           />
           <DatePicker
             value={scheduledDate}
             onChange={onScheduledDateChange}
-            placeholder="배송 날짜"
+            placeholder="결제 날짜"
             minDate={minScheduledDate}
             maxDate={maxScheduledDate}
             disabled={startDateMode !== "scheduled"}
-            className="w-[122px]"
+            className="w-[150px]"
             triggerClassName={DATE_TRIGGER_CLASS}
             iconColor="var(--color-border)"
           />

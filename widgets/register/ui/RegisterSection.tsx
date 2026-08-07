@@ -1,26 +1,22 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
-import registerTitle from "../assets/register-title.webp";
-import registerTitleMobi from "../assets/register-title-mobi.webp";
-import registerPaw from "../assets/register-pow.webp";
 import { useRegisterSection } from "./register-section/useRegisterSection";
-import { AGREEMENTS, inputBase, inputDisabled, actionBtnCls } from "./register-section/constants";
+import { AGREEMENTS } from "./register-section/constants";
 import { CheckboxIcon } from "./register-section/components/CheckboxIcon";
-import { RegisterPasswordToggleIcon } from "./register-section/components/RegisterPasswordToggleIcon";
-import { FieldRow } from "./register-section/components/FieldRow";
 import PasswordToggleIcon from "@/shared/ui/PasswordToggleIcon";
 import {
   AuthDesktopShell,
+  AuthMobileShell,
   SocialLoginButtons,
   getOAuthUrl,
   authLabelCls,
   authUnderlineInputCls,
   authInlineActionBtnCls,
+  authMobileInlineActionBtnCls,
   authCtaButtonCls,
+  authMobileCtaButtonCls,
 } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
 
@@ -35,131 +31,177 @@ export default function RegisterSection() {
     if (url) window.location.href = url;
   }
 
+  const agreementsBlock = (
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            agree.toggleAll();
+            if (!agree.agreementsOpen) agree.setAgreementsOpen(true);
+          }}
+          className="flex items-center gap-2"
+        >
+          <CheckboxIcon checked={agree.allChecked} />
+          <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">전체 동의</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => agree.setAgreementsOpen((v) => !v)}
+          aria-label={agree.agreementsOpen ? "약관 접기" : "약관 펼치기"}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 16 16"
+            fill="none"
+            className={["transition-transform", agree.agreementsOpen ? "" : "rotate-180"].join(" ")}
+          >
+            <path
+              d="M4 10L8 6L12 10"
+              stroke="var(--color-text-secondary)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {agree.agreementsOpen && (
+        <div className="flex flex-col gap-4">
+          {AGREEMENTS.map(({ key, label, required }) => (
+            <div key={key} className="flex items-center gap-2">
+              <button type="button" onClick={() => agree.toggleOne(key)}>
+                <CheckboxIcon checked={agree.agreements[key]} />
+              </button>
+              <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
+                {label}{" "}
+                <span className="text-[var(--color-text-secondary)]">({required ? "필수" : "선택"})</span>
+              </span>
+              {key !== "marketing" && (
+                <button
+                  type="button"
+                  onClick={() => agree.setTermsModal(key)}
+                  className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline transition-opacity hover:opacity-70"
+                >
+                  보기
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   /* ── 렌더 ── */
   return (
     <>
-    {agree.termsModal && (
-      <TermsViewModal
-        type={agree.termsModal}
-        onClose={() => agree.setTermsModal(null)}
-        onConfirm={() => agree.acceptTerm(agree.termsModal!)}
-      />
-    )}
-    <div className="min-h-screen bg-white">
-      {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
-      <div className="lg:hidden">
-      <div className="mx-auto max-w-[874px] px-5 py-10 md:px-6 lg:px-6 md:py-[96px] lg:py-[96px]">
-
-        {/* 타이틀 */}
-        <div className="mb-7 text-center md:mb-11 lg:mb-11">
-          <h1>
-            <Image
-              src={registerTitleMobi}
-              alt="회원가입을 완료해주세요!"
-              className="mx-auto w-auto max-w-[98px] md:hidden lg:hidden"
-              priority
-            />
-            <Image
-              src={registerTitle}
-              alt="회원가입을 완료해주세요!"
-              quality={HIGH_IMAGE_QUALITY}
-              className="mx-auto w-auto max-md:hidden md:max-w-[322px] lg:max-w-[322px]"
-              priority
-            />
-          </h1>
-          <p
-            className="mt-3 md:mt-4 lg:mt-4 max-md:text-body-13-r md:text-body-16-r lg:text-body-16-r text-[var(--color-text)]"
-            style={{ fontFamily: "Griun PolFairness", letterSpacing: "-0.02em" }}
-          >
-            회원가입을 위해 필수 입력사항을 입력해주세요.
-          </p>
-        </div>
-
-        {/* ─── 폼 카드 ─── */}
-        <div
-          className="relative overflow-hidden rounded-[20px] px-6 py-8 md:mx-auto lg:mx-auto md:w-full lg:w-full md:max-w-[874px] lg:max-w-[874px] md:min-h-[524px] lg:min-h-[524px] max-md:pb-16 md:py-11 lg:py-11 lg:pb-[64px]"
-          style={{ background: "var(--color-support-faq-surface)" }}
-        >
-          <div className="flex flex-col gap-4 md:mx-auto lg:mx-auto md:w-[420px] lg:w-[420px]">
-
-            {/* ── 이메일 ── */}
-            <FieldRow label="이메일" required htmlFor="reg-email">
-              <div className="flex gap-2">
+      {agree.termsModal && (
+        <TermsViewModal
+          type={agree.termsModal}
+          onClose={() => agree.setTermsModal(null)}
+          onConfirm={() => agree.acceptTerm(agree.termsModal!)}
+        />
+      )}
+      <div className="min-h-svh bg-white max-lg:bg-[var(--color-login-top)]">
+        {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
+        <AuthMobileShell active="register">
+          <div className="flex flex-col gap-6">
+            {/* 이메일 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-email-mobile" className={authLabelCls}>
+                이메일
+              </label>
+              <div className="flex items-end gap-2">
                 <input
-                  id="reg-email"
+                  id="reg-email-mobile"
                   type="email"
                   placeholder="이메일을 입력해주세요"
                   value={email.email}
                   onChange={(e) => email.setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !emailVerified && email.handleSendCode()}
                   readOnly={emailVerified}
-                  className={[inputBase, emailVerified ? inputDisabled : ""].join(" ")}
+                  className={[authUnderlineInputCls, "min-w-0 flex-1"].join(" ")}
                   autoComplete="email"
                 />
                 <button
                   type="button"
                   onClick={email.handleSendCode}
-                  disabled={!email.email.trim() || isPending || emailVerified || email.dailyLimitReached || (email.codeSent && email.countdown > 0)}
-                  className={[actionBtnCls, "min-w-[95px] px-3 bg-[var(--color-btn-dark-warm)]"].join(" ")}
+                  disabled={
+                    !email.email.trim() ||
+                    isPending ||
+                    emailVerified ||
+                    email.dailyLimitReached ||
+                    (email.codeSent && email.countdown > 0)
+                  }
+                  className={[authMobileInlineActionBtnCls, "min-w-[95px]"].join(" ")}
                 >
                   {isPending && !email.codeSent
                     ? "발송 중..."
                     : email.dailyLimitReached
                       ? "발송 제한"
                       : email.codeSent
-                        ? email.countdown > 0 ? `재전송 (${email.countdown}s)` : "재전송"
-                        : (
-                          <>
-                            <span className="max-md:hidden">인증번호 전송</span>
-                            <span className="md:hidden">인증번호</span>
-                          </>
-                        )}
+                        ? email.countdown > 0
+                          ? `재전송 (${email.countdown}s)`
+                          : "재전송"
+                        : "인증번호 전송"}
                 </button>
               </div>
               {email.codeSent && !emailVerified && (
-                <p className="mt-1.5 text-caption-12-r text-[var(--color-text-secondary)]">
-                  <span className="font-semibold text-[var(--color-text)]">{email.email}</span>으로 인증코드를 발송했습니다.
+                <p className="text-caption-12-r text-[var(--color-text-secondary)]">
+                  <span className="font-semibold text-[var(--color-text)]">{email.email}</span>
+                  으로 인증코드를 발송했습니다.
                 </p>
               )}
-            </FieldRow>
+            </div>
 
-            {/* ── 인증번호 ── */}
-            <FieldRow label="인증번호" required htmlFor="reg-otp">
-              <div className="flex gap-2">
-                <input
-                  id="reg-otp"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={8}
-                  placeholder="인증번호를 입력해주세요"
-                  value={email.otp}
-                  onChange={(e) => email.setOtp(e.target.value.replace(/\D/g, ""))}
-                  onKeyDown={(e) => e.key === "Enter" && email.codeSent && !emailVerified && email.handleVerifyOtp()}
-                  disabled={!email.codeSent || emailVerified}
-                  className={[inputBase, (!email.codeSent || emailVerified) ? inputDisabled : ""].join(" ")}
-                  autoComplete="one-time-code"
-                />
-                <button
-                  type="button"
-                  onClick={email.handleVerifyOtp}
-                  disabled={!email.otp.trim() || isPending || !email.codeSent || emailVerified}
-                  className={[actionBtnCls, "min-w-[52px] px-2 bg-[var(--color-btn-dark-warm)]"].join(" ")}
-                >
-                  {isPending && email.codeSent && !emailVerified ? "확인 중..." : "확인"}
-                </button>
+            {/* 인증번호 */}
+            {email.codeSent && (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="reg-otp-mobile" className={authLabelCls}>
+                  인증번호
+                </label>
+                <div className="flex items-end gap-2">
+                  <input
+                    id="reg-otp-mobile"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={8}
+                    placeholder="인증번호를 입력해주세요"
+                    value={email.otp}
+                    onChange={(e) => email.setOtp(e.target.value.replace(/\D/g, ""))}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && email.codeSent && !emailVerified && email.handleVerifyOtp()
+                    }
+                    disabled={emailVerified}
+                    className={[authUnderlineInputCls, "min-w-0 flex-1"].join(" ")}
+                    autoComplete="one-time-code"
+                  />
+                  <button
+                    type="button"
+                    onClick={email.handleVerifyOtp}
+                    disabled={!email.otp.trim() || isPending || emailVerified}
+                    className={[authMobileInlineActionBtnCls, "min-w-[52px]"].join(" ")}
+                  >
+                    {isPending && !emailVerified ? "확인 중..." : "확인"}
+                  </button>
+                </div>
+                {emailVerified && (
+                  <p className="text-caption-12-r text-[var(--color-accent)]">이메일 인증이 완료되었습니다.</p>
+                )}
               </div>
-              {emailVerified && (
-                <p className="mt-1.5 text-caption-12-r text-[var(--color-accent)]">
-                  이메일 인증이 완료되었습니다.
-                </p>
-              )}
-            </FieldRow>
+            )}
 
-            {/* ── 비밀번호 ── */}
-            <FieldRow label="비밀번호" required htmlFor="reg-pw">
-              <div className="relative w-full md:w-[220px]">
+            {/* 비밀번호 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-pw-mobile" className={authLabelCls}>
+                비밀번호
+              </label>
+              <div className="relative">
                 <input
-                  id="reg-pw"
+                  id="reg-pw-mobile"
                   type={pw.showPw ? "text" : "password"}
                   placeholder="비밀번호를 입력해주세요"
                   value={pw.password}
@@ -167,25 +209,48 @@ export default function RegisterSection() {
                   onFocus={pw.onPasswordFocus}
                   onBlur={pw.onPasswordBlur}
                   disabled={!emailVerified}
-                  className={[inputBase, "pr-10", !emailVerified ? inputDisabled : ""].join(" ")}
+                  className={[authUnderlineInputCls, "pr-8"].join(" ")}
                   autoComplete="new-password"
                 />
                 <button
                   type="button"
                   onClick={() => pw.setShowPw((v) => !v)}
                   aria-label={pw.showPw ? "비밀번호 숨기기" : "비밀번호 보기"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 opacity-80"
                 >
-                  <RegisterPasswordToggleIcon passwordVisible={pw.showPw} />
+                  <PasswordToggleIcon visible={pw.showPw} className="w-5 h-5" />
                 </button>
               </div>
-            </FieldRow>
+              <div className="space-y-0.5 text-[12px] font-medium leading-[16px]">
+                <p
+                  className={
+                    pw.ruleMinLenInvalid
+                      ? "text-[var(--color-accent-rust)]"
+                      : "text-[var(--color-text-secondary)]"
+                  }
+                >
+                  * 비밀번호는 최소 8자 이상이어야 합니다.
+                </p>
+                <p
+                  className={
+                    pw.ruleComplexityInvalid
+                      ? "text-[var(--color-accent-rust)]"
+                      : "text-[var(--color-text-secondary)]"
+                  }
+                >
+                  * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
+                </p>
+              </div>
+            </div>
 
-            {/* ── 비밀번호 확인 ── */}
-            <FieldRow label="비밀번호 확인" required htmlFor="reg-pw-confirm">
-              <div className="relative w-full md:w-[220px]">
+            {/* 비밀번호 확인 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-pw-confirm-mobile" className={authLabelCls}>
+                비밀번호 확인
+              </label>
+              <div className="relative">
                 <input
-                  id="reg-pw-confirm"
+                  id="reg-pw-confirm-mobile"
                   type={pw.showPwConfirm ? "text" : "password"}
                   placeholder="비밀번호를 다시 입력해주세요"
                   value={pw.passwordConfirm}
@@ -193,370 +258,275 @@ export default function RegisterSection() {
                   onFocus={pw.onConfirmFocus}
                   onBlur={pw.onConfirmBlur}
                   disabled={!emailVerified}
-                  className={[inputBase, "pr-10", !emailVerified ? inputDisabled : ""].join(" ")}
+                  className={[authUnderlineInputCls, "pr-8"].join(" ")}
                   autoComplete="new-password"
                 />
                 <button
                   type="button"
                   onClick={() => pw.setShowPwConfirm((v) => !v)}
                   aria-label={pw.showPwConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 opacity-80"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 opacity-80"
                 >
-                  <RegisterPasswordToggleIcon passwordVisible={pw.showPwConfirm} />
+                  <PasswordToggleIcon visible={pw.showPwConfirm} className="w-5 h-5" />
                 </button>
               </div>
               {pw.passwordMismatch && (
-                <p className="mt-1.5 text-caption-12-r text-[var(--color-accent-rust)]" role="alert">
+                <p className="text-caption-12-r text-[var(--color-accent-rust)]" role="alert">
                   비밀번호가 일치하지 않습니다.
                 </p>
               )}
-            </FieldRow>
-
-            {/* 비밀번호 힌트 */}
-            <div className="max-md:pl-[80px] md:pl-[94px] lg:pl-[94px] space-y-0.5 text-[12px] font-medium leading-[16px]">
-              <p
-                className={
-                  pw.ruleMinLenInvalid
-                    ? "text-[var(--color-accent-rust)]"
-                    : "text-[var(--color-text-secondary)]"
-                }
-              >
-                * 비밀번호는 최소 8자 이상이어야 합니다.
-              </p>
-              <p
-                className={
-                  pw.ruleComplexityInvalid
-                    ? "text-[var(--color-accent-rust)]"
-                    : "text-[var(--color-text-secondary)]"
-                }
-              >
-                * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
-              </p>
-            </div>
-
-            {/* ─── 약관 동의 ─── */}
-            <div className="mt-2 flex flex-col gap-5">
-              {/* 전체 동의 */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => { agree.toggleAll(); if (!agree.agreementsOpen) agree.setAgreementsOpen(true); }}
-                  className="flex items-center gap-2"
-                >
-                  <CheckboxIcon checked={agree.allChecked} />
-                  <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">전체 동의</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => agree.setAgreementsOpen((v) => !v)}
-                  aria-label={agree.agreementsOpen ? "약관 접기" : "약관 펼치기"}
-                >
-                  <svg
-                    width="24" height="24" viewBox="0 0 16 16" fill="none"
-                    className={["transition-transform", agree.agreementsOpen ? "" : "rotate-180"].join(" ")}
-                  >
-                    <path d="M4 10L8 6L12 10" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* 개별 동의 (접기/펼치기) */}
-              {agree.agreementsOpen && (
-                <div className="flex flex-col gap-4">
-                  {AGREEMENTS.map(({ key, label, required }) => (
-                    <div key={key} className="flex items-center gap-2">
-                      <button type="button" onClick={() => agree.toggleOne(key)}>
-                        <CheckboxIcon checked={agree.agreements[key]} />
-                      </button>
-                      <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
-                        {label}{" "}
-                        <span className="text-[var(--color-text-secondary)]">({required ? "필수" : "선택"})</span>
-                      </span>
-                      {key !== "marketing" && (
-                        <button
-                          type="button"
-                          onClick={() => agree.setTermsModal(key)}
-                          className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline hover:opacity-70 transition-opacity"
-                        >
-                          보기
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
-          {/* 발바닥 장식 — 카드 기준 배치 (패딩 영역 위에 걸침) */}
-          <Image
-            src={registerPaw}
-            alt=""
-            aria-hidden="true"
-            className="absolute right-4 bottom-4 md:bottom-[36px] lg:bottom-[36px] md:right-[44px] lg:right-[44px] w-[60px] h-[50px] md:w-[84px] lg:w-[84px] md:h-[70px] lg:h-[70px] opacity-60"
-          />
-        </div>
+          <div className="mt-6">{agreementsBlock}</div>
 
-        {/* ─── CTA 버튼 ─── */}
-        <button
-          type="button"
-          disabled={!canSubmit}
-          onClick={handleSignup}
-          className="mt-10 mx-auto flex h-[48px] w-full md:max-w-[412px] lg:max-w-[412px] items-center justify-center rounded-[12px] max-md:text-subtitle-16-sb md:text-body-16-sb lg:text-body-16-sb text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-14 lg:mt-14"
-          style={{ background: "var(--color-btn-dark-warm)" }}
+          <div className="mt-8">
+            <button
+              type="button"
+              disabled={!canSubmit}
+              onClick={handleSignup}
+              className={authMobileCtaButtonCls}
+            >
+              {isPending ? "처리 중..." : "회원가입 완료"}
+            </button>
+          </div>
+
+          <p
+            className="mt-[18px] text-center text-body-14-m text-[var(--color-text-secondary)]"
+            style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
+          >
+            - 간편로그인 -
+          </p>
+
+          <div className="mt-7">
+            <SocialLoginButtons onSelect={handleSocialSignup} />
+          </div>
+
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <span
+              className="text-body-14-m text-[var(--color-auth-hint)] opacity-40"
+              style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
+            >
+              이미 계정이 있으신가요?
+            </span>
+            <Link
+              href="/login"
+              className="text-body-14-sb text-[var(--color-link-warm)]"
+              style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
+            >
+              로그인 하기
+            </Link>
+          </div>
+        </AuthMobileShell>
+
+        {/* ══════════════════ 데스크톱(lg+) ══════════════════ */}
+        <AuthDesktopShell
+          active="register"
+          headingTop="간단한 정보만 입력하고 바로 시작해요!"
+          headingBottom="꼬순박스와 함께해요"
+          contentGapPx={32}
         >
-          {isPending ? "처리 중..." : "가입하기"}
-        </button>
-
-        {/* 로그인 링크 */}
-        {/* <div className="mt-4 flex items-center justify-center gap-1 md:mt-6 lg:mt-6">
-          <span className="text-[var(--color-brown-dark)] opacity-40 max-md:text-body-14-m md:text-body-16-m lg:text-body-16-m">
-            이미 계정이 있으신가요?
-          </span>
-          <a href="/login" className="text-[var(--color-link-warm)] max-md:text-body-14-sb md:text-body-16-sb lg:text-body-16-sb">
-            로그인하기
-          </a>
-        </div> */}
-
-      </div>
-      </div>
-
-      {/* ══════════════════ 데스크톱(lg+) ══════════════════ */}
-      <AuthDesktopShell
-        active="register"
-        headingTop="간단한 정보만 입력하고 바로 시작해요!"
-        headingBottom="꼬순박스와 함께해요"
-        contentGapPx={32}
-      >
-        <div className="flex flex-col gap-6">
-          {/* 이메일 */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="reg-email-desktop" className={authLabelCls}>이메일</label>
-            <div className="flex items-end gap-2">
-              <input
-                id="reg-email-desktop"
-                type="email"
-                placeholder="이메일을 입력해주세요"
-                value={email.email}
-                onChange={(e) => email.setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && !emailVerified && email.handleSendCode()}
-                readOnly={emailVerified}
-                className={[authUnderlineInputCls, "flex-1"].join(" ")}
-                autoComplete="email"
-              />
-              <button
-                type="button"
-                onClick={email.handleSendCode}
-                disabled={!email.email.trim() || isPending || emailVerified || email.dailyLimitReached || (email.codeSent && email.countdown > 0)}
-                className={[authInlineActionBtnCls, "min-w-[95px]"].join(" ")}
-              >
-                {isPending && !email.codeSent
-                  ? "발송 중..."
-                  : email.dailyLimitReached
-                    ? "발송 제한"
-                    : email.codeSent
-                      ? email.countdown > 0 ? `재전송 (${email.countdown}s)` : "재전송"
-                      : "인증번호 전송"}
-              </button>
-            </div>
-            {email.codeSent && !emailVerified && (
-              <p className="text-caption-12-r text-[var(--color-text-secondary)]">
-                <span className="font-semibold text-[var(--color-text)]">{email.email}</span>으로 인증코드를 발송했습니다.
-              </p>
-            )}
-          </div>
-
-          {/* 인증번호 — 인증번호 전송 전에는 렌더되지 않는다 */}
-          {email.codeSent && (
+          <div className="flex flex-col gap-6">
+            {/* 이메일 */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="reg-otp-desktop" className={authLabelCls}>인증번호</label>
+              <label htmlFor="reg-email-desktop" className={authLabelCls}>
+                이메일
+              </label>
               <div className="flex items-end gap-2">
                 <input
-                  id="reg-otp-desktop"
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={8}
-                  placeholder="인증번호를 입력해주세요"
-                  value={email.otp}
-                  onChange={(e) => email.setOtp(e.target.value.replace(/\D/g, ""))}
-                  onKeyDown={(e) => e.key === "Enter" && !emailVerified && email.handleVerifyOtp()}
-                  disabled={emailVerified}
+                  id="reg-email-desktop"
+                  type="email"
+                  placeholder="이메일을 입력해주세요"
+                  value={email.email}
+                  onChange={(e) => email.setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !emailVerified && email.handleSendCode()}
+                  readOnly={emailVerified}
                   className={[authUnderlineInputCls, "flex-1"].join(" ")}
-                  autoComplete="one-time-code"
+                  autoComplete="email"
                 />
                 <button
                   type="button"
-                  onClick={email.handleVerifyOtp}
-                  disabled={!email.otp.trim() || isPending || emailVerified}
-                  className={[authInlineActionBtnCls, "min-w-[52px]"].join(" ")}
+                  onClick={email.handleSendCode}
+                  disabled={
+                    !email.email.trim() ||
+                    isPending ||
+                    emailVerified ||
+                    email.dailyLimitReached ||
+                    (email.codeSent && email.countdown > 0)
+                  }
+                  className={[authInlineActionBtnCls, "min-w-[95px]"].join(" ")}
                 >
-                  {isPending && !emailVerified ? "확인 중..." : "확인"}
+                  {isPending && !email.codeSent
+                    ? "발송 중..."
+                    : email.dailyLimitReached
+                      ? "발송 제한"
+                      : email.codeSent
+                        ? email.countdown > 0
+                          ? `재전송 (${email.countdown}s)`
+                          : "재전송"
+                        : "인증번호 전송"}
                 </button>
               </div>
-              {emailVerified && (
-                <p className="text-caption-12-r text-[var(--color-accent)]">
-                  이메일 인증이 완료되었습니다.
+              {email.codeSent && !emailVerified && (
+                <p className="text-caption-12-r text-[var(--color-text-secondary)]">
+                  <span className="font-semibold text-[var(--color-text)]">{email.email}</span>
+                  으로 인증코드를 발송했습니다.
                 </p>
               )}
             </div>
-          )}
 
-          {/* 비밀번호 */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="reg-pw-desktop" className={authLabelCls}>비밀번호</label>
-            <div className="relative">
-              <input
-                id="reg-pw-desktop"
-                type={pw.showPw ? "text" : "password"}
-                placeholder="비밀번호를 입력해주세요"
-                value={pw.password}
-                onChange={(e) => pw.setPassword(e.target.value)}
-                onFocus={pw.onPasswordFocus}
-                onBlur={pw.onPasswordBlur}
-                disabled={!emailVerified}
-                className={[authUnderlineInputCls, "pr-8"].join(" ")}
-                autoComplete="new-password"
-              />
-              <button
-                type="button"
-                onClick={() => pw.setShowPw((v) => !v)}
-                aria-label={pw.showPw ? "비밀번호 숨기기" : "비밀번호 보기"}
-                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-80"
-              >
-                <PasswordToggleIcon visible={pw.showPw} className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="text-[12px] font-medium leading-[16px] space-y-0.5">
-              <p className={pw.ruleMinLenInvalid ? "text-[var(--color-accent-rust)]" : "text-[var(--color-text-secondary)]"}>
-                * 비밀번호는 최소 8자 이상이어야 합니다.
-              </p>
-              <p className={pw.ruleComplexityInvalid ? "text-[var(--color-accent-rust)]" : "text-[var(--color-text-secondary)]"}>
-                * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
-              </p>
-            </div>
-          </div>
-
-          {/* 비밀번호 확인 */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="reg-pw-confirm-desktop" className={authLabelCls}>비밀번호 확인</label>
-            <div className="relative">
-              <input
-                id="reg-pw-confirm-desktop"
-                type={pw.showPwConfirm ? "text" : "password"}
-                placeholder="비밀번호를 다시 입력해주세요"
-                value={pw.passwordConfirm}
-                onChange={(e) => pw.setPasswordConfirm(e.target.value)}
-                onFocus={pw.onConfirmFocus}
-                onBlur={pw.onConfirmBlur}
-                disabled={!emailVerified}
-                className={[authUnderlineInputCls, "pr-8"].join(" ")}
-                autoComplete="new-password"
-              />
-              <button
-                type="button"
-                onClick={() => pw.setShowPwConfirm((v) => !v)}
-                aria-label={pw.showPwConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
-                className="absolute right-0 top-1/2 -translate-y-1/2 opacity-80"
-              >
-                <PasswordToggleIcon visible={pw.showPwConfirm} className="w-5 h-5" />
-              </button>
-            </div>
-            {pw.passwordMismatch && (
-              <p className="text-caption-12-r text-[var(--color-accent-rust)]" role="alert">
-                비밀번호가 일치하지 않습니다.
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* 약관 동의 */}
-        <div className="mt-6 flex flex-col gap-5">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => { agree.toggleAll(); if (!agree.agreementsOpen) agree.setAgreementsOpen(true); }}
-              className="flex items-center gap-2"
-            >
-              <CheckboxIcon checked={agree.allChecked} />
-              <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">전체 동의</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => agree.setAgreementsOpen((v) => !v)}
-              aria-label={agree.agreementsOpen ? "약관 접기" : "약관 펼치기"}
-            >
-              <svg
-                width="24" height="24" viewBox="0 0 16 16" fill="none"
-                className={["transition-transform", agree.agreementsOpen ? "" : "rotate-180"].join(" ")}
-              >
-                <path d="M4 10L8 6L12 10" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-
-          {agree.agreementsOpen && (
-            <div className="flex flex-col gap-4">
-              {AGREEMENTS.map(({ key, label, required }) => (
-                <div key={key} className="flex items-center gap-2">
-                  <button type="button" onClick={() => agree.toggleOne(key)}>
-                    <CheckboxIcon checked={agree.agreements[key]} />
+            {email.codeSent && (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="reg-otp-desktop" className={authLabelCls}>
+                  인증번호
+                </label>
+                <div className="flex items-end gap-2">
+                  <input
+                    id="reg-otp-desktop"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={8}
+                    placeholder="인증번호를 입력해주세요"
+                    value={email.otp}
+                    onChange={(e) => email.setOtp(e.target.value.replace(/\D/g, ""))}
+                    onKeyDown={(e) => e.key === "Enter" && !emailVerified && email.handleVerifyOtp()}
+                    disabled={emailVerified}
+                    className={[authUnderlineInputCls, "flex-1"].join(" ")}
+                    autoComplete="one-time-code"
+                  />
+                  <button
+                    type="button"
+                    onClick={email.handleVerifyOtp}
+                    disabled={!email.otp.trim() || isPending || emailVerified}
+                    className={[authInlineActionBtnCls, "min-w-[52px]"].join(" ")}
+                  >
+                    {isPending && !emailVerified ? "확인 중..." : "확인"}
                   </button>
-                  <span className="text-[13px] font-medium leading-[16px] text-[var(--color-text)]">
-                    {label}{" "}
-                    <span className="text-[var(--color-text-secondary)]">({required ? "필수" : "선택"})</span>
-                  </span>
-                  {key !== "marketing" && (
-                    <button
-                      type="button"
-                      onClick={() => agree.setTermsModal(key)}
-                      className="text-[13px] font-medium leading-[16px] text-[var(--color-text-secondary)] underline hover:opacity-70 transition-opacity"
-                    >
-                      보기
-                    </button>
-                  )}
                 </div>
-              ))}
+                {emailVerified && (
+                  <p className="text-caption-12-r text-[var(--color-accent)]">이메일 인증이 완료되었습니다.</p>
+                )}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-pw-desktop" className={authLabelCls}>
+                비밀번호
+              </label>
+              <div className="relative">
+                <input
+                  id="reg-pw-desktop"
+                  type={pw.showPw ? "text" : "password"}
+                  placeholder="비밀번호를 입력해주세요"
+                  value={pw.password}
+                  onChange={(e) => pw.setPassword(e.target.value)}
+                  onFocus={pw.onPasswordFocus}
+                  onBlur={pw.onPasswordBlur}
+                  disabled={!emailVerified}
+                  className={[authUnderlineInputCls, "pr-8"].join(" ")}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => pw.setShowPw((v) => !v)}
+                  aria-label={pw.showPw ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 opacity-80"
+                >
+                  <PasswordToggleIcon visible={pw.showPw} className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="space-y-0.5 text-[12px] font-medium leading-[16px]">
+                <p
+                  className={
+                    pw.ruleMinLenInvalid
+                      ? "text-[var(--color-accent-rust)]"
+                      : "text-[var(--color-text-secondary)]"
+                  }
+                >
+                  * 비밀번호는 최소 8자 이상이어야 합니다.
+                </p>
+                <p
+                  className={
+                    pw.ruleComplexityInvalid
+                      ? "text-[var(--color-accent-rust)]"
+                      : "text-[var(--color-text-secondary)]"
+                  }
+                >
+                  * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
+                </p>
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* CTA 버튼 */}
-        <div className="mt-6">
-          <button type="button" disabled={!canSubmit} onClick={handleSignup} className={authCtaButtonCls}>
-            {isPending ? "처리 중..." : "가입하기"}
-          </button>
-        </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-pw-confirm-desktop" className={authLabelCls}>
+                비밀번호 확인
+              </label>
+              <div className="relative">
+                <input
+                  id="reg-pw-confirm-desktop"
+                  type={pw.showPwConfirm ? "text" : "password"}
+                  placeholder="비밀번호를 다시 입력해주세요"
+                  value={pw.passwordConfirm}
+                  onChange={(e) => pw.setPasswordConfirm(e.target.value)}
+                  onFocus={pw.onConfirmFocus}
+                  onBlur={pw.onConfirmBlur}
+                  disabled={!emailVerified}
+                  className={[authUnderlineInputCls, "pr-8"].join(" ")}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => pw.setShowPwConfirm((v) => !v)}
+                  aria-label={pw.showPwConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 opacity-80"
+                >
+                  <PasswordToggleIcon visible={pw.showPwConfirm} className="w-5 h-5" />
+                </button>
+              </div>
+              {pw.passwordMismatch && (
+                <p className="text-caption-12-r text-[var(--color-accent-rust)]" role="alert">
+                  비밀번호가 일치하지 않습니다.
+                </p>
+              )}
+            </div>
+          </div>
 
-        {/* 간편로그인 */}
-        <p
-          className="text-center text-[var(--color-text-secondary)] text-body-14-m mt-6"
-          style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
-        >
-          - 간편로그인 -
-        </p>
+          <div className="mt-6">{agreementsBlock}</div>
 
-        <div className="mt-6">
-          <SocialLoginButtons onSelect={handleSocialSignup} />
-        </div>
+          <div className="mt-6">
+            <button type="button" disabled={!canSubmit} onClick={handleSignup} className={authCtaButtonCls}>
+              {isPending ? "처리 중..." : "가입하기"}
+            </button>
+          </div>
 
-        {/* 로그인 링크 */}
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <span
-            className="text-[var(--color-auth-hint)] opacity-40 text-body-14-m"
-            style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
+          <p
+            className="mt-6 text-center text-body-14-m text-[var(--color-text-secondary)]"
+            style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
           >
-            이미 계정이 있으신가요?
-          </span>
-          <Link
-            href="/login"
-            className="text-[var(--color-link-warm)] text-body-14-sb"
-            style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
-          >
-            로그인 하기
-          </Link>
-        </div>
-      </AuthDesktopShell>
-    </div>
+            - 간편로그인 -
+          </p>
+
+          <div className="mt-6">
+            <SocialLoginButtons onSelect={handleSocialSignup} />
+          </div>
+
+          <div className="mt-6 flex items-center justify-center gap-2">
+            <span
+              className="text-body-14-m text-[var(--color-auth-hint)] opacity-40"
+              style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
+            >
+              이미 계정이 있으신가요?
+            </span>
+            <Link
+              href="/login"
+              className="text-body-14-sb text-[var(--color-link-warm)]"
+              style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
+            >
+              로그인 하기
+            </Link>
+          </div>
+        </AuthDesktopShell>
+      </div>
     </>
   );
 }

@@ -24,7 +24,7 @@ const CONTACT_PHONE = {
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */
 const SOCIAL_LINKS = [
   {
-    href: "#",
+    href: "https://www.instagram.com/kkosunbox/",
     label: "Instagram",
     icon: (
       <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +51,7 @@ const SOCIAL_LINKS = [
     ),
   },
   {
-    href: "#",
+    href: "https://pf.kakao.com/_xjHxlxfX",
     label: "KakaoTalk",
     icon: (
       <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">

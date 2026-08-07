@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 export const viewport: Viewport = {
-  themeColor: "#FFF4EA",
+  themeColor: "#FEFDF4",
   viewportFit: "cover",
 };
 

@@ -24,7 +24,8 @@ export function AuthDesktopShell({
   contentGapPx,
   children,
 }: {
-  active: AuthTabKey;
+  /** 로그인/회원가입 전환 탭 — 생략하면 탭 없이 헤딩이 카드 맨 위에 온다 (비밀번호 찾기 등) */
+  active?: AuthTabKey;
   headingTop: string;
   headingBottom: string;
   contentGapPx: number;
@@ -37,9 +38,12 @@ export function AuthDesktopShell({
     // 뷰포트가 1804+96(=1900)px를 넘으면 max-w-[1804px]가 먼저 막아서 더는 안 벌어진다.
     <div className="max-lg:hidden lg:flex lg:min-h-svh lg:items-center lg:justify-center lg:px-12 lg:py-10">
       <div className="mx-auto flex w-full max-w-[1804px] items-stretch gap-6">
-        {/* 좌측 — 배너. 높이 837px 고정, 너비 702~890px 가변. 뷰포트가 좁아질 때 우측 폼보다
-            천천히(shrink-[1]) 줄어들도록 — 좌상단 문구가 화면 밖으로 밀리지 않게 한다 */}
-        <div className="relative h-[837px] min-w-[702px] max-w-[890px] grow shrink-[1] basis-[890px] overflow-hidden rounded-[40px]">
+        {/* 좌측 — 배너. 높이 837px 고정, 너비 650~890px 가변. 뷰포트가 좁아질 때 우측 폼보다
+            천천히(shrink-[1]) 줄어들도록 — 좌상단 문구가 화면 밖으로 밀리지 않게 한다.
+            min-w는 lg 진입 직후(1200px)에도 폼(401px 고정)·gap(24px)·좌우 패딩(96px)과 함께
+            한 화면에 다 들어가도록 역산한 값 — 702px였을 때는 1200~1223px 구간에서 합이
+            뷰포트를 넘겨 우측 패딩이 눌리고 레이아웃이 한쪽으로 쏠렸다. */}
+        <div className="relative h-[837px] min-w-[650px] max-w-[890px] grow shrink-[1] basis-[890px] overflow-hidden rounded-[40px]">
           <Image
             src={authBanner}
             alt=""
@@ -65,9 +69,9 @@ export function AuthDesktopShell({
             좌측 배너보다 훨씬 빠르게(shrink-[6]) 줄어들어 401px 바닥에 먼저 도달한다 */}
         <div className="flex min-w-[401px] max-w-[890px] grow shrink-[6] basis-[890px] flex-col items-center justify-center rounded-[40px] bg-white">
           <div className="w-full max-w-[401px]">
-            <AuthTabs active={active} />
+            {active && <AuthTabs active={active} />}
 
-            <div className="mt-[52px] text-center">
+            <div className={["text-center", active ? "mt-[52px]" : ""].join(" ")}>
               <p
                 className="text-[16px] leading-[140%] tracking-[-0.04em] text-primary"
                 style={{ fontFamily: AUTH_HEADING_FONT, fontWeight: 600, textShadow: "2px 4px 8px rgba(252, 226, 206, 0.2)" }}

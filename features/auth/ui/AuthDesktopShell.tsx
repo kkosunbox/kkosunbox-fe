@@ -31,10 +31,12 @@ export function AuthDesktopShell({
   children: ReactNode;
 }) {
   return (
-    // 좌우 여백 48px(px-12) — 1804px(890+890+gap) 도달 전까지는 이 여백이 바깥쪽에서 콘텐츠를 밀어주고,
-    // 뷰포트가 1804+96(=1900)px를 넘어서면 안쪽 max-w-[1804px]가 먼저 막아서 더는 안 벌어진다.
-    <div className="max-lg:hidden lg:px-12">
-      <div className="mx-auto flex w-full max-w-[1804px] items-stretch gap-6 py-10">
+    // 1920 HD 기준 블록(max-w 1804 + 좌우 48px)을 뷰포트 가로·세로 중앙에 둔다.
+    // 더 넓은 모니터에서도 상단 치우침 없이 가운데 유지. 뷰포트가 콘텐츠보다 짧으면 py-10으로 스크롤 여유.
+    // 좌우 여백 48px(px-12) — 1804px 도달 전까지 바깥 여백이 콘텐츠를 밀어주고,
+    // 뷰포트가 1804+96(=1900)px를 넘으면 max-w-[1804px]가 먼저 막아서 더는 안 벌어진다.
+    <div className="max-lg:hidden lg:flex lg:min-h-svh lg:items-center lg:justify-center lg:px-12 lg:py-10">
+      <div className="mx-auto flex w-full max-w-[1804px] items-stretch gap-6">
         {/* 좌측 — 배너. 높이 837px 고정, 너비 702~890px 가변. 뷰포트가 좁아질 때 우측 폼보다
             천천히(shrink-[1]) 줄어들도록 — 좌상단 문구가 화면 밖으로 밀리지 않게 한다 */}
         <div className="relative h-[837px] min-w-[702px] max-w-[890px] grow shrink-[1] basis-[890px] overflow-hidden rounded-[40px]">

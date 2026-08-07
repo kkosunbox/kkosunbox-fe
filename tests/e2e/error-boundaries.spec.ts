@@ -227,7 +227,7 @@ test.describe("구독 플랜 (/subscribe)", () => {
 test.describe("주문 (/order?planId=1)", () => {
   test("08 - 정상 상태 (베이스라인)", async ({ page }) => {
     await loginAndGoTo(page, "/order?planId=1");
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: SETTLE_TIMEOUT,
     });
 
@@ -237,7 +237,7 @@ test.describe("주문 (/order?planId=1)", () => {
 
   test("09 - 플랜 API 실패 → /subscribe 리다이렉트 (plans=[] 가드)", async ({ page }) => {
     await loginAndGoTo(page, "/order?planId=1");
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: SETTLE_TIMEOUT,
     });
 
@@ -254,7 +254,7 @@ test.describe("주문 (/order?planId=1)", () => {
 
   test("10 - 결제수단 API 실패 → 결제수단 없이 정상 렌더 (catch 흡수)", async ({ page }) => {
     await loginAndGoTo(page, "/order?planId=1");
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: SETTLE_TIMEOUT,
     });
 
@@ -262,7 +262,7 @@ test.describe("주문 (/order?planId=1)", () => {
     // 따라서 결제수단 없음 상태로 주문 페이지가 정상 렌더된다(error.tsx 가 아님).
     await injectErrors(["/v1/billing"]);
     await page.reload();
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: SETTLE_TIMEOUT,
     });
 

@@ -60,8 +60,8 @@ test.describe("주문 페이지 (/order)", () => {
   test("프로필 없는 유저 진입 → 가드 없이 주문 페이지 렌더", async ({ page }) => {
     await loginByTokens(page, NO_PROFILE_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
-    // 가드 모달 없이 결제하기 버튼이 보여야 한다
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    // 가드 모달 없이 구독하기 버튼이 보여야 한다
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: 10_000,
     });
     await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -69,13 +69,13 @@ test.describe("주문 페이지 (/order)", () => {
 
   // ── 약관 동의 ────────────────────────────────────────────────────
 
-  test("결제하기 버튼 초기 비활성화 + 전체동의 클릭 → 활성화", async ({ page }) => {
+  test("구독하기 버튼 초기 비활성화 + 전체동의 클릭 → 활성화", async ({ page }) => {
     // 약관 동의만으로 활성화되는지 보는 테스트라 카드는 이미 등록된 유저로 로그인한다.
     await loginByTokens(page, BILLING_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
 
     // 약관 미동의 → disabled
-    const payButton = page.getByRole("button", { name: "결제하기" }).first();
+    const payButton = page.getByRole("button", { name: "구독하기" }).first();
     await expect(payButton).toBeDisabled({ timeout: 10_000 });
 
     // 전체동의 체크박스 클릭
@@ -85,21 +85,21 @@ test.describe("주문 페이지 (/order)", () => {
     await expect(payButton).toBeEnabled();
   });
 
-  test("전체동의 후 개별 약관 해제 → 결제하기 비활성화", async ({ page }) => {
+  test("전체동의 후 개별 약관 해제 → 구독하기 비활성화", async ({ page }) => {
     await loginByTokens(page, BILLING_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
 
     // 전체동의
     await clickCheckbox(page, "모두 동의합니다.");
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeEnabled();
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeEnabled();
 
     // 동의 상세 패널은 기본 열림(agreeOpen) — 토글을 누르면 닫혀 이후 단계가 실패함
 
     // 이용약관만 해제
     await clickCheckbox(page, "이용약관 동의 (필수)");
 
-    // 전체동의가 깨지므로 결제하기 비활성화
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeDisabled();
+    // 전체동의가 깨지므로 구독하기 비활성화
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeDisabled();
   });
 
   // ── 쿠폰 ─────────────────────────────────────────────────────────
@@ -154,7 +154,7 @@ test.describe("주문 페이지 구독 시작일 섹션", () => {
   test("일반 진입(from 파라미터 없음) → 구독 시작일 섹션 렌더되지 않음", async ({ page }) => {
     await loginByTokens(page, TEST_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: 10_000,
     });
     await expect(page.getByText("구독 시작일", { exact: true })).toHaveCount(0);
@@ -165,30 +165,30 @@ test.describe("주문 페이지 구독 시작일 섹션", () => {
     await page.goto(`/order?planId=${VALID_PLAN_ID}&from=purchase`);
 
     await expect(visibleText(page, "구독 시작일")).toBeVisible({ timeout: 10_000 });
-    await expect(visibleText(page, "지금 바로 첫 구독 상품 받기")).toBeVisible();
-    await expect(visibleText(page, "다음 배송부터 시작")).toBeVisible();
+    await expect(visibleText(page, "지금 바로 첫 구독 상품 결제하기")).toBeVisible();
+    await expect(visibleText(page, "다음 결제부터 시작")).toBeVisible();
 
-    // 기본값은 "지금 바로 첫 구독 상품 받기" → 날짜 선택기 비활성
-    await expect(page.getByRole("button", { name: "배송 날짜" })).toBeDisabled();
+    // 기본값은 "지금 바로 첫 구독 상품 결제하기" → 날짜 선택기 비활성
+    await expect(page.getByRole("button", { name: "결제 날짜" })).toBeDisabled();
   });
 
-  test("다음 배송부터 시작 선택 → 날짜 선택기 활성화", async ({ page }) => {
+  test("다음 결제부터 시작 선택 → 날짜 선택기 활성화", async ({ page }) => {
     await loginByTokens(page, TEST_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}&from=purchase`);
 
-    await visibleText(page, "다음 배송부터 시작").click();
-    await expect(page.getByRole("button", { name: "배송 날짜" })).toBeEnabled();
+    await visibleText(page, "다음 결제부터 시작").click();
+    await expect(page.getByRole("button", { name: "결제 날짜" })).toBeEnabled();
   });
 
-  test("다음 배송부터 시작 선택 + 날짜 미선택 → 결제하기 클릭 시 에러 메시지", async ({ page }) => {
+  test("다음 결제부터 시작 선택 + 날짜 미선택 → 구독하기 클릭 시 에러 메시지", async ({ page }) => {
     // 카드·배송지가 모두 등록된 계정으로, 구독 시작일 검증만 단독으로 관찰한다.
     await loginByTokens(page, BILLING_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}&from=purchase`);
 
     await clickCheckbox(page, "모두 동의합니다.");
-    await visibleText(page, "다음 배송부터 시작").click();
+    await visibleText(page, "다음 결제부터 시작").click();
 
-    await page.getByRole("button", { name: "결제하기" }).first().click();
+    await page.getByRole("button", { name: "구독하기" }).first().click();
     await expect(visibleText(page, "구독 시작일을 선택해 주세요.")).toBeVisible({
       timeout: 10_000,
     });
@@ -213,7 +213,7 @@ test.describe("주문 페이지 초대코드 섹션 (레퍼럴)", () => {
   test("일반 진입 + 구독 이력 있음 → 섹션 가림(hidden)", async ({ page }) => {
     await loginByTokens(page, TEST_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: 10_000,
     });
     // 섹션 자체가 렌더되지 않으므로 어떤 레이아웃에도 타이틀이 없다.
@@ -297,7 +297,7 @@ test.describe("주문 페이지 초대코드 섹션 (레퍼럴)", () => {
     await loginByTokens(page, NO_PROFILE_TOKENS);
     await setRefCookie(page, "ABC123");
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
-    await expect(page.getByRole("button", { name: "결제하기" }).first()).toBeVisible({
+    await expect(page.getByRole("button", { name: "구독하기" }).first()).toBeVisible({
       timeout: 10_000,
     });
 
@@ -329,15 +329,15 @@ test.describe("주문 페이지 초대코드 섹션 (레퍼럴)", () => {
 // ── 카드 등록 팝업 흐름 ───────────────────────────────────────────
 // 실제 Toss 카드 인증은 외부 호스팅 페이지라 e2e 범위 밖 — 팝업이 우리 앱의
 // /payment?mode=direct로 열리는지, 등록 완료 브릿지(/payment/billing/success)로
-// "돌아왔을 때" 메인 탭의 billing이 갱신되어 결제하기가 활성화되는지까지만 검증한다.
+// "돌아왔을 때" 메인 탭의 billing이 갱신되어 구독하기가 활성화되는지까지만 검증한다.
 test.describe("카드 등록 팝업 흐름", () => {
-  test("카드 미등록 상태 → 결제하기 비활성화, 카드 등록 완료 후 활성화", async ({ page }) => {
+  test("카드 미등록 상태 → 구독하기 비활성화, 카드 등록 완료 후 활성화", async ({ page }) => {
     await loginByTokens(page, TEST_TOKENS);
     await page.goto(`/order?planId=${VALID_PLAN_ID}`);
 
     await clickCheckbox(page, "모두 동의합니다.");
-    const payButton = page.getByRole("button", { name: "결제하기" }).first();
-    // 약관에 모두 동의해도 카드 미등록이면 결제하기는 계속 비활성 — 팝업으로 유도하지 않는다.
+    const payButton = page.getByRole("button", { name: "구독하기" }).first();
+    // 약관에 모두 동의해도 카드 미등록이면 구독하기는 계속 비활성 — 팝업으로 유도하지 않는다.
     await expect(payButton).toBeDisabled();
     await expect(visibleText(page, "결제 수단을 등록해야 결제할 수 있어요.")).toBeVisible();
 
@@ -356,7 +356,7 @@ test.describe("카드 등록 팝업 흐름", () => {
     );
     await popup.waitForEvent("close", { timeout: 10_000 });
 
-    // 팝업이 브로드캐스트로 알리면 메인 탭이 billing을 다시 조회해 결제하기가 활성화된다.
+    // 팝업이 브로드캐스트로 알리면 메인 탭이 billing을 다시 조회해 구독하기가 활성화된다.
     await expect(payButton).toBeEnabled({ timeout: 10_000 });
   });
 });

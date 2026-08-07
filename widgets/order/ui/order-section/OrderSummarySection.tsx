@@ -154,7 +154,7 @@ export function OrderSummarySection({
             onClick={handlePay}
             className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-body-16-sb tracking-[-0.02em] disabled:opacity-50"
           >
-            {isPending ? "처리 중…" : "결제하기"}
+            {isPending ? "처리 중…" : "구독하기"}
           </button>
       </div>
     </SectionCard>

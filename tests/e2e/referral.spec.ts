@@ -278,7 +278,7 @@ test.describe("구독 완료 시점 — 초대코드 소비", () => {
     await page.waitForURL(/\/order\?planId=/, { timeout: 10_000 });
 
     await page.locator("label").filter({ hasText: "모두 동의합니다." }).click();
-    const payButton = page.getByRole("button", { name: "결제하기" }).first();
+    const payButton = page.getByRole("button", { name: "구독하기" }).first();
     await expect(payButton).toBeEnabled({ timeout: 10_000 });
     await payButton.click();
 

@@ -22,6 +22,8 @@ export function AuthDesktopShell({
   headingBottom,
   /** 헤딩 하단 ~ 폼 시작 간격(px). 로그인·회원가입 피그마 실측값이 서로 달라 페이지별로 주입받는다. */
   contentGapPx,
+  /** 탭 하단 ~ 헤딩 상단 간격(px). 페이지별 실측값이 다를 수 있어 기본값(52, 로그인 기준)을 유지하고 필요한 페이지만 덮어쓴다. */
+  tabsGapPx = 52,
   children,
 }: {
   /** 로그인/회원가입 전환 탭 — 생략하면 탭 없이 헤딩이 카드 맨 위에 온다 (비밀번호 찾기 등) */
@@ -29,6 +31,7 @@ export function AuthDesktopShell({
   headingTop: string;
   headingBottom: string;
   contentGapPx: number;
+  tabsGapPx?: number;
   children: ReactNode;
 }) {
   return (
@@ -71,7 +74,10 @@ export function AuthDesktopShell({
           <div className="w-full max-w-[401px]">
             {active && <AuthTabs active={active} />}
 
-            <div className={["text-center", active ? "mt-[52px]" : ""].join(" ")}>
+            <div
+              className="text-center"
+              style={active ? { marginTop: tabsGapPx } : undefined}
+            >
               <p
                 className="text-[16px] leading-[140%] tracking-[-0.04em] text-primary"
                 style={{ fontFamily: AUTH_HEADING_FONT, fontWeight: 600, textShadow: "2px 4px 8px rgba(252, 226, 206, 0.2)" }}

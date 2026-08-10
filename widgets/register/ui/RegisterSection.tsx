@@ -203,7 +203,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-pw-mobile"
                   type={pw.showPw ? "text" : "password"}
-                  placeholder="비밀번호를 입력해주세요"
+                  placeholder="최소 8자 이상, 영문자, 숫자, 특수문자를 포함하여 입력해주세요."
                   value={pw.password}
                   onChange={(e) => pw.setPassword(e.target.value)}
                   onFocus={pw.onPasswordFocus}
@@ -324,7 +324,8 @@ export default function RegisterSection() {
           active="register"
           headingTop="간단한 정보만 입력하고 바로 시작해요!"
           headingBottom="꼬순박스와 함께해요"
-          contentGapPx={32}
+          contentGapPx={24}
+          tabsGapPx={40}
         >
           <div className="flex flex-col gap-6">
             {/* 이메일 */}
@@ -410,14 +411,21 @@ export default function RegisterSection() {
             )}
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="reg-pw-desktop" className={authLabelCls}>
-                비밀번호
-              </label>
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor="reg-pw-desktop" className={authLabelCls}>
+                  비밀번호
+                </label>
+                {pw.passwordRuleMessage && (
+                  <span className="text-[12px] font-medium leading-[16px] text-[var(--color-accent-rust)]">
+                    {pw.passwordRuleMessage}
+                  </span>
+                )}
+              </div>
               <div className="relative">
                 <input
                   id="reg-pw-desktop"
                   type={pw.showPw ? "text" : "password"}
-                  placeholder="비밀번호를 입력해주세요"
+                  placeholder="최소 8자 이상, 영문자, 숫자, 특수문자를 포함하여 입력해주세요."
                   value={pw.password}
                   onChange={(e) => pw.setPassword(e.target.value)}
                   onFocus={pw.onPasswordFocus}
@@ -434,26 +442,6 @@ export default function RegisterSection() {
                 >
                   <PasswordToggleIcon visible={pw.showPw} className="w-5 h-5" />
                 </button>
-              </div>
-              <div className="space-y-0.5 text-[12px] font-medium leading-[16px]">
-                <p
-                  className={
-                    pw.ruleMinLenInvalid
-                      ? "text-[var(--color-accent-rust)]"
-                      : "text-[var(--color-text-secondary)]"
-                  }
-                >
-                  * 비밀번호는 최소 8자 이상이어야 합니다.
-                </p>
-                <p
-                  className={
-                    pw.ruleComplexityInvalid
-                      ? "text-[var(--color-accent-rust)]"
-                      : "text-[var(--color-text-secondary)]"
-                  }
-                >
-                  * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
-                </p>
               </div>
             </div>
 

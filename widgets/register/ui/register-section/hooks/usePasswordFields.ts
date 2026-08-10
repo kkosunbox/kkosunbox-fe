@@ -30,6 +30,12 @@ export function usePasswordFields({ emailVerified }: { emailVerified: boolean })
   const passwordValid =
     meetsMinPasswordLength(password) && meetsPasswordComplexity(password);
   const passwordsMatch = password === passwordConfirm;
+  /** 라벨 옆 한 줄 경고용 — 길이 미달이 복잡도 미달보다 우선(둘 다 위반이면 길이만 의미 있음) */
+  const passwordRuleMessage = ruleMinLenInvalid
+    ? "* 비밀번호는 최소 8자 이상이어야 합니다."
+    : ruleComplexityInvalid
+      ? "* 영문자, 숫자, 특수문자를 포함하여 입력해 주세요."
+      : null;
 
   /* ── 포커스/블러 핸들러 ── */
   function onPasswordFocus() {
@@ -57,6 +63,7 @@ export function usePasswordFields({ emailVerified }: { emailVerified: boolean })
     setShowPwConfirm,
     ruleMinLenInvalid,
     ruleComplexityInvalid,
+    passwordRuleMessage,
     passwordMismatch,
     passwordValid,
     passwordsMatch,

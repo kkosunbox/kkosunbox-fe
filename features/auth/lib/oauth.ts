@@ -2,10 +2,26 @@
 
 export type OAuthProvider = "google" | "naver" | "kakao";
 
-const CALLBACK_BASE =
+/**
+ * 호스트의 선행 `www.`를 제거한다.
+ * 구글·네이버·카카오 콘솔에 등록된 Redirect URI가 apex 도메인 기준이라,
+ * www로 접속한 사용자도 같은 값을 보내야 인증 요청과 토큰 교환의 redirect_uri가 일치한다.
+ */
+function toApexOrigin(origin: string) {
+  try {
+    const url = new URL(origin);
+    url.hostname = url.hostname.replace(/^www\./, "");
+    return url.origin;
+  } catch {
+    return origin;
+  }
+}
+
+const CALLBACK_BASE = toApexOrigin(
   typeof window !== "undefined"
     ? window.location.origin
-    : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+);
 
 /** 소셜 로그인 콜백 라우트 prefix — 이 경로에서는 콜백 페이지가 인증 핸드셰이크를 단독으로 소유한다. */
 export const OAUTH_CALLBACK_PATH_PREFIX = "/auth/callback";

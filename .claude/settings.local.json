@@ -487,7 +487,10 @@
       "Bash(echo \"LINT_EXIT=$?\")",
       "Bash(echo \"TSC_EXIT=$?\")",
       "Bash(echo \"EXIT=$?\")",
-      "Bash(tee /c/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/0708cf1a-d0ab-4497-aaa2-1432d628789a/scratchpad/e2e-run-1.log)"
+      "Bash(tee /c/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/0708cf1a-d0ab-4497-aaa2-1432d628789a/scratchpad/e2e-run-1.log)",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/프리미엄6.png\" \"/c/2026/ggosoonbox/entities/package/assets/purchase-detail-premium-06.png\")",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/스탠다드6.png\" \"/c/2026/ggosoonbox/entities/package/assets/purchase-detail-standard-06.png\")",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/베이직6.png\" \"/c/2026/ggosoonbox/entities/package/assets/purchase-detail-basic-06.png\")"
     ]
   },
   "disabledMcpjsonServers": [

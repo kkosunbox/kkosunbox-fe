@@ -17,8 +17,8 @@ const COMPANY_INFO_LINES = [
 
 const CONTACT_PHONE = {
   label: "Contact",
-  number: "010-4390-2416",
-  href: "tel:01043902416",
+  number: "050-6665-2416",
+  href: "tel:05066652416",
 } as const;
 
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */

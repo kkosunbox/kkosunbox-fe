@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
-import { ChevronIcon } from "@/shared/ui";
 import {
   PACKAGE_DETAIL_IMAGES_PURCHASE,
   TIER_BOX_IMAGES,
@@ -38,30 +37,6 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "delivery", label: "배송정보" },
   { key: "support", label: "고객센터" },
 ];
-
-/** 이미지 좌우 장식용 화살표 — 상품이 1종뿐이라 비활성(PurchaseListSection 하단 페이지네이션과 동일 패턴) */
-function DecorativeImageArrows() {
-  return (
-    <>
-      <span
-        aria-hidden
-        className="absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 opacity-30"
-      >
-        <span className="rotate-90 inline-flex">
-          <ChevronIcon open={false} size={16} />
-        </span>
-      </span>
-      <span
-        aria-hidden
-        className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 opacity-30"
-      >
-        <span className="-rotate-90 inline-flex">
-          <ChevronIcon open={false} size={16} />
-        </span>
-      </span>
-    </>
-  );
-}
 
 export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId }: Props) {
   const router = useRouter();
@@ -133,7 +108,6 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
               className="object-cover"
               priority
             />
-            <DecorativeImageArrows />
           </div>
           <p className="mt-2 text-center text-[10px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -317,7 +291,6 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   className="object-cover"
                   priority
                 />
-                <DecorativeImageArrows />
               </div>
               <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
                 ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.

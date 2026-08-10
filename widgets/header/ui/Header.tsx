@@ -95,10 +95,10 @@ export default function Header() {
               꼬순박스 소개
             </Link>
             <Link href="/subscribe" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
-              구독 시작하기
+              구독몰
             </Link>
             <Link href="/purchase" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
-              구매하기
+              단품몰
             </Link>
             {/* 간식 스토어 — 광고 집행 전 잠정 비활성화. 라우트 접근 차단은 proxy.ts DISABLED_ROUTES 참고.
             <Link href="/shop" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>

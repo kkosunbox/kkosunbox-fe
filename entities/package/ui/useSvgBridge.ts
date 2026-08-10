@@ -4,6 +4,20 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { BREAKPOINT_MD_PX, BREAKPOINT_LG_PX } from "@/shared/config/breakpoints";
 import type { PackageTier } from "../lib/packageData";
 
+/** getBoundingClientRect를 정수 px로 반올림 — 브라우저 줌·디스플레이 배율에 따른 서브픽셀 오차로
+ * flush 판정 임계값(디자인상 0px/4px와 정확히 맞닿아 있음)이 흔들리는 것을 방지한다. */
+function roundedRect(el: HTMLElement) {
+  const r = el.getBoundingClientRect();
+  return {
+    top: Math.round(r.top),
+    left: Math.round(r.left),
+    right: Math.round(r.right),
+    bottom: Math.round(r.bottom),
+    width: Math.round(r.width),
+    height: Math.round(r.height),
+  };
+}
+
 /**
  * 왼쪽 설명 패널 ↔ 선택된 요약 카드를 하나의 흰색 배경으로 잇는 SVG path를 계산한다.
  *
@@ -36,8 +50,8 @@ export function useSvgBridge(order: PackageTier[], displayTier: PackageTier) {
     if (vw < BREAKPOINT_MD_PX) { setSvgBg(null); return; }
 
     const tierIndex = order.indexOf(displayTier);
-    const cRect = container.getBoundingClientRect();
-    const lpRect = leftPanel.getBoundingClientRect();
+    const cRect = roundedRect(container);
+    const lpRect = roundedRect(leftPanel);
     if (lpRect.width < 10) { setSvgBg(null); return; }
 
     const R = 24;
@@ -48,12 +62,13 @@ export function useSvgBridge(order: PackageTier[], displayTier: PackageTier) {
       const card = tabletCardRefs.current[tierIndex];
       if (!cardColumn || !card) { setSvgBg(null); return; }
 
-      const cardRect = card.getBoundingClientRect();
+      const cardRect = roundedRect(card);
       const pW = lpRect.width;
       const pH = lpRect.height;
 
       const gapH = cardRect.top - lpRect.bottom;
-      if (gapH < 0) { setSvgBg(null); return; }
+      // 디자인상 선택된 카드는 패널 바로 아래 0px로 맞닿음 — 서브픽셀 오차 허용치로 -2px까지 통과
+      if (gapH < -2) { setSvgBg(null); return; }
 
       const cl = cardRect.left - lpRect.left;
       const cr = cardRect.right - lpRect.left;
@@ -112,11 +127,12 @@ export function useSvgBridge(order: PackageTier[], displayTier: PackageTier) {
     const card = cardRefs.current[tierIndex];
     if (!card) { setSvgBg(null); return; }
 
-    const cardRect = card.getBoundingClientRect();
-    const colRect = cardColumn.getBoundingClientRect();
+    const cardRect = roundedRect(card);
+    const colRect = roundedRect(cardColumn);
 
     const gapWidth = colRect.left - lpRect.right;
-    if (gapWidth < 4) { setSvgBg(null); return; }
+    // 디자인상 패널-카드 열 사이 간격은 gap-1(4px) — 서브픽셀 오차 허용치로 1px 미만일 때만 flush로 판정
+    if (gapWidth < 1) { setSvgBg(null); return; }
 
     const lpW = lpRect.width;
     const lpH = lpRect.height;

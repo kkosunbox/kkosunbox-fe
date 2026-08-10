@@ -48,7 +48,7 @@ export function AuthTabs({
                 : [
                     "py-[13px] text-[18px] leading-[150%]",
                     isActive
-                      ? "my-[2px] bg-white font-bold text-black"
+                      ? "m-[2px] bg-white font-bold text-black"
                       : "font-semibold text-[var(--color-text-tertiary)]",
                   ].join(" "),
             ].join(" ")}

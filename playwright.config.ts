@@ -52,19 +52,28 @@ export default defineConfig({
     },
     // 태블릿 구간(768–1199px, CLAUDE.md 반응형 표 기준) 경계값 3종.
     // 기존 기능 스펙에는 영향 없도록 visual-regression-tablet*.spec.ts만 실행한다.
+    //
+    // ⚠️ 3종 모두 `contextOptions.reducedMotion: "reduce"` 필수 — 지우지 말 것.
+    // ScrollReveal(shared/ui/ScrollReveal.tsx)은 IntersectionObserver로 opacity 0→1을
+    // 바꾸는데, fullPage 스크린샷은 실제로 스크롤하지 않으므로(captureBeyondViewport)
+    // 캡처 시점에 열리지 않은 요소는 흰 여백으로 찍힌다. 열렸는지 여부가 실행 부하에 따라
+    // 갈려서 같은 화면이 실행마다 다르게 찍혔다(2026-08-11 /about·/ 간헐 실패의 원인).
+    // `animations: "disabled"`는 CSS 애니메이션만 끄고 JS로 바뀌는 상태는 못 막는다.
+    // reduced-motion이면 ScrollReveal이 관찰자 없이 즉시 표시하므로 타이밍이 개입하지 않는다.
+    // (Playwright 1.59 기준 `use` 최상위가 아니라 contextOptions 안에 넣어야 타입이 맞는다)
     {
       name: "tablet-768",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 768, height: 1024 } },
+      use: { ...devices["Desktop Chrome"], viewport: { width: 768, height: 1024 }, contextOptions: { reducedMotion: "reduce" } },
       testMatch: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
     {
       name: "tablet-1024",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1024, height: 1000 } },
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1024, height: 1000 }, contextOptions: { reducedMotion: "reduce" } },
       testMatch: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
     {
       name: "tablet-1199",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1199, height: 1000 } },
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1199, height: 1000 }, contextOptions: { reducedMotion: "reduce" } },
       testMatch: /visual-regression-tablet(-auth)?\.spec\.ts/,
     },
   ],

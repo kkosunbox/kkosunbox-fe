@@ -219,6 +219,7 @@
   --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 리뷰 많은' 텍스트 */
   --color-badge-best-bg: #DFEEF7;       /* 상품 뱃지 'BEST' 배경 */
   --color-cta-button: #EC7700;          /* WhyChoose CTA 버튼 (진한 오렌지) */
+  --color-cta-button-soft: #E0770C;     /* 범용 모달 CTA 버튼 — cta-button의 채도만 낮춘 변형(S 100%→90%, hue·명도 동일). dim 배경 위에서 과채도로 읽히는 것 완화 */
   --color-banner-bg: #F89602;           /* 띠 배너 배경 (그랜드 오픈) */
   --color-banner-badge-bg: #B65B15;     /* 띠 배너 OPEN 뱃지 배경 */
   --color-profile-modal-subtitle: rgba(255, 255, 255, 0.7); /* 프로필 작성 모달 헤더 부제 */
@@ -370,6 +371,7 @@
   --color-badge-warm-text: var(--color-badge-warm-text);
   --color-badge-best-bg: var(--color-badge-best-bg);
   --color-cta-button: var(--color-cta-button);
+  --color-cta-button-soft: var(--color-cta-button-soft);
   --color-banner-bg: var(--color-banner-bg);
   --color-banner-badge-bg: var(--color-banner-badge-bg);
   --color-profile-modal-subtitle: var(--color-profile-modal-subtitle);

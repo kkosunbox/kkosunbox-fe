@@ -21,12 +21,15 @@ interface Props extends AlertModalOptions {
   onClose: () => void;
 }
 
+/* 디자인 원본(88×88 PNG)을 그대로 사용한다. 44px 렌더의 2배수 소스이며,
+ * next/image 최적화를 거치면 기본 quality 75로 재인코딩되어 색이 탁해지므로
+ * unoptimized로 원본 바이트를 그대로 내보낸다 (개당 6~10KB). */
 const ICONS: Record<AlertModalType, { src: string; alt: string }> = {
-  alert:    { src: "/icons/modal/alert.webp",    alt: "경고" },
-  contents: { src: "/icons/modal/contents.webp", alt: "내용" },
-  info:     { src: "/icons/modal/info.webp",     alt: "안내" },
-  present:  { src: "/icons/modal/present.webp",  alt: "선물" },
-  success:  { src: "/icons/modal/success.webp",  alt: "완료" },
+  alert:    { src: "/icons/modal/alert.png",    alt: "경고" },
+  contents: { src: "/icons/modal/contents.png", alt: "내용" },
+  info:     { src: "/icons/modal/info.png",     alt: "안내" },
+  present:  { src: "/icons/modal/present.png",  alt: "선물" },
+  success:  { src: "/icons/modal/success.png",  alt: "완료" },
 };
 
 /** description 내 [텍스트] 패턴을 primary 색상으로 강조 렌더링 */
@@ -105,6 +108,7 @@ export default function AlertModal({
             alt={icon.alt}
             width={44}
             height={44}
+            unoptimized
             className="object-contain"
           />
           <h2 className="text-[18px] font-bold leading-[152%] tracking-[-0.04em] text-[var(--color-text)] text-center">
@@ -118,12 +122,12 @@ export default function AlertModal({
         </div>
 
         {/* Footer — 화이트, 그라디언트 끝(#FFF)과 자연스럽게 이어짐 */}
-        <div className="bg-white flex flex-col items-center px-5 py-4 gap-4" style={{ boxShadow: "0px 4px 4px rgba(16, 24, 64, 0.08)" }}>
+        <div className="bg-white flex flex-col items-center px-5 pt-4 pb-5 gap-4" style={{ boxShadow: "0px 4px 4px rgba(16, 24, 64, 0.08)" }}>
           <button
             ref={primaryRef}
             type="button"
             onClick={handlePrimary}
-            className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
+            className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button-soft)] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
           >
             {primaryLabel}
           </button>

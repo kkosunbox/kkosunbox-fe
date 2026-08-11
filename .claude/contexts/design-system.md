@@ -26,6 +26,8 @@
 | `--color-accent` | `#7FB3FF` | Soft Sky Blue — 링크, 강조 요소, CTA |
 | `--color-accent-soft` | `#E5F0FF` | Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) |
 | `--color-accent-orange` | `#EE681A` | Warm Orange — 데코 강조 ("for you" 등) |
+| `--color-cta-button` | `#EC7700` | 진한 오렌지 — 사이트 전역 CTA 버튼 (WhyChoose, PlanPicker, 주문 등) |
+| `--color-cta-button-soft` | `#E0770C` | `--color-cta-button`의 저채도 변형 (S 100%→90%, hue·명도 동일) — dim 배경 위 모달 CTA 전용 |
 | `--color-profile-gender-selected-bg` | `#FFE8DC` | 프로필 작성 모달 성별 선택 배경 |
 
 ### Surface

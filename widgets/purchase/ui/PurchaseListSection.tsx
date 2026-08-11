@@ -18,11 +18,16 @@ import PurchaseHeroImageTablet from "../assets/purchase-hero-tablet.webp";
 import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
 
 interface PurchaseListSectionProps {
-  /** 티어별로 백엔드 카탈로그에서 매칭된 실제 상품 (없으면 더미 데이터로 폴백) */
+  /** 티어별로 백엔드 카탈로그에서 매칭된 실제 상품 (없으면 더미 가격으로 폴백) */
   productsByTier: Record<PackageTier, ProductDto | null>;
+  /** 티어별 실제 평균 별점 (구독 플랜 `averageRating`). 0이면 리뷰가 없다는 뜻이라 별점을 숨긴다. */
+  ratingByTier: Record<PackageTier, number>;
 }
 
-export default function PurchaseListSection({ productsByTier }: PurchaseListSectionProps) {
+export default function PurchaseListSection({
+  productsByTier,
+  ratingByTier,
+}: PurchaseListSectionProps) {
   return (
     <div>
       {/* Hero */}
@@ -77,9 +82,10 @@ export default function PurchaseListSection({ productsByTier }: PurchaseListSect
         <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
           {COMPARE_PACKAGES.map((pkg) => {
             const apiProduct = productsByTier[pkg.tier];
-            const dummyProduct = getPackagePurchaseProduct(pkg.tier)!;
             const displayName = apiProduct?.name ?? pkg.name;
-            const displayPrice = apiProduct?.price ?? dummyProduct.price;
+            // 가격은 카탈로그가 비었을 때만 더미로 폴백한다(결제는 productId === null 가드가 차단).
+            const displayPrice = apiProduct?.price ?? getPackagePurchaseProduct(pkg.tier)!.price;
+            const rating = ratingByTier[pkg.tier];
 
             return (
               <Link
@@ -116,7 +122,7 @@ export default function PurchaseListSection({ productsByTier }: PurchaseListSect
                       {formatKrwPrice(displayPrice)}
                     </span>
                   </div>
-                  <PlanRatingStars rating={dummyProduct.rating} size={16} />
+                  {rating > 0 ? <PlanRatingStars rating={rating} size={16} /> : null}
                 </div>
               </Link>
             );

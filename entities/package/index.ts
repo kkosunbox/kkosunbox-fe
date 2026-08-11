@@ -1,6 +1,7 @@
 export {
   sortOrderToPackageTier,
   tierFromSubscriptionPlan,
+  resolveAverageRatingByTier,
   comparePlansForDisplayOrder,
   tierLabel,
   packageThemeForPlan,
@@ -13,6 +14,7 @@ export {
 export type {
   PackageTier,
   SubscriptionPlanLike,
+  SubscriptionPlanWithRating,
   PackageData,
 } from "./lib/packageData";
 export {

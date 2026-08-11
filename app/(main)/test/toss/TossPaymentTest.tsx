@@ -8,7 +8,7 @@ import {
 
 // ⚠️ Toss 공식 문서 공유 샘플 키(클라이언트+시크릿 페어) — success/page.tsx의 WIDGET_SECRET_KEY와 짝.
 // 우리 실 계정 키가 절대 아니다. 실제 체크아웃(/purchase/order, /order)과 무관한 위젯 UI 데모 전용.
-// 다른 곳에 이 값을 복붙하지 말 것 — /shop/order/success의 시크릿키 불일치 버그가 이 패턴을 그대로 옮겨 쓰다 생긴 것.
+// 다른 곳에 이 값을 복붙하지 말 것 — 과거 폐기된 /shop 결제 승인이 이 패턴을 그대로 옮겨 쓰다 시크릿키 불일치 버그가 났었다.
 const WIDGET_CLIENT_KEY = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
 type PaymentMethodsWidget = ReturnType<

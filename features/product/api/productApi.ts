@@ -27,32 +27,11 @@ export function getProduct(id: number) {
 }
 
 /** 단건 주문 생성 (Pending 상태로 생성, 반환된 orderId/amount로 토스 결제위젯을 오픈한다) */
-export async function createProductOrder(
-  id: number,
-  body: CreateProductOrderRequest,
-) {
-  // TODO(product-debug): 카탈로그 안정화되면 이 로그 제거. 브라우저 콘솔(F12)에서 확인 — 클라이언트에서 직접 호출해 서버 로그엔 안 남는다.
-  console.info(`[product-debug] → POST /v1/products/${id}/orders`, JSON.stringify(body));
-  try {
-    const order = await apiClient.post<CreateProductOrderResponse>(
-      `/v1/products/${id}/orders`,
-      body,
-    );
-    console.info(`[product-debug] ✓ POST /v1/products/${id}/orders 성공`, JSON.stringify(order));
-    return order;
-  } catch (err) {
-    const apiErr = err as { statusCode?: number; code?: string; message?: string; traceId?: string | null };
-    console.error(
-      `[product-debug] ✗ POST /v1/products/${id}/orders 실패`,
-      JSON.stringify({
-        statusCode: apiErr?.statusCode ?? null,
-        code: apiErr?.code ?? null,
-        message: apiErr?.message ?? String(err),
-        traceId: apiErr?.traceId ?? null,
-      }),
-    );
-    throw err;
-  }
+// 이 함수는 클라이언트에서 직접 호출된다. 과거 여기에 요청/응답을 찍는 `[product-debug]`
+// console 로그가 있었으나, 배송지·수량·금액이 사용자 브라우저 콘솔에 그대로 노출되어 제거했다.
+// 디버깅이 필요하면 서버 측(features/product/api/queries.ts)의 개발 전용 로그를 쓸 것.
+export function createProductOrder(id: number, body: CreateProductOrderRequest) {
+  return apiClient.post<CreateProductOrderResponse>(`/v1/products/${id}/orders`, body);
 }
 
 /** 내 단건 주문 목록 조회 */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PRIVACY_OFFICER } from "@/shared/config/companyInfo";
 
 /* ─── 서비스 이용약관 ─── */
 const TERMS_CONTENT = [
@@ -139,7 +140,7 @@ const PRIVACY_CONTENT = [
   },
   {
     title: "8. 개인정보 보호 책임자",
-    items: ["• 담당자: (추후 기재)", "• 이메일: (추후 기재)"],
+    items: [`• 담당자: ${PRIVACY_OFFICER.name}`, `• 이메일: ${PRIVACY_OFFICER.email}`],
   },
   {
     title: "9. 정책 변경",

@@ -71,7 +71,7 @@
 
 | 위치 | 내용 |
 |---|---|
-| `app/(main)/mypage/point/page.tsx:9, 58` | `TODO: API 연동 완료 시 제거` — `DUMMY_ITEMS`, `DUMMY_BALANCE`. 잔액 0이면 더미 폴백 |
+| ~~`app/(main)/mypage/point/page.tsx`~~ | ~~`DUMMY_ITEMS`·`DUMMY_BALANCE` 더미 폴백~~ → **2026-08-11 제거 완료.** 잔액 0·내역 없음을 그대로 빈 상태로 렌더한다 |
 | `widgets/order/ui/order-section/OrderPaymentSection.tsx:46` | `TODO: 카카오페이·무통장입금·계좌이체 추후 지원` (현재 신용카드만) |
 | `features/billing/ui/PaymentManager.tsx:13` | `현재 신용카드만 지원 — 추후 결제수단 추가 시 복원` |
 

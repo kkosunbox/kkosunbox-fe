@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { getServerToken } from "@/features/auth/lib/session";
 import { registerBillingKey, updateBillingKey } from "@/features/billing/api/queries";
-// TODO(billing-debug): dev 실연동 검증용 임시 로그 — 검증 끝나면 import·호출부 제거
-import { logBillingNote } from "@/features/billing/lib/billingDebugLog";
 import { getErrorMessage } from "@/shared/lib/api";
 import BillingSuccessBridge from "./BillingSuccessBridge";
 
@@ -40,16 +38,8 @@ export default async function BillingSuccessPage({
 }) {
   const { authKey, customerKey, billingInfoId } = await searchParams;
 
-  // TODO(billing-debug): dev 실연동 검증용 임시 로그 — 검증 끝나면 제거
-  logBillingNote("successUrl 진입", {
-    hasAuthKey: Boolean(authKey),
-    hasCustomerKey: Boolean(customerKey),
-    billingInfoId: billingInfoId ?? null,
-  });
-
   const token = await getServerToken();
   if (!token) {
-    logBillingNote("중단: 서버 토큰 없음(비로그인/쿠키 미전달)");
     return (
       <StatusPage
         title="로그인이 필요합니다"
@@ -59,7 +49,6 @@ export default async function BillingSuccessPage({
   }
 
   if (!authKey || !customerKey) {
-    logBillingNote("중단: authKey 또는 customerKey 누락");
     return (
       <StatusPage
         title="카드 등록에 실패했습니다"

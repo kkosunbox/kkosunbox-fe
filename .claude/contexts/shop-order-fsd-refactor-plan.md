@@ -1,4 +1,12 @@
-# `widgets/shop` → `widgets/order` 딥 임포트 해소 리팩토링 계획
+# ⚠️ 폐기됨 (2026-08-11) — `widgets/shop` → `widgets/order` 딥 임포트 해소 리팩토링 계획
+
+> **이 계획은 실행되지 않으며, 실행할 필요도 없다.**
+> `/shop` 자체가 폐기되어 `app/(main)/shop`, `widgets/shop`, `entities/product`가
+> 모두 삭제됐다. 해소 대상이던 의존 관계는 소스가 사라지면서 함께 없어졌고,
+> `.dependency-cruiser.cjs`의 `widget-shop-order-coupling` 규칙도 제거했다.
+> 단건 판매는 `/purchase`(`widgets/purchase`)가 담당한다.
+>
+> 아래 내용은 당시 분석 기록으로만 남긴다.
 
 작성: 2026-07-16 (Opus) / 실행 대상: Sonnet 5
 전제: `.claude/contexts/design-system.md`, `CLAUDE.md` 규칙 준수

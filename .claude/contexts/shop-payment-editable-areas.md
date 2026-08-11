@@ -1,6 +1,12 @@
-# 단건 결제(간식 스토어) 화면 — 수정 가능 영역 / 고정 영역
+# ⚠️ 폐기됨 (2026-08-11) — 단건 결제(간식 스토어) 화면 수정 가능 영역
 
-대상 화면: `/shop/order?productId=…` (간식 단건 구매)
+> **대상 화면이 삭제됐다.** `/shop` 폐기로 `widgets/shop/ui/ShopOrderSection.tsx`가
+> 더 이상 존재하지 않는다. 단건 결제 화면은 `/purchase/order`
+> (`widgets/purchase/ui/purchase-order-section/`)를 참고할 것.
+>
+> 아래 내용은 당시 기록으로만 남긴다.
+
+대상 화면: `/shop/order?productId=…` (간식 단건 구매) — **삭제됨**
 작성일: 2026-07-28
 공유 목적: 디자인 수정 범위 확인
 

@@ -585,8 +585,10 @@ export default function ChecklistResult({
                           {formatMonthlyPrice(plan.monthlyPrice)}
                         </span>
                       </div>
-                      {/* 별점 */}
-                      <PlanRatingStars rating={plan.averageRating} size={16} />
+                      {/* 별점 — 리뷰가 없으면(0) 빈 별만 늘어놓지 않고 숨긴다 (PlanPicker와 동일 규칙) */}
+                      {plan.averageRating > 0 ? (
+                        <PlanRatingStars rating={plan.averageRating} size={16} />
+                      ) : null}
                     </div>
                   </Link>
                 );

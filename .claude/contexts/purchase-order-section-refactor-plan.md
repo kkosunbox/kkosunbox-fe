@@ -404,7 +404,9 @@ pnpm dev
 
 ### 7-3. 결제 오케스트레이션 회귀 (Phase 4·5 Exit Gate) — **필수**
 
-Toss 테스트 환경에서 수행. 브라우저 콘솔에 `[product-debug]` 로그가 남으므로 **호출 순서·페이로드를 직접 확인**할 수 있다.
+Toss 테스트 환경에서 수행. 호출 순서·페이로드는 **DevTools > Network 탭**에서 확인한다.
+(2026-08-11 이전에는 브라우저 콘솔의 `[product-debug]` 로그로 확인했으나, 배송지·수량·금액이
+사용자 콘솔에 노출되는 문제로 클라이언트 로그를 제거했다.)
 
 | # | 시나리오 | 기대 |
 |---|---|---|
@@ -415,7 +417,7 @@ Toss 테스트 환경에서 수행. 브라우저 콘솔에 `[product-debug]` 로
 | P5 | `productId === null` (카탈로그 빈 상태 재현) | `"현재 이 상품은 준비 중입니다. 잠시 후 다시 시도해주세요."` |
 | P6 | **저장된 배송지 선택** 후 결제 | 배송지 생성 API **미호출**(§6 Phase 4-D) → `POST /v1/products/{id}/orders` 1회 → Toss 결제창 |
 | P7 | **신규 배송지 입력** 후 결제 | 배송지 생성 → 주문 생성 **순서**로 2회 호출 후 결제창 |
-| P8 | 수량 3으로 변경 후 결제 | `[product-debug]` 페이로드의 `quantity: 3`, 결제창 금액 = 서버 `order.amount` |
+| P8 | 수량 3으로 변경 후 결제 | Network 탭 주문 생성 요청 Payload의 `quantity: 3`, 결제창 금액 = 서버 `order.amount` |
 | P9 | 결제창에서 **취소** | 에러 문구 **미표시**, 버튼이 "결제하기"로 복귀(= `isPaying` 해제) |
 | P10 | 결제 완료 | `/purchase/order/success` 이동, **금액 불일치(`PRODUCT_ORDER_AMOUNT_MISMATCH`) 미발생** ← `await updateAmount(order.amount)`가 살아 있다는 증거 |
 | P11 | 결제 실패 유도 | `/purchase/order/fail` 이동 |
@@ -480,7 +482,7 @@ Phase 3·4는 되돌릴 지점이 반드시 필요하다. **절대 한 커밋에
 ### A. 이번에 하지 않음
 - `openSections`를 URL 상태·localStorage에 저장
 - `submitError`를 모달로 승격 (CLAUDE.md 기준상 서버 응답 에러는 모달 대상이나, **현행 인라인 동작을 유지**한다 — 변경은 별건)
-- `features/product/api/productApi.ts`의 `[product-debug]` 콘솔 로그 제거 (카탈로그 안정화 후)
+- ~~`features/product/api/productApi.ts`의 `[product-debug]` 콘솔 로그 제거~~ → **2026-08-11 완료** (카탈로그 안정화를 기다리지 않고 선제 제거 — 사용자 브라우저 콘솔 노출 때문)
 
 ### B. 후속 권장 (별도 계획 문서 필요)
 - **`widgets/purchase` → `widgets/order` 딥 임포트 해소** — `OrderPriceSummaryBar`, `OrderDeliveryMethodSection` 2개(35–36줄). `shop→order`와 동일 위반 클래스이며 depcruise 규칙이 아직 없다. 해소 시 `.dependency-cruiser.cjs`에 `widget-purchase-order-coupling`(severity `error`) 추가

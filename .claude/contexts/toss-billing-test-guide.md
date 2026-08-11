@@ -34,31 +34,17 @@ Toss는 **프론트 클라이언트 키**와 **백엔드 시크릿 키**의 환�
 → "카드 미등록 상태"를 다시 만들려면 **백엔드에서 billingInfo를 지우거나, 새 계정으로 가입**해야 한다.
 → 그래서 **S1(신규 등록)을 가장 먼저** 하고, 그 다음 S2(변경)로 넘어가는 순서를 지킬 것.
 
-### 🧪 디버그 로그 켜기 (2026-07-27 추가, 검증 후 제거 예정)
+### 🧪 디버그 로그 — 제거됨 (2026-08-11)
 
-브라우저 개발자도구에는 authKey·customerKey가 계속 노출되지 않는다. 대신 **서버 로그로만** 값을 볼 수 있다.
+`[billing-debug]` 로그와 `BILLING_DEBUG_LOG` 환경변수는 **삭제됐다.**
+(`features/billing/lib/billingDebugLog.ts` 파일 + 모든 호출부 + `.env.example` 항목)
 
-```bash
-# .env.local
-BILLING_DEBUG_LOG=1     # 미설정이면 아무것도 출력되지 않음
-```
+제거 이유: 이 스위치를 켜면 **authKey·customerKey 원문이 로그에 남는다.**
+"운영에서는 켜지 마세요"라는 주석에만 의존하는 구조는 프로젝트를 이어받은 사람이
+실수로 켤 수 있으므로, 스위치 자체를 없애 프로덕션에서 애초에 출력 불가능하게 만들었다.
 
-- 로컬: `pnpm dev` 를 띄운 **터미널**에 `[billing-debug]` 로 시작하는 줄이 찍힌다.
-  (`.env.local` 변경은 Next가 자동 반영하지만, 안 보이면 dev 서버를 재시작할 것)
-- Vercel dev/preview: 프로젝트 환경변수에 `BILLING_DEBUG_LOG=1` 추가 후 재배포 → **Runtime Logs** 에서 확인.
-
-출력 내용
-
-| 시점 | 남는 값 |
-|---|---|
-| successUrl 진입 | authKey·customerKey 유무, billingInfoId |
-| register/update 요청 | authKey·customerKey **원문**, billingInfoId |
-| 성공 응답 | id·cardCompany·lastFourDigits·cardType·ownerType + **null인 필드 목록** |
-| 실패 응답 | statusCode·code·message 원문 |
-| failUrl 진입 | Toss가 준 `code` 와 **원문 message**(화면에는 여전히 미노출) |
-
-> ⚠️ **운영(live) 환경에서는 절대 켜지 않는다.** authKey 원문이 로그에 남는다.
-> 검증이 끝나면 `git grep billing-debug` 로 호출부를 찾아 `features/billing/lib/billingDebugLog.ts`와 함께 전부 제거한다.
+**다시 되살리지 말 것.** 빌링 요청/응답을 들여다봐야 하면 일회성 로컬 패치로 찍고
+커밋 전에 지우거나, 민감값을 마스킹하는 형태로 새로 설계한다.
 
 ### 준비물 체크
 

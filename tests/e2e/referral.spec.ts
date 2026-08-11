@@ -145,7 +145,8 @@ test.describe("홈 화면 히어로", () => {
 //
 // 인플루언서 진입 시 SSR fetch:
 //   GET /v1/points/balance        → MOCK_POINT_BALANCE
-//   GET /v1/points?limit=200      → { items: [] } → DUMMY_ITEMS 폴백
+//   GET /v1/points?limit=200      → { items: [] } → "포인트 내역이 없습니다." 빈 상태
+//       (2026-08-11 이전에는 여기서 DUMMY_ITEMS 더미 폴백이 렌더됐다 — 제거됨)
 //   GET /v1/referral/me           → MOCK_MY_REFERRAL_CODE
 //       └ referralCode: FRIEND10, referralLink: https://dev.kkosunbox.com/r/test-influencer
 //

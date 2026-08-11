@@ -15,6 +15,24 @@ const PROTECTED = ["/mypage", "/order"];
  */
 const DISABLED_ROUTES = ["/shop"];
 
+/**
+ * 개발 전용 라우트 — 정식 프로덕션 도메인에서만 차단한다.
+ * `/test`는 디자인 시스템 패널과 Toss 결제위젯 데모(`/test/toss`)를 포함한다.
+ * noindex 메타(app/(main)/test/layout.tsx)만으로는 색인만 막힐 뿐 URL 직접 접근은 열려 있어,
+ * 실사용자가 커머스 도메인에서 결제 테스트 화면에 도달할 수 있었다.
+ */
+const DEV_ONLY_ROUTES = ["/test"];
+
+// 정식 프로덕션 도메인 판별은 app/robots.ts와 동일한 기준(apex, www 없음)을 사용한다.
+// localhost·dev.kkosunbox.com·preview 에서는 /test가 그대로 열려 있어 디자인 확인에 지장이 없다.
+const PRODUCTION_URL = "https://kkosunbox.com";
+const isProductionSite =
+  (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000") === PRODUCTION_URL;
+
+const BLOCKED_ROUTES = isProductionSite
+  ? [...DISABLED_ROUTES, ...DEV_ONLY_ROUTES]
+  : DISABLED_ROUTES;
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -41,7 +59,7 @@ export function proxy(request: NextRequest) {
     return res;
   }
 
-  if (DISABLED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
+  if (BLOCKED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";

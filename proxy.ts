@@ -10,28 +10,21 @@ import {
 const PROTECTED = ["/mypage", "/order"];
 
 /**
- * 잠정 비활성화 라우트 — 광고 집행 전까지 주소창 직접 접근을 홈으로 리다이렉트한다.
- * 헤더 진입점만 없앤 상태이며, 정책이 바뀔 수 있어 페이지 코드 자체는 삭제하지 않는다.
- */
-const DISABLED_ROUTES = ["/shop"];
-
-/**
- * 개발 전용 라우트 — 정식 프로덕션 도메인에서만 차단한다.
+ * 개발 전용 라우트 — 정식 프로덕션 도메인에서만 홈으로 리다이렉트한다.
  * `/test`는 디자인 시스템 패널과 Toss 결제위젯 데모(`/test/toss`)를 포함한다.
  * noindex 메타(app/(main)/test/layout.tsx)만으로는 색인만 막힐 뿐 URL 직접 접근은 열려 있어,
  * 실사용자가 커머스 도메인에서 결제 테스트 화면에 도달할 수 있었다.
+ *
+ * 정식 프로덕션 도메인 판별은 app/robots.ts와 동일한 기준(apex, www 없음)을 사용한다.
+ * localhost·dev.kkosunbox.com·preview 에서는 그대로 열려 있어 디자인 확인에 지장이 없다.
  */
 const DEV_ONLY_ROUTES = ["/test"];
 
-// 정식 프로덕션 도메인 판별은 app/robots.ts와 동일한 기준(apex, www 없음)을 사용한다.
-// localhost·dev.kkosunbox.com·preview 에서는 /test가 그대로 열려 있어 디자인 확인에 지장이 없다.
 const PRODUCTION_URL = "https://kkosunbox.com";
 const isProductionSite =
   (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000") === PRODUCTION_URL;
 
-const BLOCKED_ROUTES = isProductionSite
-  ? [...DISABLED_ROUTES, ...DEV_ONLY_ROUTES]
-  : DISABLED_ROUTES;
+const BLOCKED_ROUTES = isProductionSite ? DEV_ONLY_ROUTES : [];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

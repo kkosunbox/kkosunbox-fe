@@ -21,6 +21,8 @@ export {
   PACKAGE_PURCHASE_PRODUCTS,
   getPackagePurchaseProduct,
   CURRENT_PURCHASE_TIER,
+  PURCHASE_FREE_SHIPPING_THRESHOLD,
+  PURCHASE_SHIPPING_FEE,
 } from "./lib/packagePurchaseProducts";
 export type { PackagePurchaseProduct } from "./lib/packagePurchaseProducts";
 export {

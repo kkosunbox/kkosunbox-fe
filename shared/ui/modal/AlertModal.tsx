@@ -23,7 +23,15 @@ interface Props extends AlertModalOptions {
 
 /* 디자인 원본(88×88 PNG)을 그대로 사용한다. 44px 렌더의 2배수 소스이며,
  * next/image 최적화를 거치면 기본 quality 75로 재인코딩되어 색이 탁해지므로
- * unoptimized로 원본 바이트를 그대로 내보낸다 (개당 6~10KB). */
+ * unoptimized로 원본 바이트를 그대로 내보낸다 (개당 6~10KB).
+ *
+ * 전달받은 원본은 아트워크가 캔버스에서 최대 5px까지 한쪽으로 쏠려 있어(타입 전환 시 아이콘이
+ * 들썩임) 알파 바운딩박스 기준으로 정중앙에 재배치해뒀다. 리사이즈 없이 정수 픽셀 이동만
+ * 했으므로 콘텐츠 픽셀은 원본과 바이트 단위로 동일하다. **새 아이콘을 받으면 같은 처리를 할 것.**
+ *
+ * TODO(디자인 재export): contents.png는 원본 export 시점에 이미 아래쪽이 잘려 있다
+ * (좌측 카드의 하단 라운드 모서리 소실). 픽셀 데이터가 없어 코드로는 복구 불가.
+ * 겸사겸사 5종 콘텐츠 크기가 제각각이라(74~84px) 세이프에어리어 규정해서 함께 요청할 것. */
 const ICONS: Record<AlertModalType, { src: string; alt: string }> = {
   alert:    { src: "/icons/modal/alert.png",    alt: "경고" },
   contents: { src: "/icons/modal/contents.png", alt: "내용" },

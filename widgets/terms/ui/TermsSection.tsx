@@ -92,10 +92,6 @@ export default function TermsSection() {
           className="max-w-[113px]"
           style={{ width: "100%", height: "auto" }}
         />
-        <p className="mt-5 text-body-16-r max-md:text-body-14-r text-[var(--color-text-secondary)]">
-          본 약관은 임시 게시본이며, 추후 서비스 정책에 따라 변경될 수 있습니다.
-        </p>
-
         <div className="mt-10 space-y-7 max-md:mt-8">
           {TERMS_SECTIONS.map((section) => (
             <article key={section.title} className="space-y-3">

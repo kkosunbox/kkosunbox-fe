@@ -3,17 +3,20 @@ import type { PackageTier } from "./packageData";
 export interface PackagePurchaseProduct {
   tier: PackageTier;
   price: number;
-  rating: number;
 }
 
 /**
- * /purchase 박스 1회 구매(구독 아님) 더미 가격·평점 — 체험용 단품 판매 컨셉.
- * 실제 상품 API 연동 시 이 배열을 서버 응답으로 교체한다.
+ * /purchase 박스 1회 구매(구독 아님) **가격 폴백** — 백엔드 상품 카탈로그가 비었을 때만 쓴다.
+ * 카탈로그에 상품이 있으면 항상 `ProductDto.price`가 우선한다.
+ *
+ * ⚠️ 여기에 `rating`을 다시 넣지 말 것. 별점은 백엔드 `SubscriptionPlanDto.averageRating`이
+ * 유일한 출처다(`resolveAverageRatingByTier`). 과거 이 파일과 ReferralPlanPicker가 각각
+ * 하드코딩 별점을 갖고 있어 같은 티어에 서로 다른 값이 보였다(Basic 4.6 vs 4.9).
  */
 export const PACKAGE_PURCHASE_PRODUCTS: PackagePurchaseProduct[] = [
-  { tier: "Basic", price: 19900, rating: 4.6 },
-  { tier: "Standard", price: 23900, rating: 4.8 },
-  { tier: "Premium", price: 27500, rating: 4.7 },
+  { tier: "Basic", price: 19900 },
+  { tier: "Standard", price: 23900 },
+  { tier: "Premium", price: 27500 },
 ];
 
 export function getPackagePurchaseProduct(tier: PackageTier): PackagePurchaseProduct | undefined {
@@ -22,3 +25,12 @@ export function getPackagePurchaseProduct(tier: PackageTier): PackagePurchasePro
 
 /** 현재 실제로 단품 판매 중인 티어 — 나머지는 데이터만 유지, UI에 노출하지 않는다. */
 export const CURRENT_PURCHASE_TIER: PackageTier = "Premium";
+
+/**
+ * 단품 구매 배송 정책 — 3만원 이상 무료배송.
+ * 폐기된 /shop(`entities/product`)에 `SHOP_` 접두사로 있던 값을 옮겨온 것으로,
+ * 현재 유일한 소비처는 /purchase 주문서(`computePurchaseTotals`)다.
+ * 구독 주문의 배송비는 별도 경로로 계산되므로 여기에 묶지 않는다.
+ */
+export const PURCHASE_FREE_SHIPPING_THRESHOLD = 30000;
+export const PURCHASE_SHIPPING_FEE = 3000;

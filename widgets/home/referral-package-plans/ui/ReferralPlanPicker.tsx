@@ -26,12 +26,6 @@ import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 /** 데스크탑 카드 열·모바일 네비·태블릿 가로 카드 공통 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
 const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
 
-const TIER_RATINGS: Record<PackageTier, number> = {
-  Premium: 4.7,
-  Standard: 4.6,
-  Basic: 4.9,
-};
-
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
@@ -465,8 +459,8 @@ export default function ReferralPlanPicker({
                             {formatMonthlyPrice(referralPrice(plan.monthlyPrice))}
                           </span>
                         </div>
-                        {TIER_RATINGS[tier] > 0 ? (
-                          <PlanRatingStars rating={TIER_RATINGS[tier]} size={16} />
+                        {plan.averageRating > 0 ? (
+                          <PlanRatingStars rating={plan.averageRating} size={16} />
                         ) : null}
                       </>
                     ) : (
@@ -551,8 +545,8 @@ export default function ReferralPlanPicker({
                             {formatMonthlyPrice(referralPrice(plan.monthlyPrice))}
                           </span>
                         </div>
-                        {TIER_RATINGS[tier] > 0 ? (
-                          <PlanRatingStars rating={TIER_RATINGS[tier]} size={16} />
+                        {plan.averageRating > 0 ? (
+                          <PlanRatingStars rating={plan.averageRating} size={16} />
                         ) : null}
                       </>
                     ) : (

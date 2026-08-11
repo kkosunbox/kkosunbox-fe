@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
+import { resolveAverageRatingByTier } from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
@@ -20,13 +21,16 @@ export const dynamic = "force-dynamic";
 export default async function PurchasePage() {
   const [products, plans] = await Promise.all([fetchProducts(), fetchSubscriptionPlans()]);
   const productsByTier = resolveProductsByTier(products, plans);
+  // 별점은 구독 플랜의 실제 평균 별점(`averageRating`)을 그대로 쓴다 — PlanPicker와 동일 소스.
+  // 단품과 구독은 같은 박스라 리뷰도 플랜 단위로 쌓인다.
+  const ratingByTier = resolveAverageRatingByTier(plans);
 
   return (
     <>
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>
-      <PurchaseListSection productsByTier={productsByTier} />
+      <PurchaseListSection productsByTier={productsByTier} ratingByTier={ratingByTier} />
     </>
   );
 }

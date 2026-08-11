@@ -28,6 +28,30 @@ export function tierFromSubscriptionPlan(plan: SubscriptionPlanLike): PackageTie
   return "Basic";
 }
 
+/** 평균 별점까지 필요한 경우의 플랜 구조 타입 (백엔드 `SubscriptionPlanDto`가 이 형태를 만족한다) */
+export type SubscriptionPlanWithRating = SubscriptionPlanLike & { averageRating: number };
+
+/**
+ * 티어별 플랜 평균 별점 맵.
+ *
+ * 별점의 **유일한 출처는 백엔드 `SubscriptionPlanDto.averageRating`**이다.
+ * 단품(/purchase)과 구독은 같은 박스라 리뷰가 플랜 단위로 쌓이므로, 단품 화면도 이 값을 쓴다.
+ * 과거 화면마다 하드코딩 별점 상수를 따로 두다가 같은 티어에 서로 다른 값이 보이는 문제가 있었다.
+ *
+ * 해당 티어의 플랜이 없거나 리뷰가 없으면 0 — 표시 측에서 `> 0` 가드로 별점을 숨긴다.
+ */
+export function resolveAverageRatingByTier(
+  plans: SubscriptionPlanWithRating[],
+): Record<PackageTier, number> {
+  const result: Record<PackageTier, number> = { Basic: 0, Standard: 0, Premium: 0 };
+  for (const plan of plans) {
+    const tier = tierFromSubscriptionPlan(plan);
+    // 같은 티어에 여러 플랜이 매칭되면 첫 건 우선 — resolveProductsByTier와 동일한 규칙
+    if (!result[tier]) result[tier] = plan.averageRating ?? 0;
+  }
+  return result;
+}
+
 /** 목록 정렬: sortOrder 우선, 동일 시 id */
 export function comparePlansForDisplayOrder(a: SubscriptionPlanLike, b: SubscriptionPlanLike): number {
   if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;

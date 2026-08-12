@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { validateReferralCode } from "@/features/referral/api";
+import type { ReferralContext } from "@/features/referral/lib/referralContext";
 import { clearStoredInviteCode, clearStoredInviteSlug, getStoredInviteCode } from "@/features/referral/lib";
 import {
   getInviteSectionMode,
@@ -27,13 +28,18 @@ export interface InviteStateResult {
   handleInviteCodeChange: (value: string) => void;
 }
 
-export function useInviteState({
-  initialInviteCode,
-  hasSubscriptionHistory,
-}: {
-  initialInviteCode: string | null;
-  hasSubscriptionHistory: boolean;
-}): InviteStateResult {
+/**
+ * 초대코드 섹션 상태.
+ *
+ * **적격 판정을 여기서 하지 않는다** — 서버가 확정한 `ReferralContext`를 그대로 쓴다.
+ * 예전에는 주문 페이지가 구독 이력을 따로 조회해 판단했고, 같은 요청에서도 플랜 화면과
+ * 답이 갈려 가격이 어긋났다(2026-08-12).
+ *
+ * 여기서 하는 재검증(`validateReferralCode`)은 **결제 직전 확인**이지 적격 판정이 아니다.
+ * 서버가 부적격이라고 한 코드를 이 훅이 되살리지 않는다.
+ */
+export function useInviteState({ referral }: { referral: ReferralContext }): InviteStateResult {
+  const initialInviteCode = referral.refCode;
   const { user } = useAuth();
   const { profile } = useProfile();
 
@@ -42,11 +48,11 @@ export function useInviteState({
   const inviteSectionMode = useMemo(
     () =>
       getInviteSectionMode({
-        initialInviteCode,
-        hasSubscriptionHistory,
+        hasCapturedInvite: referral.isReferral,
+        canUseInviteCode: referral.firstSubscriptionEligible,
         inviteDismissed,
       }),
-    [initialInviteCode, hasSubscriptionHistory, inviteDismissed],
+    [referral.isReferral, referral.firstSubscriptionEligible, inviteDismissed],
   );
 
   const isInviteInputLocked = inviteSectionMode === "locked";
@@ -99,15 +105,15 @@ export function useInviteState({
     validateRequestIdRef.current += 1;
     setInviteDismissed(false);
     const mode = getInviteSectionMode({
-      initialInviteCode,
-      hasSubscriptionHistory,
+      hasCapturedInvite: referral.isReferral,
+      canUseInviteCode: referral.firstSubscriptionEligible,
       inviteDismissed: false,
     });
     setInviteCodeInput(mode === "locked" ? (initialInviteCode ?? "") : "");
     setInviteStatus("idle");
     setInviteBlockedMsg(null);
     setInviteDiscountRate(0);
-  }, [initialInviteCode, hasSubscriptionHistory]);
+  }, [initialInviteCode, referral.isReferral, referral.firstSubscriptionEligible]);
 
   // locked 모드 진입 시 캡처된 코드를 자동 검증한다.
   useEffect(() => {

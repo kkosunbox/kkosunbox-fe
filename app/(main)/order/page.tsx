@@ -1,10 +1,9 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
-import { fetchSubscriptionPlans, fetchSubscriptions } from "@/features/subscription/api/queries";
-import { INVITE_CODE_COOKIE, isValidInviteCode } from "@/features/referral/lib";
+import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
+import { resolveOrderReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { ORDER_ENTRY_FROM_PARAM, ORDER_ENTRY_FROM_PURCHASE_PROMO } from "@/features/order";
 import { OrderSection } from "@/widgets/order";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
@@ -39,12 +38,13 @@ export default async function OrderPage({
     redirect(`/login?next=${encodeURIComponent(`/order?planId=${planId}`)}`);
   }
 
-  const [plans, addresses, billing, subscriptions, cookieStore] = await Promise.all([
+  const [plans, addresses, billing, referral] = await Promise.all([
     fetchSubscriptionPlans(token),
     fetchDeliveryAddresses(token),
     fetchBillingInfo(token),
-    fetchSubscriptions(token),
-    cookies(),
+    // 초대코드·할인율·적격 여부를 서버에서 한 번에 확정한다. 주문서가 구독 이력을 따로 조회하면
+    // 같은 요청에서도 /subscribe와 답이 갈려 쿠폰 적용 전 가격이 어긋난다.
+    resolveOrderReferralContext(),
   ]);
 
   const plan = plans.find((p) => p.id === planId);
@@ -52,22 +52,13 @@ export default async function OrderPage({
     redirect("/subscribe");
   }
 
-  // 구독 이력 존재 여부 (취소 건 포함) — 초대코드 섹션 노출/잠금 분기에 사용
-  const hasSubscriptionHistory = subscriptions.length > 0;
-
-  // ?ref로 캡처된 초대 코드 (미들웨어가 저장한 쿠키). 형식 검증 후 전달
-  const rawInviteCode = cookieStore.get(INVITE_CODE_COOKIE)?.value ?? null;
-  const initialInviteCode =
-    rawInviteCode && isValidInviteCode(rawInviteCode) ? rawInviteCode : null;
-
   return (
     <OrderSection
       plan={plan}
       initialAddresses={addresses}
       initialBilling={billing}
       initialQuantity={initialQuantity}
-      hasSubscriptionHistory={hasSubscriptionHistory}
-      initialInviteCode={initialInviteCode}
+      referral={referral}
       showStartDateOption={showStartDateOption}
     />
   );

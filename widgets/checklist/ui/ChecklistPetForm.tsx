@@ -15,6 +15,7 @@ import {
   PROFILE_PET_GENDER_ROW,
   profilePetGenderBtnClass,
 } from "@/shared/ui";
+import { getPetBirthMaxDate, getPetBirthMinDate } from "@/shared/config/profile";
 import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
 import type { PetInfo } from "./types";
 
@@ -97,8 +98,8 @@ export default function ChecklistPetForm({
   onAvatarFileSelect,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const birthMaxDate = new Date();
-  const birthMinDate = new Date(birthMaxDate.getFullYear() - 40, 0, 1);
+  const birthMaxDate = getPetBirthMaxDate();
+  const birthMinDate = getPetBirthMinDate();
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

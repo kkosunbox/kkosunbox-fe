@@ -123,7 +123,7 @@ export default function ReferralPlanPicker({
     [plans],
   );
 
-  const { referralPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
+  const { unitPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
     useReferralPricing();
 
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
@@ -323,7 +323,7 @@ export default function ReferralPlanPicker({
                             {formatMonthlyPrice(activePlan.originalPrice ?? activePlan.monthlyPrice)}
                           </span>
                           <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))}
+                            {formatMonthlyPrice(unitPrice(activePlan.monthlyPrice))}
                           </span>
                         </div>
                       </div>
@@ -456,7 +456,7 @@ export default function ReferralPlanPicker({
                             월 요금제
                           </span>
                           <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(referralPrice(plan.monthlyPrice))}
+                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (
@@ -542,7 +542,7 @@ export default function ReferralPlanPicker({
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >
-                            {formatMonthlyPrice(referralPrice(plan.monthlyPrice))}
+                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (

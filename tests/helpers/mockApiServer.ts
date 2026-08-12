@@ -159,6 +159,8 @@ export const MOCK_SUBSCRIPTION = {
   nextBillingDate: "2026-05-01",
   isActive: true,
   isPaused: false,
+  // 할인 없는 구독 — 실결제액이 정가(39,000원)와 같은 케이스
+  lastPaidAmount: 39000,
 };
 
 export const MOCK_PLANS = [

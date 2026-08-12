@@ -49,6 +49,15 @@ export interface UserSubscriptionDto {
   isActive: boolean;
   /** true면 이번 결제일에 결제 건너뜀 (쉬어가기 활성화) */
   isPaused: boolean;
+  /**
+   * 가장 최근 완료(completed) 결제의 실제 청구액 — 쿠폰·레퍼럴 할인이 모두 반영된
+   * 부가세 포함 최종 금액. 결제가 한 번도 완료되지 않은 구독(예약 구독 등)은 null.
+   *
+   * **정가(`plan.monthlyPrice × quantity`)로 대체하지 말 것.** 레퍼럴은 첫 달만,
+   * 쿠폰은 `applyCount` 회차만 할인되므로 두 값은 자주 어긋난다.
+   * 표시에는 `features/subscription/lib/subscriptionAmount.ts`를 거친다.
+   */
+  lastPaidAmount?: number | null;
   pendingPlanId?: number;
   cancelledAt?: string;   // date-time
   terminatedAt?: string;  // date-time

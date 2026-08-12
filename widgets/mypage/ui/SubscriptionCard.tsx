@@ -7,6 +7,7 @@ import { Text, useLoadingOverlay } from "@/shared/ui";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { deleteReview } from "@/features/review/api";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
+import { subscriptionPaidAmount } from "@/features/subscription/lib/subscriptionAmount";
 import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
@@ -42,10 +43,6 @@ const PURCHASE_SLIDE_COLOR_VAR = PACKAGES.find((p) => p.tier === CURRENT_PURCHAS
 function billingDayLabel(nextBillingDate: string): string {
   const day = parseInt(nextBillingDate.slice(8, 10), 10);
   return `매월 ${day}일`;
-}
-
-function subscriptionPaymentAmount(subscription: UserSubscriptionDto): number {
-  return subscription.plan.monthlyPrice * (subscription.quantity || 1);
 }
 
 function formatDate(dateTime: string): string {
@@ -323,7 +320,10 @@ function SlidePanel({
                   mobileVariant="body-13-m"
                   className="max-lg:text-body-13-m leading-tight text-white/80"
                 >
-                  결제금액 : {view.paymentAmount!.toLocaleString("ko-KR")}원
+                  결제금액 :{" "}
+                  {view.paymentAmount !== null
+                    ? `${view.paymentAmount.toLocaleString("ko-KR")}원`
+                    : "-"}
                 </Text>
               </>
             ) : (
@@ -484,7 +484,7 @@ export function SubscriptionCard({
     const manageHref = isSubscriptionSlide ? "/mypage/subscription" : purchaseHref;
     const manageLabel = isSubscriptionSlide ? "구독관리" : "구매관리";
 
-    const paymentAmount = subscription ? subscriptionPaymentAmount(subscription) : null;
+    const paymentAmount = subscription ? subscriptionPaidAmount(subscription) : null;
     const boxQuantity = subscription && subscription.quantity > 1 ? subscription.quantity : null;
 
     // 리뷰 상태 (리뷰는 플랜당 1개 단위). 구독 슬라이드는 plan.id, 구매 슬라이드는 상품의 relatedPlanId 기준

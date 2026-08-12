@@ -15,6 +15,10 @@ import {
   isScheduledSubscription,
 } from "@/features/subscription/lib/subscriptionDisplayBucket";
 import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
+import {
+  subscriptionPaidAmount,
+  totalSubscriptionPaidAmount,
+} from "@/features/subscription/lib/subscriptionAmount";
 import { formatDateToYMD } from "@/features/order";
 import {
   comparePlansForDisplayOrder,
@@ -95,17 +99,14 @@ function SubscriptionsSummaryCard({
   hasPlans,
 }: {
   activeSubscriptions: UserSubscriptionDto[];
-  /** 쉬는 중(isPaused)이 아닌, 이번 주기에 실제로 청구되는 구독만. "예상 결제 금액" 계산 전용 */
+  /** 쉬는 중(isPaused)이 아닌, 이번 주기에 실제로 청구되는 구독만. "결제 금액" 합계 계산 전용 */
   billableSubscriptions: UserSubscriptionDto[];
   /** "다음 결제일" 표시용, getNextBillingDateLabel로 이미 과거 날짜 방어까지 끝낸 최종 문자열 */
   nextBillingDateLabel: string;
   hasPlans: boolean;
 }) {
   const count = activeSubscriptions.length;
-  const totalAmount = billableSubscriptions.reduce(
-    (sum, s) => sum + s.plan.monthlyPrice * (s.quantity || 1),
-    0,
-  );
+  const totalAmount = totalSubscriptionPaidAmount(billableSubscriptions);
 
   // 동일 플랜 복수 구독 시 박스 수 합산
   const aggregatedPlans = useMemo(() => {
@@ -160,7 +161,7 @@ function SubscriptionsSummaryCard({
       {hasPlans && (
         <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
           <p>다음 결제일 : {nextBillingDateLabel}</p>
-          <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
+          <p>결제 금액 : {totalAmount !== null ? formatPrice(totalAmount) : "-"}</p>
         </div>
       )}
     </div>
@@ -268,6 +269,8 @@ function SubscriptionRow({
   const isScheduled = isScheduledSubscription(subscription.status);
   const theme = packageThemeForPlan(plan);
   const boxQuantity = subscription.quantity || 1;
+  // 결제 이력이 없는 구독(예약 구독 등)은 실결제액 자체가 없어 null — 정가로 대체하지 않는다.
+  const paidAmount = subscriptionPaidAmount(subscription);
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
   const detailHref = `/mypage/subscription/detail?subscriptionId=${subscription.id}`;
 
@@ -332,9 +335,9 @@ function SubscriptionRow({
           mobileVariant="body-13-m"
           className="text-[var(--color-text-label)]"
         >
-          {isActive
-            ? `결제금액 : ${formatPrice(plan.monthlyPrice * boxQuantity)}`
-            : "-"}
+          {!isActive
+            ? "-"
+            : `결제금액 : ${paidAmount !== null ? formatPrice(paidAmount) : "-"}`}
         </Text>
       </div>
     </Link>

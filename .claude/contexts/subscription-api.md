@@ -1190,19 +1190,37 @@ Type:object
 data
 Type:object · GetCouponInfoResponse
 Hide Child Attributesfor data
+applyCount
+Type:number
+required
+할인 적용 횟수 (최초 결제 포함). 예: 5면 구독 시작 + 갱신 4회까지 할인
+
 canUse
 Type:boolean
 required
 쿠폰 사용 가능 여부
 
-discountRate
-Type:number
+discountType
+Type:string
+enum
 required
-할인율 (1~100, 단위: %)
+할인 방식 (정률/정액)
+
+values
+percent
+fixed
 
 description
 Type:string
 쿠폰 설명
+
+discountAmount
+Type:object
+할인 금액 (단위: 원). 정액 할인일 때만 값이 있음
+
+discountRate
+Type:object
+할인율 (1~100, 단위: %). 정률 할인일 때만 값이 있음
 
 endDate
 Type:string

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
+import { openCenteredPopup } from "@/shared/lib/popup";
 import type { BillingInfo } from "@/features/billing/api/types";
-import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { useBillingUpdatedAlert } from "@/features/billing/lib/billingSync";
 import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {
@@ -14,6 +15,10 @@ import {
   isScheduledSubscription,
 } from "@/features/subscription/lib/subscriptionDisplayBucket";
 import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
+import {
+  subscriptionPaidAmount,
+  totalSubscriptionPaidAmount,
+} from "@/features/subscription/lib/subscriptionAmount";
 import { formatDateToYMD } from "@/features/order";
 import {
   comparePlansForDisplayOrder,
@@ -94,17 +99,14 @@ function SubscriptionsSummaryCard({
   hasPlans,
 }: {
   activeSubscriptions: UserSubscriptionDto[];
-  /** 쉬는 중(isPaused)이 아닌, 이번 주기에 실제로 청구되는 구독만. "예상 결제 금액" 계산 전용 */
+  /** 쉬는 중(isPaused)이 아닌, 이번 주기에 실제로 청구되는 구독만. "결제 금액" 합계 계산 전용 */
   billableSubscriptions: UserSubscriptionDto[];
   /** "다음 결제일" 표시용, getNextBillingDateLabel로 이미 과거 날짜 방어까지 끝낸 최종 문자열 */
   nextBillingDateLabel: string;
   hasPlans: boolean;
 }) {
   const count = activeSubscriptions.length;
-  const totalAmount = billableSubscriptions.reduce(
-    (sum, s) => sum + s.plan.monthlyPrice * (s.quantity || 1),
-    0,
-  );
+  const totalAmount = totalSubscriptionPaidAmount(billableSubscriptions);
 
   // 동일 플랜 복수 구독 시 박스 수 합산
   const aggregatedPlans = useMemo(() => {
@@ -159,7 +161,7 @@ function SubscriptionsSummaryCard({
       {hasPlans && (
         <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
           <p>다음 결제일 : {nextBillingDateLabel}</p>
-          <p>예상 결제 금액 : {totalAmount > 0 ? formatPrice(totalAmount) : "-"}</p>
+          <p>결제 금액 : {totalAmount !== null ? formatPrice(totalAmount) : "-"}</p>
         </div>
       )}
     </div>
@@ -185,8 +187,11 @@ function PaymentInfoCard({
     setBillingInfo(initialBillingInfo);
   }, [initialBillingInfo]);
 
-  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
-  useBillingUpdated(() => router.refresh());
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회하고 완료 모달을 띄운다.
+  useBillingUpdatedAlert({
+    hadBilling: initialBillingInfo !== null,
+    onUpdated: () => router.refresh(),
+  });
 
   useEffect(() => {
     function handlePaymentMessage(e: MessageEvent) {
@@ -201,11 +206,7 @@ function PaymentInfoCard({
 
   // 결제수단 변경 팝업. 등록된 카드가 있으면 확인 1단계, 없으면 곧바로 Toss 카드 등록창이 뜬다.
   function handleOpenPayment() {
-    window.open(
-      "/payment?mode=change",
-      "paymentPopup",
-      "width=650,height=700,scrollbars=yes",
-    );
+    openCenteredPopup("/payment?mode=change", "paymentPopup", { width: 650, height: 700 });
   }
 
   const cardDisplay = billingInfo
@@ -268,6 +269,8 @@ function SubscriptionRow({
   const isScheduled = isScheduledSubscription(subscription.status);
   const theme = packageThemeForPlan(plan);
   const boxQuantity = subscription.quantity || 1;
+  // 결제 이력이 없는 구독(예약 구독 등)은 실결제액 자체가 없어 null — 정가로 대체하지 않는다.
+  const paidAmount = subscriptionPaidAmount(subscription);
   const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
   const detailHref = `/mypage/subscription/detail?subscriptionId=${subscription.id}`;
 
@@ -332,9 +335,9 @@ function SubscriptionRow({
           mobileVariant="body-13-m"
           className="text-[var(--color-text-label)]"
         >
-          {isActive
-            ? `결제금액 : ${formatPrice(plan.monthlyPrice * boxQuantity)}`
-            : "-"}
+          {!isActive
+            ? "-"
+            : `결제금액 : ${paidAmount !== null ? formatPrice(paidAmount) : "-"}`}
         </Text>
       </div>
     </Link>

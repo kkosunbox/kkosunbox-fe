@@ -20,9 +20,14 @@ declare global {
       Postcode: new (opts: {
         oncomplete: (data: DaumPostcodeData) => void;
         onclose?: () => void;
-        width: string;
-        height: string;
-      }) => { embed: (el: HTMLElement) => void; open: () => void };
+        // 레이어(embed) 모드는 "100%" 같은 퍼센트 문자열, 팝업 모드는 px 숫자만 유효하다.
+        width: string | number;
+        height: string | number;
+      }) => {
+        embed: (el: HTMLElement) => void;
+        // open()에 좌표를 주지 않으면 브라우저 기본 위치에 뜬다 — 중앙 정렬은 호출부에서 계산해 넘긴다.
+        open: (options?: { left?: number; top?: number }) => void;
+      };
     };
   }
 }

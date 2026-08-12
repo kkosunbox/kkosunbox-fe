@@ -159,6 +159,8 @@ export const MOCK_SUBSCRIPTION = {
   nextBillingDate: "2026-05-01",
   isActive: true,
   isPaused: false,
+  // 할인 없는 구독 — 실결제액이 정가(39,000원)와 같은 케이스
+  lastPaidAmount: 39000,
 };
 
 export const MOCK_PLANS = [
@@ -468,9 +470,21 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     if (method === "POST" && url === "/v1/subscriptions/coupon/info") {
       const body = await readBody(req) as Record<string, string>;
       if (body.code?.toUpperCase() === MOCK_VALID_COUPON_CODE) {
-        ok(res, { name: "테스트 쿠폰", discountRate: 10, canUse: true });
+        ok(res, {
+          name: "테스트 쿠폰",
+          discountType: "percent",
+          discountRate: 10,
+          applyCount: 1,
+          canUse: true,
+        });
       } else {
-        ok(res, { canUse: false, discountRate: 0, unavailableReason: "유효하지 않은 쿠폰 코드입니다." });
+        ok(res, {
+          canUse: false,
+          discountType: "percent",
+          discountRate: 0,
+          applyCount: 0,
+          unavailableReason: "유효하지 않은 쿠폰 코드입니다.",
+        });
       }
       return;
     }

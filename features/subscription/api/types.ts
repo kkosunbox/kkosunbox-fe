@@ -49,6 +49,15 @@ export interface UserSubscriptionDto {
   isActive: boolean;
   /** true면 이번 결제일에 결제 건너뜀 (쉬어가기 활성화) */
   isPaused: boolean;
+  /**
+   * 가장 최근 완료(completed) 결제의 실제 청구액 — 쿠폰·레퍼럴 할인이 모두 반영된
+   * 부가세 포함 최종 금액. 결제가 한 번도 완료되지 않은 구독(예약 구독 등)은 null.
+   *
+   * **정가(`plan.monthlyPrice × quantity`)로 대체하지 말 것.** 레퍼럴은 첫 달만,
+   * 쿠폰은 `applyCount` 회차만 할인되므로 두 값은 자주 어긋난다.
+   * 표시에는 `features/subscription/lib/subscriptionAmount.ts`를 거친다.
+   */
+  lastPaidAmount?: number | null;
   pendingPlanId?: number;
   cancelledAt?: string;   // date-time
   terminatedAt?: string;  // date-time
@@ -98,14 +107,41 @@ export interface SubscriptionPaymentDto {
 
 // ── Coupon ────────────────────────────────────────────────────────
 
+/** 할인 방식 — 정률(percent) / 정액(fixed) */
+export type CouponDiscountType = "percent" | "fixed";
+
+/**
+ * POST /v1/subscriptions/coupon/info 응답 (GetCouponInfoResponse).
+ *
+ * 단건 구매 쿠폰(`features/product/api/types.ts`의 `ProductCouponInfo`)과 **별개 체계**다.
+ * 구독 쿠폰에만 정액 할인(`discountType: "fixed"`)과 회차(`applyCount`)가 있고,
+ * 단건 쿠폰에만 할인 상한(`maxDiscountAmount`)이 있다. 두 타입을 서로 대입하지 말 것.
+ */
 export interface CouponInfo {
-  name?: string;
-  description?: string;
-  discountRate: number;   // 1~100 (%)
-  startDate?: string;     // date-time, null이면 제한 없음
-  endDate?: string;       // date-time, null이면 제한 없음
+  /** 쿠폰 사용 가능 여부 */
   canUse: boolean;
-  unavailableReason?: string;
+  /** 할인 방식 (정률/정액) */
+  discountType: CouponDiscountType;
+  /** 할인 적용 횟수 (최초 결제 포함). 예: 5면 구독 시작 + 갱신 4회까지 할인 */
+  applyCount: number;
+  /**
+   * 할인율 (1~100, 단위: %) — 스펙상 정률 할인일 때만 값이 있다.
+   * 다만 실제 응답은 정액 쿠폰에도 이 값이 함께 실려 온다(dev `spring30`: fixed인데 rate 30).
+   * **어느 필드가 찼는지로 타입을 판단하지 말고 반드시 `discountType`으로 분기할 것.**
+   */
+  discountRate?: number | null;
+  /** 할인 금액 (단위: 원) — 정액 할인일 때만 값이 있음 (위 주의사항 동일) */
+  discountAmount?: number | null;
+  /** 쿠폰 이름 */
+  name?: string | null;
+  /** 쿠폰 설명 */
+  description?: string | null;
+  /** 쿠폰 사용 시작 시간 (date-time, null이면 제한 없음) */
+  startDate?: string | null;
+  /** 쿠폰 사용 종료 시간 (date-time, null이면 제한 없음) */
+  endDate?: string | null;
+  /** 사용 불가 사유 (사용 가능한 경우 null) */
+  unavailableReason?: string | null;
 }
 
 // ── 요청 ──────────────────────────────────────────────────────────

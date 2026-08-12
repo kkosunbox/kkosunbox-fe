@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { BillingInfo } from "@/features/billing/api/types";
-import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { useBillingUpdatedAlert } from "@/features/billing/lib/billingSync";
 import { getCouponInfo } from "@/features/subscription/api/subscriptionApi";
 import type { CouponInfo } from "@/features/subscription/api/types";
 import { getErrorMessage } from "@/shared/lib/api";
+import { openCenteredPopup } from "@/shared/lib/popup";
 
 export interface PaymentStateResult {
   paymentMethod: string;
@@ -37,9 +38,12 @@ export function usePaymentState({
     setBilling(initialBilling);
   }, [initialBilling]);
 
-  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회하고 완료 모달을 띄운다.
   // router.refresh()는 Server Component만 다시 그리므로 입력 중인 주문 폼 상태는 유지된다.
-  useBillingUpdated(() => router.refresh());
+  useBillingUpdatedAlert({
+    hadBilling: initialBilling !== null,
+    onUpdated: () => router.refresh(),
+  });
   const [couponEnabled, setCouponEnabled] = useState(false);
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
@@ -54,7 +58,7 @@ export function usePaymentState({
   );
 
   function openPaymentPopup(url: string) {
-    window.open(url, "paymentPopup", "width=650,height=700,scrollbars=yes");
+    openCenteredPopup(url, "paymentPopup", { width: 650, height: 700 });
   }
 
   // 주문 페이지까지 온 사용자가 직접 "카드 등록/변경"을 누른 것이므로 팝업에서 다시 묻지 않고

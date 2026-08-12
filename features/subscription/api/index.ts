@@ -23,6 +23,7 @@ export type {
   UserSubscriptionDto,
   SubscriptionPaymentDto,
   CouponInfo,
+  CouponDiscountType,
   SubscriptionStatus,
   PaymentStatus,
   PaymentType,

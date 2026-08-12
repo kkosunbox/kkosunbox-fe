@@ -33,7 +33,7 @@ export default async function PurchaseOrderSuccessPage({
 
   const token = await getServerToken();
 
-  let order, tier;
+  let order, tier, basePrice;
   try {
     const [confirmedOrder, products, plans] = await Promise.all([
       confirmProductOrderServer(token, { orderId, paymentKey, amount: Number(amount) }),
@@ -43,6 +43,8 @@ export default async function PurchaseOrderSuccessPage({
     const product = products.find((p) => p.id === confirmedOrder.productId) ?? null;
     order = confirmedOrder;
     tier = product ? resolveProductTier(product, plans) : null;
+    // 주문 응답에는 할인 전 금액이 없다. 쿠폰 할인액을 보여주려면 상품 단가로 역산해야 한다.
+    basePrice = product ? product.price * confirmedOrder.quantity : null;
   } catch (err) {
     const code = err instanceof ApiError ? err.code : "UNKNOWN_ERROR";
     redirect(`/purchase?confirmError=${encodeURIComponent(code)}`);
@@ -55,6 +57,7 @@ export default async function PurchaseOrderSuccessPage({
       productName={order.productName}
       quantity={order.quantity}
       amount={order.amount}
+      basePrice={basePrice}
       productId={order.productId}
       method={order.method}
       tier={tier}

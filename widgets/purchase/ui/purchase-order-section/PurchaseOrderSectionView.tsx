@@ -109,7 +109,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
                 onPay={() => void vm.handlePay()}
               />
 
-              <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:rounded-[8px]">
+              <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:mx-3 md:rounded-[8px]">
                 <Image
                   src="/images/sidebar-banner-001.png"
                   alt="꼬순박스 배너"
@@ -117,7 +117,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
                   height={126}
                   quality={HIGH_IMAGE_QUALITY}
                   className="h-auto w-full"
-                  sizes="(min-width: 1024px) 327px, 100vw"
+                  sizes="(min-width: 1024px) 303px, 100vw"
                 />
               </div>
             </div>

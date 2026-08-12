@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useModal } from "@/shared/ui";
 
 /**
  * 카드 등록/변경 완료를 같은 오리진의 다른 창·탭에 알린다.
@@ -63,4 +64,39 @@ export function useBillingUpdated(onUpdated: () => void): void {
       window.removeEventListener("storage", handleStorage);
     };
   }, []);
+}
+
+/**
+ * 카드 등록/변경 완료를 사용자에게 알린다 — `useBillingUpdated` + 성공 모달.
+ *
+ * 모달을 팝업 안에서 띄울 수는 없다. 등록이 끝나면 팝업은 `window.close()`로 즉시 사라지므로
+ * (`app/payment/billing/success/BillingSuccessBridge.tsx`) 알림은 부모 창이 대신 띄운다.
+ *
+ * `hadBilling`에는 반드시 **서버가 내려준 초기 prop**을 넘긴다. 로컬 state는 팝업의
+ * `PAYMENT_SELECTED` postMessage로 먼저 갱신될 수 있어, 그 값을 쓰면 신규 등록도 "변경"으로 뜬다.
+ */
+export function useBillingUpdatedAlert({
+  hadBilling,
+  onUpdated,
+}: {
+  /** 이 신호를 받기 전 시점에 등록된 카드가 있었는지 (등록/변경 문구 분기) */
+  hadBilling: boolean;
+  onUpdated: () => void;
+}): void {
+  const { openAlert } = useModal();
+
+  const hadBillingRef = useRef(hadBilling);
+  useEffect(() => {
+    hadBillingRef.current = hadBilling;
+  }, [hadBilling]);
+
+  useBillingUpdated(() => {
+    onUpdated();
+    openAlert({
+      type: "success",
+      title: hadBillingRef.current
+        ? "결제수단이 변경되었습니다."
+        : "결제수단이 등록되었습니다.",
+    });
+  });
 }

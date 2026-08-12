@@ -14,6 +14,7 @@ import type { BillingInfo } from "@/features/billing/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { createSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { resolveSubscriptionCouponDiscount } from "@/features/subscription/lib/couponDiscount";
 import { clearStoredInviteCode, clearStoredInviteSlug } from "@/features/referral/lib";
 import { useReferral } from "@/features/referral/model";
 import { computeOrderPricing, formatDateToYMD } from "@/features/order";
@@ -77,12 +78,13 @@ export function useOrderSectionState({
 
   const unitPrice = plan.monthlyPrice;
   // 금액·할인 계산은 순수 함수로 분리(단위 테스트 대상). 쿠폰·초대코드 모두 단가 1개에만 적용.
+  // 쿠폰 할인액은 구독 전용 resolver가 정률/정액을 판단해 산출한다(단건 쿠폰과 규칙이 다름).
   const { basePrice, couponDiscount, totalDiscount, total } = useMemo(
     () =>
       computeOrderPricing({
         unitPrice,
         quantity,
-        couponRatePercent: payment.couponInfo?.canUse ? payment.couponInfo.discountRate : null,
+        couponDiscount: resolveSubscriptionCouponDiscount(payment.couponInfo, unitPrice),
         inviteRate: invite.inviteStatus === "applicable" ? invite.inviteDiscountRate : null,
       }),
     [unitPrice, quantity, payment.couponInfo, invite.inviteStatus, invite.inviteDiscountRate],

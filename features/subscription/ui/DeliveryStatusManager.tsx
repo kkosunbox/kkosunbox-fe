@@ -152,6 +152,8 @@ function DeliveryItemCard({
         .join(" ")
     : null;
 
+  // 이 팝업은 deliveryStatus로 이미 필터링된 목록이라 카드가 아니라 목록 기준으로 판정한다.
+  // (마이페이지 구독 상세는 한 목록에 여러 상태가 섞이므로 isPaymentCancelable 술어를 쓴다.)
   const actionButton =
     deliveryStatus === "PendingDelivery" ? (
       <button

@@ -67,6 +67,9 @@ export function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClos
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose]);
 
+  const content = item.content?.trim();
+  const attachments = getImageAttachments(item);
+
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center px-4"
@@ -74,8 +77,13 @@ export function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClos
       aria-modal="true"
     >
       <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 flex max-h-[80vh] w-full max-w-[480px] flex-col gap-4 overflow-y-auto rounded-[20px] bg-white p-6 shadow-lg">
-        <div className="flex items-start justify-between">
+      {/*
+        헤더는 고정, 본문만 스크롤한다. 문의 내용·답변은 길이 상한이 없어(등록 시 200자,
+        관리자 답변은 제한 없음) 모달 전체를 늘리면 뷰포트를 넘어가고 닫기 버튼까지
+        화면 밖으로 밀린다.
+      */}
+      <div className="relative z-10 flex max-h-[70vh] w-full max-w-[480px] flex-col rounded-[20px] bg-white shadow-lg">
+        <div className="flex shrink-0 items-start justify-between px-6 pt-6 pb-4">
           <PawCircleIcon />
           <button
             onClick={onClose}
@@ -92,21 +100,44 @@ export function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClos
             </svg>
           </button>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
-          <InquiryStatusBadge inquiry={item} />
-        </div>
-        <AttachmentThumbnails urls={getImageAttachments(item)} />
-        <div className="min-h-[160px]">
-          {isResolved(item) ? (
-            <p className="whitespace-pre-wrap text-body-14-m leading-[160%] text-[var(--color-text)]">
-              {item.answer!.trim()}
+
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pb-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-body-14-sb break-words text-[var(--color-text)]">{item.title}</p>
+            <InquiryStatusBadge inquiry={item} />
+          </div>
+
+          {content ? (
+            <section className="flex flex-col gap-2">
+              <p className="text-caption-12-m leading-[14px] text-[var(--color-text-secondary)]">
+                문의 내용
+              </p>
+              <p className="whitespace-pre-wrap break-words rounded-[12px] bg-[var(--color-surface-warm)] px-4 py-3 text-body-14-m leading-[160%] text-[var(--color-text)]">
+                {content}
+              </p>
+            </section>
+          ) : null}
+
+          <AttachmentThumbnails urls={attachments} />
+
+          <div className="h-px w-full shrink-0 bg-[var(--color-divider-warm)]" />
+
+          <section className="flex flex-col gap-2">
+            <p className="text-caption-12-m leading-[14px] text-[var(--color-text-secondary)]">
+              답변
             </p>
-          ) : (
-            <p className="whitespace-pre-wrap text-center text-body-14-m leading-[160%] text-[var(--color-text-secondary)]">
-              {WAITING_MESSAGE}
-            </p>
-          )}
+            <div className="flex min-h-[120px] flex-col justify-center">
+              {isResolved(item) ? (
+                <p className="whitespace-pre-wrap break-words text-body-14-m leading-[160%] text-[var(--color-text)]">
+                  {item.answer!.trim()}
+                </p>
+              ) : (
+                <p className="whitespace-pre-wrap text-center text-body-14-m leading-[160%] text-[var(--color-text-secondary)]">
+                  {WAITING_MESSAGE}
+                </p>
+              )}
+            </div>
+          </section>
         </div>
       </div>
     </div>

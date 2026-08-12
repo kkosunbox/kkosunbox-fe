@@ -7,6 +7,7 @@ import type { InquiryDto } from "@/features/inquiry/api";
 import { deleteInquiry, getInquiries } from "@/features/inquiry/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { ApiError } from "@/shared/lib/api/types";
+import { useAuth } from "@/features/auth";
 import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { PawCircleIcon, useModal } from "@/shared/ui";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
@@ -80,12 +81,23 @@ export default function InquiryHistorySection() {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<InquiryDto[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [loadState, setLoadState] = useState<"loading" | "ok" | "error" | "unauthorized">("loading");
+  const [fetchState, setFetchState] = useState<"loading" | "ok" | "error" | "unauthorized">("loading");
   const [loadMessage, setLoadMessage] = useState<string | null>(null);
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryDto | null>(null);
   const { openAlert } = useModal();
+  const { isLoggedIn, isAuthLoading } = useAuth();
+
+  /**
+   * accessToken은 메모리에만 있어 새로고침하면 비어 있고, AuthProvider가 refreshToken·쿠키로
+   * 다시 채운다. 자식 effect가 부모(AuthProvider) effect보다 먼저 실행되므로 그냥 마운트 시점에
+   * 요청하면 Authorization 헤더 없이 나가 401이 뜬다(화면 로그인 상태는 SSR 쿠키 기준이라 유지됨).
+   * 부트스트랩이 끝날 때까지 기다렸다가 요청한다.
+   */
+  const loadState = isAuthLoading ? "loading" : !isLoggedIn ? "unauthorized" : fetchState;
 
   useEffect(() => {
+    if (isAuthLoading || !isLoggedIn) return;
+
     let cancelled = false;
     getInquiries()
       .then((res) => {
@@ -95,24 +107,22 @@ export default function InquiryHistorySection() {
         );
         setRows(sorted);
         setPage(1);
-        setLoadState("ok");
+        setFetchState("ok");
       })
       .catch((err) => {
         if (cancelled) return;
         if (err instanceof ApiError && err.isUnauthorized) {
-          setLoadState("unauthorized");
+          setFetchState("unauthorized");
           setLoadMessage(null);
           return;
         }
-        setLoadState("error");
-        setLoadMessage(
-          err instanceof ApiError ? err.message : "문의 내역을 불러오지 못했습니다.",
-        );
+        setFetchState("error");
+        setLoadMessage(getErrorMessage(err, "문의 내역을 불러오지 못했습니다."));
       });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isAuthLoading, isLoggedIn]);
 
   const totalPages = Math.max(1, Math.ceil(rows.length / ITEMS_PER_PAGE));
   const currentPage = Math.min(Math.max(1, page), totalPages);
@@ -216,11 +226,18 @@ export default function InquiryHistorySection() {
                       <PawCircleIcon />
                       <InquiryStatusBadge inquiry={item} />
                     </div>
+                    {/*
+                      제목·답변 모두 길이 상한이 없어 그대로 두면 카드가 무한정 길어지고,
+                      그리드 한 줄 전체가 가장 긴 카드에 맞춰 늘어난다. 카드에서는 잘라 보여주고
+                      전문은 상세 모달에서 확인한다.
+                    */}
                     <div className="flex flex-col gap-2">
-                      <p className="text-body-14-sb text-[var(--color-text)]">{item.title}</p>
+                      <p className="line-clamp-2 break-words text-body-14-sb text-[var(--color-text)]">
+                        {item.title}
+                      </p>
                       <AttachmentThumbnails urls={getImageAttachments(item)} />
                       {resolved ? (
-                        <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text)]">
+                        <p className="line-clamp-3 whitespace-pre-wrap break-words text-body-14-m leading-5 text-[var(--color-text)]">
                           {item.answer!.trim()}
                         </p>
                       ) : (

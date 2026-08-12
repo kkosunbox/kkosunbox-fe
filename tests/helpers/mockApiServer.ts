@@ -26,6 +26,21 @@ export const MOCK_NO_PROFILE_REFRESH_TOKEN = "mock-no-profile-refresh-token-for-
 export const MOCK_BILLING_ACCESS_TOKEN = "mock-billing-access-token-for-testing";
 export const MOCK_BILLING_REFRESH_TOKEN = "mock-billing-refresh-token-for-testing";
 
+/**
+ * 프로필 가입일 — **고정 날짜가 아니라 오늘 기준 상대값**으로 만든다.
+ *
+ * `WithdrawConfirmSection`의 `daysSince()`가 `new Date()`(실행 시각)로
+ * "꼬순박스와 함께한 지 N일째"를 계산한다. `createdAt`을 고정 날짜로 두면 N이 **매일 1씩 증가**해
+ * `/mypage/withdraw` 시각회귀 baseline이 만든 날 이후로는 항상 실패한다(2026-08-12 확인 — diff 279px,
+ * 그 숫자 한 곳뿐이었다). baseline을 다시 찍어도 다음 날 또 깨지므로 데이터 쪽을 고정해야 한다.
+ *
+ * 상대값이면 언제 실행해도 항상 같은 일수로 렌더된다.
+ */
+const MOCK_PROFILE_DAYS_WITH_US = 200;
+const MOCK_PROFILE_CREATED_AT = new Date(
+  Date.now() - MOCK_PROFILE_DAYS_WITH_US * 86_400_000,
+).toISOString();
+
 export const MOCK_PROFILE = {
   id: 1,
   name: "쿠키",
@@ -35,8 +50,8 @@ export const MOCK_PROFILE = {
   weight: 3.5,
   profileImageUrl: null,
   specialNotes: null,
-  createdAt: "2026-01-01T00:00:00.000Z",
-  updatedAt: "2026-01-01T00:00:00.000Z",
+  createdAt: MOCK_PROFILE_CREATED_AT,
+  updatedAt: MOCK_PROFILE_CREATED_AT,
   checklistAnswers: [],
 };
 

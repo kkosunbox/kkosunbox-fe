@@ -105,6 +105,7 @@ export function OrderPaymentSection({
                   <input
                     value={couponCodeInput}
                     onChange={(e) => setCouponCodeInput(e.target.value)}
+                    maxLength={30} // 백엔드 스펙: 쿠폰 코드 최대 30자
                     className={`${inputCls} flex-1 min-w-0`}
                     placeholder="코드 입력"
                     aria-label="쿠폰 코드"
@@ -117,12 +118,14 @@ export function OrderPaymentSection({
                     쿠폰적용
                   </button>
                 </div>
-                {couponInfo?.canUse ? (
-                  <span className="shrink-0 text-body-13-m text-[var(--color-text-secondary)]">
-                    {couponInfo.name ?? `할인쿠폰`} {couponInfo.discountRate}% -{formatPrice(couponDiscount)}
-                  </span>
-                ) : null}
               </div>
+              {/* 적용된 쿠폰 정보는 입력 줄 오른쪽이 아니라 아랫줄에 둔다 — 같은 줄에 두면 쿠폰명 길이만큼
+                  입력창이 밀려 좁아지고, 에러 메시지와 노출 위치도 어긋난다. */}
+              {couponInfo?.canUse ? (
+                <p className="text-body-13-m text-[var(--color-text-secondary)] max-md:pl-[82px] md:pl-[86px]">
+                  {couponInfo.name ?? `할인쿠폰`} -{formatPrice(couponDiscount)}
+                </p>
+              ) : null}
               {couponError ? (
                 <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">{couponError}</p>
               ) : null}

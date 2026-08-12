@@ -3,9 +3,10 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Text } from "@/shared/ui";
+import { openCenteredPopup } from "@/shared/lib/popup";
 import { DashboardCard, PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS, SectionHeader } from "../lib/dashboard-shared";
 import type { BillingInfo } from "@/features/billing/api/types";
-import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { useBillingUpdatedAlert } from "@/features/billing/lib/billingSync";
 import { formatCardLabel } from "@/features/billing/lib/formatBillingLabel";
 import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
 import { formatDateToYMD } from "@/features/order";
@@ -47,8 +48,12 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
     setBillingInfo(initialBillingInfo);
   }, [initialBillingInfo]);
 
-  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
-  useBillingUpdated(() => router.refresh());
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회하고 완료 모달을 띄운다.
+  // 등록/변경 문구는 서버 prop 기준으로 분기한다(로컬 state는 postMessage로 먼저 바뀔 수 있음).
+  useBillingUpdatedAlert({
+    hadBilling: initialBillingInfo !== null,
+    onUpdated: () => router.refresh(),
+  });
 
   const handlePaymentMessage = useCallback((e: MessageEvent) => {
     if (e.origin !== window.location.origin) return;
@@ -64,11 +69,7 @@ export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: P
 
   // 결제수단 변경 팝업. 등록된 카드가 있으면 확인 1단계, 없으면 곧바로 Toss 카드 등록창이 뜬다.
   function handleOpenPayment() {
-    window.open(
-      "/payment?mode=change",
-      "paymentPopup",
-      "width=650,height=700,scrollbars=yes",
-    );
+    openCenteredPopup("/payment?mode=change", "paymentPopup", { width: 650, height: 700 });
   }
 
   const hasMethod = billingInfo !== null;

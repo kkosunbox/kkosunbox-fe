@@ -94,18 +94,28 @@ test.afterEach(async () => {
 // (delivery·inquiry는 어떤 테스트에서도 주입하지 않으므로 격리 기준점으로 쓴다.)
 
 test.describe("마이페이지 카드 graceful degradation (/mypage)", () => {
-  /** 페이지가 죽지 않고, 주입 대상이 아닌 카드(배송·문의)가 정상임을 확인 */
+  /**
+   * 페이지가 죽지 않고, 주입 대상이 아닌 카드(배송·문의)가 정상임을 확인.
+   *
+   * `.first()`가 붙은 이유 — 아래 SUBSCRIPTION_TITLE 주석과 동일한 배경이다.
+   * 마이페이지는 반응형 변형과 캐러셀 전환 때문에 같은 문구가 일시적으로 2개 존재할 수 있어
+   * 스코프 없는 getByText는 strict mode 위반으로 터진다.
+   */
   async function expectIsolatedAndAlive(page: Page) {
-    await expect(page.getByText("배송관리")).toBeVisible();
-    await expect(page.getByText("문의 내역이 없습니다.")).toBeVisible();
+    await expect(page.getByText("배송관리").first()).toBeVisible();
+    await expect(page.getByText("문의 내역이 없습니다.").first()).toBeVisible();
   }
 
   test("00 - 정상 상태 (베이스라인)", async ({ page }) => {
     await loginAndGoTo(page, "/mypage");
     await waitForMypageSettled(page);
 
-    // 정상 상태에서는 활성 구독이 표시된다
-    await expect(page.getByText("베이직 패키지 BOX 구독중")).toBeVisible();
+    // 정상 상태에서는 활성 구독이 표시된다.
+    // `.first()` 필수 — SubscriptionCard는 캐러셀이라 슬라이드 전환 중에는 from/to 두 슬라이드를
+    // 동시에 렌더한다(SubscriptionCard.tsx:760·769). 단정이 그 순간에 걸리면 같은 문구가 2개가 되어
+    // 스코프 없는 getByText가 strict mode 위반으로 터진다(실행 타이밍에 따라 간헐 실패).
+    // 아래 toHaveCount(0) 단정들은 개수를 세는 것이라 이 문제와 무관하다.
+    await expect(page.getByText("베이직 패키지 BOX 구독중").first()).toBeVisible();
 
     await prepareForSnapshot(page);
     await expect(page).toHaveScreenshot("mypage-00-baseline.png", SNAPSHOT_OPTS);

@@ -42,6 +42,7 @@ export function PurchasePaymentMethodCard({
               <input
                 value={couponCodeInput}
                 onChange={(e) => setCouponCodeInput(e.target.value)}
+                maxLength={30} // 백엔드 스펙: 쿠폰 코드 최대 30자
                 className={`${inputCls} min-w-0 flex-1`}
                 placeholder="쿠폰을 입력해주세요."
                 aria-label="쿠폰 코드"
@@ -50,12 +51,15 @@ export function PurchasePaymentMethodCard({
                 쿠폰적용
               </button>
             </div>
-            {couponInfo?.canUse ? (
-              <span className="shrink-0 text-body-13-m text-[var(--color-text-secondary)]">
-                {couponInfo.name ?? "할인쿠폰"} {couponInfo.discountRate}% -{formatKrwPrice(couponDiscount)}
-              </span>
-            ) : null}
           </div>
+          {/* 적용된 쿠폰 정보는 입력 줄 오른쪽이 아니라 아랫줄에 둔다 — 같은 줄에 두면 쿠폰명 길이만큼
+              입력창이 밀려 좁아지고, 에러 메시지와 노출 위치도 어긋난다.
+              할인율은 따로 적지 않는다 — 쿠폰명에 이미 들어 있어(예: "웰컴 10%") 두 번 노출된다. */}
+          {couponInfo?.canUse ? (
+            <p className="text-body-13-m text-[var(--color-text-secondary)] max-md:pl-[82px] md:pl-[86px]">
+              {couponInfo.name ?? "할인쿠폰"} -{formatKrwPrice(couponDiscount)}
+            </p>
+          ) : null}
           {couponError ? (
             <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]" role="alert">
               {couponError}

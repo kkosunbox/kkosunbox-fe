@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 import type { DogGender } from "@/features/profile/api/types";
-import { getProfileDisplayName } from "@/shared/config/profile";
+import {
+  getPetBirthMaxDate,
+  getPetBirthMinDate,
+  getProfileDisplayName,
+} from "@/shared/config/profile";
 import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
 import { BreedCombobox, DatePicker } from "@/shared/ui";
 import {
@@ -35,6 +39,9 @@ export function ProfileManagementView({
   save,
   isActionsDisabled,
 }: ProfileManagementSectionVM) {
+  const birthMaxDate = getPetBirthMaxDate();
+  const birthMinDate = getPetBirthMinDate();
+
   return (
     <>
       <input {...image.hiddenFileInputProps} />
@@ -150,6 +157,8 @@ export function ProfileManagementView({
                   }}
                   placeholder="생년월일 선택"
                   formatDisplay={formatBirthDateDisplayDots}
+                  minDate={birthMinDate}
+                  maxDate={birthMaxDate}
                   iconColor="var(--color-text-secondary)"
                   triggerClassName="!w-full !rounded-[8px] !border-0 !bg-[var(--color-surface-light)] !px-3 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
                 />
@@ -325,6 +334,8 @@ export function ProfileManagementView({
                         }}
                         placeholder="생년월일 선택"
                         formatDisplay={formatBirthDateDisplayDots}
+                        minDate={birthMinDate}
+                        maxDate={birthMaxDate}
                         iconColor="var(--color-text-secondary)"
                         triggerClassName="!w-full !rounded-[4px] !border-0 !bg-[var(--color-surface-light)] !px-3 !text-body-13-m [&>span]:!text-body-13-m [&>span]:!font-medium [&>span]:!tracking-normal"
                       />

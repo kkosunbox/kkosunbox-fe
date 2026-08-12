@@ -6,8 +6,14 @@
  *   - 구독: `features/subscription/lib/couponDiscount.ts`
  *   - 단건: `features/product/lib/couponDiscount.ts`
  *
- * 초대코드 할인은 두 도메인 공통이라 여기서 계산하며, 쿠폰과 마찬가지로 **단가 1개**에만
- * 적용된다(서버 청구 기준과 일치). 총액은 0 미만으로 내려가지 않는다.
+ * 초대코드 할인 **금액**도 마찬가지로 밖에서 계산해 넘긴다 —
+ * `features/referral/lib/referralPricing.ts`의 `referralDiscountAmount()`가 유일한 계산식이며,
+ * 플랜 선택 화면이 보여주는 단가와 정확히 같은 값이 나오도록 보장한다.
+ * (예전에는 여기서 `floor(단가 × 요율)`을 따로 계산해 플랜 화면의 `round(단가 × (1−요율))`과
+ *  1원씩 어긋날 수 있었다.)
+ *
+ * 쿠폰·초대코드 모두 **단가 1개**에만 적용된다(서버 청구 기준과 일치).
+ * 총액은 0 미만으로 내려가지 않는다.
  */
 
 export interface OrderPricingInput {
@@ -17,8 +23,8 @@ export interface OrderPricingInput {
   quantity: number;
   /** 쿠폰 할인금액(원) — 도메인 resolver가 계산한 값. 미적용 시 0/null/undefined. */
   couponDiscount?: number | null;
-  /** 초대코드 할인율(분수) — 적용 가능할 때만 전달. 예: 0.1 = 10%. 미적용 시 null/0/undefined. */
-  inviteRate?: number | null;
+  /** 초대코드 할인금액(원) — `referralDiscountAmount()`가 계산한 값. 미적용 시 0/null/undefined. */
+  inviteDiscount?: number | null;
 }
 
 export interface OrderPricing {
@@ -38,12 +44,11 @@ export function computeOrderPricing({
   unitPrice,
   quantity,
   couponDiscount: couponDiscountInput,
-  inviteRate,
+  inviteDiscount: inviteDiscountInput,
 }: OrderPricingInput): OrderPricing {
   const basePrice = unitPrice * quantity;
   const couponDiscount = Math.max(0, couponDiscountInput ?? 0);
-  // 초대코드 할인율은 분수(0.1=10%) 단위다.
-  const inviteDiscount = inviteRate ? Math.floor(unitPrice * inviteRate) : 0;
+  const inviteDiscount = Math.max(0, inviteDiscountInput ?? 0);
   const totalDiscount = couponDiscount + inviteDiscount;
   const total = Math.max(0, basePrice - totalDiscount);
   return { basePrice, couponDiscount, inviteDiscount, totalDiscount, total };

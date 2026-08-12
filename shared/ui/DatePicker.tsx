@@ -123,6 +123,9 @@ function ChevronDownIcon() {
 ───────────────────────────── */
 type CalendarView = "days" | "months" | "years";
 
+/** 연도 선택 그리드 한 페이지 크기 (3열 × 5줄) */
+const YEARS_PER_PAGE = 15;
+
 /* ─────────────────────────────
    DatePicker
 ───────────────────────────── */
@@ -296,11 +299,37 @@ export default function DatePicker({
     if (allCells.length >= 42) break;
   }
 
+  /* ── 선택 가능 범위 — days 그리드뿐 아니라 월·연 뷰와 이동 버튼에도 적용된다 */
+  const minBound = minDate ? startOfDay(minDate) : null;
+  const maxBound = maxDate ? startOfDay(maxDate) : null;
+  const minYear = minBound?.getFullYear() ?? null;
+  const maxYear = maxBound?.getFullYear() ?? null;
+
   const isDisabledDay = (day: number) => {
     const d = startOfDay(new Date(viewYear, viewMonth, day));
-    if (minDate && d < startOfDay(minDate)) return true;
-    if (maxDate && d > startOfDay(maxDate)) return true;
+    if (minBound && d < minBound) return true;
+    if (maxBound && d > maxBound) return true;
     return false;
+  };
+
+  /** 해당 연·월에 고를 수 있는 날이 하루라도 있는지 */
+  const isSelectableMonth = (year: number, month: number) => {
+    if (maxBound && new Date(year, month, 1) > maxBound) return false;
+    if (minBound && new Date(year, month + 1, 0) < minBound) return false;
+    return true;
+  };
+
+  const isSelectableYear = (year: number) => {
+    if (maxYear != null && year > maxYear) return false;
+    if (minYear != null && year < minYear) return false;
+    return true;
+  };
+
+  /** 연도를 옮길 때 범위 밖으로 밀려난 월을 경계 월로 당겨 온다 */
+  const clampMonthToYear = (year: number, month: number) => {
+    if (maxBound && year === maxYear && month > maxBound.getMonth()) return maxBound.getMonth();
+    if (minBound && year === minYear && month < minBound.getMonth()) return minBound.getMonth();
+    return month;
   };
 
   const handleDayClick = (day: number) => {
@@ -311,12 +340,15 @@ export default function DatePicker({
   };
 
   const handleMonthSelect = (month: number) => {
+    if (!isSelectableMonth(viewYear, month)) return;
     setViewMonth(month);
     setCalendarView("days");
   };
 
   const handleYearSelect = (year: number) => {
+    if (!isSelectableYear(year)) return;
     setViewYear(year);
+    setViewMonth((m) => clampMonthToYear(year, m));
     setCalendarView("months");
   };
 
@@ -326,9 +358,34 @@ export default function DatePicker({
     else setCalendarView("days");
   };
 
-  /* 연도 선택용 범위 (현재 viewYear 기준 ±6년) */
-  const yearStart = viewYear - 6;
-  const years = Array.from({ length: 12 }, (_, i) => yearStart + i);
+  /* 연도 그리드 — maxYear(없으면 올해)를 마지막 칸으로 삼아 15년 단위로 끊는다.
+     페이지가 고정되므로 연도를 고를 때마다 범위가 밀리지 않는다. */
+  const yearAnchor = maxYear ?? today.getFullYear();
+  const yearPageIndex = Math.floor((yearAnchor - viewYear) / YEARS_PER_PAGE);
+  const yearStart = yearAnchor - (YEARS_PER_PAGE - 1) - YEARS_PER_PAGE * yearPageIndex;
+  const years = Array.from({ length: YEARS_PER_PAGE }, (_, i) => yearStart + i);
+
+  /* ── 이동 버튼 활성 여부 (이전은 하한만, 다음은 상한만 본다) */
+  const prevMonthCursor =
+    viewMonth === 0 ? { y: viewYear - 1, m: 11 } : { y: viewYear, m: viewMonth - 1 };
+  const nextMonthCursor =
+    viewMonth === 11 ? { y: viewYear + 1, m: 0 } : { y: viewYear, m: viewMonth + 1 };
+
+  const canGoPrev =
+    calendarView === "years"
+      ? minYear == null || yearStart > minYear
+      : calendarView === "months"
+      ? minYear == null || viewYear - 1 >= minYear
+      : minBound == null ||
+        startOfDay(new Date(prevMonthCursor.y, prevMonthCursor.m + 1, 0)) >= minBound;
+
+  const canGoNext =
+    calendarView === "years"
+      ? maxYear == null || yearStart + YEARS_PER_PAGE - 1 < maxYear
+      : calendarView === "months"
+      ? maxYear == null || viewYear + 1 <= maxYear
+      : maxBound == null ||
+        startOfDay(new Date(nextMonthCursor.y, nextMonthCursor.m, 1)) <= maxBound;
 
   /* ── trigger 기본 스타일 */
   const triggerBase = [
@@ -424,8 +481,10 @@ export default function DatePicker({
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                disabled={!canGoPrev}
                 onClick={() => {
-                  if (calendarView === "years") setViewYear((y) => y - 12);
+                  if (!canGoPrev) return;
+                  if (calendarView === "years") setViewYear((y) => y - YEARS_PER_PAGE);
                   else if (calendarView === "months") setViewYear((y) => y - 1);
                   else prevMonth();
                 }}
@@ -439,7 +498,8 @@ export default function DatePicker({
                   alignItems: "center",
                   justifyContent: "center",
                   background: "transparent",
-                  cursor: "pointer",
+                  cursor: canGoPrev ? "pointer" : "not-allowed",
+                  opacity: canGoPrev ? 1 : 0.4,
                   color: "#B0B0B0",
                 }}
               >
@@ -447,8 +507,10 @@ export default function DatePicker({
               </button>
               <button
                 type="button"
+                disabled={!canGoNext}
                 onClick={() => {
-                  if (calendarView === "years") setViewYear((y) => y + 12);
+                  if (!canGoNext) return;
+                  if (calendarView === "years") setViewYear((y) => y + YEARS_PER_PAGE);
                   else if (calendarView === "months") setViewYear((y) => y + 1);
                   else nextMonth();
                 }}
@@ -462,7 +524,8 @@ export default function DatePicker({
                   alignItems: "center",
                   justifyContent: "center",
                   background: "transparent",
-                  cursor: "pointer",
+                  cursor: canGoNext ? "pointer" : "not-allowed",
+                  opacity: canGoNext ? 1 : 0.4,
                   color: "#B0B0B0",
                 }}
               >
@@ -584,28 +647,32 @@ export default function DatePicker({
                 {MONTH_LABELS.map((label, i) => {
                   const isCurrent = i === viewMonth && viewYear === today.getFullYear();
                   const isSelected = i === viewMonth;
+                  const monthDisabled = !isSelectableMonth(viewYear, i);
                   return (
                     <button
                       key={label}
                       type="button"
+                      disabled={monthDisabled}
                       onClick={() => handleMonthSelect(i)}
                       style={{
                         height: 36,
                         borderRadius: 8,
                         border: "none",
-                        background: isSelected ? "#F6E9DD" : "transparent",
+                        background: isSelected && !monthDisabled ? "#F6E9DD" : "transparent",
                         fontFamily: "Pretendard, sans-serif",
                         fontWeight: isCurrent ? 700 : 500,
                         fontSize: 14,
-                        color: "#252525",
-                        cursor: "pointer",
+                        color: monthDisabled ? "#DDDDDD" : "#252525",
+                        cursor: monthDisabled ? "not-allowed" : "pointer",
                         transition: "background 150ms",
                       }}
                       onMouseEnter={(e) => {
-                        if (!isSelected) e.currentTarget.style.background = "#F9F1EA";
+                        if (!isSelected && !monthDisabled)
+                          e.currentTarget.style.background = "#F9F1EA";
                       }}
                       onMouseLeave={(e) => {
-                        if (!isSelected) e.currentTarget.style.background = "transparent";
+                        if (!isSelected && !monthDisabled)
+                          e.currentTarget.style.background = "transparent";
                       }}
                     >
                       {label}
@@ -620,28 +687,32 @@ export default function DatePicker({
                 {years.map((year) => {
                   const isCurrent = year === today.getFullYear();
                   const isSelected = year === viewYear;
+                  const yearDisabled = !isSelectableYear(year);
                   return (
                     <button
                       key={year}
                       type="button"
+                      disabled={yearDisabled}
                       onClick={() => handleYearSelect(year)}
                       style={{
                         height: 36,
                         borderRadius: 8,
                         border: "none",
-                        background: isSelected ? "#F6E9DD" : "transparent",
+                        background: isSelected && !yearDisabled ? "#F6E9DD" : "transparent",
                         fontFamily: "Pretendard, sans-serif",
                         fontWeight: isCurrent ? 700 : 500,
                         fontSize: 14,
-                        color: "#252525",
-                        cursor: "pointer",
+                        color: yearDisabled ? "#DDDDDD" : "#252525",
+                        cursor: yearDisabled ? "not-allowed" : "pointer",
                         transition: "background 150ms",
                       }}
                       onMouseEnter={(e) => {
-                        if (!isSelected) e.currentTarget.style.background = "#F9F1EA";
+                        if (!isSelected && !yearDisabled)
+                          e.currentTarget.style.background = "#F9F1EA";
                       }}
                       onMouseLeave={(e) => {
-                        if (!isSelected) e.currentTarget.style.background = "transparent";
+                        if (!isSelected && !yearDisabled)
+                          e.currentTarget.style.background = "transparent";
                       }}
                     >
                       {year}

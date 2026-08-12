@@ -61,11 +61,12 @@ describe("computeOrderPricing", () => {
   });
 
   it("초대코드 할인금액은 referralDiscountAmount()가 계산해 넘긴 값을 그대로 쓴다", () => {
-    // 33,333 × 15% → 표시 단가 round(28,333.05)=28,333, 할인액 33,333−28,333=5,000
+    // 백엔드 청구식 floor(단가 × 요율): 33,333 × 0.15 = 4,999.95 → 4,999
+    // (round(단가 × (1−요율))로 단가부터 구하면 5,000이 되어 서버보다 1원 더 깎인다)
     const amount = referralDiscountAmount(33333, { inviteEligible: true, discountRate: 0.15 });
-    expect(amount).toBe(5000);
+    expect(amount).toBe(4999);
     const q = computeOrderPricing({ unitPrice: 33333, quantity: 1, inviteDiscount: amount });
-    expect(q.inviteDiscount).toBe(5000);
+    expect(q.inviteDiscount).toBe(4999);
     // 플랜 선택 화면이 보여주는 단가와 주문서 총액이 정확히 일치해야 한다
     expect(q.total).toBe(referralUnitPrice(33333, { inviteEligible: true, discountRate: 0.15 }));
   });

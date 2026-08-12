@@ -25,6 +25,12 @@ describe("referralUnitPrice", () => {
 });
 
 describe("referralDiscountAmount", () => {
+  it("백엔드 청구식 floor(단가 × 요율)과 원 단위까지 일치한다", () => {
+    // 나누어떨어지지 않는 경우가 핵심 — round로 단가부터 구하면 서버보다 1원 더 깎인다
+    expect(referralDiscountAmount(33333, ELIGIBLE)).toBe(Math.floor(33333 * 0.15)); // 4,999
+    expect(referralUnitPrice(33333, ELIGIBLE)).toBe(33333 - 4999);
+  });
+
   it("정가 − 할인단가로 유도되므로 단가와 항상 정확히 맞는다", () => {
     const price = 33333;
     expect(referralUnitPrice(price, ELIGIBLE) + referralDiscountAmount(price, ELIGIBLE)).toBe(price);

@@ -97,12 +97,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const detailImages = PACKAGE_DETAIL_IMAGES[selectedTier];
   const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
-  const { referralPrice, additionalDiscountPct, inviteEligible } = useReferralPricing();
+  const { unitPrice, additionalDiscountPct, inviteEligible } = useReferralPricing();
 
   const originalPrice = selectedPlan.originalPrice ?? selectedPlan.monthlyPrice;
-  const discountedUnitPrice = inviteEligible
-    ? referralPrice(selectedPlan.monthlyPrice)
-    : selectedPlan.monthlyPrice;
+  const discountedUnitPrice = unitPrice(selectedPlan.monthlyPrice);
   const hasDiscount = inviteEligible || (selectedPlan.discountRate ?? 0) > 0;
   const salePrice = discountedUnitPrice * quantity;
 

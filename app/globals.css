@@ -811,12 +811,17 @@ button:disabled {
   to   { transform: translateX(-33.333%); }
 }
 
+/* 무한 자동 스크롤은 reduced-motion에서 멈춘다 — 같은 파일의 다른 infinite 애니메이션
+   (animate-float, 파티클)과 동일한 처리. 사용자 설정 존중이면서, 끝나지 않는 애니메이션이라
+   fullPage 스크린샷이 매번 다른 프레임을 잡아 시각회귀가 간헐 실패하던 원인이기도 하다. */
 @utility animate-gallery-right {
   animation: roll-right 23s linear infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 
 @utility animate-gallery-left {
   animation: roll-left 23s linear infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
 }
 
 /* ─── Floating animation ─────────────────────────────────────────────────── */

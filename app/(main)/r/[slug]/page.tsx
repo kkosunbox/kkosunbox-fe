@@ -2,8 +2,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchReferralPage } from "@/features/referral/api/queries";
 import { ReferralProvider } from "@/features/referral/model";
-import { getServerToken } from "@/features/auth/lib/session";
-import { fetchSubscriptions } from "@/features/subscription/api/queries";
+import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { ReferralHeroSection } from "@/widgets/home/referral-hero";
 import { StatsBar } from "@/widgets/home/stats-bar";
 import { ReferralPackagePlansSection } from "@/widgets/home/referral-package-plans";
@@ -32,22 +31,12 @@ export default async function ReferralLandingPage({ params }: Props) {
     redirect("/");
   }
 
-  // 이미 구독 이력이 있는 방문자(본인 링크 재방문 포함)에게는 첫 달 할인 배지를 보여주지 않는다.
-  const token = await getServerToken().catch(() => null);
-  const subscriptions = token ? await fetchSubscriptions(token).catch(() => []) : [];
-  const hasSubscriptionHistory = subscriptions.length > 0;
+  // 적격 판정(구독 이력 확인 포함)은 서버 단일 resolver가 담당한다. 이 페이지가 따로 계산하면
+  // layout이 만든 값과 어긋나 같은 유저에게 /r/{slug}와 /subscribe가 다른 가격을 보여주게 된다.
+  const referral = await resolveReferralContext(slug);
 
   return (
-    <ReferralProvider
-      initialData={{
-        slug,
-        refCode: data.referralCode,
-        discountRate: data.discountRate,
-        influencerName: data.displayName,
-        profileImageUrl: data.profileImageUrl,
-      }}
-      hasSubscriptionHistory={hasSubscriptionHistory}
-    >
+    <ReferralProvider context={referral}>
       <div className="pt-[var(--banner-height)]">
         <div className="relative z-0">
           <ReferralHeroSection />

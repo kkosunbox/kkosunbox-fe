@@ -505,11 +505,18 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
 
     // GET /v1/subscriptions — 구독 목록 조회 (취소 건 포함, 구독 이력 판정에 사용)
-    // MOCK_ACCESS_TOKEN(test 유저) → 구독 1건(이력 있음)
-    // NO_PROFILE 토큰 등 그 외 → 빈 배열(이력 없음)
+    // MOCK_ACCESS_TOKEN(test 유저)·인플루언서 토큰 → 구독 1건(이력 있음)
+    // NO_PROFILE/BILLING 토큰 등 그 외 → 빈 배열(이력 없음)
+    //
+    // 인플루언서를 "이미 구독 중"으로 두는 이유: 구독 이력 판정이 서버 컴포넌트로 옮겨가면서
+    // page.route()로는 이 응답을 가로챌 수 없다(SSR fetch는 브라우저를 거치지 않음).
+    // 자기 감지 배지 게이팅 테스트가 그 시나리오를 쓰므로 목 데이터 자체로 표현한다.
     if (method === "GET" && url === "/v1/subscriptions") {
       const auth = req.headers.authorization ?? "";
-      if (auth === `Bearer ${MOCK_ACCESS_TOKEN}`) {
+      if (
+        auth === `Bearer ${MOCK_ACCESS_TOKEN}` ||
+        auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`
+      ) {
         ok(res, { subscriptions: [MOCK_SUBSCRIPTION] });
       } else {
         ok(res, { subscriptions: [] });

@@ -169,7 +169,7 @@ export default function PlanPicker({
 
   const activePlan = planForTier(sortedPlans, displayTier);
 
-  const { referralPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
+  const { unitPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
     useReferralPricing();
   const activeDiscount = activePlan ? planDiscountInfo(activePlan, inviteEligible, combinedDiscountPct) : null;
 
@@ -393,9 +393,7 @@ export default function PlanPicker({
                               </>
                             ) : null}
                             <span className="text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                              {inviteEligible
-                                ? formatMonthlyPrice(referralPrice(activePlan.monthlyPrice))
-                                : formatMonthlyPrice(activePlan.monthlyPrice)}
+                              {formatMonthlyPrice(unitPrice(activePlan.monthlyPrice))}
                             </span>
                           </div>
                         </div>
@@ -537,9 +535,7 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {inviteEligible
-                              ? formatMonthlyPrice(referralPrice(plan.monthlyPrice))
-                              : formatMonthlyPrice(plan.monthlyPrice)}
+                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (
@@ -630,9 +626,7 @@ export default function PlanPicker({
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >
-                            {inviteEligible
-                              ? formatMonthlyPrice(referralPrice(plan.monthlyPrice))
-                              : formatMonthlyPrice(plan.monthlyPrice)}
+                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (

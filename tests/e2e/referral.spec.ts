@@ -5,7 +5,6 @@ import {
   MOCK_ACTIVE_SLUG,
   MOCK_INACTIVE_SLUG,
   MOCK_REFERRAL_PAGE,
-  MOCK_SUBSCRIPTION,
   MOCK_PLANS,
 } from "../helpers/mockApiServer";
 import {
@@ -226,26 +225,19 @@ test.describe("첫 달 할인 배지 (/r/[slug]) — 구독 이력 게이팅", (
 // ──────────────────────────────────────────────────────────────────────────────
 // E. 자기 감지 — 인플루언서 본인이 초대코드 쿠키 없이 접근했을 때도 구독 이력을 반영하는지
 //
-// 초대코드 쿠키가 없으면 ReferralProvider가 getMyReferralCode()로 "로그인된 인플루언서인지"
-// 자체 감지한다. layout.tsx는 쿠키가 없으면 hasSubscriptionHistory 계산 자체를 스킵하므로
-// (기본값 false), 이 경로는 자기 감지 성공 시점에 클라이언트에서 별도로 getSubscriptions()를
-// 호출해 실제 이력을 확인하도록 2026-07-30에 보강했다. 홈의 PlanPicker가 같은 배지
-// 컴포넌트를 쓰므로 여기서 검증한다.
+// 초대코드 쿠키가 없어도, 로그인 유저가 인플루언서 본인이면 서버(resolveReferralContext)가
+// /v1/referral/me로 자기 slug를 찾아 초대 맥락을 구성한다. 이때도 구독 이력이 있으면
+// 할인 적격이 아니므로 배지는 숨겨져야 한다.
+// (2026-08-12 이전에는 이 감지·이력 확인을 ReferralProvider가 클라이언트에서 따로 했고,
+//  그 경로만 서버와 다른 답을 내 페이지마다 가격이 갈렸다. 판정을 서버 한곳으로 모았다.)
+// 홈의 PlanPicker가 같은 배지 컴포넌트를 쓰므로 여기서 검증한다.
 // ──────────────────────────────────────────────────────────────────────────────
 
 test.describe("자기 감지 — 인플루언서 본인 접근", () => {
   test("이미 구독 중인 인플루언서가 초대코드 쿠키 없이 홈 방문 → 배지 숨김", async ({ page }) => {
-    // GET /v1/subscriptions는 인플루언서 토큰에 기본적으로 빈 배열을 반환하므로
-    // 이 테스트에서만 구독 이력이 있는 것으로 오버라이드한다.
-    await page.route("**/v1/subscriptions", async (route) => {
-      if (route.request().method() !== "GET") return route.continue();
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ result: true, data: { subscriptions: [MOCK_SUBSCRIPTION] } }),
-      });
-    });
-
+    // 구독 이력은 목 서버가 인플루언서 토큰에 1건을 돌려주는 것으로 표현한다.
+    // page.route()로 덮지 않는 이유: 이 조회는 이제 서버 컴포넌트에서 일어나
+    // 브라우저를 거치지 않으므로 가로챌 수 없다.
     await loginAsInfluencer(page);
     // loginAsInfluencer는 이미 "/"까지 이동을 기다린다 — 자기 감지 완료(배지 부재)를 폴링한다.
     await expect(page.getByText(BADGE_TEXT)).not.toBeVisible({ timeout: 10_000 });

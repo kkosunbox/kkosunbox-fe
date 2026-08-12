@@ -2,54 +2,54 @@ import { describe, it, expect } from "vitest";
 import { getInviteSectionMode } from "@/features/order";
 
 describe("getInviteSectionMode", () => {
-  it("(invite 있음, history 있음) → ineligible", () => {
+  it("(초대코드 있음, 사용 불가) → ineligible", () => {
     expect(
       getInviteSectionMode({
-        initialInviteCode: "FRIEND10",
-        hasSubscriptionHistory: true,
+        hasCapturedInvite: true,
+        canUseInviteCode: false,
       }),
     ).toBe("ineligible");
   });
 
-  it("(invite 있음, history 없음) → locked", () => {
+  it("(초대코드 있음, 사용 가능) → locked", () => {
     expect(
       getInviteSectionMode({
-        initialInviteCode: "FRIEND10",
-        hasSubscriptionHistory: false,
+        hasCapturedInvite: true,
+        canUseInviteCode: true,
       }),
     ).toBe("locked");
   });
 
-  it("(invite 없음, history 있음) → hidden", () => {
+  it("(초대코드 없음, 사용 불가) → hidden", () => {
     expect(
       getInviteSectionMode({
-        initialInviteCode: null,
-        hasSubscriptionHistory: true,
+        hasCapturedInvite: false,
+        canUseInviteCode: false,
       }),
     ).toBe("hidden");
   });
 
-  it("(invite 없음, history 없음) → open", () => {
+  it("(초대코드 없음, 사용 가능) → open", () => {
     expect(
       getInviteSectionMode({
-        initialInviteCode: null,
-        hasSubscriptionHistory: false,
+        hasCapturedInvite: false,
+        canUseInviteCode: true,
       }),
     ).toBe("open");
   });
 
-  it("inviteDismissed=true이면 쿠키가 있어도 open/hidden으로 분기", () => {
+  it("inviteDismissed=true이면 코드가 있어도 open/hidden으로 분기", () => {
     expect(
       getInviteSectionMode({
-        initialInviteCode: "FRIEND10",
-        hasSubscriptionHistory: false,
+        hasCapturedInvite: true,
+        canUseInviteCode: true,
         inviteDismissed: true,
       }),
     ).toBe("open");
     expect(
       getInviteSectionMode({
-        initialInviteCode: "FRIEND10",
-        hasSubscriptionHistory: true,
+        hasCapturedInvite: true,
+        canUseInviteCode: false,
         inviteDismissed: true,
       }),
     ).toBe("hidden");

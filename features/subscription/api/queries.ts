@@ -3,6 +3,7 @@
  * "server-only" 임포트로 클라이언트 번들에 포함되면 빌드 에러 발생.
  */
 import "server-only";
+import { cache } from "react";
 import { apiClient } from "@/shared/lib/api";
 import { getSubscriptionDisplayBucket } from "../lib/subscriptionDisplayBucket";
 import type {
@@ -39,6 +40,33 @@ export async function fetchSubscriptions(token?: string): Promise<UserSubscripti
     .catch(() => ({ subscriptions: [] as UserSubscriptionDto[] }));
   return data.subscriptions;
 }
+
+/**
+ * 구독 이력 존재 여부 — **초대코드 할인 적격 판정 전용**.
+ *
+ * `true` = 이력 있음 / `false` = 이력 없음 / `null` = **판정 불가**(비로그인·조회 실패).
+ *
+ * 다른 조회 함수처럼 실패를 `[]`로 삼키지 않는다. 조회 실패를 "이력 없음"으로 처리하면
+ * 자격 없는 사용자에게 첫 구독 할인가를 노출하게 되고, 화면 가격과 실제 청구액이 어긋난다.
+ * 판정 불가일 때 무엇을 할지는 호출부가 정한다(적격 판정은 fail-closed).
+ *
+ * `cache()`로 요청 단위 메모이즈한다 — layout·`/r/[slug]`·`/order`가 각자 조회하던 탓에
+ * **같은 요청 안에서 서로 다른 답을 받아 페이지마다 가격이 달라지는 사고**가 있었다(2026-08-12).
+ */
+export const probeSubscriptionHistory = cache(
+  async (token?: string): Promise<boolean | null> => {
+    if (!token) return null;
+    try {
+      const data = await apiClient.get<{ subscriptions: UserSubscriptionDto[] }>(
+        "/v1/subscriptions",
+        serverOpts(token),
+      );
+      return (data.subscriptions?.length ?? 0) > 0;
+    } catch {
+      return null;
+    }
+  },
+);
 
 /** 구독 플랜 목록 (profileId 전달 시 백엔드가 isRecommended 설정) */
 export async function fetchSubscriptionPlans(

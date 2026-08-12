@@ -556,7 +556,11 @@
       "Bash(cp features/referral/lib/resolveReferralContext.ts /tmp/rrc.bak)",
       "Bash(cp features/referral/lib/resolveReferralContext.ts \"/c/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/be7889ae-a8b6-43c9-9671-d60855f0884e/scratchpad/rrc.bak\")",
       "Bash(RRC_DIAG=1 npx playwright test tests/e2e/visual-regression-tablet-auth.spec.ts --project=tablet-1199 --grep \"subscribe-detail\")",
-      "PowerShell(npx vitest run tests/unit --reporter=dot)"
+      "PowerShell(npx vitest run tests/unit --reporter=dot)",
+      "PowerShell(npx eslint features/delivery-address/ui/AddressFormView.tsx)",
+      "PowerShell(npx eslint features/delivery-address/ui/AddressListView.tsx; \"exit=$LASTEXITCODE\")",
+      "PowerShell(npx eslint features/delivery-address/ui/AddressFormView.tsx; \"modified_exit=$LASTEXITCODE\")",
+      "PowerShell(npx eslint shared/config/breakpoints.ts; \"untouched_exit=$LASTEXITCODE\")"
     ]
   },
   "disabledMcpjsonServers": [

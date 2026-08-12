@@ -165,12 +165,21 @@ export default function AddressFormView({
         <div className="flex items-center gap-3">
           <label className={LABEL_CLS}>우편번호</label>
           <div className="flex min-w-0 flex-1 items-center gap-2">
+            {/* 직접 입력할 수 없는 필드라 클릭·Enter만으로도 주소찾기가 열리게 한다 */}
             <input
               type="text"
               value={pendingZipCode}
               readOnly
-              placeholder=""
-              className={`${INPUT_CLS} cursor-default bg-[var(--color-surface-light)]`}
+              placeholder="우편번호를 검색해주세요"
+              aria-label="우편번호"
+              onClick={onSearchAddress}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSearchAddress();
+                }
+              }}
+              className={`${INPUT_CLS} cursor-pointer bg-[var(--color-surface-light)]`}
             />
             <button
               type="button"

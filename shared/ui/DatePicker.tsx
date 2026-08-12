@@ -118,13 +118,86 @@ function ChevronDownIcon() {
   );
 }
 
+/**
+ * 헤더의 `06월 ▾` / `2026 ▾` 트리거.
+ * 두 컨트롤이 독립이라 월·연 뷰로 각각 한 번에 진입한다.
+ */
+function ViewSwitchButton({
+  label,
+  active,
+  onClick,
+  "aria-label": ariaLabel,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  "aria-label": string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={ariaLabel}
+      aria-pressed={active}
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        height: HEADER_CONTROL_HEIGHT,
+        padding: `0 ${HEADER_CONTROL_PADDING_X}px`,
+        border: "none",
+        borderRadius: 6,
+        background: active ? "#F6E9DD" : "transparent",
+        cursor: "pointer",
+        transition: "background 150ms",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) e.currentTarget.style.background = "#F9F1EA";
+      }}
+      onMouseLeave={(e) => {
+        if (!active) e.currentTarget.style.background = "transparent";
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "Pretendard, sans-serif",
+          fontWeight: 500,
+          fontSize: 14,
+          lineHeight: "150%",
+          color: "#252525",
+        }}
+      >
+        {label}
+      </span>
+      <span style={{ display: "flex", color: "#B0B0B0" }}>
+        <ChevronDownIcon />
+      </span>
+    </button>
+  );
+}
+
 /* ─────────────────────────────
    View modes
 ───────────────────────────── */
 type CalendarView = "days" | "months" | "years";
 
-/** 연도 선택 그리드 한 페이지 크기 (3열 × 5줄) */
-const YEARS_PER_PAGE = 15;
+/** 연도 선택 그리드 한 페이지 크기 (4열 × 4줄 — 월 그리드와 같은 56×32 셀) */
+const YEARS_PER_PAGE = 16;
+
+/** 월·연 그리드 셀 — Figma Date Picker Month 스펙 (간격 0, 4열 × 56px = 224px) */
+const GRID_CELL_WIDTH = 56;
+const GRID_CELL_HEIGHT = 32;
+const GRID_CELL_RADIUS = 6;
+
+/**
+ * 헤더 월·연 트리거 크기.
+ * Figma 스펙은 높이 24 / 내부 패딩 0이지만, 그 값이면 hover 배경이 글자에 붙어 답답하다.
+ * 패딩을 주되 글자 위치(팝업 좌측에서 24px)는 스펙 그대로 두어,
+ * hover 박스 좌측이 아래 그리드의 좌측 정렬선(16px)과 맞아떨어지게 했다.
+ */
+const HEADER_CONTROL_HEIGHT = 28;
+const HEADER_CONTROL_PADDING_X = 8;
 
 /* ─────────────────────────────
    DatePicker
@@ -352,13 +425,7 @@ export default function DatePicker({
     setCalendarView("months");
   };
 
-  const handleHeaderClick = () => {
-    if (calendarView === "days") setCalendarView("months");
-    else if (calendarView === "months") setCalendarView("years");
-    else setCalendarView("days");
-  };
-
-  /* 연도 그리드 — maxYear(없으면 올해)를 마지막 칸으로 삼아 15년 단위로 끊는다.
+  /* 연도 그리드 — maxYear(없으면 올해)를 마지막 칸으로 삼아 16년 단위로 끊는다.
      페이지가 고정되므로 연도를 고를 때마다 범위가 밀리지 않는다. */
   const yearAnchor = maxYear ?? today.getFullYear();
   const yearPageIndex = Math.floor((yearAnchor - viewYear) / YEARS_PER_PAGE);
@@ -451,31 +518,27 @@ export default function DatePicker({
           {/* ── Header ── */}
           <div
             className="flex items-center justify-between"
-            style={{ padding: "16px 16px 0 16px", height: 24 + 16 }}
+            style={{ padding: "16px 16px 0 16px", height: HEADER_CONTROL_HEIGHT + 16 }}
           >
-            {/* 연·월 클릭 영역 */}
-            <button
-              type="button"
-              onClick={handleHeaderClick}
-              className="flex items-center gap-1 rounded-md px-2 py-[2px] transition-colors hover:bg-[var(--color-secondary)]"
-            >
-              <span
-                style={{
-                  fontFamily: "Pretendard, sans-serif",
-                  fontWeight: 500,
-                  fontSize: 14,
-                  lineHeight: "150%",
-                  color: "#252525",
-                }}
-              >
-                {calendarView === "years"
-                  ? `${years[0]} – ${years[years.length - 1]}`
-                  : calendarView === "months"
-                  ? `${viewYear}`
-                  : `${String(viewMonth + 1).padStart(2, "0")}월 ${viewYear}`}
-              </span>
-              <ChevronDownIcon />
-            </button>
+            {/* 월·연 — 각각 해당 뷰로 바로 진입하는 독립 컨트롤 */}
+            <div className="flex items-center" style={{ gap: 4, height: HEADER_CONTROL_HEIGHT }}>
+              <ViewSwitchButton
+                label={`${String(viewMonth + 1).padStart(2, "0")}월`}
+                active={calendarView === "months"}
+                onClick={() =>
+                  setCalendarView((v) => (v === "months" ? "days" : "months"))
+                }
+                aria-label={`월 선택 (현재 ${viewMonth + 1}월)`}
+              />
+              <ViewSwitchButton
+                label={`${viewYear}`}
+                active={calendarView === "years"}
+                onClick={() =>
+                  setCalendarView((v) => (v === "years" ? "days" : "years"))
+                }
+                aria-label={`연도 선택 (현재 ${viewYear}년)`}
+              />
+            </div>
 
             {/* 이전/다음 버튼 */}
             <div className="flex items-center gap-2">
@@ -643,7 +706,7 @@ export default function DatePicker({
             )}
 
             {calendarView === "months" && (
-              <div className="grid grid-cols-3 gap-2" style={{ paddingTop: 8 }}>
+              <div className="grid grid-cols-4">
                 {MONTH_LABELS.map((label, i) => {
                   const isCurrent = i === viewMonth && viewYear === today.getFullYear();
                   const isSelected = i === viewMonth;
@@ -655,8 +718,9 @@ export default function DatePicker({
                       disabled={monthDisabled}
                       onClick={() => handleMonthSelect(i)}
                       style={{
-                        height: 36,
-                        borderRadius: 8,
+                        width: GRID_CELL_WIDTH,
+                        height: GRID_CELL_HEIGHT,
+                        borderRadius: GRID_CELL_RADIUS,
                         border: "none",
                         background: isSelected && !monthDisabled ? "#F6E9DD" : "transparent",
                         fontFamily: "Pretendard, sans-serif",
@@ -683,7 +747,7 @@ export default function DatePicker({
             )}
 
             {calendarView === "years" && (
-              <div className="grid grid-cols-3 gap-2" style={{ paddingTop: 8 }}>
+              <div className="grid grid-cols-4">
                 {years.map((year) => {
                   const isCurrent = year === today.getFullYear();
                   const isSelected = year === viewYear;
@@ -695,8 +759,9 @@ export default function DatePicker({
                       disabled={yearDisabled}
                       onClick={() => handleYearSelect(year)}
                       style={{
-                        height: 36,
-                        borderRadius: 8,
+                        width: GRID_CELL_WIDTH,
+                        height: GRID_CELL_HEIGHT,
+                        borderRadius: GRID_CELL_RADIUS,
                         border: "none",
                         background: isSelected && !yearDisabled ? "#F6E9DD" : "transparent",
                         fontFamily: "Pretendard, sans-serif",

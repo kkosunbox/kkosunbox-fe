@@ -20,6 +20,7 @@ import {
   getSubscriptionDisplayBucket,
   isScheduledSubscription,
 } from "@/features/subscription/lib/subscriptionDisplayBucket";
+import { isPaymentCancelable } from "@/features/subscription/lib/paymentCancelable";
 import type { UserSubscriptionDto, SubscriptionPaymentDto } from "@/features/subscription/api/types";
 import {
   ITEMS_PER_PAGE,
@@ -109,9 +110,9 @@ export function useSubscriptionDetailSection({
 
   function handleCancel() {
     trackSubscriptionCancelAttempt();
-    const hasCancellablePayment = payments.some(
-      (p) => p.status === "completed" && p.deliveryStatus !== "DeliveryCompleted",
-    );
+    // 취소 가능한 결제 건이 하나도 없으면 "이번 건만 받고 해지하기" 선택지 자체가 의미가 없다.
+    // 판정은 결제취소 버튼(RecordRow)과 반드시 같은 술어를 써야 한다.
+    const hasCancellablePayment = payments.some(isPaymentCancelable);
 
     const doCancel = (cancelEligiblePayments: boolean) => {
       showLoading("구독 해지를 처리하고 있습니다...");

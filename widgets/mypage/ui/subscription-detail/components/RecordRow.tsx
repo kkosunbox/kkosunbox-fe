@@ -1,4 +1,5 @@
 import type { SubscriptionPaymentDto } from "@/features/subscription/api/types";
+import { isPaymentCancelable } from "@/features/subscription/lib/paymentCancelable";
 import {
   EPOST_TRACKING_BASE,
   ROW_GRID,
@@ -29,9 +30,9 @@ export function RecordRow({
   const dateStr = formatDate(record.approvedAt ?? record.createdAt);
   const pkgName = record.planName ?? planName;
 
-  const canCancelPayment =
-    record.status === "completed" &&
-    record.deliveryStatus !== "DeliveryCompleted";
+  // 배송중 건은 취소 불가 — 판정은 공용 술어에 위임한다.
+  // 결제 대기(pending) 건의 취소 버튼은 기존 동작 그대로 유지한다.
+  const canCancelPayment = isPaymentCancelable(record);
 
   const statusBadge = record.trackingNumber ? (
     <a

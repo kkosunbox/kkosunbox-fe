@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
+import { openCenteredPopup } from "@/shared/lib/popup";
 import type { BillingInfo } from "@/features/billing/api/types";
-import { useBillingUpdated } from "@/features/billing/lib/billingSync";
+import { useBillingUpdatedAlert } from "@/features/billing/lib/billingSync";
 import { getCardName, getLastFourDigits } from "@/features/billing/lib/formatBillingLabel";
 import type { UserSubscriptionDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import {
@@ -185,8 +186,11 @@ function PaymentInfoCard({
     setBillingInfo(initialBillingInfo);
   }, [initialBillingInfo]);
 
-  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회한다.
-  useBillingUpdated(() => router.refresh());
+  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회하고 완료 모달을 띄운다.
+  useBillingUpdatedAlert({
+    hadBilling: initialBillingInfo !== null,
+    onUpdated: () => router.refresh(),
+  });
 
   useEffect(() => {
     function handlePaymentMessage(e: MessageEvent) {
@@ -201,11 +205,7 @@ function PaymentInfoCard({
 
   // 결제수단 변경 팝업. 등록된 카드가 있으면 확인 1단계, 없으면 곧바로 Toss 카드 등록창이 뜬다.
   function handleOpenPayment() {
-    window.open(
-      "/payment?mode=change",
-      "paymentPopup",
-      "width=650,height=700,scrollbars=yes",
-    );
+    openCenteredPopup("/payment?mode=change", "paymentPopup", { width: 650, height: 700 });
   }
 
   const cardDisplay = billingInfo

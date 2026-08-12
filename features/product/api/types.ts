@@ -108,16 +108,24 @@ export interface ProductOrderReceiptResponse {
 
 // ── ProductCoupon ────────────────────────────────────────────────
 
+/** POST /v1/products/coupon/info 응답 (GetProductCouponInfoResponse) */
 export interface ProductCouponInfo {
-  name?: string;
-  description?: string;
-  discountRate: number;   // 1~100 (%)
+  /** 쿠폰 사용 가능 여부 */
+  canUse: boolean;
+  /** 할인율 (1~100, 단위: %) */
+  discountRate: number;
+  /** 쿠폰 이름 */
+  name?: string | null;
+  /** 쿠폰 설명 */
+  description?: string | null;
   /** 최대 할인 금액 (원, null이면 제한 없음) */
   maxDiscountAmount?: number | null;
-  startDate?: string;     // date-time, null이면 제한 없음
-  endDate?: string;       // date-time, null이면 제한 없음
-  canUse: boolean;
-  unavailableReason?: string;
+  /** 쿠폰 사용 시작 시간 (date-time, null이면 제한 없음) */
+  startDate?: string | null;
+  /** 쿠폰 사용 종료 시간 (date-time, null이면 제한 없음) */
+  endDate?: string | null;
+  /** 사용 불가 사유 (사용 가능한 경우 null) */
+  unavailableReason?: string | null;
 }
 
 // ── ProductOrderPlanSummary ───────────────────────────────────────

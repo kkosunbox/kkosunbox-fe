@@ -61,6 +61,39 @@ describe("computePurchaseTotals", () => {
     expect(p.shippingFee).toBe(0);
     expect(p.total).toBe(10000);
   });
+
+  it("쿠폰 상한(maxDiscountAmount)이 총액 계산까지 반영된다", () => {
+    // 39,000 × 20% = 7,800 이지만 상한 5,000
+    const p = computePurchaseTotals({
+      unitPrice: UNIT,
+      quantity: 1,
+      couponInfo: { canUse: true, discountRate: 20, maxDiscountAmount: 5000 },
+    });
+    expect(p.couponDiscount).toBe(5000);
+    expect(p.total).toBe(34000);
+  });
+
+  it("수량 2개 이상 → 쿠폰 할인이 주문상품금액 전체 기준으로 계산된다", () => {
+    // 39,000 × 2 = 78,000의 20% = 15,600 (단가 1개 기준이면 7,800이 되어 청구액과 어긋난다)
+    const p = computePurchaseTotals({
+      unitPrice: UNIT,
+      quantity: 2,
+      couponInfo: { canUse: true, discountRate: 20 },
+    });
+    expect(p.basePrice).toBe(78000);
+    expect(p.couponDiscount).toBe(15600);
+    expect(p.total).toBe(62400);
+  });
+
+  it("사용 불가 쿠폰은 할인 0", () => {
+    const p = computePurchaseTotals({
+      unitPrice: UNIT,
+      quantity: 1,
+      couponInfo: { canUse: false, discountRate: 20, unavailableReason: "만료됨" },
+    });
+    expect(p.couponDiscount).toBe(0);
+    expect(p.total).toBe(39000);
+  });
 });
 
 describe("validatePurchaseCheckout", () => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@/shared/ui";
+import { openCenteredPopup } from "@/shared/lib/popup";
 import { DashboardCard, SectionHeader } from "../lib/dashboard-shared";
 import type { DeliveryStatus, DeliveryStatusSummaryResponse } from "@/features/subscription/api/types";
 
@@ -48,27 +49,21 @@ const DELIVERY_STEPS: Array<{
     { label: "배송완료", status: "DeliveryCompleted", key: "deliveryCompleted" },
   ];
 
+// 좌표 계산을 openCenteredPopup에 위임한다 — 직접 screen.width로 계산하면 브라우저가
+// 보조 모니터에 있어도 팝업이 주모니터 중앙으로 날아간다.
+const POPUP_SIZE = { width: 420, height: 680 };
+const POPUP_FEATURES = "scrollbars=yes,resizable=yes";
+
 function openAddressPopup() {
-  const w = 420;
-  const h = 680;
-  const left = (screen.width - w) / 2;
-  const top = (screen.height - h) / 2;
-  window.open(
-    "/address",
-    "addressPopup",
-    `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
-  );
+  openCenteredPopup("/address", "addressPopup", POPUP_SIZE, POPUP_FEATURES);
 }
 
 function openDeliveryPopup(status: DeliveryStatus) {
-  const w = 420;
-  const h = 680;
-  const left = (screen.width - w) / 2;
-  const top = (screen.height - h) / 2;
-  window.open(
+  openCenteredPopup(
     `/delivery?status=${status}`,
     `deliveryPopup_${status}`,
-    `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+    POPUP_SIZE,
+    POPUP_FEATURES,
   );
 }
 

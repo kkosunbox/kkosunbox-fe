@@ -60,7 +60,7 @@ export function usePurchaseOrderSection({
   const { basePrice, couponDiscount, totalDiscount, originalShippingFee, shippingFee, total } = computePurchaseTotals({
     unitPrice: purchaseProduct.price,
     quantity,
-    couponRatePercent: coupon.couponInfo?.canUse ? coupon.couponInfo.discountRate : null,
+    couponInfo: coupon.couponInfo,
   });
 
   const { paymentWidget, paymentReady, widgetLoadError, reloadWidget, updateAmount } =

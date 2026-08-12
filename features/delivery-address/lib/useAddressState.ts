@@ -6,6 +6,7 @@ import type { DeliveryAddress } from "../api/types";
 import { EMPTY_ADDR_STATE, type NewAddrState } from "./addressFormState";
 import { openAddressSearchPopup } from "./openAddressSearchPopup";
 import { digitsOnly } from "@/shared/lib/format";
+import { openCenteredPopup } from "@/shared/lib/popup";
 
 export interface AddressStateResult {
   selectedAddress: DeliveryAddress | null;
@@ -56,7 +57,7 @@ export function useAddressState({
     const url = selectedAddressId
       ? `/address?selectedId=${selectedAddressId}`
       : "/address";
-    window.open(url, "addressPopup", "width=480,height=700,scrollbars=yes");
+    openCenteredPopup(url, "addressPopup", { width: 480, height: 700 });
   }
 
   function handleSearchAddress() {

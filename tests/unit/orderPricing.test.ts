@@ -16,8 +16,8 @@ describe("computeOrderPricing", () => {
     });
   });
 
-  it("쿠폰만 10% → 단가 1개 기준 floor 할인", () => {
-    const p = computeOrderPricing({ unitPrice: UNIT, quantity: 1, couponRatePercent: 10 });
+  it("쿠폰 할인금액만 전달 → 그대로 차감", () => {
+    const p = computeOrderPricing({ unitPrice: UNIT, quantity: 1, couponDiscount: 3900 });
     expect(p.couponDiscount).toBe(3900);
     expect(p.inviteDiscount).toBe(0);
     expect(p.total).toBe(35100);
@@ -30,11 +30,11 @@ describe("computeOrderPricing", () => {
     expect(p.total).toBe(35100);
   });
 
-  it("쿠폰 + 초대코드 → 각각 원금액 기준 계산 후 합산", () => {
+  it("쿠폰 + 초대코드 → 각각 계산 후 합산", () => {
     const p = computeOrderPricing({
       unitPrice: UNIT,
       quantity: 1,
-      couponRatePercent: 10,
+      couponDiscount: 3900,
       inviteRate: 0.1,
     });
     expect(p.couponDiscount).toBe(3900);
@@ -47,7 +47,7 @@ describe("computeOrderPricing", () => {
     const p = computeOrderPricing({
       unitPrice: UNIT,
       quantity: 3,
-      couponRatePercent: 10,
+      couponDiscount: 3900,
       inviteRate: 0.1,
     });
     expect(p.basePrice).toBe(117000);
@@ -56,10 +56,7 @@ describe("computeOrderPricing", () => {
     expect(p.total).toBe(117000 - 7800); // 109,200
   });
 
-  it("나누어떨어지지 않는 할인율 → floor(내림) 처리", () => {
-    // 33,333 × 7% = 2,333.31 → floor 2,333
-    const p = computeOrderPricing({ unitPrice: 33333, quantity: 1, couponRatePercent: 7 });
-    expect(p.couponDiscount).toBe(2333);
+  it("초대코드 할인율이 나누어떨어지지 않으면 floor(내림) 처리", () => {
     // 33,333 × 0.15 = 4,999.95 → floor 4,999
     const q = computeOrderPricing({ unitPrice: 33333, quantity: 1, inviteRate: 0.15 });
     expect(q.inviteDiscount).toBe(4999);
@@ -70,7 +67,7 @@ describe("computeOrderPricing", () => {
     const p = computeOrderPricing({
       unitPrice: 1000,
       quantity: 1,
-      couponRatePercent: 100,
+      couponDiscount: 1000,
       inviteRate: 0.5,
     });
     expect(p.totalDiscount).toBe(1500);
@@ -81,11 +78,17 @@ describe("computeOrderPricing", () => {
     const p = computeOrderPricing({
       unitPrice: UNIT,
       quantity: 1,
-      couponRatePercent: null,
+      couponDiscount: null,
       inviteRate: 0,
     });
     expect(p.couponDiscount).toBe(0);
     expect(p.inviteDiscount).toBe(0);
+    expect(p.total).toBe(39000);
+  });
+
+  it("음수 쿠폰 할인금액은 0으로 방어", () => {
+    const p = computeOrderPricing({ unitPrice: UNIT, quantity: 1, couponDiscount: -5000 });
+    expect(p.couponDiscount).toBe(0);
     expect(p.total).toBe(39000);
   });
 });

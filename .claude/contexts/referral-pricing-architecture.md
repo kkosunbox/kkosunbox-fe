@@ -442,7 +442,7 @@ Order Pricing     + 쿠폰 → 최종 결제금액   ← /order 전용
 | 1 | 요구사항·가격 경계·불변조건 문서화 (이 문서) | ✅ 완료 |
 | 2 | `referralSource` + `hasDisplayableReferralOffer` 도입, `useReferralPricing` intent, 호출부 선언 (`ReferralPackagePlansSection` 별도 처리) | ✅ 완료 (tsc/eslint/vitest 통과) |
 | 3 | `PlanPicker` prop 추가, `/mypage/subscription/change` `actual` 고정 + 회귀 테스트 | ✅ 완료 (tsc/eslint/vitest 통과) |
-| 4 | E2E 갱신(D 기대값 변경 / E·F 보존 확인) + 4-1·4-2 백엔드 과제 분리 | 대기 — 다음 작업 |
+| 4 | E2E 갱신(D 기대값 변경 / E·F 보존 확인) | ✅ 완료 (18/18 통과) — 4-1·4-2 백엔드 과제는 §4에 분리 기재, 별도 착수 필요 |
 
 ### `intent` 설계 조건 (전부 필수)
 

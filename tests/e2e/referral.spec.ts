@@ -190,15 +190,20 @@ test.describe("/mypage/point (인플루언서 전용)", () => {
 });
 
 // ──────────────────────────────────────────────────────────────────────────────
-// D. 첫 달 할인 배지 — 구독 이력 여부에 따른 노출 (ReferralPlanPicker / ReferralPackagePlansSection)
+// D. 첫 달 할인 배지 (ReferralPlanPicker / ReferralPackagePlansSection)
 //
-// hasSubscriptionHistory = fetchSubscriptions(token).length > 0 (취소 건 포함) —
-// /r/[slug] 페이지가 서버에서 직접 계산해 ReferralProvider에 전달한다.
-//   TEST_TOKENS(MOCK_ACCESS_TOKEN)         → 구독 1건 → 이력 있음 → 배지 숨김
-//   BILLING_TOKENS(MOCK_BILLING_ACCESS_TOKEN) → 구독 0건 → 이력 없음 → 배지 표시
+// /r/[slug]는 마케팅 계층이다(.claude/contexts/referral-pricing-architecture.md §2).
+// 초대 맥락이 성립(referralSource: "slug")하고 요율을 확보했으면, 이 계정이 실제로
+// 할인을 받을 수 있는지(구독 이력·적격 여부)와 무관하게 배지를 보여준다 — 정직성은
+// /order가 담당한다("초대코드는 첫 구독 시에만 사용 가능합니다" 안내, §3 케이스 B 실측).
 //
-// 2026-07-30 이전에는 ReferralPlanPicker/ReferralPackagePlansSection이
-// inviteEligible을 전혀 체크하지 않아 이력과 무관하게 항상 배지가 떴던 회귀 버그가 있었다.
+// 2026-08-12 이전에는 이 배지가 구독 이력(hasSubscriptionHistory)에 게이팅되어
+// 기존 구독자에게는 숨겨졌다 — 요구사항 확정 후 의도적으로 뒤집힌 동작이다(§2 "1차 작업이
+// 꼬였던 경위"). 예외는 own-slug(자기감지)뿐이며, 그건 게이팅이 아니라 별도 배타 조건이다.
+//
+// 2026-07-30 이전에는 반대로 inviteEligible을 전혀 체크하지 않아 이력과 무관하게 항상
+// 배지가 떴던 회귀 버그가 있었다 — 지금의 "항상 표시"는 그 버그로의 회귀가 아니라
+// referralSource !== "own-slug" 조건이 자기감지만 명시적으로 차단하는 별도 사양이다.
 // ──────────────────────────────────────────────────────────────────────────────
 
 const BADGE_TEXT = `첫 달 ${DISCOUNT_PCT}%추가할인`;
@@ -206,30 +211,31 @@ const BADGE_TEXT = `첫 달 ${DISCOUNT_PCT}%추가할인`;
 // 순수 .first()는 숨겨진 변형을 집을 수 있다 — 보임 단정에는 visible 필터가 필요하다.
 const visibleBadge = (page: Page) => page.getByText(BADGE_TEXT).filter({ visible: true }).first();
 
-test.describe("첫 달 할인 배지 (/r/[slug]) — 구독 이력 게이팅", () => {
+test.describe("첫 달 할인 배지 (/r/[slug]) — 마케팅 계층: 이력과 무관하게 노출", () => {
   test("구독 이력 없는 로그인 유저 → 배지 표시", async ({ page }) => {
     await loginByTokens(page, BILLING_TOKENS);
     await page.goto(REFERRAL_LANDING);
     await expect(visibleBadge(page)).toBeVisible({ timeout: 10_000 });
   });
 
-  test("구독 이력 있는 로그인 유저 → 배지 숨김", async ({ page }) => {
+  test("구독 이력 있는 로그인 유저 → 배지 표시 (적격 여부는 /order가 판정)", async ({ page }) => {
     await loginByTokens(page, TEST_TOKENS);
     await page.goto(REFERRAL_LANDING);
-    // 페이지 자체(인플루언서 이름)는 정상 로드되지만 배지는 숨겨져야 한다
     await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText(BADGE_TEXT)).not.toBeVisible();
+    await expect(visibleBadge(page)).toBeVisible({ timeout: 10_000 });
   });
 });
 
 // ──────────────────────────────────────────────────────────────────────────────
-// E. 자기 감지 — 인플루언서 본인이 초대코드 쿠키 없이 접근했을 때도 구독 이력을 반영하는지
+// E. 자기 감지 — 인플루언서 본인이 초대코드 쿠키 없이 접근했을 때 배지가 뜨지 않는지
 //
 // 초대코드 쿠키가 없어도, 로그인 유저가 인플루언서 본인이면 서버(resolveReferralContext)가
-// /v1/referral/me로 자기 slug를 찾아 초대 맥락을 구성한다. 이때도 구독 이력이 있으면
-// 할인 적격이 아니므로 배지는 숨겨져야 한다.
-// (2026-08-12 이전에는 이 감지·이력 확인을 ReferralProvider가 클라이언트에서 따로 했고,
-//  그 경로만 서버와 다른 답을 내 페이지마다 가격이 갈렸다. 판정을 서버 한곳으로 모았다.)
+// /v1/referral/me로 자기 slug를 찾아 초대 맥락을 구성한다(referralSource: "own-slug").
+// 홈은 마케팅 계층(promotional)이라 D와 달리 구독 이력·적격 여부는 배지 노출과 무관하지만,
+// own-slug는 hasDisplayableReferralOffer가 명시적으로 배제하는 별도 조건이라 여전히 숨는다
+// (.claude/contexts/referral-pricing-architecture.md §2 "제품 정책 — 자동 자기감지만 차단한다").
+// 인플루언서가 로그인만 했다고 사이트 전역에 자기 프로모션이 뜨면 안 된다는 정책 검증이지,
+// 이 테스트의 구독 이력 1건은 배지 숨김의 원인이 아니다 — own-slug 자체가 원인이다.
 // 홈의 PlanPicker가 같은 배지 컴포넌트를 쓰므로 여기서 검증한다.
 // ──────────────────────────────────────────────────────────────────────────────
 

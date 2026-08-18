@@ -97,11 +97,14 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const detailImages = PACKAGE_DETAIL_IMAGES[selectedTier];
   const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
-  const { unitPrice, additionalDiscountPct, inviteEligible } = useReferralPricing();
+  // `/subscribe/detail` — 마케팅 계층. 적격 판정은 `/order`가 한다.
+  const { unitPrice, additionalDiscountPct, discountApplied } = useReferralPricing({
+    intent: "promotional",
+  });
 
   const originalPrice = selectedPlan.originalPrice ?? selectedPlan.monthlyPrice;
   const discountedUnitPrice = unitPrice(selectedPlan.monthlyPrice);
-  const hasDiscount = inviteEligible || (selectedPlan.discountRate ?? 0) > 0;
+  const hasDiscount = discountApplied || (selectedPlan.discountRate ?? 0) > 0;
   const salePrice = discountedUnitPrice * quantity;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
@@ -192,7 +195,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
               {formatWon(discountedUnitPrice)}
             </span>
-            {inviteEligible && (
+            {discountApplied && (
               <ReferralAdditionalDiscountChip pct={additionalDiscountPct} inline />
             )}
           </div>
@@ -429,7 +432,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
                   {formatWon(discountedUnitPrice)}
                 </span>
-                {inviteEligible && (
+                {discountApplied && (
                   <ReferralAdditionalDiscountChip pct={additionalDiscountPct} inline />
                 )}
               </div>

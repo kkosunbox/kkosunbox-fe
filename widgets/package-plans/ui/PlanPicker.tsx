@@ -19,7 +19,7 @@ import {
   PackageNutritionGuide,
   type PackageTier,
 } from "@/entities/package";
-import { useReferralPricing } from "@/features/referral/model";
+import { useReferralPricing, type ReferralPricingIntent } from "@/features/referral/model";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { trackSelectItem } from "@/shared/lib/analytics";
@@ -37,13 +37,13 @@ function formatMonthlyPrice(n: number) {
 /** 할인 표시 정보 (할인율·정가). 할인이 없는 플랜(discountRate 없음 + 초대코드 미적용)이면 null. */
 function planDiscountInfo(
   plan: Pick<SubscriptionPlanDto, "monthlyPrice" | "originalPrice" | "discountRate">,
-  inviteEligible: boolean,
+  discountApplied: boolean,
   combinedDiscountPct: (p: { monthlyPrice: number; originalPrice?: number | null }) => number,
 ): { pct: number; original: number } | null {
-  const hasDiscount = inviteEligible || (plan.discountRate ?? 0) > 0;
+  const hasDiscount = discountApplied || (plan.discountRate ?? 0) > 0;
   if (!hasDiscount) return null;
   return {
-    pct: inviteEligible ? combinedDiscountPct(plan) : (plan.discountRate ?? 0),
+    pct: discountApplied ? combinedDiscountPct(plan) : (plan.discountRate ?? 0),
     original: plan.originalPrice ?? plan.monthlyPrice,
   };
 }
@@ -142,6 +142,16 @@ export interface PlanPickerProps {
    * - "charcoal": #2F2F2F(--color-text) — 메인 홈 제품 상세보기 전용
    */
   primaryButtonVariant?: "default" | "orange" | "charcoal";
+  /**
+   * 이 화면이 마케팅 계층인가 결제 계층인가.
+   *
+   * **기본값 "actual"(정가 기준)은 의도된 것이다.** 새 사용처가 실수로 초대 할인을 약속하면
+   * 백엔드가 부적격 코드를 조용히 무시하고 정가를 청구해 표시가와 청구액이 어긋난다.
+   * 낙관적 표시가 필요한 마케팅 화면만 "promotional"을 **명시적으로** 넘긴다.
+   *
+   * 화면별 배정: `.claude/contexts/referral-pricing-architecture.md` §2
+   */
+  pricingIntent?: ReferralPricingIntent;
 }
 
 export default function PlanPicker({
@@ -154,6 +164,7 @@ export default function PlanPicker({
   summaryOrder = DEFAULT_SUMMARY_ORDER,
   mobileSlot,
   primaryButtonVariant = "default",
+  pricingIntent = "actual",
 }: PlanPickerProps) {
   const sortedPlans = useMemo(
     () => [...plans].sort(comparePlansForDisplayOrder),
@@ -169,9 +180,9 @@ export default function PlanPicker({
 
   const activePlan = planForTier(sortedPlans, displayTier);
 
-  const { unitPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
-    useReferralPricing();
-  const activeDiscount = activePlan ? planDiscountInfo(activePlan, inviteEligible, combinedDiscountPct) : null;
+  const { unitPrice, combinedDiscountPct, additionalDiscountPct, discountApplied } =
+    useReferralPricing({ intent: pricingIntent });
+  const activeDiscount = activePlan ? planDiscountInfo(activePlan, discountApplied, combinedDiscountPct) : null;
 
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
@@ -323,7 +334,7 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {inviteEligible ? (
+                    {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-3 top-3"
@@ -474,7 +485,7 @@ export default function PlanPicker({
               const isSelected = selectedTier === tier;
               const showSelectionState = showSelectedCardHighlight;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
-              const discount = plan ? planDiscountInfo(plan, inviteEligible, combinedDiscountPct) : null;
+              const discount = plan ? planDiscountInfo(plan, discountApplied, combinedDiscountPct) : null;
 
               return (
                 <button
@@ -498,7 +509,7 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {inviteEligible ? (
+                    {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-2 top-2"
@@ -562,7 +573,7 @@ export default function PlanPicker({
               const img = PACKAGE_SUMMARY_IMAGES[tier];
               const isSelected = selectedTier === tier;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
-              const discount = plan ? planDiscountInfo(plan, inviteEligible, combinedDiscountPct) : null;
+              const discount = plan ? planDiscountInfo(plan, discountApplied, combinedDiscountPct) : null;
 
               return (
                 <button
@@ -586,7 +597,7 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {inviteEligible ? (
+                    {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-2 top-2"

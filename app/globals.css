@@ -254,6 +254,12 @@
 
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
+  /* Hero 슬라이드3(강아지) 데스크탑 좌우 여백 — 이미지 원본 비율 유지 시 노출되는 여백을 이미지 좌우 끝 색으로 채움 */
+  --gradient-hero-dog-fill: linear-gradient(to right, #F6E8D9 50%, #E1C2A6 50%);
+  /* Hero 슬라이드1(맞춤간식) 배경 — 강아지 컷아웃 이미지 뒤에 깔리는 옐로 그라디언트 */
+  --gradient-hero-custom-snack: linear-gradient(180deg, #FDEB9A 0%, #FDE692 72.55%, #FED766 100%);
+
+
   --gradient-inquiry-bg: linear-gradient(105deg, var(--color-surface-warm) 0%, #ffffff 40%, var(--color-card-standard) 100%);
   /* 문의 페이지 히어로 (Figma: blue→peach, 263.72deg) */
   --gradient-inquiry-hero: linear-gradient(263.72deg, rgba(173, 206, 255, 0.5) -25.5%, rgba(254, 234, 215, 0.5) 57.97%);

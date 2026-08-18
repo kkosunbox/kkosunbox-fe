@@ -160,6 +160,8 @@
 | Token | 값 | 용도 |
 |---|---|---|
 | `--gradient-hero` | `radial-gradient(#F9D6B5→#ECA265)` | Hero 섹션 배경 |
+| `--gradient-hero-dog-fill` | `linear-gradient(→, #F6E8D9 50% / #E1C2A6 50%)` | Hero 슬라이드3(강아지) 데스크탑 좌우 여백 채움 (하드스톱, 사실상 단색 2분할) |
+| `--gradient-hero-custom-snack` | `linear-gradient(180deg, #FDEB9A→#FDE692→#FED766)` | Hero 슬라이드1(맞춤간식) 배경 (강아지 컷아웃 이미지 뒤) |
 | `--gradient-inquiry-hero` | `linear-gradient(263.72deg, …)` | 문의 페이지 상단 히어로 (블루→피치) |
 | `--gradient-checklist-hero` | `linear-gradient(268.21deg, …)` | 체크리스트 페이지 상단 히어로 (피치→크림) |
 

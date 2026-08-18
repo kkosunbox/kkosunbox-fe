@@ -69,6 +69,8 @@ export default function PackagePlansSection() {
       {/* PlanPicker가 자체적으로 max-md:px-5 md:px-6 lg:px-0 좌우 패딩을 적용하므로
           위 헤더 wrapper와 중복 적용되지 않도록 별도 wrapper 없이 렌더링한다. */}
       <PlanPicker
+        // 마케팅 계층 — 초대 맥락이 있으면 적격 판정과 무관하게 할인가를 보여준다.
+        pricingIntent="promotional"
         plans={apiPlans}
         plansReady={plansReady}
         summaryOrder={HOME_SUMMARY_ORDER}

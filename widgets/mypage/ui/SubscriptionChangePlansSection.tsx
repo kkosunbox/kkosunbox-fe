@@ -121,6 +121,10 @@ export default function SubscriptionChangePlansSection({
           </div>
         ) : (
           <PlanPicker
+            // 결제 계층 — `/order`를 거치지 않고 "변경하기"가 changePlan()을 직접 호출하므로
+            // 가격을 확인시켜줄 경계가 없다. 초대 쿠키가 남아 있어도 실제 청구가를 보여줘야 한다.
+            // (pricingIntent 기본값이 "actual"이지만 의도임을 명시한다.)
+            pricingIntent="actual"
             plans={plans}
             initialSelectedTier={initialSelectedTier}
             isCurrentPlan={checkIsCurrentPlan}

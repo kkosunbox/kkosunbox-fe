@@ -560,7 +560,19 @@
       "PowerShell(npx eslint features/delivery-address/ui/AddressFormView.tsx)",
       "PowerShell(npx eslint features/delivery-address/ui/AddressListView.tsx; \"exit=$LASTEXITCODE\")",
       "PowerShell(npx eslint features/delivery-address/ui/AddressFormView.tsx; \"modified_exit=$LASTEXITCODE\")",
-      "PowerShell(npx eslint shared/config/breakpoints.ts; \"untouched_exit=$LASTEXITCODE\")"
+      "PowerShell(npx eslint shared/config/breakpoints.ts; \"untouched_exit=$LASTEXITCODE\")",
+      "Artifact",
+      "PowerShell(npx tsc --noEmit; \"tsc_exit=$LASTEXITCODE\")",
+      "PowerShell(npx eslint features/referral widgets/package-plans widgets/home/package-plans widgets/home/referral-package-plans widgets/mypage/ui/SubscriptionChangePlansSection.tsx widgets/subscribe/plans; \"eslint_exit=$LASTEXITCODE\")",
+      "PowerShell(npx vitest run 2>&1 | Select-Object -Last 25; \"unit_exit=$LASTEXITCODE\")",
+      "Bash(echo \"tsc_exit=$?\")",
+      "Bash(echo \"eslint_exit=$?\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 5; \"dev_server_status=$\\($r.StatusCode\\)\" } catch { \"dev_server_unreachable: $\\($_.Exception.Message\\)\" })",
+      "Bash(mkdir -p /tmp/webp-quality-test)",
+      "Bash(cygpath -u 'C:/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/71dfd7d6-909a-4e90-b71d-344cc43b1364/scratchpad')",
+      "Bash(mkdir -p \"$\\(cygpath -u 'C:/Users/tbrk7/AppData/Local/Temp/claude/C--2026-ggosoonbox/71dfd7d6-909a-4e90-b71d-344cc43b1364/scratchpad'\\)/webp-test\")",
+      "Bash(cp \"/c/Users/tbrk7/Downloads/Group 1000005973.png\" widgets/home/hero/assets/hero-dog-bg.png)",
+      "Bash(rm widgets/home/hero/assets/hero-dog-bg.png)"
     ]
   },
   "disabledMcpjsonServers": [

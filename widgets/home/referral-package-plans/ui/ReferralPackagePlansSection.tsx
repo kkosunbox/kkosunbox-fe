@@ -22,7 +22,9 @@ import ReferralTitleSvg from "./ReferralTitleSvg";
 
 export default function ReferralPackagePlansSection() {
   const router = useRouter();
-  const { influencerName, discountRate, inviteEligible } = useReferral();
+  // `/r/{slug}` 전용 섹션 — 마케팅 계층이므로 표시 술어를 그대로 읽는다.
+  // (`useReferralPricing`을 쓰지 않으므로 intent 스위치가 덮지 못한다 — 여기서 직접 맞춘다.)
+  const { influencerName, discountRate, hasDisplayableReferralOffer } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
 
@@ -100,7 +102,7 @@ export default function ReferralPackagePlansSection() {
                         />
                       );
                     })}
-                    {inviteEligible ? (
+                    {hasDisplayableReferralOffer ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-3 top-3"

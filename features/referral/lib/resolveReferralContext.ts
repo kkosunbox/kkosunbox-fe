@@ -5,7 +5,11 @@ import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { probeSubscriptionHistory } from "@/features/subscription/api/queries";
 import { fetchMyReferralCode, fetchReferralPage, fetchReferralValidation } from "../api/queries";
 import { INVITE_CODE_COOKIE, INVITE_SLUG_COOKIE, isValidInviteCode } from "./inviteCodeCookie";
-import { INERT_REFERRAL_CONTEXT, type ReferralContext } from "./referralContext";
+import {
+  INERT_REFERRAL_CONTEXT,
+  type ReferralContext,
+  type ReferralSource,
+} from "./referralContext";
 
 /**
  * 초대코드(레퍼럴) 상태의 **단일 진실 공급원**.
@@ -47,8 +51,10 @@ export const resolveReferralContext = cache(
     const firstSubscriptionEligible = (await probeSubscriptionHistory(token)) === false;
     const base = { ...INERT_REFERRAL_CONTEXT, firstSubscriptionEligible };
 
+    // 자기감지(`ownSlug`)로 성립한 맥락은 "초대"가 아니다 — 아무도 이 사용자를 초대하지 않았다.
+    // 마케팅 표시 술어가 이 경로를 제외하므로 출처를 구분해 기록한다.
     const resolvedSlug = slug ?? ownSlug;
-    if (resolvedSlug) return fromSlug(resolvedSlug, base);
+    if (resolvedSlug) return fromSlug(resolvedSlug, base, slug ? "slug" : "own-slug");
 
     // slug 없이 코드만 있는 경로(`?r=CODE`). 할인율·적용 가능 여부를 서버가 판정한다.
     //
@@ -58,6 +64,7 @@ export const resolveReferralContext = cache(
     const validation = await fetchReferralValidation(code!, token);
     return {
       ...base,
+      referralSource: "code",
       refCode: code!,
       discountRate: validation?.discountRate ?? 0,
       isReferral: true,
@@ -81,11 +88,17 @@ export const resolveOrderReferralContext = cache(async (): Promise<ReferralConte
   };
 });
 
-async function fromSlug(slug: string, base: ReferralContext): Promise<ReferralContext> {
+async function fromSlug(
+  slug: string,
+  base: ReferralContext,
+  source: Extract<ReferralSource, "slug" | "own-slug">,
+): Promise<ReferralContext> {
   const page = await fetchReferralPage(slug);
+  // 비활성·미존재 slug는 맥락이 성립하지 않은 것으로 본다 — base는 `referralSource: "none"`이다.
   if (!page || !page.isActive) return base;
   return {
     ...base,
+    referralSource: source,
     // 쿠키에 담긴 코드가 이 slug의 코드와 다를 수 있으므로 페이지 응답을 신뢰한다.
     refCode: page.referralCode,
     slug,

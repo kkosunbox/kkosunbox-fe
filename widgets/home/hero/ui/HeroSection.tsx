@@ -8,7 +8,7 @@ import { Button } from "@/shared/ui";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import heroCustomSnackBg from "../assets/hero-custom-snack-bg.webp";
+import heroCustomSnackPuppies from "../assets/hero-custom-snack-puppies.webp";
 import heroCustomSnackHeading from "../assets/hero-custom-snack-heading.svg";
 import heroCustomSnackHeadingMobile from "../assets/hero-custom-snack-heading-mobile.svg";
 import heroCustomSnackBgMobile from "../assets/hero-custom-snack-bg-mobile.webp";
@@ -27,7 +27,7 @@ const DRAG_THRESHOLD = 50;
 
 type HeroSlide = {
   id: string;
-  type: "solid" | "photo" | "fullBg";
+  type: "solid" | "photo" | "gradientCutout";
   bg?: string;
   bgImage?: string;
   mobileBgImage?: string;
@@ -48,8 +48,8 @@ type HeroSlide = {
 const slides: HeroSlide[] = [
   {
     id: "custom-snack",
-    type: "fullBg",
-    bgImage: heroCustomSnackBg.src,
+    type: "gradientCutout",
+    bg: "var(--gradient-hero-custom-snack)",
     mobileBgImage: heroCustomSnackBgMobile.src,
     tabletBgImage: heroCustomSnackBgTablet.src,
     headingImg: heroCustomSnackHeading.src,
@@ -62,7 +62,6 @@ const slides: HeroSlide[] = [
     tags: "#꼬순박스맞춤간식, #우리아이 건강간식, #반려견간식",
     tagsClass:
       "font-medium text-[14px] leading-[17px] text-[var(--color-hero-third-tagline)]",
-    ctaBg: "var(--color-hero-third-cta)",
   },
   {
     id: "truck",
@@ -80,7 +79,7 @@ const slides: HeroSlide[] = [
   {
     id: "dog",
     type: "photo",
-    bg: "var(--color-hero-bg)",
+    bg: "var(--gradient-hero-dog-fill)",
     mobileBgImage: heroDogBgMobile.src,
     tabletBgImage: heroDogBgTablet.src,
     headingImg: heroDogHeading.src,
@@ -187,28 +186,90 @@ export default function HeroSection() {
             style={slide.bg ? { background: slide.bg } : undefined}
           >
             {/* 배경 이미지 — <picture>로 breakpoint별 최적화 (모바일·태블릿·데스크탑 각 1장만 다운로드) */}
-            {(slide.mobileBgImage || slide.bgImage || slide.type === "photo") && (
-              <picture>
-                {slide.mobileBgImage && (
-                  <source media="(max-width: 767px)" srcSet={slide.mobileBgImage} />
-                )}
-                {slide.tabletBgImage && (
-                  <source media="(max-width: 1199px)" srcSet={slide.tabletBgImage} />
-                )}
-                <img
-                  src={slide.type === "photo" ? heroDogBg.src : (slide.bgImage ?? "")}
-                  alt=""
-                  className={[
-                    "absolute inset-0 h-full w-full object-cover",
-                    slide.type === "fullBg"
-                      ? "max-lg:object-center lg:object-[70%_center]"
-                      : "max-lg:object-[70%_center] lg:object-center",
-                  ].join(" ")}
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "auto"}
-                  decoding="async"
-                />
-              </picture>
+            {slide.type === "photo" ? (
+              <>
+                {/* 모바일·태블릿(<1200px): 기존과 동일하게 꽉 채움 */}
+                <div className="lg:hidden absolute inset-0">
+                  <picture>
+                    <source media="(max-width: 767px)" srcSet={heroDogBgMobile.src} />
+                    <img
+                      src={heroDogBgTablet.src}
+                      alt=""
+                      className="h-full w-full object-cover object-[70%_center]"
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : "auto"}
+                      decoding="async"
+                    />
+                  </picture>
+                </div>
+                {/* 데스크탑(≥1200px): 원본 크기(3190×679) 그대로 고정 표시, 가로 중앙 정렬.
+                    화면이 원본보다 넓어지면 slide.bg(좌우 단색)가 그대로 이어져 보인다. */}
+                <div className="max-lg:hidden absolute inset-0 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={heroDogBg.src}
+                    alt=""
+                    width={heroDogBg.width}
+                    height={heroDogBg.height}
+                    className="w-[3190px] h-[679px] max-w-none flex-shrink-0"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    decoding="async"
+                  />
+                </div>
+              </>
+            ) : slide.type === "gradientCutout" ? (
+              <>
+                {/* 모바일·태블릿(<1200px): 기존과 동일하게 꽉 채움 */}
+                <div className="lg:hidden absolute inset-0">
+                  <picture>
+                    <source media="(max-width: 767px)" srcSet={slide.mobileBgImage} />
+                    <img
+                      src={slide.tabletBgImage}
+                      alt=""
+                      className="h-full w-full object-cover object-center"
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : "auto"}
+                      decoding="async"
+                    />
+                  </picture>
+                </div>
+                {/* 데스크탑(≥1200px): 배경은 slide.bg(옐로 그라디언트), 강아지 컷아웃 이미지는
+                    contents wrapper 오른쪽 경계에 걸쳐 배치. 높이는 515px 고정, 텍스트보다
+                    뒤에 그려지도록 z-index 없이(auto) 둔다 — 텍스트 wrapper가 z-10이라 항상 위에 그려짐. */}
+                <div className="max-lg:hidden absolute inset-0 pointer-events-none overflow-hidden">
+                  <div className="relative mx-auto h-full max-w-content">
+                    <img
+                      src={heroCustomSnackPuppies.src}
+                      alt=""
+                      width={heroCustomSnackPuppies.width}
+                      height={heroCustomSnackPuppies.height}
+                      className="absolute right-[-44px] top-1/2 -translate-y-1/2 h-[515px] w-auto max-h-full"
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchPriority={index === 0 ? "high" : "auto"}
+                      decoding="async"
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              (slide.mobileBgImage || slide.bgImage) && (
+                <picture>
+                  {slide.mobileBgImage && (
+                    <source media="(max-width: 767px)" srcSet={slide.mobileBgImage} />
+                  )}
+                  {slide.tabletBgImage && (
+                    <source media="(max-width: 1199px)" srcSet={slide.tabletBgImage} />
+                  )}
+                  <img
+                    src={slide.bgImage ?? ""}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover max-lg:object-[70%_center] lg:object-center"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    decoding="async"
+                  />
+                </picture>
+              )
             )}
 
             <div className="relative z-10 mx-auto max-w-content flex max-lg:flex-col lg:flex-row lg:items-center max-lg:px-5 lg:px-0 max-lg:pt-[82px] h-full lg:min-h-[644px]">
@@ -262,6 +323,7 @@ export default function HeroSection() {
                     style={{
                       background: "var(--color-cta-button)",
                       borderRadius: 8,
+                      fontWeight: 600,
                     }}
                     className="lg:hidden text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 max-lg:h-[40px] max-lg:w-[230px] max-lg:text-[13px]"
                   >
@@ -275,6 +337,7 @@ export default function HeroSection() {
                   style={{
                     background: slide.ctaBg ?? "var(--color-cta-button)",
                     borderRadius: 12,
+                    fontWeight: 600,
                   }}
                   className={[
                     "text-white font-semibold tracking-[-0.04em] leading-[30px] whitespace-nowrap transition-opacity hover:opacity-90 lg:h-[52px] lg:w-[282px] lg:text-[16px]",

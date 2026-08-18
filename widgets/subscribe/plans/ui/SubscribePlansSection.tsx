@@ -101,6 +101,8 @@ export default function SubscribePlansSection({
             </div>
           ) : (
             <PlanPicker
+              // 마케팅 계층 — 초대 맥락이 있으면 적격 판정과 무관하게 할인가를 보여준다.
+              pricingIntent="promotional"
               plans={plans}
               primaryButtonVariant="orange"
               getPrimaryButton={(plan) => ({

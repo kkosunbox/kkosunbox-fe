@@ -123,8 +123,9 @@ export default function ReferralPlanPicker({
     [plans],
   );
 
-  const { unitPrice, combinedDiscountPct, additionalDiscountPct, inviteEligible } =
-    useReferralPricing();
+  // `/r/{slug}` 랜딩 전용 위젯 — 마케팅 계층이므로 항상 promotional이다.
+  const { unitPrice, combinedDiscountPct, additionalDiscountPct, discountApplied } =
+    useReferralPricing({ intent: "promotional" });
 
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
     initialSelectedTier ?? summaryOrder[0],
@@ -258,7 +259,7 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {inviteEligible ? (
+                    {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-3 top-3"
@@ -423,7 +424,7 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {inviteEligible ? (
+                    {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-2 top-2"
@@ -506,7 +507,7 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {inviteEligible ? (
+                    {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
                         className="left-2 top-2"

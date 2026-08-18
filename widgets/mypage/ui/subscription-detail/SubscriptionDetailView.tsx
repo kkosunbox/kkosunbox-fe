@@ -87,7 +87,11 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                     {formatDate(startDate)} ~
                   </Text>
-                  {isScheduled ? null : isEditingBillingDay ? (
+                  {isScheduled ? (
+                    <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
+                      결제일 : 매달 {billingDay}일
+                    </Text>
+                  ) : isEditingBillingDay ? (
                     <div className="flex max-sm:flex-wrap items-center max-sm:gap-1 sm:gap-1.5">
                       <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
                         결제일 :

@@ -21,8 +21,9 @@ const DISPLAY_STATUS_LABEL: Record<ProductOrderDto["displayStatus"], string> = {
   partially_refunded: "부분환불",
 };
 
+/** 주문취소는 배송 준비중(상품준비중) 상태에서만 가능하다. 배송 시작 이후는 환불 플로우로 분리해야 한다. */
 function canCancel(order: ProductOrderDto): boolean {
-  return order.status === "completed" && order.deliveryStatus !== "DeliveryCompleted";
+  return order.status === "completed" && order.displayStatus === "preparing";
 }
 
 function formatDate(iso: string): string {

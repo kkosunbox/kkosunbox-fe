@@ -21,6 +21,12 @@ const CONTACT_PHONE = {
   href: "tel:05066652416",
 } as const;
 
+const CONTACT_EMAIL = {
+  label: "Email",
+  address: "support@petbridgecore.com",
+  href: "mailto:support@petbridgecore.com",
+} as const;
+
 /** Figma SNS 아이콘 stroke/fill — #999999 (= --color-footer-text) */
 const SOCIAL_LINKS = [
   {
@@ -81,8 +87,10 @@ export default function FooterSection() {
             </Fragment>
           ))}
         </p>
-        <p className="mt-2 text-center text-caption-12-m text-[var(--color-footer-text)]">
+        <p className="mt-2 text-center text-caption-12-m leading-[1.8] text-[var(--color-footer-text)]">
           {CONTACT_PHONE.label}: <a href={CONTACT_PHONE.href} className="transition-opacity hover:opacity-80">{CONTACT_PHONE.number}</a>
+          <br />
+          {CONTACT_EMAIL.label}: <a href={CONTACT_EMAIL.href} className="transition-opacity hover:opacity-80">{CONTACT_EMAIL.address}</a>
         </p>
         <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5 flex flex-col items-center gap-2">
           <nav className="flex items-center" aria-label="Footer policy and support links">
@@ -135,6 +143,8 @@ export default function FooterSection() {
               ))}
               <p className="text-body-13-r leading-[24px] tracking-[-0.02em] text-[var(--color-footer-text)]">
                 {CONTACT_PHONE.label}: <a href={CONTACT_PHONE.href} className="transition-opacity hover:opacity-80">{CONTACT_PHONE.number}</a>
+                <span aria-hidden="true" className="mx-1">|</span>
+                {CONTACT_EMAIL.label}: <a href={CONTACT_EMAIL.href} className="transition-opacity hover:opacity-80">{CONTACT_EMAIL.address}</a>
               </p>
             </div>
           </div>

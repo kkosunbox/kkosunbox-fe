@@ -74,6 +74,13 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
               decoding="async"
               className="absolute inset-0 h-full w-full object-cover object-center scale-105"
             />
+            {subscription.isPaused && (
+              <>
+                <div className="absolute inset-0 z-10 scale-105 bg-black/30" aria-hidden="true" />
+                {/* eslint-disable-next-line @next/next/no-img-element -- 첨부 디자인 원본 SVG 유지 */}
+                <img src="/images/subscription-paused.svg" alt="" width="104" height="24" className="absolute left-1/2 top-1/2 z-20 h-auto w-[104px] -translate-x-1/2 -translate-y-1/2 max-md:w-[88px]" aria-hidden="true" />
+              </>
+            )}
           </div>
 
           <div className="flex flex-1 flex-col justify-center gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8 md:py-5 lg:py-5">

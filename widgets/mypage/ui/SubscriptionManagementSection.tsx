@@ -278,7 +278,7 @@ function SubscriptionRow({
     <Link
       href={detailHref}
       className="flex items-stretch overflow-hidden rounded-[20px] bg-[var(--color-surface-light)] max-md:h-[120px] max-md:rounded-[16px] transition-opacity hover:opacity-90"
-      aria-label={`${plan.name} 구독 상세보기`}
+      aria-label={`${plan.name}${isPaused ? " 쉬는 중" : ""} 구독 상세보기`}
     >
       <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-[129px] md:min-h-[170px] lg:min-h-[170px] md:w-[182px] lg:w-[182px]">
         {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
@@ -290,6 +290,13 @@ function SubscriptionRow({
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-center scale-105"
         />
+        {isPaused && (
+          <>
+            <div className="absolute inset-0 z-10 scale-105 bg-black/30" aria-hidden="true" />
+            {/* eslint-disable-next-line @next/next/no-img-element -- 첨부 디자인 원본 SVG 유지 */}
+            <img src="/images/subscription-paused.svg" alt="" width="104" height="24" className="absolute left-1/2 top-1/2 z-20 h-auto w-[104px] -translate-x-1/2 -translate-y-1/2 max-md:w-[88px]" aria-hidden="true" />
+          </>
+        )}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col justify-center max-md:gap-1 md:gap-2 lg:gap-2 max-md:px-4 md:p-5 lg:p-5">

@@ -28,6 +28,10 @@ async function waitForStableRender(page: Page) {
     window.scrollTo(0, 0);
   });
   await page.waitForLoadState("networkidle");
+  // checklist-result 등 카드가 비동기 데이터(cardReady) 로딩 중엔 animate-pulse
+  // 스켈레톤을 렌더하는데, networkidle만으론 이 전환을 못 잡아 스켈레톤 상태 그대로
+  // 캡처되는 레이스가 있었다. 스켈레톤이 사라질 때까지 명시적으로 기다린다.
+  await page.waitForSelector(".animate-pulse", { state: "detached", timeout: 5_000 });
   // next/image 최적화 응답·페이드인 등 networkidle만으론 못 잡는 마지막 정착 시간을
   // 짧은 버퍼로 흡수한다. (img.complete 이벤트 기반 대기는 일부 페이지에서 영원히
   // resolve 안 되는 <img>가 있어 걸어뒀다가 제거함 — 대신 이 버퍼로 대체)

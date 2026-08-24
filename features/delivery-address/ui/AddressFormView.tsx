@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { DeliveryAddress } from "../api/types";
 import {
   createDeliveryAddress,
@@ -17,10 +17,17 @@ interface Props {
   pendingAddress: string;
 }
 
-const LABEL_CLS = "w-[72px] shrink-0 text-body-14-sb text-[var(--color-text)]";
+const LABEL_CLS = "w-[54px] shrink-0 text-body-13-m text-[var(--color-text)]";
 /** Text input height: 40px — see `shared/config/input.ts` */
 const INPUT_CLS =
-  "h-10 flex-1 min-w-0 rounded-[4px] border border-[var(--color-text-muted)] bg-white px-3 text-body-14-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-btn-dark-warm)]";
+  "h-10 flex-1 min-w-0 rounded-[4px] border border-transparent bg-[var(--color-surface-light)] px-3 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-accent-orange)]";
+
+const MEMO_MAX_LENGTH = 40;
+const MEMO_OPTIONS = [
+  "문 앞에 놓아주세요",
+  "부재 시 연락주세요",
+  "배송 전 미리 연락주세요",
+] as const;
 
 export default function AddressFormView({
   editingAddress,
@@ -43,6 +50,14 @@ export default function AddressFormView({
     formatPhoneNumber(digitsOnly(editingAddress?.phoneNumber ?? "")),
   );
   const [memo, setMemo] = useState(editingAddress?.memo ?? "");
+  const [isMemoMenuOpen, setIsMemoMenuOpen] = useState(false);
+  const [isCustomMemo, setIsCustomMemo] = useState(
+    Boolean(editingAddress?.memo) &&
+      !MEMO_OPTIONS.includes(
+        editingAddress?.memo as (typeof MEMO_OPTIONS)[number],
+      ),
+  );
+  const memoInputRef = useRef<HTMLInputElement>(null);
 
   /* 사용 보류 필드 — API/타입에 없음. 필요 시 폼에 다시 연결.
   const [email, setEmail] = useState("");
@@ -105,10 +120,10 @@ export default function AddressFormView({
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-6 pb-8 pt-8">
+    <div className="flex min-h-screen flex-col px-7 pb-7 pt-7">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-subtitle-20-b tracking-tightest text-[var(--color-text)]">
+      <div className="mb-7 flex items-center justify-between">
+        <h2 className="text-subtitle-18-b tracking-tightest text-[var(--color-text)]">
           {isEditing ? "배송지 수정" : "신규 배송지 추가"}
         </h2>
         <button
@@ -129,7 +144,7 @@ export default function AddressFormView({
       </div>
 
       {/* Form fields — 순서·노출: 신규 배송지 모바일 UI 기준 (받는분 → 휴대폰 → 우편번호/찾기 → 기본주소 → 상세 → 배송지명 → 배송메모) */}
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4">
         {/* 받는분 */}
         <div className="flex items-center gap-3">
           <label htmlFor="addr-receiver" className={LABEL_CLS}>
@@ -179,12 +194,12 @@ export default function AddressFormView({
                   onSearchAddress();
                 }
               }}
-              className={`${INPUT_CLS} cursor-pointer bg-[var(--color-surface-light)]`}
+              className={`${INPUT_CLS} cursor-pointer`}
             />
             <button
               type="button"
               onClick={onSearchAddress}
-              className="flex h-10 shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] px-2 py-1 text-body-13-m text-[var(--color-surface-light)] transition-opacity hover:opacity-90"
+              className="flex h-10 w-[61px] shrink-0 items-center justify-center rounded-[4px] bg-[var(--color-cta-button)] text-body-13-m text-white transition-opacity hover:opacity-90"
             >
               주소찾기
             </button>
@@ -200,7 +215,7 @@ export default function AddressFormView({
               value={pendingAddress}
               readOnly
               aria-label="검색된 주소"
-              className={`${INPUT_CLS} cursor-default bg-[var(--color-surface-light)]`}
+              className={`${INPUT_CLS} cursor-default`}
             />
           </div>
         ) : null}
@@ -266,21 +281,102 @@ export default function AddressFormView({
         </div>
 
         {/* 배송메모 */}
-        <div className="flex items-center gap-3">
-          <label htmlFor="addr-memo" className={LABEL_CLS}>
+        <div
+          className="flex items-center gap-3"
+          onBlur={(event) => {
+            if (
+              !event.currentTarget.contains(event.relatedTarget as Node | null)
+            ) {
+              setIsMemoMenuOpen(false);
+            }
+          }}
+        >
+          <label
+            htmlFor="addr-memo"
+            className={`${LABEL_CLS} flex h-10 items-center self-start`}
+          >
             배송메모
           </label>
-          <input
-            id="addr-memo"
-            type="text"
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
-            placeholder="배송 시 요청사항을 입력해주세요"
-            maxLength={50}
-            className={INPUT_CLS}
-          />
-        </div>
+          <div className="relative min-w-0 flex-1">
+            {isCustomMemo ? (
+              <div className="relative pb-5">
+                <input
+                  ref={memoInputRef}
+                  id="addr-memo"
+                  type="text"
+                  value={memo}
+                  onChange={(event) => setMemo(event.target.value)}
+                  onClick={() => setIsMemoMenuOpen(true)}
+                  placeholder="배송 시 요청사항을 입력해주세요"
+                  maxLength={MEMO_MAX_LENGTH}
+                  className={`${INPUT_CLS} w-full`}
+                />
+                <span className="pointer-events-none absolute bottom-0 right-0 text-body-13-r text-[var(--color-text-secondary)]">
+                  {memo.length}/{MEMO_MAX_LENGTH}자
+                </span>
+              </div>
+            ) : (
+              <button
+                id="addr-memo"
+                type="button"
+                onClick={() => setIsMemoMenuOpen((open) => !open)}
+                aria-haspopup="listbox"
+                aria-expanded={isMemoMenuOpen}
+                className={`${INPUT_CLS} flex w-full items-center text-left`}
+              >
+                <span
+                  className={
+                    memo ? undefined : "text-[var(--color-text-secondary)]"
+                  }
+                >
+                  {memo || "배송 시 요청사항을 입력해주세요"}
+                </span>
+              </button>
+            )}
 
+            {isMemoMenuOpen && (
+              <div
+                role="listbox"
+                aria-label="배송메모 선택"
+                className="absolute left-0 right-0 top-10 z-20 mt-1 overflow-hidden rounded-[8px] bg-white py-1 shadow-[0_13px_61px_rgba(169,169,169,0.36)]"
+              >
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isCustomMemo}
+                  onClick={() => {
+                    if (!isCustomMemo) setMemo("");
+                    setIsCustomMemo(true);
+                    setIsMemoMenuOpen(false);
+                    requestAnimationFrame(() => memoInputRef.current?.focus());
+                  }}
+                  className="flex h-10 w-full items-center px-5 text-left text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
+                >
+                  직접 입력하기
+                  <span className="ml-1 text-[var(--color-text-secondary)]">
+                    ({memo.length}/{MEMO_MAX_LENGTH}자)
+                  </span>
+                </button>
+                {MEMO_OPTIONS.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="option"
+                    aria-selected={!isCustomMemo && memo === option}
+                    onClick={() => {
+                      setMemo(option);
+                      setIsCustomMemo(false);
+                      setIsMemoMenuOpen(false);
+                    }}
+                    className="flex h-10 w-full items-center px-5 text-left text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Error */}
@@ -296,7 +392,7 @@ export default function AddressFormView({
           type="button"
           onClick={handleSubmit}
           disabled={saving}
-          className="h-12 w-full rounded-[8px] bg-[var(--color-btn-dark-warm)] text-btn-15-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-btn-15-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "저장 중..." : "저장하기"}
         </button>

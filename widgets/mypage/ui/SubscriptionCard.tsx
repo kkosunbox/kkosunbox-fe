@@ -258,6 +258,7 @@ function SlidePanel({
   const isSubscriptionSlide = slide.kind === "subscription";
   const subscription = slide.kind === "subscription" ? slide.subscription : null;
   const group = slide.kind === "purchase" ? slide.group : null;
+  const isPaused = subscription?.isPaused ?? false;
 
   return (
     <div
@@ -394,6 +395,19 @@ function SlidePanel({
       >
         {view.manageLabel}
       </Link>
+
+      {isPaused && (
+        <div className="pointer-events-none absolute right-12 top-1/2 z-30 flex h-10 w-[110px] -translate-y-1/2 items-center justify-center rounded-[12px] bg-white/90 max-lg:right-4 max-lg:h-9 max-lg:w-[96px]" aria-hidden="true">
+          <span
+            className="h-[17px] w-20 max-lg:h-[15px] max-lg:w-[72px]"
+            style={{
+              backgroundColor: view.colorVar,
+              WebkitMask: "url(/images/subscription-paused-accent.svg) center / contain no-repeat",
+              mask: "url(/images/subscription-paused-accent.svg) center / contain no-repeat",
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -479,7 +493,7 @@ export function SubscriptionCard({
       ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
       : purchaseHref;
     const detailAriaLabel = isSubscriptionSlide
-      ? `${subscription!.plan.name} 구독 상세 보기`
+      ? `${subscription!.plan.name}${subscription!.isPaused ? " 쉬는 중" : ""} 구독 상세 보기`
       : `${group!.productName} 구매 내역 보기`;
     const manageHref = isSubscriptionSlide ? "/mypage/subscription" : purchaseHref;
     const manageLabel = isSubscriptionSlide ? "구독관리" : "구매관리";

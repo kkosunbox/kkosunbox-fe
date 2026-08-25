@@ -5,6 +5,7 @@ const TRANSPARENT_ROUTES = [
   "/purchase",
   "/support",
   "/inquiry",
+  "/partnership",
   "/mypage/review/write",
   "/mypage/subscription/change",
   "/mypage/withdraw",

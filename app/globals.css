@@ -267,7 +267,8 @@
   --gradient-checklist-hero: linear-gradient(268.21deg, rgba(255, 223, 173, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
   /* 구독 플랜 페이지 히어로 (Figma Rectangle 4281, 블루→피치) */
   --gradient-subscribe-plans-hero: linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
-  --gradient-support-banner: linear-gradient(92.78deg, rgba(254, 234, 215, 0.5) 47.68%, rgba(173, 206, 255, 0.5) 105.7%);
+  /* 파트너 CTA 배너 — Figma의 좌우 반전(matrix(-1))을 최종 렌더 방향으로 환산 */
+  --gradient-support-banner: linear-gradient(90deg, #FFF2DA 0%, #FFDDAF 100%);
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-checklist-button-border: linear-gradient(90deg, #FEEAD7 0%, #ADCEFF 100%); /* 체크리스트 CTA 외곽선 — 가로 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */

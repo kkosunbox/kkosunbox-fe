@@ -11,6 +11,14 @@ export function getAttachmentPresignedUrl(body: PresignedUrlRequest) {
   );
 }
 
+/** 제휴·입점 문의 파일 첨부용 Presigned URL 발급 */
+export function getPartnershipInquiryPresignedUrl(body: PresignedUrlRequest) {
+  return apiClient.post<PresignedUrlResponse>(
+    "/v1/asset/partnership-inquiry/presigned-url",
+    body,
+  );
+}
+
 /**
  * 프로필 이미지 업로드용 Presigned URL 발급
  * 허용 포맷 외 파일 전달 시 400 INVALID_FILE_FORMAT

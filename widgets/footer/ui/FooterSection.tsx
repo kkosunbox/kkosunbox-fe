@@ -4,9 +4,10 @@ import Link from "next/link";
 import logoMono from "@/shared/assets/logo-mono.svg";
 
 const FOOTER_LINKS = [
-  { href: "/support", label: "FAQ" },
-  { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Use" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/support", label: "FAQ" },
+  { href: "/partnership", label: "Partnership" },
 ] as const;
 
 const COMPANY_INFO_LINES = [

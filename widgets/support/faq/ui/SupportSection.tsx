@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState, useMemo, type ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
 import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
 import { SupportHero } from "@/widgets/support/shared";
+import PartnershipHandshake from "../assets/partnership-handshake.webp";
 
 /* ── FAQ 데이터 ──────────────────────────────────────────── */
 interface FaqItem {
@@ -264,6 +266,44 @@ export default function SupportSection({
         }`}
       >
       <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
+        {/* ── 파트너 제안 CTA ── */}
+        {showBanner && (
+          <ScrollReveal variant="fade-in" delay={150}>
+            <section
+              className="flex w-full items-center rounded-[12px] max-md:min-h-[196px] max-md:flex-col max-md:justify-center max-md:gap-3 max-md:px-5 max-md:py-4 md:h-[88px] md:flex-row md:px-8 lg:px-10"
+              style={{ background: "var(--gradient-support-banner)" }}
+              aria-labelledby="partnership-banner-title"
+            >
+              <Image
+                src={PartnershipHandshake}
+                alt=""
+                aria-hidden="true"
+                className="h-auto shrink-0 max-md:w-[72px] md:w-[92px]"
+                sizes="(max-width: 767px) 72px, 92px"
+              />
+
+              <div className="min-w-0 max-md:text-center md:ml-6">
+                <h2
+                  id="partnership-banner-title"
+                  className="text-body-16-b tracking-[-0.04em] text-[var(--color-text)]"
+                >
+                  꼬순박스와 함께할 파트너를 기다립니다.🌟
+                </h2>
+                <p className="mt-1 text-body-12-r text-[var(--color-support-banner-heading)]">
+                  꼬순박스와 함께하고 싶으신가요?
+                </p>
+              </div>
+
+              <Link
+                href="/partnership"
+                className="inline-flex shrink-0 items-center justify-center rounded-full bg-white text-body-14-sb text-[var(--color-cta-button)] transition-opacity hover:opacity-85 max-md:h-10 max-md:w-full md:ml-auto md:h-10 md:w-[142px]"
+              >
+                제휴·입점 문의&nbsp;→
+              </Link>
+            </section>
+          </ScrollReveal>
+        )}
+
         {/* ── 모바일·태블릿 (< 1200px): 문의하기 CTA (히어로 아래) ── */}
         {showBanner && (
           <ScrollReveal variant="fade-in" delay={200} className="flex flex-col items-center lg:hidden">

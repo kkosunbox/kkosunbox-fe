@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { MouseEvent, TouchEvent } from "react";
 import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
@@ -19,12 +20,53 @@ import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
 
 const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
+const MOBILE_SWIPE_THRESHOLD_PX = 50;
 
 export default function PackagePlansSection() {
   const router = useRouter();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const suppressClickUntilRef = useRef(0);
+
+  function handleMobileSwipeStart(event: TouchEvent<HTMLDivElement>) {
+    const touch = event.touches[0];
+    swipeStartRef.current = { x: touch.clientX, y: touch.clientY };
+  }
+
+  function handleMobileSwipeEnd(
+    event: TouchEvent<HTMLDivElement>,
+    tier: PackageTier,
+    onTierSelect: (tier: PackageTier) => void,
+    order: PackageTier[],
+  ) {
+    const start = swipeStartRef.current;
+    swipeStartRef.current = null;
+    if (!start) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+    if (
+      Math.abs(deltaX) < MOBILE_SWIPE_THRESHOLD_PX ||
+      Math.abs(deltaX) <= Math.abs(deltaY)
+    ) {
+      return;
+    }
+
+    const currentIndex = order.indexOf(tier);
+    const direction = deltaX < 0 ? 1 : -1;
+    const nextIndex = (currentIndex + direction + order.length) % order.length;
+    suppressClickUntilRef.current = Date.now() + 500;
+    onTierSelect(order[nextIndex]);
+  }
+
+  function handleMobileClickCapture(event: MouseEvent<HTMLDivElement>) {
+    if (Date.now() >= suppressClickUntilRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   useEffect(() => {
     getSubscriptionPlans()
@@ -83,7 +125,13 @@ export default function PackagePlansSection() {
           const activePkg = PACKAGES.find((p) => p.tier === tier);
           const activePlan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
           return (
-            <>
+            <div
+              className="touch-pan-y"
+              onTouchStart={handleMobileSwipeStart}
+              onTouchEnd={(event) => handleMobileSwipeEnd(event, tier, onTierSelect, order)}
+              onTouchCancel={() => { swipeStartRef.current = null; }}
+              onClickCapture={handleMobileClickCapture}
+            >
               <div
                 className="relative w-full rounded-[22px]"
                 style={{ boxShadow: "var(--shadow-card-soft)" }}
@@ -151,7 +199,7 @@ export default function PackagePlansSection() {
                 </div>
               ) : null}
               <PlanTierDots tier={tier} order={order} onTierSelect={onTierSelect} />
-            </>
+            </div>
           );
         }}
       />

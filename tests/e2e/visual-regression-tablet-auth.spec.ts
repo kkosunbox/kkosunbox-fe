@@ -34,7 +34,9 @@ async function waitForStableRender(page: Page) {
   await page.waitForSelector(".animate-pulse", { state: "detached", timeout: 5_000 });
   // next/image 최적화 응답·페이드인 등 networkidle만으론 못 잡는 마지막 정착 시간을
   // 짧은 버퍼로 흡수한다. (img.complete 이벤트 기반 대기는 일부 페이지에서 영원히
-  // resolve 안 되는 <img>가 있어 걸어뒀다가 제거함 — 대신 이 버퍼로 대체)
+  // resolve 안 되는 <img>가 있어 걸어뒀다가 제거함 — 대신 이 버퍼로 대체.
+  // waitForFunction으로 재시도했으나 checklist-result에서 자체 timeout(5s)을
+  // 넘겨 테스트 전체(60s)를 먹통으로 만드는 걸 확인해 다시 제거함, 2026-08-24)
   await page.waitForTimeout(1_000);
 }
 
@@ -46,6 +48,12 @@ const AUTH_ROUTES: Array<{ name: string; path: string; maxDiffPixelRatio?: numbe
   // 이 라우트가 실제 회귀 게이트로 쓰일 땐 별도로 원인 조사 필요.
   { name: "subscribe-detail", path: "/subscribe/detail?planId=1", maxDiffPixelRatio: 0.005 },
   { name: "checklist", path: "/checklist" },
+  // checklist-result: tablet-768에서만 재현. 스탠다드 패키지 explain 이미지가
+  // 캡처 시점에 빈 화면으로 찍힘(diff ~14%, 재실행해도 동일 픽셀 수로 재현).
+  // next/image가 768px 전용 sizes 응답을 다른 폭보다 늦게 내려주는 것으로
+  // 추정되나 확정은 아님. waitForFunction(img.complete)으로 명시 대기를 시도했다가
+  // 자체 timeout(5s)을 못 지키고 테스트 전체를 먹통으로 만들어(위 waitForStableRender
+  // 주석 참고) 되돌림 — 원인 조사는 실제 브라우저에서 별도로 필요.
   { name: "checklist-result", path: "/checklist/result" },
   { name: "inquiry", path: "/inquiry" },
   { name: "support-history", path: "/support/history" },

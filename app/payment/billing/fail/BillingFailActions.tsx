@@ -33,7 +33,7 @@ export default function BillingFailActions() {
     <div className="flex gap-2">
       <Link
         href="/payment?mode=change"
-        className="flex h-11 flex-1 items-center justify-center rounded-lg bg-zinc-900 text-sm font-medium text-white hover:opacity-90"
+        className="flex h-11 flex-1 items-center justify-center rounded-lg bg-[var(--color-cta-button)] text-sm font-medium text-white hover:opacity-90"
       >
         다시 시도
       </Link>

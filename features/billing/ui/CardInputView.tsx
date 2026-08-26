@@ -97,7 +97,7 @@ export default function CardInputView({ existingBilling, onBack, onClose }: Prop
           type="button"
           onClick={handleStartAuth}
           disabled={isPending}
-          className="w-full h-12 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-white text-body-14-sb transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-body-14-sb transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {isPending ? "처리 중…" : "카드 등록하기"}
         </button>

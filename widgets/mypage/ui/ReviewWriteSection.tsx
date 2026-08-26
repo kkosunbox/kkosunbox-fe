@@ -363,7 +363,7 @@ export default function ReviewWriteSection({
             </p>
           </div>
         ) : (
-        <form onSubmit={handleSubmit}>
+        <form className="relative z-10" onSubmit={handleSubmit}>
           <div className="rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
             {/* 뒤로가기 — 카드 상단 */}
             <div className="flex items-center px-5 py-6 max-md:min-h-[56px] md:min-h-[94px] md:px-11 md:py-0 lg:px-11">

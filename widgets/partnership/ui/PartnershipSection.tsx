@@ -229,7 +229,7 @@ export default function PartnershipSection() {
       <PartnershipHero />
 
       <div
-        className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pt-0 md:pb-10 lg:pb-[130px]`}
+        className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pt-0 md:pb-10 lg:pb-[64px]`}
       >
         <form onSubmit={handleSubmit}>
           <section

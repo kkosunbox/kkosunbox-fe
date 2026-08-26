@@ -51,12 +51,12 @@ export default function PaymentMethodView({
               className={[
                 "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors",
                 selected === method
-                  ? "border-2 border-[var(--color-accent)]"
+                  ? "border-2 border-[var(--color-cta-button)]"
                   : "border border-[var(--color-border)]",
               ].join(" ")}
             >
               {selected === method && (
-                <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-cta-button)]" />
               )}
             </button>
             <span className="text-body-14-m leading-[17px] tracking-[-0.02em] text-[var(--color-text)]">
@@ -71,7 +71,7 @@ export default function PaymentMethodView({
         <button
           type="button"
           onClick={onNext}
-          className="w-full h-12 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-white text-body-14-sb transition-opacity hover:opacity-90"
+          className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-body-14-sb transition-opacity hover:opacity-90"
         >
           다음
         </button>

@@ -67,7 +67,7 @@ export default function ExistingBillingView({
       <button
         type="button"
         onClick={onNewCard}
-        className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-text-muted)] bg-white text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
+        className="mt-4 flex h-12 w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-cta-button)] bg-white text-body-14-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80"
       >
         카드 정보 변경
       </button>
@@ -77,7 +77,7 @@ export default function ExistingBillingView({
         <button
           type="button"
           onClick={() => onConfirm(billing)}
-          className="w-full h-12 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-white text-body-14-sb transition-opacity hover:opacity-90"
+          className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-body-14-sb transition-opacity hover:opacity-90"
         >
           이 카드로 결제
         </button>

@@ -116,7 +116,7 @@ export default function BillingChangeView({ billing, autoStart, onClose }: Props
             type="button"
             onClick={() => void startAuth()}
             disabled={isPending}
-            className="h-12 w-full rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {isPending ? "처리 중…" : error ? "다시 시도" : "확인"}
           </button>

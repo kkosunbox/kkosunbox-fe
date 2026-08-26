@@ -79,7 +79,7 @@ export default function AddressListView({
       <button
         type="button"
         onClick={onAddNew}
-        className="mb-6 flex h-12 w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-text-muted)] bg-white text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
+        className="mb-6 flex h-12 w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-cta-button)] bg-white text-body-14-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80"
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path
@@ -127,7 +127,7 @@ export default function AddressListView({
                         fill="none"
                         className="shrink-0"
                       >
-                        <circle cx="8" cy="8" r="8" fill="var(--color-accent)" />
+                        <circle cx="8" cy="8" r="8" fill="var(--color-cta-button)" />
                         <path
                           d="M5 8l2 2 4-4"
                           stroke="white"
@@ -161,7 +161,7 @@ export default function AddressListView({
                   <button
                     type="button"
                     onClick={() => onSelect(addr.id)}
-                    className="shrink-0 rounded-md bg-[var(--color-secondary)] px-3 py-1.5 text-body-13-sb text-[var(--color-btn-dark-warm)] transition-opacity hover:opacity-90"
+                    className="shrink-0 rounded-md bg-[var(--color-cta-button)] px-3 py-1.5 text-body-13-sb text-white transition-opacity hover:opacity-90"
                   >
                     선택
                   </button>
@@ -173,7 +173,7 @@ export default function AddressListView({
                 <button
                   type="button"
                   onClick={() => onEdit(addr)}
-                  className="rounded-md border border-[var(--color-border)] px-3 py-1 text-body-13-m text-[var(--color-text)] transition-opacity hover:opacity-80"
+                  className="rounded-md border border-[var(--color-cta-button)] px-3 py-1 text-body-13-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80"
                 >
                   수정
                 </button>
@@ -181,7 +181,7 @@ export default function AddressListView({
                   type="button"
                   onClick={() => handleDelete(addr.id)}
                   disabled={deletingId === addr.id}
-                  className="rounded-md border border-[var(--color-border)] px-3 py-1 text-body-13-m text-[var(--color-text)] transition-opacity hover:opacity-80 disabled:opacity-50"
+                  className="rounded-md border border-[var(--color-cta-button)] px-3 py-1 text-body-13-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80 disabled:opacity-50"
                 >
                   {deletingId === addr.id ? "삭제 중..." : "삭제"}
                 </button>

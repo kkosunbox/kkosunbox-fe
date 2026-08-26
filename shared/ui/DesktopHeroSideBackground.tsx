@@ -3,7 +3,7 @@ export default function DesktopHeroSideBackground() {
   return (
     <div
       aria-hidden="true"
-      className="absolute inset-x-0 top-0 h-[253px] w-full bg-support-hero-side-bg"
+      className="absolute inset-x-0 top-0 h-[254px] w-full bg-support-hero-side-bg"
     />
   );
 }

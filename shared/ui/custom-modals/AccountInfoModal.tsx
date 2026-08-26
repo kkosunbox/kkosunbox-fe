@@ -103,7 +103,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled, 
         type="button"
         onClick={onRight}
         disabled={rightDisabled}
-        className="h-10 flex-1 rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="h-10 flex-1 rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {rightLabel}
       </button>
@@ -198,7 +198,7 @@ export default function AccountInfoModal({ onClose }: Props) {
                 <button
                   type="button"
                   onClick={() => setView("password-change")}
-                  className="inline-flex h-8 w-[87px] items-center justify-center rounded-[4px] bg-[var(--color-btn-dark-warm)] text-body-13-m-tight text-white transition-opacity hover:opacity-90"
+                  className="inline-flex h-8 w-[87px] items-center justify-center rounded-[4px] bg-[var(--color-cta-button)] text-body-13-m-tight text-white transition-opacity hover:opacity-90"
                 >
                   비밀번호 변경
                 </button>

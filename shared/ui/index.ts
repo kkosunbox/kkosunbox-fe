@@ -41,3 +41,4 @@ export { default as JsonLd } from "./JsonLd";
 export { CollapsiblePanel, SectionCard, Checkbox, RadioButton, FormRow } from "./FormParts";
 export { FORM_INPUT_CLASS, FORM_ACTION_CHIP_CLASS, FORM_ACTION_CHIP_SMALL_CLASS } from "./formFieldStyles";
 export { QuantityMinusIcon, QuantityPlusIcon, ChevronIcon } from "./FormPartsIcons";
+export { default as DesktopHeroSideBackground } from "./DesktopHeroSideBackground";

@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChecklistRecommendModal, ScrollReveal } from "@/shared/ui";
+import { ChecklistRecommendModal, DesktopHeroSideBackground, ScrollReveal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
@@ -73,7 +73,7 @@ export default function SubscribePlansSection({
               {/* 데스크톱 (≥1200px) */}
               <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
                 <div className="relative w-full h-[306px]">
-                  <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+                  <DesktopHeroSideBackground />
                   <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
                     <img
                       src={SubscribePlansHeroImage.src}

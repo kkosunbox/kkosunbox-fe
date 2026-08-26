@@ -231,7 +231,7 @@ export default function PartnershipSection() {
       <div
         className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pt-0 md:pb-10 lg:pb-[64px]`}
       >
-        <form onSubmit={handleSubmit}>
+        <form className="relative z-10" onSubmit={handleSubmit}>
           <section
             className="flex rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:min-h-0 max-md:flex-col md:min-h-[688px] md:flex-col"
             aria-labelledby="partnership-form-title"

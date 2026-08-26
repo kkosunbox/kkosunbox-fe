@@ -283,7 +283,7 @@ export default function SupportSection({
                   꼬순박스와 함께할 파트너를 기다립니다.🌟
                 </h2>
                 <p className="mt-1 text-body-12-r text-[var(--color-support-banner-heading)]">
-                  꼬순박스와 함께하고 싶으신가요?
+                  꼬순박스와 함께하고 싶으신가요? 언제든 문의해주세요.
                 </p>
               </div>
 

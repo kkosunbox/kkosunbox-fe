@@ -20,6 +20,7 @@ const MAX_ATTACHMENTS = 10;
 const MAX_REFERENCE_LINKS = 10;
 const ACCEPT_ATTACHMENT =
   "image/jpeg,image/png,image/webp,image/gif,application/pdf";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface PartnershipFormState {
   companyName: string;
@@ -28,6 +29,8 @@ interface PartnershipFormState {
   email: string;
   content: string;
 }
+
+type PartnershipFormErrors = Partial<Record<keyof PartnershipFormState, string>>;
 
 const initialForm: PartnershipFormState = {
   companyName: "",
@@ -48,6 +51,15 @@ function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React
     <label htmlFor={htmlFor} className={labelClass}>
       {children} <span className="text-[var(--color-stats-icon-blue)]">*</span>
     </label>
+  );
+}
+
+function InlineFieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={id} className="pl-1 text-body-13-m text-red-600" role="alert">
+      {message}
+    </p>
   );
 }
 
@@ -74,7 +86,7 @@ export default function PartnershipSection() {
   const [form, setForm] = useState<PartnershipFormState>(initialForm);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [referenceLinks, setReferenceLinks] = useState([""]);
-  const [contactError, setContactError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<PartnershipFormErrors>({});
 
   useEffect(() => {
     if (!isAuthLoading && !isLoggedIn) {
@@ -84,22 +96,55 @@ export default function PartnershipSection() {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
+    const fieldName = name as keyof PartnershipFormState;
+    setFieldErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleContactChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setContactError(null);
+    setFieldErrors((prev) => ({ ...prev, contact: undefined }));
     setForm((prev) => ({
       ...prev,
       contact: formatPhoneNumber(digitsOnly(event.target.value)),
     }));
   };
 
-  const handleContactBlur = () => {
-    const rawContact = digitsOnly(form.contact);
-    if (rawContact && !isValidKoreanPhone(rawContact)) {
-      setContactError("올바른 전화번호 형식이 아닙니다.");
+  const getFieldError = (name: keyof PartnershipFormState, value: string) => {
+    if (!value.trim()) {
+      const requiredMessages: Record<keyof PartnershipFormState, string> = {
+        companyName: "회사 / 브랜드명을 작성해주세요.",
+        managerName: "담당자명 / 직급을 작성해주세요.",
+        contact: "연락처를 작성해주세요.",
+        email: "이메일을 작성해주세요.",
+        content: "문의내용을 작성해주세요.",
+      };
+      return requiredMessages[name];
     }
+
+    if (name === "contact" && !isValidKoreanPhone(digitsOnly(value))) {
+      return "올바른 전화번호 형식이 아닙니다.";
+    }
+    if (name === "email" && !EMAIL_PATTERN.test(value.trim())) {
+      return "올바른 이메일 형식이 아닙니다.";
+    }
+    return undefined;
+  };
+
+  const handleFieldBlur = (name: keyof PartnershipFormState) => {
+    setFieldErrors((prev) => ({ ...prev, [name]: getFieldError(name, form[name]) }));
+  };
+
+  const validateForm = () => {
+    const errors = (Object.keys(form) as (keyof PartnershipFormState)[]).reduce(
+      (nextErrors, name) => {
+        const error = getFieldError(name, form[name]);
+        if (error) nextErrors[name] = error;
+        return nextErrors;
+      },
+      {} as PartnershipFormErrors,
+    );
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,17 +198,9 @@ export default function PartnershipSection() {
     });
   };
 
-  const isSubmittable =
-    form.companyName.trim() &&
-    form.managerName.trim() &&
-    form.contact.trim() &&
-    form.email.trim() &&
-    form.content.trim() &&
-    !contactError;
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!isSubmittable) return;
+    if (!validateForm()) return;
 
     const companyName = form.companyName.trim();
     const contactName = form.managerName.trim();
@@ -205,7 +242,7 @@ export default function PartnershipSection() {
         setForm(initialForm);
         setAttachments([]);
         setReferenceLinks([""]);
-        setContactError(null);
+        setFieldErrors({});
         openAlert({
           type: "success",
           title: "제휴·입점 문의가 접수되었습니다.",
@@ -231,7 +268,7 @@ export default function PartnershipSection() {
       <div
         className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pt-0 md:pb-10 lg:pb-[64px]`}
       >
-        <form className="relative z-10" onSubmit={handleSubmit}>
+        <form className="relative z-10" noValidate onSubmit={handleSubmit}>
           <section
             className="flex rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:min-h-0 max-md:flex-col md:min-h-[688px] md:flex-col"
             aria-labelledby="partnership-form-title"
@@ -266,8 +303,12 @@ export default function PartnershipSection() {
                     placeholder="회사 / 브랜드명을 작성해주세요"
                     value={form.companyName}
                     onChange={handleChange}
+                    onBlur={() => handleFieldBlur("companyName")}
+                    aria-invalid={Boolean(fieldErrors.companyName)}
+                    aria-describedby={fieldErrors.companyName ? "companyName-error" : undefined}
                     className={fieldClass}
                   />
+                  <InlineFieldError id="companyName-error" message={fieldErrors.companyName} />
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-2">
@@ -281,8 +322,12 @@ export default function PartnershipSection() {
                     placeholder="담당자명 / 직급을 작성해주세요"
                     value={form.managerName}
                     onChange={handleChange}
+                    onBlur={() => handleFieldBlur("managerName")}
+                    aria-invalid={Boolean(fieldErrors.managerName)}
+                    aria-describedby={fieldErrors.managerName ? "managerName-error" : undefined}
                     className={fieldClass}
                   />
+                  <InlineFieldError id="managerName-error" message={fieldErrors.managerName} />
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-2">
@@ -297,14 +342,15 @@ export default function PartnershipSection() {
                     placeholder="연락처를 작성해주세요"
                     value={form.contact}
                     onChange={handleContactChange}
-                    onBlur={handleContactBlur}
+                    onBlur={() => handleFieldBlur("contact")}
+                    aria-invalid={Boolean(fieldErrors.contact)}
+                    aria-describedby={fieldErrors.contact ? "partnership-contact-error" : undefined}
                     className={fieldClass}
                   />
-                  {contactError && (
-                    <p className="pl-1 text-body-13-m text-red-600" role="alert">
-                      {contactError}
-                    </p>
-                  )}
+                  <InlineFieldError
+                    id="partnership-contact-error"
+                    message={fieldErrors.contact}
+                  />
                 </div>
 
                 <div className="flex min-w-0 flex-col gap-2">
@@ -317,8 +363,12 @@ export default function PartnershipSection() {
                     placeholder="이메일을 작성해주세요"
                     value={form.email}
                     onChange={handleChange}
+                    onBlur={() => handleFieldBlur("email")}
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={fieldErrors.email ? "partnership-email-error" : undefined}
                     className={fieldClass}
                   />
+                  <InlineFieldError id="partnership-email-error" message={fieldErrors.email} />
                 </div>
 
                 <div className="flex min-w-0 flex-col md:col-span-2">
@@ -333,7 +383,14 @@ export default function PartnershipSection() {
                       placeholder="문의 내용을 작성해주세요"
                       value={form.content}
                       onChange={handleChange}
+                      onBlur={() => handleFieldBlur("content")}
+                      aria-invalid={Boolean(fieldErrors.content)}
+                      aria-describedby={fieldErrors.content ? "partnership-content-error" : undefined}
                       className="h-[124px] w-full resize-none rounded-[8px] bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+                    />
+                    <InlineFieldError
+                      id="partnership-content-error"
+                      message={fieldErrors.content}
                     />
                   </div>
                   <p className="mt-1 self-end text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80">

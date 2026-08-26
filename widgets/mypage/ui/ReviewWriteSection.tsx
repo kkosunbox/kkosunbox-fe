@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { createReview, getMyReviews, updateReview } from "@/features/review/api";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
+import { DesktopHeroSideBackground } from "@/shared/ui";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getReviewImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
@@ -339,7 +340,7 @@ export default function ReviewWriteSection({
         {/* 데스크톱 (≥1200px) */}
         <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
           <div className="relative w-full h-[306px]">
-            <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+            <DesktopHeroSideBackground />
             <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
               <img
                 src={reviewWriteHeroDesktop.src}

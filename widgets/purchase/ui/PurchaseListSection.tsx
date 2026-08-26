@@ -13,6 +13,7 @@ import {
 import type { ProductDto } from "@/features/product/api/types";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import { DesktopHeroSideBackground } from "@/shared/ui";
 import PurchaseHeroImage from "../assets/purchase-hero.webp";
 import PurchaseHeroImageTablet from "../assets/purchase-hero-tablet.webp";
 import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
@@ -61,7 +62,7 @@ export default function PurchaseListSection({
         {/* 데스크톱 (≥ 1200px) */}
         <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
           <div className="relative w-full h-[306px]">
-            <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+            <DesktopHeroSideBackground />
             <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
               <img
                 src={PurchaseHeroImage.src}

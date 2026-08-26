@@ -3,8 +3,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ScrollReveal } from "@/shared/ui";
-import { useLoadingOverlay, useModal } from "@/shared/ui";
+import { DesktopHeroSideBackground, ScrollReveal, useLoadingOverlay, useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
@@ -93,7 +92,7 @@ export default function SubscriptionChangePlansSection({
             {/* 데스크톱 (≥1200px) */}
             <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
               <div className="relative w-full h-[306px]">
-                <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+                <DesktopHeroSideBackground />
                 <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
                   <img
                     src={subscriptionChangeHeroDesktop.src}

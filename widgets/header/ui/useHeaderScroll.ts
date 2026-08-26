@@ -8,7 +8,10 @@ export function useHeaderScroll(pathname: string) {
     const handleScroll = () => {
       const y = window.scrollY;
       setIsScrolled(y > 0);
-      setIsBannerCollapsed(y > 36);
+      // 짧은 페이지에서는 배너가 접히며 문서 높이가 줄어 scrollY가 임계값 아래로
+      // 밀릴 수 있다. 같은 임계값으로 다시 펼치면 접힘/펼침이 반복되므로,
+      // 한 번 접힌 배너는 실제 최상단에 도달했을 때만 복원한다.
+      setIsBannerCollapsed((collapsed) => (collapsed ? y > 0 : y > 36));
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });

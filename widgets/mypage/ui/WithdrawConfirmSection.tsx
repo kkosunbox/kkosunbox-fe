@@ -9,7 +9,7 @@ import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
-import { useLoadingOverlay, useModal } from "@/shared/ui";
+import { DesktopHeroSideBackground, useLoadingOverlay, useModal } from "@/shared/ui";
 
 /* ── 탈퇴 사유 옵션 ──────────────────────────────────────────────── */
 
@@ -369,7 +369,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
         {/* 데스크톱 (≥1200px) */}
         <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
           <div className="relative w-full h-[306px]">
-            <div className="absolute inset-x-0 top-0 h-[256px] w-full bg-support-hero-side-bg" />
+            <DesktopHeroSideBackground />
             <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
               <img

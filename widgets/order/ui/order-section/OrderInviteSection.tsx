@@ -1,4 +1,5 @@
 import type { InviteSectionMode } from "@/features/order";
+import { INVITE_CODE_MAX_LENGTH } from "@/features/referral/lib";
 import {
   FORM_ACTION_CHIP_CLASS as actionChipCls,
   FORM_INPUT_CLASS as inputCls,
@@ -49,6 +50,7 @@ export function OrderInviteSection({
               <input
                 value={inviteCodeInput}
                 onChange={(e) => onInviteCodeChange(e.target.value)}
+                maxLength={INVITE_CODE_MAX_LENGTH}
                 disabled={isInviteInputLocked}
                 className={`${inputCls} flex-1 min-w-0 disabled:cursor-not-allowed disabled:opacity-60`}
                 placeholder="초대코드를 입력해주세요."

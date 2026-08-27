@@ -16,8 +16,11 @@ export const INVITE_CODE_COOKIE = "ggosoon-ref";
 /** 어트리뷰션 윈도우 — 진입 후 7일간 초대 코드를 유지한다. */
 export const INVITE_CODE_MAX_AGE_SEC = 60 * 60 * 24 * 7;
 
-/** 허용 코드 형식 (영숫자·`-`·`_`, 최대 64자). 쿠키 인젝션 방지용 화이트리스트. */
-const INVITE_CODE_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+/** 초대 코드 최대 길이. */
+export const INVITE_CODE_MAX_LENGTH = 64;
+
+/** 허용 코드 형식 (영숫자·`-`·`_`). 쿠키 인젝션 방지용 화이트리스트. */
+const INVITE_CODE_PATTERN = new RegExp(`^[A-Za-z0-9_-]{1,${INVITE_CODE_MAX_LENGTH}}$`);
 
 export function isValidInviteCode(code: string): boolean {
   return INVITE_CODE_PATTERN.test(code);

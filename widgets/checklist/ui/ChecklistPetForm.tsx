@@ -17,10 +17,10 @@ import {
 } from "@/shared/ui";
 import { getPetBirthMaxDate, getPetBirthMinDate } from "@/shared/config/profile";
 import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
+import { PET_SPECIAL_NOTES_MAX_LENGTH, PET_NAME_MAX_LENGTH } from "@/shared/config/inputLimits";
 import type { PetInfo } from "./types";
 
 const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
-const SPECIAL_NOTES_MAX_LENGTH = 200;
 
 function formatBirthDateDisplay(date: Date): string {
   const y = date.getFullYear();
@@ -135,6 +135,7 @@ export default function ChecklistPetForm({
               placeholder="이름"
               value={petInfo.name}
               onChange={(e) => setPetInfo((p) => ({ ...p, name: e.target.value }))}
+              maxLength={PET_NAME_MAX_LENGTH}
               className={PROFILE_PET_INPUT}
             />
           </div>
@@ -217,7 +218,7 @@ export default function ChecklistPetForm({
               type="text"
               placeholder={SPECIAL_NOTES_PLACEHOLDER}
               value={petInfo.specialNotes}
-              maxLength={SPECIAL_NOTES_MAX_LENGTH}
+              maxLength={PET_SPECIAL_NOTES_MAX_LENGTH}
               onChange={(e) => setPetInfo((p) => ({ ...p, specialNotes: e.target.value }))}
               className={PROFILE_PET_INPUT}
             />

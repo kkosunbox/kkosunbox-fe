@@ -1,7 +1,6 @@
 export const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 export const ACCEPT_IMAGE = "image/jpeg,image/png,image/webp,image/gif";
 export const SPECIAL_NOTES_PLACEHOLDER = "예) 푸드퍼즐 간식을 좋아해요.";
-export const SPECIAL_NOTES_MAX_LENGTH = 200;
 
 export function birthDateInputValue(profileBirth: string | null | undefined): string {
   if (!profileBirth?.trim()) return "";

@@ -9,6 +9,7 @@ import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import { WITHDRAWAL_REASON_MAX_LENGTH } from "@/shared/config/inputLimits";
 import { DesktopHeroSideBackground, useLoadingOverlay, useModal } from "@/shared/ui";
 
 /* ── 탈퇴 사유 옵션 ──────────────────────────────────────────────── */
@@ -178,6 +179,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
                 type="text"
                 value={etcText}
                 onChange={(e) => setEtcText(e.target.value)}
+                maxLength={WITHDRAWAL_REASON_MAX_LENGTH}
                 placeholder="탈퇴 이유를 작성해주세요."
                 disabled={!isEtc}
                 className="h-10 w-[271px] rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] disabled:opacity-50"
@@ -301,6 +303,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
                 type="text"
                 value={etcText}
                 onChange={(e) => setEtcText(e.target.value)}
+                maxLength={WITHDRAWAL_REASON_MAX_LENGTH}
                 placeholder="탈퇴 이유를 작성해주세요."
                 className="ml-8 h-10 rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)]"
               />

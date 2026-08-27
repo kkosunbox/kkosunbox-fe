@@ -7,7 +7,11 @@ import {
   updateDeliveryAddress,
 } from "../api/deliveryAddressApi";
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
-import { DELIVERY_ADDRESS_FIELD_MAX_LENGTH } from "@/shared/config/inputLimits";
+import {
+  DELIVERY_RECEIVER_NAME_MAX_LENGTH,
+  DELIVERY_ADDRESS_DETAIL_MAX_LENGTH,
+  DELIVERY_ADDRESS_NICKNAME_MAX_LENGTH,
+} from "@/shared/config/inputLimits";
 
 interface Props {
   editingAddress: DeliveryAddress | null;
@@ -75,12 +79,16 @@ export default function AddressFormView({
       setError("받는분을 입력해주세요.");
       return;
     }
-    if (
-      receiverName.trim().length > DELIVERY_ADDRESS_FIELD_MAX_LENGTH ||
-      addressDetail.trim().length > DELIVERY_ADDRESS_FIELD_MAX_LENGTH ||
-      nickname.trim().length > DELIVERY_ADDRESS_FIELD_MAX_LENGTH
-    ) {
-      setError(`배송지 입력은 항목별 ${DELIVERY_ADDRESS_FIELD_MAX_LENGTH}자 이하로 입력해주세요.`);
+    if (receiverName.trim().length > DELIVERY_RECEIVER_NAME_MAX_LENGTH) {
+      setError(`받는분은 ${DELIVERY_RECEIVER_NAME_MAX_LENGTH}자 이하로 입력해주세요.`);
+      return;
+    }
+    if (addressDetail.trim().length > DELIVERY_ADDRESS_DETAIL_MAX_LENGTH) {
+      setError(`상세 주소는 ${DELIVERY_ADDRESS_DETAIL_MAX_LENGTH}자 이하로 입력해주세요.`);
+      return;
+    }
+    if (nickname.trim().length > DELIVERY_ADDRESS_NICKNAME_MAX_LENGTH) {
+      setError(`배송지명은 ${DELIVERY_ADDRESS_NICKNAME_MAX_LENGTH}자 이하로 입력해주세요.`);
       return;
     }
     if (!pendingZipCode || !pendingAddress) {
@@ -162,7 +170,7 @@ export default function AddressFormView({
           <input
             id="addr-receiver"
             type="text"
-            maxLength={DELIVERY_ADDRESS_FIELD_MAX_LENGTH}
+            maxLength={DELIVERY_RECEIVER_NAME_MAX_LENGTH}
             value={receiverName}
             onChange={(e) => setReceiverName(e.target.value)}
             placeholder="이름"
@@ -235,7 +243,7 @@ export default function AddressFormView({
           <span className={LABEL_CLS} aria-hidden />
           <input
             type="text"
-            maxLength={DELIVERY_ADDRESS_FIELD_MAX_LENGTH}
+            maxLength={DELIVERY_ADDRESS_DETAIL_MAX_LENGTH}
             value={addressDetail}
             onChange={(e) => setAddressDetail(e.target.value)}
             placeholder="상세 주소를 입력해주세요"
@@ -284,7 +292,7 @@ export default function AddressFormView({
           <input
             id="addr-nickname"
             type="text"
-            maxLength={DELIVERY_ADDRESS_FIELD_MAX_LENGTH}
+            maxLength={DELIVERY_ADDRESS_NICKNAME_MAX_LENGTH}
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="배송지명을 입력해주세요"

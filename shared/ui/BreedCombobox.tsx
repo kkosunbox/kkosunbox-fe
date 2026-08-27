@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { DOG_BREED_OPTIONS, MIX_BREED_NAME, type DogBreedOption } from "@/shared/config/dogBreeds";
+import { PET_BREED_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 const MAX_VISIBLE_BREED_OPTIONS = 300;
 
@@ -235,6 +236,7 @@ export default function BreedCombobox({
               : undefined
           }
           autoComplete="off"
+          maxLength={PET_BREED_MAX_LENGTH}
           value={query}
           onChange={(event) => {
             const text = event.target.value;

@@ -8,9 +8,9 @@ import {
   getProfileDisplayName,
 } from "@/shared/config/profile";
 import { sanitizeWeightInput } from "@/shared/lib/profile/weightInput";
+import { PET_SPECIAL_NOTES_MAX_LENGTH, PET_NAME_MAX_LENGTH } from "@/shared/config/inputLimits";
 import { BreedCombobox, DatePicker } from "@/shared/ui";
 import {
-  SPECIAL_NOTES_MAX_LENGTH,
   SPECIAL_NOTES_PLACEHOLDER,
   birthDateToValue,
   formatBirthDateDisplayDots,
@@ -103,6 +103,7 @@ export function ProfileManagementView({
                   value={draft.petName}
                   onChange={(e) => draft.setPetName(e.target.value)}
                   placeholder="이름"
+                  maxLength={PET_NAME_MAX_LENGTH}
                   className="!rounded-[8px]"
                 />
               </div>
@@ -195,7 +196,7 @@ export function ProfileManagementView({
                   value={draft.specialNotes}
                   onChange={(e) => draft.setSpecialNotes(e.target.value)}
                   placeholder={SPECIAL_NOTES_PLACEHOLDER}
-                  maxLength={SPECIAL_NOTES_MAX_LENGTH}
+                  maxLength={PET_SPECIAL_NOTES_MAX_LENGTH}
                   className="!rounded-[8px]"
                 />
               </div>
@@ -284,6 +285,7 @@ export function ProfileManagementView({
                       type="text"
                       value={draft.petName}
                       onChange={(event) => draft.setPetName(event.target.value)}
+                      maxLength={PET_NAME_MAX_LENGTH}
                       className="flex-1 min-w-0"
                     />
                   </div>
@@ -359,7 +361,7 @@ export function ProfileManagementView({
                       value={draft.specialNotes}
                       onChange={(event) => draft.setSpecialNotes(event.target.value)}
                       placeholder={SPECIAL_NOTES_PLACEHOLDER}
-                      maxLength={SPECIAL_NOTES_MAX_LENGTH}
+                      maxLength={PET_SPECIAL_NOTES_MAX_LENGTH}
                       className="flex-1 min-w-0"
                     />
                   </div>

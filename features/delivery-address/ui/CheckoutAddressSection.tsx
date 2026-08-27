@@ -10,6 +10,7 @@ import {
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
 import { CheckoutAddressCheckIcon as CheckCircleIcon } from "./CheckoutAddressIcon";
 import type { NewAddrState } from "../lib";
+import { DELIVERY_ADDRESS_FIELD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 interface CheckoutAddressSectionProps {
   open: boolean;
@@ -79,6 +80,7 @@ export function CheckoutAddressSection({
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormRow label="받는분">
               <input
+                maxLength={DELIVERY_ADDRESS_FIELD_MAX_LENGTH}
                 value={newAddr.receiverName}
                 onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
                 className={`${inputCls} md:max-w-[220px]`}
@@ -143,6 +145,7 @@ export function CheckoutAddressSection({
                   aria-label="검색된 기본 주소"
                 />
                 <input
+                  maxLength={DELIVERY_ADDRESS_FIELD_MAX_LENGTH}
                   value={newAddr.addressDetail}
                   onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
                   className={inputCls}
@@ -152,6 +155,7 @@ export function CheckoutAddressSection({
               </div>
             ) : (
               <input
+                maxLength={DELIVERY_ADDRESS_FIELD_MAX_LENGTH}
                 value={newAddr.addressDetail}
                 onChange={(e) => setNewAddr((s) => ({ ...s, addressDetail: e.target.value }))}
                 className={inputCls}

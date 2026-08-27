@@ -6,6 +6,7 @@ import { getErrorMessage } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { usePasswordResetEmailVerification } from "./hooks/usePasswordResetEmailVerification";
 import { useResetPasswordFields } from "./hooks/useResetPasswordFields";
+import { PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 /**
  * 비밀번호 재설정 페이지(Section)의 조정자(Coordinator).
@@ -28,6 +29,10 @@ export function useForgotPasswordSection() {
 
   function handleResetPassword() {
     if (pw.newPassword.length < 8) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
+    if (pw.newPassword.length > PASSWORD_MAX_LENGTH) {
+      showError(`비밀번호는 ${PASSWORD_MAX_LENGTH}자 이하로 입력해주세요.`);
+      return;
+    }
     if (pw.newPassword !== pw.confirmPassword) { showError("비밀번호가 일치하지 않습니다."); return; }
     showLoading("비밀번호를 변경하고 있습니다...");
     start(async () => {

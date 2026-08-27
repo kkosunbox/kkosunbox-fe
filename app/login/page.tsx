@@ -16,6 +16,7 @@ import {
 } from "@/features/auth";
 import PasswordToggleIcon from "@/shared/ui/PasswordToggleIcon";
 import { useLoadingOverlay } from "@/shared/ui";
+import { EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 const LAST_LOGIN_KEY = "ggosoonbox_last_login";
 type LastLoginMethod = "email" | OAuthProvider;
@@ -75,6 +76,7 @@ function LoginFormFields({
           type="text"
           placeholder="이메일을 입력하세요"
           autoComplete="email"
+          maxLength={EMAIL_MAX_LENGTH}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={authUnderlineInputCls}
@@ -89,6 +91,7 @@ function LoginFormFields({
             type={showPassword ? "text" : "password"}
             placeholder="비밀번호를 입력하세요"
             autoComplete="current-password"
+            maxLength={PASSWORD_MAX_LENGTH}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={[authUnderlineInputCls, "pr-8"].join(" ")}
@@ -119,7 +122,11 @@ export default function LoginPage() {
   const { showLoading, hideLoading } = useLoadingOverlay();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isFormValid = EMAIL_REGEX.test(email.trim()) && password.length >= 3;
+  const isFormValid =
+    EMAIL_REGEX.test(email.trim()) &&
+    email.trim().length <= EMAIL_MAX_LENGTH &&
+    password.length >= 3 &&
+    password.length <= PASSWORD_MAX_LENGTH;
   const formLoginInProgressRef = useRef(false);
 
   useEffect(() => {

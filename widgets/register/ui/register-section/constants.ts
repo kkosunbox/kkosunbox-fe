@@ -1,5 +1,6 @@
 /* ─── 상수 ─── */
 export const RESEND_COOLDOWN = 60;
+export { EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 /* ─── 공통 스타일 ─── */
 export const inputBase =

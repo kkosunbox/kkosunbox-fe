@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 /**
  * 비밀번호 재설정 폼의 새 비밀번호·확인 필드 상태를 소유하는 단위 훅.
@@ -14,6 +15,7 @@ export function useResetPasswordFields({ emailVerified }: { emailVerified: boole
   const passwordsValid =
     emailVerified &&
     newPassword.length >= 8 &&
+    newPassword.length <= PASSWORD_MAX_LENGTH &&
     newPassword === confirmPassword;
 
   return {

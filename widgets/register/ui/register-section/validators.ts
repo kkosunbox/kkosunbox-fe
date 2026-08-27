@@ -1,5 +1,11 @@
+import { PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
+
 export function meetsMinPasswordLength(password: string) {
   return password.length >= 8;
+}
+
+export function meetsMaxPasswordLength(password: string) {
+  return password.length <= PASSWORD_MAX_LENGTH;
 }
 
 export function meetsPasswordComplexity(password: string) {

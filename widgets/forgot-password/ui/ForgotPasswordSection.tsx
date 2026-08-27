@@ -12,6 +12,7 @@ import {
 } from "@/features/auth";
 import PasswordToggleIcon from "@/shared/ui/PasswordToggleIcon";
 import { useForgotPasswordSection } from "./forgot-password-section/useForgotPasswordSection";
+import { EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 type ForgotPasswordSectionState = ReturnType<typeof useForgotPasswordSection>;
 
@@ -42,6 +43,7 @@ function ForgotPasswordFormFields({
           <input
             id={`fp-email-${idSuffix}`}
             type="email"
+            maxLength={EMAIL_MAX_LENGTH}
             placeholder="이메일을 입력하세요"
             autoComplete="email"
             value={email.email}
@@ -117,7 +119,8 @@ function ForgotPasswordFormFields({
           <input
             id={`fp-pw-${idSuffix}`}
             type={pw.showPw ? "text" : "password"}
-            placeholder="최소 8자 이상, 대문자, 소문자, 특수문자를 포함"
+            maxLength={PASSWORD_MAX_LENGTH}
+            placeholder={`8~${PASSWORD_MAX_LENGTH}자, 대문자, 소문자, 특수문자를 포함`}
             autoComplete="new-password"
             value={pw.newPassword}
             onChange={(e) => pw.setNewPassword(e.target.value)}
@@ -142,6 +145,7 @@ function ForgotPasswordFormFields({
           <input
             id={`fp-pw-confirm-${idSuffix}`}
             type={pw.showPwConfirm ? "text" : "password"}
+            maxLength={PASSWORD_MAX_LENGTH}
             placeholder="비밀번호를 다시 입력하세요"
             autoComplete="new-password"
             value={pw.confirmPassword}

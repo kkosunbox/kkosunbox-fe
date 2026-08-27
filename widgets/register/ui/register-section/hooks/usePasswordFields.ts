@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { meetsMinPasswordLength, meetsPasswordComplexity } from "../validators";
+import { meetsMaxPasswordLength, meetsMinPasswordLength, meetsPasswordComplexity } from "../validators";
+import { PASSWORD_MAX_LENGTH } from "../constants";
 
 /**
  * 비밀번호·비밀번호 확인 필드 상태와 규칙 검증을 소유하는 단위 훅.
@@ -28,11 +29,13 @@ export function usePasswordFields({ emailVerified }: { emailVerified: boolean })
     password !== passwordConfirm &&
     showPasswordMismatch;
   const passwordValid =
-    meetsMinPasswordLength(password) && meetsPasswordComplexity(password);
+    meetsMinPasswordLength(password) &&
+    meetsMaxPasswordLength(password) &&
+    meetsPasswordComplexity(password);
   const passwordsMatch = password === passwordConfirm;
   /** 라벨 옆 한 줄 경고용 — 길이 미달이 복잡도 미달보다 우선(둘 다 위반이면 길이만 의미 있음) */
   const passwordRuleMessage = ruleMinLenInvalid
-    ? "* 비밀번호는 최소 8자 이상이어야 합니다."
+    ? `* 비밀번호는 8~${PASSWORD_MAX_LENGTH}자여야 합니다.`
     : ruleComplexityInvalid
       ? "* 영문자, 숫자, 특수문자를 포함하여 입력해 주세요."
       : null;

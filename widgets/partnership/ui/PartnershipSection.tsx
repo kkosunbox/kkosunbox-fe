@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { Fragment, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { createPartnershipInquiry } from "@/features/partnership-inquiry";
 import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
+import { EMAIL_MAX_LENGTH } from "@/shared/config/inputLimits";
 import { getPartnershipInquiryPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
@@ -15,12 +16,29 @@ import { PartnershipHero } from "./PartnershipHero";
 const MAX_COMPANY_NAME_LENGTH = 100;
 const MAX_CONTACT_NAME_LENGTH = 50;
 const MAX_CONTENT_LENGTH = 2000;
-const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+const MAX_ATTACHMENT_BYTES = 30 * 1024 * 1024;
 const MAX_ATTACHMENTS = 10;
 const MAX_REFERENCE_LINKS = 10;
+const MAX_REFERENCE_LINK_LENGTH = 2048;
 const ACCEPT_ATTACHMENT =
   "image/jpeg,image/png,image/webp,image/gif,application/pdf";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function getReferenceLinkError(value: string) {
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return undefined;
+  if (trimmedValue.length > MAX_REFERENCE_LINK_LENGTH) {
+    return `참고링크는 ${MAX_REFERENCE_LINK_LENGTH.toLocaleString()}자 이하로 입력해주세요.`;
+  }
+
+  try {
+    const url = new URL(trimmedValue);
+    if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error();
+  } catch {
+    return "http:// 또는 https://로 시작하는 올바른 링크를 입력해주세요.";
+  }
+  return undefined;
+}
 
 interface PartnershipFormState {
   companyName: string;
@@ -86,6 +104,7 @@ export default function PartnershipSection() {
   const [form, setForm] = useState<PartnershipFormState>(initialForm);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [referenceLinks, setReferenceLinks] = useState([""]);
+  const [referenceLinkErrors, setReferenceLinkErrors] = useState<(string | undefined)[]>([]);
   const [fieldErrors, setFieldErrors] = useState<PartnershipFormErrors>({});
 
   useEffect(() => {
@@ -124,6 +143,9 @@ export default function PartnershipSection() {
     if (name === "contact" && !isValidKoreanPhone(digitsOnly(value))) {
       return "올바른 전화번호 형식이 아닙니다.";
     }
+    if (name === "email" && value.trim().length > EMAIL_MAX_LENGTH) {
+      return `이메일은 ${EMAIL_MAX_LENGTH}자 이하로 작성해주세요.`;
+    }
     if (name === "email" && !EMAIL_PATTERN.test(value.trim())) {
       return "올바른 이메일 형식이 아닙니다.";
     }
@@ -159,7 +181,7 @@ export default function PartnershipSection() {
 
     for (const file of files) {
       if (file.size > MAX_ATTACHMENT_BYTES) {
-        openAlert({ type: "info", title: "첨부파일은 5MB 이하만 선택할 수 있습니다." });
+        openAlert({ type: "info", title: "첨부파일은 파일당 30MB 이하만 선택할 수 있습니다." });
         return;
       }
       if (file.type && !ACCEPT_ATTACHMENT.split(",").includes(file.type)) {
@@ -179,6 +201,11 @@ export default function PartnershipSection() {
   };
 
   const handleReferenceLinkChange = (index: number, value: string) => {
+    setReferenceLinkErrors((prev) => {
+      const next = [...prev];
+      next[index] = undefined;
+      return next;
+    });
     setReferenceLinks((prev) => {
       const next = [...prev];
       next[index] = value;
@@ -189,7 +216,16 @@ export default function PartnershipSection() {
     });
   };
 
+  const handleReferenceLinkBlur = (index: number) => {
+    setReferenceLinkErrors((prev) => {
+      const next = [...prev];
+      next[index] = getReferenceLinkError(referenceLinks[index]);
+      return next;
+    });
+  };
+
   const handleRemoveReferenceLink = (index: number) => {
+    setReferenceLinkErrors((prev) => prev.filter((_, linkIndex) => linkIndex !== index));
     setReferenceLinks((prev) => {
       const next = prev.filter((_, linkIndex) => linkIndex !== index);
       if (next.length === 0) return [""];
@@ -200,7 +236,10 @@ export default function PartnershipSection() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validateForm()) return;
+    const isFormValid = validateForm();
+    const nextReferenceLinkErrors = referenceLinks.map(getReferenceLinkError);
+    setReferenceLinkErrors(nextReferenceLinkErrors);
+    if (!isFormValid || nextReferenceLinkErrors.some(Boolean)) return;
 
     const companyName = form.companyName.trim();
     const contactName = form.managerName.trim();
@@ -242,6 +281,7 @@ export default function PartnershipSection() {
         setForm(initialForm);
         setAttachments([]);
         setReferenceLinks([""]);
+        setReferenceLinkErrors([]);
         setFieldErrors({});
         openAlert({
           type: "success",
@@ -360,6 +400,7 @@ export default function PartnershipSection() {
                     name="email"
                     type="email"
                     required
+                    maxLength={EMAIL_MAX_LENGTH}
                     placeholder="이메일을 작성해주세요"
                     value={form.email}
                     onChange={handleChange}
@@ -449,29 +490,39 @@ export default function PartnershipSection() {
                     참고링크
                   </label>
                   {referenceLinks.map((link, index) => (
-                    <div key={index} className={`${fieldClass} flex items-center gap-2`}>
-                      <input
-                        id={index === 0 ? "referenceLink" : `referenceLink-${index + 1}`}
-                        name={`referenceLink-${index + 1}`}
-                        type="url"
-                        placeholder="링크를 입력해주세요"
-                        value={link}
-                        onChange={(event) => handleReferenceLinkChange(index, event.target.value)}
-                        className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-[var(--color-text-secondary)]"
-                        aria-label={`참고링크 ${index + 1}`}
+                    <Fragment key={index}>
+                      <div className={`${fieldClass} flex items-center gap-2`}>
+                        <input
+                          id={index === 0 ? "referenceLink" : `referenceLink-${index + 1}`}
+                          name={`referenceLink-${index + 1}`}
+                          type="url"
+                          maxLength={MAX_REFERENCE_LINK_LENGTH}
+                          placeholder="https://example.com"
+                          value={link}
+                          onChange={(event) => handleReferenceLinkChange(index, event.target.value)}
+                          onBlur={() => handleReferenceLinkBlur(index)}
+                          className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-[var(--color-text-secondary)]"
+                          aria-label={`참고링크 ${index + 1}`}
+                          aria-invalid={Boolean(referenceLinkErrors[index])}
+                          aria-describedby={referenceLinkErrors[index] ? `referenceLink-${index + 1}-error` : undefined}
+                        />
+                        {link && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveReferenceLink(index)}
+                            disabled={isPending}
+                            aria-label={`참고링크 ${index + 1} 삭제`}
+                            className="shrink-0 text-body-13-m text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)] disabled:opacity-50"
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
+                      <InlineFieldError
+                        id={`referenceLink-${index + 1}-error`}
+                        message={referenceLinkErrors[index]}
                       />
-                      {link && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveReferenceLink(index)}
-                          disabled={isPending}
-                          aria-label={`참고링크 ${index + 1} 삭제`}
-                          className="shrink-0 text-body-13-m text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text)] disabled:opacity-50"
-                        >
-                          삭제
-                        </button>
-                      )}
-                    </div>
+                    </Fragment>
                   ))}
                 </div>
               </div>

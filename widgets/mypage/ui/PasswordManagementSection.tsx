@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { changePassword } from "@/features/auth/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
+import { PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
 
 function BackIcon() {
   return (
@@ -78,6 +79,7 @@ function PasswordField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        maxLength={PASSWORD_MAX_LENGTH}
         className="h-full w-full rounded-[4px] bg-transparent pl-3 pr-10 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
       />
       <button
@@ -110,6 +112,9 @@ export default function PasswordManagementSection() {
     if (!currentPassword.trim()) return "현재 비밀번호를 입력해주세요.";
     if (!newPassword.trim()) return "새 비밀번호를 입력해주세요.";
     if (newPassword.length < 8) return "새 비밀번호는 최소 8자 이상이어야 합니다.";
+    if (currentPassword.length > PASSWORD_MAX_LENGTH || newPassword.length > PASSWORD_MAX_LENGTH) {
+      return `비밀번호는 ${PASSWORD_MAX_LENGTH}자 이하로 입력해주세요.`;
+    }
     if (newPassword !== confirmPassword) return "새 비밀번호가 일치하지 않습니다.";
     if (currentPassword === newPassword) return "새 비밀번호를 기존 비밀번호와 다르게 입력해주세요.";
     return null;
@@ -195,7 +200,7 @@ export default function PasswordManagementSection() {
 
                 <div />
                 <p className="-mt-1 w-[302px] text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
-                  * 비밀번호는 최소 8자 이상이어야 합니다.
+                  * 비밀번호는 8~{PASSWORD_MAX_LENGTH}자여야 합니다.
                   <br />
                   * 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
                 </p>
@@ -295,7 +300,7 @@ export default function PasswordManagementSection() {
 
           <div />
           <p className="text-[12px] font-medium leading-[16px] text-[var(--color-text-secondary)]">
-            * 비밀번호는 최소 8자 이상이어야 합니다.
+            * 비밀번호는 8~{PASSWORD_MAX_LENGTH}자여야 합니다.
             <br />
             * 대문자, 영문자, 숫자, 특수문자를 포함하여 입력해 주세요.
           </p>

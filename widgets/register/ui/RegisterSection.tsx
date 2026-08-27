@@ -3,7 +3,7 @@
 import Link from "next/link";
 import TermsViewModal from "@/shared/ui/custom-modals/TermsViewModal";
 import { useRegisterSection } from "./register-section/useRegisterSection";
-import { AGREEMENTS } from "./register-section/constants";
+import { AGREEMENTS, EMAIL_MAX_LENGTH, PASSWORD_MAX_LENGTH } from "./register-section/constants";
 import { CheckboxIcon } from "./register-section/components/CheckboxIcon";
 import PasswordToggleIcon from "@/shared/ui/PasswordToggleIcon";
 import {
@@ -118,6 +118,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-email-mobile"
                   type="email"
+                  maxLength={EMAIL_MAX_LENGTH}
                   placeholder="이메일을 입력해주세요"
                   value={email.email}
                   onChange={(e) => email.setEmail(e.target.value)}
@@ -203,6 +204,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-pw-mobile"
                   type={pw.showPw ? "text" : "password"}
+                  maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="최소 8자 이상, 영문자, 숫자, 특수문자를 포함하여 입력해주세요."
                   value={pw.password}
                   onChange={(e) => pw.setPassword(e.target.value)}
@@ -229,7 +231,7 @@ export default function RegisterSection() {
                       : "text-[var(--color-text-secondary)]"
                   }
                 >
-                  * 비밀번호는 최소 8자 이상이어야 합니다.
+                  * 비밀번호는 8~{PASSWORD_MAX_LENGTH}자여야 합니다.
                 </p>
                 <p
                   className={
@@ -252,6 +254,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-pw-confirm-mobile"
                   type={pw.showPwConfirm ? "text" : "password"}
+                  maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="비밀번호를 다시 입력해주세요"
                   value={pw.passwordConfirm}
                   onChange={(e) => pw.setPasswordConfirm(e.target.value)}
@@ -337,6 +340,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-email-desktop"
                   type="email"
+                  maxLength={EMAIL_MAX_LENGTH}
                   placeholder="이메일을 입력해주세요"
                   value={email.email}
                   onChange={(e) => email.setEmail(e.target.value)}
@@ -425,6 +429,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-pw-desktop"
                   type={pw.showPw ? "text" : "password"}
+                  maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="최소 8자 이상, 영문자, 숫자, 특수문자를 포함하여 입력해주세요."
                   value={pw.password}
                   onChange={(e) => pw.setPassword(e.target.value)}
@@ -453,6 +458,7 @@ export default function RegisterSection() {
                 <input
                   id="reg-pw-confirm-desktop"
                   type={pw.showPwConfirm ? "text" : "password"}
+                  maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="비밀번호를 다시 입력해주세요"
                   value={pw.passwordConfirm}
                   onChange={(e) => pw.setPasswordConfirm(e.target.value)}

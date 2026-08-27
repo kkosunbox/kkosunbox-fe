@@ -7,7 +7,7 @@ import {
   verifyEmail,
 } from "@/features/auth/api/authApi";
 import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
-import { RESEND_COOLDOWN } from "../constants";
+import { EMAIL_MAX_LENGTH, RESEND_COOLDOWN } from "../constants";
 
 /**
  * 이메일 인증 흐름(발송·재전송·OTP 확인·재전송 카운트다운)을 소유하는 단위 훅.
@@ -52,6 +52,10 @@ export function useEmailVerification({
   /* ── 인증코드 발송 ── */
   function handleSendCode() {
     if (!email.trim()) { showError("이메일을 입력해주세요."); return; }
+    if (email.trim().length > EMAIL_MAX_LENGTH) {
+      showError(`이메일은 ${EMAIL_MAX_LENGTH}자 이하로 입력해주세요.`);
+      return;
+    }
     start(async () => {
       try {
         if (codeSent) {

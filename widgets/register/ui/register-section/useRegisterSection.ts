@@ -7,7 +7,8 @@ import { tokenStore } from "@/shared/lib/api/token";
 import { trackSignUp } from "@/shared/lib/analytics";
 import { useAuth } from "@/features/auth";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import { meetsMinPasswordLength, meetsPasswordComplexity } from "./validators";
+import { meetsMaxPasswordLength, meetsMinPasswordLength, meetsPasswordComplexity } from "./validators";
+import { PASSWORD_MAX_LENGTH } from "./constants";
 import { useEmailVerification } from "./hooks/useEmailVerification";
 import { usePasswordFields } from "./hooks/usePasswordFields";
 import { useAgreements } from "./hooks/useAgreements";
@@ -57,6 +58,10 @@ export function useRegisterSection() {
     if (!agree.agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
     if (!agree.agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
     if (!meetsMinPasswordLength(pw.password)) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
+    if (!meetsMaxPasswordLength(pw.password)) {
+      showError(`비밀번호는 ${PASSWORD_MAX_LENGTH}자 이하로 입력해주세요.`);
+      return;
+    }
     if (!meetsPasswordComplexity(pw.password)) {
       showError("영문자, 숫자, 특수문자를 포함하여 입력해 주세요.");
       return;

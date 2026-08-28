@@ -115,6 +115,16 @@ export function DrawerLogoutIcon() {
   );
 }
 
+export function DrawerPointIcon({ active = false }: { active?: boolean }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse cx="12" cy="6" rx="7" ry="3" stroke={active ? "var(--color-primary)" : "var(--color-border)"} strokeWidth="2" />
+      <path d="M5 6V12C5 13.6569 8.13401 15 12 15C15.866 15 19 13.6569 19 12V6" stroke={active ? "var(--color-primary)" : "var(--color-border)"} strokeWidth="2" />
+      <path d="M5 12V18C5 19.6569 8.13401 21 12 21C15.866 21 19 19.6569 19 18V12" stroke={active ? "var(--color-primary)" : "var(--color-border)"} strokeWidth="2" />
+    </svg>
+  );
+}
+
 const DRAWER_NAV_ICONS = {
   home: DrawerHomeIcon,
   document: DrawerDocumentIcon,
@@ -238,6 +248,16 @@ export function DropdownLogoutIcon() {
           <rect width="24" height="24" fill="white" transform="matrix(0 -1 1 0 0 24)" />
         </clipPath>
       </defs>
+    </svg>
+  );
+}
+
+export function DropdownPointIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse cx="12" cy="6" rx="7" ry="3" fill="var(--color-icon-warm)" />
+      <path d="M5 6V12C5 13.6569 8.13401 15 12 15C15.866 15 19 13.6569 19 12V6" fill="var(--color-icon-warm)" fillOpacity="0.25" stroke="var(--color-icon-warm)" strokeWidth="1.5" />
+      <path d="M5 12V18C5 19.6569 8.13401 21 12 21C15.866 21 19 19.6569 19 18V12" fill="var(--color-icon-warm)" fillOpacity="0.18" stroke="var(--color-icon-warm)" strokeWidth="1.5" />
     </svg>
   );
 }

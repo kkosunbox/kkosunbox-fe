@@ -122,6 +122,7 @@ export default function Header() {
                     email={user?.email ?? null}
                     profileImageUrl={profileImageUrl}
                     userId={user?.id ?? null}
+                    isInfluencer={user?.isInfluencer ?? false}
                     onClose={() => setIsProfileOpen(false)}
                   />
                 )}
@@ -145,6 +146,7 @@ export default function Header() {
         profileImageUrl={profileImageUrl}
         hasProfile={hasProfile}
         petName={profile?.name ?? null}
+        isInfluencer={user?.isInfluencer ?? false}
         onLogout={logout}
       />
     </>

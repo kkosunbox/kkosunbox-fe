@@ -42,3 +42,4 @@ export { CollapsiblePanel, SectionCard, Checkbox, RadioButton, FormRow } from ".
 export { FORM_INPUT_CLASS, FORM_ACTION_CHIP_CLASS, FORM_ACTION_CHIP_SMALL_CLASS } from "./formFieldStyles";
 export { QuantityMinusIcon, QuantityPlusIcon, ChevronIcon } from "./FormPartsIcons";
 export { default as DesktopHeroSideBackground } from "./DesktopHeroSideBackground";
+export { default as PlanImageBadges } from "./PlanImageBadges";

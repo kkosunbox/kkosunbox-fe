@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent, TouchEvent } from "react";
-import { Text, ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { Text, ScrollReveal, CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import {
@@ -162,6 +162,10 @@ export default function PackagePlansSection() {
                       />
                     );
                   })}
+                  <PlanImageBadges
+                    tags={activePlan?.tags}
+                    className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
+                  />
                 </div>
                 <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
               </div>

@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { CheckCircleIcon } from "@/shared/ui";
+import { CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
@@ -334,6 +334,10 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
+                    <PlanImageBadges
+                      tags={activePlan?.tags}
+                      className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
+                    />
                     {discountApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
@@ -459,6 +463,10 @@ export default function PlanPicker({
                   </span>
                 </div>
               ) : null}
+              <PlanImageBadges
+                tags={activePlan?.tags}
+                className="absolute right-4 top-4 z-10 flex items-center gap-2"
+              />
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">
                 {renderPrimaryAction(

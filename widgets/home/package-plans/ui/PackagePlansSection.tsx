@@ -164,7 +164,7 @@ export default function PackagePlansSection() {
                   })}
                   <PlanImageBadges
                     tags={activePlan?.tags}
-                    className="absolute right-3 top-[62px] z-10 flex items-center gap-1.5"
+                    className="absolute right-[59px] top-[25px] z-10 flex items-center gap-1.5"
                   />
                 </div>
                 <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />

@@ -336,7 +336,7 @@ export default function PlanPicker({
                     ) : null}
                     <PlanImageBadges
                       tags={activePlan?.tags}
-                      className="absolute right-3 top-[62px] z-10 flex items-center gap-1.5"
+                      className="absolute right-[59px] top-[25px] z-10 flex items-center gap-1.5"
                     />
                     {discountApplied ? (
                       <ReferralAdditionalDiscountChip
@@ -465,7 +465,7 @@ export default function PlanPicker({
               ) : null}
               <PlanImageBadges
                 tags={activePlan?.tags}
-                className="absolute right-4 top-[62px] z-10 flex items-center gap-2"
+                className="absolute right-[59px] top-[25px] z-10 flex items-center gap-2"
               />
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">

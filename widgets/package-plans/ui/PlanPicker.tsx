@@ -9,6 +9,7 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
+  resolveRecommendedPlanIds,
   tierFromSubscriptionPlan,
   PACKAGE_SUMMARY_IMAGES,
   PACKAGE_EXPLAIN_BY_TIER,
@@ -189,6 +190,9 @@ export default function PlanPicker({
   const displayTier = selectedTier;
 
   const activePlan = planForTier(sortedPlans, displayTier);
+
+  /** 백엔드 추천픽이 없으면 Standard 폴백 — 배지 표시는 이 집합만 기준으로 삼는다 */
+  const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(sortedPlans), [sortedPlans]);
 
   const { unitPrice, combinedDiscountPct, additionalDiscountPct, discountApplied } =
     useReferralPricing({ intent: pricingIntent });
@@ -382,7 +386,7 @@ export default function PlanPicker({
 
                 {activePkg ? (
                   <div className="mt-6">
-                    {activePlan?.isRecommended ? (
+                    {activePlan && recommendedPlanIds.has(activePlan.id) ? (
                       <RecommendedPickBadge className="mb-2" />
                     ) : null}
                     <p
@@ -538,7 +542,7 @@ export default function PlanPicker({
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
-                    {plan?.isRecommended ? (
+                    {plan && recommendedPlanIds.has(plan.id) ? (
                       <RecommendedPickBadge className="mb-2" />
                     ) : null}
                     <p
@@ -629,7 +633,7 @@ export default function PlanPicker({
                     ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
-                    {plan?.isRecommended ? (
+                    {plan && recommendedPlanIds.has(plan.id) ? (
                       <RecommendedPickBadge className="mb-2" />
                     ) : null}
                     <p

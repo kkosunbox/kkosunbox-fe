@@ -12,7 +12,6 @@ import {
   resolveRecommendedPlanIds,
   tierFromSubscriptionPlan,
   PACKAGE_SUMMARY_IMAGES,
-  PACKAGE_EXPLAIN_BY_TIER,
   PackageSummaryThumbnail,
   PlanRatingStars,
   TIER_DETAIL_HERO_IMAGES,
@@ -24,6 +23,7 @@ import { useReferralPricing, type ReferralPricingIntent } from "@/features/refer
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { trackSelectItem } from "@/shared/lib/analytics";
+import planPickerInfoGradient from "../assets/plan-picker-info-gradient.png";
 
 /** 데스크탑 카드 열·모바일 네비·태블릿 가로 카드 공통 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
 const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
@@ -58,6 +58,65 @@ function crossfadeStyle(isActive: boolean): React.CSSProperties {
       ? "opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), filter 660ms cubic-bezier(0.16, 1, 0.3, 1)"
       : "opacity 200ms ease, filter 200ms ease",
   };
+}
+
+function PlanExplainVisual({
+  tier,
+  isActive,
+  priority,
+}: {
+  tier: PackageTier;
+  isActive: boolean;
+  priority: boolean;
+}) {
+  const pkg = PACKAGES.find((item) => item.tier === tier)!;
+
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 bg-white"
+      style={crossfadeStyle(isActive)}
+      aria-hidden={!isActive}
+    >
+      <div className="absolute inset-x-0 top-0 bottom-6">
+        <Image
+          src={TIER_DETAIL_HERO_IMAGES[tier]}
+          alt={`${pkg.name} 대표 이미지`}
+          fill
+          quality={HIGH_IMAGE_QUALITY}
+          className="object-cover"
+          sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
+          priority={priority}
+        />
+      </div>
+
+      <Image
+        src={planPickerInfoGradient}
+        alt=""
+        className="absolute inset-x-0 bottom-0 h-auto w-full"
+        aria-hidden="true"
+      />
+
+      <div className="absolute bottom-7 left-8 z-[1] max-w-[300px]">
+        <p
+          className="text-[20px] font-extrabold leading-6 tracking-[-0.04em]"
+          style={{ color: pkg.colorVar }}
+        >
+          {pkg.name}
+        </p>
+        <ul className="mt-3 flex flex-col gap-2">
+          {pkg.items.map((item) => (
+            <li
+              key={item}
+              className="flex items-start gap-2 text-body-14-m leading-[18px] text-[var(--color-text)]"
+            >
+              <CheckCircleIcon color={pkg.colorVar} className="mt-px shrink-0" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 /** 모바일 좌우 네비 버튼용 SVG 아이콘 */
@@ -457,22 +516,14 @@ export default function PlanPicker({
               }}
               onClick={handlePrimaryClick}
             >
-              {ALL_TIERS.map((tier) => {
-                const explain = PACKAGE_EXPLAIN_BY_TIER[tier];
-                return (
-                  <Image
-                    key={tier}
-                    src={explain.src}
-                    alt={explain.alt}
-                    fill
-                    quality={HIGH_IMAGE_QUALITY}
-                    className="object-cover"
-                    sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
-                    priority={tier === defaultTier}
-                    style={crossfadeStyle(displayTier === tier)}
-                  />
-                );
-              })}
+              {ALL_TIERS.map((tier) => (
+                <PlanExplainVisual
+                  key={tier}
+                  tier={tier}
+                  isActive={displayTier === tier}
+                  priority={tier === defaultTier}
+                />
+              ))}
               {activeIsCurrentPlan ? (
                 <div className="absolute left-4 top-4 z-10">
                   <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-body-14-sb-tight text-white">

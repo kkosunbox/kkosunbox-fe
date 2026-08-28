@@ -18,6 +18,21 @@ export function ChevronIcon({ dir }: { dir: "left" | "right" }) {
   );
 }
 
+/** Icon/Outline/duplicate — 24x24 프레임 안쪽 16.67% 인셋(4~20px)에 배치된 복사 아이콘 */
+export function CopyIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M6 16H5.5C4.67157 16 4 15.3284 4 14.5V5.5C4 4.67157 4.67157 4 5.5 4H14.5C15.3284 4 16 4.67157 16 5.5V6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function CalendarIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">

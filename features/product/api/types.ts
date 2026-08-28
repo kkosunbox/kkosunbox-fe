@@ -106,6 +106,27 @@ export interface ProductOrderReceiptResponse {
   receiptUrl: string;
 }
 
+// ── ProductPriceQuote ────────────────────────────────────────────
+
+export interface QuoteProductPriceRequest {
+  quantity: number;
+  /** 할인 쿠폰 코드 (선택). 주문 총액에 할인율이 적용된다. */
+  couponCode?: string;
+}
+
+/** POST /v1/products/{id}/price 응답 — 서버가 확정한 결제 예정 금액 */
+export interface QuoteProductPriceResponse {
+  /** 상품 단가 (부가세 포함) */
+  unitPrice: number;
+  quantity: number;
+  /** 할인 전 금액 (단가 × 수량) */
+  originalAmount: number;
+  /** 쿠폰 할인 금액 */
+  couponDiscountAmount: number;
+  /** 실제 결제 금액 (쿠폰 적용 후 100원 단위 내림) */
+  amount: number;
+}
+
 // ── ProductCoupon ────────────────────────────────────────────────
 
 /** POST /v1/products/coupon/info 응답 (GetProductCouponInfoResponse) */

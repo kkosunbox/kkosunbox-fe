@@ -20,6 +20,7 @@ interface OrderSummarySectionProps {
   handleAgreeAll: () => void;
   submitError: string | null;
   isPending: boolean;
+  isQuoting: boolean;
   hasBilling: boolean;
   handlePay: () => void;
 }
@@ -43,6 +44,7 @@ export function OrderSummarySection({
   handleAgreeAll,
   submitError,
   isPending,
+  isQuoting,
   hasBilling,
   handlePay,
 }: OrderSummarySectionProps) {
@@ -150,7 +152,7 @@ export function OrderSummarySection({
 
           <button
             type="button"
-            disabled={!agreeAll || isPending || !hasBilling}
+            disabled={!agreeAll || isPending || isQuoting || !hasBilling}
             onClick={handlePay}
             className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-body-16-sb tracking-[-0.02em] disabled:opacity-50"
           >

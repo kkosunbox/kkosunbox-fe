@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { MouseEvent, TouchEvent } from "react";
 import { Text, ScrollReveal, CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import {
   PACKAGES,
+  resolveRecommendedPlanIds,
   tierFromSubscriptionPlan,
   TIER_DETAIL_HERO_IMAGES,
   PackageNutritionGuide,
@@ -29,6 +30,9 @@ export default function PackagePlansSection() {
   const [scrolled, setScrolled] = useState(false);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const suppressClickUntilRef = useRef(0);
+
+  /** 백엔드 추천픽이 없으면 Standard 폴백 — PlanPicker 내부 배지와 동일 기준 */
+  const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(apiPlans), [apiPlans]);
 
   function handleMobileSwipeStart(event: TouchEvent<HTMLDivElement>) {
     const touch = event.touches[0];
@@ -171,7 +175,7 @@ export default function PackagePlansSection() {
               </div>
               {activePkg ? (
                 <div className="mt-4">
-                  {activePlan?.isRecommended ? (
+                  {activePlan && recommendedPlanIds.has(activePlan.id) ? (
                     <RecommendedPickBadge className="mb-2" />
                   ) : null}
                   <p

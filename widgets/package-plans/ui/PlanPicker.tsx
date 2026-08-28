@@ -85,7 +85,7 @@ function NavArrowRight() {
 export function RecommendedPickBadge({ className = "" }: { className?: string }) {
   return (
     <span
-      className={`flex h-[22px] w-[79px] items-center justify-center whitespace-nowrap rounded-[24px] bg-black text-[12px] font-bold leading-[14px] tracking-[-0.02em] text-white ${className}`}
+      className={`flex h-[22px] w-[79px] items-center justify-center whitespace-nowrap rounded-[24px] bg-[var(--color-text)] text-[12px] font-bold leading-[14px] tracking-[-0.02em] text-white ${className}`}
     >
       추천 PICK 🌟
     </span>

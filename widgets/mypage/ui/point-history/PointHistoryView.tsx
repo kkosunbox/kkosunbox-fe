@@ -4,11 +4,10 @@ import Link from "next/link";
 import { BackIcon } from "./components/icons";
 import { BalanceCard } from "./components/BalanceCard";
 import { Pagination } from "./components/Pagination";
-import { ReferralInviteCard } from "./components/ReferralInviteCard";
 import { SORT_TABS, fmtDate, fmtPoint } from "./pointHistoryHelpers";
 import type { PointHistorySectionVM } from "./usePointHistorySection";
 
-export function PointHistoryView({ balanceCardProps, ledger, referral }: PointHistorySectionVM) {
+export function PointHistoryView({ balanceCardProps, ledger }: PointHistorySectionVM) {
   return (
     <div className="min-h-screen bg-white pt-[var(--header-offset)]">
 
@@ -27,7 +26,6 @@ export function PointHistoryView({ balanceCardProps, ledger, referral }: PointHi
             <h1 className="text-subtitle-18-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">MY 포인트</h1>
           </div>
           <BalanceCard mobile {...balanceCardProps} />
-          {referral ? <div className="mt-4"><ReferralInviteCard mobile referral={referral} /></div> : null}
         </div>
 
         {/* 포인트 내역 — pt-6(24px), px-6 */}
@@ -83,7 +81,6 @@ export function PointHistoryView({ balanceCardProps, ledger, referral }: PointHi
               <h1 className="text-body-20-sb tracking-[-0.04em] text-[var(--color-text)]">MY 포인트</h1>
             </div>
             <BalanceCard mobile={false} {...balanceCardProps} />
-            {referral ? <div className="mt-4"><ReferralInviteCard mobile={false} referral={referral} /></div> : null}
           </div>
         </div>
 

@@ -82,6 +82,16 @@ function NavArrowRight() {
   );
 }
 
+export function RecommendedPickBadge({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`flex h-[22px] w-[79px] items-center justify-center whitespace-nowrap rounded-[24px] bg-[var(--color-text)] text-[12px] font-bold leading-[14px] tracking-[-0.02em] text-white ${className}`}
+    >
+      추천 PICK 🌟
+    </span>
+  );
+}
+
 function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
   return plans.find((p) => tierFromSubscriptionPlan(p) === tier);
 }
@@ -336,7 +346,7 @@ export default function PlanPicker({
                     ) : null}
                     <PlanImageBadges
                       tags={activePlan?.tags}
-                      className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
+                      className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
                     />
                     {discountApplied ? (
                       <ReferralAdditionalDiscountChip
@@ -372,6 +382,9 @@ export default function PlanPicker({
 
                 {activePkg ? (
                   <div className="mt-6">
+                    {activePlan?.isRecommended ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className="text-subtitle-17-b-lh22"
                       style={{ color: activePkg.colorVar }}
@@ -465,7 +478,7 @@ export default function PlanPicker({
               ) : null}
               <PlanImageBadges
                 tags={activePlan?.tags}
-                className="absolute right-4 top-4 z-10 flex items-center gap-2"
+                className="absolute right-[69px] top-[25px] z-10 flex items-center gap-2"
               />
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">
@@ -525,6 +538,9 @@ export default function PlanPicker({
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
+                    {plan?.isRecommended ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",
@@ -613,6 +629,9 @@ export default function PlanPicker({
                     ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
+                    {plan?.isRecommended ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",

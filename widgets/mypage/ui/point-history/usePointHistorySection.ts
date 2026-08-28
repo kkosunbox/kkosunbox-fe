@@ -52,9 +52,10 @@ export function usePointHistorySection({
     onPickerOpen: month.onPickerOpen,
     onPickerClose: month.onPickerClose,
     onMonthSelect: month.handleMonthSelect,
+    referral,
   };
 
-  return { balanceCardProps, ledger, referral };
+  return { balanceCardProps, ledger };
 }
 
 export type PointHistorySectionVM = ReturnType<typeof usePointHistorySection>;

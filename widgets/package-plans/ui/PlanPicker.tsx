@@ -82,6 +82,16 @@ function NavArrowRight() {
   );
 }
 
+export function RecommendedPickBadge({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`flex h-[22px] w-[79px] items-center justify-center whitespace-nowrap rounded-[24px] bg-black text-[12px] font-bold leading-[14px] tracking-[-0.02em] text-white ${className}`}
+    >
+      추천 PICK 🌟
+    </span>
+  );
+}
+
 function planForTier(plans: SubscriptionPlanDto[], tier: PackageTier) {
   return plans.find((p) => tierFromSubscriptionPlan(p) === tier);
 }
@@ -372,6 +382,9 @@ export default function PlanPicker({
 
                 {activePkg ? (
                   <div className="mt-6">
+                    {activePlan?.isRecommended ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className="text-subtitle-17-b-lh22"
                       style={{ color: activePkg.colorVar }}
@@ -525,6 +538,9 @@ export default function PlanPicker({
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
+                    {plan?.isRecommended ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",
@@ -613,6 +629,9 @@ export default function PlanPicker({
                     ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
+                    {plan?.isRecommended ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",

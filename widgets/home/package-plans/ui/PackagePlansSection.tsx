@@ -16,7 +16,7 @@ import {
 } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
-import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
+import { PlanPicker, PlanTierDots, RecommendedPickBadge } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
 
 const HOME_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
@@ -171,6 +171,9 @@ export default function PackagePlansSection() {
               </div>
               {activePkg ? (
                 <div className="mt-4">
+                  {activePlan?.isRecommended ? (
+                    <RecommendedPickBadge className="mb-2" />
+                  ) : null}
                   <p
                     className="text-subtitle-17-b-lh22"
                     style={{ color: activePkg.colorVar }}

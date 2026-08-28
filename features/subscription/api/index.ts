@@ -15,6 +15,7 @@ export {
   changeBillingDay,
   getPaymentReceipt,
   getCouponInfo,
+  getSubscriptionPriceQuote,
 } from "./subscriptionApi";
 
 export type {
@@ -45,4 +46,6 @@ export type {
   PaginatedPaymentHistoryResponse,
   DeliveryStatusSummaryResponse,
   PaymentReceiptResponse,
+  QuoteSubscriptionPriceRequest,
+  QuoteSubscriptionPriceResponse,
 } from "./types";

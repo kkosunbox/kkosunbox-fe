@@ -12,6 +12,8 @@ import type {
   ProductOrderDto,
   ProductOrderPlanSummariesResponse,
   ProductOrderReceiptResponse,
+  QuoteProductPriceRequest,
+  QuoteProductPriceResponse,
 } from "./types";
 
 // POST /v1/products/webhook/toss는 Toss → 백엔드 서버 간 웹훅이라 프론트에서 호출하지 않으므로 여기 포함하지 않는다.
@@ -78,4 +80,9 @@ export function getProductOrderReceipt(id: number) {
 /** 단건 구매 쿠폰 코드 조회 */
 export function getProductCouponInfo(body: GetProductCouponInfoRequest) {
   return apiClient.post<ProductCouponInfo>("/v1/products/coupon/info", body);
+}
+
+/** 단품 결제 예정 금액 조회 — 서버가 쿠폰까지 반영해 확정한 금액을 반환한다 */
+export function getProductPriceQuote(id: number, body: QuoteProductPriceRequest) {
+  return apiClient.post<QuoteProductPriceResponse>(`/v1/products/${id}/price`, body);
 }

@@ -538,8 +538,8 @@ export default function ChecklistResult({
           <ChecklistStartSubscriptionTitleSvg className="mx-auto mb-[48px] h-auto w-full max-w-[380px] max-md:mb-7 max-md:max-w-[260px]" />
 
           <div className="flex max-md:flex-col max-md:gap-6 md:justify-center md:gap-6 lg:justify-between lg:gap-0">
-              {/* 프리미엄부터 노출 — sortedPlans는 베이직→프리미엄 오름차순이라 역순으로 뒤집는다 */}
-              {[...sortedPlans].reverse().map((plan) => {
+              {/* 베이직부터 노출 — 왼쪽→오른쪽, 모바일에서는 위→아래 순서 */}
+              {sortedPlans.map((plan) => {
                 const tier = tierFromSubscriptionPlan(plan);
                 const img = PACKAGE_SUMMARY_IMAGES[tier];
                 const pkg = PACKAGES.find((p) => p.tier === tier);

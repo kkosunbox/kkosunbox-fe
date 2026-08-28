@@ -5,6 +5,7 @@ import { useAgreementState } from "./hooks/useAgreementState";
 import { useInviteState } from "./hooks/useInviteState";
 import { usePaymentState } from "./hooks/usePaymentState";
 import { useStartDateState } from "./hooks/useStartDateState";
+import { useSubscriptionPriceQuote } from "./hooks/useSubscriptionPriceQuote";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { useAddressState, useExternalMessages } from "@/features/delivery-address/lib";
 import { useRouter } from "next/navigation";
@@ -14,12 +15,10 @@ import type { BillingInfo } from "@/features/billing/api/types";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { createSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { resolveSubscriptionCouponDiscount } from "@/features/subscription/lib/couponDiscount";
 import { clearStoredInviteCode, clearStoredInviteSlug } from "@/features/referral/lib";
 import type { ReferralContext } from "@/features/referral/lib/referralContext";
-import { referralDiscountAmount } from "@/features/referral/lib/referralPricing";
 import { useReferral } from "@/features/referral/model";
-import { computeOrderPricing, formatDateToYMD } from "@/features/order";
+import { formatDateToYMD } from "@/features/order";
 import { packageThemeForPlan } from "@/entities/package";
 import { trackPurchase } from "@/shared/lib/analytics";
 import { isValidKoreanPhone } from "@/shared/lib/format";
@@ -98,18 +97,31 @@ export function useOrderSectionState({
     };
   }, [referral.inviteEligible, referral.discountRate, invite.inviteStatus, invite.inviteDiscountRate]);
 
-  // 금액·할인 계산은 순수 함수로 분리(단위 테스트 대상). 쿠폰·초대코드 모두 단가 1개에만 적용.
-  // 쿠폰 할인액은 구독 전용 resolver가 정률/정액을 판단해 산출한다(단건 쿠폰과 규칙이 다름).
-  const { basePrice, couponDiscount, totalDiscount, total } = useMemo(
-    () =>
-      computeOrderPricing({
-        unitPrice,
-        quantity,
-        couponDiscount: resolveSubscriptionCouponDiscount(payment.couponInfo, unitPrice),
-        inviteDiscount: referralDiscountAmount(unitPrice, referralDiscount),
-      }),
-    [unitPrice, quantity, payment.couponInfo, referralDiscount],
-  );
+  // 확정(canUse)된 쿠폰 코드만 quote에 실어 보낸다 — 실제 구독 생성 시 보내는 조건과 동일.
+  const appliedCouponCode =
+    payment.couponInfo?.canUse && payment.couponCodeInput.trim()
+      ? payment.couponCodeInput.trim()
+      : undefined;
+  // 초대코드는 referralDiscount.inviteEligible(캡처된 코드의 낙관적 표시 포함)을 그대로 게이트로 쓴다 —
+  // 재검증 왕복이 끝나기 전에도 플랜 화면과 같은 할인이 바로 보이도록.
+  const appliedReferralCode =
+    referralDiscount.inviteEligible && invite.inviteCodeInput.trim()
+      ? invite.inviteCodeInput.trim()
+      : undefined;
+
+  const { quote, isQuoting, quoteError } = useSubscriptionPriceQuote({
+    planId: plan.id,
+    quantity,
+    couponCode: appliedCouponCode,
+    referralCode: appliedReferralCode,
+  });
+
+  // 금액은 서버 quote(`/v1/subscriptions/price`)가 확정한 값을 그대로 쓴다. 응답이 아직 없으면
+  // (초기 렌더·조회 중) 단가 × 수량으로 낙관적 표시만 하고 할인은 0으로 둔다.
+  const basePrice = quote?.originalAmount ?? unitPrice * quantity;
+  const couponDiscount = quote?.couponDiscountAmount ?? 0;
+  const totalDiscount = couponDiscount + (quote?.referralDiscountAmount ?? 0);
+  const total = quote?.amount ?? Math.max(0, basePrice - totalDiscount);
 
   function toggleSection(key: keyof typeof openSections) {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -117,6 +129,15 @@ export function useOrderSectionState({
 
   function handlePay() {
     setSubmitError(null);
+
+    if (isQuoting) {
+      setSubmitError("금액을 계산하는 중입니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    if (quoteError) {
+      setSubmitError(quoteError);
+      return;
+    }
 
     // 카드 미등록 시 버튼 자체가 disabled라 정상 UI로는 여기 도달하지 않는다. 방어적 가드.
     if (!payment.billing) {
@@ -273,6 +294,7 @@ export function useOrderSectionState({
     couponDiscount,
     totalDiscount,
     total,
+    isQuoting,
 
     // ── agreement ──
     agreeOpen: agreement.agreeOpen,

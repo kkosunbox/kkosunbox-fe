@@ -1,8 +1,6 @@
 import { PURCHASE_FREE_SHIPPING_THRESHOLD, PURCHASE_SHIPPING_FEE } from "@/entities/package";
-import { computeOrderPricing } from "@/features/order/lib/orderPricing";
-import { resolveProductCouponDiscount } from "@/features/product/lib/couponDiscount";
 import { digitsOnly, isValidKoreanPhone } from "@/shared/lib/format";
-import type { ProductCouponInfo } from "@/features/product/api/types";
+import type { QuoteProductPriceResponse } from "@/features/product/api/types";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import type { NewAddrState } from "@/features/delivery-address/lib/addressFormState";
 
@@ -25,22 +23,21 @@ export interface PurchaseTotals {
 export function computePurchaseTotals({
   unitPrice,
   quantity,
-  couponInfo,
+  quote,
 }: {
   unitPrice: number;
   quantity: number;
   /**
-   * 단건 쿠폰 조회 응답. 할인율·상한 해석은 단건 전용 resolver가 담당한다 —
-   * 정액 할인과 회차가 있는 구독 쿠폰(`CouponInfo`)을 여기에 넘기면 안 된다.
+   * `POST /v1/products/{id}/price` 응답 — 쿠폰 할인·최종 결제액(100원 단위 내림)을
+   * 서버가 이미 계산해 내려준다. 아직 응답이 없으면(초기 렌더·조회 중) null — 그동안은
+   * 단가 × 수량으로 낙관적 표시만 하고 쿠폰 할인은 0으로 둔다(응답 도착 시 교체).
    */
-  couponInfo?: ProductCouponInfo | null;
+  quote?: QuoteProductPriceResponse | null;
 }): PurchaseTotals {
-  const { basePrice, couponDiscount, totalDiscount, total: productTotal } = computeOrderPricing({
-    unitPrice,
-    quantity,
-    // 단건 쿠폰은 주문상품금액(단가 × 수량) 전체에 할인율을 적용한다 — 구독(단가 1개)과 다르다.
-    couponDiscount: resolveProductCouponDiscount(couponInfo ?? null, unitPrice * quantity),
-  });
+  const basePrice = quote?.originalAmount ?? unitPrice * quantity;
+  const couponDiscount = quote?.couponDiscountAmount ?? 0;
+  const totalDiscount = couponDiscount;
+  const productTotal = quote?.amount ?? Math.max(0, basePrice - totalDiscount);
   // 단건 구매 무료배송 이벤트 — 원래 배송비는 취소선으로만 표시하고 실제로는 0원 청구
   const originalShippingFee =
     basePrice >= PURCHASE_FREE_SHIPPING_THRESHOLD ? 0 : PURCHASE_SHIPPING_FEE;

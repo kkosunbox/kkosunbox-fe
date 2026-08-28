@@ -144,6 +144,33 @@ export interface CouponInfo {
   unavailableReason?: string | null;
 }
 
+// ── SubscriptionPriceQuote ────────────────────────────────────────
+
+export interface QuoteSubscriptionPriceRequest {
+  planId: number;
+  /** 구독 수량. 쿠폰·레퍼럴 할인은 단가 1개에만 적용된다. */
+  quantity: number;
+  /** 할인 쿠폰 코드 (선택) */
+  couponCode?: string;
+  /** 추천인 레퍼럴 코드 (선택). 첫 구독에만 적용되며, 할인액은 100원 단위로 내림한다. */
+  referralCode?: string;
+}
+
+/** POST /v1/subscriptions/price 응답 — 서버가 확정한 결제 예정 금액 */
+export interface QuoteSubscriptionPriceResponse {
+  /** 플랜 단가 (부가세 포함) */
+  unitPrice: number;
+  quantity: number;
+  /** 할인 전 금액 (단가 × 수량) */
+  originalAmount: number;
+  /** 쿠폰 할인 금액 */
+  couponDiscountAmount: number;
+  /** 레퍼럴 할인 금액 (100원 단위 내림) */
+  referralDiscountAmount: number;
+  /** 실제 결제 금액 (쿠폰·레퍼럴 적용 후 100원 단위 내림) */
+  amount: number;
+}
+
 // ── 요청 ──────────────────────────────────────────────────────────
 
 export interface CreateSubscriptionRequest {

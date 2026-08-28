@@ -19,7 +19,7 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
 
-const HOME_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
+const HOME_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
 const MOBILE_SWIPE_THRESHOLD_PX = 50;
 
 export default function PackagePlansSection() {
@@ -143,7 +143,7 @@ export default function PackagePlansSection() {
                   }}
                   style={{ cursor: activePlan ? "pointer" : undefined }}
                 >
-                  {(["Premium", "Standard", "Basic"] as const).map((t) => {
+                  {(["Basic", "Standard", "Premium"] as const).map((t) => {
                     const tPkg = PACKAGES.find((p) => p.tier === t);
                     return (
                       <Image

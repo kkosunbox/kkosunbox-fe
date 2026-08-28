@@ -82,7 +82,7 @@ export default function ReferralPackagePlansSection() {
                     }}
                     style={{ cursor: activePlan ? "pointer" : undefined }}
                   >
-                    {(["Premium", "Standard", "Basic"] as const).map((t) => {
+                    {(["Basic", "Standard", "Premium"] as const).map((t) => {
                       const tPkg = PACKAGES.find((p) => p.tier === t);
                       return (
                         <Image

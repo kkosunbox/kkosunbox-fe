@@ -5,8 +5,20 @@ import {
 } from "@/widgets/purchase/ui/purchase-order-section/purchaseOrderHelpers";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { EMPTY_ADDR_STATE, type NewAddrState } from "@/features/delivery-address/lib/addressFormState";
+import type { QuoteProductPriceResponse } from "@/features/product/api/types";
 
 const UNIT = 39000; // 프리미엄 단품 단가 예시
+
+function quote(overrides: Partial<QuoteProductPriceResponse>): QuoteProductPriceResponse {
+  return {
+    unitPrice: UNIT,
+    quantity: 1,
+    originalAmount: UNIT,
+    couponDiscountAmount: 0,
+    amount: UNIT,
+    ...overrides,
+  };
+}
 
 const SELECTED_ADDRESS: DeliveryAddress = {
   id: 1,
@@ -33,66 +45,62 @@ function filledAddr(overrides: Partial<NewAddrState> = {}): NewAddrState {
 }
 
 describe("computePurchaseTotals", () => {
-  it("수량 1, 임계값(30,000) 이상 → 원배송비 취소선 0, 실배송비는 항상 0", () => {
-    const p = computePurchaseTotals({ unitPrice: UNIT, quantity: 1 });
+  it("quote 응답 도착 전(null) → 단가 × 수량으로 낙관적 표시, 할인 0", () => {
+    const p = computePurchaseTotals({ unitPrice: UNIT, quantity: 1, quote: null });
     expect(p.basePrice).toBe(39000);
     expect(p.totalDiscount).toBe(0);
     expect(p.originalShippingFee).toBe(0);
     expect(p.shippingFee).toBe(0);
     expect(p.total).toBe(p.productTotal);
+    expect(p.total).toBe(39000);
   });
 
-  it("수량 2 → 주문상품금액만 배수", () => {
-    const p = computePurchaseTotals({ unitPrice: UNIT, quantity: 2 });
+  it("수량 2, quote 없음 → 주문상품금액만 배수", () => {
+    const p = computePurchaseTotals({ unitPrice: UNIT, quantity: 2, quote: null });
     expect(p.basePrice).toBe(78000);
     expect(p.total).toBe(78000);
   });
 
-  it("수량 99 → 상한까지 정상 계산", () => {
-    const p = computePurchaseTotals({ unitPrice: UNIT, quantity: 99 });
-    expect(p.basePrice).toBe(UNIT * 99);
-    expect(p.total).toBe(UNIT * 99);
-  });
-
   it("단가×수량이 임계값(30,000) 미만 → 원배송비는 3,000 취소선, 실배송비는 여전히 0", () => {
-    const p = computePurchaseTotals({ unitPrice: 10000, quantity: 1 });
+    const p = computePurchaseTotals({ unitPrice: 10000, quantity: 1, quote: null });
     expect(p.basePrice).toBe(10000);
     expect(p.originalShippingFee).toBe(3000);
     expect(p.shippingFee).toBe(0);
     expect(p.total).toBe(10000);
   });
 
-  it("쿠폰 상한(maxDiscountAmount)이 총액 계산까지 반영된다", () => {
-    // 39,000 × 20% = 7,800 이지만 상한 5,000
+  it("quote 응답의 쿠폰 할인·최종액을 그대로 반영한다(상한 적용 케이스)", () => {
+    // 39,000 × 20% = 7,800 이지만 서버가 상한 5,000을 적용해 내려준 응답
     const p = computePurchaseTotals({
       unitPrice: UNIT,
       quantity: 1,
-      couponInfo: { canUse: true, discountRate: 20, maxDiscountAmount: 5000 },
+      quote: quote({ couponDiscountAmount: 5000, amount: 34000 }),
     });
     expect(p.couponDiscount).toBe(5000);
     expect(p.total).toBe(34000);
   });
 
-  it("수량 2개 이상 → 쿠폰 할인이 주문상품금액 전체 기준으로 계산된다", () => {
+  it("수량 2개 → quote의 originalAmount·couponDiscountAmount를 그대로 쓴다(주문 총액 기준)", () => {
     // 39,000 × 2 = 78,000의 20% = 15,600 (단가 1개 기준이면 7,800이 되어 청구액과 어긋난다)
     const p = computePurchaseTotals({
       unitPrice: UNIT,
       quantity: 2,
-      couponInfo: { canUse: true, discountRate: 20 },
+      quote: quote({ quantity: 2, originalAmount: 78000, couponDiscountAmount: 15600, amount: 62400 }),
     });
     expect(p.basePrice).toBe(78000);
     expect(p.couponDiscount).toBe(15600);
     expect(p.total).toBe(62400);
   });
 
-  it("사용 불가 쿠폰은 할인 0", () => {
+  it("최종 결제액(amount)은 서버가 100원 단위로 내린 값을 재계산 없이 그대로 쓴다", () => {
+    // 39,000 - 3,950 = 35,050이지만 서버는 100원 단위 내림한 35,000을 amount로 내려준다
     const p = computePurchaseTotals({
       unitPrice: UNIT,
       quantity: 1,
-      couponInfo: { canUse: false, discountRate: 20, unavailableReason: "만료됨" },
+      quote: quote({ couponDiscountAmount: 3950, amount: 35000 }),
     });
-    expect(p.couponDiscount).toBe(0);
-    expect(p.total).toBe(39000);
+    expect(p.couponDiscount).toBe(3950);
+    expect(p.total).toBe(35000); // 35,050이 아니라 서버 값 그대로
   });
 });
 

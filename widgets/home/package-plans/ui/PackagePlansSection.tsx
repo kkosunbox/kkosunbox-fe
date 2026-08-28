@@ -16,7 +16,7 @@ import {
 } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
-import { PlanPicker, PlanTierDots } from "@/widgets/package-plans";
+import { PlanPicker, PlanTierDots, RecommendedPickBadge } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
 
 const HOME_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
@@ -164,13 +164,16 @@ export default function PackagePlansSection() {
                   })}
                   <PlanImageBadges
                     tags={activePlan?.tags}
-                    className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
+                    className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
                   />
                 </div>
                 <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
               </div>
               {activePkg ? (
                 <div className="mt-4">
+                  {activePlan?.isRecommended ? (
+                    <RecommendedPickBadge className="mb-2" />
+                  ) : null}
                   <p
                     className="text-subtitle-17-b-lh22"
                     style={{ color: activePkg.colorVar }}

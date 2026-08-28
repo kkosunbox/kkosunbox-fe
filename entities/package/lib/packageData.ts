@@ -52,6 +52,30 @@ export function resolveAverageRatingByTier(
   return result;
 }
 
+/** 백엔드 추천픽이 없을 때 '추천 PICK' 배지를 붙일 기본 티어 */
+export const FALLBACK_RECOMMENDED_TIER: PackageTier = "Standard";
+
+/** 추천 여부 판별에 필요한 플랜 구조 (백엔드 `SubscriptionPlanDto`가 이 형태를 만족한다) */
+export type RecommendablePlan = SubscriptionPlanLike & { isRecommended?: boolean };
+
+/**
+ * '추천 PICK' 배지를 붙일 플랜 id 집합.
+ *
+ * 백엔드는 `profileId`를 넘겨 조회했을 때만 `isRecommended`를 설정하므로,
+ * 비로그인·체크리스트 미진단 사용자에게는 모든 플랜이 false로 내려온다.
+ * **그 경우에만** `FALLBACK_RECOMMENDED_TIER`(Standard) 플랜을 기본 추천으로 세워
+ * 배지가 아예 사라지지 않게 한다. 백엔드가 하나라도 추천을 주면 그 값을 그대로 쓴다
+ * (여러 건을 주면 여러 건 모두 — 폴백은 대체가 아니라 빈 결과에 대한 보충이다).
+ *
+ * Standard 플랜조차 없으면 빈 집합 — 표시 측에서 배지를 숨긴다.
+ */
+export function resolveRecommendedPlanIds(plans: RecommendablePlan[]): Set<number> {
+  const fromApi = plans.filter((plan) => plan.isRecommended);
+  if (fromApi.length > 0) return new Set(fromApi.map((plan) => plan.id));
+  const fallback = plans.find((plan) => tierFromSubscriptionPlan(plan) === FALLBACK_RECOMMENDED_TIER);
+  return new Set(fallback ? [fallback.id] : []);
+}
+
 /** 목록 정렬: sortOrder 우선, 동일 시 id */
 export function comparePlansForDisplayOrder(a: SubscriptionPlanLike, b: SubscriptionPlanLike): number {
   if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;

@@ -14,6 +14,7 @@ import {
   DrawerPinIcon,
   DrawerClipboardIcon,
   DrawerNavIcon,
+  DrawerPointIcon,
   DrawerLogoutIcon,
 } from "./icons";
 
@@ -35,6 +36,7 @@ export function MobileDrawer({
   profileImageUrl,
   hasProfile,
   petName,
+  isInfluencer,
   onLogout,
 }: {
   open: boolean;
@@ -46,6 +48,7 @@ export function MobileDrawer({
   profileImageUrl: string | null;
   hasProfile: boolean;
   petName?: string | null;
+  isInfluencer: boolean;
   onLogout: () => Promise<void>;
 }) {
   const { openModal } = useModal();
@@ -55,6 +58,7 @@ export function MobileDrawer({
   // 단축 아이콘 active 경로 (계정정보는 모달이라 경로 active가 없음)
   const isMyPageActive = pathname === "/mypage";
   const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
+  const isPointActive = pathname.startsWith("/mypage/point");
   const shortcutLabelClass = (active: boolean) =>
     `tracking-[-0.02em] ${
       active
@@ -194,6 +198,22 @@ export function MobileDrawer({
               </Link>
             );
           })}
+          {isLoggedIn && isInfluencer && (
+            <Link
+              href="/mypage/point"
+              onClick={onClose}
+              aria-current={isPointActive ? "page" : undefined}
+              className={[
+                "flex h-[58px] items-center gap-4 rounded-xl tracking-[-0.02em]",
+                isPointActive ? "mx-3 bg-[var(--color-drawer-item-active)] px-7" : "mx-7 px-3",
+              ].join(" ")}
+            >
+              <DrawerPointIcon active={isPointActive} />
+              <span className={isPointActive ? "text-body-14-b text-[var(--color-primary)]" : "text-body-14-m text-[var(--color-text)]"}>
+                MY 포인트
+              </span>
+            </Link>
+          )}
         </nav>
 
         {/* 로그아웃 + 하단 배너 — 함께 하단으로 밀되, 화면이 짧으면 드로워 전체가 스크롤된다 */}

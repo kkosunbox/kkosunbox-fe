@@ -131,7 +131,7 @@ export function formatPackageContentsLabel(contents: readonly string[]): string 
   return contents.map((group) => group.replace(/ /g, " ")).join(" ");
 }
 
-const COMPARE_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
+const COMPARE_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
 export const COMPARE_PACKAGES = COMPARE_ORDER.map(
   (t) => PACKAGES.find((p) => p.tier === t)!
 );

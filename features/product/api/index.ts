@@ -9,6 +9,7 @@ export {
   cancelProductOrder,
   getProductOrderReceipt,
   getProductCouponInfo,
+  getProductPriceQuote,
 } from "./productApi";
 
 export type {
@@ -28,4 +29,6 @@ export type {
   ProductCouponInfo,
   ProductOrderPlanSummaryDto,
   ProductOrderPlanSummariesResponse,
+  QuoteProductPriceRequest,
+  QuoteProductPriceResponse,
 } from "./types";

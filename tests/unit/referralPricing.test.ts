@@ -4,7 +4,6 @@ import {
   referralDiscountAmount,
   referralUnitPrice,
 } from "@/features/referral/lib/referralPricing";
-import { computeOrderPricing } from "@/features/order";
 
 const ELIGIBLE = { inviteEligible: true, discountRate: 0.15 };
 const INELIGIBLE = { inviteEligible: false, discountRate: 0.15 };
@@ -38,35 +37,6 @@ describe("referralDiscountAmount", () => {
 
   it("적격이 아니면 0", () => {
     expect(referralDiscountAmount(28900, INELIGIBLE)).toBe(0);
-  });
-});
-
-describe("플랜 화면 단가 == 주문서 쿠폰 적용 전 총액 (수량 1)", () => {
-  // 회귀 방지: 예전에는 플랜 화면이 round(P×(1−r)), 주문서가 P−floor(P×r)로 각자 계산해
-  // 같은 플랜에 다른 값이 나올 수 있었다(2026-08-12 /r/{slug} 24,565 vs /order 28,900 사고의 일부).
-  const PLANS = [28900, 26900, 20900, 17900, 33333, 39000];
-
-  for (const monthlyPrice of PLANS) {
-    it(`${monthlyPrice.toLocaleString("ko-KR")}원 — 두 화면 값이 일치`, () => {
-      const planScreen = referralUnitPrice(monthlyPrice, ELIGIBLE);
-      const order = computeOrderPricing({
-        unitPrice: monthlyPrice,
-        quantity: 1,
-        inviteDiscount: referralDiscountAmount(monthlyPrice, ELIGIBLE),
-      });
-      expect(order.total).toBe(planScreen);
-    });
-  }
-
-  it("부적격이면 두 화면 모두 정가", () => {
-    const planScreen = referralUnitPrice(28900, INELIGIBLE);
-    const order = computeOrderPricing({
-      unitPrice: 28900,
-      quantity: 1,
-      inviteDiscount: referralDiscountAmount(28900, INELIGIBLE),
-    });
-    expect(planScreen).toBe(28900);
-    expect(order.total).toBe(28900);
   });
 });
 

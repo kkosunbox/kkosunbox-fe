@@ -15,6 +15,8 @@ import type {
   DeliveryStatusSummaryResponse,
   GetPaymentHistoryParams,
   PaymentReceiptResponse,
+  QuoteSubscriptionPriceRequest,
+  QuoteSubscriptionPriceResponse,
   SubscriptionListResponse,
   SubscriptionPlanListResponse,
   UserSubscriptionDto,
@@ -143,4 +145,9 @@ export function getPaymentReceipt(paymentId: string) {
 /** 쿠폰 정보 조회 */
 export function getCouponInfo(body: GetCouponInfoRequest) {
   return apiClient.post<CouponInfo>("/v1/subscriptions/coupon/info", body);
+}
+
+/** 구독 결제 예정 금액 조회 — 서버가 쿠폰·레퍼럴까지 반영해 확정한 금액을 반환한다 */
+export function getSubscriptionPriceQuote(body: QuoteSubscriptionPriceRequest) {
+  return apiClient.post<QuoteSubscriptionPriceResponse>("/v1/subscriptions/price", body);
 }

@@ -504,6 +504,48 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
       return;
     }
 
+    // POST /v1/subscriptions/price — 구독 결제 예정 금액 조회.
+    // 쿠폰(MOCK_VALID_COUPON_CODE)·초대코드(MOCK_VALID_REFERRAL_CODE) 모두 10% 할인,
+    // 실제 백엔드처럼 최종 결제액은 100원 단위로 내림한다.
+    if (method === "POST" && url === "/v1/subscriptions/price") {
+      const body = await readBody(req) as {
+        planId?: number;
+        quantity?: number;
+        couponCode?: string;
+        referralCode?: string;
+      };
+      const plan = MOCK_PLANS.find((p) => p.id === body.planId) ?? MOCK_PLANS[0];
+      const quantity = body.quantity ?? 1;
+      const unitPrice = plan.monthlyPrice;
+      const originalAmount = unitPrice * quantity;
+      const couponDiscountAmount =
+        body.couponCode?.toUpperCase() === MOCK_VALID_COUPON_CODE ? Math.floor(unitPrice * 0.1) : 0;
+      const referralDiscountRaw =
+        body.referralCode?.toUpperCase() === MOCK_VALID_REFERRAL_CODE ? Math.floor(unitPrice * 0.1) : 0;
+      const referralDiscountAmount = Math.floor(referralDiscountRaw / 100) * 100;
+      const amount =
+        Math.floor(Math.max(0, originalAmount - couponDiscountAmount - referralDiscountAmount) / 100) * 100;
+      ok(res, { unitPrice, quantity, originalAmount, couponDiscountAmount, referralDiscountAmount, amount });
+      return;
+    }
+
+    // POST /v1/products/{id}/price — 단품 결제 예정 금액 조회.
+    // 단건 구매 e2e는 아직 없지만(상품 카탈로그 목이 없음), quote 연동 확장 시 바로 쓸 수 있도록
+    // 구독 quote와 동일한 계약(couponCode 검증, 100원 단위 내림)으로 목을 갖춰 둔다.
+    if (method === "POST" && /^\/v1\/products\/\d+\/price$/.test(url)) {
+      const body = await readBody(req) as { quantity?: number; couponCode?: string };
+      const quantity = body.quantity ?? 1;
+      const unitPrice = 39000;
+      const originalAmount = unitPrice * quantity;
+      const couponDiscountAmount =
+        body.couponCode?.toUpperCase() === MOCK_VALID_COUPON_CODE
+          ? Math.floor((originalAmount * 10) / 100)
+          : 0;
+      const amount = Math.floor(Math.max(0, originalAmount - couponDiscountAmount) / 100) * 100;
+      ok(res, { unitPrice, quantity, originalAmount, couponDiscountAmount, amount });
+      return;
+    }
+
     // GET /v1/subscriptions — 구독 목록 조회 (취소 건 포함, 구독 이력 판정에 사용)
     // MOCK_ACCESS_TOKEN(test 유저)·인플루언서 토큰 → 구독 1건(이력 있음)
     // NO_PROFILE/BILLING 토큰 등 그 외 → 빈 배열(이력 없음)

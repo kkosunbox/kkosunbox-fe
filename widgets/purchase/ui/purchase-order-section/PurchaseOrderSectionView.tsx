@@ -105,7 +105,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
                 onAgreeAll={vm.handleAgreeAll}
                 submitError={vm.submitError}
                 isPaying={vm.isPaying}
-                paymentReady={vm.paymentReady}
+                paymentReady={vm.paymentReady && !vm.isQuoting}
                 onPay={() => void vm.handlePay()}
               />
 

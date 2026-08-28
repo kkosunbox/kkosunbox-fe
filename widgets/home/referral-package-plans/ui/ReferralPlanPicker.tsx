@@ -24,7 +24,7 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 
 /** 데스크탑 카드 열·모바일 네비·태블릿 가로 카드 공통 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
-const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Premium", "Standard", "Basic"];
+const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -102,7 +102,7 @@ export interface PlanPickerProps {
   /** false이면 plans 로딩 중 — plan 없는 슬롯에 pulse 애니메이션 표시. true(기본값)이면 로딩 완료 — 정적 플레이스홀더 표시 */
   plansReady?: boolean;
   getPrimaryButton: (plan: SubscriptionPlanDto) => PrimaryButtonConfig;
-  /** 데스크탑 카드 열·모바일 네비 순서. 기본값: ["Premium", "Standard", "Basic"] */
+  /** 데스크탑 카드 열·모바일 네비 순서. 기본값: ["Basic", "Standard", "Premium"] */
   summaryOrder?: PackageTier[];
   /** 모바일(<768px) 슬롯. 제공 시 기본 셰브론+도트 네비를 대체한다. onTierSelect는 재탭 시 primary 버튼과 동일 동작. */
   mobileSlot?: (tier: PackageTier, onTierSelect: (tier: PackageTier) => void, order: PackageTier[]) => ReactNode;

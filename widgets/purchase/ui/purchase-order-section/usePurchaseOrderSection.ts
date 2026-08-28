@@ -11,6 +11,7 @@ import { computePurchaseTotals, validatePurchaseCheckout } from "./purchaseOrder
 import { useOrderAgreements } from "./hooks/useOrderAgreements";
 import { usePurchaseCoupon } from "./hooks/usePurchaseCoupon";
 import { usePurchasePaymentWidget } from "./hooks/usePurchasePaymentWidget";
+import { usePurchasePriceQuote } from "./hooks/usePurchasePriceQuote";
 
 interface UsePurchaseOrderSectionParams {
   purchaseProduct: PackagePurchaseProduct;
@@ -57,10 +58,22 @@ export function usePurchaseOrderSection({
 
   useExternalMessages({ onAddressSelected: address.handleAddressSelected });
 
+  // 확정(canUse)된 쿠폰 코드만 quote에 실어 보낸다 — 실제 주문 생성 시 보내는 조건과 동일.
+  const appliedCouponCode =
+    coupon.couponInfo?.canUse && coupon.couponCodeInput.trim()
+      ? coupon.couponCodeInput.trim()
+      : undefined;
+
+  const { quote, isQuoting, quoteError } = usePurchasePriceQuote({
+    productId,
+    quantity,
+    couponCode: appliedCouponCode,
+  });
+
   const { basePrice, couponDiscount, totalDiscount, originalShippingFee, shippingFee, total } = computePurchaseTotals({
     unitPrice: purchaseProduct.price,
     quantity,
-    couponInfo: coupon.couponInfo,
+    quote,
   });
 
   const { paymentWidget, paymentReady, widgetLoadError, reloadWidget, updateAmount } =
@@ -72,6 +85,15 @@ export function usePurchaseOrderSection({
 
   async function handlePay() {
     setSubmitError(null);
+
+    if (isQuoting) {
+      setSubmitError("금액을 계산하는 중입니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    if (quoteError) {
+      setSubmitError(quoteError);
+      return;
+    }
 
     const guard = validatePurchaseCheckout({
       agreeAll,
@@ -150,6 +172,7 @@ export function usePurchaseOrderSection({
     originalShippingFee,
     shippingFee,
     total,
+    isQuoting,
     couponCodeInput: coupon.couponCodeInput,
     setCouponCodeInput: coupon.setCouponCodeInput,
     couponInfo: coupon.couponInfo,

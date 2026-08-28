@@ -59,6 +59,7 @@ export default function OrderSection(props: OrderSectionProps) {
     phoneError,
     setPhoneError,
     isPending,
+    isQuoting,
     unitPrice,
     basePrice,
     totalDiscount,
@@ -179,6 +180,7 @@ export default function OrderSection(props: OrderSectionProps) {
         handleAgreeAll={handleAgreeAll}
         submitError={submitError}
         isPending={isPending}
+        isQuoting={isQuoting}
         hasBilling={billing !== null}
         handlePay={handlePay}
       />

@@ -12,6 +12,7 @@ import {
   DropdownUserIcon,
   DropdownPinIcon,
   DropdownClipboardIcon,
+  DropdownPointIcon,
   DropdownLogoutIcon,
 } from "./icons";
 
@@ -21,6 +22,7 @@ export function ProfileDropdown({
   email,
   profileImageUrl,
   userId,
+  isInfluencer,
   onClose,
 }: {
   hasProfile: boolean;
@@ -28,6 +30,7 @@ export function ProfileDropdown({
   email: string | null;
   profileImageUrl: string | null;
   userId?: number | null;
+  isInfluencer: boolean;
   onClose: () => void;
 }) {
   const { logout } = useAuth();
@@ -36,7 +39,8 @@ export function ProfileDropdown({
   const pathname = usePathname();
 
   const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
-  const isMypageActive = pathname.startsWith("/mypage") && !isSubscriptionActive && !pathname.startsWith("/mypage/withdraw");
+  const isPointActive = pathname.startsWith("/mypage/point");
+  const isMypageActive = pathname.startsWith("/mypage") && !isSubscriptionActive && !isPointActive && !pathname.startsWith("/mypage/withdraw");
 
   const menuItemClass = (active: boolean) =>
     [
@@ -111,6 +115,12 @@ export function ProfileDropdown({
           <DropdownClipboardIcon />
           구독관리
         </button>
+        {isInfluencer && (
+          <button onClick={() => { onClose(); router.push("/mypage/point"); }} className={menuItemClass(isPointActive)}>
+            <DropdownPointIcon />
+            MY 포인트
+          </button>
+        )}
         <button onClick={handleLogout} className={menuItemClass(false)}>
           <DropdownLogoutIcon />
           로그아웃

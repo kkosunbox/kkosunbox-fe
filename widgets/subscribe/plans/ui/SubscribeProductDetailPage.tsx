@@ -13,10 +13,11 @@ import {
   PACKAGES,
   tierFromSubscriptionPlan,
 } from "@/entities/package";
-import type { SubscriptionPlanDto, SubscriptionPlanTagDto } from "@/features/subscription/api/types";
+import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { useReferralPricing } from "@/features/referral/model";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import { PlanImageBadges } from "@/shared/ui";
 import Stars from "./reviews/Stars";
 import ReviewImageLightbox from "./reviews/ReviewImageLightbox";
 import { useProductReviews } from "./reviews/useProductReviews";
@@ -32,31 +33,6 @@ interface Props {
 
 function formatWon(value: number) {
   return `${value.toLocaleString("ko-KR")}원`;
-}
-
-function PlanImageBadges({
-  tags,
-  className,
-}: {
-  tags: SubscriptionPlanTagDto[] | null | undefined;
-  className: string;
-}) {
-  const visibleTags = (tags ?? []).filter((tag) => tag.name.trim().length > 0);
-  if (visibleTags.length === 0) return null;
-
-  return (
-    <div className={className}>
-      {visibleTags.map((tag) => (
-        <span
-          key={tag.id}
-          className="rounded-[5px] px-1.5 py-1 text-[12px] font-semibold leading-[14px]"
-          style={{ background: tag.bgColor, color: tag.textColor }}
-        >
-          {tag.name}
-        </span>
-      ))}
-    </div>
-  );
 }
 
 type TabKey = "info" | "review" | "delivery" | "support";

@@ -36,7 +36,7 @@ function formatMonthlyPrice(n: number) {
 }
 
 /** 할인 표시 정보 (할인율·정가). 할인이 없는 플랜(discountRate 없음 + 초대코드 미적용)이면 null. */
-function planDiscountInfo(
+export function planDiscountInfo(
   plan: Pick<SubscriptionPlanDto, "monthlyPrice" | "originalPrice" | "discountRate">,
   discountApplied: boolean,
   combinedDiscountPct: (p: { monthlyPrice: number; originalPrice?: number | null }) => number,
@@ -60,14 +60,21 @@ function crossfadeStyle(isActive: boolean): React.CSSProperties {
   };
 }
 
-function PlanExplainVisual({
+/** PlanPicker 좌측 패널(560×519) 기준 기본값 — 다른 폭의 컨테이너는 sizes를 직접 넘긴다 */
+const PLAN_EXPLAIN_DEFAULT_SIZES =
+  "(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw";
+
+export function PlanExplainVisual({
   tier,
   isActive,
   priority,
+  sizes = PLAN_EXPLAIN_DEFAULT_SIZES,
 }: {
   tier: PackageTier;
   isActive: boolean;
   priority: boolean;
+  /** 컨테이너 폭이 PlanPicker 패널과 다를 때만 지정 — 잘못 두면 태블릿에서 저해상도 소스를 받는다 */
+  sizes?: string;
 }) {
   const pkg = PACKAGES.find((item) => item.tier === tier)!;
 
@@ -84,7 +91,7 @@ function PlanExplainVisual({
           fill
           quality={HIGH_IMAGE_QUALITY}
           className="object-cover"
-          sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
+          sizes={sizes}
           priority={priority}
         />
       </div>

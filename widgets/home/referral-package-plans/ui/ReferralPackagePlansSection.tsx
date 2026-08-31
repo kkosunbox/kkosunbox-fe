@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { CheckCircleIcon } from "@/shared/ui";
+import { useEffect, useMemo, useState } from "react";
+import { CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   PACKAGES,
+  resolveRecommendedPlanIds,
   tierFromSubscriptionPlan,
   TIER_DETAIL_HERO_IMAGES,
   PackageNutritionGuide,
@@ -14,7 +15,7 @@ import {
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { useReferral } from "@/features/referral/model";
-import { PlanTierDots } from "@/widgets/package-plans";
+import { PlanTierDots, RecommendedPickBadge } from "@/widgets/package-plans";
 import ReferralPlanPicker from "./ReferralPlanPicker";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import NimIRecommendSvg from "./NimIRecommendSvg";
@@ -35,6 +36,9 @@ export default function ReferralPackagePlansSection() {
   }, []);
 
   const additionalDiscountPct = Math.round(discountRate * 100);
+
+  /** 백엔드 추천픽이 없으면 Standard 폴백 — ReferralPlanPicker 내부 배지와 동일 기준 */
+  const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(apiPlans), [apiPlans]);
 
   return (
     <section className="bg-white py-12 md:py-20">
@@ -102,6 +106,10 @@ export default function ReferralPackagePlansSection() {
                         />
                       );
                     })}
+                    <PlanImageBadges
+                      tags={activePlan?.tags}
+                      className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
+                    />
                     {hasDisplayableReferralOffer ? (
                       <ReferralAdditionalDiscountChip
                         pct={additionalDiscountPct}
@@ -113,6 +121,9 @@ export default function ReferralPackagePlansSection() {
                 </div>
                 {activePkg ? (
                   <div className="mt-4">
+                    {activePlan && recommendedPlanIds.has(activePlan.id) ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p className="text-subtitle-17-b-lh22" style={{ color: activePkg.colorVar }}>
                       {activePkg.name}
                     </p>

@@ -44,6 +44,12 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "support", label: "고객센터" },
 ];
 
+function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
+  return tab.key === "review" && reviewTotal > 0
+    ? `${tab.label} ${reviewTotal.toLocaleString("ko-KR")}`
+    : tab.label;
+}
+
 export default function SubscribeProductDetailPage({ initialPlan, plans }: Props) {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
@@ -280,7 +286,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                           : "text-body-13-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tab.label}
+                      {tabLabel(tab, reviewState.total)}
                     </button>
                     {idx < TABS.length - 1 && (
                       <span className="mx-1 h-3 w-px bg-[var(--color-text-secondary)]" />
@@ -494,7 +500,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                           : "text-body-16-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tab.label}
+                      {tabLabel(tab, reviewState.total)}
                     </button>
                     {idx < TABS.length - 1 && (
                       <span className="mx-2 h-3 w-px bg-[var(--color-text-secondary)]" />

@@ -179,6 +179,7 @@
   --color-text-discount: #EC7700;  /* 할인율 텍스트 (오렌지) */
   --color-referral-discount-chip-bg: #FFE7E7;    /* 레퍼럴 플랜 카드 추가할인 칩 배경 */
   --color-referral-discount-chip-text: #C00000;  /* 레퍼럴 플랜 카드 추가할인 칩 텍스트 */
+  --color-referral-offer-badge: #5B792F;         /* 레퍼럴 공용 첫 달 할인 Hero 상단 배지 */
   --color-modal-desc: rgba(34, 34, 38, 0.82); /* 범용 모달 설명 텍스트 */
 
   /* Status */
@@ -490,6 +491,7 @@
   --color-text-discount: var(--color-text-discount);
   --color-referral-discount-chip-bg: var(--color-referral-discount-chip-bg);
   --color-referral-discount-chip-text: var(--color-referral-discount-chip-text);
+  --color-referral-offer-badge: var(--color-referral-offer-badge);
   --color-modal-desc: var(--color-modal-desc);
 
   /* Status */

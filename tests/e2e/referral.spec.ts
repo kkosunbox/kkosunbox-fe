@@ -27,7 +27,7 @@ import {
 //
 // 페이지 동작:
 //   isActive: false or 404       → redirect("/")
-//   isPageVisible: false         → 추천 코드 캡처 후 redirect("/")
+//   isPageVisible: false         → 추천 코드 유지 + 공용 첫 달 할인 Hero 렌더링
 //   isPageVisible: true          → ReferralProvider(initialData) + 홈 섹션 렌더링
 //                                  마운트 후 ggosoon-ref 쿠키 설정 (client-side)
 // ──────────────────────────────────────────────────────────────────────────────
@@ -80,9 +80,12 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
     await expect(page).toHaveURL("/", { timeout: 10_000 });
   });
 
-  test("isPageVisible=false slug → 추천 코드를 유지하고 / 리다이렉트", async ({ page }) => {
+  test("isPageVisible=false slug → 추천 코드를 유지하고 공용 할인 Hero 렌더링", async ({ page }) => {
     await page.goto(`/r/${MOCK_HIDDEN_PAGE_SLUG}`);
-    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await expect(page).toHaveURL(`/r/${MOCK_HIDDEN_PAGE_SLUG}`, { timeout: 10_000 });
+    await expect(page.getByAltText("꼬순박스 첫 달 할인")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("button", { name: CTA_LABEL })).toBeVisible();
+    await expect(page.getByText(INFLUENCER_NAME_TEXT)).not.toBeVisible();
 
     await expect
       .poll(async () => {
@@ -90,6 +93,16 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
         return cookies.find((c) => c.name === "ggosoon-ref")?.value;
       })
       .toBe(encodeURIComponent(MOCK_VALID_REFERRAL_CODE));
+  });
+
+  test("숨김 slug 방문 후 활성 slug 진입 → 현재 slug의 개인화 Hero 렌더링", async ({ page }) => {
+    await page.goto(`/r/${MOCK_HIDDEN_PAGE_SLUG}`);
+    await expect(page.getByAltText("꼬순박스 첫 달 할인")).toBeVisible({ timeout: 10_000 });
+
+    await page.goto(REFERRAL_LANDING);
+    await expect(page).toHaveURL(REFERRAL_LANDING, { timeout: 10_000 });
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByAltText("꼬순박스 첫 달 할인")).not.toBeVisible();
   });
 
   test("존재하지 않는 slug → / 리다이렉트", async ({ page }) => {

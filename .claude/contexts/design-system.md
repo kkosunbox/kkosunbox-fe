@@ -75,6 +75,7 @@
 | `--color-hero-third-tagline` | `#813800` | Hero 슬라이드3 해시태그 |
 | `--color-hero-third-cta` | `#89431D` | Hero 슬라이드3 CTA 버튼 |
 | `--color-hero-cta-bg` | `#454545` | Hero CTA 버튼 배경 |
+| `--color-referral-offer-badge` | `#5B792F` | 레퍼럴 공용 첫 달 할인 Hero 상단 배지 |
 
 ### CTA / About
 

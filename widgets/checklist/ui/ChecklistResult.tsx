@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionApi";
@@ -12,7 +12,6 @@ import {
   packageThemeForPlan,
   tierFromSubscriptionPlan,
   PACKAGE_SUMMARY_IMAGES,
-  PACKAGE_EXPLAIN_BY_TIER,
   PackageSummaryThumbnail,
   PlanRatingStars,
   TIER_DETAIL_HERO_IMAGES,
@@ -20,6 +19,7 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import { PackageNutritionGuide } from "@/entities/package";
+import { PlanExplainVisual } from "@/widgets/package-plans";
 import { CheckCircleIcon, FallbackAvatar } from "@/shared/ui";
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
@@ -162,7 +162,6 @@ interface CardBodyProps {
   tierColorVar: string;
   tierLabel: string;
   pkg: PackageData;
-  explainImage: StaticImageData;
   reasons: RecommendReason[];
   onDetailClick: () => void;
 }
@@ -174,7 +173,6 @@ function CardBody({
   tierColorVar,
   tierLabel,
   pkg,
-  explainImage,
   reasons,
   onDetailClick,
 }: CardBodyProps) {
@@ -216,14 +214,12 @@ function CardBody({
         <div className="relative shrink-0 max-lg:aspect-[562/521] max-lg:w-full lg:h-[521px] lg:w-[562px]">
           {/* 이미지 클리핑 전용 — overflow-hidden은 여기서만 */}
           <div className="absolute inset-0 overflow-hidden rounded-[20px]">
-            <Image
-              src={explainImage}
-              alt={`${pkg.name} 설명`}
-              fill
-              quality={HIGH_IMAGE_QUALITY}
-              className="object-cover"
-              sizes="(min-width: 1200px) 562px, calc(100vw - 72px)"
+            {/* 홈·구독몰 PlanPicker와 동일한 설명 비주얼 — 대표 사진 + 그라디언트 + 구성 텍스트 */}
+            <PlanExplainVisual
+              tier={pkg.tier}
+              isActive
               priority
+              sizes="(min-width: 1200px) 562px, calc(100vw - 72px)"
             />
             {/* 제품 상세보기 버튼 (우하단) */}
             <button
@@ -359,7 +355,6 @@ export default function ChecklistResult({
     : TIER_LABEL[effectiveRecommendedTier];
 
   const reasons = recommendReasons;
-  const explainImage = PACKAGE_EXPLAIN_BY_TIER[recommendedPlanTier].src;
 
   const navigateToDetail = () => {
     if (!recommendedApiPlan) return;
@@ -376,7 +371,6 @@ export default function ChecklistResult({
     tierColorVar,
     tierLabel,
     pkg: recommendedPkg,
-    explainImage,
     reasons,
   };
 

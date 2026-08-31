@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from "next";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
+import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL } from "@/shared/lib/seo";
@@ -34,7 +35,9 @@ export const metadata: Metadata = {
 
 export default async function SubscribePage() {
   const token = await getServerToken();
-  const plans = await fetchSubscriptionPlans(token);
+  // 초대 맥락이 있으면 코드를 함께 넘겨 서버가 채운 할인가를 그대로 표시한다.
+  const { refCode } = await resolveReferralContext();
+  const plans = await fetchSubscriptionPlans(token, undefined, refCode ?? undefined);
 
   return (
     <>

@@ -14,8 +14,8 @@ import {
   tierFromSubscriptionPlan,
 } from "@/entities/package";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { useReferralPricing } from "@/features/referral/model";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
+import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { PlanImageBadges } from "@/shared/ui";
 import Stars from "./reviews/Stars";
@@ -73,14 +73,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const detailImages = PACKAGE_DETAIL_IMAGES[selectedTier];
   const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
-  // `/subscribe/detail` — 마케팅 계층. 적격 판정은 `/order`가 한다.
-  const { unitPrice, additionalDiscountPct, discountApplied } = useReferralPricing({
-    intent: "promotional",
-  });
-
-  const originalPrice = selectedPlan.originalPrice ?? selectedPlan.monthlyPrice;
-  const discountedUnitPrice = unitPrice(selectedPlan.monthlyPrice);
-  const hasDiscount = discountApplied || (selectedPlan.discountRate ?? 0) > 0;
+  // 표시 금액은 전부 서버 값 그대로 — 초대 할인가는 플랜 조회 시 `referralCode`로 채워진다.
+  const price = planDisplayPrice(selectedPlan);
+  const originalPrice = price.strikePrice ?? selectedPlan.monthlyPrice;
+  const discountedUnitPrice = price.price;
+  const hasDiscount = price.strikePrice != null;
   const salePrice = discountedUnitPrice * quantity;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
@@ -171,8 +168,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
               {formatWon(discountedUnitPrice)}
             </span>
-            {discountApplied && (
-              <ReferralAdditionalDiscountChip pct={additionalDiscountPct} inline />
+            {price.referralApplied && (
+              <ReferralAdditionalDiscountChip pct={price.referralPct} inline />
             )}
           </div>
 
@@ -408,8 +405,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
                   {formatWon(discountedUnitPrice)}
                 </span>
-                {discountApplied && (
-                  <ReferralAdditionalDiscountChip pct={additionalDiscountPct} inline />
+                {price.referralApplied && (
+                  <ReferralAdditionalDiscountChip pct={price.referralPct} inline />
                 )}
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">

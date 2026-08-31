@@ -19,9 +19,11 @@ import {
  * 적격 여부를 계산했다. 같은 요청 안에서도 답이 갈려 `/r/{slug}`는 24,565원,
  * `/subscribe`·`/order`는 28,900원을 보여주는 사고가 났다(2026-08-12).
  *
- * 서버가 확정하는 값과 프론트가 유도하는 값을 분리한다.
- *   - **서버(여기)**: 초대코드·slug·할인율·적격 여부
- *   - **프론트**: 위 값으로부터 표시 단가 (`features/referral/lib/referralPricing.ts`)
+ * 이 모듈이 확정하는 것은 **초대 맥락**(코드·slug·할인율·적격 여부)까지다.
+ * **표시 단가는 여기서 유도하지 않는다** — `GET /v1/subscriptions/plans?referralCode=...`가
+ * 내려주는 `referralDiscountedPrice`를 그대로 쓴다(`features/subscription/lib/planDisplayPrice.ts`).
+ * 프론트가 단가를 직접 계산하던 시절에는 서버의 100원 단위 내림을 놓쳐 실제 청구액보다
+ * 싸게 표시하고 있었다(2026-08-31).
  */
 
 /**

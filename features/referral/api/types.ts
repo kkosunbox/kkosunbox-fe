@@ -14,6 +14,8 @@ export interface ReferralPageResponse {
   profileImageUrl: string | null;
   discountRate: number;
   isActive: boolean;
+  /** 인플루언서 전용 랜딩 노출 여부. false면 추천 코드는 유지한 채 홈으로 보낸다. */
+  isPageVisible: boolean;
 }
 
 // ── 초대 코드 적용 가능 여부 ──────────────────────────────────────

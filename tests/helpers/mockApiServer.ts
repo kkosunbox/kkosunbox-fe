@@ -128,6 +128,7 @@ const MOCK_INFLUENCER_REFRESH_TOKEN = "mock-influencer-refresh-token";
 // 레퍼럴 랜딩 페이지 슬러그
 export const MOCK_ACTIVE_SLUG = "test-influencer";
 export const MOCK_INACTIVE_SLUG = "inactive-influencer";
+export const MOCK_HIDDEN_PAGE_SLUG = "hidden-page-influencer";
 
 // GET /v1/referral/pages/{slug} 응답
 export const MOCK_REFERRAL_PAGE = {
@@ -136,6 +137,7 @@ export const MOCK_REFERRAL_PAGE = {
   profileImageUrl: null as string | null,
   discountRate: 0.1,
   isActive: true,
+  isPageVisible: true,
 };
 
 // GET /v1/referral/me 응답 (인플루언서 전용)
@@ -631,7 +633,22 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
         auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}` ||
         auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}`
       ) {
-        ok(res, { plans: MOCK_PLANS });
+        // referralCode가 유효하면 초대 할인 3종을 채운다 — 무효·부재면 null(에러 아님).
+        // 실서버와 동일하게 **할인액을 100원 단위로 내림**한다. 이 내림을 빼면
+        // 프론트가 자체 계산으로 되돌아가도 테스트가 통과해버린다(2026-08-31 회귀).
+        const code = new URL(url, "http://x").searchParams.get("referralCode");
+        const rate = code?.toUpperCase() === MOCK_VALID_REFERRAL_CODE ? 0.1 : 0;
+        const plans = MOCK_PLANS.map((plan) => {
+          if (rate === 0) return plan;
+          const amount = Math.floor(Math.floor(plan.monthlyPrice * rate) / 100) * 100;
+          return {
+            ...plan,
+            referralDiscountRate: rate,
+            referralDiscountAmount: amount,
+            referralDiscountedPrice: plan.monthlyPrice - amount,
+          };
+        });
+        ok(res, { plans });
       } else {
         err(res, 401, "UNAUTHORIZED");
       }
@@ -646,6 +663,10 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
     if (method === "GET" && url === `/v1/referral/pages/${MOCK_INACTIVE_SLUG}`) {
       ok(res, { ...MOCK_REFERRAL_PAGE, isActive: false });
+      return;
+    }
+    if (method === "GET" && url === `/v1/referral/pages/${MOCK_HIDDEN_PAGE_SLUG}`) {
+      ok(res, { ...MOCK_REFERRAL_PAGE, isPageVisible: false });
       return;
     }
     if (method === "GET" && url.startsWith("/v1/referral/pages/")) {

@@ -271,7 +271,7 @@ function SlidePanel({
       <div
         className={[
           "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
-          "max-lg:px-6 max-lg:pl-10 max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
+          "max-md:pl-7 max-md:pr-6 max-md:py-4 md:max-lg:pl-10 md:max-lg:pr-6 md:max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
         ].join(" ")}
       >
         {/* 카드 본문 클릭 — 구독/구매 상세 */}

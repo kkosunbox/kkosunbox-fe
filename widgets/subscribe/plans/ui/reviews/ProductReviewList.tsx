@@ -49,7 +49,6 @@ export default function ProductReviewList(props: ProductReviewListProps) {
 }
 
 function MobileReviewList({
-  selectedTheme,
   reviews,
   loading,
   reviewImages,
@@ -147,7 +146,7 @@ function MobileReviewList({
               key={review.id}
               className="border-b border-[var(--color-text-muted)] pb-6 last:border-b-0"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-3">
                 <div
                   className="h-[54px] w-[54px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]"
                   aria-hidden="true"
@@ -157,16 +156,7 @@ function MobileReviewList({
                     userId={review.userId ?? review.id}
                   />
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col gap-[6px]">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold leading-[14px] text-white"
-                      style={{ background: selectedTheme.colorVar }}
-                    >
-                      {selectedTheme.tierLabel}
-                    </span>
-                    <Stars rating={review.rating} size={24} />
-                  </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
                   <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
                     <span className="font-semibold text-[var(--color-text)]">
                       {review.snapshotPetName ?? "익명"}
@@ -180,9 +170,10 @@ function MobileReviewList({
                       {formatReviewDate(review.createdAt)}
                     </span>
                   </div>
+                  <Stars rating={review.rating} size={24} />
+                  <ReviewContent content={review.content} className="mt-[3px]" />
                 </div>
               </div>
-              <ReviewContent content={review.content} className="mt-[9px] pl-[66px]" />
               {review.imageUrls && review.imageUrls.length > 0 && (
                 <div className="mt-4 flex gap-2 pl-[66px]">
                   {review.imageUrls.slice(0, 3).map((url, imgIdx) => (

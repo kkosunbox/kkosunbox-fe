@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useModal } from "@/shared/ui";
+import { CheckCircleIcon, useModal } from "@/shared/ui";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import type { DeliveryAddress } from "../api/types";
@@ -52,21 +52,21 @@ export default function AddressListView({
   }
 
   return (
-    <div className="flex min-h-screen flex-col px-6 pb-8 pt-8">
+    <div className="flex min-h-screen flex-col px-7 pb-7 pt-7">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-subtitle-18-sb tracking-tightest text-[var(--color-text)]">
+      <div className="mb-5 flex items-start justify-between">
+        <h2 className="text-subtitle-18-b leading-[21px] tracking-tightest text-[var(--color-text-emphasis)]">
           배송지 목록
         </h2>
         <button
           type="button"
           onClick={onClose}
           aria-label="닫기"
-          className="flex h-8 w-8 items-center justify-center text-[var(--color-text)] transition-opacity hover:opacity-70"
+          className="flex h-5 w-5 items-center justify-center text-[var(--color-text)] transition-opacity hover:opacity-70"
         >
-          <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path
-              d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5"
+              d="M15 5L5 15M5 5L15 15"
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
@@ -79,13 +79,13 @@ export default function AddressListView({
       <button
         type="button"
         onClick={onAddNew}
-        className="mb-6 flex h-12 w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--color-cta-button)] bg-white text-body-14-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80"
+        className="mb-4 flex h-10 w-full items-center justify-center gap-1 rounded-[4px] border border-[var(--color-text-muted)] bg-white text-body-13-m text-[var(--color-text)] transition-opacity hover:opacity-80"
       >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
-            d="M7 1v12M1 7h12"
-            stroke="currentColor"
-            strokeWidth="1.5"
+            d="M12 6V18M6 12H18"
+            stroke="var(--color-text-secondary)"
+            strokeWidth="2"
             strokeLinecap="round"
           />
         </svg>
@@ -93,7 +93,7 @@ export default function AddressListView({
       </button>
 
       {/* Address list */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-[22px]">
         {addresses.length === 0 && (
           <p className="py-10 text-center text-body-14-m text-[var(--color-text-secondary)]">
             등록된 배송지가 없습니다.
@@ -105,47 +105,32 @@ export default function AddressListView({
           return (
             <div
               key={addr.id}
-              className="rounded-lg border border-[var(--color-text-muted)] bg-white px-5 py-4"
+              className="relative h-[148px] rounded-lg border border-[var(--color-text-muted)] bg-white px-[19px] py-[19px]"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
+              <div>
+                <div className="min-w-0">
                   {/* Name + selected badge */}
-                  <div className="mb-1 flex items-center gap-2">
+                  <div className="flex items-center gap-1 pr-12">
                     {addr.nickname ? (
-                      <span className="text-body-14-sb text-[var(--color-text)]">
+                      <span className="truncate text-body-13-m leading-4 tracking-[-0.04em] text-[var(--color-text)]">
                         {addr.nickname}
                       </span>
                     ) : null}
-                    <span className="text-body-14-sb text-[var(--color-text)]">
+                    <span className="truncate text-body-13-m leading-4 tracking-[-0.04em] text-[var(--color-text)]">
                       {addr.receiverName}
                     </span>
                     {isSelected && (
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        className="shrink-0"
-                      >
-                        <circle cx="8" cy="8" r="8" fill="var(--color-cta-button)" />
-                        <path
-                          d="M5 8l2 2 4-4"
-                          stroke="white"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                      <CheckCircleIcon color="var(--color-cta-button)" />
                     )}
                   </div>
 
                   {/* Phone */}
-                  <p className="text-body-13-r text-[var(--color-text-secondary)]">
+                  <p className="mt-[5px] text-caption-12-m-tight tracking-[-0.04em] text-[var(--color-text-secondary)]">
                     {addr.phoneNumber}
                   </p>
 
                   {/* Address */}
-                  <p className="mt-1 text-body-13-r leading-[1.5] text-[var(--color-text)]">
+                  <p className="mt-[5px] text-caption-12-m-tight tracking-[-0.04em] text-[var(--color-text-secondary)]">
                     {addr.address}
                     {addr.addressDetail ? ` ${addr.addressDetail}` : ""}
                     {addr.zipCode ? ` (${addr.zipCode})` : ""}
@@ -154,14 +139,14 @@ export default function AddressListView({
 
                 {/* Select button */}
                 {isSelected ? (
-                  <span className="shrink-0 text-body-13-m text-[var(--color-text)]">
+                  <span className="absolute right-[19px] top-[27px] text-body-13-m leading-4 text-[var(--color-cta-button)]">
                     선택됨
                   </span>
                 ) : (
                   <button
                     type="button"
                     onClick={() => onSelect(addr.id)}
-                    className="shrink-0 rounded-md bg-[var(--color-cta-button)] px-3 py-1.5 text-body-13-sb text-white transition-opacity hover:opacity-90"
+                    className="absolute right-[19px] top-[19px] flex h-8 w-[39px] items-center justify-center rounded-[4px] bg-[var(--color-cta-button)] text-body-13-m leading-4 text-white transition-opacity hover:opacity-90"
                   >
                     선택
                   </button>
@@ -169,11 +154,11 @@ export default function AddressListView({
               </div>
 
               {/* Action buttons */}
-              <div className="mt-3 flex gap-2">
+              <div className="absolute bottom-[19px] left-[19px] flex gap-3">
                 <button
                   type="button"
                   onClick={() => onEdit(addr)}
-                  className="rounded-md border border-[var(--color-cta-button)] px-3 py-1 text-body-13-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80"
+                  className="flex h-8 w-10 items-center justify-center rounded-[4px] border border-[var(--color-text-muted)] bg-white text-body-13-m leading-4 text-[var(--color-text)] transition-opacity hover:opacity-80"
                 >
                   수정
                 </button>
@@ -181,7 +166,7 @@ export default function AddressListView({
                   type="button"
                   onClick={() => handleDelete(addr.id)}
                   disabled={deletingId === addr.id}
-                  className="rounded-md border border-[var(--color-cta-button)] px-3 py-1 text-body-13-m text-[var(--color-cta-button)] transition-opacity hover:opacity-80 disabled:opacity-50"
+                  className="flex h-8 min-w-10 items-center justify-center rounded-[4px] border border-[var(--color-text-muted)] bg-white px-2 text-body-13-m leading-4 text-[var(--color-text)] transition-opacity hover:opacity-80 disabled:opacity-50"
                 >
                   {deletingId === addr.id ? "삭제 중..." : "삭제"}
                 </button>

@@ -16,6 +16,7 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
+import { useReferral } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { PlanPicker, PlanTierDots, RecommendedPickBadge } from "@/widgets/package-plans";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
@@ -72,11 +73,14 @@ export default function PackagePlansSection() {
     event.stopPropagation();
   }
 
+  // 초대 맥락이 있으면 코드를 함께 넘긴다 — 서버가 채워준 할인가를 그대로 표시한다.
+  const { refCode } = useReferral();
+
   useEffect(() => {
-    getSubscriptionPlans()
+    getSubscriptionPlans(undefined, refCode ?? undefined)
       .then((res) => { setApiPlans(res.plans); setPlansReady(true); })
       .catch(() => { setPlansReady(true); });
-  }, []);
+  }, [refCode]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 0);
@@ -116,7 +120,6 @@ export default function PackagePlansSection() {
           위 헤더 wrapper와 중복 적용되지 않도록 별도 wrapper 없이 렌더링한다. */}
       <PlanPicker
         // 마케팅 계층 — 초대 맥락이 있으면 적격 판정과 무관하게 할인가를 보여준다.
-        pricingIntent="promotional"
         plans={apiPlans}
         plansReady={plansReady}
         summaryOrder={HOME_SUMMARY_ORDER}

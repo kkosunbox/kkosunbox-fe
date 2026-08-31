@@ -14,6 +14,7 @@ import type {
   GetPaymentHistoryParams,
   PaginatedPaymentHistoryResponse,
 } from "./types";
+import { planListQuery } from "../lib/planListQuery";
 
 function serverOpts(token?: string) {
   return { token, skipRefresh: true } as const;
@@ -72,11 +73,11 @@ export const probeSubscriptionHistory = cache(
 export async function fetchSubscriptionPlans(
   token?: string,
   profileId?: number,
+  referralCode?: string,
 ): Promise<SubscriptionPlanDto[]> {
-  const query = profileId !== undefined ? `?profileId=${profileId}` : "";
   const data = await apiClient
     .get<{ plans: SubscriptionPlanDto[] }>(
-      `/v1/subscriptions/plans${query}`,
+      `/v1/subscriptions/plans${planListQuery(profileId, referralCode)}`,
       serverOpts(token),
     )
     .catch(() => ({ plans: [] as SubscriptionPlanDto[] }));

@@ -25,6 +25,20 @@ export interface SubscriptionPlanDto {
   averageRating: number;
   description?: string | null;
   tags: SubscriptionPlanTagDto[];
+  /**
+   * 초대코드 할인 3종 — `GET /v1/subscriptions/plans?referralCode=...`로 조회했고
+   * 그 코드가 유효할 때만 채워진다. 코드가 없거나 무효면 셋 다 null(에러가 아니다).
+   *
+   * **표시 단가는 반드시 `referralDiscountedPrice`를 그대로 쓴다.** 프론트가
+   * `monthlyPrice`에서 직접 유도하면 안 된다 — 서버는 할인액을 100원 단위로 내림하는데
+   * 그 규칙을 프론트가 따로 구현했다가 35~85원씩 싸게 표시하고 있었다(2026-08-31 실측).
+   */
+  /** 초대 할인율 분수 (0.15 = 15%) */
+  referralDiscountRate?: number | null;
+  /** 초대 할인액(원). 100원 단위 내림이 이미 적용된 값 */
+  referralDiscountAmount?: number | null;
+  /** 초대 할인이 반영된 표시 단가(원) */
+  referralDiscountedPrice?: number | null;
 }
 
 // ── Subscription ──────────────────────────────────────────────────

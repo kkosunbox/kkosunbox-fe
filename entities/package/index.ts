@@ -35,10 +35,7 @@ export {
   TIER_THUMBNAIL_IMAGE_CLASS,
 } from "./lib/packageThumbnails";
 export { PACKAGE_DETAIL_IMAGES, PACKAGE_DETAIL_IMAGES_PURCHASE } from "./lib/packageDetailImages";
-export {
-  PACKAGE_SUMMARY_IMAGES,
-  PACKAGE_EXPLAIN_BY_TIER,
-} from "./lib/packageSummaryImages";
+export { PACKAGE_SUMMARY_IMAGES } from "./lib/packageSummaryImages";
 export { PACKAGE_SUMMARY_IMAGE_CLASSNAME } from "./lib/packageSummaryImageClassName";
 export { PackageSummaryThumbnail } from "./ui/PackageSummaryThumbnail";
 export { PlanRatingStars } from "./ui/PlanRatingStars";

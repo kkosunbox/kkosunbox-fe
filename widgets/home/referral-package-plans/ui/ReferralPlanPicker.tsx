@@ -3,15 +3,15 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { ScrollReveal, CheckCircleIcon } from "@/shared/ui";
+import { ScrollReveal, CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   comparePlansForDisplayOrder,
   PACKAGES,
+  resolveRecommendedPlanIds,
   tierFromSubscriptionPlan,
   PACKAGE_SUMMARY_IMAGES,
-  PACKAGE_EXPLAIN_BY_TIER,
   PackageSummaryThumbnail,
   PlanRatingStars,
   TIER_DETAIL_HERO_IMAGES,
@@ -19,12 +19,16 @@ import {
   PackageNutritionGuide,
   type PackageTier,
 } from "@/entities/package";
-import { useReferralPricing } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
+import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
+import { PlanExplainVisual, RecommendedPickBadge } from "@/widgets/package-plans";
 
 /** 데스크탑 카드 열·모바일 네비·태블릿 가로 카드 공통 기본 순서 — 모듈 상수로 고정해 useSvgBridge 무한 루프 방지 */
 const DEFAULT_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
+
+/** 데스크탑 설명 패널 crossfade에 사용할 전체 티어 목록 — PlanPicker와 동일 기준 */
+const ALL_TIERS: PackageTier[] = ["Basic", "Standard", "Premium"];
 
 function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
@@ -123,10 +127,6 @@ export default function ReferralPlanPicker({
     [plans],
   );
 
-  // `/r/{slug}` 랜딩 전용 위젯 — 마케팅 계층이므로 항상 promotional이다.
-  const { unitPrice, combinedDiscountPct, additionalDiscountPct, discountApplied } =
-    useReferralPricing({ intent: "promotional" });
-
   const [selectedTier, setSelectedTier] = useState<PackageTier>(
     initialSelectedTier ?? summaryOrder[0],
   );
@@ -134,10 +134,17 @@ export default function ReferralPlanPicker({
   /** 왼쪽 패널 렌더링용 — 항상 선택된 tier 표시 (미선택 상태 없음) */
   const displayTier = selectedTier;
 
-  const activeExplain = PACKAGE_EXPLAIN_BY_TIER[displayTier];
   const activePlan = planForTier(sortedPlans, displayTier);
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
+  /** 표시 금액은 전부 서버 값 그대로 — 프론트는 어떤 필드를 보여줄지만 고른다 */
+  const activePrice = activePlan ? planDisplayPrice(activePlan) : null;
+
+  /** 백엔드 추천픽이 없으면 Standard 폴백 — 메인 PlanPicker 배지와 동일 기준 */
+  const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(sortedPlans), [sortedPlans]);
+
+  /** 기본 선택 티어 — priority 이미지 결정용 */
+  const defaultTier = initialSelectedTier ?? summaryOrder[0];
 
   const {
     containerRef,
@@ -259,9 +266,13 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {discountApplied ? (
+                    <PlanImageBadges
+                      tags={activePlan?.tags}
+                      className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
+                    />
+                    {activePrice?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={activePrice.referralPct}
                         className="left-3 top-3"
                       />
                     ) : null}
@@ -293,6 +304,9 @@ export default function ReferralPlanPicker({
 
                 {activePkg ? (
                   <div className="mt-4">
+                    {activePlan && recommendedPlanIds.has(activePlan.id) ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className="text-subtitle-17-b-lh22"
                       style={{ color: activePkg.colorVar }}
@@ -317,14 +331,18 @@ export default function ReferralPlanPicker({
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
                             월 요금제
                           </span>
-                          <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {combinedDiscountPct(activePlan)}%
-                          </span>
-                          <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(activePlan.originalPrice ?? activePlan.monthlyPrice)}
-                          </span>
+                          {activePrice?.strikePrice != null ? (
+                            <>
+                              <span className="text-price-16-sb text-[var(--color-cta-button)]">
+                                {activePrice.discountPct}%
+                              </span>
+                              <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                {formatMonthlyPrice(activePrice.strikePrice)}
+                              </span>
+                            </>
+                          ) : null}
                           <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(unitPrice(activePlan.monthlyPrice))}
+                            {formatMonthlyPrice(activePrice!.price)}
                           </span>
                         </div>
                       </div>
@@ -358,16 +376,14 @@ export default function ReferralPlanPicker({
               }}
               onClick={handlePrimaryClick}
             >
-              <Image
-                key={displayTier}
-                src={activeExplain.src}
-                alt={activeExplain.alt}
-                fill
-                quality={HIGH_IMAGE_QUALITY}
-                className="object-cover transition-opacity duration-500"
-                sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
-                priority
-              />
+              {ALL_TIERS.map((tier) => (
+                <PlanExplainVisual
+                  key={tier}
+                  tier={tier}
+                  isActive={displayTier === tier}
+                  priority={tier === defaultTier}
+                />
+              ))}
               {activeIsCurrentPlan ? (
                 <div className="absolute left-4 top-4 z-10">
                   <span className="rounded-full bg-[var(--color-text)] px-3 py-1 text-body-14-sb-tight text-white">
@@ -375,6 +391,10 @@ export default function ReferralPlanPicker({
                   </span>
                 </div>
               ) : null}
+              <PlanImageBadges
+                tags={activePlan?.tags}
+                className="absolute right-[69px] top-[25px] z-10 flex items-center gap-2"
+              />
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">
                 {renderPrimaryAction(
@@ -401,6 +421,7 @@ export default function ReferralPlanPicker({
               const isSelected = selectedTier === tier;
               const showSelectionState = showSelectedCardHighlight;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
+              const price = plan ? planDisplayPrice(plan) : null;
 
               return (
                 <button
@@ -424,14 +445,17 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {discountApplied ? (
+                    {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={price.referralPct}
                         className="left-2 top-2"
                       />
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
+                    {plan && recommendedPlanIds.has(plan.id) ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",
@@ -445,19 +469,23 @@ export default function ReferralPlanPicker({
                     {plan ? (
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                          <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
-                            {combinedDiscountPct(plan)}%
-                          </span>
-                          <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(plan.originalPrice ?? plan.monthlyPrice)}
-                          </span>
+                          {price?.strikePrice != null ? (
+                            <>
+                              <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
+                                {price.discountPct}%
+                              </span>
+                              <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                {formatMonthlyPrice(price.strikePrice)}
+                              </span>
+                            </>
+                          ) : null}
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="max-md:text-price-14-b md:text-price-16-b-tight text-[var(--color-text-body-warm)]">
                             월 요금제
                           </span>
                           <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
+                            {formatMonthlyPrice(price!.price)}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (
@@ -484,6 +512,7 @@ export default function ReferralPlanPicker({
               const img = PACKAGE_SUMMARY_IMAGES[tier];
               const isSelected = selectedTier === tier;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
+              const price = plan ? planDisplayPrice(plan) : null;
 
               return (
                 <button
@@ -507,14 +536,17 @@ export default function ReferralPlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {discountApplied ? (
+                    {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={price.referralPct}
                         className="left-2 top-2"
                       />
                     ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
+                    {plan && recommendedPlanIds.has(plan.id) ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",
@@ -526,12 +558,16 @@ export default function ReferralPlanPicker({
                     {plan ? (
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                          <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                            {combinedDiscountPct(plan)}%
-                          </span>
-                          <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                            {formatMonthlyPrice(plan.originalPrice ?? plan.monthlyPrice)}
-                          </span>
+                          {price?.strikePrice != null ? (
+                            <>
+                              <span className="text-price-16-sb text-[var(--color-cta-button)]">
+                                {price.discountPct}%
+                              </span>
+                              <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                {formatMonthlyPrice(price.strikePrice)}
+                              </span>
+                            </>
+                          ) : null}
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
@@ -543,7 +579,7 @@ export default function ReferralPlanPicker({
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >
-                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
+                            {formatMonthlyPrice(price!.price)}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (

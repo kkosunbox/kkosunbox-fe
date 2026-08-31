@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
+import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { SubscribeProductDetailPage } from "@/widgets/subscribe/plans";
 
 export async function generateMetadata({
@@ -75,7 +76,8 @@ export default async function SubscribeDetailPage({
   }
 
   const token = await getServerToken();
-  const plans = await fetchSubscriptionPlans(token);
+  const { refCode } = await resolveReferralContext();
+  const plans = await fetchSubscriptionPlans(token, undefined, refCode ?? undefined);
 
   if (plans.length === 0) {
     redirect("/subscribe");

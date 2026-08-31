@@ -533,36 +533,39 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
 
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
-      {/* Upper solid color band — mobile 367px / desktop 258px */}
-      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:h-[367px] md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
+      {/* Desktop upper solid color band — mobile background follows hero content height */}
+      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:hidden md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
 
-      {/* Hero content — overlaps the 258px boundary */}
-      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
-        {/* Back + title */}
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="mb-6 flex items-center gap-1 text-subtitle-18-b text-[var(--color-text)] hover:opacity-70"
-        >
-          <ChevronLeftIcon />
-          구독관리
-        </button>
+      {/* Mobile: ivory background wraps the full hero and always leaves 24px below it. */}
+      <section className="relative max-md:bg-[var(--color-subscription-header-bg)] max-md:pb-6">
+        {/* Hero content — desktop overlaps the 258px boundary */}
+        <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
+          {/* Back + title */}
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="mb-6 flex items-center gap-1 text-subtitle-18-b text-[var(--color-text)] hover:opacity-70"
+          >
+            <ChevronLeftIcon />
+            구독관리
+          </button>
 
-        {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
-        <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white max-md:shadow-[0px_4px_12px_0px_#00000014] md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_12px_0px_#00000014] lg:shadow-[0px_4px_12px_0px_#00000014]">
-          <SubscriptionsSummaryCard
-            activeSubscriptions={activeSubscriptions}
-            billableSubscriptions={billableSubscriptions}
-            nextBillingDateLabel={nextBillingDateLabel}
-            hasPlans={hasPlans}
-          />
-          {/* Mobile: horizontal divider */}
-          <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
-          {/* Desktop: vertical divider */}
-          <div className="max-md:hidden w-px shrink-0 bg-[var(--color-border-light)] my-10" />
-          <PaymentInfoCard billingInfo={billingInfo} nextBillingDateLabel={nextBillingDateLabel} />
+          {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
+          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_12px_0px_#00000014] lg:shadow-[0px_4px_12px_0px_#00000014]">
+            <SubscriptionsSummaryCard
+              activeSubscriptions={activeSubscriptions}
+              billableSubscriptions={billableSubscriptions}
+              nextBillingDateLabel={nextBillingDateLabel}
+              hasPlans={hasPlans}
+            />
+            {/* Mobile: horizontal divider */}
+            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
+            {/* Desktop: vertical divider */}
+            <div className="max-md:hidden w-px shrink-0 bg-[var(--color-border-light)] my-10" />
+            <PaymentInfoCard billingInfo={billingInfo} nextBillingDateLabel={nextBillingDateLabel} />
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Subscription list — 구독 전체보기 */}
       <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-8 pb-10">
@@ -593,11 +596,11 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
           </div>
 
           {!hasPlans ? (
-            <p className="text-body-14-m text-[var(--color-text-label)]">
+            <p className="text-body-14-m text-[var(--color-text-label)] max-md:flex max-md:min-h-[160px] max-md:items-center max-md:justify-center max-md:text-center">
               플랜 정보를 불러올 수 없습니다.
             </p>
           ) : filteredSubscriptions.length === 0 ? (
-            <p className="text-body-14-m text-[var(--color-text-label)]">
+            <p className="text-body-14-m text-[var(--color-text-label)] max-md:flex max-md:min-h-[160px] max-md:items-center max-md:justify-center max-md:text-center">
               {filter === "ended"
                 ? "구독종료된 항목이 없습니다."
                 : "구독 내역이 없습니다."}

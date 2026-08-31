@@ -397,7 +397,7 @@ function SlidePanel({
       </Link>
 
       {isPaused && (
-        <div className="pointer-events-none absolute right-12 top-1/2 z-30 flex h-10 w-[110px] -translate-y-1/2 items-center justify-center rounded-[12px] bg-white/90 max-lg:right-4 max-lg:h-9 max-lg:w-[96px]" aria-hidden="true">
+        <div className="pointer-events-none absolute top-1/2 z-30 flex h-10 w-[110px] -translate-y-1/2 items-center justify-center rounded-[12px] bg-white/90 max-md:right-[28px] max-md:mt-[3px] md:max-lg:right-4 lg:right-12 max-lg:h-9 max-lg:w-[96px]" aria-hidden="true">
           <span
             className="h-[17px] w-20 max-lg:h-[15px] max-lg:w-[72px]"
             style={{

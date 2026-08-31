@@ -21,12 +21,17 @@ import type {
   SubscriptionPlanListResponse,
   UserSubscriptionDto,
 } from "./types";
+import { planListQuery } from "../lib/planListQuery";
 
-/** 구독 플랜 목록 조회 (profileId 전달 시 isRecommended 값 설정) */
-export function getSubscriptionPlans(profileId?: number) {
-  const query = profileId !== undefined ? `?profileId=${profileId}` : "";
+/**
+ * 구독 플랜 목록 조회.
+ * - `profileId` 전달 시 그 프로필의 체크리스트 답변 기준으로 `isRecommended`가 채워진다.
+ * - `referralCode` 전달 시 유효한 코드면 `referralDiscounted*` 3종이 채워진다.
+ *   초대 할인가를 보여주는 화면은 반드시 이 값을 넘겨야 한다 — 안 넘기면 정가만 내려온다.
+ */
+export function getSubscriptionPlans(profileId?: number, referralCode?: string) {
   return apiClient.get<SubscriptionPlanListResponse>(
-    `/v1/subscriptions/plans${query}`,
+    `/v1/subscriptions/plans${planListQuery(profileId, referralCode)}`,
   );
 }
 

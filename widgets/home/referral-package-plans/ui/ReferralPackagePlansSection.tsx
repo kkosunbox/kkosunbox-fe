@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { CheckCircleIcon } from "@/shared/ui";
+import { useEffect, useMemo, useState } from "react";
+import { CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   PACKAGES,
+  resolveRecommendedPlanIds,
   tierFromSubscriptionPlan,
   TIER_DETAIL_HERO_IMAGES,
   PackageNutritionGuide,
@@ -14,7 +15,8 @@ import {
 import { getSubscriptionPlans } from "@/features/subscription/api";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { useReferral } from "@/features/referral/model";
-import { PlanTierDots } from "@/widgets/package-plans";
+import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
+import { PlanTierDots, RecommendedPickBadge } from "@/widgets/package-plans";
 import ReferralPlanPicker from "./ReferralPlanPicker";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import NimIRecommendSvg from "./NimIRecommendSvg";
@@ -22,19 +24,19 @@ import ReferralTitleSvg from "./ReferralTitleSvg";
 
 export default function ReferralPackagePlansSection() {
   const router = useRouter();
-  // `/r/{slug}` 전용 섹션 — 마케팅 계층이므로 표시 술어를 그대로 읽는다.
-  // (`useReferralPricing`을 쓰지 않으므로 intent 스위치가 덮지 못한다 — 여기서 직접 맞춘다.)
-  const { influencerName, discountRate, hasDisplayableReferralOffer } = useReferral();
+  // 초대 코드를 플랜 조회에 함께 넘겨 서버가 채워준 할인가를 그대로 쓴다.
+  const { influencerName, refCode } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
 
   useEffect(() => {
-    getSubscriptionPlans()
+    getSubscriptionPlans(undefined, refCode ?? undefined)
       .then((res) => { setApiPlans(res.plans); setPlansReady(true); })
       .catch(() => { setPlansReady(true); });
-  }, []);
+  }, [refCode]);
 
-  const additionalDiscountPct = Math.round(discountRate * 100);
+  /** 백엔드 추천픽이 없으면 Standard 폴백 — ReferralPlanPicker 내부 배지와 동일 기준 */
+  const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(apiPlans), [apiPlans]);
 
   return (
     <section className="bg-white py-12 md:py-20">
@@ -69,6 +71,7 @@ export default function ReferralPackagePlansSection() {
           mobileSlot={(tier, onTierSelect, order) => {
             const activePkg = PACKAGES.find((p) => p.tier === tier);
             const activePlan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
+            const activePrice = activePlan ? planDisplayPrice(activePlan) : null;
             return (
               <>
                 <div
@@ -102,9 +105,13 @@ export default function ReferralPackagePlansSection() {
                         />
                       );
                     })}
-                    {hasDisplayableReferralOffer ? (
+                    <PlanImageBadges
+                      tags={activePlan?.tags}
+                      className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
+                    />
+                    {activePrice?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={activePrice.referralPct}
                         className="left-3 top-3"
                       />
                     ) : null}
@@ -113,6 +120,9 @@ export default function ReferralPackagePlansSection() {
                 </div>
                 {activePkg ? (
                   <div className="mt-4">
+                    {activePlan && recommendedPlanIds.has(activePlan.id) ? (
+                      <RecommendedPickBadge className="mb-2" />
+                    ) : null}
                     <p className="text-subtitle-17-b-lh22" style={{ color: activePkg.colorVar }}>
                       {activePkg.name}
                     </p>

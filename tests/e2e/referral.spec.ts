@@ -4,6 +4,7 @@ import {
   MOCK_VALID_REFERRAL_CODE,
   MOCK_ACTIVE_SLUG,
   MOCK_INACTIVE_SLUG,
+  MOCK_HIDDEN_PAGE_SLUG,
   MOCK_REFERRAL_PAGE,
   MOCK_PLANS,
 } from "../helpers/mockApiServer";
@@ -19,14 +20,16 @@ import {
 // A. 레퍼럴 랜딩 페이지 (/r/[slug])
 //
 // GET /v1/referral/pages/{slug} (공개 API, 토큰 불필요)
-//   - MOCK_ACTIVE_SLUG   → { isActive: true, displayName, discountRate: 0.1 }
-//   - MOCK_INACTIVE_SLUG → { isActive: false }
+//   - MOCK_ACTIVE_SLUG      → { isActive: true, isPageVisible: true }
+//   - MOCK_INACTIVE_SLUG    → { isActive: false, isPageVisible: true }
+//   - MOCK_HIDDEN_PAGE_SLUG → { isActive: true, isPageVisible: false }
 //   - 그 외 slug         → 404
 //
 // 페이지 동작:
-//   isActive: false or 404  → redirect("/")
-//   isActive: true          → ReferralProvider(initialData) + 홈 섹션 렌더링
-//                             마운트 후 ggosoon-ref 쿠키 설정 (client-side)
+//   isActive: false or 404       → redirect("/")
+//   isPageVisible: false         → 추천 코드 캡처 후 redirect("/")
+//   isPageVisible: true          → ReferralProvider(initialData) + 홈 섹션 렌더링
+//                                  마운트 후 ggosoon-ref 쿠키 설정 (client-side)
 // ──────────────────────────────────────────────────────────────────────────────
 
 const REFERRAL_LANDING = `/r/${MOCK_ACTIVE_SLUG}`;
@@ -75,6 +78,18 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
     await page.goto(`/r/${MOCK_INACTIVE_SLUG}`);
     // SSR redirect: 브라우저가 / 에 도달한 후 기준 URL 확인
     await expect(page).toHaveURL("/", { timeout: 10_000 });
+  });
+
+  test("isPageVisible=false slug → 추천 코드를 유지하고 / 리다이렉트", async ({ page }) => {
+    await page.goto(`/r/${MOCK_HIDDEN_PAGE_SLUG}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+      })
+      .toBe(encodeURIComponent(MOCK_VALID_REFERRAL_CODE));
   });
 
   test("존재하지 않는 slug → / 리다이렉트", async ({ page }) => {

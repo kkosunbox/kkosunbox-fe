@@ -19,9 +19,9 @@ import {
   PackageNutritionGuide,
   type PackageTier,
 } from "@/entities/package";
-import { useReferralPricing, type ReferralPricingIntent } from "@/features/referral/model";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { trackSelectItem } from "@/shared/lib/analytics";
 import planPickerInfoGradient from "../assets/plan-picker-info-gradient.png";
 
@@ -35,20 +35,6 @@ function formatMonthlyPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-/** 할인 표시 정보 (할인율·정가). 할인이 없는 플랜(discountRate 없음 + 초대코드 미적용)이면 null. */
-function planDiscountInfo(
-  plan: Pick<SubscriptionPlanDto, "monthlyPrice" | "originalPrice" | "discountRate">,
-  discountApplied: boolean,
-  combinedDiscountPct: (p: { monthlyPrice: number; originalPrice?: number | null }) => number,
-): { pct: number; original: number } | null {
-  const hasDiscount = discountApplied || (plan.discountRate ?? 0) > 0;
-  if (!hasDiscount) return null;
-  return {
-    pct: discountApplied ? combinedDiscountPct(plan) : (plan.discountRate ?? 0),
-    original: plan.originalPrice ?? plan.monthlyPrice,
-  };
-}
-
 /** 이미지 전환 인라인 스타일 — blur focus-in + 비대칭 타이밍 */
 function crossfadeStyle(isActive: boolean): React.CSSProperties {
   return {
@@ -60,14 +46,21 @@ function crossfadeStyle(isActive: boolean): React.CSSProperties {
   };
 }
 
-function PlanExplainVisual({
+/** PlanPicker 좌측 패널(560×519) 기준 기본값 — 다른 폭의 컨테이너는 sizes를 직접 넘긴다 */
+const PLAN_EXPLAIN_DEFAULT_SIZES =
+  "(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw";
+
+export function PlanExplainVisual({
   tier,
   isActive,
   priority,
+  sizes = PLAN_EXPLAIN_DEFAULT_SIZES,
 }: {
   tier: PackageTier;
   isActive: boolean;
   priority: boolean;
+  /** 컨테이너 폭이 PlanPicker 패널과 다를 때만 지정 — 잘못 두면 태블릿에서 저해상도 소스를 받는다 */
+  sizes?: string;
 }) {
   const pkg = PACKAGES.find((item) => item.tier === tier)!;
 
@@ -84,7 +77,7 @@ function PlanExplainVisual({
           fill
           quality={HIGH_IMAGE_QUALITY}
           className="object-cover"
-          sizes="(min-width: 1200px) 560px, (min-width: 768px) calc(60vw - 80px), 100vw"
+          sizes={sizes}
           priority={priority}
         />
       </div>
@@ -212,16 +205,6 @@ export interface PlanPickerProps {
    * - "charcoal": #2F2F2F(--color-text) — 메인 홈 제품 상세보기 전용
    */
   primaryButtonVariant?: "default" | "orange" | "charcoal";
-  /**
-   * 이 화면이 마케팅 계층인가 결제 계층인가.
-   *
-   * **기본값 "actual"(정가 기준)은 의도된 것이다.** 새 사용처가 실수로 초대 할인을 약속하면
-   * 백엔드가 부적격 코드를 조용히 무시하고 정가를 청구해 표시가와 청구액이 어긋난다.
-   * 낙관적 표시가 필요한 마케팅 화면만 "promotional"을 **명시적으로** 넘긴다.
-   *
-   * 화면별 배정: `.claude/contexts/referral-pricing-architecture.md` §2
-   */
-  pricingIntent?: ReferralPricingIntent;
 }
 
 export default function PlanPicker({
@@ -234,7 +217,6 @@ export default function PlanPicker({
   summaryOrder = DEFAULT_SUMMARY_ORDER,
   mobileSlot,
   primaryButtonVariant = "default",
-  pricingIntent = "actual",
 }: PlanPickerProps) {
   const sortedPlans = useMemo(
     () => [...plans].sort(comparePlansForDisplayOrder),
@@ -253,9 +235,8 @@ export default function PlanPicker({
   /** 백엔드 추천픽이 없으면 Standard 폴백 — 배지 표시는 이 집합만 기준으로 삼는다 */
   const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(sortedPlans), [sortedPlans]);
 
-  const { unitPrice, combinedDiscountPct, additionalDiscountPct, discountApplied } =
-    useReferralPricing({ intent: pricingIntent });
-  const activeDiscount = activePlan ? planDiscountInfo(activePlan, discountApplied, combinedDiscountPct) : null;
+  /** 표시 금액은 전부 서버 값 그대로 — 프론트는 어떤 필드를 보여줄지만 고른다 */
+  const activePrice = activePlan ? planDisplayPrice(activePlan) : null;
 
   const activePkg = PACKAGES.find((p) => p.tier === displayTier);
   const activeIsCurrentPlan = activePlan ? (isCurrentPlan?.(activePlan) ?? false) : false;
@@ -411,9 +392,9 @@ export default function PlanPicker({
                       tags={activePlan?.tags}
                       className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
                     />
-                    {discountApplied ? (
+                    {activePrice?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={activePrice.referralPct}
                         className="left-3 top-3"
                       />
                     ) : null}
@@ -473,18 +454,18 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                            {activeDiscount ? (
+                            {activePrice?.strikePrice != null ? (
                               <>
                                 <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                                  {activeDiscount.pct}%
+                                  {activePrice.discountPct}%
                                 </span>
                                 <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                                  {formatMonthlyPrice(activeDiscount.original)}
+                                  {formatMonthlyPrice(activePrice.strikePrice)}
                                 </span>
                               </>
                             ) : null}
                             <span className="text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                              {formatMonthlyPrice(unitPrice(activePlan.monthlyPrice))}
+                              {formatMonthlyPrice(activePrice!.price)}
                             </span>
                           </div>
                         </div>
@@ -561,7 +542,7 @@ export default function PlanPicker({
               const isSelected = selectedTier === tier;
               const showSelectionState = showSelectedCardHighlight;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
-              const discount = plan ? planDiscountInfo(plan, discountApplied, combinedDiscountPct) : null;
+              const price = plan ? planDisplayPrice(plan) : null;
 
               return (
                 <button
@@ -585,9 +566,9 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {discountApplied ? (
+                    {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={price.referralPct}
                         className="left-2 top-2"
                       />
                     ) : null}
@@ -609,13 +590,13 @@ export default function PlanPicker({
                     {plan ? (
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                          {discount ? (
+                          {price?.strikePrice != null ? (
                             <>
                               <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
-                                {discount.pct}%
+                                {price.discountPct}%
                               </span>
                               <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
-                                {formatMonthlyPrice(discount.original)}
+                                {formatMonthlyPrice(price.strikePrice)}
                               </span>
                             </>
                           ) : null}
@@ -625,7 +606,7 @@ export default function PlanPicker({
                             월 요금제
                           </span>
                           <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
+                            {formatMonthlyPrice(price!.price)}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (
@@ -652,7 +633,7 @@ export default function PlanPicker({
               const img = PACKAGE_SUMMARY_IMAGES[tier];
               const isSelected = selectedTier === tier;
               const isPlanCurrent = plan ? (isCurrentPlan?.(plan) ?? false) : false;
-              const discount = plan ? planDiscountInfo(plan, discountApplied, combinedDiscountPct) : null;
+              const price = plan ? planDisplayPrice(plan) : null;
 
               return (
                 <button
@@ -676,9 +657,9 @@ export default function PlanPicker({
                         </span>
                       </div>
                     ) : null}
-                    {discountApplied ? (
+                    {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
-                        pct={additionalDiscountPct}
+                        pct={price.referralPct}
                         className="left-2 top-2"
                       />
                     ) : null}
@@ -698,13 +679,13 @@ export default function PlanPicker({
                     {plan ? (
                       <>
                         <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
-                          {discount ? (
+                          {price?.strikePrice != null ? (
                             <>
                               <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                                {discount.pct}%
+                                {price.discountPct}%
                               </span>
                               <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                                {formatMonthlyPrice(discount.original)}
+                                {formatMonthlyPrice(price.strikePrice)}
                               </span>
                             </>
                           ) : null}
@@ -719,7 +700,7 @@ export default function PlanPicker({
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >
-                            {formatMonthlyPrice(unitPrice(plan.monthlyPrice))}
+                            {formatMonthlyPrice(price!.price)}
                           </span>
                         </div>
                         {plan.averageRating > 0 ? (

@@ -49,6 +49,9 @@ export function PointHistoryView({ balanceCardProps, ledger }: PointHistorySecti
                           {fmtPoint(item.amount)}
                         </span>
                       </div>
+                      <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)]">
+                        구독자 이메일 {item.email ?? "-"}
+                      </p>
                       <div className="mt-1 flex items-center justify-between gap-3">
                         <span className="text-body-14-m text-[var(--color-text-secondary)]">{dateRange}</span>
                         <span className="shrink-0 text-body-14-m text-[var(--color-text-secondary)]">
@@ -114,8 +117,8 @@ export function PointHistoryView({ balanceCardProps, ledger }: PointHistorySecti
           </div>
 
           {/* 테이블 헤더 */}
-          <div className="grid h-11 md:grid-cols-[1fr_120px_130px_110px] lg:grid-cols-[1fr_178px_184px_167px] items-center rounded-lg bg-[var(--color-surface-light)] px-6">
-            {["내역", "포인트", "잔여포인트", "적립일"].map((col) => (
+          <div className="grid h-11 md:grid-cols-[minmax(120px,1fr)_160px_100px_110px_110px] lg:grid-cols-[1fr_240px_150px_160px_150px] items-center rounded-lg bg-[var(--color-surface-light)] px-6">
+            {["내역", "구독자 이메일", "포인트", "잔여포인트", "적립일"].map((col) => (
               <span key={col} className="text-body-16-m text-[var(--color-text-tertiary)]">{col}</span>
             ))}
           </div>
@@ -131,9 +134,12 @@ export function PointHistoryView({ balanceCardProps, ledger }: PointHistorySecti
                   return (
                     <li
                       key={item.id}
-                      className="grid md:grid-cols-[1fr_120px_130px_110px] lg:grid-cols-[1fr_178px_184px_167px] items-center border-b border-[var(--color-text-muted)] px-6 py-[16px] last:border-b-0"
+                      className="grid md:grid-cols-[minmax(120px,1fr)_160px_100px_110px_110px] lg:grid-cols-[1fr_240px_150px_160px_150px] items-center border-b border-[var(--color-text-muted)] px-6 py-[16px] last:border-b-0"
                     >
                       <span className="text-body-14-m text-[var(--color-text)]">{item.description}</span>
+                      <span className="truncate pr-4 text-body-14-m text-[var(--color-text)]" title={item.email ?? undefined}>
+                        {item.email ?? "-"}
+                      </span>
                       <span className="text-body-14-m font-medium text-[var(--color-text)]">
                         {fmtPoint(item.amount)}
                       </span>

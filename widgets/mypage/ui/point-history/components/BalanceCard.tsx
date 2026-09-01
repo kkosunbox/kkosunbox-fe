@@ -40,18 +40,23 @@ function ReferralField({
   label,
   value,
   valueClassName,
+  fluid = false,
 }: {
   label: string;
   value: string | null;
   /** 코드(400)·링크(500)가 굵기가 달라 호출부에서 타이포 클래스를 지정한다 */
   valueClassName: string;
+  /** 모바일에서는 카드의 남은 너비에 맞춰 값 영역을 줄인다. */
+  fluid?: boolean;
 }) {
   const { copied, copy } = useCopyFeedback();
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center gap-3 ${fluid ? "w-full" : ""}`}>
       <span className="w-[46px] shrink-0 text-body-13-m text-[var(--color-text)]">{label}</span>
-      <div className="flex h-10 w-[208px] items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3">
+      <div
+        className={`flex h-10 min-w-0 items-center gap-3 rounded-[4px] bg-[var(--color-surface-light)] px-3 ${fluid ? "flex-1" : "w-[208px]"}`}
+      >
         <span className={`min-w-0 flex-1 truncate ${valueClassName} text-[var(--color-text)]`}>
           {value ?? "미설정"}
         </span>
@@ -72,9 +77,19 @@ function ReferralField({
 
 function ReferralFields({ referral, stacked }: { referral: MyReferralCode; stacked?: boolean }) {
   return (
-    <div className={stacked ? "mt-4 flex flex-col gap-3" : "flex items-center gap-6"}>
-      <ReferralField label="초대코드" value={referral.referralCode} valueClassName="text-body-13-r" />
-      <ReferralField label="초대링크" value={referral.referralLink} valueClassName="text-body-13-m" />
+    <div className={stacked ? "mt-4 flex w-full flex-col gap-3" : "flex items-center gap-6"}>
+      <ReferralField
+        label="초대코드"
+        value={referral.referralCode}
+        valueClassName="text-body-13-r"
+        fluid={stacked}
+      />
+      <ReferralField
+        label="초대링크"
+        value={referral.referralLink}
+        valueClassName="text-body-13-m"
+        fluid={stacked}
+      />
     </div>
   );
 }

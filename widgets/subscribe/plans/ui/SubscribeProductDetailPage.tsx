@@ -158,9 +158,18 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
           </p>
 
-          <h2 className="mt-[30px] text-[24px] font-bold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
-            {selectedPlan.name}
-          </h2>
+          <div className="mt-[30px] flex items-center gap-2">
+            <h2 className="min-w-0 text-[24px] font-bold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
+              {selectedPlan.name}
+            </h2>
+            {price.referralApplied && (
+              <ReferralAdditionalDiscountChip
+                pct={price.referralPct}
+                className="shrink-0 whitespace-nowrap"
+                inline
+              />
+            )}
+          </div>
 
           <div className="mt-[12px] flex items-center gap-2">
             <span className="text-[20px] font-bold leading-6 tracking-[-0.05em] text-[var(--color-surface-dark)]">
@@ -174,9 +183,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
               {formatWon(discountedUnitPrice)}
             </span>
-            {price.referralApplied && (
-              <ReferralAdditionalDiscountChip pct={price.referralPct} inline />
-            )}
           </div>
 
           <div className="mt-3 flex items-center gap-2">

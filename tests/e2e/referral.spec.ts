@@ -6,6 +6,7 @@ import {
   MOCK_INACTIVE_SLUG,
   MOCK_HIDDEN_PAGE_SLUG,
   MOCK_REFERRAL_PAGE,
+  MOCK_POINT_BALANCE,
   MOCK_PLANS,
 } from "../helpers/mockApiServer";
 import {
@@ -185,6 +186,41 @@ test.describe("홈 화면 히어로", () => {
 // ──────────────────────────────────────────────────────────────────────────────
 
 test.describe("/mypage/point (인플루언서 전용)", () => {
+  for (const viewport of [
+    { name: "333px 모바일", width: 333, height: 800 },
+    { name: "1280px 데스크톱", width: 1280, height: 900 },
+  ]) {
+    test(`${viewport.name} → 연도·월 선택 및 바깥 클릭 닫기`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await loginAsInfluencer(page);
+      await page.goto("/mypage/point");
+
+      const calendarButton = page.getByRole("button", { name: "달력 열기" }).filter({ visible: true });
+      const picker = page.getByRole("dialog", { name: "년월 선택" }).filter({ visible: true });
+
+      await calendarButton.click();
+      await expect(picker).toBeVisible();
+
+      await picker
+        .getByRole("button", { name: String(MOCK_POINT_BALANCE.year), exact: true })
+        .click();
+      await expect(picker).toBeVisible();
+
+      const targetYear = MOCK_POINT_BALANCE.year - 1;
+      await picker.getByRole("button", { name: String(targetYear), exact: true }).click();
+      await expect(picker).toBeVisible();
+
+      await picker.getByRole("button", { name: "5월", exact: true }).click();
+      await expect(picker).toBeHidden();
+      await expect(page.getByText("5월", { exact: true }).filter({ visible: true })).toBeVisible();
+
+      await calendarButton.click();
+      await expect(picker).toBeVisible();
+      await page.getByRole("heading", { name: "MY 포인트" }).filter({ visible: true }).click();
+      await expect(picker).toBeHidden();
+    });
+  }
+
   test("미인증 접근 → 로그인 페이지 리다이렉트", async ({ page }) => {
     await page.goto("/mypage/point");
     // 미들웨어가 /login?next=%2Fmypage%2Fpoint 으로 리다이렉트함

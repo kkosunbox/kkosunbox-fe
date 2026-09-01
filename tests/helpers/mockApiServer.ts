@@ -690,7 +690,10 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     if (method === "GET" && url.startsWith("/v1/points/balance")) {
       const auth = req.headers.authorization ?? "";
       if (auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`) {
-        ok(res, MOCK_POINT_BALANCE);
+        const searchParams = new URL(url, "http://localhost").searchParams;
+        const year = Number(searchParams.get("year")) || MOCK_POINT_BALANCE.year;
+        const month = Number(searchParams.get("month")) || MOCK_POINT_BALANCE.month;
+        ok(res, { ...MOCK_POINT_BALANCE, year, month });
       } else {
         err(res, 401, "UNAUTHORIZED");
       }

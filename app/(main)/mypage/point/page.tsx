@@ -19,8 +19,7 @@ export default async function PointPage() {
   const token = await getServerToken();
 
   // 잔액 0·내역 없음은 정상 상태 그대로 보여준다.
-  // (과거 이 자리에 더미 폴백이 있었으나, 실제로 포인트가 0인 사용자에게
-  //  존재하지 않는 잔액·적립 내역이 노출되는 문제가 있어 제거했다.)
+  // 실제 포인트 내역이 없을 때는 빈 상태 UI를 렌더링한다.
   const [balance, history, referral] = await Promise.all([
     fetchPointBalance(token),
     fetchPointHistory(token, { limit: 200 }),

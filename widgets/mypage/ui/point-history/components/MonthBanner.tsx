@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { shouldCloseMonthPicker } from "../monthPickerHelpers";
 import { CalendarIcon, ChevronIcon } from "./icons";
 import { YearMonthPicker } from "./YearMonthPicker";
 
@@ -35,7 +36,10 @@ export function MonthBanner({
   useEffect(() => {
     if (!showPicker) return;
     function handlePointerDown(e: PointerEvent) {
-      if (bannerRef.current && !bannerRef.current.contains(e.target as Node)) {
+      const banner = bannerRef.current;
+      // 모바일·데스크톱 배너가 DOM에 함께 렌더되고 한쪽만 CSS로 숨겨진다.
+      // 숨겨진 배너는 보이는 picker 내부 클릭도 바깥 클릭으로 오인하므로 무시한다.
+      if (shouldCloseMonthPicker(banner, e.target as Node | null)) {
         onPickerClose();
       }
     }

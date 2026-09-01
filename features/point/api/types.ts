@@ -21,6 +21,8 @@ export interface PointLedgerItem {
   amount: number;
   type: PointLedgerType;
   description: string;
+  /** 적립을 발생시킨 구독자 이메일 (인플루언서 조회 시 마스킹) */
+  email?: string | null;
   createdAt: string; // ISO 8601
   referenceId: number | null;
   referralCode: string | null;

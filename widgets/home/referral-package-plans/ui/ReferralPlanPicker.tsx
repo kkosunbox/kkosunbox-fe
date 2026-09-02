@@ -268,7 +268,7 @@ export default function ReferralPlanPicker({
                     ) : null}
                     <PlanImageBadges
                       tags={activePlan?.tags}
-                      className="absolute right-[69px] top-[25px] z-10 flex items-center gap-1.5"
+                      className="absolute left-[25px] right-[69px] top-[25px] z-10 flex items-center gap-1.5"
                     />
                     {activePrice?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
@@ -393,7 +393,7 @@ export default function ReferralPlanPicker({
               ) : null}
               <PlanImageBadges
                 tags={activePlan?.tags}
-                className="absolute right-[69px] top-[25px] z-10 flex items-center gap-2"
+                className="absolute left-[25px] right-[69px] top-[25px] z-10 flex items-center gap-2"
               />
               {/* 버튼: 태블릿 bottom-4 right-4 / 데스크탑 bottom-8 right-8 */}
               <div className="absolute bottom-4 right-4 z-10 lg:bottom-8 lg:right-8">

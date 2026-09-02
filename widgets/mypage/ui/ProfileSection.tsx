@@ -229,7 +229,12 @@ function ChecklistPanel({
 
         {!hasChecklist && (
           <>
-            <div className="absolute inset-0 rounded-[12px] bg-[var(--color-checklist-fallback-bg)] backdrop-blur-[3px]" />
+            <div
+              className={[
+                "absolute inset-0 rounded-[12px] backdrop-blur-[3px]",
+                isMobile ? "bg-white" : "bg-[var(--color-checklist-fallback-bg)]",
+              ].join(" ")}
+            />
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-3 text-center">
               <Text variant="body-14-m" className="font-semibold leading-[1.5] text-[var(--color-text-emphasis)]">
                 우리 아이 맞춤 간식을 위해

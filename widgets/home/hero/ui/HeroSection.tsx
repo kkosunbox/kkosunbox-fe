@@ -147,7 +147,23 @@ export default function HeroSection() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.36) 42%, rgba(0,0,0,0.06) 72%), linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.18) 100%)",
+            "linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.18) 100%)",
+        }}
+        aria-hidden="true"
+      />
+
+      <div
+        className="absolute inset-y-0 left-0 w-[min(664px,50%)]"
+        style={{
+          background: "linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
+        }}
+        aria-hidden="true"
+      />
+
+      <div
+        className="absolute inset-y-0 right-0 w-[min(664px,50%)]"
+        style={{
+          background: "linear-gradient(270deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
         }}
         aria-hidden="true"
       />

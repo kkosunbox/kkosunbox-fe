@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
+import heroVideoHeading from "../assets/hero-video-heading.svg";
 
 const HOME_HERO_VIDEOS = [
   { src: "/videos/home-hero.mp4", type: "video/mp4" },
@@ -151,24 +152,26 @@ export default function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex h-full items-center max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
-        <div className="max-w-[510px] pt-[var(--header-height)] text-white">
-          <p className="mb-4 text-body-14-sb tracking-[-0.02em] text-white/80 md:text-body-16-sb">
-            100% 국내산 휴먼그레이드 수제 간식
-          </p>
-          <h2 className="font-extrabold leading-[1.18] tracking-[-0.05em] break-keep max-md:text-[38px] md:max-lg:text-[54px] lg:text-[64px]">
-            강아지가
-            <br />
-            먼저 찾는 간식
+      <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
+        <div className="max-w-[510px] pb-[18svh] text-white">
+          <h2>
+            {/* eslint-disable-next-line @next/next/no-img-element -- exact supplied heading artwork */}
+            <img
+              src={heroVideoHeading.src}
+              alt="강아지가 먼저 찾는 간식"
+              width={heroVideoHeading.width}
+              height={heroVideoHeading.height}
+              className="h-auto max-md:w-[230px] md:w-[286px]"
+            />
           </h2>
-          <p className="mt-5 font-medium leading-[1.6] tracking-[-0.02em] text-white/85 max-md:text-[15px] md:text-[18px]">
+          <p className="mt-8 font-medium leading-[1.6] tracking-[-0.02em] text-white/85 max-md:text-[15px] md:text-[18px]">
             먹는 순간 표정이 달라지는
             <br className="md:hidden" /> 휴먼그레이드 수제 간식 구독
           </p>
           <button
             type="button"
             onClick={handleCta}
-            className="mt-8 rounded-[12px] bg-[var(--color-cta-button)] font-semibold tracking-[-0.03em] text-white transition-opacity hover:opacity-90 max-md:h-12 max-md:px-6 max-md:text-[14px] md:h-[52px] md:px-7 md:text-[16px]"
+            className="mt-6 rounded-[12px] bg-[var(--color-cta-button)] font-semibold tracking-[-0.03em] text-white transition-opacity hover:opacity-90 max-md:h-12 max-md:px-6 max-md:text-[14px] md:h-[52px] md:w-[282px] md:text-[16px]"
           >
             10초 진단하고 우리 아이 맞춤 추천 받기
           </button>

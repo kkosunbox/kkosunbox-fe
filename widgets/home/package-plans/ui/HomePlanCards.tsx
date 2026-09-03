@@ -67,7 +67,7 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
           >
             {isRecommended ? (
               <div className="absolute inset-x-0 top-0 flex h-[34px] items-center justify-center text-[14px] font-bold leading-[17px] tracking-[-0.02em] text-white">
-                추천 PICK 🌟
+                인기 Pick
               </div>
             ) : null}
 

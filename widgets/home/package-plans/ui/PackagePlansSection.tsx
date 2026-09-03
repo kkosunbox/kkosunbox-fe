@@ -1,98 +1,46 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { MouseEvent, TouchEvent } from "react";
-import { Text, ScrollReveal, CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
+import { useEffect, useState } from "react";
+import { Text, ScrollReveal } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
-import {
-  PACKAGES,
-  resolveRecommendedPlanIds,
-  tierFromSubscriptionPlan,
-  TIER_DETAIL_HERO_IMAGES,
-  PackageNutritionGuide,
-  type PackageTier,
-} from "@/entities/package";
 import { getSubscriptionPlans } from "@/features/subscription/api";
-import { useReferral } from "@/features/referral/model";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
-import { PlanPicker, PlanTierDots, RecommendedPickBadge } from "@/widgets/package-plans";
+import { useReferral } from "@/features/referral/model";
 import homePackagePlansTitle from "../assets/home-package-plans-title-02.webp";
-
-const HOME_SUMMARY_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
-const MOBILE_SWIPE_THRESHOLD_PX = 50;
+import HomePlanCards from "./HomePlanCards";
 
 export default function PackagePlansSection() {
-  const router = useRouter();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
-  const suppressClickUntilRef = useRef(0);
-
-  /** 백엔드 추천픽이 없으면 Standard 폴백 — PlanPicker 내부 배지와 동일 기준 */
-  const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(apiPlans), [apiPlans]);
-
-  function handleMobileSwipeStart(event: TouchEvent<HTMLDivElement>) {
-    const touch = event.touches[0];
-    swipeStartRef.current = { x: touch.clientX, y: touch.clientY };
-  }
-
-  function handleMobileSwipeEnd(
-    event: TouchEvent<HTMLDivElement>,
-    tier: PackageTier,
-    onTierSelect: (tier: PackageTier) => void,
-    order: PackageTier[],
-  ) {
-    const start = swipeStartRef.current;
-    swipeStartRef.current = null;
-    if (!start) return;
-
-    const touch = event.changedTouches[0];
-    const deltaX = touch.clientX - start.x;
-    const deltaY = touch.clientY - start.y;
-    if (
-      Math.abs(deltaX) < MOBILE_SWIPE_THRESHOLD_PX ||
-      Math.abs(deltaX) <= Math.abs(deltaY)
-    ) {
-      return;
-    }
-
-    const currentIndex = order.indexOf(tier);
-    const direction = deltaX < 0 ? 1 : -1;
-    const nextIndex = (currentIndex + direction + order.length) % order.length;
-    suppressClickUntilRef.current = Date.now() + 500;
-    onTierSelect(order[nextIndex]);
-  }
-
-  function handleMobileClickCapture(event: MouseEvent<HTMLDivElement>) {
-    if (Date.now() >= suppressClickUntilRef.current) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  // 초대 맥락이 있으면 코드를 함께 넘긴다 — 서버가 채워준 할인가를 그대로 표시한다.
   const { refCode } = useReferral();
 
   useEffect(() => {
     getSubscriptionPlans(undefined, refCode ?? undefined)
-      .then((res) => { setApiPlans(res.plans); setPlansReady(true); })
-      .catch(() => { setPlansReady(true); });
+      .then((response) => {
+        setApiPlans(response.plans);
+        setPlansReady(true);
+      })
+      .catch(() => {
+        setPlansReady(true);
+      });
   }, [refCode]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 0);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <section className={`bg-white pt-16 pb-16 md:py-24 lg:py-20 transition-[border-radius] duration-300 ${scrolled ? "rounded-t-[24px]" : ""}`}>
+    <section
+      className={`bg-white pt-16 pb-16 transition-[border-radius] duration-300 md:py-24 lg:pt-[76px] lg:pb-24 ${
+        scrolled ? "rounded-t-[24px]" : ""
+      }`}
+    >
       <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0">
-        {/* 섹션 헤더 */}
         <ScrollReveal variant="fade-up">
           <Image
             src={homePackagePlansTitle}
@@ -107,7 +55,7 @@ export default function PackagePlansSection() {
           <Text
             variant="subtitle-18-m"
             mobileVariant="body-13-m"
-            className="mt-5 mb-12 text-center text-[var(--color-text-warm)] max-md:leading-[20px]"
+            className="mt-5 text-center text-[var(--color-text-warm)] max-md:leading-[20px]"
           >
             체크리스트 후 우리 아이에게 적절한{" "}
             <br className="md:hidden lg:hidden" />
@@ -116,107 +64,9 @@ export default function PackagePlansSection() {
         </ScrollReveal>
       </div>
 
-      {/* PlanPicker가 자체적으로 max-md:px-5 md:px-6 lg:px-0 좌우 패딩을 적용하므로
-          위 헤더 wrapper와 중복 적용되지 않도록 별도 wrapper 없이 렌더링한다. */}
-      <PlanPicker
-        // 마케팅 계층 — 초대 맥락이 있으면 적격 판정과 무관하게 할인가를 보여준다.
-        plans={apiPlans}
-        plansReady={plansReady}
-        summaryOrder={HOME_SUMMARY_ORDER}
-        primaryButtonVariant="charcoal"
-        getPrimaryButton={(plan) => ({
-          label: "제품 상세보기",
-          onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
-        })}
-        mobileSlot={(tier, onTierSelect, order) => {
-          const activePkg = PACKAGES.find((p) => p.tier === tier);
-          const activePlan = apiPlans.find((p) => tierFromSubscriptionPlan(p) === tier);
-          return (
-            <div
-              className="touch-pan-y"
-              onTouchStart={handleMobileSwipeStart}
-              onTouchEnd={(event) => handleMobileSwipeEnd(event, tier, onTierSelect, order)}
-              onTouchCancel={() => { swipeStartRef.current = null; }}
-              onClickCapture={handleMobileClickCapture}
-            >
-              <div
-                className="relative w-full rounded-[22px]"
-                style={{ boxShadow: "var(--shadow-card-soft)" }}
-              >
-                <div
-                  className="relative aspect-square w-full overflow-hidden rounded-[22px] bg-white"
-                  onClick={() => {
-                    if (activePlan) router.push(`/subscribe/detail?planId=${activePlan.id}`);
-                  }}
-                  style={{ cursor: activePlan ? "pointer" : undefined }}
-                >
-                  {(["Basic", "Standard", "Premium"] as const).map((t) => {
-                    const tPkg = PACKAGES.find((p) => p.tier === t);
-                    return (
-                      <Image
-                        key={t}
-                        src={TIER_DETAIL_HERO_IMAGES[t]}
-                        alt={`${tPkg?.name ?? t} 대표 이미지`}
-                        fill
-                        quality={HIGH_IMAGE_QUALITY}
-                        className="object-cover"
-                        sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
-                        style={{
-                          opacity: tier === t ? 1 : 0,
-                          filter: tier === t ? "blur(0px)" : "blur(6px)",
-                          transition: "opacity 350ms ease, filter 350ms ease",
-                        }}
-                      />
-                    );
-                  })}
-                  <PlanImageBadges
-                    tags={activePlan?.tags}
-                    className="absolute left-[25px] right-[69px] top-[25px] z-10 flex items-center gap-1.5"
-                  />
-                </div>
-                <PackageNutritionGuide initialTier={tier} bubbleClassName="h-auto w-[100px]" />
-              </div>
-              {activePkg ? (
-                <div className="mt-4">
-                  {activePlan && recommendedPlanIds.has(activePlan.id) ? (
-                    <RecommendedPickBadge className="mb-2" />
-                  ) : null}
-                  <p
-                    className="text-subtitle-17-b-lh22"
-                    style={{ color: activePkg.colorVar }}
-                  >
-                    {activePkg.name}
-                  </p>
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <ul className="min-w-0 flex-1 flex flex-col gap-3">
-                      {activePkg.items.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-2 text-body-13-m leading-[18px] text-[var(--color-text)]"
-                        >
-                          <CheckCircleIcon color={activePkg.colorVar} className="mt-0.5 shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (activePlan) router.push(`/subscribe/detail?planId=${activePlan.id}`);
-                      }}
-                      disabled={!activePlan}
-                      className="flex h-10 w-[108px] shrink-0 flex-row items-center justify-center gap-[10px] self-center rounded-[8px] bg-[var(--color-text)] px-6 py-[13px] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      제품 상세보기
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-              <PlanTierDots tier={tier} order={order} onTierSelect={onTierSelect} />
-            </div>
-          );
-        }}
-      />
+      <div className="mt-12 lg:mt-[52px]">
+        <HomePlanCards plans={apiPlans} plansReady={plansReady} />
+      </div>
     </section>
   );
 }

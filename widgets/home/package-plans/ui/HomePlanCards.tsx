@@ -148,11 +148,11 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
                   onClick={() => {
                     if (!plan) return;
                     trackSelectItem({ plan_tier: plan.name });
-                    router.push(`/order?planId=${plan.id}&quantity=1`);
+                    router.push(`/subscribe/detail?planId=${plan.id}`);
                   }}
                   className="mt-[22px] flex h-12 w-full items-center justify-center rounded-[12px] bg-[var(--color-cta-button)] text-[16px] font-semibold leading-6 tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  구독하기
+                  상세보기
                 </button>
               </div>
             </div>

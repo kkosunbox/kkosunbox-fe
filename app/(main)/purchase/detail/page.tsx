@@ -6,12 +6,30 @@ import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
-import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
-export const metadata: Metadata = {
-  title: "상품 상세 | 꼬순박스",
-  ...NOINDEX_METADATA,
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ tier?: string }>;
+}): Promise<Metadata> {
+  const { tier } = await searchParams;
+  const pkg = PACKAGES.find((item) => item.tier === tier);
+
+  if (!pkg) {
+    return {
+      title: "상품 상세 | 꼬순박스",
+      alternates: { canonical: "/purchase" },
+    };
+  }
+
+  const description = `${pkg.name}를 단품으로 만나보세요. 휴먼그레이드 재료로 만든 프리미엄 강아지 수제간식 패키지입니다.`;
+
+  return {
+    title: `${pkg.name} 단품 | 꼬순박스`,
+    description,
+    alternates: { canonical: `/purchase/detail?tier=${pkg.tier}` },
+  };
+}
 
 export default async function PurchaseDetailPage({
   searchParams,

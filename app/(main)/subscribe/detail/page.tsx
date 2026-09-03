@@ -18,6 +18,7 @@ export async function generateMetadata({
   if (!Number.isFinite(planId) || planId <= 0) {
     return {
       title: "플랜 상세보기 | 꼬순박스",
+      alternates: { canonical: "/subscribe" },
       openGraph: { images: [ogImage] },
       twitter: { card: "summary_large_image", images: ["/og-image.png"] },
     };
@@ -31,6 +32,7 @@ export async function generateMetadata({
     if (!plan) {
       return {
         title: "플랜 상세보기 | 꼬순박스",
+        alternates: { canonical: "/subscribe" },
         openGraph: { images: [ogImage] },
         twitter: { card: "summary_large_image", images: ["/og-image.png"] },
       };
@@ -43,6 +45,7 @@ export async function generateMetadata({
     return {
       title: `${plan.name} 플랜 상세 | 꼬순박스`,
       description,
+      alternates: { canonical: `/subscribe/detail?planId=${plan.id}` },
       openGraph: {
         title: `${plan.name} 플랜 상세 | 꼬순박스`,
         description,
@@ -58,6 +61,7 @@ export async function generateMetadata({
   } catch {
     return {
       title: "플랜 상세보기 | 꼬순박스",
+      alternates: { canonical: "/subscribe" },
       openGraph: { images: [ogImage] },
       twitter: { card: "summary_large_image", images: ["/og-image.png"] },
     };

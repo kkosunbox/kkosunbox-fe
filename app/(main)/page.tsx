@@ -33,7 +33,7 @@ export default function Home() {
       <div className="relative z-0">
         <HomeHero />
       </div>
-      <div className="relative z-[1]">
+      <div id="home-content" className="relative z-[1] scroll-mt-[var(--header-height)]">
         <StatsBar />
         <HomePackagePlansSection />
         <WhyGallerySection />

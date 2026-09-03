@@ -70,7 +70,7 @@ export default function Header() {
           style={{ background: "var(--gradient-header-overlay)", backdropFilter: "none" }}
           aria-hidden="true"
         />
-        <div className="mx-auto flex h-full max-w-content items-center justify-between max-md:px-6 md:px-[20px] lg:px-0">
+        <div className="mx-auto flex h-full items-center justify-between max-md:w-full max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
           <div className="flex items-center gap-3">
             <button
               className="max-md:flex md:flex lg:hidden items-center justify-center"

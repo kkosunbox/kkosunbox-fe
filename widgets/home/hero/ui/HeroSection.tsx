@@ -8,7 +8,8 @@ import { openChecklistForm } from "@/shared/lib/checklistModal";
 import heroVideoHeading from "../assets/hero-video-heading.svg";
 
 const HOME_HERO_VIDEOS = [
-  { src: "/videos/home-hero.mp4", type: "video/mp4" },
+  { src: "/videos/home-hero.mp4", type: "video/mp4", label: "원본", filtered: false },
+  { src: "/videos/home-hero.mp4", type: "video/mp4", label: "채도 조정", filtered: true },
 ] as const;
 const HOME_HERO_POSTER_SRC = "/videos/home-hero-poster.webp";
 const SNAP_LOCK_MS = 900;
@@ -107,6 +108,12 @@ export default function HeroSection() {
     openChecklistForm();
   }
 
+  function selectVideo(index: number) {
+    if (index === currentVideoIndex) return;
+    setVideoReady(false);
+    setCurrentVideoIndex(index);
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -119,16 +126,15 @@ export default function HeroSection() {
       <img
         src={HOME_HERO_POSTER_SRC}
         alt="간식을 기다리는 강아지들"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className={`absolute inset-0 h-full w-full object-cover object-center ${currentVideo.filtered ? "[filter:saturate(0.85)_contrast(1.03)]" : ""}`}
         fetchPriority="high"
       />
 
       <video
-        key={currentVideo.src}
-        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
+        key={`${currentVideo.src}-${currentVideo.label}`}
+        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${currentVideo.filtered ? "[filter:saturate(0.85)_contrast(1.03)]" : ""} ${videoReady ? "opacity-100" : "opacity-0"}`}
         autoPlay
         muted
-        loop={HOME_HERO_VIDEOS.length === 1}
         playsInline
         preload="metadata"
         poster={HOME_HERO_POSTER_SRC}
@@ -191,6 +197,19 @@ export default function HeroSection() {
           >
             10초 진단하고 우리 아이 맞춤 추천 받기
           </button>
+
+          <div className="mt-8 flex h-1 gap-2" aria-label="히어로 영상 버전 선택">
+            {HOME_HERO_VIDEOS.map((video, index) => (
+              <button
+                key={video.label}
+                type="button"
+                onClick={() => selectVideo(index)}
+                className={`h-1 w-[60px] bg-white transition-opacity ${index === currentVideoIndex ? "opacity-100" : "opacity-40 hover:opacity-70"}`}
+                aria-label={`${video.label} 영상 재생`}
+                aria-current={index === currentVideoIndex ? "true" : undefined}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

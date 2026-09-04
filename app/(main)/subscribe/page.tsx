@@ -8,28 +8,29 @@ import { SITE_URL } from "@/shared/lib/seo";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
 const description = "베이직부터 프리미엄까지, 우리 강아지에게 맞는 구독 플랜을 선택하세요. 매달 신선한 수제간식이 배송됩니다.";
+const subscribeTitle = "구독몰 | 강아지 수제간식 구독 플랜 - 꼬순박스";
 
 const breadcrumbJsonLd = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "홈", item: SITE_URL },
-    { "@type": "ListItem", position: 2, name: "구독 플랜", item: `${SITE_URL}/subscribe` },
+    { "@type": "ListItem", position: 2, name: "구독몰", item: `${SITE_URL}/subscribe` },
   ],
 };
 
 export const metadata: Metadata = {
-  title: "구독 플랜 | 꼬순박스",
+  title: subscribeTitle,
   description,
   alternates: { canonical: "/subscribe" },
   openGraph: {
-    title: "구독 플랜 | 꼬순박스",
+    title: subscribeTitle,
     description,
     url: "/subscribe",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "꼬순박스" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "구독 플랜 | 꼬순박스",
+    title: subscribeTitle,
     description,
     images: ["/og-image.png"],
   },

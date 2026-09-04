@@ -8,19 +8,21 @@ import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByT
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL } from "@/shared/lib/seo";
 
+const purchaseTitle = "단품몰 | 강아지 수제간식 단품 - 꼬순박스";
+
 export const metadata: Metadata = {
-  title: "구매하기 | 꼬순박스",
+  title: purchaseTitle,
   description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
   alternates: { canonical: "/purchase" },
   openGraph: {
-    title: "강아지 수제간식 단품 | 꼬순박스",
+    title: purchaseTitle,
     description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
     url: "/purchase",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "꼬순박스 수제간식 단품" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "강아지 수제간식 단품 | 꼬순박스",
+    title: purchaseTitle,
     description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
     images: ["/og-image.png"],
   },

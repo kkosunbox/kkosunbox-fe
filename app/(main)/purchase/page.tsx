@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
-import { COMPARE_PACKAGES, getPackagePurchaseProduct, resolveAverageRatingByTier } from "@/entities/package";
+import { COMPARE_PACKAGES, TIER_BOX_IMAGES, getPackagePurchaseProduct, resolveAverageRatingByTier } from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
@@ -57,7 +57,8 @@ export default async function PurchasePage() {
           "@type": "Product",
           name: product?.name ?? pkg.name,
           description:
-            product?.description ?? `${pkg.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
+            product?.description || `${pkg.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
+          image: product?.imageUrl || `${SITE_URL}${TIER_BOX_IMAGES[pkg.tier].src}`,
           url: `${SITE_URL}/purchase/detail?tier=${pkg.tier}`,
           brand: { "@type": "Brand", name: "꼬순박스" },
           offers: {
@@ -65,6 +66,7 @@ export default async function PurchasePage() {
             url: `${SITE_URL}/purchase/detail?tier=${pkg.tier}`,
             priceCurrency: "KRW",
             price,
+            availability: "https://schema.org/InStock",
           },
         },
       };

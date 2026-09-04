@@ -6,6 +6,7 @@ import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL } from "@/shared/lib/seo";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
+import { TIER_BOX_IMAGES, tierFromSubscriptionPlan } from "@/entities/package";
 
 const description = "베이직부터 프리미엄까지, 우리 강아지에게 맞는 구독 플랜을 선택하세요. 매달 신선한 수제간식이 배송됩니다.";
 const subscribeTitle = "구독몰 | 강아지 수제간식 구독 플랜 - 꼬순박스";
@@ -53,7 +54,8 @@ function buildSubscriptionJsonLd(plans: SubscriptionPlanDto[]) {
             "@type": "Product",
             name: plan.name,
             description:
-              plan.description ?? `${plan.name} 강아지 맞춤 수제간식 정기구독 플랜`,
+              plan.description || `${plan.name} 강아지 맞춤 수제간식 정기구독 플랜`,
+            image: `${SITE_URL}${TIER_BOX_IMAGES[tierFromSubscriptionPlan(plan)].src}`,
             url: `${SITE_URL}/subscribe/detail?planId=${plan.id}`,
             brand: { "@type": "Brand", name: "꼬순박스" },
             offers: {
@@ -61,6 +63,7 @@ function buildSubscriptionJsonLd(plans: SubscriptionPlanDto[]) {
               url: `${SITE_URL}/subscribe/detail?planId=${plan.id}`,
               priceCurrency: "KRW",
               price: plan.monthlyPrice,
+              availability: "https://schema.org/InStock",
             },
           },
         })),

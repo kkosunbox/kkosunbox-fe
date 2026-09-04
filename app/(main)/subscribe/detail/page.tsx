@@ -4,6 +4,7 @@ import { getServerToken } from "@/features/auth/lib/session";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { SubscribeProductDetailPage } from "@/widgets/subscribe/plans";
+import { NOINDEX_FOLLOW_METADATA } from "@/shared/lib/seo";
 
 export async function generateMetadata({
   searchParams,
@@ -19,6 +20,7 @@ export async function generateMetadata({
     return {
       title: "플랜 상세보기 | 꼬순박스",
       alternates: { canonical: "/subscribe" },
+      ...NOINDEX_FOLLOW_METADATA,
       openGraph: { images: [ogImage] },
       twitter: { card: "summary_large_image", images: ["/og-image.png"] },
     };
@@ -33,6 +35,7 @@ export async function generateMetadata({
       return {
         title: "플랜 상세보기 | 꼬순박스",
         alternates: { canonical: "/subscribe" },
+        ...NOINDEX_FOLLOW_METADATA,
         openGraph: { images: [ogImage] },
         twitter: { card: "summary_large_image", images: ["/og-image.png"] },
       };
@@ -45,7 +48,8 @@ export async function generateMetadata({
     return {
       title: `${plan.name} 플랜 상세 | 꼬순박스`,
       description,
-      alternates: { canonical: `/subscribe/detail?planId=${plan.id}` },
+      alternates: { canonical: "/subscribe" },
+      ...NOINDEX_FOLLOW_METADATA,
       openGraph: {
         title: `${plan.name} 플랜 상세 | 꼬순박스`,
         description,
@@ -62,6 +66,7 @@ export async function generateMetadata({
     return {
       title: "플랜 상세보기 | 꼬순박스",
       alternates: { canonical: "/subscribe" },
+      ...NOINDEX_FOLLOW_METADATA,
       openGraph: { images: [ogImage] },
       twitter: { card: "summary_large_image", images: ["/og-image.png"] },
     };

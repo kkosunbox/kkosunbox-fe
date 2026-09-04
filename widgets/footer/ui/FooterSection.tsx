@@ -1,14 +1,23 @@
+"use client";
+
 import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/features/auth";
 import logoMono from "@/shared/assets/logo-mono.svg";
 
+type FooterLink = {
+  href: string;
+  label: string;
+  authenticatedHref?: string;
+};
+
 const FOOTER_LINKS = [
-  { href: "/terms", label: "Terms of Use" },
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/support", label: "FAQ" },
-  { href: "/partnership", label: "Partnership" },
-] as const;
+  { href: "/terms", label: "이용약관" },
+  { href: "/privacy", label: "개인정보처리방침" },
+  { href: "/support", label: "자주 묻는 질문" },
+  { href: "/support#partnership", authenticatedHref: "/partnership", label: "제휴 안내" },
+] as const satisfies readonly FooterLink[];
 
 const COMPANY_INFO_LINES = [
   "PetBridge Core Co. Ltd.  |  Business Registration No. : 355-87-03780",
@@ -73,7 +82,11 @@ const LOGO_W = 88;
 const LOGO_H = 28;
 
 export default function FooterSection() {
+  const { isLoggedIn } = useAuth();
   const year = new Date().getFullYear();
+
+  const resolveFooterHref = (item: FooterLink) =>
+    isLoggedIn && item.authenticatedHref ? item.authenticatedHref : item.href;
 
   return (
     <footer className="bg-[var(--color-footer-bg)] text-[var(--color-footer-text)]" aria-label="Site footer">
@@ -94,14 +107,14 @@ export default function FooterSection() {
           {CONTACT_EMAIL.label}: <a href={CONTACT_EMAIL.href} className="transition-opacity hover:opacity-80">{CONTACT_EMAIL.address}</a>
         </p>
         <div className="mt-6 border-t border-[var(--color-footer-divider)] pt-5 flex flex-col items-center gap-2">
-          <nav className="flex items-center" aria-label="Footer policy and support links">
+          <nav className="flex flex-wrap items-center justify-center gap-y-1" aria-label="Footer policy and support links">
             {FOOTER_LINKS.map((item, idx) => (
               <Fragment key={item.href}>
                 {idx > 0 && (
                   <span aria-hidden="true" className="mx-1 text-[var(--color-footer-text)]">|</span>
                 )}
                 <Link
-                  href={item.href}
+                  href={resolveFooterHref(item)}
                   className="text-caption-12-m text-[var(--color-footer-text)] transition-opacity hover:opacity-80"
                 >
                   {item.label}
@@ -173,7 +186,7 @@ export default function FooterSection() {
               {FOOTER_LINKS.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={resolveFooterHref(item)}
                   className="text-footer-nav text-[var(--color-footer-text)] transition-opacity hover:opacity-80"
                 >
                   {item.label}

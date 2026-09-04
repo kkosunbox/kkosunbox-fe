@@ -4,7 +4,7 @@ import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { JsonLd } from "@/shared/ui";
-import { SITE_URL } from "@/shared/lib/seo";
+import { SITE_URL, PRODUCT_SHIPPING_DETAILS_JSONLD, PRODUCT_RETURN_POLICY_JSONLD } from "@/shared/lib/seo";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { TIER_BOX_IMAGES, tierFromSubscriptionPlan } from "@/entities/package";
 
@@ -64,6 +64,8 @@ function buildSubscriptionJsonLd(plans: SubscriptionPlanDto[]) {
               priceCurrency: "KRW",
               price: plan.monthlyPrice,
               availability: "https://schema.org/InStock",
+              shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
+              hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
             },
           },
         })),

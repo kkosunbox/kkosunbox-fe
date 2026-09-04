@@ -5,33 +5,69 @@ import { resolveReferralContext } from "@/features/referral/lib/resolveReferralC
 import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL } from "@/shared/lib/seo";
+import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 
 const description = "베이직부터 프리미엄까지, 우리 강아지에게 맞는 구독 플랜을 선택하세요. 매달 신선한 수제간식이 배송됩니다.";
+const subscribeTitle = "구독몰 | 강아지 수제간식 구독 플랜 - 꼬순박스";
 
 const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "홈", item: SITE_URL },
-    { "@type": "ListItem", position: 2, name: "구독 플랜", item: `${SITE_URL}/subscribe` },
+    { "@type": "ListItem", position: 2, name: "구독몰", item: `${SITE_URL}/subscribe` },
   ],
 };
 
 export const metadata: Metadata = {
-  title: "구독 플랜 | 꼬순박스",
+  title: subscribeTitle,
   description,
+  alternates: { canonical: "/subscribe" },
   openGraph: {
-    title: "구독 플랜 | 꼬순박스",
+    title: subscribeTitle,
     description,
+    url: "/subscribe",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "꼬순박스" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "구독 플랜 | 꼬순박스",
+    title: subscribeTitle,
     description,
     images: ["/og-image.png"],
   },
 };
+
+function buildSubscriptionJsonLd(plans: SubscriptionPlanDto[]) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      breadcrumbJsonLd,
+      {
+        "@type": "ItemList",
+        name: "꼬순박스 강아지 수제간식 정기구독 플랜",
+        url: `${SITE_URL}/subscribe`,
+        numberOfItems: plans.length,
+        itemListElement: plans.map((plan, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "Product",
+            name: plan.name,
+            description:
+              plan.description ?? `${plan.name} 강아지 맞춤 수제간식 정기구독 플랜`,
+            url: `${SITE_URL}/subscribe/detail?planId=${plan.id}`,
+            brand: { "@type": "Brand", name: "꼬순박스" },
+            offers: {
+              "@type": "Offer",
+              url: `${SITE_URL}/subscribe/detail?planId=${plan.id}`,
+              priceCurrency: "KRW",
+              price: plan.monthlyPrice,
+            },
+          },
+        })),
+      },
+    ],
+  };
+}
 
 export default async function SubscribePage() {
   const token = await getServerToken();
@@ -41,7 +77,8 @@ export default async function SubscribePage() {
 
   return (
     <>
-      <JsonLd data={breadcrumbJsonLd} />
+      <h1 className="sr-only">강아지 수제간식 정기구독 플랜</h1>
+      <JsonLd data={buildSubscriptionJsonLd(plans)} />
       <SubscribePlansSection plans={plans} />
     </>
   );

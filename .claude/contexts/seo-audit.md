@@ -1,9 +1,17 @@
 # SEO 점검 보고서 & Phase별 Todolist
 
-> 작성일: 2026-06-26
+> 작성일: 2026-06-26 / 정책 갱신: 2026-09-04
 > 정식 도메인: **https://www.kkosunbox.com** (apex `kkosunbox.com` / `dev.kkosunbox.com` 아님)
-> 색인 대상: **메인 `/`, 소개 `/about`, 구독안내 `/subscribe`, 고객지원 `/support`** — 나머지 전부 noindex
+> 색인 대상: **메인 `/`, 소개 `/about`, 구독 `/subscribe`, 단품 `/purchase`, 고객지원 `/support`** — 나머지 전부 noindex
 > 운영: Google Search Console 사용 중 / `dev.kkosunbox.com` 색인 차단 필요
+
+## 2026-09-04 적용 정책
+
+- 대표 URL은 `https://www.kkosunbox.com` 하나로 통일한다. sitemap, robots의 Sitemap URL, canonical, Open Graph, JSON-LD에 apex 주소를 섞지 않는다.
+- 이용약관과 개인정보처리방침은 footer에서 접근 가능하게 유지하되 `noindex, follow`로 설정하고 sitemap에서는 제외한다.
+- 쿼리 기반 구독·단품 상세 페이지는 안정적인 slug URL로 개편하기 전까지 `noindex, follow`와 상위 목록 canonical을 사용한다.
+- 핵심 색인 페이지는 한국어 텍스트 H1을 정확히 하나씩 제공한다.
+- `/subscribe`, `/purchase`의 가격은 서버에서 조회한 값으로 HTML과 Product/Offer JSON-LD를 함께 생성한다.
 
 ---
 

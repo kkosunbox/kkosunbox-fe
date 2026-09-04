@@ -1,14 +1,23 @@
+"use client";
+
 import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/features/auth";
 import logoMono from "@/shared/assets/logo-mono.svg";
+
+type FooterLink = {
+  href: string;
+  label: string;
+  authenticatedHref?: string;
+};
 
 const FOOTER_LINKS = [
   { href: "/terms", label: "Terms of Use" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/support", label: "FAQ" },
-  { href: "/partnership", label: "Partnership" },
-] as const;
+  { href: "/support#partnership", authenticatedHref: "/partnership", label: "Partnership" },
+] as const satisfies readonly FooterLink[];
 
 const COMPANY_INFO_LINES = [
   "PetBridge Core Co. Ltd.  |  Business Registration No. : 355-87-03780",
@@ -73,7 +82,11 @@ const LOGO_W = 88;
 const LOGO_H = 28;
 
 export default function FooterSection() {
+  const { isLoggedIn } = useAuth();
   const year = new Date().getFullYear();
+
+  const resolveFooterHref = (item: FooterLink) =>
+    isLoggedIn && item.authenticatedHref ? item.authenticatedHref : item.href;
 
   return (
     <footer className="bg-[var(--color-footer-bg)] text-[var(--color-footer-text)]" aria-label="Site footer">
@@ -101,7 +114,7 @@ export default function FooterSection() {
                   <span aria-hidden="true" className="mx-1 text-[var(--color-footer-text)]">|</span>
                 )}
                 <Link
-                  href={item.href}
+                  href={resolveFooterHref(item)}
                   className="text-caption-12-m text-[var(--color-footer-text)] transition-opacity hover:opacity-80"
                 >
                   {item.label}
@@ -173,7 +186,7 @@ export default function FooterSection() {
               {FOOTER_LINKS.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={resolveFooterHref(item)}
                   className="text-footer-nav text-[var(--color-footer-text)] transition-opacity hover:opacity-80"
                 >
                   {item.label}

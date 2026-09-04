@@ -6,7 +6,7 @@ import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
 import { JsonLd } from "@/shared/ui";
-import { SITE_URL } from "@/shared/lib/seo";
+import { SITE_URL, PRODUCT_SHIPPING_DETAILS_JSONLD, PRODUCT_RETURN_POLICY_JSONLD } from "@/shared/lib/seo";
 
 const purchaseTitle = "단품몰 | 강아지 수제간식 단품 - 꼬순박스";
 
@@ -67,6 +67,8 @@ export default async function PurchasePage() {
             priceCurrency: "KRW",
             price,
             availability: "https://schema.org/InStock",
+            shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
+            hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
           },
         },
       };

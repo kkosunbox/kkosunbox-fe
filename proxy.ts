@@ -5,7 +5,7 @@ import {
   INVITE_CODE_MAX_AGE_SEC,
   isValidInviteCode,
 } from "@/features/referral/lib";
-import { SITE_URL } from "@/shared/lib/seo";
+import { PRODUCTION_HOST } from "@/shared/lib/seo";
 
 /** 로그인 없이 접근 불가한 라우트 */
 const PROTECTED = ["/mypage", "/order"];
@@ -21,7 +21,6 @@ const PROTECTED = ["/mypage", "/order"];
  */
 const DEV_ONLY_ROUTES = ["/test"];
 
-const PRODUCTION_HOST = new URL(SITE_URL).hostname;
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProductionHost = request.nextUrl.hostname === PRODUCTION_HOST;

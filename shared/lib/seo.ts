@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 /** 검색엔진에 알리는 유일한 정식 프로덕션 주소. */
 export const SITE_URL = "https://www.kkosunbox.com";
 
+/** 정식 프로덕션 호스트명. dev.kkosunbox.com·preview·localhost 등과 구분하는 기준. */
+export const PRODUCTION_HOST = new URL(SITE_URL).hostname;
+
 /**
  * 검색엔진 색인 제외(noindex, nofollow).
  * 검색 노출 대상이 아닌 페이지(가입·로그인·마이페이지·주문·결제 등)에 사용한다.

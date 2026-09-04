@@ -5,6 +5,7 @@ import {
   INVITE_CODE_MAX_AGE_SEC,
   isValidInviteCode,
 } from "@/features/referral/lib";
+import { SITE_URL } from "@/shared/lib/seo";
 
 /** 로그인 없이 접근 불가한 라우트 */
 const PROTECTED = ["/mypage", "/order"];
@@ -15,19 +16,15 @@ const PROTECTED = ["/mypage", "/order"];
  * noindex 메타(app/(main)/test/layout.tsx)만으로는 색인만 막힐 뿐 URL 직접 접근은 열려 있어,
  * 실사용자가 커머스 도메인에서 결제 테스트 화면에 도달할 수 있었다.
  *
- * 정식 프로덕션 도메인 판별은 app/robots.ts와 동일한 기준(apex, www 없음)을 사용한다.
+ * 정식 프로덕션 도메인은 검색 canonical과 동일한 www 호스트를 사용한다.
  * localhost·dev.kkosunbox.com·preview 에서는 그대로 열려 있어 디자인 확인에 지장이 없다.
  */
 const DEV_ONLY_ROUTES = ["/test"];
 
-const PRODUCTION_URL = "https://kkosunbox.com";
-const isProductionSite =
-  (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000") === PRODUCTION_URL;
-
-const BLOCKED_ROUTES = isProductionSite ? DEV_ONLY_ROUTES : [];
-
+const PRODUCTION_HOST = new URL(SITE_URL).hostname;
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isProductionHost = request.nextUrl.hostname === PRODUCTION_HOST;
 
   // 레퍼럴 캡처 — 인증 가드보다 먼저 처리한다.
   // `?r=CODE`로 진입하면 코드를 쿠키에 저장하고 r을 제거한 깨끗한 URL로 보낸다.
@@ -52,7 +49,7 @@ export function proxy(request: NextRequest) {
     return res;
   }
 
-  if (BLOCKED_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
+  if (isProductionHost && DEV_ONLY_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";
@@ -70,7 +67,15 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // preview·dev·localhost 등 정식 호스트가 아닌 배포본은 검색 결과에서 제외한다.
+  // canonical만으로는 별도 호스트의 색인을 완전히 막을 수 없어 응답 헤더도 함께 제공한다.
+  if (request.nextUrl.hostname !== PRODUCTION_HOST) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+
+  return response;
 }
 
 export const config = {

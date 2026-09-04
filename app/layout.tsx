@@ -9,6 +9,7 @@ import { getAuthUser } from "@/features/auth/lib/session";
 import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
 import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider, GoogleAnalyticsTracker, JsonLd } from "@/shared/ui";
 import { GA_ID } from "@/shared/lib/analytics";
+import { SITE_URL } from "@/shared/lib/seo";
 
 const msMadi = Ms_Madi({
   weight: "400",
@@ -28,17 +29,16 @@ const gantari = Gantari({
   variable: "--font-gantari",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
 export const viewport: Viewport = {
   themeColor: "#F89602",
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
   description: "강아지에게 맞춤 수제간식을 정기적으로 제공하는 프리미엄 패키지 구독 서비스",
   openGraph: {
+    url: SITE_URL,
     siteName: "꼬순박스",
     type: "website",
     locale: "ko_KR",
@@ -61,8 +61,9 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "꼬순박스",
   alternateName: ["kkosunbox", "꼬순 박스"],
-  url: siteUrl,
-  logo: `${siteUrl}/og-image.png`,
+  url: SITE_URL,
+  logo: `${SITE_URL}/og-image.png`,
+  sameAs: ["https://www.instagram.com/kkosunbox/"],
 };
 
 const websiteJsonLd = {
@@ -70,7 +71,7 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "꼬순박스",
   alternateName: "kkosunbox",
-  url: siteUrl,
+  url: SITE_URL,
 };
 
 export default async function RootLayout({

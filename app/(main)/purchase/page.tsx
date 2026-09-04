@@ -1,15 +1,29 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
-import { resolveAverageRatingByTier } from "@/entities/package";
+import { COMPARE_PACKAGES, getPackagePurchaseProduct, resolveAverageRatingByTier } from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
+import { JsonLd } from "@/shared/ui";
+import { SITE_URL } from "@/shared/lib/seo";
 
 export const metadata: Metadata = {
   title: "구매하기 | 꼬순박스",
   description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
   alternates: { canonical: "/purchase" },
+  openGraph: {
+    title: "강아지 수제간식 단품 | 꼬순박스",
+    description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
+    url: "/purchase",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "꼬순박스 수제간식 단품" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "강아지 수제간식 단품 | 꼬순박스",
+    description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
+    images: ["/og-image.png"],
+  },
 };
 
 // 빌드 시점 정적 생성이 이 페이지에서만 반복적으로 60초 타임아웃에 걸려 next build가 실패한다
@@ -24,9 +38,41 @@ export default async function PurchasePage() {
   // 별점은 구독 플랜의 실제 평균 별점(`averageRating`)을 그대로 쓴다 — PlanPicker와 동일 소스.
   // 단품과 구독은 같은 박스라 리뷰도 플랜 단위로 쌓인다.
   const ratingByTier = resolveAverageRatingByTier(plans);
+  const productListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "꼬순박스 강아지 수제간식 단품",
+    url: `${SITE_URL}/purchase`,
+    numberOfItems: COMPARE_PACKAGES.length,
+    itemListElement: COMPARE_PACKAGES.map((pkg, index) => {
+      const product = productsByTier[pkg.tier];
+      const price = product?.price ?? getPackagePurchaseProduct(pkg.tier)!.price;
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: product?.name ?? pkg.name,
+          description:
+            product?.description ?? `${pkg.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
+          url: `${SITE_URL}/purchase/detail?tier=${pkg.tier}`,
+          brand: { "@type": "Brand", name: "꼬순박스" },
+          offers: {
+            "@type": "Offer",
+            url: `${SITE_URL}/purchase/detail?tier=${pkg.tier}`,
+            priceCurrency: "KRW",
+            price,
+          },
+        },
+      };
+    }),
+  };
 
   return (
     <>
+      <h1 className="sr-only">꼬순박스 강아지 수제간식 단품</h1>
+      <JsonLd data={productListJsonLd} />
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>

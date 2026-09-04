@@ -6,6 +6,7 @@ import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
+import { NOINDEX_FOLLOW_METADATA } from "@/shared/lib/seo";
 
 export async function generateMetadata({
   searchParams,
@@ -19,6 +20,7 @@ export async function generateMetadata({
     return {
       title: "상품 상세 | 꼬순박스",
       alternates: { canonical: "/purchase" },
+      ...NOINDEX_FOLLOW_METADATA,
     };
   }
 
@@ -27,7 +29,8 @@ export async function generateMetadata({
   return {
     title: `${pkg.name} 단품 | 꼬순박스`,
     description,
-    alternates: { canonical: `/purchase/detail?tier=${pkg.tier}` },
+    alternates: { canonical: "/purchase" },
+    ...NOINDEX_FOLLOW_METADATA,
   };
 }
 

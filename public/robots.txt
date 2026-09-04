@@ -3,19 +3,8 @@ Allow: /
 
 Disallow: /api/
 Disallow: /auth/
-Disallow: /login
-Disallow: /register
-Disallow: /forgot-password
-Disallow: /mypage
-Disallow: /order
 Disallow: /payment
-Disallow: /delivery
-Disallow: /address
-Disallow: /checklist
-Disallow: /inquiry
-Disallow: /support/history
-Disallow: /purchase/order
 Disallow: /r/
 Disallow: /test
 
-Sitemap: https://kkosunbox.com/sitemap.xml
+Sitemap: https://www.kkosunbox.com/sitemap.xml

@@ -10,6 +10,7 @@ const description = "믿을 수 있는 재료로 만든 수제간식을 매월 �
 export const metadata: Metadata = {
   title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
   description,
+  alternates: { canonical: "/" },
   openGraph: {
     title: "꼬순박스 — 프리미엄 강아지 수제간식 구독",
     description,

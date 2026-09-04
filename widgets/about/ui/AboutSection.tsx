@@ -103,7 +103,7 @@ export default function AboutSection() {
 
         {/* 텍스트 overlay — SVG 상단, 문단 하단 */}
         <div className="lg:hidden relative z-10 h-full flex flex-col items-center text-center px-6 pt-4">
-          <h1 aria-label="About Us">
+          <div aria-hidden="true">
             <svg
               width="175"
               height="33"
@@ -121,7 +121,7 @@ export default function AboutSection() {
                 fill="var(--color-cta-button)"
               />
             </svg>
-          </h1>
+          </div>
 
           <div className="flex-1" />
           <div className="flex flex-col gap-5 pb-8">
@@ -178,7 +178,7 @@ export default function AboutSection() {
             <div className="flex-none w-[356px]">
               {/* 디스플레이 헤딩 SVG — 폰트 글리프 대체, 텍스트로 환원 금지 (2026-06-18) */}
               <ScrollReveal variant="fade-up" delay={100}>
-                <h1 className="mb-10" aria-label="About Us">
+                <div className="mb-10" aria-hidden="true">
                   <svg
                     width="175"
                     height="33"
@@ -196,7 +196,7 @@ export default function AboutSection() {
                       fill="var(--color-cta-button)"
                     />
                   </svg>
-                </h1>
+                </div>
               </ScrollReveal>
 
               <div className="flex flex-col gap-5 items-start text-left">

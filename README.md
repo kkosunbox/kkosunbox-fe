@@ -44,7 +44,7 @@ pnpm dev
 | 변수 | 설명 |
 |---|---|
 | `NEXT_PUBLIC_API_URL` | 백엔드 API 베이스 URL |
-| `NEXT_PUBLIC_SITE_URL` | 사이트 공개 URL (SEO·OAuth 리다이렉트) |
+| `NEXT_PUBLIC_SITE_URL` | 사이트 공개 URL (OAuth 리다이렉트; SEO 대표 주소는 `shared/lib/seo.ts`에서 www로 고정) |
 
 선택 항목: OAuth 클라이언트 ID, Toss Payments 키, GA ID, Channel Talk 키 등. 상세 목록은 [`.env.example`](./.env.example)을 참고하세요.
 

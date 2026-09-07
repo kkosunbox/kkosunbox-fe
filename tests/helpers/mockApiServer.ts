@@ -127,6 +127,7 @@ const MOCK_INFLUENCER_REFRESH_TOKEN = "mock-influencer-refresh-token";
 
 // 레퍼럴 랜딩 페이지 슬러그
 export const MOCK_ACTIVE_SLUG = "test-influencer";
+export const MOCK_ACTIVE_SLUG_2 = "second-influencer";
 export const MOCK_INACTIVE_SLUG = "inactive-influencer";
 export const MOCK_HIDDEN_PAGE_SLUG = "hidden-page-influencer";
 
@@ -136,6 +137,17 @@ export const MOCK_REFERRAL_PAGE = {
   displayName: "테스트인플루언서",
   profileImageUrl: null as string | null,
   discountRate: 0.1,
+  isActive: true,
+  isPageVisible: true,
+};
+
+// 두 번째 활성 slug — 서로 다른 인플루언서로 전환됐을 때 코드·slug 쿠키가 새 값으로
+// 갱신되는지 검증하기 위한 값(referralCode·displayName 모두 MOCK_REFERRAL_PAGE와 달라야 한다).
+export const MOCK_REFERRAL_PAGE_2 = {
+  referralCode: "SECOND20",
+  displayName: "두번째인플루언서",
+  profileImageUrl: null as string | null,
+  discountRate: 0.2,
   isActive: true,
   isPageVisible: true,
 };
@@ -659,6 +671,10 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     // 특정 slug만 처리하고 나머지는 404
     if (method === "GET" && url === `/v1/referral/pages/${MOCK_ACTIVE_SLUG}`) {
       ok(res, MOCK_REFERRAL_PAGE);
+      return;
+    }
+    if (method === "GET" && url === `/v1/referral/pages/${MOCK_ACTIVE_SLUG_2}`) {
+      ok(res, MOCK_REFERRAL_PAGE_2);
       return;
     }
     if (method === "GET" && url === `/v1/referral/pages/${MOCK_INACTIVE_SLUG}`) {

@@ -7,4 +7,4 @@ Disallow: /payment
 Disallow: /r/
 Disallow: /test
 
-Sitemap: https://www.kkosunbox.com/sitemap.xml
+Sitemap: https://kkosunbox.com/sitemap.xml

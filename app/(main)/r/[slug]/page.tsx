@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchReferralPage } from "@/features/referral/api/queries";
-import { ReferralProvider } from "@/features/referral/model";
-import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import {
   ReferralHeroSection,
   ReferralOfferHeroSection,
@@ -34,27 +32,24 @@ export default async function ReferralLandingPage({ params }: Props) {
     redirect("/");
   }
 
-  // 적격 판정(구독 이력 확인 포함)은 서버 단일 resolver가 담당한다. 이 페이지가 따로 계산하면
-  // layout이 만든 값과 어긋나 같은 유저에게 /r/{slug}와 /subscribe가 다른 가격을 보여주게 된다.
-  const referral = await resolveReferralContext(slug);
-
+  // 적격 판정(구독 이력 확인 포함)은 서버 단일 resolver가 담당한다. layout이 proxy.ts의
+  // landingSlug 헤더로 이미 이 slug 기준 context를 확정해 ReferralProvider로 내려주므로,
+  // 여기서 따로 계산하지 않는다 — 중첩 Provider를 만들면 쿠키 기록 effect가 경합한다.
   return (
-    <ReferralProvider context={referral}>
-      <div className="pt-[var(--banner-height)]">
-        <div className="relative z-0">
-          {data.isPageVisible ? (
-            <ReferralHeroSection />
-          ) : (
-            <ReferralOfferHeroSection />
-          )}
-        </div>
-        <div className="relative z-[1]">
-          <StatsBar />
-          <ReferralPackagePlansSection />
-          <WhyGallerySection />
-          <ReviewsSection />
-        </div>
+    <div className="pt-[var(--banner-height)]">
+      <div className="relative z-0">
+        {data.isPageVisible ? (
+          <ReferralHeroSection />
+        ) : (
+          <ReferralOfferHeroSection />
+        )}
       </div>
-    </ReferralProvider>
+      <div className="relative z-[1]">
+        <StatsBar />
+        <ReferralPackagePlansSection />
+        <WhyGallerySection />
+        <ReviewsSection />
+      </div>
+    </div>
   );
 }

@@ -66,7 +66,17 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const response = NextResponse.next();
+  // `/r/{slug}` 랜딩 slug를 요청 헤더로 전달한다. `(main)/layout.tsx`는 이 헤더를 읽어
+  // `resolveReferralContext`에 landingSlug로 넘긴다 — 페이지가 별도로 같은 계산을 다시 하며
+  // 중첩 ReferralProvider를 만들면, 두 Provider의 쿠키 기록 effect가 마운트 순서(자식→부모)로
+  // 경합해 상위(레이아웃) Provider가 기존 쿠키 값으로 덮어써버린다(예: test 방문 후 kkosun 방문 시
+  // ggosoon-ref-slug가 kkosun으로 갱신되지 않고 test로 남는 문제, 2026-09-07).
+  const requestHeaders = new Headers(request.headers);
+  const slugMatch = pathname.match(/^\/r\/([^/]+)\/?$/);
+  if (slugMatch) {
+    requestHeaders.set("x-referral-slug", slugMatch[1]);
+  }
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
 
   // preview·dev·localhost 등 정식 호스트가 아닌 배포본은 검색 결과에서 제외한다.
   // canonical만으로는 별도 호스트의 색인을 완전히 막을 수 없어 응답 헤더도 함께 제공한다.

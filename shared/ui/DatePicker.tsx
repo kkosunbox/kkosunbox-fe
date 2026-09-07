@@ -520,16 +520,8 @@ export default function DatePicker({
             className="flex items-center justify-between"
             style={{ padding: "16px 16px 0 16px", height: HEADER_CONTROL_HEIGHT + 16 }}
           >
-            {/* 월·연 — 각각 해당 뷰로 바로 진입하는 독립 컨트롤 */}
+            {/* 연·월 — 각각 해당 뷰로 바로 진입하는 독립 컨트롤 */}
             <div className="flex items-center" style={{ gap: 4, height: HEADER_CONTROL_HEIGHT }}>
-              <ViewSwitchButton
-                label={`${String(viewMonth + 1).padStart(2, "0")}월`}
-                active={calendarView === "months"}
-                onClick={() =>
-                  setCalendarView((v) => (v === "months" ? "days" : "months"))
-                }
-                aria-label={`월 선택 (현재 ${viewMonth + 1}월)`}
-              />
               <ViewSwitchButton
                 label={`${viewYear}`}
                 active={calendarView === "years"}
@@ -537,6 +529,14 @@ export default function DatePicker({
                   setCalendarView((v) => (v === "years" ? "days" : "years"))
                 }
                 aria-label={`연도 선택 (현재 ${viewYear}년)`}
+              />
+              <ViewSwitchButton
+                label={`${String(viewMonth + 1).padStart(2, "0")}월`}
+                active={calendarView === "months"}
+                onClick={() =>
+                  setCalendarView((v) => (v === "months" ? "days" : "months"))
+                }
+                aria-label={`월 선택 (현재 ${viewMonth + 1}월)`}
               />
             </div>
 

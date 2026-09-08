@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
+import { ShippingFeeWaiver } from "@/shared/ui";
 import {
   PACKAGE_DETAIL_IMAGES_PURCHASE,
   TIER_BOX_IMAGES,
@@ -173,7 +174,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
               <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">배송비</span>
-              <span className="text-[13px] font-medium leading-[140%] text-[var(--color-text)]">무료</span>
+              <ShippingFeeWaiver className="text-[var(--color-text)]" />
             </div>
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
@@ -352,7 +353,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
                     <span className="leading-[1.1] text-[var(--color-text)]">배송비</span>
-                    <span className="justify-self-start text-body-13-m leading-[140%] text-[var(--color-text)]">무료</span>
+                    <ShippingFeeWaiver className="justify-self-start text-[var(--color-text)]" />
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 text-body-14-m md:gap-x-9 lg:gap-x-9">
                     <span className="leading-[1.1] text-[var(--color-text)]">제품수량</span>

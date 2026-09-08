@@ -43,3 +43,4 @@ export { FORM_INPUT_CLASS, FORM_ACTION_CHIP_CLASS, FORM_ACTION_CHIP_SMALL_CLASS 
 export { QuantityMinusIcon, QuantityPlusIcon, ChevronIcon } from "./FormPartsIcons";
 export { default as DesktopHeroSideBackground } from "./DesktopHeroSideBackground";
 export { default as PlanImageBadges } from "./PlanImageBadges";
+export { default as ShippingFeeWaiver } from "./ShippingFeeWaiver";

@@ -1,10 +1,12 @@
+export const SHIPPING_FEE_INFO_ITEM = "배송 비용: 무료";
+
 export const DELIVERY_INFO_SECTIONS = [
   {
     title: "기본 배송 정보",
     items: [
       "배송 방법: 택배",
       "배송 지역: 전국 (일부 도서산간 지역 제외)",
-      "배송 비용: 무료",
+      SHIPPING_FEE_INFO_ITEM,
       "배송 기간: 결제 완료 후 1~3일 이내 출고 (금요일, 주말, 공휴일 제외)",
     ],
   },

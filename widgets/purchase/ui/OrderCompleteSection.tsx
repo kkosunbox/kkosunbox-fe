@@ -6,6 +6,7 @@ import Link from "next/link";
 import { PACKAGES, TIER_BOX_IMAGES, TIER_LABEL, CURRENT_PURCHASE_TIER, type PackageTier } from "@/entities/package";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
+import { ShippingFeeWaiver } from "@/shared/ui";
 import orderCompleteHeroIcon from "../assets/order-complete-hero-icon.svg";
 import orderCompleteHeading from "../assets/order-complete-heading.svg";
 import orderCompleteDeliveryIcon from "../assets/order-complete-delivery-icon.png";
@@ -149,7 +150,7 @@ export default function OrderCompleteSection({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-body-13-m text-[var(--color-text)]">배송비</span>
-                <span className="text-body-13-m text-[var(--color-text)]">-{formatKrwPrice(0)}</span>
+                <ShippingFeeWaiver className="text-[var(--color-text)]" />
               </div>
             </div>
 

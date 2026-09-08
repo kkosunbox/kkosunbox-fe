@@ -1,5 +1,5 @@
 import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
-import { SectionCard, Checkbox, CollapsiblePanel, ChevronIcon } from "@/shared/ui";
+import { SectionCard, Checkbox, CollapsiblePanel, ChevronIcon, ShippingFeeWaiver } from "@/shared/ui";
 
 interface OrderSummarySectionProps {
   open: boolean;
@@ -66,7 +66,7 @@ export function OrderSummarySection({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-body-13-m text-[var(--color-text)]">총 배송비</span>
-              <span className="text-body-13-m text-[var(--color-text)]">-0원</span>
+              <ShippingFeeWaiver className="text-[var(--color-text)]" />
             </div>
           </div>
 

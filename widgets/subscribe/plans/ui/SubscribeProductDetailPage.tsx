@@ -17,7 +17,7 @@ import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
 import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
-import { PlanImageBadges } from "@/shared/ui";
+import { PlanImageBadges, ShippingFeeWaiver } from "@/shared/ui";
 import Stars from "./reviews/Stars";
 import ReviewImageLightbox from "./reviews/ReviewImageLightbox";
 import { useProductReviews } from "./reviews/useProductReviews";
@@ -228,7 +228,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
               <span className="text-[14px] font-medium leading-[17px] text-[var(--color-text)]">배송비</span>
-              <span className="text-[13px] font-medium leading-[140%] text-[var(--color-text)]">무료</span>
+              <ShippingFeeWaiver className="text-[var(--color-text)]" />
             </div>
 
             <div className="mt-[22px] grid grid-cols-[72px_minmax(0,1fr)] items-center gap-x-4">
@@ -440,7 +440,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">배송비</span>
-                    <span className="justify-self-start text-body-13-m leading-[140%] text-[var(--color-text)]">무료</span>
+                    <ShippingFeeWaiver className="justify-self-start text-[var(--color-text)]" />
                   </div>
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
                     <span className="text-[var(--color-text)] leading-[1.1]">제품수량</span>

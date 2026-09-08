@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { ScrollReveal, CheckCircleIcon, PlanImageBadges } from "@/shared/ui";
+import { ScrollReveal, CheckCircleIcon, FreeShippingBadge, PlanImageBadges } from "@/shared/ui";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
@@ -327,23 +327,28 @@ export default function ReferralPlanPicker({
 
                     {activePlan ? (
                       <div className="mt-4 border-t border-[var(--color-border-light)] pt-4">
-                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <div className="mb-2 flex justify-end">
+                          <FreeShippingBadge />
+                        </div>
+                        <div className="flex items-baseline justify-between gap-x-2">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
                             월 요금제
                           </span>
-                          {activePrice?.strikePrice != null ? (
-                            <>
-                              <span className="text-price-16-sb text-[var(--color-cta-button)]">
-                                {activePrice.discountPct}%
-                              </span>
-                              <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
-                                {formatMonthlyPrice(activePrice.strikePrice)}
-                              </span>
-                            </>
-                          ) : null}
-                          <span className="ml-auto text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
-                            {formatMonthlyPrice(activePrice!.price)}
-                          </span>
+                          <div className="flex flex-nowrap items-baseline gap-x-2 overflow-visible">
+                            {activePrice?.strikePrice != null ? (
+                              <>
+                                <span className="whitespace-nowrap text-price-16-sb text-[var(--color-cta-button)]">
+                                  {activePrice.discountPct}%
+                                </span>
+                                <span className="whitespace-nowrap text-price-16-r text-[var(--color-text-secondary)] line-through">
+                                  {formatMonthlyPrice(activePrice.strikePrice)}
+                                </span>
+                              </>
+                            ) : null}
+                            <span className="whitespace-nowrap text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
+                              {formatMonthlyPrice(activePrice!.price)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ) : null}
@@ -413,7 +418,7 @@ export default function ReferralPlanPicker({
           </div>
 
           {/* 우측 — 패키지 요약 카드 목록 (데스크탑 전용) */}
-          <div ref={cardColumnRef} className="max-lg:hidden lg:flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[386px] lg:max-w-none pr-4">
+          <div ref={cardColumnRef} className="max-lg:hidden lg:flex w-full flex-col gap-[14px] max-w-[320px] shrink-0 lg:w-[402px] lg:max-w-none pr-4">
             {summaryOrder.map((tier, i) => {
               const pkg = PACKAGES.find((p) => p.tier === tier)!;
               const plan = planForTier(sortedPlans, tier);
@@ -438,8 +443,12 @@ export default function ReferralPlanPicker({
                 >
                   <div className={`relative ${isSelected ? "h-[159px] w-[172px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-white ${isSelected ? "ml-0" : "ml-3"}`}>
                     <PackageSummaryThumbnail src={img} alt={pkg.name} />
+                    <FreeShippingBadge
+                      variant="image"
+                      className="absolute left-3 top-3 z-10"
+                    />
                     {isPlanCurrent ? (
-                      <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
+                      <div className="absolute left-3 top-9 z-10 md:left-4 md:top-10">
                         <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
                           이용중
                         </span>
@@ -448,7 +457,7 @@ export default function ReferralPlanPicker({
                     {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={price.referralPct}
-                        className="left-2 top-2"
+                        className="left-2 top-9"
                       />
                     ) : null}
                   </div>
@@ -468,13 +477,13 @@ export default function ReferralPlanPicker({
                     </p>
                     {plan ? (
                       <>
-                        <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                        <div className="mb-1 flex flex-nowrap items-center gap-x-2 overflow-visible">
                           {price?.strikePrice != null ? (
                             <>
                               <span className="max-md:text-price-14-sb md:text-price-16-sb text-[var(--color-cta-button)]">
                                 {price.discountPct}%
                               </span>
-                              <span className="max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
+                              <span className="whitespace-nowrap max-md:text-price-14-r md:text-price-16-r text-[var(--color-text-secondary)] line-through">
                                 {formatMonthlyPrice(price.strikePrice)}
                               </span>
                             </>
@@ -484,7 +493,7 @@ export default function ReferralPlanPicker({
                           <span className="max-md:text-price-14-b md:text-price-16-b-tight text-[var(--color-text-body-warm)]">
                             월 요금제
                           </span>
-                          <span className="max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
+                          <span className="whitespace-nowrap max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
                             {formatMonthlyPrice(price!.price)}
                           </span>
                         </div>
@@ -529,8 +538,12 @@ export default function ReferralPlanPicker({
                 >
                   <div className="relative h-[148px] w-[160px] shrink-0 overflow-hidden rounded-[16px] bg-white">
                     <PackageSummaryThumbnail src={img} alt={pkg.name} />
+                    <FreeShippingBadge
+                      variant="image"
+                      className="absolute left-3 top-3 z-10"
+                    />
                     {isPlanCurrent ? (
-                      <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
+                      <div className="absolute left-3 top-9 z-10 md:left-4 md:top-10">
                         <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
                           이용중
                         </span>
@@ -539,7 +552,7 @@ export default function ReferralPlanPicker({
                     {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={price.referralPct}
-                        className="left-2 top-2"
+                        className="left-2 top-9"
                       />
                     ) : null}
                   </div>
@@ -557,13 +570,13 @@ export default function ReferralPlanPicker({
                     </p>
                     {plan ? (
                       <>
-                        <div className="mb-1 flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                        <div className="mb-1 flex flex-nowrap items-center gap-x-2 overflow-visible">
                           {price?.strikePrice != null ? (
                             <>
                               <span className="text-price-16-sb text-[var(--color-cta-button)]">
                                 {price.discountPct}%
                               </span>
-                              <span className="text-price-16-r text-[var(--color-text-secondary)] line-through">
+                              <span className="whitespace-nowrap text-price-16-r text-[var(--color-text-secondary)] line-through">
                                 {formatMonthlyPrice(price.strikePrice)}
                               </span>
                             </>
@@ -575,7 +588,7 @@ export default function ReferralPlanPicker({
                           </span>
                           <span
                             className={[
-                              "text-[var(--color-text-emphasis)]",
+                              "whitespace-nowrap text-[var(--color-text-emphasis)]",
                               isSelected ? "text-price-20-eb-lh24" : "text-price-16-eb",
                             ].join(" ")}
                           >

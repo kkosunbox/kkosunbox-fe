@@ -250,7 +250,7 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
                       월 요금제
                     </span>
                     {price ? (
-                      <div className="flex flex-col items-end">
+                      <div className="flex flex-col items-end gap-2">
                         {price.strikePrice ? (
                           <div className="flex items-center gap-2 text-[16px] font-semibold leading-[19px] tracking-[-0.05em]">
                             {price.discountPct ? (

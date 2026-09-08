@@ -13,6 +13,11 @@ const HOME_HERO_VIDEOS = [
 const HOME_HERO_POSTER_SRC = "/videos/home-hero-poster.webp";
 const SNAP_LOCK_MS = 900;
 const SWIPE_THRESHOLD = 48;
+const HERO_SIDE_SHADE_STYLE = {
+  width: "clamp(120px, calc((100vw - 480px) / 2), 664px)",
+};
+const HERO_SIDE_SHADE_STOPS =
+  "rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.38) 32%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0) 78%, rgba(0,0,0,0) 100%";
 
 export default function HeroSection() {
   const { isLoggedIn } = useAuth();
@@ -153,17 +158,19 @@ export default function HeroSection() {
       />
 
       <div
-        className="absolute inset-y-0 left-0 w-[min(664px,50%)]"
+        className="absolute inset-y-0 left-0 max-md:hidden"
         style={{
-          background: "linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
+          ...HERO_SIDE_SHADE_STYLE,
+          background: `linear-gradient(90deg, ${HERO_SIDE_SHADE_STOPS})`,
         }}
         aria-hidden="true"
       />
 
       <div
-        className="absolute inset-y-0 right-0 w-[min(664px,50%)]"
+        className="absolute inset-y-0 right-0 max-md:hidden"
         style={{
-          background: "linear-gradient(270deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
+          ...HERO_SIDE_SHADE_STYLE,
+          background: `linear-gradient(270deg, ${HERO_SIDE_SHADE_STOPS})`,
         }}
         aria-hidden="true"
       />

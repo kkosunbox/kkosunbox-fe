@@ -3,6 +3,7 @@ import { COOKIE_NAME } from "@/features/auth/lib/constants";
 import {
   INVITE_CODE_COOKIE,
   INVITE_CODE_MAX_AGE_SEC,
+  INVITE_SLUG_COOKIE,
   isValidInviteCode,
 } from "@/features/referral/lib";
 import { PRODUCTION_HOST } from "@/shared/lib/seo";
@@ -44,6 +45,22 @@ export function proxy(request: NextRequest) {
         secure: process.env.NODE_ENV === "production",
         // httpOnly 미지정 → 주문 페이지(클라이언트)에서 읽어 validate에 사용
       });
+
+      // 새 초대 링크는 이전 초대를 대체한다 — 이전 slug 쿠키를 함께 정리한다.
+      //
+      // 남겨두면 `resolveReferralContext`가 slug를 코드보다 우선해(방금 클릭한 링크가 아니라
+      // 예전 랜딩 기준으로) 맥락을 만들고, `ReferralProvider`가 그 slug의 예전 코드를 다시 써서
+      // 방금 저장한 코드를 되돌린다. 코드는 서버가 제대로 저장하는데도 `?r=` 링크의 초대가
+      // 통째로 유실되던 버그다(2026-09-08 조사 "재현 확정 2").
+      //
+      // 같은 초대를 가리키는 링크(코드가 기존 쿠키와 동일)라면 지우지 않는다 — 인플루언서
+      // 이름·프로필 이미지는 slug 경로에서만 나오므로 개인화를 잃을 이유가 없다.
+      // 기존 코드 쿠키는 slug 랜딩에서 그 slug의 코드로 심어지므로 비교 기준이 된다.
+      const previousCode = request.cookies.get(INVITE_CODE_COOKIE)?.value;
+      const isSameInvite = previousCode?.toLowerCase() === code.toLowerCase();
+      if (request.cookies.has(INVITE_SLUG_COOKIE) && !isSameInvite) {
+        res.cookies.set(INVITE_SLUG_COOKIE, "", { path: "/", maxAge: 0 });
+      }
     }
     return res;
   }
@@ -66,7 +83,17 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  const response = NextResponse.next();
+  // `/r/{slug}` 랜딩 slug를 요청 헤더로 전달한다. `(main)/layout.tsx`는 이 헤더를 읽어
+  // `resolveReferralContext`에 landingSlug로 넘긴다 — 페이지가 별도로 같은 계산을 다시 하며
+  // 중첩 ReferralProvider를 만들면, 두 Provider의 쿠키 기록 effect가 마운트 순서(자식→부모)로
+  // 경합해 상위(레이아웃) Provider가 기존 쿠키 값으로 덮어써버린다(예: test 방문 후 kkosun 방문 시
+  // ggosoon-ref-slug가 kkosun으로 갱신되지 않고 test로 남는 문제, 2026-09-07).
+  const requestHeaders = new Headers(request.headers);
+  const slugMatch = pathname.match(/^\/r\/([^/]+)\/?$/);
+  if (slugMatch) {
+    requestHeaders.set("x-referral-slug", slugMatch[1]);
+  }
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
 
   // preview·dev·localhost 등 정식 호스트가 아닌 배포본은 검색 결과에서 제외한다.
   // canonical만으로는 별도 호스트의 색인을 완전히 막을 수 없어 응답 헤더도 함께 제공한다.

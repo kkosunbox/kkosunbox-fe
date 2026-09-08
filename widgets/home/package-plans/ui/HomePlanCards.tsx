@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckCircleIcon } from "@/shared/ui";
+import { MEDIA_LG_MIN, MEDIA_MD_MIN } from "@/shared/config/breakpoints";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import {
   PACKAGES,
@@ -19,6 +21,9 @@ import standardImage from "../assets/package-image-standard.webp";
 import premiumImage from "../assets/package-image-premium.webp";
 
 const HOME_PLAN_ORDER: PackageTier[] = ["Basic", "Standard", "Premium"];
+const HOME_PLAN_CAROUSEL = [-1, 0, 1].flatMap((group) =>
+  HOME_PLAN_ORDER.map((tier) => ({ group, tier })),
+);
 
 const HOME_PLAN_IMAGES = {
   Basic: basicImage,
@@ -41,13 +46,137 @@ interface HomePlanCardsProps {
   plansReady: boolean;
 }
 
-export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps) {
-  const router = useRouter();
-  const recommendedPlanIds = resolveRecommendedPlanIds(plans);
+function CarouselArrow({
+  direction,
+  onClick,
+}: {
+  direction: "previous" | "next";
+  onClick: () => void;
+}) {
+  const isPrevious = direction === "previous";
 
   return (
-    <div className="mx-auto max-lg:flex max-lg:w-full max-lg:snap-x max-lg:snap-mandatory max-lg:items-end max-lg:gap-5 max-lg:overflow-x-auto max-lg:px-5 max-lg:pb-5 max-lg:[scrollbar-width:none] max-lg:[&::-webkit-scrollbar]:hidden lg:grid lg:w-[1061px] lg:grid-cols-3 lg:items-end lg:gap-10">
-      {HOME_PLAN_ORDER.map((tier) => {
+    <button
+      type="button"
+      aria-label={isPrevious ? "이전 요금제" : "다음 요금제"}
+      onClick={onClick}
+      className={`absolute top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[var(--shadow-card-soft)] lg:hidden ${
+        isPrevious ? "max-md:left-2 md:-left-14" : "max-md:right-2 md:-right-14"
+      }`}
+    >
+      <svg
+        width="14"
+        height="24"
+        viewBox="0 0 14 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d={isPrevious ? "M12 2L2 12L12 22" : "M2 2L12 12L2 22"}
+          stroke="var(--color-text-secondary)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
+export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps) {
+  const router = useRouter();
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const activeIndexRef = useRef(4);
+  const scrollEndTimerRef = useRef<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(4);
+  const recommendedPlanIds = resolveRecommendedPlanIds(plans);
+
+  const scrollToCard = useCallback((index: number, behavior: ScrollBehavior = "smooth") => {
+    const carousel = carouselRef.current;
+    const card = carousel?.children[index] as HTMLElement | undefined;
+    if (!carousel || !card) return;
+
+    carousel.scrollTo({
+      left: card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2,
+      behavior,
+    });
+    activeIndexRef.current = index;
+    setActiveIndex(index);
+  }, []);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const desktopQuery = window.matchMedia(MEDIA_LG_MIN);
+    const tabletQuery = window.matchMedia(MEDIA_MD_MIN);
+    const centerActiveCard = () => {
+      if (desktopQuery.matches) return;
+      const currentCard = carousel.children[activeIndexRef.current] as HTMLElement | undefined;
+      const normalizedIndex = currentCard?.offsetWidth
+        ? activeIndexRef.current
+        : HOME_PLAN_ORDER.length + (activeIndexRef.current % HOME_PLAN_ORDER.length);
+      scrollToCard(normalizedIndex, "auto");
+    };
+    const handleScroll = () => {
+      if (desktopQuery.matches) return;
+      const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2;
+      const cards = (Array.from(carousel.children) as HTMLElement[])
+        .map((card, index) => ({ card, index }))
+        .filter(({ card }) => card.offsetWidth > 0);
+      const closest = cards.reduce((current, candidate) => {
+        const cardCenter = candidate.card.offsetLeft + candidate.card.offsetWidth / 2;
+        const closestCenter = current.card.offsetLeft + current.card.offsetWidth / 2;
+        return Math.abs(cardCenter - carouselCenter) < Math.abs(closestCenter - carouselCenter)
+          ? candidate
+          : current;
+      });
+      activeIndexRef.current = closest.index;
+      setActiveIndex(closest.index);
+
+      if (tabletQuery.matches) {
+        if (scrollEndTimerRef.current !== null) window.clearTimeout(scrollEndTimerRef.current);
+        scrollEndTimerRef.current = window.setTimeout(() => {
+          const currentIndex = activeIndexRef.current;
+          if (currentIndex < HOME_PLAN_ORDER.length) {
+            scrollToCard(currentIndex + HOME_PLAN_ORDER.length, "auto");
+          } else if (currentIndex >= HOME_PLAN_ORDER.length * 2) {
+            scrollToCard(currentIndex - HOME_PLAN_ORDER.length, "auto");
+          }
+        }, 120);
+      }
+    };
+
+    centerActiveCard();
+    carousel.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", centerActiveCard);
+    return () => {
+      carousel.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", centerActiveCard);
+      if (scrollEndTimerRef.current !== null) window.clearTimeout(scrollEndTimerRef.current);
+    };
+  }, [scrollToCard]);
+
+  const moveCarousel = (direction: -1 | 1) => {
+    const isTablet = window.matchMedia(MEDIA_MD_MIN).matches;
+    let nextIndex = isTablet
+      ? activeIndex + direction
+      : HOME_PLAN_ORDER.length +
+        ((activeIndex - HOME_PLAN_ORDER.length + direction + HOME_PLAN_ORDER.length) %
+          HOME_PLAN_ORDER.length);
+    if (nextIndex < 0) nextIndex += HOME_PLAN_ORDER.length;
+    if (nextIndex >= HOME_PLAN_CAROUSEL.length) nextIndex -= HOME_PLAN_ORDER.length;
+    scrollToCard(nextIndex);
+  };
+
+  return (
+    <div className="relative max-lg:mx-auto max-lg:max-w-[948px] max-md:w-full md:max-lg:w-[calc(100%-112px)]">
+      <div
+        ref={carouselRef}
+        aria-label="구독 요금제"
+        className="mx-auto max-lg:flex max-lg:w-full max-lg:snap-x max-lg:snap-mandatory max-lg:items-end max-lg:gap-5 max-lg:overflow-x-auto max-lg:px-[calc(50%-150px)] max-lg:pb-5 max-lg:[scrollbar-width:none] max-lg:[&::-webkit-scrollbar]:hidden lg:grid lg:w-[1061px] lg:grid-cols-3 lg:items-end lg:gap-10"
+      >
+      {HOME_PLAN_CAROUSEL.map(({ group, tier }) => {
         const pkg = PACKAGES.find((item) => item.tier === tier)!;
         const plan = plans.find((item) => tierFromSubscriptionPlan(item) === tier);
         const price = plan ? planDisplayPrice(plan) : null;
@@ -57,17 +186,19 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
 
         return (
           <article
-            key={tier}
-            aria-labelledby={`home-plan-${tier}`}
+            key={`${group}-${tier}`}
+            aria-labelledby={`home-plan-${group}-${tier}`}
             className={`relative shrink-0 snap-center rounded-[20px] max-lg:w-[300px] lg:w-[327px] ${
+              group === 0 ? "" : "max-md:hidden lg:hidden"
+            } ${
               isRecommended
                 ? "max-lg:h-[582px] lg:h-[604px] bg-[var(--color-cta-button)] pt-[34px] shadow-[var(--shadow-card-selected)]"
                 : "max-lg:h-[548px] lg:h-[570px] bg-white shadow-[var(--shadow-card-soft)]"
             }`}
           >
             {isRecommended ? (
-              <div className="absolute inset-x-0 top-0 flex h-[34px] items-center justify-center text-[14px] font-bold leading-[17px] tracking-[-0.02em] text-white">
-                인기 Pick
+              <div className="absolute inset-x-0 top-0 flex h-[34px] items-center justify-center text-[14px] font-bold leading-[22px] tracking-[-0.02em] text-white">
+                인기 PICK 🌟
               </div>
             ) : null}
 
@@ -92,7 +223,7 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
 
               <div className="flex min-h-0 flex-1 flex-col px-7 pt-5 pb-[26px]">
                 <h3
-                  id={`home-plan-${tier}`}
+                  id={`home-plan-${group}-${tier}`}
                   className="text-[20px] font-bold leading-6 tracking-[-0.04em] text-[var(--color-text)]"
                 >
                   {pkg.name}
@@ -159,6 +290,9 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
           </article>
         );
       })}
+      </div>
+      <CarouselArrow direction="previous" onClick={() => moveCarousel(-1)} />
+      <CarouselArrow direction="next" onClick={() => moveCarousel(1)} />
     </div>
   );
 }

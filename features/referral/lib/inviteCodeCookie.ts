@@ -13,8 +13,8 @@
  */
 export const INVITE_CODE_COOKIE = "ggosoon-ref";
 
-/** 어트리뷰션 윈도우 — 진입 후 7일간 초대 코드를 유지한다. */
-export const INVITE_CODE_MAX_AGE_SEC = 60 * 60 * 24 * 7;
+/** 어트리뷰션 윈도우 — 진입 후 24시간 동안 초대 코드를 유지한다. */
+export const INVITE_CODE_MAX_AGE_SEC = 60 * 60 * 24;
 
 /** 초대 코드 최대 길이. */
 export const INVITE_CODE_MAX_LENGTH = 64;

@@ -1,1 +1,1 @@
-export { ReferralProvider, useReferral } from "./ReferralProvider";
+export { ReferralProvider, ReferralLandingSync, useReferral } from "./ReferralProvider";

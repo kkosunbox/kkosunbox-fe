@@ -3,9 +3,11 @@ import { test, expect } from "../helpers/fixtures";
 import {
   MOCK_VALID_REFERRAL_CODE,
   MOCK_ACTIVE_SLUG,
+  MOCK_ACTIVE_SLUG_2,
   MOCK_INACTIVE_SLUG,
   MOCK_HIDDEN_PAGE_SLUG,
   MOCK_REFERRAL_PAGE,
+  MOCK_REFERRAL_PAGE_2,
   MOCK_POINT_BALANCE,
   MOCK_PLANS,
 } from "../helpers/mockApiServer";
@@ -87,6 +89,10 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
     await expect(page.getByAltText("꼬순박스 첫 달 할인")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole("button", { name: CTA_LABEL })).toBeVisible();
     await expect(page.getByText(INFLUENCER_NAME_TEXT)).not.toBeVisible();
+    // 이름을 지우는 대신 대체 문자열이 박히는 것도 실패다 — 정체 표시 자체가 렌더되면 안 된다.
+    await expect(page.getByText("[홍길동]")).toHaveCount(0);
+    // "님이 추천하는 꼬순박스"는 SVG라 텍스트로 잡히지 않는다 — aria-label로 확인한다.
+    await expect(page.getByRole("img", { name: "님이 추천하는 꼬순박스" })).toHaveCount(0);
 
     await expect
       .poll(async () => {
@@ -109,6 +115,254 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
   test("존재하지 않는 slug → / 리다이렉트", async ({ page }) => {
     await page.goto("/r/this-slug-does-not-exist");
     await expect(page).toHaveURL("/", { timeout: 10_000 });
+  });
+
+  // layout(전역)과 페이지가 각자 ReferralProvider를 만들던 시절, 두 Provider의 쿠키 기록
+  // useEffect가 마운트 순서(자식→부모)로 경합해 상위(layout) 값이 항상 이겼다 — 활성 slug에서
+  // 다른 활성 slug로 이동해도 쿠키가 이전 slug로 남는 버그였다(2026-09-07 실사용자 리포트).
+  // proxy.ts가 landingSlug를 헤더로 넘겨 layout이 유일한 Provider가 되도록 고쳤다.
+  test("활성 slug 방문 후 다른 활성 slug 진입 → 코드·slug 쿠키가 새 인플루언서로 교체됨", async ({
+    page,
+  }) => {
+    await page.goto(REFERRAL_LANDING);
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+      }, { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/r/${MOCK_ACTIVE_SLUG_2}`);
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+      }, { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG_2);
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+      }, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE_2.referralCode));
+  });
+
+  // `?r=CODE`로 코드만 캡처된 쿠키(slug 쿠키 없음) 상태에서 활성 slug 랜딩에 진입하는 조합.
+  // fromSlug()의 "쿠키에 담긴 코드가 이 slug의 코드와 다를 수 있으므로 페이지 응답을 신뢰한다"
+  // 주석대로, 코드만 있던 상태여도 landingSlug가 우선해 slug 소유 코드로 교체돼야 한다.
+  test("코드만 캡처된 쿠키 상태에서 활성 slug 진입 → 코드·slug 쿠키가 해당 slug 값으로 교체됨", async ({
+    page,
+  }) => {
+    await page.context().addCookies([
+      { name: "ggosoon-ref", value: MOCK_VALID_REFERRAL_CODE, domain: "localhost", path: "/" },
+    ]);
+
+    await page.goto(`/r/${MOCK_ACTIVE_SLUG_2}`);
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+      }, { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG_2);
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+      }, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE_2.referralCode));
+  });
+
+  // 숨김(isPageVisible: false) slug 방문 후 다른 "정상 노출" 활성 slug로 이동하는 조합.
+  // 기존 "숨김 slug 방문 후 활성 slug 진입" 테스트는 화면(개인화 Hero 렌더링)만 검증했다 —
+  // 여기서는 그 전환에서 쿠키 2종이 실제로 새 slug 값으로 바뀌는지까지 확인한다.
+  test("숨김 slug 방문 후 다른 활성 slug 진입 → 코드·slug 쿠키가 새 slug 값으로 교체됨", async ({
+    page,
+  }) => {
+    await page.goto(`/r/${MOCK_HIDDEN_PAGE_SLUG}`);
+    await expect(page.getByAltText("꼬순박스 첫 달 할인")).toBeVisible({ timeout: 10_000 });
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+      }, { timeout: 10_000 })
+      .toBe(MOCK_HIDDEN_PAGE_SLUG);
+
+    await page.goto(`/r/${MOCK_ACTIVE_SLUG_2}`);
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+      }, { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG_2);
+
+    await expect
+      .poll(async () => {
+        const cookies = await page.context().cookies();
+        return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+      }, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE_2.referralCode));
+  });
+
+  // 뒤로/앞으로 가기로 두 초대 랜딩을 오갈 때 화면·쿠키가 URL을 따라가는지 — 기존 테스트가
+  // 덮지 않던 조합이다.
+  //
+  // **이 테스트는 소프트 내비게이션 결함(2026-09-08 조사 "재현 확정 1")의 회귀 테스트가 아니다.**
+  // 앞선 `page.goto` 두 번은 각각 새 문서 로드라 뒤로가기도 문서 단위 이동이 되고, layout이
+  // 다시 렌더되어 결함이 드러나지 않는다(수정 전 코드에서도 통과함을 실측). 그 결함은
+  // 같은 문서 안에서 `/r/A` → `/r/B`로 이동해야 재현되는데, `/r/{slug}`로 가는 내부 링크가
+  // 없어 프로덕션에서는 도달 경로가 없다. 재현·검증은 dev 전용 라우터 핸들을 쓰는
+  // `scripts/referral-investigation.mjs`가 담당한다.
+  test("활성 slug A → B 진입 후 뒤로/앞으로 가기 → 화면·쿠키가 현재 URL의 인플루언서를 따라감", async ({
+    page,
+  }) => {
+    const currentSlugCookie = async () => {
+      const cookies = await page.context().cookies();
+      return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+    };
+    const currentCodeCookie = async () => {
+      const cookies = await page.context().cookies();
+      return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+    };
+
+    await page.goto(REFERRAL_LANDING);
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/r/${MOCK_ACTIVE_SLUG_2}`);
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG_2);
+
+    // 뒤로가기 — layout은 재렌더되지 않고 페이지 세그먼트만 A로 바뀐다.
+    await page.goBack();
+    await expect(page).toHaveURL(REFERRAL_LANDING, { timeout: 10_000 });
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`)).toHaveCount(0);
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG);
+    await expect
+      .poll(currentCodeCookie, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE.referralCode));
+
+    // 앞으로가기 — 같은 경로를 반대 방향으로 한 번 더 잠근다.
+    await page.goForward();
+    await expect(page).toHaveURL(`/r/${MOCK_ACTIVE_SLUG_2}`, { timeout: 10_000 });
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG_2);
+    await expect
+      .poll(currentCodeCookie, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE_2.referralCode));
+  });
+
+  // 기존에 유효한 초대 쿠키(A)가 있는 상태에서 비활성 slug를 방문하는 조합.
+  // resolveReferralContext의 fromSlug()는 !page.isActive면 base(referralSource: "none")를
+  // 반환한다 — effect는 isReferral이 false면 쓰기를 스킵하므로 A 쿠키가 지워지거나 다른 값으로
+  // 덮어써지면 안 된다(리다이렉트 전에 쿠키가 붕괴하는 회귀를 잡기 위한 테스트).
+  test("유효 쿠키(A) 보유 중 비활성 slug 방문 → 리다이렉트 후에도 쿠키 A 그대로 유지", async ({
+    page,
+  }) => {
+    await page.context().addCookies([
+      { name: "ggosoon-ref", value: MOCK_VALID_REFERRAL_CODE, domain: "localhost", path: "/" },
+      { name: "ggosoon-ref-slug", value: MOCK_ACTIVE_SLUG, domain: "localhost", path: "/" },
+    ]);
+
+    await page.goto(`/r/${MOCK_INACTIVE_SLUG}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+
+    // 리다이렉트 후 hydration까지 안정적으로 기다린 뒤 쿠키를 확인한다.
+    await page.waitForLoadState("networkidle");
+    const cookies = await page.context().cookies();
+    expect(cookies.find((c) => c.name === "ggosoon-ref")?.value).toBe(
+      encodeURIComponent(MOCK_VALID_REFERRAL_CODE),
+    );
+    expect(cookies.find((c) => c.name === "ggosoon-ref-slug")?.value).toBe(MOCK_ACTIVE_SLUG);
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// A-2. `?r=CODE` 초대 링크 캡처 (proxy.ts)
+//
+// proxy.ts는 `?r=CODE`를 쿠키에 저장하고 r을 제거한 URL로 307 리다이렉트한다.
+// resolveReferralContext는 slug를 코드보다 우선하므로(랜딩이 코드 캡처보다 구체적인 신호다),
+// 이전 랜딩의 slug 쿠키가 남아 있으면 방금 캡처한 코드가 그 slug의 예전 코드로 되돌아갔다
+// — proxy가 새 초대를 저장할 때 이전 slug도 함께 정리하도록 고쳤다(2026-09-08).
+// ──────────────────────────────────────────────────────────────────────────────
+
+test.describe("`?r=CODE` 초대 링크 캡처", () => {
+  const readCookie = (page: Page, name: string) => async () => {
+    const cookies = await page.context().cookies();
+    return cookies.find((c) => c.name === name)?.value;
+  };
+
+  const seedInvite = (page: Page, code: string, slug: string) =>
+    page.context().addCookies([
+      { name: "ggosoon-ref", value: code, domain: "localhost", path: "/" },
+      { name: "ggosoon-ref-slug", value: slug, domain: "localhost", path: "/" },
+    ]);
+
+  test("이전 랜딩(B) 쿠키 보유 중 다른 초대의 `?r=` 링크 진입 → 새 코드로 교체되고 옛 slug는 정리됨", async ({
+    page,
+  }) => {
+    await seedInvite(page, MOCK_REFERRAL_PAGE_2.referralCode, MOCK_ACTIVE_SLUG_2);
+
+    await page.goto(`/?r=${MOCK_VALID_REFERRAL_CODE}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect
+      .poll(readCookie(page, "ggosoon-ref"), { timeout: 10_000 })
+      .toBe(MOCK_VALID_REFERRAL_CODE);
+    await expect.poll(readCookie(page, "ggosoon-ref-slug"), { timeout: 10_000 }).toBeUndefined();
+  });
+
+  test("같은 초대의 `?r=` 링크 재진입 → slug 쿠키를 유지해 개인화를 잃지 않음", async ({ page }) => {
+    await seedInvite(page, MOCK_VALID_REFERRAL_CODE, MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/?r=${MOCK_VALID_REFERRAL_CODE}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect
+      .poll(readCookie(page, "ggosoon-ref"), { timeout: 10_000 })
+      .toBe(MOCK_VALID_REFERRAL_CODE);
+    await expect
+      .poll(readCookie(page, "ggosoon-ref-slug"), { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG);
+  });
+
+  // 형식이 어긋난 코드는 애초에 캡처하지 않는다 — 그 경우 기존 초대를 건드리면 안 된다.
+  // (형식은 맞지만 백엔드가 400을 주는 코드는 다르다. 그건 캡처해서 주문서가 잠긴 입력과
+  //  재검증 실패 사유로 안내한다 — resolveReferralContext의 "코드가 무효여도 isReferral 유지" 참고.)
+  test("형식이 잘못된 `?r=` 링크 진입 → 기존 초대 쿠키가 그대로 유지됨", async ({ page }) => {
+    await seedInvite(page, MOCK_VALID_REFERRAL_CODE, MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/?r=${encodeURIComponent("@@@")}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect
+      .poll(readCookie(page, "ggosoon-ref"), { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_VALID_REFERRAL_CODE));
+    await expect
+      .poll(readCookie(page, "ggosoon-ref-slug"), { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG);
   });
 });
 

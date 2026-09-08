@@ -297,6 +297,76 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
 });
 
 // ──────────────────────────────────────────────────────────────────────────────
+// A-2. `?r=CODE` 초대 링크 캡처 (proxy.ts)
+//
+// proxy.ts는 `?r=CODE`를 쿠키에 저장하고 r을 제거한 URL로 307 리다이렉트한다.
+// resolveReferralContext는 slug를 코드보다 우선하므로(랜딩이 코드 캡처보다 구체적인 신호다),
+// 이전 랜딩의 slug 쿠키가 남아 있으면 방금 캡처한 코드가 그 slug의 예전 코드로 되돌아갔다
+// — proxy가 새 초대를 저장할 때 이전 slug도 함께 정리하도록 고쳤다(2026-09-08).
+// ──────────────────────────────────────────────────────────────────────────────
+
+test.describe("`?r=CODE` 초대 링크 캡처", () => {
+  const readCookie = (page: Page, name: string) => async () => {
+    const cookies = await page.context().cookies();
+    return cookies.find((c) => c.name === name)?.value;
+  };
+
+  const seedInvite = (page: Page, code: string, slug: string) =>
+    page.context().addCookies([
+      { name: "ggosoon-ref", value: code, domain: "localhost", path: "/" },
+      { name: "ggosoon-ref-slug", value: slug, domain: "localhost", path: "/" },
+    ]);
+
+  test("이전 랜딩(B) 쿠키 보유 중 다른 초대의 `?r=` 링크 진입 → 새 코드로 교체되고 옛 slug는 정리됨", async ({
+    page,
+  }) => {
+    await seedInvite(page, MOCK_REFERRAL_PAGE_2.referralCode, MOCK_ACTIVE_SLUG_2);
+
+    await page.goto(`/?r=${MOCK_VALID_REFERRAL_CODE}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect
+      .poll(readCookie(page, "ggosoon-ref"), { timeout: 10_000 })
+      .toBe(MOCK_VALID_REFERRAL_CODE);
+    await expect.poll(readCookie(page, "ggosoon-ref-slug"), { timeout: 10_000 }).toBeUndefined();
+  });
+
+  test("같은 초대의 `?r=` 링크 재진입 → slug 쿠키를 유지해 개인화를 잃지 않음", async ({ page }) => {
+    await seedInvite(page, MOCK_VALID_REFERRAL_CODE, MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/?r=${MOCK_VALID_REFERRAL_CODE}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect
+      .poll(readCookie(page, "ggosoon-ref"), { timeout: 10_000 })
+      .toBe(MOCK_VALID_REFERRAL_CODE);
+    await expect
+      .poll(readCookie(page, "ggosoon-ref-slug"), { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG);
+  });
+
+  // 형식이 어긋난 코드는 애초에 캡처하지 않는다 — 그 경우 기존 초대를 건드리면 안 된다.
+  // (형식은 맞지만 백엔드가 400을 주는 코드는 다르다. 그건 캡처해서 주문서가 잠긴 입력과
+  //  재검증 실패 사유로 안내한다 — resolveReferralContext의 "코드가 무효여도 isReferral 유지" 참고.)
+  test("형식이 잘못된 `?r=` 링크 진입 → 기존 초대 쿠키가 그대로 유지됨", async ({ page }) => {
+    await seedInvite(page, MOCK_VALID_REFERRAL_CODE, MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/?r=${encodeURIComponent("@@@")}`);
+    await expect(page).toHaveURL("/", { timeout: 10_000 });
+    await page.waitForLoadState("networkidle");
+
+    await expect
+      .poll(readCookie(page, "ggosoon-ref"), { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_VALID_REFERRAL_CODE));
+    await expect
+      .poll(readCookie(page, "ggosoon-ref-slug"), { timeout: 10_000 })
+      .toBe(MOCK_ACTIVE_SLUG);
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
 // B. 홈 화면 히어로
 //
 // HomeHero는 항상 일반 HeroSection을 렌더한다.

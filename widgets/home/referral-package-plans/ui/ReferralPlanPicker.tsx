@@ -328,7 +328,7 @@ export default function ReferralPlanPicker({
                     {activePlan ? (
                       <div className="mt-4 border-t border-[var(--color-border-light)] pt-4">
                         <div className="mb-2 flex justify-end">
-                          <FreeShippingBadge />
+                          <FreeShippingBadge withIcon={false} />
                         </div>
                         <div className="flex items-baseline justify-between gap-x-2">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
@@ -443,12 +443,8 @@ export default function ReferralPlanPicker({
                 >
                   <div className={`relative ${isSelected ? "h-[159px] w-[172px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-white ${isSelected ? "ml-0" : "ml-3"}`}>
                     <PackageSummaryThumbnail src={img} alt={pkg.name} />
-                    <FreeShippingBadge
-                      variant="image"
-                      className="absolute left-3 top-3 z-10"
-                    />
                     {isPlanCurrent ? (
-                      <div className="absolute left-3 top-9 z-10 md:left-4 md:top-10">
+                      <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
                         <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
                           이용중
                         </span>
@@ -457,14 +453,17 @@ export default function ReferralPlanPicker({
                     {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={price.referralPct}
-                        className="left-2 top-9"
+                        className="left-2 top-2"
                       />
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1 flex flex-col justify-center pl-6 py-5">
-                    {plan && recommendedPlanIds.has(plan.id) ? (
-                      <RecommendedPickBadge className="mb-2" />
-                    ) : null}
+                    <div className="mb-2 flex items-center gap-2">
+                      {plan && recommendedPlanIds.has(plan.id) ? (
+                        <RecommendedPickBadge />
+                      ) : null}
+                      <FreeShippingBadge withIcon={false} />
+                    </div>
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",
@@ -538,12 +537,8 @@ export default function ReferralPlanPicker({
                 >
                   <div className="relative h-[148px] w-[160px] shrink-0 overflow-hidden rounded-[16px] bg-white">
                     <PackageSummaryThumbnail src={img} alt={pkg.name} />
-                    <FreeShippingBadge
-                      variant="image"
-                      className="absolute left-3 top-3 z-10"
-                    />
                     {isPlanCurrent ? (
-                      <div className="absolute left-3 top-9 z-10 md:left-4 md:top-10">
+                      <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
                         <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
                           이용중
                         </span>
@@ -552,14 +547,17 @@ export default function ReferralPlanPicker({
                     {price?.referralApplied ? (
                       <ReferralAdditionalDiscountChip
                         pct={price.referralPct}
-                        className="left-2 top-9"
+                        className="left-2 top-2"
                       />
                     ) : null}
                   </div>
                   <div className="min-w-0 w-[160px] flex flex-col pt-3">
-                    {plan && recommendedPlanIds.has(plan.id) ? (
-                      <RecommendedPickBadge className="mb-2" />
-                    ) : null}
+                    <div className="mb-2 flex items-center gap-2">
+                      {plan && recommendedPlanIds.has(plan.id) ? (
+                        <RecommendedPickBadge />
+                      ) : null}
+                      <FreeShippingBadge withIcon={false} />
+                    </div>
                     <p
                       className={[
                         "mb-2 truncate text-[var(--color-text-emphasis)]",

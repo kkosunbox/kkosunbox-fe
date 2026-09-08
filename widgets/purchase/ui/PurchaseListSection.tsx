@@ -13,7 +13,7 @@ import {
 import type { ProductDto } from "@/features/product/api/types";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import { DesktopHeroSideBackground } from "@/shared/ui";
+import { DesktopHeroSideBackground, FreeShippingBadge } from "@/shared/ui";
 import PurchaseHeroImage from "../assets/purchase-hero.webp";
 import PurchaseHeroImageTablet from "../assets/purchase-hero-tablet.webp";
 import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
@@ -117,11 +117,12 @@ export default function PurchaseListSection({
                   <span className="text-subtitle-18-sb text-[var(--color-text-emphasis)] group-hover:text-[var(--color-primary)] transition-colors">
                     {displayName}
                   </span>
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
                     <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
                       {formatKrwPrice(displayPrice)}
                     </span>
+                    <FreeShippingBadge />
                   </div>
                   {rating > 0 ? <PlanRatingStars rating={rating} size={16} /> : null}
                 </div>

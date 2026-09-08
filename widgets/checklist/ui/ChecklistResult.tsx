@@ -20,7 +20,7 @@ import {
 } from "@/entities/package";
 import { PackageNutritionGuide } from "@/entities/package";
 import { PlanExplainVisual } from "@/widgets/package-plans";
-import { CheckCircleIcon, FallbackAvatar } from "@/shared/ui";
+import { CheckCircleIcon, FallbackAvatar, FreeShippingBadge } from "@/shared/ui";
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { PetInfo, RecommendedTier } from "./types";
 import reasonCheckIcon from "@/widgets/checklist/assets/check.svg";
@@ -557,8 +557,9 @@ export default function ChecklistResult({
                         {pkg.name}
                       </p>
                       {/* 할인율 + 정가(취소선) */}
-                      {plan.discountRate ? (
-                        <div className="flex items-center gap-[6px] max-md:mb-[2px] md:mb-[2px]">
+                      <div className="flex flex-wrap items-center gap-x-[6px] gap-y-1 max-md:mb-[2px] md:mb-[2px]">
+                        {plan.discountRate ? (
+                          <>
                           <span
                             className="text-[14px] font-semibold leading-[17px] tracking-[-0.05em] max-md:text-[12px] max-md:leading-[15px]"
                             style={{ color: "var(--color-cta-button)" }}
@@ -568,8 +569,10 @@ export default function ChecklistResult({
                           <span className="text-[var(--color-text-secondary)] line-through max-md:text-[12px] max-md:font-semibold max-md:leading-[15px] max-md:tracking-[-0.05em] md:text-[14px] md:font-semibold md:leading-[17px] md:tracking-[-0.05em]">
                             {formatMonthlyPrice(plan.originalPrice ?? plan.monthlyPrice)}
                           </span>
-                        </div>
-                      ) : null}
+                          </>
+                        ) : null}
+                        <FreeShippingBadge />
+                      </div>
                       {/* 월 요금제 + 할인가 */}
                       <div className="flex items-baseline gap-[8px] max-md:mb-[2px] md:mb-[6px]">
                         <span className="text-[var(--color-text-body-warm)] max-md:text-[13px] max-md:font-bold max-md:leading-[16px] max-md:tracking-[-0.05em] md:text-[16px] md:font-bold md:leading-[19px] md:tracking-[-0.05em]">

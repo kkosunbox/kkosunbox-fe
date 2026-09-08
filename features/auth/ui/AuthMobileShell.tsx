@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import logoMain2x from "@/shared/assets/logo-main@2x.webp";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import { AuthMobileBackground } from "./AuthMobileBackground";
+import { AuthMobileBackground, AuthMobileDecoration } from "./AuthMobileBackground";
 import { AuthTabs, type AuthTabKey } from "./AuthTabs";
 
 const LOGO_WIDTH = 156;
@@ -25,7 +25,10 @@ export function AuthMobileShell({
       <AuthMobileBackground />
 
       <div className="relative flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-6 pb-8 pt-[30px]">
-        <div className="mx-auto my-auto w-full max-w-[328px] py-10">
+        <div className="relative isolate mx-auto my-auto w-full max-w-[328px] py-10">
+          <div className="absolute inset-0 -z-10">
+            <AuthMobileDecoration />
+          </div>
           <div className="flex items-center justify-center pb-10">
             <Image
               src={logoMain2x}

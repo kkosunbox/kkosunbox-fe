@@ -1,4 +1,15 @@
-import { DELIVERY_INFO_SECTIONS } from "./deliveryInfo";
+import { ShippingFeeWaiver } from "@/shared/ui";
+import { DELIVERY_INFO_SECTIONS, SHIPPING_FEE_INFO_ITEM } from "./deliveryInfo";
+
+function DeliveryInfoItem({ item }: { item: string }) {
+  if (item !== SHIPPING_FEE_INFO_ITEM) return item;
+
+  return (
+    <>
+      배송 비용: <ShippingFeeWaiver />
+    </>
+  );
+}
 
 export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "desktop" }) {
   if (variant === "mobile") {
@@ -20,7 +31,7 @@ export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "
                     className="relative pl-4 text-[14px] font-medium leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
                   >
                     <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
-                    {item}
+                    <DeliveryInfoItem item={item} />
                   </li>
                 ))}
               </ul>
@@ -45,7 +56,7 @@ export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "
                   className="relative pl-4 text-body-14-m leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
                 >
                   <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
-                  {item}
+                  <DeliveryInfoItem item={item} />
                 </li>
               ))}
             </ul>

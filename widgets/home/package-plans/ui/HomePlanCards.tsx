@@ -41,6 +41,24 @@ function formatPrice(value: number) {
   return `${value.toLocaleString("ko-KR")}원`;
 }
 
+function FreeShippingBadge() {
+  return (
+    <span className="flex h-[22px] w-[76px] shrink-0 items-center justify-center gap-0.5 whitespace-nowrap rounded-[24px] border border-[var(--color-text-muted)] px-1 text-[12px] font-semibold leading-[17px] text-[var(--color-text-secondary)]">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="10.6673" cy="10.9998" r="1.33333" stroke="currentColor" />
+        <circle cx="5.99935" cy="10.9998" r="1.33333" stroke="currentColor" />
+        <path
+          d="M13.3327 7V6.14729C13.3327 5.84351 13.1946 5.55619 12.9574 5.36642L9.99935 3H7.33268V7.66667H3.33268M7.33268 3V4.33333H2.66602V9C2.66602 10.1046 3.56145 11 4.66602 11M11.3327 4.33333H10.666V7H13.3327M13.3327 7V9.66667C13.3327 10.403 12.7357 11 11.9993 11M9.33268 11H7.33268"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <span className="inline-flex h-4 items-center leading-none">무료배송</span>
+    </span>
+  );
+}
+
 interface HomePlanCardsProps {
   plans: SubscriptionPlanDto[];
   plansReady: boolean;
@@ -241,36 +259,41 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
                   ))}
                 </ul>
 
-                <div className="mt-auto flex min-h-[50px] items-center justify-between gap-4">
-                  <span className="text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
-                    월 요금제
-                  </span>
-                  {price ? (
-                    <div className="flex flex-col items-end">
-                      {price.strikePrice ? (
-                        <div className="flex items-center gap-2 text-[16px] font-semibold leading-[19px] tracking-[-0.05em]">
-                          {price.discountPct ? (
-                            <span className="text-[var(--color-text-discount)]">
-                              {price.discountPct}%
+                <div className="mt-auto flex flex-col">
+                  <div className="mb-2 flex justify-end">
+                    <FreeShippingBadge />
+                  </div>
+                  <div className="flex min-h-[50px] items-center justify-between gap-4">
+                    <span className="text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
+                      월 요금제
+                    </span>
+                    {price ? (
+                      <div className="flex flex-col items-end">
+                        {price.strikePrice ? (
+                          <div className="flex items-center gap-2 text-[16px] font-semibold leading-[19px] tracking-[-0.05em]">
+                            {price.discountPct ? (
+                              <span className="text-[var(--color-text-discount)]">
+                                {price.discountPct}%
+                              </span>
+                            ) : null}
+                            <span className="text-[var(--color-text-secondary)] line-through">
+                              {formatPrice(price.strikePrice)}
                             </span>
-                          ) : null}
-                          <span className="text-[var(--color-text-secondary)] line-through">
-                            {formatPrice(price.strikePrice)}
-                          </span>
-                        </div>
-                      ) : null}
-                      <strong className="text-[20px] font-extrabold leading-6 tracking-[-0.05em] text-[var(--color-text-price)]">
-                        {formatPrice(price.price)}
-                      </strong>
-                    </div>
-                  ) : (
-                    <div
-                      className={`h-10 w-[100px] rounded-lg bg-[var(--color-surface-light)] ${
-                        plansReady ? "" : "animate-pulse"
-                      }`}
-                      aria-label={plansReady ? "판매 준비 중" : "요금 불러오는 중"}
-                    />
-                  )}
+                          </div>
+                        ) : null}
+                        <strong className="text-[20px] font-extrabold leading-6 tracking-[-0.05em] text-[var(--color-text-price)]">
+                          {formatPrice(price.price)}
+                        </strong>
+                      </div>
+                    ) : (
+                      <div
+                        className={`h-10 w-[100px] rounded-lg bg-[var(--color-surface-light)] ${
+                          plansReady ? "" : "animate-pulse"
+                        }`}
+                        aria-label={plansReady ? "판매 준비 중" : "요금 불러오는 중"}
+                      />
+                    )}
+                  </div>
                 </div>
 
                 <button

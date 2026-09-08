@@ -49,7 +49,7 @@ describe("computePurchaseTotals", () => {
     const p = computePurchaseTotals({ unitPrice: UNIT, quantity: 1, quote: null });
     expect(p.basePrice).toBe(39000);
     expect(p.totalDiscount).toBe(0);
-    expect(p.originalShippingFee).toBe(0);
+    expect(p.originalShippingFee).toBe(4000);
     expect(p.shippingFee).toBe(0);
     expect(p.total).toBe(p.productTotal);
     expect(p.total).toBe(39000);
@@ -61,10 +61,10 @@ describe("computePurchaseTotals", () => {
     expect(p.total).toBe(78000);
   });
 
-  it("단가×수량이 임계값(30,000) 미만 → 원배송비는 3,000 취소선, 실배송비는 여전히 0", () => {
+  it("무료배송 혜택 → 원배송비는 4,000 취소선, 실배송비는 0", () => {
     const p = computePurchaseTotals({ unitPrice: 10000, quantity: 1, quote: null });
     expect(p.basePrice).toBe(10000);
-    expect(p.originalShippingFee).toBe(3000);
+    expect(p.originalShippingFee).toBe(4000);
     expect(p.shippingFee).toBe(0);
     expect(p.total).toBe(10000);
   });

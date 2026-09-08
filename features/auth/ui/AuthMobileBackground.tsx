@@ -16,7 +16,7 @@ export function AuthMobileBackground() {
 }
 
 /** 375px 시안의 장식을 콘텐츠에 고정해 화면 높이가 달라도 로고와의 간격을 유지한다. */
-export function AuthMobileDecoration() {
+export function AuthMobileDecoration({ hasTabs = false }: { hasTabs?: boolean }) {
   return (
     <div className="pointer-events-none absolute inset-0" aria-hidden="true">
       <div
@@ -37,7 +37,10 @@ export function AuthMobileDecoration() {
         width={49}
         height={56}
         quality={HIGH_IMAGE_QUALITY}
-        className="absolute right-[5px] top-[58px] h-[56px] w-[49px]"
+        className={[
+          "absolute right-[5px] h-[56px] w-[49px]",
+          hasTabs ? "max-md:top-[113px] md:top-[58px]" : "top-[58px]",
+        ].join(" ")}
         sizes="49px"
         priority
       />

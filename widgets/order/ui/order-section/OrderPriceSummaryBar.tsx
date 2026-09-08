@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { formatKrwPrice as formatPrice } from "@/shared/lib/format";
+import { ShippingFeeWaiver } from "@/shared/ui";
 
 interface OrderPriceSummaryBarProps {
   basePrice: number;
@@ -19,10 +20,7 @@ export function OrderPriceSummaryBar({
 }: OrderPriceSummaryBarProps) {
   const showShippingWaiver = originalShippingFee !== undefined && originalShippingFee > shippingFee;
   const shippingValue: ReactNode = showShippingWaiver ? (
-    <>
-      <span className="mr-1 opacity-60 line-through">{formatPrice(originalShippingFee)}</span>
-      {formatPrice(shippingFee)}
-    </>
+    <ShippingFeeWaiver />
   ) : (
     formatPrice(shippingFee)
   );

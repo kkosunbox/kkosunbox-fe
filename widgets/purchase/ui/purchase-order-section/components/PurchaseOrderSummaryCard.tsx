@@ -1,4 +1,4 @@
-import { SectionCard } from "@/shared/ui";
+import { SectionCard, ShippingFeeWaiver } from "@/shared/ui";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { PurchaseAgreementsPanel } from "./PurchaseAgreementsPanel";
 
@@ -59,14 +59,13 @@ export function PurchaseOrderSummaryCard({
           </div>
           <div className="flex items-center justify-between">
             <span className="text-body-13-m text-[var(--color-text)]">총 배송비</span>
-            <span className="text-body-13-m text-[var(--color-text)]">
-              {originalShippingFee > shippingFee && (
-                <span className="mr-1 text-[var(--color-text-secondary)] line-through">
-                  -{formatKrwPrice(originalShippingFee)}
-                </span>
-              )}
-              -{formatKrwPrice(shippingFee)}
-            </span>
+            {originalShippingFee > shippingFee ? (
+              <ShippingFeeWaiver className="text-[var(--color-text)]" />
+            ) : (
+              <span className="text-body-13-m text-[var(--color-text)]">
+                {formatKrwPrice(shippingFee)}
+              </span>
+            )}
           </div>
         </div>
 

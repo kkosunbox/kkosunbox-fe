@@ -25,11 +25,23 @@ export function AuthMobileShell({
       <AuthMobileBackground />
 
       <div className="relative flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-6 pb-8 pt-[30px]">
-        <div className="relative isolate mx-auto my-auto w-full max-w-[328px] py-10">
+        <div
+          className={[
+            "relative isolate mx-auto w-full max-w-[328px]",
+            active
+              ? "max-md:my-0 max-md:pb-10 max-md:pt-[69px] md:my-auto md:py-10"
+              : "my-auto py-10",
+          ].join(" ")}
+        >
           <div className="absolute inset-0 -z-10">
-            <AuthMobileDecoration />
+            <AuthMobileDecoration hasTabs={Boolean(active)} />
           </div>
-          <div className="flex items-center justify-center pb-10">
+          <div
+            className={[
+              "flex items-center justify-center",
+              active ? "max-md:pb-[69px] md:pb-10" : "pb-10",
+            ].join(" ")}
+          >
             <Image
               src={logoMain2x}
               alt="꼬순박스"

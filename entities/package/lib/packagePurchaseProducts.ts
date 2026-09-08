@@ -1,3 +1,4 @@
+import { STANDARD_SHIPPING_FEE } from "@/shared/config/shipping";
 import type { PackageTier } from "./packageData";
 
 export interface PackagePurchaseProduct {
@@ -27,10 +28,8 @@ export function getPackagePurchaseProduct(tier: PackageTier): PackagePurchasePro
 export const CURRENT_PURCHASE_TIER: PackageTier = "Premium";
 
 /**
- * 단품 구매 배송 정책 — 3만원 이상 무료배송.
- * 폐기된 /shop(`entities/product`)에 `SHOP_` 접두사로 있던 값을 옮겨온 것으로,
- * 현재 유일한 소비처는 /purchase 주문서(`computePurchaseTotals`)다.
- * 구독 주문의 배송비는 별도 경로로 계산되므로 여기에 묶지 않는다.
+ * 단품 구매 주문서에서 취소선으로 보여줄 원배송비.
+ * 상시 무료배송이라 실제 청구액은 항상 0원이며, 이 값은 혜택 표시 전용이다
+ * (`computePurchaseTotals`의 `originalShippingFee`).
  */
-export const PURCHASE_FREE_SHIPPING_THRESHOLD = 30000;
-export const PURCHASE_SHIPPING_FEE = 3000;
+export const PURCHASE_SHIPPING_FEE = STANDARD_SHIPPING_FEE;

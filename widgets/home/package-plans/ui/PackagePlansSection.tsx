@@ -46,7 +46,7 @@ export default function PackagePlansSection() {
             src={homePackagePlansTitle}
             alt="우리 아이에게 맞는 간식 선택 후 구독하세요!"
             quality={HIGH_IMAGE_QUALITY}
-            className="mx-auto max-lg:h-[64px] max-lg:w-auto lg:h-auto lg:w-full lg:max-w-[352px]"
+            className="mx-auto h-auto max-lg:w-[300px] max-lg:max-w-none lg:w-[352px] lg:max-w-none"
             sizes="(min-width: 768px) 352px, 300px"
             priority
           />
@@ -55,7 +55,7 @@ export default function PackagePlansSection() {
           <Text
             variant="subtitle-18-m"
             mobileVariant="body-13-m"
-            className="mt-5 text-center text-[var(--color-text-warm)] max-md:leading-[20px]"
+            className="mt-[26px] text-center text-[var(--color-text-warm)] max-md:leading-[20px]"
           >
             체크리스트 후 우리 아이에게 적절한{" "}
             <br className="md:hidden lg:hidden" />

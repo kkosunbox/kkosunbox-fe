@@ -1,4 +1,4 @@
-import { PURCHASE_FREE_SHIPPING_THRESHOLD, PURCHASE_SHIPPING_FEE } from "@/entities/package";
+import { PURCHASE_SHIPPING_FEE } from "@/entities/package";
 import { digitsOnly, isValidKoreanPhone } from "@/shared/lib/format";
 import type { QuoteProductPriceResponse } from "@/features/product/api/types";
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
@@ -39,8 +39,7 @@ export function computePurchaseTotals({
   const totalDiscount = couponDiscount;
   const productTotal = quote?.amount ?? Math.max(0, basePrice - totalDiscount);
   // 단건 구매 무료배송 이벤트 — 원래 배송비는 취소선으로만 표시하고 실제로는 0원 청구
-  const originalShippingFee =
-    basePrice >= PURCHASE_FREE_SHIPPING_THRESHOLD ? 0 : PURCHASE_SHIPPING_FEE;
+  const originalShippingFee = PURCHASE_SHIPPING_FEE;
   const shippingFee = 0;
   const total = productTotal + shippingFee;
 

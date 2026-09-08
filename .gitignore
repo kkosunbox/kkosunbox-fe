@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 조사 산출물 — 로컬 보관용(스크립트는 scripts/에 커밋, 결과는 저장소에 넣지 않는다)
+/reports

@@ -27,6 +27,9 @@ export function getPackagePurchaseProduct(tier: PackageTier): PackagePurchasePro
 /** 현재 실제로 단품 판매 중인 티어 — 나머지는 데이터만 유지, UI에 노출하지 않는다. */
 export const CURRENT_PURCHASE_TIER: PackageTier = "Premium";
 
-/** 단품 구매의 상시 무료배송 정책 이전 기준값. */
-export const PURCHASE_FREE_SHIPPING_THRESHOLD = 30000;
+/**
+ * 단품 구매 주문서에서 취소선으로 보여줄 원배송비.
+ * 상시 무료배송이라 실제 청구액은 항상 0원이며, 이 값은 혜택 표시 전용이다
+ * (`computePurchaseTotals`의 `originalShippingFee`).
+ */
 export const PURCHASE_SHIPPING_FEE = STANDARD_SHIPPING_FEE;

@@ -44,3 +44,4 @@ export { QuantityMinusIcon, QuantityPlusIcon, ChevronIcon } from "./FormPartsIco
 export { default as DesktopHeroSideBackground } from "./DesktopHeroSideBackground";
 export { default as PlanImageBadges } from "./PlanImageBadges";
 export { default as ShippingFeeWaiver } from "./ShippingFeeWaiver";
+export { default as FreeShippingBadge } from "./FreeShippingBadge";

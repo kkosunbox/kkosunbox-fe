@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Script from "next/script";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import { STANDARD_SHIPPING_FEE } from "@/shared/config/shipping";
 import { trackBeginCheckout } from "@/shared/lib/analytics";
 import {
   useOrderSectionState,
@@ -205,7 +206,13 @@ export default function OrderSection(props: OrderSectionProps) {
         src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
         strategy="afterInteractive"
       />
-      <OrderPriceSummaryBar basePrice={basePrice} totalDiscount={totalDiscount} shippingFee={0} total={total} />
+      <OrderPriceSummaryBar
+        basePrice={basePrice}
+        totalDiscount={totalDiscount}
+        shippingFee={0}
+        originalShippingFee={STANDARD_SHIPPING_FEE}
+        total={total}
+      />
 
       <div className="bg-white lg:overflow-x-auto">
         <div

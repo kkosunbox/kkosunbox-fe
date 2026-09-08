@@ -89,6 +89,10 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
     await expect(page.getByAltText("꼬순박스 첫 달 할인")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByRole("button", { name: CTA_LABEL })).toBeVisible();
     await expect(page.getByText(INFLUENCER_NAME_TEXT)).not.toBeVisible();
+    // 이름을 지우는 대신 대체 문자열이 박히는 것도 실패다 — 정체 표시 자체가 렌더되면 안 된다.
+    await expect(page.getByText("[홍길동]")).toHaveCount(0);
+    // "님이 추천하는 꼬순박스"는 SVG라 텍스트로 잡히지 않는다 — aria-label로 확인한다.
+    await expect(page.getByRole("img", { name: "님이 추천하는 꼬순박스" })).toHaveCount(0);
 
     await expect
       .poll(async () => {

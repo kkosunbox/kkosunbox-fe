@@ -105,8 +105,12 @@ async function fromSlug(
     refCode: page.referralCode,
     slug,
     discountRate: page.discountRate,
-    influencerName: page.displayName,
-    profileImageUrl: page.profileImageUrl,
+    // 노출이 꺼진 페이지(`isPageVisible: false`)는 **할인만 유지하고 인플루언서 개인 정체는
+    // 내려보내지 않는다.** 그것이 이 플래그의 목적이다 — 랜딩은 개인화 없는 공용 할인 화면으로
+    // 렌더된다. 이름을 맥락에 실어 보내면 개인화 Hero를 껐더라도 다른 섹션이 그대로 노출한다
+    // (실제로 `ReferralPackagePlansSection`의 "[이름]님이 추천하는" 헤더가 그랬다, 2026-09-08).
+    influencerName: page.isPageVisible ? page.displayName : null,
+    profileImageUrl: page.isPageVisible ? page.profileImageUrl : null,
     isReferral: true,
     inviteEligible: base.firstSubscriptionEligible,
   };

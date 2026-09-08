@@ -30,6 +30,17 @@ interface ReferralState extends ReferralContext {
    */
   hasDisplayableReferralOffer: boolean;
   /**
+   * **인플루언서 개인 정체(이름·프로필 이미지)를 노출해도 되는가.**
+   *
+   * `influencerName`은 표시용 대체 문자열("홍길동")까지 포함한 최종값이라 "이름이 없음"을
+   * 구분할 수 없다 — 그대로 렌더하면 정체가 없는 화면에 가짜 이름이 박힌다. 이름을 쓰는
+   * 화면 요소는 이 술어로 렌더 여부를 먼저 정한다.
+   *
+   * 정체가 없는 경우는 둘이다: 노출이 꺼진 초대 페이지(`isPageVisible: false`),
+   * 그리고 `?r=CODE`로만 들어와 누가 초대했는지 모르는 경우.
+   */
+  hasInfluencerIdentity: boolean;
+  /**
    * 구독 완료 시점에 호출 — 서버 재계산(`router.refresh()`)을 기다리지 않고
    * 즉시 초대 혜택 표시를 내린다.
    *
@@ -53,6 +64,7 @@ const DEFAULT_STATE: ReferralState = {
   firstSubscriptionEligible: false,
   inviteEligible: false,
   hasDisplayableReferralOffer: false,
+  hasInfluencerIdentity: false,
   markInviteConsumed: () => {},
 };
 
@@ -141,6 +153,7 @@ export function ReferralProvider({
         effectiveContext.referralSource !== "own-slug" &&
         effectiveContext.discountRate > 0 &&
         !inviteConsumed,
+      hasInfluencerIdentity: effectiveContext.influencerName !== null,
       markInviteConsumed: () => setInviteConsumed(true),
     }),
     [effectiveContext, inviteConsumed],

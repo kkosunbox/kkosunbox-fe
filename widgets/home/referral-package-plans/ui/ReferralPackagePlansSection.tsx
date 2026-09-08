@@ -25,7 +25,7 @@ import ReferralTitleSvg from "./ReferralTitleSvg";
 export default function ReferralPackagePlansSection() {
   const router = useRouter();
   // 초대 코드를 플랜 조회에 함께 넘겨 서버가 채워준 할인가를 그대로 쓴다.
-  const { influencerName, refCode } = useReferral();
+  const { influencerName, hasInfluencerIdentity, refCode } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
 
@@ -43,16 +43,20 @@ export default function ReferralPackagePlansSection() {
       <div className="mx-auto max-w-content max-md:px-5 md:px-6 lg:px-0">
         {/* 섹션 헤더 */}
         <div className="mb-8 text-center md:mb-10 lg:mb-12">
-          {/* Row 1: [인플루언서이름] + 님이 추천하는 꼬순박스 SVG */}
-          <div className="flex items-center justify-center gap-2">
-            <span
-              className="translate-y-[6px] max-md:text-[22px] text-[32px] font-bold leading-[1.5] tracking-[-0.04em] text-[var(--color-text-discount)]"
-              style={{ fontFamily: "var(--font-gmarket-sans)" }}
-            >
-              [{influencerName}]
-            </span>
-            <NimIRecommendSvg className="max-md:h-[18px] h-[26px] w-auto max-w-[233px]" />
-          </div>
+          {/* Row 1: [인플루언서이름] + 님이 추천하는 꼬순박스 SVG
+              노출이 꺼진 초대 페이지에서는 통째로 렌더하지 않는다 — 이름 없이 "님이 추천하는"만
+              남으면 문장이 성립하지 않고, 대체 이름("홍길동")이 그대로 박히면 더 나쁘다. */}
+          {hasInfluencerIdentity ? (
+            <div className="flex items-center justify-center gap-2">
+              <span
+                className="translate-y-[6px] max-md:text-[22px] text-[32px] font-bold leading-[1.5] tracking-[-0.04em] text-[var(--color-text-discount)]"
+                style={{ fontFamily: "var(--font-gmarket-sans)" }}
+              >
+                [{influencerName}]
+              </span>
+              <NimIRecommendSvg className="max-md:h-[18px] h-[26px] w-auto max-w-[233px]" />
+            </div>
+          ) : null}
           {/* Row 2: 전용 할인 받고 구독 시작하세요! SVG */}
           <ReferralTitleSvg className="mt-2 w-full max-md:max-w-[320px] max-w-[469px] h-auto mx-auto" />
           {/* Row 3: 지금 구독하면... */}

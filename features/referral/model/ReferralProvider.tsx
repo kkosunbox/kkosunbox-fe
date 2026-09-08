@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   INVITE_CODE_COOKIE,
   INVITE_CODE_MAX_AGE_SEC,
@@ -58,6 +58,21 @@ const DEFAULT_STATE: ReferralState = {
 
 const ReferralReactContext = createContext<ReferralState>(DEFAULT_STATE);
 
+/**
+ * `/r/{slug}` 랜딩이 자기 초대 맥락을 상위 Provider로 밀어 넣는 통로 — `ReferralLandingSync` 전용.
+ *
+ * Next는 소프트 내비게이션에서 **layout을 다시 렌더하지 않는다.** 바뀐 세그먼트(page)만 다시
+ * 받으므로, `(main)/layout.tsx`가 `x-referral-slug` 헤더로 계산한 초대 맥락은 첫 전체 로드
+ * 시점에 굳어버린다. `/r/A` → `/r/B` 이동(뒤로가기 포함)에서 URL은 B인데 화면·쿠키가 A로
+ * 남던 원인이다(2026-09-08 조사). 랜딩 페이지 세그먼트는 매 이동마다 다시 렌더되므로,
+ * 서버가 그 요청에서 확정한 값을 여기로 올려보내 Provider 하나를 갱신한다.
+ *
+ * **중첩 Provider로 풀지 않는다.** 쿠키를 쓰는 effect가 둘이 되면 마운트 순서(자식→부모)로
+ * 경합해 상위가 예전 값으로 덮어쓴다 — 2026-09-07에 제거한 바로 그 구조다. 쓰기 주체는
+ * 끝까지 이 Provider 하나이고, 랜딩은 "무엇을 쓸지"만 알려준다.
+ */
+const ReferralLandingSyncContext = createContext<(context: ReferralContext) => void>(() => {});
+
 export function ReferralProvider({
   children,
   context,
@@ -68,7 +83,28 @@ export function ReferralProvider({
 }) {
   const [inviteConsumed, setInviteConsumed] = useState(false);
 
-  const { refCode, slug, isReferral, referralSource } = context;
+  // 랜딩이 올려준 맥락이 있으면 그쪽이 최신이다(위 ReferralLandingSyncContext 설명 참고).
+  const [landingContext, setLandingContext] = useState<ReferralContext | null>(null);
+  // 서버가 layout을 새로 렌더했다는 것은 이 요청 기준으로 값을 다시 확정했다는 뜻이므로,
+  // 그때는 서버가 이긴다 — 쌓인 랜딩 값을 버린다. (`router.refresh()`·전체 로드가 해당)
+  const [lastServerContext, setLastServerContext] = useState(context);
+  if (lastServerContext !== context) {
+    setLastServerContext(context);
+    setLandingContext(null);
+  }
+
+  const effectiveContext = landingContext ?? context;
+
+  const syncLandingContext = useCallback(
+    (next: ReferralContext) => {
+      // 값이 같으면 상태를 건드리지 않는다 — 전체 로드에서는 layout과 랜딩이 같은 값을
+      // 계산하므로(같은 slug → `cache()` 히트), 무조건 set하면 매 랜딩마다 헛 렌더가 생긴다.
+      setLandingContext((prev) => (isSameReferralContext(prev ?? context, next) ? prev : next));
+    },
+    [context],
+  );
+
+  const { refCode, slug, isReferral, referralSource } = effectiveContext;
 
   // 어트리뷰션 유지 — 초대 맥락으로 확인된 요청이면 코드·slug를 쿠키에 남겨
   // 이후 요청(구독 흐름 전체)에서도 서버가 같은 상태를 재구성할 수 있게 한다.
@@ -89,9 +125,9 @@ export function ReferralProvider({
   // 구독 완료로 코드를 소비하면 쿠키가 지워진다. 그 순간 다시 심지 않도록 소비 상태를 함께 본다.
   const value = useMemo<ReferralState>(
     () => ({
-      ...context,
-      influencerName: context.influencerName ?? FALLBACK_INFLUENCER_NAME,
-      inviteEligible: context.inviteEligible && !inviteConsumed,
+      ...effectiveContext,
+      influencerName: effectiveContext.influencerName ?? FALLBACK_INFLUENCER_NAME,
+      inviteEligible: effectiveContext.inviteEligible && !inviteConsumed,
       // 마케팅 표시 술어 — **여기 한 곳에서만** 계산한다.
       //   referralSource !== "none"      초대 맥락이 성립함
       //   referralSource !== "own-slug"  자동 자기감지는 초대가 아님 (사이트 전역 영구 노출 방지)
@@ -101,18 +137,56 @@ export function ReferralProvider({
       //                                    없으면 "첫 달 0%추가할인" 칩이 렌더된다.
       //   !inviteConsumed                같은 세션에서 방금 소비하지 않음 (전이 구간 가드)
       hasDisplayableReferralOffer:
-        context.referralSource !== "none" &&
-        context.referralSource !== "own-slug" &&
-        context.discountRate > 0 &&
+        effectiveContext.referralSource !== "none" &&
+        effectiveContext.referralSource !== "own-slug" &&
+        effectiveContext.discountRate > 0 &&
         !inviteConsumed,
       markInviteConsumed: () => setInviteConsumed(true),
     }),
-    [context, inviteConsumed],
+    [effectiveContext, inviteConsumed],
   );
 
-  return <ReferralReactContext.Provider value={value}>{children}</ReferralReactContext.Provider>;
+  return (
+    <ReferralLandingSyncContext.Provider value={syncLandingContext}>
+      <ReferralReactContext.Provider value={value}>{children}</ReferralReactContext.Provider>
+    </ReferralLandingSyncContext.Provider>
+  );
 }
 
 export function useReferral(): ReferralState {
   return useContext(ReferralReactContext);
+}
+
+/**
+ * `/r/{slug}` 랜딩 전용 — 그 요청에서 서버가 확정한 초대 맥락을 상위 `ReferralProvider`에 반영한다.
+ * 아무것도 렌더하지 않는다.
+ *
+ * 랜딩 페이지에서만 쓴다. 다른 화면은 layout이 내려준 값이 곧 최신이라 올려보낼 것이 없고,
+ * URL로 초대 출처가 새로 정해지는 화면은 여기뿐이다.
+ */
+export function ReferralLandingSync({ context }: { context: ReferralContext }) {
+  const syncLandingContext = useContext(ReferralLandingSyncContext);
+
+  useEffect(() => {
+    syncLandingContext(context);
+  }, [syncLandingContext, context]);
+
+  return null;
+}
+
+/**
+ * 서버 렌더마다 새 객체가 오므로 참조 비교로는 "같은 초대"를 판별할 수 없다 — 값으로 비교한다.
+ */
+function isSameReferralContext(a: ReferralContext, b: ReferralContext): boolean {
+  return (
+    a.referralSource === b.referralSource &&
+    a.refCode === b.refCode &&
+    a.slug === b.slug &&
+    a.discountRate === b.discountRate &&
+    a.influencerName === b.influencerName &&
+    a.profileImageUrl === b.profileImageUrl &&
+    a.isReferral === b.isReferral &&
+    a.firstSubscriptionEligible === b.firstSubscriptionEligible &&
+    a.inviteEligible === b.inviteEligible
+  );
 }

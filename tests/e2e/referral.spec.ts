@@ -214,6 +214,59 @@ test.describe("레퍼럴 랜딩 페이지 (/r/[slug])", () => {
       .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE_2.referralCode));
   });
 
+  // 뒤로/앞으로 가기로 두 초대 랜딩을 오갈 때 화면·쿠키가 URL을 따라가는지 — 기존 테스트가
+  // 덮지 않던 조합이다.
+  //
+  // **이 테스트는 소프트 내비게이션 결함(2026-09-08 조사 "재현 확정 1")의 회귀 테스트가 아니다.**
+  // 앞선 `page.goto` 두 번은 각각 새 문서 로드라 뒤로가기도 문서 단위 이동이 되고, layout이
+  // 다시 렌더되어 결함이 드러나지 않는다(수정 전 코드에서도 통과함을 실측). 그 결함은
+  // 같은 문서 안에서 `/r/A` → `/r/B`로 이동해야 재현되는데, `/r/{slug}`로 가는 내부 링크가
+  // 없어 프로덕션에서는 도달 경로가 없다. 재현·검증은 dev 전용 라우터 핸들을 쓰는
+  // `scripts/referral-investigation.mjs`가 담당한다.
+  test("활성 slug A → B 진입 후 뒤로/앞으로 가기 → 화면·쿠키가 현재 URL의 인플루언서를 따라감", async ({
+    page,
+  }) => {
+    const currentSlugCookie = async () => {
+      const cookies = await page.context().cookies();
+      return cookies.find((c) => c.name === "ggosoon-ref-slug")?.value;
+    };
+    const currentCodeCookie = async () => {
+      const cookies = await page.context().cookies();
+      return cookies.find((c) => c.name === "ggosoon-ref")?.value;
+    };
+
+    await page.goto(REFERRAL_LANDING);
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG);
+
+    await page.goto(`/r/${MOCK_ACTIVE_SLUG_2}`);
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG_2);
+
+    // 뒤로가기 — layout은 재렌더되지 않고 페이지 세그먼트만 A로 바뀐다.
+    await page.goBack();
+    await expect(page).toHaveURL(REFERRAL_LANDING, { timeout: 10_000 });
+    await expect(page.getByText(INFLUENCER_NAME_TEXT).first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`)).toHaveCount(0);
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG);
+    await expect
+      .poll(currentCodeCookie, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE.referralCode));
+
+    // 앞으로가기 — 같은 경로를 반대 방향으로 한 번 더 잠근다.
+    await page.goForward();
+    await expect(page).toHaveURL(`/r/${MOCK_ACTIVE_SLUG_2}`, { timeout: 10_000 });
+    await expect(page.getByText(`[${MOCK_REFERRAL_PAGE_2.displayName}]`).first()).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect.poll(currentSlugCookie, { timeout: 10_000 }).toBe(MOCK_ACTIVE_SLUG_2);
+    await expect
+      .poll(currentCodeCookie, { timeout: 10_000 })
+      .toBe(encodeURIComponent(MOCK_REFERRAL_PAGE_2.referralCode));
+  });
+
   // 기존에 유효한 초대 쿠키(A)가 있는 상태에서 비활성 slug를 방문하는 조합.
   // resolveReferralContext의 fromSlug()는 !page.isActive면 base(referralSource: "none")를
   // 반환한다 — effect는 isReferral이 false면 쓰기를 스킵하므로 A 쿠키가 지워지거나 다른 값으로

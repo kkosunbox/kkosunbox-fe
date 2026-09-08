@@ -254,7 +254,7 @@ hasDisplayableReferralOffer =
 `referral.spec.ts:236`(E)이 정확히 이 케이스를 검증하며, **F와 달리 E는 사양 변경이 아니라 리그레션이다.**
 
 **주의 — 명시 진입은 랜딩에만 머무르지 않는다.** `/r` 방문 직후 `ReferralProvider.tsx:59`가
-코드·slug 쿠키를 심으므로, 이후 홈·`/subscribe`에서도 `"slug"` 경로로 **7일간
+코드·slug 쿠키를 심으므로, 이후 홈·`/subscribe`에서도 `"slug"` 경로로 **24시간 동안
 (`INVITE_CODE_MAX_AGE_SEC`) 프로모션이 유지된다.** 인플루언서가 스스로 방문자로 진입한 결과이며
 `/order`가 차단하므로 허용한다. 회사가 자기 랜딩조차 금지하기로 하면 `referralSource`만으로는
 부족하고 `page.referralCode === 본인 코드` 같은 실제 소유 판정이 추가로 필요하다.
@@ -280,7 +280,7 @@ router.refresh() → router.replace(...)
 **`inviteConsumed`는 영구 숨김 장치가 아니다.** 쿠키를 지운 사실이 이미 렌더된 React 트리에
 반영되기까지의 **전이 구간 가드**다(`useOrderSectionState.ts:203` 주석 참고 — 쿠키가 사라지면
 layout이 재계산을 스킵해 `router.refresh()`만으로는 값이 갱신되지 않는다).
-영속 정책은 쿠키 수명(7일)이 표현한다. 이름을 유지하되 이 설명을 타입과 Provider 양쪽에 남긴다.
+영속 정책은 쿠키 수명(24시간)이 표현한다. 이름을 유지하되 이 설명을 타입과 Provider 양쪽에 남긴다.
 
 ### 개별 재판정 금지
 

@@ -9,12 +9,14 @@ import { ProfileThumbnail } from "./ProfileThumbnail";
 import {
   SwitchHorizontalIcon,
   PlusCircleIcon,
+} from "./icons";
+import {
   DropdownUserIcon,
   DropdownPinIcon,
   DropdownClipboardIcon,
   DropdownPointIcon,
   DropdownLogoutIcon,
-} from "./icons";
+} from "./DropdownMenuIcons";
 
 export function ProfileDropdown({
   hasProfile,
@@ -46,8 +48,8 @@ export function ProfileDropdown({
     [
       "w-full h-[52px] px-6 flex items-center gap-3 text-left tracking-[-0.02em] transition-colors",
       active
-        ? "text-body-14-b text-[var(--color-primary)]"
-        : "text-body-14-m text-[var(--color-text-tertiary)] hover:text-[var(--color-primary)]",
+        ? "text-body-14-b text-[var(--color-cta-button)]"
+        : "text-body-14-m text-[var(--color-text-tertiary)] hover:text-[var(--color-cta-button)]",
     ].join(" ");
 
   const handleLogout = async () => {
@@ -70,13 +72,21 @@ export function ProfileDropdown({
       <div className="flex flex-col pb-[6px]">
         {/* 프로필 헤더 — 그라디언트 배경 */}
         <div
-          className="flex h-[90px] items-center gap-4 rounded-[10px_10px_0_0] px-5"
+          className="relative flex h-[90px] items-center gap-4 overflow-hidden rounded-[10px_10px_0_0] px-5"
           style={{ background: "var(--gradient-dropdown-header)" }}
         >
-          <div className="shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 top-1/2 h-[600%] w-[120%] origin-right"
+            style={{
+              background: "var(--gradient-dropdown-header)",
+              transform: "translateY(-50%) rotate(30deg)",
+            }}
+          />
+          <div className="relative z-10 shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
             <ProfileThumbnail imageUrl={profileImageUrl} userId={userId} size="lg" />
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="relative z-10 min-w-0 flex-1">
             <div className="flex items-center gap-1 min-w-0">
               {hasProfile ? (
                 <>

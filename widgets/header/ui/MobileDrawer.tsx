@@ -86,7 +86,10 @@ export function MobileDrawer({
         aria-label="모바일 메뉴"
       >
         {/* 상단 섹션 */}
-        <div className="relative shrink-0 flex flex-col items-center bg-white rounded-b-[40px]">
+        <div
+          className="relative shrink-0 flex flex-col items-center rounded-b-[40px]"
+          style={{ background: "var(--gradient-mobile-menu)" }}
+        >
           {/* 닫기 버튼 */}
           <button
             onClick={onClose}

@@ -194,9 +194,17 @@ function DeliveryItemCard({
             {theme.tierLabel}
           </span>
           <div className="flex flex-col gap-0.5">
-            <p className="text-body-14-sb-tight tracking-[-0.04em] text-[var(--color-text-emphasis)]">
-              {planLabel}
-            </p>
+            {/* 구독은 이름 뒤에 "구독"을 같은 서체로 잇고, 단건은 회색 "단품" 칩을 붙인다. */}
+            <div className="flex items-center gap-1.5">
+              <p className="text-body-14-sb-tight tracking-[-0.04em] text-[var(--color-text-emphasis)]">
+                {payment.orderType === "subscription" ? `${planLabel} 구독` : planLabel}
+              </p>
+              {payment.orderType === "product" && (
+                <span className="translate-y-[-1px] inline-flex h-4 shrink-0 items-center rounded-[5px] bg-[var(--color-border-light)] px-1 leading-[14px] text-body-10-m text-[var(--color-status-done)] opacity-80">
+                  단품
+                </span>
+              )}
+            </div>
             <p className="text-body-13-m leading-[1.4] text-[var(--color-text-label)]">
               주문접수 : {orderDate}
             </p>

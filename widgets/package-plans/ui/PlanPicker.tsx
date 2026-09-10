@@ -392,12 +392,6 @@ export default function PlanPicker({
                       tags={activePlan?.tags}
                       className="absolute left-[25px] right-[69px] top-[25px] z-10 flex items-center gap-1.5"
                     />
-                    {activePrice?.referralApplied ? (
-                      <ReferralAdditionalDiscountChip
-                        pct={activePrice.referralPct}
-                        className="left-3 top-3"
-                      />
-                    ) : null}
                   </div>
 
                   {/* 좌우 네비 — 이전/다음 패키지 (중심이 이미지 wrapper 경계에 위치) */}
@@ -429,12 +423,21 @@ export default function PlanPicker({
                     {activePlan && recommendedPlanIds.has(activePlan.id) ? (
                       <RecommendedPickBadge className="mb-2" />
                     ) : null}
-                    <p
-                      className="text-subtitle-17-b-lh22"
-                      style={{ color: activePkg.colorVar }}
-                    >
-                      {activePkg.name}
-                    </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p
+                        className="text-subtitle-17-b-lh22"
+                        style={{ color: activePkg.colorVar }}
+                      >
+                        {activePkg.name}
+                      </p>
+                      {activePrice?.referralApplied ? (
+                        <ReferralAdditionalDiscountChip
+                          pct={activePrice.referralPct}
+                          className="shrink-0 whitespace-nowrap"
+                          inline
+                        />
+                      ) : null}
+                    </div>
                     <ul className="mt-3 flex flex-col gap-2">
                       {activePkg.items.map((item) => (
                         <li

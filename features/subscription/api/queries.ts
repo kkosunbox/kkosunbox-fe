@@ -87,7 +87,13 @@ export async function fetchSubscriptionPlans(
   });
 }
 
-/** 배송 상태 요약 조회 */
+/**
+ * 배송 상태 요약 조회 (구독 결제 전용).
+ *
+ * @deprecated 배송관리 화면은 단건 주문까지 합산한
+ * `features/payment`의 `fetchCombinedDeliveryStatusSummary`(GET /v1/payments/delivery-summary)를 쓴다.
+ * 구독 건수만 따로 필요한 경우에만 사용할 것.
+ */
 export async function fetchDeliveryStatusSummary(
   token?: string,
 ): Promise<DeliveryStatusSummaryResponse> {
@@ -96,7 +102,12 @@ export async function fetchDeliveryStatusSummary(
     .catch(() => ({ pendingDelivery: 0, deliveryInProgress: 0, deliveryCompleted: 0 }));
 }
 
-/** 배송 상태별 결제 내역 (페이지네이션 메타 포함) */
+/**
+ * 배송 상태별 결제 내역 (구독 결제 전용, 페이지네이션 메타 포함).
+ *
+ * @deprecated 배송관리 화면은 단건 주문까지 합친
+ * `features/payment`의 `fetchCombinedPaymentHistory`(GET /v1/payments)를 쓴다.
+ */
 export async function fetchPaginatedPaymentHistory(
   token?: string,
   params?: GetPaymentHistoryParams,

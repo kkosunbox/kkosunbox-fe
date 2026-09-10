@@ -10,20 +10,28 @@ import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { ProfileThumbnail } from "./ProfileThumbnail";
 import {
   SwitchHorizontalIcon,
-  DrawerUserIcon,
-  DrawerPinIcon,
-  DrawerClipboardIcon,
-  DrawerNavIcon,
-  DrawerPointIcon,
-  DrawerLogoutIcon,
 } from "./icons";
+import {
+  DropdownClipboardIcon,
+  DropdownLogoutIcon,
+  DropdownPinIcon,
+  DropdownPointIcon,
+  DropdownUserIcon,
+} from "./DropdownMenuIcons";
+import {
+  MobileDrawerDocumentIcon,
+  MobileDrawerHomeIcon,
+  MobileDrawerPurchaseIcon,
+  MobileDrawerSubscribeIcon,
+  MobileDrawerSupportIcon,
+} from "./MobileDrawerIcons";
 
 const NAV_ITEMS = [
-  { href: "/", label: "홈", icon: "home" as const },
-  { href: "/about", label: "꼬순박스 소개", icon: "document" as const },
-  { href: "/subscribe", label: "구독몰", icon: "check-circle" as const },
-  { href: "/purchase", label: "단품몰", icon: "cart" as const },
-  { href: "/support", label: "고객센터", icon: "heart" as const },
+  { href: "/", label: "홈", Icon: MobileDrawerHomeIcon },
+  { href: "/about", label: "꼬순박스 소개", Icon: MobileDrawerDocumentIcon },
+  { href: "/subscribe", label: "구독몰", Icon: MobileDrawerSubscribeIcon },
+  { href: "/purchase", label: "단품몰", Icon: MobileDrawerPurchaseIcon },
+  { href: "/support", label: "고객센터", Icon: MobileDrawerSupportIcon },
 ];
 
 export function MobileDrawer({
@@ -62,8 +70,8 @@ export function MobileDrawer({
   const shortcutLabelClass = (active: boolean) =>
     `tracking-[-0.02em] ${
       active
-        ? "text-body-14-b text-[var(--color-primary)]"
-        : "text-body-14-m text-[var(--color-text-menu-label)]"
+        ? "text-[14px] leading-[17px] font-bold text-[var(--color-primary)]"
+        : "text-[14px] leading-[17px] font-medium text-[var(--color-text-menu-label)]"
     }`;
 
   return (
@@ -85,16 +93,13 @@ export function MobileDrawer({
         aria-modal="true"
         aria-label="모바일 메뉴"
       >
-        {/* 상단 섹션 */}
-        <div
-          className="relative shrink-0 flex flex-col items-center rounded-b-[40px]"
-          style={{ background: "var(--gradient-mobile-menu)" }}
-        >
+        {/* 상단 섹션 — 375×897 모바일 메뉴 명세 기준 */}
+        <div className="relative h-[308px] shrink-0 bg-white">
           {/* 닫기 버튼 */}
           <button
             onClick={onClose}
             aria-label="메뉴 닫기"
-            className="absolute right-6 top-4 flex items-center justify-center"
+            className="absolute right-6 top-14 flex h-6 w-6 items-center justify-center"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 6L6 18M6 6L18 18" stroke="var(--color-text)" strokeWidth="2" strokeLinecap="round" />
@@ -102,7 +107,7 @@ export function MobileDrawer({
           </button>
 
           {/* 프로필 이미지 */}
-          <div className="mt-[25px]">
+          <div className="absolute left-1/2 top-[69px] -translate-x-1/2">
             {isLoggedIn ? (
               <Link href="/mypage" onClick={onClose}>
                 <ProfileThumbnail imageUrl={profileImageUrl} userId={userId} size="xl" />
@@ -113,19 +118,19 @@ export function MobileDrawer({
           </div>
 
           {/* 이름 / 로그인 텍스트 */}
-          <div className="mt-2 flex items-center gap-1">
+          <div className="absolute left-1/2 top-[145px] flex -translate-x-1/2 items-center gap-1 whitespace-nowrap">
             {isAuthLoading ? (
               <div className="h-6 w-24 animate-pulse rounded bg-[var(--color-secondary)]" />
             ) : isLoggedIn ? (
               hasProfile ? (
                 <>
-                  <span className="text-body-20-sb text-[var(--color-text)]">
+                  <span className="text-[20px] leading-[26px] font-semibold text-[var(--color-text)]">
                     {getProfileDisplayName(petName)}
                   </span>
                   <button
                     onClick={() => { onClose(); openModal("profile-switch"); }}
                     aria-label="프로필 변경"
-                    className="shrink-0"
+                    className="shrink-0 [&>svg]:h-4 [&>svg]:w-4"
                   >
                     <SwitchHorizontalIcon />
                   </button>
@@ -133,13 +138,13 @@ export function MobileDrawer({
               ) : (
                 <button
                   onClick={() => { onClose(); openChecklistForm({ isNewProfile: true }); }}
-                  className="text-body-20-sb text-[var(--color-text-secondary)]"
+                  className="text-[20px] leading-[26px] font-semibold text-[var(--color-text-secondary)]"
                 >
                   프로필 등록하기
                 </button>
               )
             ) : (
-              <Link href="/login" onClick={onClose} className="text-body-20-sb text-[var(--color-text)]">
+              <Link href="/login" onClick={onClose} className="text-[20px] leading-[26px] font-semibold text-[var(--color-text)]">
                 로그인 하기
               </Link>
             )}
@@ -147,30 +152,30 @@ export function MobileDrawer({
 
           {/* 이메일 */}
           {isLoggedIn && email && (
-            <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)]">{email}</p>
+            <p className="absolute left-1/2 top-[175px] -translate-x-1/2 whitespace-nowrap text-[14px] leading-[18px] font-medium text-[var(--color-text-secondary)]">{email}</p>
           )}
 
           {/* 단축 아이콘 3종 */}
-          <div className="mt-7 flex w-full items-start justify-center gap-12 pb-7">
+          <div className="absolute left-1/2 top-[221px] flex w-[268px] -translate-x-1/2 items-start justify-between">
             <button
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage" : "/login"); }}
-              className="flex flex-col items-center gap-2"
+              className="flex w-[60px] flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
             >
-              <DrawerUserIcon active={isMyPageActive} />
+              <DropdownUserIcon />
               <span className={shortcutLabelClass(isMyPageActive)}>마이페이지</span>
             </button>
             <button
               onClick={() => { onClose(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
-              className="flex min-w-[56px] flex-col items-center gap-2"
+              className="flex w-14 flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
             >
-              <DrawerPinIcon />
+              <DropdownPinIcon />
               <span className={shortcutLabelClass(false)}>계정정보</span>
             </button>
             <button
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage/subscription" : "/login"); }}
-              className="flex min-w-[56px] flex-col items-center gap-2"
+              className="flex w-14 flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
             >
-              <DrawerClipboardIcon active={isSubscriptionActive} />
+              <DropdownClipboardIcon />
               <span className={shortcutLabelClass(isSubscriptionActive)}>구독관리</span>
             </button>
           </div>
@@ -180,9 +185,10 @@ export function MobileDrawer({
         <div className="shrink-0 border-t border-[var(--color-divider-neutral)]" />
 
         {/* 네비게이션 */}
-        <nav className="flex shrink-0 flex-col gap-1 pt-3">
+        <nav className="mx-7 mb-[26px] flex shrink-0 flex-col gap-1 pt-[11px]">
           {NAV_ITEMS.map((item) => {
             const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            const { Icon } = item;
             return (
               <Link
                 key={item.href}
@@ -190,12 +196,12 @@ export function MobileDrawer({
                 onClick={onClose}
                 aria-current={isActive ? "page" : undefined}
                 className={[
-                  "flex h-[58px] items-center gap-4 rounded-xl tracking-[-0.02em]",
-                  isActive ? "mx-3 bg-[var(--color-drawer-item-active)] px-7" : "mx-7 px-3",
+                  "flex h-[58px] items-center gap-4 rounded-xl px-3 tracking-[-0.02em]",
+                  isActive ? "bg-[var(--color-drawer-item-active)]" : "",
                 ].join(" ")}
               >
-                <DrawerNavIcon type={item.icon} active={isActive} />
-                <span className={isActive ? "text-body-14-b text-[var(--color-primary)]" : "text-body-14-m text-[var(--color-text)]"}>
+                <Icon />
+                <span className={isActive ? "text-[14px] leading-[17px] font-bold text-[var(--color-text)]" : "text-[14px] leading-[17px] font-medium text-[var(--color-text)]"}>
                   {item.label}
                 </span>
               </Link>
@@ -207,38 +213,36 @@ export function MobileDrawer({
               onClick={onClose}
               aria-current={isPointActive ? "page" : undefined}
               className={[
-                "flex h-[58px] items-center gap-4 rounded-xl tracking-[-0.02em]",
-                isPointActive ? "mx-3 bg-[var(--color-drawer-item-active)] px-7" : "mx-7 px-3",
+                "flex h-[58px] items-center gap-4 rounded-xl px-3 tracking-[-0.02em]",
+                isPointActive ? "bg-[var(--color-drawer-item-active)]" : "",
               ].join(" ")}
             >
-              <DrawerPointIcon active={isPointActive} />
-              <span className={isPointActive ? "text-body-14-b text-[var(--color-primary)]" : "text-body-14-m text-[var(--color-text)]"}>
+              <span className="[&>svg]:h-6 [&>svg]:w-6"><DropdownPointIcon /></span>
+              <span className={isPointActive ? "text-[14px] leading-[17px] font-bold text-[var(--color-text)]" : "text-[14px] leading-[17px] font-medium text-[var(--color-text)]"}>
                 MY 포인트
               </span>
             </Link>
           )}
+          {isLoggedIn && (
+            <button
+              onClick={async () => { onClose(); await onLogout(); }}
+              className="flex h-[58px] w-full items-center gap-4 px-3 tracking-[-0.02em]"
+            >
+              <span className="[&>svg]:h-6 [&>svg]:w-6"><DropdownLogoutIcon /></span>
+              <span className="text-[14px] leading-[17px] font-medium text-[var(--color-text-secondary)]">로그아웃</span>
+            </button>
+          )}
         </nav>
 
-        {/* 로그아웃 + 하단 배너 — 함께 하단으로 밀되, 화면이 짧으면 드로워 전체가 스크롤된다 */}
+        {/* 하단 배너 — 화면이 짧으면 드로워 전체가 스크롤된다 */}
         <div className="mt-auto shrink-0">
-          {isLoggedIn && (
-            <div className="mx-7 mt-2">
-              <button
-                onClick={async () => { onClose(); await onLogout(); }}
-                className="flex h-[58px] w-full items-center gap-4 px-3 tracking-[-0.02em]"
-              >
-                <DrawerLogoutIcon />
-                <span className="text-body-14-m text-[var(--color-text-secondary)]">로그아웃</span>
-              </button>
-            </div>
-          )}
           <Image
             src="/images/sidebar-banner-001.png"
             alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
             width={375}
-            height={126}
+            height={121}
             quality={HIGH_IMAGE_QUALITY}
-            className="mt-2"
+            className="block"
             style={{ width: "100%", height: "auto" }}
           />
         </div>

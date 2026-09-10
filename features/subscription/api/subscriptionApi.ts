@@ -77,7 +77,12 @@ export function resumeSubscription(subscriptionId: number) {
   );
 }
 
-/** 전체 결제 이력 조회 (deliveryStatus 필터, 페이지네이션 지원) */
+/**
+ * 구독 결제 이력 조회 (deliveryStatus 필터, 페이지네이션 지원).
+ *
+ * @deprecated 배송관리 화면은 단건 주문까지 합친
+ * `features/payment`의 `getCombinedPaymentHistory`(GET /v1/payments)를 쓴다.
+ */
 export function getPaymentHistory(params?: GetPaymentHistoryParams) {
   const parts: string[] = [];
   if (params?.deliveryStatus) parts.push(`deliveryStatus=${params.deliveryStatus}`);
@@ -87,7 +92,12 @@ export function getPaymentHistory(params?: GetPaymentHistoryParams) {
   return apiClient.get<PaginatedPaymentHistoryResponse>(`/v1/subscriptions/payments${query}`);
 }
 
-/** 배송 상태 요약 조회 */
+/**
+ * 배송 상태 요약 조회 (구독 결제 전용).
+ *
+ * @deprecated 배송관리 화면은 단건 주문까지 합산한
+ * `features/payment`의 `getCombinedDeliveryStatusSummary`(GET /v1/payments/delivery-summary)를 쓴다.
+ */
 export function getDeliveryStatusSummary() {
   return apiClient.get<DeliveryStatusSummaryResponse>("/v1/subscriptions/payments/delivery-summary");
 }

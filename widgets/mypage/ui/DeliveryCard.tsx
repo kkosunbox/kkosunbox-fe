@@ -3,7 +3,10 @@
 import { Text } from "@/shared/ui";
 import { openCenteredPopup } from "@/shared/lib/popup";
 import { DashboardCard, SectionHeader } from "../lib/dashboard-shared";
-import type { DeliveryStatus, DeliveryStatusSummaryResponse } from "@/features/subscription/api/types";
+import type {
+  CombinedDeliveryStatus,
+  CombinedDeliveryStatusSummaryResponse,
+} from "@/features/payment/api/types";
 
 function PackingIcon() {
   return (
@@ -41,8 +44,8 @@ const DELIVERY_ICON_COMPONENTS = [PackingIcon, TruckIcon, DeliveredIcon];
 
 const DELIVERY_STEPS: Array<{
   label: string;
-  status: DeliveryStatus;
-  key: keyof DeliveryStatusSummaryResponse;
+  status: CombinedDeliveryStatus;
+  key: keyof CombinedDeliveryStatusSummaryResponse;
 }> = [
     { label: "배송준비중", status: "PendingDelivery", key: "pendingDelivery" },
     { label: "배송중", status: "DeliveryInProgress", key: "deliveryInProgress" },
@@ -58,7 +61,7 @@ function openAddressPopup() {
   openCenteredPopup("/address", "addressPopup", POPUP_SIZE, POPUP_FEATURES);
 }
 
-function openDeliveryPopup(status: DeliveryStatus) {
+function openDeliveryPopup(status: CombinedDeliveryStatus) {
   openCenteredPopup(
     `/delivery?status=${status}`,
     `deliveryPopup_${status}`,
@@ -68,7 +71,7 @@ function openDeliveryPopup(status: DeliveryStatus) {
 }
 
 interface DeliveryCardProps {
-  summary: DeliveryStatusSummaryResponse;
+  summary: CombinedDeliveryStatusSummaryResponse;
 }
 
 export function DeliveryCard({ summary }: DeliveryCardProps) {

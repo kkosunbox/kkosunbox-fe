@@ -2,16 +2,17 @@
 
 import { useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { getPaymentHistory, cancelPayment } from "@/features/subscription/api/subscriptionApi";
+import { cancelPayment } from "@/features/subscription/api/subscriptionApi";
+import { cancelProductOrder } from "@/features/product/api/productApi";
+import { getCombinedPaymentHistory } from "@/features/payment/api/paymentApi";
 import { getErrorMessage } from "@/shared/lib/api";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
 import { packageThemeForPlan } from "@/entities/package";
 import type { PackageTier } from "@/entities/package";
 import type {
-  SubscriptionPaymentDto,
-  DeliveryStatus,
-} from "@/features/subscription/api/types";
-import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+  CombinedPaymentDto,
+  CombinedDeliveryStatus,
+} from "@/features/payment/api/types";
 function AddressVerifiedIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -28,7 +29,7 @@ function AddressVerifiedIcon() {
 
 /* ── 상수 ─────────────────────────────────────────────────── */
 
-const STATUS_LABEL: Record<DeliveryStatus, string> = {
+const STATUS_LABEL: Record<CombinedDeliveryStatus, string> = {
   PendingDelivery: "배송준비중",
   DeliveryInProgress: "배송중",
   DeliveryCompleted: "배송완료",
@@ -47,6 +48,11 @@ const EPOST_TRACKING_BASE =
 
 function formatDate(dateStr: string): string {
   return dateStr.slice(0, 10).replace(/-/g, ".");
+}
+
+/** 통합 목록은 구독 결제와 단건 주문이 섞여 ID가 겹칠 수 있어 orderType까지 묶어 key를 만든다. */
+function paymentKey(payment: CombinedPaymentDto): string {
+  return `${payment.orderType}-${payment.id}`;
 }
 
 /* ── 아이콘 ──────────────────────────────────────────────── */
@@ -122,17 +128,18 @@ function Pagination({
 function DeliveryItemCard({
   payment,
   deliveryStatus,
-  deliveryAddress,
   onCancelRequest,
 }: {
-  payment: SubscriptionPaymentDto;
-  deliveryStatus: DeliveryStatus;
-  deliveryAddress: DeliveryAddress | null;
-  onCancelRequest: (paymentId: number) => void;
+  payment: CombinedPaymentDto;
+  deliveryStatus: CombinedDeliveryStatus;
+  onCancelRequest: (payment: CombinedPaymentDto) => void;
 }) {
-  const theme = packageThemeForPlan({ id: 0, name: payment.planName ?? "", sortOrder: 0 });
-  const planLabel = payment.planName ?? "패키지";
+  const theme = packageThemeForPlan({ id: 0, name: payment.name, sortOrder: 0 });
+  const planLabel = payment.name || "패키지";
   const orderDate = formatDate(payment.createdAt);
+  // 배송지는 결제 건별 스냅샷이다. 삭제된 배송지는 null로 내려오며,
+  // 이때 다른 배송지로 대체하지 않고 섹션 자체를 감춘다(엉뚱한 주소 표시 방지).
+  const deliveryAddress = payment.deliveryAddress ?? null;
 
   function handleTrack() {
     if (!payment.trackingNumber) return;
@@ -158,7 +165,7 @@ function DeliveryItemCard({
     deliveryStatus === "PendingDelivery" ? (
       <button
         type="button"
-        onClick={() => onCancelRequest(payment.id)}
+        onClick={() => onCancelRequest(payment)}
         className="inline-flex h-6 shrink-0 items-center rounded px-2 text-body-13-m leading-4 text-white bg-[var(--color-text)] hover:opacity-90 transition-opacity"
       >
         주문취소
@@ -187,9 +194,17 @@ function DeliveryItemCard({
             {theme.tierLabel}
           </span>
           <div className="flex flex-col gap-0.5">
-            <p className="text-body-14-sb-tight tracking-[-0.04em] text-[var(--color-text-emphasis)]">
-              {planLabel}
-            </p>
+            {/* 구독은 이름 뒤에 "구독"을 같은 서체로 잇고, 단건은 회색 "단품" 칩을 붙인다. */}
+            <div className="flex items-center gap-1.5">
+              <p className="text-body-14-sb-tight tracking-[-0.04em] text-[var(--color-text-emphasis)]">
+                {payment.orderType === "subscription" ? `${planLabel} 구독` : planLabel}
+              </p>
+              {payment.orderType === "product" && (
+                <span className="translate-y-[-1px] inline-flex h-4 shrink-0 items-center rounded-[5px] bg-[var(--color-border-light)] px-1 leading-[14px] text-body-10-m text-[var(--color-status-done)] opacity-80">
+                  단품
+                </span>
+              )}
+            </div>
             <p className="text-body-13-m leading-[1.4] text-[var(--color-text-label)]">
               주문접수 : {orderDate}
             </p>
@@ -229,11 +244,10 @@ function DeliveryItemCard({
 /* ── Props ───────────────────────────────────────────────── */
 
 interface Props {
-  initialPayments: SubscriptionPaymentDto[];
+  initialPayments: CombinedPaymentDto[];
   initialTotal: number;
-  deliveryStatus: DeliveryStatus;
+  deliveryStatus: CombinedDeliveryStatus;
   pageLimit: number;
-  deliveryAddress: DeliveryAddress | null;
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
@@ -243,7 +257,6 @@ export function DeliveryStatusManager({
   initialTotal,
   deliveryStatus,
   pageLimit,
-  deliveryAddress,
 }: Props) {
   const router = useRouter();
   const { openModal, openAlert } = useModal();
@@ -260,7 +273,7 @@ export function DeliveryStatusManager({
   const loadPage = useCallback(
     async (nextPage: number) => {
       try {
-        const data = await getPaymentHistory({
+        const data = await getCombinedPaymentHistory({
           deliveryStatus,
           page: nextPage,
           limit: pageLimit,
@@ -282,8 +295,33 @@ export function DeliveryStatusManager({
     });
   }
 
-  function handleCancelRequest(paymentId: number) {
-    setErrorMsg(null);
+  /** 단건 주문 취소 — 함께 해지할 구독이 없으므로 확인 알럿만 띄운다. */
+  function requestProductCancel(orderId: number) {
+    openAlert({
+      type: "info",
+      title: "주문을 환불할까요?",
+      description: "결제 완료 후 배송 전 상태의 주문만 환불할 수 있습니다.",
+      primaryLabel: "환불",
+      secondaryLabel: "닫기",
+      onPrimary: () => {
+        showLoading("주문을 환불하고 있습니다...");
+        startTransition(async () => {
+          try {
+            await cancelProductOrder(orderId);
+            await loadPage(page);
+            router.refresh();
+          } catch (err) {
+            openAlert({ title: getErrorMessage(err, "환불 처리 중 오류가 발생했습니다.") });
+          } finally {
+            hideLoading();
+          }
+        });
+      },
+    });
+  }
+
+  /** 구독 결제 취소 — 이번 결제만 취소 / 구독까지 해지 두 갈래를 모달로 묻는다. */
+  function requestSubscriptionCancel(paymentId: number) {
     openModal(
       "payment-cancel",
       () => {
@@ -315,6 +353,15 @@ export function DeliveryStatusManager({
         });
       },
     );
+  }
+
+  function handleCancelRequest(payment: CombinedPaymentDto) {
+    setErrorMsg(null);
+    if (payment.orderType === "product") {
+      requestProductCancel(payment.id);
+      return;
+    }
+    requestSubscriptionCancel(payment.id);
   }
 
   return (
@@ -356,10 +403,9 @@ export function DeliveryStatusManager({
         ) : (
           payments.map((payment) => (
             <DeliveryItemCard
-              key={payment.id}
+              key={paymentKey(payment)}
               payment={payment}
               deliveryStatus={deliveryStatus}
-              deliveryAddress={deliveryAddress}
               onCancelRequest={handleCancelRequest}
             />
           ))

@@ -13,7 +13,7 @@ export function OrderDeliveryMethodSection({ open, onToggle }: OrderDeliveryMeth
           우체국택배
         </span>
         <span className="text-body-13-m leading-[140%] text-[var(--color-text-secondary)]">
-          월~목 배송 / 오전 11시 이후 주문 시 익일 발송
+          월~목 배송 / 오전 10시 이전 주문시 당일 배송
         </span>
       </div>
     </SectionCard>

@@ -109,7 +109,9 @@ export function MobileDrawer({
           {/* 프로필 이미지 */}
           <div className="absolute left-1/2 top-[69px] -translate-x-1/2">
             {isLoggedIn ? (
-              <Link href="/mypage" onClick={onClose}>
+              // 이미지만 있고 alt=""(장식용)라 링크에 접근 가능한 이름이 없었다
+              // (Lighthouse link-name, 2026-09-11 실측). 닫기 버튼과 동일한 패턴으로 aria-label 부여.
+              <Link href="/mypage" onClick={onClose} aria-label="마이페이지">
                 <ProfileThumbnail imageUrl={profileImageUrl} userId={userId} size="xl" />
               </Link>
             ) : (

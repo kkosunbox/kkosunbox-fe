@@ -1,7 +1,7 @@
 import { ScrollReveal } from "@/shared/ui";
-import careIcon from "../assets/stats-care.svg";
-import deliveryIcon from "../assets/stats-delivery.svg";
-import healthyIcon from "../assets/stats-healthy.svg";
+import careIcon from "../assets/stats-care.webp";
+import deliveryIcon from "../assets/stats-delivery.webp";
+import healthyIcon from "../assets/stats-healthy.webp";
 
 const STATS = [
   {

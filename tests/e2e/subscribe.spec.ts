@@ -13,6 +13,11 @@ async function dismissChecklistRecommendModalIfVisible(page: import("@playwright
   }
 }
 
+/** 반응형 변형으로 중복 렌더된 숨김 가격이 아닌, 사용자가 실제 보는 가격을 선택한다. */
+function visiblePrice(page: import("@playwright/test").Page, price: string) {
+  return page.getByText(price, { exact: true }).filter({ visible: true }).first();
+}
+
 test.describe("구독 플랜 목록 (/subscribe)", () => {
   // ── 정상 렌더링 ──────────────────────────────────────────────────
   test("프로필은 있지만 체크리스트 미완료면 추천 모달 노출", async ({ page }) => {
@@ -35,7 +40,7 @@ test.describe("구독 플랜 목록 (/subscribe)", () => {
     }
 
     // 베이직 플랜 월 요금 (39,000원)
-    await expect(page.getByText("39,000원").first()).toBeVisible();
+    await expect(visiblePrice(page, "39,000원")).toBeVisible();
   });
 
   // ── 원가/할인가 표시 ────────────────────────────────────────────
@@ -44,10 +49,9 @@ test.describe("구독 플랜 목록 (/subscribe)", () => {
     await loginAndGoTo(page, "/subscribe");
     await dismissChecklistRecommendModalIfVisible(page);
 
-    // 베이직(49,000원), 스탠다드(74,000원) 원가: 기본 선택 플랜(프리미엄)이 아니므로
-    // 모바일 섹션(hidden)에 없음 → .first()는 데스크탑 카드(visible)를 반환
-    await expect(page.getByText("49,000원").first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText("74,000원").first()).toBeVisible({ timeout: 10_000 });
+    // 베이직(49,000원), 스탠다드(74,000원)의 실제 노출 가격을 확인한다.
+    await expect(visiblePrice(page, "49,000원")).toBeVisible({ timeout: 10_000 });
+    await expect(visiblePrice(page, "74,000원")).toBeVisible({ timeout: 10_000 });
   });
 
   // ── 빈 플랜 ──────────────────────────────────────────────────────

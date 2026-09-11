@@ -77,6 +77,11 @@ async function waitForShell(page: Page) {
   await expect(page.getByRole("navigation").first()).toBeVisible({ timeout: SETTLE_TIMEOUT });
 }
 
+/** 반응형 변형의 숨김 가격을 피하고 실제 표시 중인 가격을 기준으로 정착을 판정한다. */
+function visiblePrice(page: Page, price: string) {
+  return page.getByText(price, { exact: true }).filter({ visible: true }).first();
+}
+
 // ── 공통 설정 ─────────────────────────────────────────────────────────────────
 // ChannelTalk 스크립트 차단은 tests/helpers/fixtures.ts의 공통 page 픽스처가 처리한다.
 
@@ -208,7 +213,7 @@ test.describe("구독 플랜 (/subscribe)", () => {
   test("06 - 정상 상태 (베이스라인)", async ({ page }) => {
     await loginAndGoTo(page, "/subscribe");
     // 플랜 요금이 보이면 플랜 목록 SSR 렌더가 끝난 것
-    await expect(page.getByText("39,000원").first()).toBeVisible({ timeout: SETTLE_TIMEOUT });
+    await expect(visiblePrice(page, "39,000원")).toBeVisible({ timeout: SETTLE_TIMEOUT });
 
     await prepareForSnapshot(page);
     await expect(page).toHaveScreenshot("subscribe-06-baseline.png", SNAPSHOT_OPTS);
@@ -216,7 +221,7 @@ test.describe("구독 플랜 (/subscribe)", () => {
 
   test("07 - 플랜 API 실패 → 빈 플랜 레이아웃 (catch 흡수, error.tsx 아님)", async ({ page }) => {
     await loginAndGoTo(page, "/subscribe");
-    await expect(page.getByText("39,000원").first()).toBeVisible({ timeout: SETTLE_TIMEOUT });
+    await expect(visiblePrice(page, "39,000원")).toBeVisible({ timeout: SETTLE_TIMEOUT });
 
     // fetchSubscriptionPlans 는 .catch(() => ({ plans: [] })) 로 모든 에러를 흡수한다.
     // 따라서 500 주입 시에도 error.tsx 가 아니라 '플랜 없는' 정상 레이아웃이 렌더된다.

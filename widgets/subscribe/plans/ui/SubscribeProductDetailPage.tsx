@@ -221,7 +221,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <p className="mt-2 text-[13px] font-normal leading-[140%] text-[var(--color-text-secondary)]">
                   월~목 배송
                   <br />
-                  오전 10시 이전 주문시 당일 배송
+                  오전 10시 이전 주문 시 당일 발송
                 </p>
               </div>
             </div>
@@ -434,7 +434,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                     <div className="justify-self-start max-w-[240px] text-left">
                       <p className="text-body-13-m leading-[140%] text-[var(--color-text)]">우체국택배</p>
                       <p className="text-body-13-r leading-[140%] text-[var(--color-text-secondary)] mt-2">
-                        월~목 배송 / 오전 10시 이전 주문시 당일 배송
+                        월~목 배송 / 오전 10시 이전 주문 시 당일 발송
                       </p>
                     </div>
                   </div>

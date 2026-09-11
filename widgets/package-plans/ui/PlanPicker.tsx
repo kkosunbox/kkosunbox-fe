@@ -79,6 +79,10 @@ export function PlanExplainVisual({
           className="object-cover"
           sizes={sizes}
           priority={priority}
+          // Next 16에서 priority는 loading="lazy"만 걷어낼 뿐 fetchpriority="high"를
+          // 자동으로 붙이지 않는다(get-img-props.js 확인, 2026-09-11). LCP 이미지엔
+          // 명시적으로 같이 줘야 한다.
+          fetchPriority={priority ? "high" : undefined}
         />
       </div>
 
@@ -377,6 +381,7 @@ export default function PlanPicker({
                           className="object-cover"
                           sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
                           priority={tier === defaultTier}
+                          fetchPriority={tier === defaultTier ? "high" : undefined}
                           style={crossfadeStyle(displayTier === tier)}
                         />
                       );

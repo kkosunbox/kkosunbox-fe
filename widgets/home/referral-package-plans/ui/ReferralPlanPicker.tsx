@@ -257,6 +257,9 @@ export default function ReferralPlanPicker({
                         className="object-cover transition-opacity duration-500"
                         sizes={`${MEDIA_MAX_MD_SIZES} 100vw, 600px`}
                         priority
+                        // widgets/package-plans/ui/PlanPicker.tsx와 동일한 이유(Next 16에서
+                        // priority만으론 fetchpriority="high"가 자동으로 붙지 않음, 2026-09-11 확인)
+                        fetchPriority="high"
                       />
                     ) : null}
                     {activeIsCurrentPlan ? (

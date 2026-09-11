@@ -97,7 +97,12 @@ async function waitForStableRender(page: Page) {
   await page.waitForTimeout(1_000);
 }
 
-const AUTH_ROUTES: Array<{ name: string; path: string; maxDiffPixelRatio?: number }> = [
+const AUTH_ROUTES: Array<{
+  name: string;
+  path: string;
+  maxDiffPixelRatio?: number;
+  fullPage?: boolean;
+}> = [
   // subscribe/detail: tablet-1199에서만 상세 이미지 블록이 실행마다 다르게 렌더됨
   // (diff ~25%, 두 상태 사이를 오가는 패턴 — 점진적 정착이 아니라 분기 자체가 다름).
   // 원인 미확인(플랜/티어 선택이 비동기로 한 번 더 바뀌는 레이스일 가능성). 소폭
@@ -105,26 +110,23 @@ const AUTH_ROUTES: Array<{ name: string; path: string; maxDiffPixelRatio?: numbe
   // 이 라우트가 실제 회귀 게이트로 쓰일 땐 별도로 원인 조사 필요.
   { name: "subscribe-detail", path: "/subscribe/detail?planId=1", maxDiffPixelRatio: 0.005 },
   { name: "checklist", path: "/checklist" },
-  // ⚠️ checklist-result: 스탠다드 패키지 대표 이미지가 fullPage 캡처에서 안 그려지는 문제가 남아 있다.
+  // ⚠️ checklist-result: 스탠다드 패키지 대표 이미지가 fullPage 캡처(captureBeyondViewport)에서만
+  // 안 그려지는 문제가 있다(2026-09-10 조사).
   //
-  // 2026-09-10 조사(이전 주석의 "sizes 응답 지연" 추정은 틀림):
   //  - 캡처 직전 DOM은 항상 정상이다(complete=true, naturalWidth>0, opacity 1, filter blur(0px)).
-  //    로딩 문제가 아니라 fullPage(captureBeyondViewport) 래스터 단계의 문제다.
-  //  - 뷰포트 캡처(fullPage 아님)로는 항상 선명하게 찍힌다.
-  //  - tablet-768: 13회 연속 완전히 동일한 백지(결정적). 이 폭에선 한 번도 그려진 적이 없다.
-  //  - tablet-1024·1199: 백지 / 흐릿함(크로스페이드 과도기) / 선명함을 오간다(비결정적).
+  //    로딩 문제가 아니라 fullPage 래스터 단계의 문제다. 원인은 미규명.
+  //  - 뷰포트 캡처(fullPage: false)로는 항상 선명하게 찍힌다.
+  //  - tablet-768은 fullPage로 13회 연속 완전히 동일한 백지(결정적으로 틀림).
+  //    tablet-1024·1199는 fullPage로 백지/흐릿함/선명함을 비결정적으로 오갔다.
   //
-  // baseline 상태(2026-09-10 갱신):
-  //  - 1024·1199 = 선명한 정착 화면으로 교체함. 반복 캡처해서 선명한 것만 채택했다.
-  //    캡처가 비결정적이므로 이 둘은 백지가 찍히는 실행에서 실패한다. 그 실패는
-  //    "이번 캡처가 안 그려졌다"는 정직한 신호이지 UI 회귀가 아니다.
-  //  - 768 = 백지 그대로. 13회 시도 내내 선명한 캡처를 못 얻어 교체하지 못했다.
-  //    틀린 baseline을 다른 틀린 baseline으로 바꾸지 않기 위해 원본을 유지한다.
+  // 기각된 가설(재시도 금지, 효과 없었음): 캡처 직전 강제 리페인트(body transform 토글),
+  // 버려지는 뷰포트 예열 캡처, PlanPicker crossfadeStyle의 no-op `blur(0px)` 제거.
+  // 상세 기록: `.claude/contexts/e2e-review-2026-09-10.md`.
   //
-  // 시도했다가 효과 없어 되돌린 것: 캡처 직전 강제 리페인트(body transform 토글),
-  // 버려지는 뷰포트 예열 캡처, PlanPicker crossfadeStyle의 no-op `blur(0px)` 제거
-  // (합성 레이어 가설 — 제거해도 이미지는 여전히 백지, 하단 그라디언트 렌더만 미세하게 달라짐).
-  { name: "checklist-result", path: "/checklist/result" },
+  // 2026-09-11: 이 라우트만 뷰포트 캡처(fullPage: false)로 전환해 상시 실패를 해소했다.
+  // 트레이드오프: 접힌 화면 아래 영역은 이 테스트가 커버하지 않는다(의도적으로 수용).
+  // captureBeyondViewport 자체의 래스터 버그 원인 규명은 여전히 별도 과제로 남아 있다.
+  { name: "checklist-result", path: "/checklist/result", fullPage: false },
   { name: "inquiry", path: "/inquiry" },
   { name: "support-history", path: "/support/history" },
   { name: "address", path: "/address" },
@@ -149,7 +151,7 @@ test.describe("태블릿 시각회귀 baseline — 로그인 경로 (정상 계�
       await waitForStableRender(page);
 
       await expect(page).toHaveScreenshot(`${route.name}.png`, {
-        fullPage: true,
+        fullPage: route.fullPage ?? true,
         animations: "disabled",
         maxDiffPixelRatio: route.maxDiffPixelRatio ?? 0,
         timeout: 20_000,

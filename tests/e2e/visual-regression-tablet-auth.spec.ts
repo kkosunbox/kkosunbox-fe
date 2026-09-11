@@ -10,9 +10,64 @@ import { loginByTokens, TEST_TOKENS } from "../helpers/auth";
  * 3개 프로젝트(tablet-768/1024/1199, playwright.config.ts)로 각각 실행된다.
  */
 
+/**
+ * 인증 경로도 `/checklist`처럼 홈으로 리다이렉트되는 화면을 캡처할 수 있다.
+ * CSS 애니메이션 비활성화만으로는 HTML5 video의 프레임 진행을 멈출 수 없으므로,
+ * 공개 경로 시각회귀 테스트와 동일하게 poster만 남긴다.
+ */
+async function freezeVideos(page: Page) {
+  await page.evaluate(() => {
+    document.querySelectorAll("video").forEach((video) => {
+      video.pause();
+      video.style.display = "none";
+    });
+  });
+}
+
+/**
+ * next/image 기본값(loading="lazy")인 이미지는 fullPage 캡처(captureBeyondViewport)로는
+ * 뷰포트에 "가까워지지" 않아 로드가 시작되지 않는다. 아래 사전 스크롤로 일부만 트리거되면
+ * 실행마다 로드된 이미지 집합이 달라져 같은 화면이 두 상태를 오갔다(subscribe/detail 상세
+ * 이미지: 1024·1199에서 전부 빈 흰색 ↔ 전부 렌더, 2026-09-10 픽셀 대조로 확인).
+ * 캡처 전에 전부 eager로 바꿔 로드를 강제하고 load/error 완료까지 기다린다 — 시간이 아니라
+ * 이벤트를 기다리므로 타이밍이 개입하지 않는다.
+ *
+ * src가 아직 없는 <img>는 기다리지 않는다. load/error가 영영 오지 않아 그대로 멈춰버리기
+ * 때문이다(2026-08-24에 waitForFunction 방식이 이 이유로 되돌려졌다 — 아래 주석 참고).
+ *
+ * ⚠️ 반드시 비동기 카드(animate-pulse 스켈레톤)가 사라진 뒤에 호출해야 한다. 스켈레톤이
+ * 남아 있는 동안엔 상품 이미지가 아직 DOM에 없어서 이 함수가 그냥 지나치고, 캡처 중에
+ * 뒤늦게 마운트돼 빈 화면으로 찍힌다(checklist-result tablet-1024, 2026-09-10 실측).
+ */
+async function loadLazyImages(page: Page) {
+  await page.evaluate(async () => {
+    // 이미 그려진 이미지는 절대 건드리지 않는다. loading 속성을 바꾸면 HTML 규격상
+    // "update the image data"가 다시 돌아 현재 요청이 버려지고, 멀쩡하던 그림이 잠시
+    // 사라졌다가 다시 로드된다. 그 공백에 캡처가 들어가면 통째로 백지로 찍힌다
+    // (checklist-result tablet-1024가 이 경로로 흰 화면이 됐다, 2026-09-10 실측).
+    const pending = Array.from(document.images).filter(
+      (img) => img.loading === "lazy" && !img.complete,
+    );
+    for (const img of pending) img.loading = "eager";
+    await Promise.all(
+      pending.map((img) => {
+        // src가 아직 없는 <img>는 load/error가 영영 오지 않으므로 기다리지 않는다.
+        if (!img.getAttribute("src") && !img.getAttribute("srcset")) return Promise.resolve();
+        return new Promise<void>((resolve) => {
+          img.addEventListener("load", () => resolve(), { once: true });
+          img.addEventListener("error", () => resolve(), { once: true });
+        });
+      }),
+    );
+  });
+  // eager 전환으로 새로 시작된 요청(next/image 최적화 응답 포함)까지 끝났는지 확인한다.
+  await page.waitForLoadState("networkidle");
+}
+
 async function waitForStableRender(page: Page) {
   await page.waitForLoadState("networkidle");
   await page.evaluate(() => document.fonts.ready);
+  await freezeVideos(page);
   // fullPage 스크린샷이 스크롤을 유발하며 lazy 이미지를 그 시점에 로드시켜
   // 캡처 중간에 레이아웃이 바뀌는 걸 방지 — 미리 끝까지 스크롤해 로드를 끝내둔다.
   // (subscribe/detail 등 상세 이미지가 많은 페이지에서 확인된 케이스, 관련: .claude/contexts/visual-regression-testing.md)
@@ -32,6 +87,8 @@ async function waitForStableRender(page: Page) {
   // 스켈레톤을 렌더하는데, networkidle만으론 이 전환을 못 잡아 스켈레톤 상태 그대로
   // 캡처되는 레이스가 있었다. 스켈레톤이 사라질 때까지 명시적으로 기다린다.
   await page.waitForSelector(".animate-pulse", { state: "detached", timeout: 5_000 });
+  // 스켈레톤이 걷힌 뒤에야 상품 카드 이미지가 DOM에 들어오므로, lazy 로드 강제는 여기서 한다.
+  await loadLazyImages(page);
   // next/image 최적화 응답·페이드인 등 networkidle만으론 못 잡는 마지막 정착 시간을
   // 짧은 버퍼로 흡수한다. (img.complete 이벤트 기반 대기는 일부 페이지에서 영원히
   // resolve 안 되는 <img>가 있어 걸어뒀다가 제거함 — 대신 이 버퍼로 대체.
@@ -48,12 +105,25 @@ const AUTH_ROUTES: Array<{ name: string; path: string; maxDiffPixelRatio?: numbe
   // 이 라우트가 실제 회귀 게이트로 쓰일 땐 별도로 원인 조사 필요.
   { name: "subscribe-detail", path: "/subscribe/detail?planId=1", maxDiffPixelRatio: 0.005 },
   { name: "checklist", path: "/checklist" },
-  // checklist-result: tablet-768에서만 재현. 스탠다드 패키지 explain 이미지가
-  // 캡처 시점에 빈 화면으로 찍힘(diff ~14%, 재실행해도 동일 픽셀 수로 재현).
-  // next/image가 768px 전용 sizes 응답을 다른 폭보다 늦게 내려주는 것으로
-  // 추정되나 확정은 아님. waitForFunction(img.complete)으로 명시 대기를 시도했다가
-  // 자체 timeout(5s)을 못 지키고 테스트 전체를 먹통으로 만들어(위 waitForStableRender
-  // 주석 참고) 되돌림 — 원인 조사는 실제 브라우저에서 별도로 필요.
+  // ⚠️ checklist-result: 스탠다드 패키지 대표 이미지가 fullPage 캡처에서 안 그려지는 문제가 남아 있다.
+  //
+  // 2026-09-10 조사(이전 주석의 "sizes 응답 지연" 추정은 틀림):
+  //  - 캡처 직전 DOM은 항상 정상이다(complete=true, naturalWidth>0, opacity 1, filter blur(0px)).
+  //    로딩 문제가 아니라 fullPage(captureBeyondViewport) 래스터 단계의 문제다.
+  //  - 뷰포트 캡처(fullPage 아님)로는 항상 선명하게 찍힌다.
+  //  - tablet-768: 13회 연속 완전히 동일한 백지(결정적). 이 폭에선 한 번도 그려진 적이 없다.
+  //  - tablet-1024·1199: 백지 / 흐릿함(크로스페이드 과도기) / 선명함을 오간다(비결정적).
+  //
+  // baseline 상태(2026-09-10 갱신):
+  //  - 1024·1199 = 선명한 정착 화면으로 교체함. 반복 캡처해서 선명한 것만 채택했다.
+  //    캡처가 비결정적이므로 이 둘은 백지가 찍히는 실행에서 실패한다. 그 실패는
+  //    "이번 캡처가 안 그려졌다"는 정직한 신호이지 UI 회귀가 아니다.
+  //  - 768 = 백지 그대로. 13회 시도 내내 선명한 캡처를 못 얻어 교체하지 못했다.
+  //    틀린 baseline을 다른 틀린 baseline으로 바꾸지 않기 위해 원본을 유지한다.
+  //
+  // 시도했다가 효과 없어 되돌린 것: 캡처 직전 강제 리페인트(body transform 토글),
+  // 버려지는 뷰포트 예열 캡처, PlanPicker crossfadeStyle의 no-op `blur(0px)` 제거
+  // (합성 레이어 가설 — 제거해도 이미지는 여전히 백지, 하단 그라디언트 렌더만 미세하게 달라짐).
   { name: "checklist-result", path: "/checklist/result" },
   { name: "inquiry", path: "/inquiry" },
   { name: "support-history", path: "/support/history" },

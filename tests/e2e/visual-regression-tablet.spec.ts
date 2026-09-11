@@ -29,10 +29,43 @@ async function freezeVideos(page: Page) {
   });
 }
 
+/**
+ * next/image 기본값(loading="lazy")인 이미지는 fullPage 캡처(captureBeyondViewport)로는
+ * 뷰포트에 "가까워지지" 않아 로드가 시작되지 않고, 캡처 도중 뒤늦게 도착하면 연속
+ * 스크린샷 두 장이 서로 달라 "two consecutive stable screenshots" 실패가 난다
+ * (home 갤러리 y≈2540, about 갤러리 y≈3315 구간에서 2026-09-10 실측). 캡처 전에 전부
+ * eager로 바꿔 로드를 강제하고 load/error 완료까지 기다린다 — 시간이 아니라 이벤트를
+ * 기다리므로 타이밍이 개입하지 않는다.
+ */
+async function loadLazyImages(page: Page) {
+  await page.evaluate(async () => {
+    // 이미 그려진 이미지는 절대 건드리지 않는다. loading 속성을 바꾸면 HTML 규격상
+    // "update the image data"가 다시 돌아 현재 요청이 버려지고, 멀쩡하던 그림이 잠시
+    // 사라졌다가 다시 로드된다. 그 공백에 캡처가 들어가면 통째로 백지로 찍힌다.
+    const pending = Array.from(document.images).filter(
+      (img) => img.loading === "lazy" && !img.complete,
+    );
+    for (const img of pending) img.loading = "eager";
+    await Promise.all(
+      pending.map((img) => {
+        // src가 아직 없는 <img>는 load/error가 영영 오지 않으므로 기다리지 않는다.
+        if (!img.getAttribute("src") && !img.getAttribute("srcset")) return Promise.resolve();
+        return new Promise<void>((resolve) => {
+          img.addEventListener("load", () => resolve(), { once: true });
+          img.addEventListener("error", () => resolve(), { once: true });
+        });
+      }),
+    );
+  });
+  // eager 전환으로 새로 시작된 요청(next/image 최적화 응답 포함)까지 끝났는지 확인한다.
+  await page.waitForLoadState("networkidle");
+}
+
 async function waitForStableRender(page: Page) {
   await page.waitForLoadState("networkidle");
   await page.evaluate(() => document.fonts.ready);
   await freezeVideos(page);
+  await loadLazyImages(page);
 }
 
 const PUBLIC_ROUTES: Array<{ name: string; path: string }> = [

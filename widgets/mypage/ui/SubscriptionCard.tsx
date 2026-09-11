@@ -387,11 +387,13 @@ function SlidePanel({
       </div>
 
       {/* 구독관리 / 구매관리 */}
+      {/* 텍스트만으로는 45×18px로 터치 영역 기준(24×24px) 미달(Lighthouse target-size,
+          2026-09-11 실측). 시각적 크기는 그대로 두고 before 의사요소로 히트 영역만 확장한다. */}
       <Link
         href={view.manageHref}
         prefetch={false}
         tabIndex={hidden ? -1 : undefined}
-        className="absolute right-6 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-white underline transition-opacity hover:opacity-80"
+        className="absolute right-6 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-white underline transition-opacity hover:opacity-80 before:absolute before:-inset-x-1 before:-inset-y-1.5 before:content-['']"
       >
         {view.manageLabel}
       </Link>
@@ -492,8 +494,11 @@ export function SubscriptionCard({
     const detailHref = subscription
       ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
       : purchaseHref;
+    // 화면에 보이는 타이틀 텍스트("{플랜명} 구독중")가 aria-label에 그대로 포함돼야 한다
+    // (Lighthouse label-content-name-mismatch, 2026-09-11 실측). "구독 상세 보기"만
+    // 붙이면 "구독중"이라는 문구 자체가 aria-label에 없어 실패했다.
     const detailAriaLabel = isSubscriptionSlide
-      ? `${subscription!.plan.name}${subscription!.isPaused ? " 쉬는 중" : ""} 구독 상세 보기`
+      ? `${subscription!.plan.name} 구독중${subscription!.isPaused ? " (쉬는 중)" : ""}, 상세 보기`
       : `${group!.productName} 구매 내역 보기`;
     const manageHref = isSubscriptionSlide ? "/mypage/subscription" : purchaseHref;
     const manageLabel = isSubscriptionSlide ? "구독관리" : "구매관리";

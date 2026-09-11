@@ -636,14 +636,20 @@ export async function startMockApiServer(port: number): Promise<() => Promise<vo
     }
 
     // GET /v1/subscriptions/plans — subscribe 페이지 플랜 목록
-    // 인증된 토큰(일반·NO_PROFILE·BILLING 모두)이면 동일한 플랜 목록 반환,
+    // 인증된 토큰(일반·NO_PROFILE·BILLING·인플루언서 모두)이면 동일한 플랜 목록 반환,
     // 그 외에는 401 → fetchSubscriptionPlans의 .catch()가 빈 배열로 폴백
+    //
+    // 인플루언서 토큰을 빠뜨리면 안 되는 이유: 홈 PackagePlansSection이 클라이언트에서
+    // 이 엔드포인트를 호출하는데, 401 UNAUTHORIZED는 apiClient가 "세션 만료"로 해석해
+    // 강제 로그아웃(쿠키 삭제 → /login)을 일으킨다. 인플루언서로 로그인한 직후 홈에서
+    // 세션이 사라져 /mypage/point 테스트가 진행 중 로그인 페이지로 튕겼다(2026-09-10 trace로 확인).
     if (method === "GET" && url.startsWith("/v1/subscriptions/plans")) {
       const auth = req.headers.authorization ?? "";
       if (
         auth === `Bearer ${MOCK_ACCESS_TOKEN}` ||
         auth === `Bearer ${MOCK_NO_PROFILE_ACCESS_TOKEN}` ||
-        auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}`
+        auth === `Bearer ${MOCK_BILLING_ACCESS_TOKEN}` ||
+        auth === `Bearer ${MOCK_INFLUENCER_ACCESS_TOKEN}`
       ) {
         // referralCode가 유효하면 초대 할인 3종을 채운다 — 무효·부재면 null(에러 아님).
         // 실서버와 동일하게 **할인액을 100원 단위로 내림**한다. 이 내림을 빼면

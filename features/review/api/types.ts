@@ -1,8 +1,19 @@
 export type ReviewSortOrder = "LATEST" | "RATING_ASC" | "RATING_DESC";
 
+export interface ReviewPlan {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  monthlyPrice: number;
+  originalPrice: number | null;
+  discountRate: number | null;
+}
+
 export interface ReviewResponse {
   id: number;
   planId: number;
+  plan: ReviewPlan;
   rating: number;
   content: string;
   createdAt: string;

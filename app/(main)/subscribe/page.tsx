@@ -6,7 +6,7 @@ import { SubscribePlansSection } from "@/widgets/subscribe/plans";
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL, PRODUCT_SHIPPING_DETAILS_JSONLD, PRODUCT_RETURN_POLICY_JSONLD } from "@/shared/lib/seo";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { TIER_BOX_IMAGES, tierFromSubscriptionPlan } from "@/entities/package";
+import { PACKAGES, TIER_BOX_IMAGES, tierFromSubscriptionPlan } from "@/entities/package";
 
 const description = "베이직부터 프리미엄까지, 우리 강아지에게 맞는 구독 플랜을 선택하세요. 매달 신선한 수제간식이 배송됩니다.";
 const subscribeTitle = "구독몰 | 강아지 수제간식 구독 플랜 - 꼬순박스";
@@ -74,17 +74,25 @@ function buildSubscriptionJsonLd(plans: SubscriptionPlanDto[]) {
   };
 }
 
-export default async function SubscribePage() {
+export default async function SubscribePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tier?: string }>;
+}) {
   const token = await getServerToken();
   // 초대 맥락이 있으면 코드를 함께 넘겨 서버가 채운 할인가를 그대로 표시한다.
   const { refCode } = await resolveReferralContext();
   const plans = await fetchSubscriptionPlans(token, undefined, refCode ?? undefined);
 
+  // 띠배너 등 특정 진입 경로에서만 초기 선택 티어를 지정 — 일반 진입 시에는 PlanPicker 기본값을 따른다.
+  const { tier } = await searchParams;
+  const initialSelectedTier = PACKAGES.find((item) => item.tier === tier)?.tier ?? null;
+
   return (
     <>
       <h1 className="sr-only">강아지 수제간식 정기구독 플랜</h1>
       <JsonLd data={buildSubscriptionJsonLd(plans)} />
-      <SubscribePlansSection plans={plans} />
+      <SubscribePlansSection plans={plans} initialSelectedTier={initialSelectedTier} />
     </>
   );
 }

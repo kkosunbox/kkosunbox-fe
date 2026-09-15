@@ -228,9 +228,11 @@ function MobileReviewList({
                     <Stars rating={review.rating} size={24} />
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
-                    <span className="font-semibold text-[var(--color-text)]">
-                      {review.snapshotPetName ?? ""}
-                    </span>
+                    {review.snapshotPetName?.trim() && (
+                      <span className="font-semibold text-[var(--color-text)]">
+                        {review.snapshotPetName.trim()}
+                      </span>
+                    )}
                     {review.snapshotUserEmail && (
                       <span className="font-medium text-[var(--color-text-secondary)]">
                         {maskEmail(review.snapshotUserEmail)}
@@ -436,9 +438,11 @@ function DesktopReviewList({
                     <Stars rating={review.rating} size={24} />
                   </div>
                   <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
-                    <span className="font-bold text-[var(--color-text)]">
-                      {review.snapshotPetName ?? ""}
-                    </span>
+                    {review.snapshotPetName?.trim() && (
+                      <span className="font-bold text-[var(--color-text)]">
+                        {review.snapshotPetName.trim()}
+                      </span>
+                    )}
                     {review.snapshotUserEmail && (
                       <span className="font-medium text-[var(--color-text-secondary)]">
                         {maskEmail(review.snapshotUserEmail)}

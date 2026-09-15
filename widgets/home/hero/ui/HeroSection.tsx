@@ -27,8 +27,20 @@ export default function HeroSection() {
   const snapLockedRef = useRef(false);
   const touchStartYRef = useRef<number | null>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [posterLoaded, setPosterLoaded] = useState(false);
+  const posterRef = useRef<HTMLImageElement>(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const currentVideo = HOME_HERO_VIDEOS[currentVideoIndex];
+
+  // 포스터는 SSR로 이미 마크업에 있어 하이드레이션 전에 브라우저가 로드를 끝낼 수 있다.
+  // 그 경우 onLoad는 React가 리스너를 붙이기 전에 이미 발생해 유실된다 — 마운트 시점에
+  // img.complete로 그 상태를 한 번 더 확인해야 video가 영원히 안 뜨는 걸 막는다.
+  useEffect(() => {
+    if (posterRef.current?.complete) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 하이드레이션 이전에 이미 끝난 로드를 마운트 시점에 한 번만 확인
+      setPosterLoaded(true);
+    }
+  }, []);
 
   const snapToContent = useCallback(() => {
     if (snapLockedRef.current) return;
@@ -122,31 +134,39 @@ export default function HeroSection() {
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- generated first-frame poster */}
       <img
+        ref={posterRef}
         src={HOME_HERO_POSTER_SRC}
         alt="간식을 기다리는 강아지들"
         className="absolute inset-0 h-full w-full object-cover object-center"
         fetchPriority="high"
+        onLoad={() => setPosterLoaded(true)}
       />
 
-      <video
-        key={currentVideo.src}
-        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        poster={HOME_HERO_POSTER_SRC}
-        aria-hidden="true"
-        onCanPlay={() => setVideoReady(true)}
-        onError={() => setVideoReady(false)}
-        onEnded={() => {
-          setVideoReady(false);
-          setCurrentVideoIndex((index) => (index + 1) % HOME_HERO_VIDEOS.length);
-        }}
-      >
-        <source src={currentVideo.src} type={currentVideo.type} />
-      </video>
+      {/* 영상(5MB)은 포스터가 그려지기 전까지 대역폭을 선점해 LCP를 늦춘다(2026-09-11
+          Lighthouse 실측). preload="metadata"는 autoPlay가 무력화하므로, video 엘리먼트
+          자체를 포스터 로드 완료 후에만 마운트해 리소스 선택 알고리즘이 그 시점에야
+          돌게 한다 — <source>만 나중에 끼워 넣으면 브라우저가 다시 스캔하지 않는다. */}
+      {posterLoaded && (
+        <video
+          key={currentVideo.src}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster={HOME_HERO_POSTER_SRC}
+          aria-hidden="true"
+          onCanPlay={() => setVideoReady(true)}
+          onError={() => setVideoReady(false)}
+          onEnded={() => {
+            setVideoReady(false);
+            setCurrentVideoIndex((index) => (index + 1) % HOME_HERO_VIDEOS.length);
+          }}
+        >
+          <source src={currentVideo.src} type={currentVideo.type} />
+        </video>
+      )}
 
       <div
         className="absolute inset-0"

@@ -51,6 +51,9 @@ export default async function OrderPage({
   if (!plan) {
     redirect("/subscribe");
   }
+  if (plan.isSalesPaused) {
+    redirect(`/subscribe/detail?planId=${plan.id}`);
+  }
 
   return (
     <OrderSection

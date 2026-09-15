@@ -9,6 +9,8 @@ export interface ProductDto {
   imageUrl?: string | null;
   /** 연관 구독 플랜 ID (리뷰 공유용) */
   relatedPlanId?: number | null;
+  /** true면 판매 일시중지 상태로 신규 주문을 받을 수 없음 */
+  isSalesPaused?: boolean;
 }
 
 // ── ProductOrder ──────────────────────────────────────────────────

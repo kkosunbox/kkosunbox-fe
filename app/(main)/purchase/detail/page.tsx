@@ -59,6 +59,7 @@ export default async function PurchaseDetailPage({
       pkg={pkg}
       purchaseProduct={effectivePurchaseProduct}
       relatedPlanId={product?.relatedPlanId ?? null}
+      isSalesPaused={product?.isSalesPaused ?? true}
     />
   );
 }

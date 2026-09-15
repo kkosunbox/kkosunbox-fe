@@ -99,7 +99,7 @@ export default function OrderCompleteSection({
         </div>
 
         {/* 주문상품 정보 · 결제정보 */}
-        <div className="mt-6 flex flex-col overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] md:flex-row">
+        <div className="mt-6 flex flex-col overflow-hidden rounded-[20px] border border-[var(--color-text-muted)] md:flex-row">
           {/* 주문상품 정보 */}
           <div className="flex-1 p-6 md:px-9 md:py-6">
             <h2 className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text-emphasis)]">주문상품 정보</h2>

@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import type { ReviewSortOrder } from "@/features/review/api";
+import { packageThemeForPlan } from "@/entities/package";
 import { FallbackAvatar } from "@/shared/ui";
 import Stars from "./Stars";
 import ReviewContent from "./ReviewContent";
@@ -32,7 +33,9 @@ const SORT_OPTIONS = [
 
 interface ProductReviewListProps {
   variant: "mobile" | "desktop";
-  selectedTheme: { tierLabel: string; colorVar: string };
+  planFilters?: Array<{ id: number; name: string; sortOrder: number }>;
+  selectedPlanId: number | null;
+  onChangePlan: (planId: number | null) => void;
   reviews: UseProductReviewsReturn["reviews"];
   loading: boolean;
   reviewImages: string[];
@@ -42,6 +45,56 @@ interface ProductReviewListProps {
   onChangeSort: (value: ReviewSortOrder) => void;
   onChangePage: (page: number) => void;
   onOpenLightbox: (urls: string[], index: number) => void;
+}
+
+function ReviewPlanBadge({ plan }: { plan: { id: number; name: string } }) {
+  const theme = packageThemeForPlan({ ...plan, sortOrder: 0 });
+  return (
+    <span
+      className="inline-flex h-5 shrink-0 items-center rounded-full px-3 text-[12px] font-semibold leading-[14px] text-white"
+      style={{ background: theme.colorVar }}
+    >
+      {theme.tierLabel}
+    </span>
+  );
+}
+
+function PlanFilters({
+  plans,
+  selectedPlanId,
+  onChangePlan,
+}: {
+  plans: NonNullable<ProductReviewListProps["planFilters"]>;
+  selectedPlanId: number | null;
+  onChangePlan: (planId: number | null) => void;
+}) {
+  const options = [
+    { id: null, label: "전체" },
+    ...plans.map((plan) => ({ id: plan.id, label: packageThemeForPlan(plan).tierLabel })),
+  ];
+
+  return (
+    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="리뷰 플랜 필터">
+      {options.map((option) => {
+        const active = selectedPlanId === option.id;
+        return (
+          <button
+            key={option.id ?? "all"}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onChangePlan(option.id)}
+            className={
+              active
+                ? "flex h-[34px] items-center rounded-full bg-black px-5 text-[14px] font-bold leading-[17px] text-white"
+                : "flex h-[34px] items-center rounded-full border border-[var(--color-border)] px-5 text-[14px] font-semibold leading-[17px] text-[var(--color-text)]"
+            }
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function ProductReviewList(props: ProductReviewListProps) {
@@ -58,6 +111,9 @@ function MobileReviewList({
   onChangeSort,
   onChangePage,
   onOpenLightbox,
+  planFilters,
+  selectedPlanId,
+  onChangePlan,
 }: ProductReviewListProps) {
   return (
     <div className="px-6 pt-6 pb-10">
@@ -131,6 +187,16 @@ function MobileReviewList({
         </div>
       )}
 
+      {planFilters && planFilters.length > 0 && (
+        <div className="mb-6 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <PlanFilters
+            plans={planFilters}
+            selectedPlanId={selectedPlanId}
+            onChangePlan={onChangePlan}
+          />
+        </div>
+      )}
+
       {loading && reviews.length === 0 ? (
         <p className="py-10 text-center text-[14px] text-[var(--color-text-secondary)]">
           리뷰를 불러오는 중...
@@ -157,9 +223,13 @@ function MobileReviewList({
                   />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <ReviewPlanBadge plan={review.plan} />
+                    <Stars rating={review.rating} size={24} />
+                  </div>
                   <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
                     <span className="font-semibold text-[var(--color-text)]">
-                      {review.snapshotPetName ?? "익명"}
+                      {review.snapshotPetName ?? ""}
                     </span>
                     {review.snapshotUserEmail && (
                       <span className="font-medium text-[var(--color-text-secondary)]">
@@ -170,7 +240,6 @@ function MobileReviewList({
                       {formatReviewDate(review.createdAt)}
                     </span>
                   </div>
-                  <Stars rating={review.rating} size={24} />
                   <ReviewContent content={review.content} className="mt-[3px]" />
                 </div>
               </div>
@@ -249,6 +318,9 @@ function DesktopReviewList({
   onChangeSort,
   onChangePage,
   onOpenLightbox,
+  planFilters,
+  selectedPlanId,
+  onChangePlan,
 }: ProductReviewListProps) {
   return (
     <div className="pt-10 pb-20 md:px-6 lg:px-0">
@@ -268,7 +340,7 @@ function DesktopReviewList({
             />
           </svg>
         </button>
-        <div className="flex items-center gap-3 text-[14px] leading-[17px]">
+        <div className="flex items-center gap-3 text-[16px] leading-[22px] tracking-[-0.02em]">
           {SORT_OPTIONS.map((opt, idx) => (
             <Fragment key={opt.value}>
               <button
@@ -322,6 +394,16 @@ function DesktopReviewList({
         </div>
       )}
 
+      {planFilters && planFilters.length > 0 && (
+        <div className="mb-2">
+          <PlanFilters
+            plans={planFilters}
+            selectedPlanId={selectedPlanId}
+            onChangePlan={onChangePlan}
+          />
+        </div>
+      )}
+
       {loading && reviews.length === 0 ? (
         <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
           리뷰를 불러오는 중...
@@ -349,9 +431,13 @@ function DesktopReviewList({
                   />
                 </div>
                 <div className="flex-1">
+                  <div className="mb-[3px] flex flex-wrap items-center gap-2">
+                    <ReviewPlanBadge plan={review.plan} />
+                    <Stars rating={review.rating} size={24} />
+                  </div>
                   <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
                     <span className="font-bold text-[var(--color-text)]">
-                      {review.snapshotPetName ?? "익명"}
+                      {review.snapshotPetName ?? ""}
                     </span>
                     {review.snapshotUserEmail && (
                       <span className="font-medium text-[var(--color-text-secondary)]">
@@ -361,9 +447,6 @@ function DesktopReviewList({
                     <span className="font-medium text-[var(--color-text-secondary)]">
                       {formatReviewDate(review.createdAt)}
                     </span>
-                  </div>
-                  <div className="mb-3">
-                    <Stars rating={review.rating} size={24} />
                   </div>
                   <ReviewContent content={review.content} className="" />
                 </div>

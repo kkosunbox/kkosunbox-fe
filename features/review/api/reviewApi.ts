@@ -10,13 +10,20 @@ import type {
 } from "./types";
 
 export function getReviews(
-  planId: number,
+  planId?: number | null,
   page: number = 1,
   limit: number = 10,
   sortOrder: ReviewSortOrder = "LATEST",
 ) {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    sortOrder,
+  });
+  if (planId != null) params.set("planId", String(planId));
+
   return apiClient.get<PlanReviewsResponse>(
-    `/v1/reviews?planId=${planId}&page=${page}&limit=${limit}&sortOrder=${sortOrder}`,
+    `/v1/reviews?${params.toString()}`,
   );
 }
 

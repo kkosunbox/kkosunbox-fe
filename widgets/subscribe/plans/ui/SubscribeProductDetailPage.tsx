@@ -58,7 +58,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
-  const reviewState = useProductReviews(selectedPlan.id);
+  const reviewState = useProductReviews();
 
   function handleReviewCountClick() {
     setActiveTab("review");
@@ -89,7 +89,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
     setQuantity(1);
-    reviewState.setPage(1);
     router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
   }
 
@@ -292,7 +291,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                           : "text-body-13-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tabLabel(tab, reviewState.total)}
+                      {tabLabel(tab, reviewState.tabTotal)}
                     </button>
                     {idx < TABS.length - 1 && (
                       <span className="mx-1 h-3 w-px bg-[var(--color-text-secondary)]" />
@@ -316,7 +315,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
         {activeTab === "review" && (
           <ProductReviewList
             variant="mobile"
-            selectedTheme={selectedTheme}
+            planFilters={sortedPlans}
+            selectedPlanId={reviewState.selectedPlanId}
+            onChangePlan={reviewState.changePlan}
             reviews={reviewState.reviews}
             loading={reviewState.loading}
             reviewImages={reviewState.reviewImages}
@@ -506,7 +507,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                           : "text-body-16-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tabLabel(tab, reviewState.total)}
+                      {tabLabel(tab, reviewState.tabTotal)}
                     </button>
                     {idx < TABS.length - 1 && (
                       <span className="mx-2 h-3 w-px bg-[var(--color-text-secondary)]" />
@@ -529,7 +530,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           {activeTab === "review" && (
             <ProductReviewList
               variant="desktop"
-              selectedTheme={selectedTheme}
+              planFilters={sortedPlans}
+              selectedPlanId={reviewState.selectedPlanId}
+              onChangePlan={reviewState.changePlan}
               reviews={reviewState.reviews}
               loading={reviewState.loading}
               reviewImages={reviewState.reviewImages}

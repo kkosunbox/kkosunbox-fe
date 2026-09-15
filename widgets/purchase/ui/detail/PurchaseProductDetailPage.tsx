@@ -239,7 +239,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                           : "text-body-13-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tabLabel(tab, reviewState.total)}
+                      {tabLabel(tab, reviewState.tabTotal)}
                     </button>
                     {idx < TABS.length - 1 && <span className="mx-1 h-3 w-px bg-[var(--color-text-secondary)]" />}
                   </Fragment>
@@ -261,7 +261,8 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
         {activeTab === "review" && (
           <ProductReviewList
             variant="mobile"
-            selectedTheme={selectedTheme}
+            selectedPlanId={reviewState.selectedPlanId}
+            onChangePlan={reviewState.changePlan}
             reviews={reviewState.reviews}
             loading={reviewState.loading}
             reviewImages={reviewState.reviewImages}
@@ -418,7 +419,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                           : "text-body-16-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tabLabel(tab, reviewState.total)}
+                      {tabLabel(tab, reviewState.tabTotal)}
                     </button>
                     {idx < TABS.length - 1 && <span className="mx-2 h-3 w-px bg-[var(--color-text-secondary)]" />}
                   </Fragment>
@@ -439,7 +440,8 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
           {activeTab === "review" && (
             <ProductReviewList
               variant="desktop"
-              selectedTheme={selectedTheme}
+              selectedPlanId={reviewState.selectedPlanId}
+              onChangePlan={reviewState.changePlan}
               reviews={reviewState.reviews}
               loading={reviewState.loading}
               reviewImages={reviewState.reviewImages}

@@ -107,7 +107,7 @@ function ProductRow({ product, index }: { product: CartProduct; index: number })
     : product;
 
   return (
-    <article className="flex w-full border-b border-[var(--color-text-muted)] max-md:gap-3 max-md:py-9 md:min-h-[188px] md:items-center md:gap-6 md:px-6">
+    <article className={`flex w-full max-md:gap-3 max-md:py-9 md:min-h-[188px] md:items-center md:gap-6 md:px-6 ${index < PRODUCTS.length - 1 ? "border-b border-[var(--color-text-muted)]" : ""}`}>
       <SelectedCheck />
       <div className="relative shrink-0 overflow-hidden rounded-[14px] max-md:h-[118px] max-md:w-[122px] md:h-[148px] md:w-[160px]">
         <Image
@@ -129,7 +129,7 @@ function ProductRow({ product, index }: { product: CartProduct; index: number })
           />
         )}
       </div>
-      <div className="flex min-w-0 flex-1 max-md:flex-col max-md:gap-3 md:items-center md:justify-between">
+      <div className="flex min-w-0 flex-1 max-md:flex-col max-md:gap-3 md:min-h-[148px] md:items-center md:justify-between">
         <div className="flex min-w-0 flex-col gap-3">
           <span className={`w-fit rounded-full px-3 py-1 text-body-14-sb text-white ${TIER_STYLE[product.tier]} ${index === 1 ? "max-md:bg-[var(--color-accent-orange)]" : ""}`}>
             <span className="max-md:hidden">{TIER_LABEL[product.tier]}</span>
@@ -148,7 +148,7 @@ function ProductRow({ product, index }: { product: CartProduct; index: number })
             <button type="button" aria-label="상품 수량 증가"><QuantityPlusIcon /></button>
           </div>
         </div>
-        <strong className="text-price-20-eb text-[var(--color-text-price)] max-md:hidden">{product.price}</strong>
+        <strong className="text-price-20-eb text-[var(--color-text-price)] max-md:hidden md:self-end md:pb-4">{product.price}</strong>
       </div>
     </article>
   );

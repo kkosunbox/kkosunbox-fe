@@ -13,8 +13,10 @@ import { HeaderBanner } from "./HeaderBanner";
 import { ProfileThumbnail } from "./ProfileThumbnail";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { MobileDrawer } from "./MobileDrawer";
+import { CartLink } from "./CartLink";
 import { LogoWhiteIcon } from "./icons";
 import { isTransparentRoute } from "@/shared/config/headerVariants";
+import { MOCK_CART_COUNT } from "@/shared/config/cartMock";
 import { useHeaderScroll } from "./useHeaderScroll";
 
 export default function Header() {
@@ -103,35 +105,42 @@ export default function Header() {
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               고객센터
             </Link>
-            {isAuthLoading ? (
-              <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
-            ) : isLoggedIn ? (
-              <div ref={profileRef} className="relative">
-                <button
-                  onClick={() => setIsProfileOpen((v) => !v)}
-                  aria-label="프로필 메뉴"
-                  aria-expanded={isProfileOpen}
-                  className="flex items-center justify-center hover:opacity-80 transition-opacity"
-                >
-                  <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
-                </button>
-                {isProfileOpen && (
-                  <ProfileDropdown
-                    hasProfile={hasProfile}
-                    petName={profile?.name ?? null}
-                    email={user?.email ?? null}
-                    profileImageUrl={profileImageUrl}
-                    userId={user?.id ?? null}
-                    isInfluencer={user?.isInfluencer ?? false}
-                    onClose={() => setIsProfileOpen(false)}
-                  />
-                )}
-              </div>
-            ) : (
-              <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
-                로그인
-              </Button>
-            )}
+            {/* 우측 액션 그룹 — 헤더 오른쪽 끝은 로그인/비로그인 동일하게 두고,
+                상태별 너비 차이는 nav 링크와의 간격(46px) 안쪽에서 흡수한다. */}
+            <div className="flex items-center gap-9">
+              {isLoggedIn && !isAuthLoading && (
+                <CartLink count={MOCK_CART_COUNT} isSolid={isSolid} />
+              )}
+              {isAuthLoading ? (
+                <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
+              ) : isLoggedIn ? (
+                <div ref={profileRef} className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen((v) => !v)}
+                    aria-label="프로필 메뉴"
+                    aria-expanded={isProfileOpen}
+                    className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                  >
+                    <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
+                  </button>
+                  {isProfileOpen && (
+                    <ProfileDropdown
+                      hasProfile={hasProfile}
+                      petName={profile?.name ?? null}
+                      email={user?.email ?? null}
+                      profileImageUrl={profileImageUrl}
+                      userId={user?.id ?? null}
+                      isInfluencer={user?.isInfluencer ?? false}
+                      onClose={() => setIsProfileOpen(false)}
+                    />
+                  )}
+                </div>
+              ) : (
+                <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
+                  로그인
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </nav>

@@ -28,6 +28,7 @@ interface Props {
   purchaseProduct: PackagePurchaseProduct;
   /** 리뷰 조회용 — 백엔드 카탈로그 매칭 전이면 null(평점·리뷰 UI 숨김) */
   relatedPlanId: number | null;
+  isSalesPaused: boolean;
 }
 
 type TabKey = "info" | "review" | "delivery" | "support";
@@ -45,7 +46,12 @@ function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
     : tab.label;
 }
 
-export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId }: Props) {
+export default function PurchaseProductDetailPage({
+  pkg,
+  purchaseProduct,
+  relatedPlanId,
+  isSalesPaused,
+}: Props) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
@@ -70,6 +76,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 
   function handleBuy() {
+    if (isSalesPaused) return;
     router.push(`/purchase/order?tier=${pkg.tier}&quantity=${quantity}`);
   }
 
@@ -217,10 +224,11 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
             <button
               type="button"
               onClick={handleBuy}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ background: "var(--color-cta-button)" }}
+              disabled={isSalesPaused}
+              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:hover:opacity-100"
+              style={{ background: isSalesPaused ? "var(--color-ui-disabled)" : "var(--color-cta-button)" }}
             >
-              구매하기
+              {isSalesPaused ? "품절되었습니다" : "구매하기"}
             </button>
           </div>
 
@@ -261,7 +269,8 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
         {activeTab === "review" && (
           <ProductReviewList
             variant="mobile"
-            selectedTheme={selectedTheme}
+            selectedPlanId={reviewState.selectedPlanId}
+            onChangePlan={reviewState.changePlan}
             reviews={reviewState.reviews}
             loading={reviewState.loading}
             reviewImages={reviewState.reviewImages}
@@ -394,10 +403,11 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                 <button
                   type="button"
                   onClick={handleBuy}
-                  className="flex h-[48px] w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 md:mt-8 lg:mt-8"
-                  style={{ background: "var(--color-cta-button)" }}
+                  disabled={isSalesPaused}
+                  className="flex h-[48px] w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:hover:opacity-100 md:mt-8 lg:mt-8"
+                  style={{ background: isSalesPaused ? "var(--color-ui-disabled)" : "var(--color-cta-button)" }}
                 >
-                  구매하기
+                  {isSalesPaused ? "품절되었습니다" : "구매하기"}
                 </button>
               </div>
             </div>
@@ -439,7 +449,8 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
           {activeTab === "review" && (
             <ProductReviewList
               variant="desktop"
-              selectedTheme={selectedTheme}
+              selectedPlanId={reviewState.selectedPlanId}
+              onChangePlan={reviewState.changePlan}
               reviews={reviewState.reviews}
               loading={reviewState.loading}
               reviewImages={reviewState.reviewImages}

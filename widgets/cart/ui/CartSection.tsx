@@ -8,7 +8,6 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import orderAdvertiseBanner from "@/widgets/order/assets/order-advertise-banner.webp";
 
 type CartProduct = {
   tier: PackageTier;
@@ -199,19 +198,15 @@ function DesktopOrderSummary() {
         <strong className="text-price-20-eb-lh24">25,000원</strong>
       </div>
       <button type="button" className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-b text-white">2건 주문하기</button>
-      <div className="relative mt-6 aspect-[300/104] w-full overflow-hidden rounded-[8px] bg-[var(--color-premium-light)] px-5 py-4">
-        <p className="relative z-10 text-caption-12-b text-[var(--color-brown)]">꼬순박스</p>
-        <p className="relative z-10 mt-2 text-body-13-sb leading-5 text-white">
-          모든 강아지는 다르니까,<br />우리 아이만을 위한 꼬순박스
-        </p>
+      <div className="mt-6 overflow-hidden rounded-[8px]">
         <Image
-          src={orderAdvertiseBanner}
-          alt=""
-          width={104}
-          height={104}
+          src="/images/sidebar-banner-001.png"
+          alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
+          width={375}
+          height={126}
           quality={HIGH_IMAGE_QUALITY}
-          className="absolute bottom-[-8px] right-4 h-[104px] w-[104px] object-contain"
-          aria-hidden="true"
+          className="h-auto w-full"
+          sizes="263px"
         />
       </div>
     </aside>

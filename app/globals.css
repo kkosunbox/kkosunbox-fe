@@ -62,6 +62,9 @@
 }
 
 :root {
+  /* 이 사이트는 라이트 테마만 지원한다. 브라우저 기본 UI의 자동 다크화를 방지한다. */
+  color-scheme: only light;
+
   /* Layout heights — 배너/헤더 높이 한 곳에서 관리. 배너 제거 시 --banner-height: 0px 으로만 변경 */
   --header-height: 54px;
   --banner-height: 30px;

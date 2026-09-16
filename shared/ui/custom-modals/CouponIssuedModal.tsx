@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import ModalShell from "../modal/ModalShell";
 
 interface Props {
   onClose: () => void;
@@ -9,14 +10,7 @@ interface Props {
 
 export default function CouponIssuedModal({ onClose }: Props) {
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-
+    <ModalShell onClose={onClose}>
       {/* Group */}
       <div
         className="relative z-10 w-full max-md:max-w-[320px] md:max-w-[388px] lg:max-w-[388px] max-md:-translate-y-[30px] md:-translate-y-[40px] lg:-translate-y-[40px]"
@@ -91,6 +85,6 @@ export default function CouponIssuedModal({ onClose }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

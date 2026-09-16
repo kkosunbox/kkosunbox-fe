@@ -3,8 +3,11 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 interface ModalShellProps {
-  /** 접근성 이름 — E2E의 getByRole("dialog", { name }) 이 이 값을 집는다 */
-  label: string;
+  /**
+   * 접근성 이름 — E2E의 getByRole("dialog", { name }) 이 이 값을 집는다.
+   * 원래 `aria-label`이 없던 모달은 그대로 비워 둔다(이름을 새로 붙이는 건 별도 작업).
+   */
+  label?: string;
   /** ESC·배경 클릭 등 "닫기 요청"의 단일 경로 */
   onClose: () => void;
   children: ReactNode;

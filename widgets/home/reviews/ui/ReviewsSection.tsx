@@ -2,7 +2,7 @@
 
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ScrollReveal } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
@@ -15,7 +15,7 @@ import reviewsProfile01 from "../assets/reviews-profile-01.webp";
 import reviewsProfile02 from "../assets/reviews-profile-02.webp";
 import reviewsProfile03 from "../assets/reviews-profile-03.webp";
 import reviewsProfile04 from "../assets/reviews-profile-04.webp";
-import { MEDIA_MD_MIN, MEDIA_LG_MIN } from "@/shared/config/breakpoints";
+import { MEDIA_LG_MIN } from "@/shared/config/breakpoints";
 
 const REVIEWS = [
   {
@@ -198,49 +198,50 @@ function ReviewCard({ review }: { review: DisplayReview }) {
 }
 
 function ReviewsCarousel() {
-  const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [startIndex, setStartIndex] = useState(0);
-  const [metrics, setMetrics] = useState({ slide: 0, gap: 36, visibleCards: 1 });
+  const activeIndexRef = useRef(0);
+  const [visibleCards, setVisibleCards] = useState(2);
 
-  const measure = useCallback(() => {
-    const vp = viewportRef.current;
-    const track = trackRef.current;
-    if (!vp) return;
-    const isDesktop = window.matchMedia(MEDIA_LG_MIN).matches;
-    const isTablet = window.matchMedia(MEDIA_MD_MIN).matches;
-    const visibleCards = isDesktop ? 3 : isTablet ? 2 : 1;
-    const w = vp.getBoundingClientRect().width;
-    const rawGap = track ? parseFloat(getComputedStyle(track).gap || "0") : 36;
-    const gap = Number.isFinite(rawGap) && rawGap > 0 ? rawGap : 36;
-    const slide = isDesktop ? (w - 2 * gap) / 3 : isTablet ? (w - gap) / 2 : w;
-    setMetrics({ slide, gap, visibleCards });
+  /* 카드 너비는 더 이상 JS로 측정하지 않는다 — 트랙 아이템에 CSS calc()로 맡기고,
+   * 여기서는 화살표 클릭 시 몇 칸이 "한 화면"인지(랩어라운드 경계)만 알면 된다. */
+  useEffect(() => {
+    const mqLg = window.matchMedia(MEDIA_LG_MIN);
+    const update = () => setVisibleCards(mqLg.matches ? 3 : 2);
+    update();
+    mqLg.addEventListener("change", update);
+    return () => mqLg.removeEventListener("change", update);
   }, []);
 
-  useLayoutEffect(() => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-    const ro = new ResizeObserver(() => measure());
-    ro.observe(vp);
-    const mqMd = window.matchMedia(MEDIA_MD_MIN);
-    const mqLg = window.matchMedia(MEDIA_LG_MIN);
-    mqMd.addEventListener("change", measure);
-    mqLg.addEventListener("change", measure);
-    queueMicrotask(measure);
-    return () => {
-      ro.disconnect();
-      mqMd.removeEventListener("change", measure);
-      mqLg.removeEventListener("change", measure);
+  const maxStart = Math.max(0, REVIEWS.length - visibleCards);
+
+  const scrollToIndex = useCallback((index: number, behavior: ScrollBehavior = "smooth") => {
+    const track = trackRef.current;
+    const card = track?.children[index] as HTMLElement | undefined;
+    if (!track || !card) return;
+    track.scrollTo({ left: card.offsetLeft, behavior });
+    activeIndexRef.current = index;
+  }, []);
+
+  /* 터치 스와이프 등 네이티브 스크롤로 위치가 바뀌면 "현재 인덱스"를 스크롤 위치에서 다시 읽어온다 */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const handleScroll = () => {
+      const cards = Array.from(track.children) as HTMLElement[];
+      let closest = 0;
+      let closestDist = Infinity;
+      cards.forEach((card, i) => {
+        const dist = Math.abs(card.offsetLeft - track.scrollLeft);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = i;
+        }
+      });
+      activeIndexRef.current = closest;
     };
-  }, [measure]);
-
-  const maxStart = useMemo(
-    () => Math.max(0, REVIEWS.length - metrics.visibleCards),
-    [metrics.visibleCards],
-  );
-
-  const displayIndex = Math.min(startIndex, maxStart);
-  const stepPx = metrics.slide > 0 ? metrics.slide + metrics.gap : 0;
+    track.addEventListener("scroll", handleScroll, { passive: true });
+    return () => track.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="mx-auto flex w-full max-w-[1107px] items-center justify-between gap-3 md:gap-4 lg:gap-6">
@@ -248,32 +249,28 @@ function ReviewsCarousel() {
         direction="prev"
         label="이전 리뷰"
         disabled={false}
-        onClick={() => setStartIndex(displayIndex === 0 ? maxStart : displayIndex - 1)}
+        onClick={() => scrollToIndex(activeIndexRef.current === 0 ? maxStart : activeIndexRef.current - 1)}
       />
-      <div ref={viewportRef} className="min-w-0 w-full max-w-[1011px] max-md:max-w-[640px] max-md:mx-auto">
-        <div className="-mx-5 overflow-hidden px-5 pt-[76px] pb-6">
-          <div
-            ref={trackRef}
-            className="flex gap-9 transition-transform duration-300 ease-out"
-            style={stepPx > 0 ? { transform: `translateX(-${displayIndex * stepPx}px)` } : undefined}
-          >
-            {REVIEWS.map((review, i) => (
-              <div
-                key={review.name + i}
-                className="shrink-0"
-                style={metrics.slide > 0 ? { width: metrics.slide } : undefined}
-              >
-                <ReviewCard review={review} />
-              </div>
-            ))}
-          </div>
+      <div className="min-w-0 w-full max-w-[1011px]">
+        <div
+          ref={trackRef}
+          className="-mx-5 flex gap-9 overflow-x-auto snap-x snap-mandatory px-5 pt-[76px] pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {REVIEWS.map((review, i) => (
+            <div
+              key={review.name + i}
+              className="shrink-0 snap-start md:w-[calc((100%-2.25rem)/2)] lg:w-[calc((100%-4.5rem)/3)]"
+            >
+              <ReviewCard review={review} />
+            </div>
+          ))}
         </div>
       </div>
       <CarouselArrowButton
         direction="next"
         label="다음 리뷰"
         disabled={false}
-        onClick={() => setStartIndex(displayIndex === maxStart ? 0 : displayIndex + 1)}
+        onClick={() => scrollToIndex(activeIndexRef.current === maxStart ? 0 : activeIndexRef.current + 1)}
       />
     </div>
   );

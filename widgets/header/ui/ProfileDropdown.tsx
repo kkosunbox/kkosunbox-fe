@@ -14,6 +14,7 @@ import {
   DropdownUserIcon,
   DropdownPinIcon,
   DropdownClipboardIcon,
+  DropdownOrderIcon,
   DropdownPointIcon,
   DropdownLogoutIcon,
 } from "./DropdownMenuIcons";
@@ -42,6 +43,7 @@ export function ProfileDropdown({
 
   const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
   const isPointActive = pathname.startsWith("/mypage/point");
+  const isOrdersActive = pathname.startsWith("/orders");
   const isMypageActive = pathname.startsWith("/mypage") && !isSubscriptionActive && !isPointActive && !pathname.startsWith("/mypage/withdraw");
 
   const menuItemClass = (active: boolean) =>
@@ -124,6 +126,10 @@ export function ProfileDropdown({
         <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isSubscriptionActive)}>
           <DropdownClipboardIcon />
           구독관리
+        </button>
+        <button onClick={() => { onClose(); router.push("/orders"); }} className={menuItemClass(isOrdersActive)}>
+          <DropdownOrderIcon />
+          주문내역
         </button>
         {isInfluencer && (
           <button onClick={() => { onClose(); router.push("/mypage/point"); }} className={menuItemClass(isPointActive)}>

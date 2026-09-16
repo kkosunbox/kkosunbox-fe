@@ -8,6 +8,7 @@ import {
   type PackageTier,
 } from "@/entities/package";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import { MOCK_CART_COUNT } from "@/shared/config/cartMock";
 
 type CartProduct = {
   tier: PackageTier;
@@ -62,6 +63,15 @@ function ChevronDown() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M5 9L12 16L19 9" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M15 5L5 15" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 5L15 15" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -175,7 +185,7 @@ function MobilePaymentSummary() {
         <ChevronDown />
       </div>
       <button type="button" className="h-[52px] w-full rounded-[9px] bg-[var(--color-cta-button)] text-subtitle-18-b text-white">
-        2건 주문하기
+        {MOCK_CART_COUNT}건 주문하기
       </button>
     </section>
   );
@@ -197,7 +207,7 @@ function DesktopOrderSummary() {
         <span className="text-subtitle-16-b">월 요금제</span>
         <strong className="text-price-20-eb-lh24">25,000원</strong>
       </div>
-      <button type="button" className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-b text-white">2건 주문하기</button>
+      <button type="button" className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-b text-white">{MOCK_CART_COUNT}건 주문하기</button>
       <div className="mt-6 overflow-hidden rounded-[8px]">
         <Image
           src="/images/sidebar-banner-001.png"
@@ -226,7 +236,7 @@ export default function CartSection() {
           <div className="mt-5 flex h-14 items-center justify-between rounded-[14px] bg-[var(--color-surface-light)] px-6 max-md:h-[52px] max-md:px-5">
             <div className="flex items-center gap-3"><SelectedCheck /><span className="text-subtitle-16-sb">전체</span></div>
             <button type="button" className="flex h-9 items-center gap-2 rounded-[6px] border border-[var(--color-text-muted)] bg-white px-4 text-body-13-m text-[var(--color-text-secondary)]" aria-label="선택한 상품 삭제">
-              <span className="text-xl font-light" aria-hidden="true">×</span> 삭제
+              <CloseIcon /> 삭제
             </button>
           </div>
           <div>

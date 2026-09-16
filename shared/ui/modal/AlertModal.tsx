@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useRef } from "react";
+import ModalShell from "./ModalShell";
 
 export type AlertModalType = "alert" | "contents" | "info" | "present" | "success";
 
@@ -67,12 +67,6 @@ export default function AlertModal({
   onDismiss,
   onClose,
 }: Props) {
-  const primaryRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    primaryRef.current?.focus();
-  }, []);
-
   function dismiss() {
     onDismiss?.();
     onClose();
@@ -91,22 +85,10 @@ export default function AlertModal({
   const icon = ICONS[type];
 
   return (
-    <div
-      className="fixed inset-0 z-[210] flex items-center justify-center px-5"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-    >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={dismiss}
-        aria-hidden="true"
-      />
-
+    <ModalShell label={title} onClose={dismiss} className="px-5" backdrop="soft">
       {/* Card */}
       <div
-        className="relative z-10 w-full max-w-[380px] rounded-[24px] overflow-hidden bg-[var(--color-border-light)]"
+        className="w-full max-w-[380px] rounded-[24px] overflow-hidden bg-[var(--color-border-light)]"
         style={{ boxShadow: "0px 4px 24px rgba(0, 0, 0, 0.08)" }}
       >
         {/* Header — 웜 크림 그라디언트 */}
@@ -135,7 +117,7 @@ export default function AlertModal({
         {/* Footer — 화이트, 그라디언트 끝(#FFF)과 자연스럽게 이어짐 */}
         <div className="bg-white flex flex-col items-center px-5 pt-4 pb-5 gap-4" style={{ boxShadow: "0px 4px 4px rgba(16, 24, 64, 0.08)" }}>
           <button
-            ref={primaryRef}
+            data-autofocus
             type="button"
             onClick={handlePrimary}
             className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
@@ -154,6 +136,6 @@ export default function AlertModal({
           )}
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

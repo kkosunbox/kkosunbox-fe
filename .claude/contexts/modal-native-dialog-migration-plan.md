@@ -119,7 +119,9 @@ body:has(dialog[open]) { overflow: hidden; }
 - `showModal()`은 `auto` 팝오버만 닫는다 — `manual`은 살아남는다
 - ESC 닫기·inert 강제가 붙지 않는다 (스피너는 닫히면 안 된다)
 
-**포기하는 것**: "항상 최상단" 보장. top layer 순서는 z-index가 아니라 개봉 순서라, 스피너가 먼저 떠 있으면 그 위에 열린 모달이 위로 간다. 위 근거상 그게 오히려 맞는 동작이라 수용한다. 진짜 보장이 필요해지면 모달 개봉 시마다 `hidePopover()`→`showPopover()`로 재개봉해 스택 꼭대기로 올리는 방법이 있으나, 깜빡임 위험이 있어 채택하지 않는다.
+**"항상 최상단" 보장 여부 — 미확정(2026-09-16 기준).** top layer 순서는 z-index가 아니라 개봉 순서라 이론상으로는 나중에 연 모달이 위로 간다. 그러나 Phase 0에서 실제로 확인하려 했을 때, 테스트 페이지의 스피너가 일정 시간 뒤 자동으로 숨는 탓에 "스피너와 모달이 동시에 열린 순간"을 안정적으로 포착하지 못해 **어느 쪽이 위인지 확정하지 못했다**. 중간에 "스피너가 위"로 보이는 측정이 한 번 나왔으나, 그 판정식이 dialog가 열리지 않은 경우에도 같은 답을 내는 결함이 있어 근거로 쓸 수 없다.
+
+당장은 무해하다 — 위 근거대로 둘이 같은 프레임에 공존하는 호출부가 현재 없다. 다만 공존하게 되는 코드가 생기면 순서가 문제가 되므로, **그때 실측해서 결정**한다. 만약 스피너가 위로 와서 알림을 덮는다면 선택지는 (a) 모달 개봉 시 `hidePopover()`→`showPopover()`로 스피너를 재개봉해 꼭대기로 올리거나(깜빡임 위험), (b) 반대로 스피너를 모달 아래에 두고 알림이 보이게 하거나 둘 중 하나다.
 
 ---
 
@@ -139,6 +141,33 @@ body:has(dialog[open]) { overflow: hidden; }
   - [ ] `LoadingOverlay` popover 전환(§2-4) 동반 — 스피너 위에 알림이 뜨는지, 스피너가 `showModal()`에 안 닫히는지
   - [ ] `ChecklistFormModal` 위에 알림 띄웠다 닫기 → 1-4-2번 스크롤 락 버그 재현/해소 확인
   - [ ] E2E `getByRole("dialog")` 셀렉터 생존 (`order.spec.ts:67`의 `toHaveCount(0)` 포함)
+
+#### Phase 0 실측 결과 (2026-09-16, Chrome / localhost:3001 `/test`)
+
+**확인됨** (JS 프로브 기준, 신뢰 가능)
+
+| 항목 | 결과 |
+|---|---|
+| 네이티브 dialog 여부 | `<DIALOG>`, `open=true`, `:modal=true` |
+| 접근성 이름 | `aria-label="Alert 모달 예시"` 유지 → E2E `getByRole("dialog", {name})` 생존 |
+| 배경 딤 색 | `::backdrop` = `rgba(0, 0, 0, 0.5)` — 기존 `bg-black/50`과 정확히 일치 |
+| UA 스타일 리셋 | padding 0 / border 0 / 배경 transparent / 박스 1920×945(뷰포트 전체) |
+| 초기 포커스 | `[data-autofocus]` → 확인 버튼에 정확히 잡힘 |
+| CSS 스크롤 락 | 인라인 스타일을 지워도 `body` computed overflow = `hidden`, 모달 닫으면 `visible` |
+| ESC 배선 | `cancel` 이벤트 → `preventDefault` 적용 + dialog 언마운트 + 락 해제 |
+| 배경 클릭 | 카드 클릭은 안 닫힘 / 배경 클릭은 닫힘 |
+| LoadingOverlay | `popover="manual"`, `:popover-open`, `role="status"` 유지. **`showModal()` 후에도 열린 채 유지됨**(manual 선택이 맞았다는 근거) |
+
+**확인 못 함** (브라우저 자동화 하네스 한계 — 실제 사람이 확인 필요)
+
+| 항목 | 왜 |
+|---|---|
+| ESC 키로 실제 닫힘 | 키 입력이 페이지에 전혀 도달하지 않음(Tab·`a`·Escape 모두 window keydown 0건). `cancel` 이벤트를 직접 쏘는 것으로 **배선만** 대체 검증함 |
+| Tab 포커스 트랩 | 위와 동일. 확인 버튼이 유일한 포커스 대상이라 "안 움직임"과 "입력 무시"가 구분되지 않음 |
+| 실제 휠 스크롤 차단 | CDP 합성 휠이 overflow 락을 우회한다. **대조군**(모달 없이 기존 JS 락만)도 똑같이 스크롤되어, 측정 방법 자체가 이 질문에 답할 수 없음이 확인됨 |
+| 스피너 vs 모달 상하관계 | §2-4 참조 |
+
+⚠️ 이 하네스에서는 **ref 기반 클릭과 JS 프로브만 신뢰할 수 있다.** 좌표 클릭·키 입력·휠은 페이지에 도달하지 않는다. 다음 Phase에서도 같은 제약을 전제할 것.
 
 ### Phase 1 — z-200 계층
 - `ChecklistFormModal` — 전환 + `useUnsavedChangesGuard`의 capture-phase ESC 해킹 제거 + 자체 스크롤 락 제거

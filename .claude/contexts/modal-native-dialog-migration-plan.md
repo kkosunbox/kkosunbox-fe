@@ -200,6 +200,26 @@ body:has(dialog[open]) { overflow: hidden; }
 - `ModalProvider`에서 ESC useEffect + 스크롤락 useEffect **삭제**
 - 커밋은 3~4개로 쪼갬 (구독계열 / 결제·탈퇴계열 / 프로필·약관계열)
 
+#### Phase 2 실측 결과 (2026-09-16, Chrome)
+
+**확인됨**
+
+| 항목 | 결과 |
+|---|---|
+| 변환 범위 | custom-modals 15개 파일 전부 ModalShell 사용. 구형 `fixed inset-0 z-[100]` 래퍼·backdrop div·`role="dialog"`·`aria-modal` 잔재 0건 |
+| 배경 딤 | 커스텀 모달 `::backdrop` = `rgba(0,0,0,0.6)` — 기존 `bg-black/60`과 일치 |
+| 접근성 이름 | 원래 `aria-label`이 없던 모달은 `null` 유지(이름을 새로 붙이지 않음), 있던 3개는 그대로 |
+| **Provider 정리 후 스크롤 락** | ModalProvider의 JS 락을 지운 뒤에도 `body` computed `hidden` + 인라인 빈 문자열 → CSS 단독으로 동작 |
+| 배경 클릭 | 닫힘 + 잠금 해제(`visible`) 확인 |
+| **AccountInfoModal 뷰 전환** | `계정 정보` ↔ `비밀번호 변경` 전환 시 React가 같은 dialog 엘리먼트를 재사용해(`dialogCount: 1`) 열린 채 `aria-label`만 교체. 재마운트·깜빡임 없음 |
+
+**주의해서 처리한 것**
+
+- 카드 div의 `relative z-10`은 **건드리지 않았다.** `z-10`은 이제 불필요하지만 `relative`는 내부 `absolute` 자식(예: ChecklistDeferModal의 상단 이미지)이 의존하므로, 함께 지우면 레이아웃이 깨진다. 죽은 `z-10` 정리는 Phase 4로 미룬다.
+- `TermsViewModal`의 `confirmBtnRef.current?.focus()`는 `data-autofocus`로 교체했다. 자식의 focus 이펙트는 ModalShell의 `showModal()`보다 **먼저** 실행돼 덮어씌워지기 때문이다. 같은 패턴이 다른 파일에 있으면 동일하게 처리할 것.
+
+**확인 못 함**: 모바일 폭 레이아웃, ESC 키 실제 닫힘 (Phase 0·1과 동일한 하네스 한계)
+
 ### Phase 3 — 잔여 개별 모달
 - `MyReviewModal`, `SupportSection`, `InquiryDetailModal`, `OrderHistorySection`, `PackageNutritionGuide`
 - 각 파일의 ESC 리스너·스크롤 락 중복 제거

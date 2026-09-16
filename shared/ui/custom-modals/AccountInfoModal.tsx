@@ -7,6 +7,7 @@ import { changePassword, updatePhone } from "@/features/auth/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
+import ModalShell from "../modal/ModalShell";
 
 type View = "info" | "password-change";
 
@@ -210,14 +211,11 @@ export default function AccountInfoModal({ onClose }: Props) {
     });
   }
 
-  const backdrop = <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />;
-
   const card = "relative z-10 w-full max-w-[416px] rounded-[24px] bg-white p-7 shadow-[0px_6px_20px_rgba(78,78,78,0.8)]";
 
   if (view === "info") {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" role="dialog" aria-modal="true" aria-label="계정 정보">
-        {backdrop}
+      <ModalShell label="계정 정보" onClose={onClose}>
         <div className={card}>
           {/* 헤더 */}
           <div className="relative flex h-6 items-center">
@@ -289,13 +287,12 @@ export default function AccountInfoModal({ onClose }: Props) {
             rightDisabled={isPending}
           />
         </div>
-      </div>
+      </ModalShell>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" role="dialog" aria-modal="true" aria-label="비밀번호 변경">
-      {backdrop}
+    <ModalShell label="비밀번호 변경" onClose={onClose}>
       <div className={card}>
         {/* 헤더 */}
         <div className="relative flex h-6 items-center">
@@ -376,6 +373,6 @@ export default function AccountInfoModal({ onClose }: Props) {
           rightDisabled={isPending}
         />
       </div>
-    </div>
+    </ModalShell>
   );
 }

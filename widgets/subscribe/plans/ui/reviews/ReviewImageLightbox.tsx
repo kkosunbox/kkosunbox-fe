@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { ModalShell } from "@/shared/ui";
 
 export type ReviewLightboxState = { urls: string[]; index: number };
 
@@ -15,17 +16,15 @@ export default function ReviewImageLightbox({
   onClose: () => void;
   onNavigate: (next: number) => void;
 }) {
-  const onCloseRef = useRef(onClose);
   const onNavigateRef = useRef(onNavigate);
 
   useEffect(() => {
-    onCloseRef.current = onClose;
     onNavigateRef.current = onNavigate;
-  }, [onClose, onNavigate]);
+  }, [onNavigate]);
 
+  /* 좌우 이동만 직접 처리한다 — ESC 닫기는 네이티브 <dialog>가 cancel로 준다(ModalShell). */
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onCloseRef.current();
       if (e.key === "ArrowLeft") onNavigateRef.current(Math.max(0, index - 1));
       if (e.key === "ArrowRight") onNavigateRef.current(Math.min(urls.length - 1, index + 1));
     }
@@ -37,12 +36,11 @@ export default function ReviewImageLightbox({
   if (!url) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label="리뷰 사진"
-      onClick={onClose}
+    <ModalShell
+      label="리뷰 사진"
+      onClose={onClose}
+      backdrop="strong"
+      className="flex min-h-full items-center justify-center p-4"
     >
       <button
         type="button"
@@ -95,6 +93,6 @@ export default function ReviewImageLightbox({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={url} alt={`리뷰 사진 ${index + 1}`} className="max-h-[85vh] max-w-full object-contain" />
       </div>
-    </div>
+    </ModalShell>
   );
 }

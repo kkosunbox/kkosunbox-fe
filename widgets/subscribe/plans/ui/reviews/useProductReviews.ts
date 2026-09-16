@@ -22,14 +22,7 @@ export function useProductReviews(initialPlanId: number | null = null) {
   const [lightbox, setLightbox] = useState<ReviewLightboxState | null>(null);
   const [reviewImages, setReviewImages] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (!lightbox) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [lightbox]);
+  /* 라이트박스가 열린 동안의 body 스크롤 잠금은 globals.css의 `body:has(dialog:modal)`가 담당한다 */
 
   const fetchReviews = useCallback(
     async (id: number | null, p: number, sortOrder: ReviewSortOrder) => {

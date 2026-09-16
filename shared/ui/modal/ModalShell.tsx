@@ -8,10 +8,14 @@ interface ModalShellProps {
   /** ESC·배경 클릭 등 "닫기 요청"의 단일 경로 */
   onClose: () => void;
   children: ReactNode;
-  /** 카드를 감싸는 정렬 컨테이너 클래스 (기존 `fixed inset-0 flex ...` 래퍼에서 남는 부분) */
+  /**
+   * 카드를 감싸는 정렬 컨테이너 클래스 — 기존 `fixed inset-0 ...` 래퍼에서 위치 지정을 뺀 나머지를
+   * 그대로 옮겨 담는다. 정렬을 여기서 통째로 받는 이유는 모달마다 요구가 다르기 때문이다
+   * (예: 체크리스트 폼은 모바일에서 전체화면이라 중앙정렬을 쓰지 않는다).
+   */
   className?: string;
-  /** 배경 어둡기 — 기본 60%, "soft"는 50% (globals.css의 ::backdrop 규칙과 짝) */
-  backdrop?: "default" | "soft";
+  /** 배경 어둡기 — 기본 60%, "soft" 50%, "strong" 80% (globals.css의 ::backdrop 규칙과 짝) */
+  backdrop?: "default" | "soft" | "strong";
   /** 배경 클릭으로 닫을지 */
   dismissOnBackdrop?: boolean;
 }
@@ -34,7 +38,7 @@ export default function ModalShell({
   label,
   onClose,
   children,
-  className = "px-4",
+  className = "flex min-h-full items-center justify-center px-4",
   backdrop = "default",
   dismissOnBackdrop = true,
 }: ModalShellProps) {
@@ -60,7 +64,7 @@ export default function ModalShell({
     <dialog
       ref={dialogRef}
       aria-label={label}
-      data-backdrop={backdrop === "soft" ? "soft" : undefined}
+      data-backdrop={backdrop === "default" ? undefined : backdrop}
       /* ESC: 기본 닫힘을 막고 onClose 한 경로로 모은다 — onDismiss 등 정리 콜백을 보장하려면
        * close 이벤트가 아니라 여기서 받아야 한다(close로 받으면 언마운트와 서로를 부른다). */
       onCancel={(e) => {
@@ -73,7 +77,7 @@ export default function ModalShell({
       }}
       className="fixed inset-0 m-0 h-auto max-h-none w-auto max-w-none border-0 bg-transparent p-0"
     >
-      <div ref={contentRef} className={`flex min-h-full items-center justify-center ${className}`}>
+      <div ref={contentRef} className={className}>
         {children}
       </div>
     </dialog>

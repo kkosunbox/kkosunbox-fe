@@ -585,6 +585,10 @@ dialog[data-backdrop="soft"]::backdrop {
   background: rgb(0 0 0 / 0.5);
 }
 
+dialog[data-backdrop="strong"]::backdrop {
+  background: rgb(0 0 0 / 0.8);
+}
+
 /*
  * 모달이 열려 있는 동안 배경 스크롤 잠금.
  *

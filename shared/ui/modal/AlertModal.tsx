@@ -85,7 +85,12 @@ export default function AlertModal({
   const icon = ICONS[type];
 
   return (
-    <ModalShell label={title} onClose={dismiss} className="px-5" backdrop="soft">
+    <ModalShell
+      label={title}
+      onClose={dismiss}
+      className="flex min-h-full items-center justify-center px-5"
+      backdrop="soft"
+    >
       {/* Card */}
       <div
         className="w-full max-w-[380px] rounded-[24px] overflow-hidden bg-[var(--color-border-light)]"

@@ -174,6 +174,27 @@ body:has(dialog[open]) { overflow: hidden; }
 - `ReviewImageLightbox` — 전환 + 자체 ESC 리스너 제거
 - ⚠️ `/checklist`는 진입 시 `ChecklistRedirectClient`가 폼을 자동으로 연다 → **VR 스냅샷 `checklist-tablet-768/1024/1199` 3장 영향 가능**. diff 나면 의도된 변경인지 확인 후 베이스라인 재생성
 
+#### Phase 1 실측 결과 (2026-09-16, Chrome / localhost:3001)
+
+**확인됨**
+
+| 항목 | 결과 |
+|---|---|
+| ChecklistFormModal 렌더 | `:modal=true`, `aria-label="체크리스트 작성"` 유지 → E2E `checklist.spec.ts:179` 셀렉터 생존 |
+| 데스크탑 레이아웃 | 카드 **908×610, 위치 (506,168)** — `md:max-w-[908px]`·`md:h-[610px]`에 정확히 일치하고 뷰포트(1920×945) 정중앙 |
+| 배경 딤 | `::backdrop` = `rgba(0,0,0,0.5)` — 기존 `bg-black/50`과 일치 |
+| 스크롤 락 | `body` computed `hidden`인데 **인라인 스타일은 빈 문자열** → JS가 아니라 CSS가 잠그고 있음 |
+| **중첩 동작 (핵심)** | 체크리스트 폼 위에 AlertModal을 띄우면 dialog 2개가 동시에 열리고, **알림이 위에** 쌓인다(top layer 개봉 순서 실증) |
+| **§1-4-2 버그 해소** | 알림만 닫은 뒤에도 `body` overflow가 `hidden` 유지 — 예전에는 ModalProvider cleanup이 `""`로 무조건 풀어 폼이 열린 채 배경이 스크롤됐다 |
+
+**확인 못 함**
+
+| 항목 | 왜 |
+|---|---|
+| 모바일 전체화면 레이아웃 | `resize_window`가 성공을 보고하면서도 뷰포트를 바꾸지 못한다(두 번 확인). `md:` 미만 분기는 미검증 — **사람이 실제 좁은 창에서 봐야 한다** |
+| VR 스냅샷 `checklist-tablet-*` 3장 | 실행하지 않음. 데스크탑이 픽셀 단위로 일치했고 `md:` 클래스를 그대로 옮긴 것이라 통과 예상이지만 단정할 수 없다 |
+| ESC 키 실제 닫힘 | Phase 0과 동일한 하네스 한계 |
+
 ### Phase 2 — custom-modals 14개 + Provider 정리
 - 14개 파일 기계적 치환 (외곽 div + backdrop div → `ModalShell`)
 - `ModalProvider`에서 ESC useEffect + 스크롤락 useEffect **삭제**

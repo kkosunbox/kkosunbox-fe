@@ -54,7 +54,7 @@ export default function HeroSection() {
   return (
     <section
       aria-label="꼬순박스 소개 영상"
-      className="relative h-[440px] overflow-hidden bg-black md:h-[480px] lg:h-[520px] xl:h-[560px]"
+      className="relative h-[590px] overflow-hidden bg-black md:h-[630px] lg:h-[670px] xl:h-[710px]"
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- generated first-frame poster */}
       <img
@@ -119,7 +119,7 @@ export default function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
+      <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px] xl:w-full xl:max-w-none xl:px-[340px]">
         <div className="max-w-[510px] pb-10 text-white md:pb-12 lg:pb-14">
           <h2>
             {/* eslint-disable-next-line @next/next/no-img-element -- exact supplied heading artwork */}

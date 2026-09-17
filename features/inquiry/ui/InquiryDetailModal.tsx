@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import type { InquiryDto } from "../api/types";
-import { PawCircleIcon } from "@/shared/ui";
+import { ModalShell, PawCircleIcon } from "@/shared/ui";
 
 export const WAITING_MESSAGE =
   "문의해주셔서 감사합니다.\n빠르게 확인 후 1~2일 이내에\n답변드릴 예정입니다.";
@@ -52,37 +51,21 @@ export function InquiryStatusBadge({ inquiry }: { inquiry: InquiryDto }) {
 }
 
 export function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClose: () => void }) {
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
   const content = item.content?.trim();
   const attachments = getImageAttachments(item);
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
+    <ModalShell
+      onClose={onClose}
+      backdrop="light"
+      className="flex min-h-full items-center justify-center px-4"
     >
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
       {/*
         헤더는 고정, 본문만 스크롤한다. 문의 내용·답변은 길이 상한이 없어(등록 시 200자,
         관리자 답변은 제한 없음) 모달 전체를 늘리면 뷰포트를 넘어가고 닫기 버튼까지
         화면 밖으로 밀린다.
       */}
-      <div className="relative z-10 flex max-h-[70vh] w-full max-w-[480px] flex-col rounded-[20px] bg-white shadow-lg">
+      <div className="relative flex max-h-[70vh] w-full max-w-[480px] flex-col rounded-[20px] bg-white shadow-lg">
         <div className="flex shrink-0 items-start justify-between px-6 pt-6 pb-4">
           <PawCircleIcon />
           <button
@@ -140,6 +123,6 @@ export function InquiryDetailModal({ item, onClose }: { item: InquiryDto; onClos
           </section>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { TIER_BOX_IMAGES, type PackageTier } from "@/entities/package";
+import { ModalShell } from "@/shared/ui";
 
 type OrderKind = "subscription" | "purchase";
 type DeliveryStatus = "배송중" | "배송준비중" | "배송완료";
@@ -132,7 +133,7 @@ export default function OrderHistorySection() {
         </nav>
       </section>
 
-      {selected && <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-6" role="dialog" aria-modal="true" aria-labelledby="order-detail-title"><div className="w-full max-w-[420px] rounded-[16px] bg-white p-6 shadow-xl"><div className="flex items-start justify-between gap-4"><div><h2 id="order-detail-title" className="text-subtitle-18-b text-[var(--color-text)]">주문 상세</h2><p className="mt-2 text-body-14-r text-[var(--color-text-secondary)]">주문번호 {selected.id}</p></div><button type="button" onClick={() => setSelected(null)} className="text-body-14-m text-[var(--color-text-label)]">닫기</button></div><dl className="mt-6 space-y-3 border-y border-[var(--color-text-muted)] py-4 text-body-14-r"><div className="flex justify-between"><dt className="text-[var(--color-text-secondary)]">상품</dt><dd>{selected.title}</dd></div><div className="flex justify-between"><dt className="text-[var(--color-text-secondary)]">배송 상태</dt><dd>{selected.status}</dd></div><div className="flex justify-between"><dt className="text-[var(--color-text-secondary)]">결제 금액</dt><dd className="font-semibold">{selected.amount.toLocaleString("ko-KR")}원</dd></div></dl><p className="mt-4 text-body-13-r text-[var(--color-text-secondary)]">현재는 주문 내역 화면 검증을 위한 mock 상세 정보입니다.</p></div></div>}
+      {selected && <ModalShell label="주문 상세" onClose={() => setSelected(null)} backdrop="light" className="flex min-h-full items-center justify-center p-6"><div className="w-full max-w-[420px] rounded-[16px] bg-white p-6 shadow-xl"><div className="flex items-start justify-between gap-4"><div><h2 className="text-subtitle-18-b text-[var(--color-text)]">주문 상세</h2><p className="mt-2 text-body-14-r text-[var(--color-text-secondary)]">주문번호 {selected.id}</p></div><button type="button" onClick={() => setSelected(null)} className="text-body-14-m text-[var(--color-text-label)]">닫기</button></div><dl className="mt-6 space-y-3 border-y border-[var(--color-text-muted)] py-4 text-body-14-r"><div className="flex justify-between"><dt className="text-[var(--color-text-secondary)]">상품</dt><dd>{selected.title}</dd></div><div className="flex justify-between"><dt className="text-[var(--color-text-secondary)]">배송 상태</dt><dd>{selected.status}</dd></div><div className="flex justify-between"><dt className="text-[var(--color-text-secondary)]">결제 금액</dt><dd className="font-semibold">{selected.amount.toLocaleString("ko-KR")}원</dd></div></dl><p className="mt-4 text-body-13-r text-[var(--color-text-secondary)]">현재는 주문 내역 화면 검증을 위한 mock 상세 정보입니다.</p></div></ModalShell>}
     </div>
   );
 }

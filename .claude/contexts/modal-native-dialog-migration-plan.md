@@ -119,7 +119,9 @@ body:has(dialog[open]) { overflow: hidden; }
 - `showModal()`은 `auto` 팝오버만 닫는다 — `manual`은 살아남는다
 - ESC 닫기·inert 강제가 붙지 않는다 (스피너는 닫히면 안 된다)
 
-**포기하는 것**: "항상 최상단" 보장. top layer 순서는 z-index가 아니라 개봉 순서라, 스피너가 먼저 떠 있으면 그 위에 열린 모달이 위로 간다. 위 근거상 그게 오히려 맞는 동작이라 수용한다. 진짜 보장이 필요해지면 모달 개봉 시마다 `hidePopover()`→`showPopover()`로 재개봉해 스택 꼭대기로 올리는 방법이 있으나, 깜빡임 위험이 있어 채택하지 않는다.
+**"항상 최상단" 보장 여부 — 미확정(2026-09-16 기준).** top layer 순서는 z-index가 아니라 개봉 순서라 이론상으로는 나중에 연 모달이 위로 간다. 그러나 Phase 0에서 실제로 확인하려 했을 때, 테스트 페이지의 스피너가 일정 시간 뒤 자동으로 숨는 탓에 "스피너와 모달이 동시에 열린 순간"을 안정적으로 포착하지 못해 **어느 쪽이 위인지 확정하지 못했다**. 중간에 "스피너가 위"로 보이는 측정이 한 번 나왔으나, 그 판정식이 dialog가 열리지 않은 경우에도 같은 답을 내는 결함이 있어 근거로 쓸 수 없다.
+
+당장은 무해하다 — 위 근거대로 둘이 같은 프레임에 공존하는 호출부가 현재 없다. 다만 공존하게 되는 코드가 생기면 순서가 문제가 되므로, **그때 실측해서 결정**한다. 만약 스피너가 위로 와서 알림을 덮는다면 선택지는 (a) 모달 개봉 시 `hidePopover()`→`showPopover()`로 스피너를 재개봉해 꼭대기로 올리거나(깜빡임 위험), (b) 반대로 스피너를 모달 아래에 두고 알림이 보이게 하거나 둘 중 하나다.
 
 ---
 
@@ -140,23 +142,114 @@ body:has(dialog[open]) { overflow: hidden; }
   - [ ] `ChecklistFormModal` 위에 알림 띄웠다 닫기 → 1-4-2번 스크롤 락 버그 재현/해소 확인
   - [ ] E2E `getByRole("dialog")` 셀렉터 생존 (`order.spec.ts:67`의 `toHaveCount(0)` 포함)
 
+#### Phase 0 실측 결과 (2026-09-16, Chrome / localhost:3001 `/test`)
+
+**확인됨** (JS 프로브 기준, 신뢰 가능)
+
+| 항목 | 결과 |
+|---|---|
+| 네이티브 dialog 여부 | `<DIALOG>`, `open=true`, `:modal=true` |
+| 접근성 이름 | `aria-label="Alert 모달 예시"` 유지 → E2E `getByRole("dialog", {name})` 생존 |
+| 배경 딤 색 | `::backdrop` = `rgba(0, 0, 0, 0.5)` — 기존 `bg-black/50`과 정확히 일치 |
+| UA 스타일 리셋 | padding 0 / border 0 / 배경 transparent / 박스 1920×945(뷰포트 전체) |
+| 초기 포커스 | `[data-autofocus]` → 확인 버튼에 정확히 잡힘 |
+| CSS 스크롤 락 | 인라인 스타일을 지워도 `body` computed overflow = `hidden`, 모달 닫으면 `visible` |
+| ESC 배선 | `cancel` 이벤트 → `preventDefault` 적용 + dialog 언마운트 + 락 해제 |
+| 배경 클릭 | 카드 클릭은 안 닫힘 / 배경 클릭은 닫힘 |
+| LoadingOverlay | `popover="manual"`, `:popover-open`, `role="status"` 유지. **`showModal()` 후에도 열린 채 유지됨**(manual 선택이 맞았다는 근거) |
+
+**확인 못 함** (브라우저 자동화 하네스 한계 — 실제 사람이 확인 필요)
+
+| 항목 | 왜 |
+|---|---|
+| ESC 키로 실제 닫힘 | 키 입력이 페이지에 전혀 도달하지 않음(Tab·`a`·Escape 모두 window keydown 0건). `cancel` 이벤트를 직접 쏘는 것으로 **배선만** 대체 검증함 |
+| Tab 포커스 트랩 | 위와 동일. 확인 버튼이 유일한 포커스 대상이라 "안 움직임"과 "입력 무시"가 구분되지 않음 |
+| 실제 휠 스크롤 차단 | CDP 합성 휠이 overflow 락을 우회한다. **대조군**(모달 없이 기존 JS 락만)도 똑같이 스크롤되어, 측정 방법 자체가 이 질문에 답할 수 없음이 확인됨 |
+| 스피너 vs 모달 상하관계 | §2-4 참조 |
+
+⚠️ 이 하네스에서는 **ref 기반 클릭과 JS 프로브만 신뢰할 수 있다.** 좌표 클릭·키 입력·휠은 페이지에 도달하지 않는다. 다음 Phase에서도 같은 제약을 전제할 것.
+
 ### Phase 1 — z-200 계층
 - `ChecklistFormModal` — 전환 + `useUnsavedChangesGuard`의 capture-phase ESC 해킹 제거 + 자체 스크롤 락 제거
 - `ReviewImageLightbox` — 전환 + 자체 ESC 리스너 제거
 - ⚠️ `/checklist`는 진입 시 `ChecklistRedirectClient`가 폼을 자동으로 연다 → **VR 스냅샷 `checklist-tablet-768/1024/1199` 3장 영향 가능**. diff 나면 의도된 변경인지 확인 후 베이스라인 재생성
+
+#### Phase 1 실측 결과 (2026-09-16, Chrome / localhost:3001)
+
+**확인됨**
+
+| 항목 | 결과 |
+|---|---|
+| ChecklistFormModal 렌더 | `:modal=true`, `aria-label="체크리스트 작성"` 유지 → E2E `checklist.spec.ts:179` 셀렉터 생존 |
+| 데스크탑 레이아웃 | 카드 **908×610, 위치 (506,168)** — `md:max-w-[908px]`·`md:h-[610px]`에 정확히 일치하고 뷰포트(1920×945) 정중앙 |
+| 배경 딤 | `::backdrop` = `rgba(0,0,0,0.5)` — 기존 `bg-black/50`과 일치 |
+| 스크롤 락 | `body` computed `hidden`인데 **인라인 스타일은 빈 문자열** → JS가 아니라 CSS가 잠그고 있음 |
+| **중첩 동작 (핵심)** | 체크리스트 폼 위에 AlertModal을 띄우면 dialog 2개가 동시에 열리고, **알림이 위에** 쌓인다(top layer 개봉 순서 실증) |
+| **§1-4-2 버그 해소** | 알림만 닫은 뒤에도 `body` overflow가 `hidden` 유지 — 예전에는 ModalProvider cleanup이 `""`로 무조건 풀어 폼이 열린 채 배경이 스크롤됐다 |
+
+**확인 못 함**
+
+| 항목 | 왜 |
+|---|---|
+| 모바일 전체화면 레이아웃 | `resize_window`가 성공을 보고하면서도 뷰포트를 바꾸지 못한다(두 번 확인). `md:` 미만 분기는 미검증 — **사람이 실제 좁은 창에서 봐야 한다** |
+| VR 스냅샷 `checklist-tablet-*` 3장 | 실행하지 않음. 데스크탑이 픽셀 단위로 일치했고 `md:` 클래스를 그대로 옮긴 것이라 통과 예상이지만 단정할 수 없다 |
+| ESC 키 실제 닫힘 | Phase 0과 동일한 하네스 한계 |
 
 ### Phase 2 — custom-modals 14개 + Provider 정리
 - 14개 파일 기계적 치환 (외곽 div + backdrop div → `ModalShell`)
 - `ModalProvider`에서 ESC useEffect + 스크롤락 useEffect **삭제**
 - 커밋은 3~4개로 쪼갬 (구독계열 / 결제·탈퇴계열 / 프로필·약관계열)
 
-### Phase 3 — 잔여 개별 모달
-- `MyReviewModal`, `SupportSection`, `InquiryDetailModal`, `OrderHistorySection`, `PackageNutritionGuide`
-- 각 파일의 ESC 리스너·스크롤 락 중복 제거
+#### Phase 2 실측 결과 (2026-09-16, Chrome)
 
-### Phase 4 — 정리
-- 스크롤 락이 CSS 한 줄로 단일화됐는지 확인, 죽은 z-index 잔재 제거
-- `CLAUDE.md` 또는 본 문서에 "새 모달은 `ModalShell`로" 규칙 추가
+**확인됨**
+
+| 항목 | 결과 |
+|---|---|
+| 변환 범위 | custom-modals 15개 파일 전부 ModalShell 사용. 구형 `fixed inset-0 z-[100]` 래퍼·backdrop div·`role="dialog"`·`aria-modal` 잔재 0건 |
+| 배경 딤 | 커스텀 모달 `::backdrop` = `rgba(0,0,0,0.6)` — 기존 `bg-black/60`과 일치 |
+| 접근성 이름 | 원래 `aria-label`이 없던 모달은 `null` 유지(이름을 새로 붙이지 않음), 있던 3개는 그대로 |
+| **Provider 정리 후 스크롤 락** | ModalProvider의 JS 락을 지운 뒤에도 `body` computed `hidden` + 인라인 빈 문자열 → CSS 단독으로 동작 |
+| 배경 클릭 | 닫힘 + 잠금 해제(`visible`) 확인 |
+| **AccountInfoModal 뷰 전환** | `계정 정보` ↔ `비밀번호 변경` 전환 시 React가 같은 dialog 엘리먼트를 재사용해(`dialogCount: 1`) 열린 채 `aria-label`만 교체. 재마운트·깜빡임 없음 |
+
+**주의해서 처리한 것**
+
+- 카드 div의 `relative z-10`은 **건드리지 않았다.** `z-10`은 이제 불필요하지만 `relative`는 내부 `absolute` 자식(예: ChecklistDeferModal의 상단 이미지)이 의존하므로, 함께 지우면 레이아웃이 깨진다. 죽은 `z-10` 정리는 Phase 4로 미룬다.
+- `TermsViewModal`의 `confirmBtnRef.current?.focus()`는 `data-autofocus`로 교체했다. 자식의 focus 이펙트는 ModalShell의 `showModal()`보다 **먼저** 실행돼 덮어씌워지기 때문이다. 같은 패턴이 다른 파일에 있으면 동일하게 처리할 것.
+
+**확인 못 함**: 모바일 폭 레이아웃, ESC 키 실제 닫힘 (Phase 0·1과 동일한 하네스 한계)
+
+### Phase 3 — 잔여 개별 모달 ✅ 구현 완료 (2026-09-17)
+- `MyReviewModal`, `SupportSection`의 FAQ 상세, `InquiryDetailModal`, `OrderHistorySection`,
+  `PackageNutritionGuide`를 모두 `ModalShell`로 전환했다.
+- FAQ·문의·주문 상세의 기존 40% 딤을 보존하도록 `backdrop="light"`, 영양정보의 기존
+  투명 배경을 보존하도록 `backdrop="none"` 옵션을 추가했다.
+- FAQ·문의의 수동 body 스크롤 락과 ESC 전역 리스너를 제거했다. `MyReviewModal`은 ESC만
+  `ModalShell`로 이관하고 기존 좌우 화살표 리뷰 탐색 리스너는 유지했다.
+- 기존 접근성 이름이 있던 `MyReviewModal`·주문 상세는 `label`로 유지하고, 없던 FAQ·문의·
+  영양정보에는 새 이름을 임의로 추가하지 않았다.
+
+### Phase 4 — 정리 ✅ 구현 완료 (2026-09-17)
+- 모달 스크롤 락은 `body:has(dialog:modal) { overflow: hidden; }` 한 곳으로 단일화했다.
+  모달이 아닌 모바일 헤더 메뉴의 수동 락은 범위 밖이므로 유지했다.
+- 마이그레이션된 카드 래퍼의 죽은 `z-10`만 제거하고, 내부 absolute 요소의 기준인
+  `relative`와 카드 내부 요소 간 쌓임에 필요한 z-index는 유지했다.
+- `CLAUDE.md`에 신규 모달은 `ModalShell`을 사용하고 수동 backdrop·ESC·스크롤 락을
+  중복 구현하지 않는다는 필수 규칙을 추가했다.
+
+### Phase 3·4 검증 (2026-09-17)
+
+| 항목 | 결과 |
+|---|---|
+| `tsc --noEmit --incremental false` | 통과 |
+| `pnpm lint` (저장소 전체) | 통과 |
+| 잔여 수동 모달 래퍼 검색 | Phase 3 대상 및 기존 마이그레이션 범위에서 `fixed inset-0` 0건 |
+| 잔여 수동 스크롤 락 검색 | 모달 범위에서 `document.body.style.overflow` 0건 |
+| 잔여 카드 래퍼 `relative z-10` 검색 | 마이그레이션된 모달 카드에서 0건 |
+| `pnpm build` | 통과 (Next.js 16.1.7, 47개 페이지 생성) |
+| 관련 브라우저 E2E | `checklist`·`mypage`·`order`·`referral`·`inquiry` Chromium **88/88 통과** |
+| Phase 3 타깃 브라우저 검증 | 임시 하네스로 5개 모달을 직접 열어 native `:modal`, CSS 스크롤 락, ESC, 배경 클릭, 40%·투명 backdrop, 리뷰 모바일 390×844 전체화면을 검증 — **5/5 통과** 후 하네스 제거 |
 
 ### 단계별 공통 검증
 `npx tsc --noEmit` → `pnpm lint` → 관련 E2E(`checklist` `mypage` `order` `referral` `inquiry`) → Phase 1·2는 VR 태블릿까지

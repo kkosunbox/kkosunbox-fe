@@ -568,6 +568,51 @@ button:disabled {
 }
 
 /*
+ * 네이티브 <dialog> 모달의 배경 딤 (ModalShell 전용)
+ *
+ * 기존의 `<div className="absolute inset-0 bg-black/60">` 백드롭을 대체한다.
+ * ::backdrop은 상속 규칙이 브라우저 버전마다 달라(구현에 따라 아무것도 상속하지 않는다)
+ * CSS 변수가 해석되지 않을 수 있어, 여기서만 예외적으로 리터럴 색을 쓴다.
+ *
+ * 박스 리셋(테두리·패딩·배경·크기)은 ModalShell이 Tailwind 유틸리티로 처리한다.
+ * 이 블록은 @layer 밖이라 유틸리티를 이기므로, 모달별로 덮어써야 하는 속성은 넣지 않는다.
+ */
+dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+dialog[data-backdrop="none"]::backdrop {
+  background: transparent;
+}
+
+dialog[data-backdrop="light"]::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+dialog[data-backdrop="soft"]::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+
+dialog[data-backdrop="strong"]::backdrop {
+  background: rgb(0 0 0 / 0.8);
+}
+
+/*
+ * 모달이 열려 있는 동안 배경 스크롤 잠금.
+ *
+ * showModal()은 배경을 inert로 만들어 주지만 문서 스크롤까지 막아준다는 보장은 없어,
+ * 기존에 모달마다 JS로 걸던 잠금(document.body.style.overflow 직접 조작)을
+ * 같은 효과의 CSS 한 줄로 옮긴 것이다. 구현이 6곳에 흩어져 있어 중첩 시 서로를
+ * 덮어쓰던 문제(안쪽 모달이 닫히면 바깥 모달이 열려 있는데도 잠금이 풀림)를 없앤다.
+ *
+ * :modal 을 쓰는 이유 — dialog[open]은 showModal() 없이 인라인으로 열린
+ * 비모달 dialog까지 잡아서 불필요하게 스크롤을 잠근다.
+ */
+body:has(dialog:modal) {
+  overflow: hidden;
+}
+
+/*
  * Typography utilities — @utility 디렉티브 사용 (필수)
  *
  * @layer utilities { .text-* { } } 대신 @utility를 사용해야 한다.

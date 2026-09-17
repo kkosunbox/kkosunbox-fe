@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PRIVACY_OFFICER } from "@/shared/config/companyInfo";
+import ModalShell from "../modal/ModalShell";
 
 /* ─── 서비스 이용약관 ─── */
 const TERMS_CONTENT = [
@@ -224,7 +225,6 @@ interface Props {
 }
 
 export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
-  const confirmBtnRef = useRef<HTMLButtonElement>(null);
   const scrollBodyRef = useRef<HTMLDivElement>(null);
   const [hasScrolledEnough, setHasScrolledEnough] = useState(false);
 
@@ -244,9 +244,8 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
     return () => el.removeEventListener("scroll", handler);
   }, [checkScroll]);
 
-  useEffect(() => {
-    confirmBtnRef.current?.focus();
-  }, []);
+  /* 확인 버튼 초기 포커스는 ModalShell이 showModal() 직후 [data-autofocus]로 잡아준다
+   * — 자식의 focus() 이펙트는 showModal()보다 먼저 실행돼 덮어씌워진다. */
 
   function handleConfirm() {
     if (hasScrolledEnough) onConfirm?.();
@@ -257,17 +256,9 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
   const title = MODAL_TITLE[type];
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-
+    <ModalShell label={title} onClose={onClose} backdrop="soft">
       {/* Card */}
-      <div className="relative z-10 flex flex-col w-full max-w-[480px] max-h-[80dvh] rounded-[24px] bg-white overflow-hidden">
+      <div className="relative flex flex-col w-full max-w-[480px] max-h-[80dvh] rounded-[24px] bg-white overflow-hidden">
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"
@@ -327,7 +318,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
           style={{ borderTop: "1px solid var(--color-text-muted)" }}
         >
           <button
-            ref={confirmBtnRef}
+            data-autofocus
             type="button"
             onClick={handleConfirm}
             className="w-full h-[44px] rounded-[8px] text-[14px] font-semibold text-white hover:opacity-90 active:opacity-80 transition-opacity"
@@ -337,6 +328,6 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

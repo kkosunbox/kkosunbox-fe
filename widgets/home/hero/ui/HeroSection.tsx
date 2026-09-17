@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
@@ -11,8 +11,6 @@ const HOME_HERO_VIDEOS = [
   { src: "/videos/home-hero.mp4", type: "video/mp4" },
 ] as const;
 const HOME_HERO_POSTER_SRC = "/videos/home-hero-poster.webp";
-const SNAP_LOCK_MS = 900;
-const SWIPE_THRESHOLD = 48;
 const HERO_SIDE_SHADE_STYLE = {
   width: "clamp(120px, calc((100vw - 480px) / 2), 664px)",
 };
@@ -23,9 +21,6 @@ export default function HeroSection() {
   const { isLoggedIn } = useAuth();
   const { profile } = useProfile();
   const router = useRouter();
-  const sectionRef = useRef<HTMLElement>(null);
-  const snapLockedRef = useRef(false);
-  const touchStartYRef = useRef<number | null>(null);
   const [videoReady, setVideoReady] = useState(false);
   const [posterLoaded, setPosterLoaded] = useState(false);
   const posterRef = useRef<HTMLImageElement>(null);
@@ -41,74 +36,6 @@ export default function HeroSection() {
       setPosterLoaded(true);
     }
   }, []);
-
-  const snapToContent = useCallback(() => {
-    if (snapLockedRef.current) return;
-
-    const content = document.getElementById("home-content");
-    if (!content) return;
-
-    snapLockedRef.current = true;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const headerHeight = Number.parseFloat(
-      window.getComputedStyle(document.documentElement).getPropertyValue("--header-height"),
-    ) || 0;
-    const targetTop = content.getBoundingClientRect().top + window.scrollY - headerHeight;
-    window.scrollTo({
-      top: targetTop,
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
-    window.setTimeout(() => {
-      snapLockedRef.current = false;
-    }, SNAP_LOCK_MS);
-  }, []);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    function isHeroActive() {
-      if (!section) return false;
-      const rect = section.getBoundingClientRect();
-      const bannerHeight = Number.parseFloat(
-        window.getComputedStyle(document.documentElement).getPropertyValue("--banner-height"),
-      ) || 0;
-      return rect.top <= bannerHeight + 1 && rect.bottom > window.innerHeight * 0.45;
-    }
-
-    function handleWheel(event: WheelEvent) {
-      if (event.deltaY <= 0 || !isHeroActive()) return;
-      event.preventDefault();
-      snapToContent();
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (!isHeroActive()) return;
-      if (!["ArrowDown", "PageDown", " "].includes(event.key)) return;
-      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
-      event.preventDefault();
-      snapToContent();
-    }
-
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [snapToContent]);
-
-  function handleTouchStart(event: React.TouchEvent<HTMLElement>) {
-    touchStartYRef.current = event.touches[0]?.clientY ?? null;
-  }
-
-  function handleTouchEnd(event: React.TouchEvent<HTMLElement>) {
-    const startY = touchStartYRef.current;
-    touchStartYRef.current = null;
-    const endY = event.changedTouches[0]?.clientY;
-    if (startY === null || endY === undefined || startY - endY < SWIPE_THRESHOLD) return;
-    snapToContent();
-  }
 
   function handleCta() {
     if (!isLoggedIn) {
@@ -126,18 +53,15 @@ export default function HeroSection() {
 
   return (
     <section
-      ref={sectionRef}
       aria-label="꼬순박스 소개 영상"
-      className="relative h-[calc(100svh-var(--banner-height))] overflow-hidden bg-black [touch-action:pan-x]"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      className="relative h-[440px] overflow-hidden bg-black md:h-[480px] lg:h-[520px] xl:h-[560px]"
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- generated first-frame poster */}
       <img
         ref={posterRef}
         src={HOME_HERO_POSTER_SRC}
         alt="간식을 기다리는 강아지들"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full scale-[1.06] object-cover object-[center_52%]"
         fetchPriority="high"
         onLoad={() => setPosterLoaded(true)}
       />
@@ -149,7 +73,7 @@ export default function HeroSection() {
       {posterLoaded && (
         <video
           key={currentVideo.src}
-          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 h-full w-full scale-[1.06] object-cover object-[center_52%] transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
           autoPlay
           loop
           muted
@@ -196,7 +120,7 @@ export default function HeroSection() {
       />
 
       <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
-        <div className="max-w-[510px] pb-[18svh] text-white">
+        <div className="max-w-[510px] pb-10 text-white md:pb-12 lg:pb-14">
           <h2>
             {/* eslint-disable-next-line @next/next/no-img-element -- exact supplied heading artwork */}
             <img
@@ -221,22 +145,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={snapToContent}
-        className="absolute left-1/2 z-20 -translate-x-1/2 text-white transition-opacity hover:opacity-70 max-md:bottom-5 md:bottom-7"
-        aria-label="다음 섹션으로 이동"
-      >
-        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-          <path
-            d="M44.3327 32.6667L27.9994 49L11.666 32.6667M27.9994 49V7"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
     </section>
   );
 }

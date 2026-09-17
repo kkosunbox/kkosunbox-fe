@@ -190,7 +190,7 @@ export default function OrderCompleteSection({
             주문 상세보기
           </Link>
           <Link
-            href="/purchase"
+            href="/products"
             className="inline-flex h-10 w-40 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 max-sm:w-full"
           >
             쇼핑 계속하기

@@ -211,7 +211,7 @@ export default function AccountInfoModal({ onClose }: Props) {
     });
   }
 
-  const card = "relative z-10 w-full max-w-[416px] rounded-[24px] bg-white p-7 shadow-[0px_6px_20px_rgba(78,78,78,0.8)]";
+  const card = "relative w-full max-w-[416px] rounded-[24px] bg-white p-7 shadow-[0px_6px_20px_rgba(78,78,78,0.8)]";
 
   if (view === "info") {
     return (

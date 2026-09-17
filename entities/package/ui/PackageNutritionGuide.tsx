@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, type CSSProperties } from "react";
+import { ModalShell } from "@/shared/ui";
 import type { PackageTier } from "../lib/packageData";
 import { PackageCompareTable } from "./PackageCompareTable";
 
@@ -59,17 +60,15 @@ export function PackageNutritionGuide({
       </div>
 
       {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4"
-          onClick={() => setIsOpen(false)}
+        <ModalShell
+          onClose={() => setIsOpen(false)}
+          backdrop="none"
+          className="flex min-h-full items-center justify-center overflow-y-auto p-4"
         >
-          <div
-            className="my-auto w-full max-w-[400px] md:max-w-[680px]"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="my-auto w-full max-w-[400px] md:max-w-[680px]">
             <PackageCompareTable initialTier={initialTier} onClose={() => setIsOpen(false)} />
           </div>
-        </div>
+        </ModalShell>
       )}
     </>
   );

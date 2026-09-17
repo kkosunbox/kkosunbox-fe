@@ -258,7 +258,7 @@ export default function TermsViewModal({ type, onClose, onConfirm }: Props) {
   return (
     <ModalShell label={title} onClose={onClose} backdrop="soft">
       {/* Card */}
-      <div className="relative z-10 flex flex-col w-full max-w-[480px] max-h-[80dvh] rounded-[24px] bg-white overflow-hidden">
+      <div className="relative flex flex-col w-full max-w-[480px] max-h-[80dvh] rounded-[24px] bg-white overflow-hidden">
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"

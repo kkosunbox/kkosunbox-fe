@@ -17,8 +17,8 @@ interface ModalShellProps {
    * (예: 체크리스트 폼은 모바일에서 전체화면이라 중앙정렬을 쓰지 않는다).
    */
   className?: string;
-  /** 배경 어둡기 — 기본 60%, "soft" 50%, "strong" 80% (globals.css의 ::backdrop 규칙과 짝) */
-  backdrop?: "default" | "soft" | "strong";
+  /** 배경 어둡기 — 없음, 40%, 50%, 기본 60%, 80% (globals.css의 ::backdrop 규칙과 짝) */
+  backdrop?: "none" | "light" | "soft" | "default" | "strong";
   /** 배경 클릭으로 닫을지 */
   dismissOnBackdrop?: boolean;
 }

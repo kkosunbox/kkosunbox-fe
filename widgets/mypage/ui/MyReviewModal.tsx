@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import type { StaticImageData } from "next/image";
-import { Text } from "@/shared/ui";
+import { ModalShell, Text } from "@/shared/ui";
 import type { ReviewResponse } from "@/features/review/api";
 
 interface Props {
@@ -126,31 +126,22 @@ export default function MyReviewModal({
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowLeft") onPrev?.();
+      if (e.key === "ArrowLeft") onPrev?.();
       else if (e.key === "ArrowRight") onNext?.();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [onClose, onPrev, onNext]);
+  }, [onPrev, onNext]);
 
   const mainImageUrl = images[activeImage] ?? images[0] ?? null;
 
   return (
-    <div
-      className="fixed inset-0 z-[100] md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label="나의 리뷰"
+    <ModalShell
+      label="나의 리뷰"
+      onClose={onClose}
+      className="h-full md:flex md:min-h-full md:items-center md:justify-center md:overflow-y-auto md:p-4"
     >
-      {/* 배경 — 데스크탑 전용 (모바일은 전체 화면 모달) */}
-      <div
-        className="absolute inset-0 bg-black/60 max-md:hidden"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden bg-white max-md:min-h-[100dvh] md:max-h-[610px] md:max-w-[900px] md:min-h-[610px] md:rounded-[16px] md:shadow-[0px_8px_32px_rgba(0,0,0,0.24)]">
+      <div className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-white max-md:min-h-[100dvh] md:max-h-[610px] md:max-w-[900px] md:min-h-[610px] md:rounded-[16px] md:shadow-[0px_8px_32px_rgba(0,0,0,0.24)]">
         {/* 헤더 */}
         <div className="shrink-0 bg-[var(--color-accent-orange)] px-6 max-md:pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center justify-between py-4">
@@ -315,6 +306,6 @@ export default function MyReviewModal({
           </button>
         )}
       </div>
-    </div>
+    </ModalShell>
   );
 }

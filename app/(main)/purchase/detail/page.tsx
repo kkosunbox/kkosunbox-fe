@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PurchaseProductDetailPage } from "@/widgets/purchase";
-import { PACKAGES, getPackagePurchaseProduct } from "@/entities/package";
+import { PACKAGES, getPackageProductPath, getPackagePurchaseProduct } from "@/entities/package";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
@@ -19,7 +19,7 @@ export async function generateMetadata({
   if (!pkg) {
     return {
       title: "상품 상세 | 꼬순박스",
-      alternates: { canonical: "/purchase" },
+      alternates: { canonical: "/products" },
       ...NOINDEX_FOLLOW_METADATA,
     };
   }
@@ -29,7 +29,7 @@ export async function generateMetadata({
   return {
     title: `${pkg.name} 단품 | 꼬순박스`,
     description,
-    alternates: { canonical: "/purchase" },
+    alternates: { canonical: getPackageProductPath(pkg.tier) },
     ...NOINDEX_FOLLOW_METADATA,
   };
 }
@@ -44,7 +44,7 @@ export default async function PurchaseDetailPage({
   const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;
 
   if (!pkg || !purchaseProduct) {
-    redirect("/purchase");
+    redirect("/products");
   }
 
   // 비로그인 방문자도 상세 페이지 조회 가능 — 토큰이 없으면 fetchProducts가 공개 카탈로그만 반환.

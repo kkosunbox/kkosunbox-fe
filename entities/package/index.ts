@@ -28,6 +28,16 @@ export {
 } from "./lib/packagePurchaseProducts";
 export type { PackagePurchaseProduct } from "./lib/packagePurchaseProducts";
 export {
+  PACKAGE_PRODUCT_SLUG_BY_TIER,
+  getPackageProductPath,
+  getPackageTierBySlug,
+  createPackageProductCatalogEntry,
+} from "./lib/packageProductCatalog";
+export type {
+  PackageProductSlug,
+  PackageProductCatalogEntry,
+} from "./lib/packageProductCatalog";
+export {
   TIER_THUMBNAILS,
   TIER_BOX_IMAGES,
   TIER_DETAIL_HERO_IMAGES,

@@ -72,7 +72,7 @@ export default function Header() {
           style={{ background: "var(--gradient-header-overlay)", backdropFilter: "none" }}
           aria-hidden="true"
         />
-        <div className="mx-auto flex h-full items-center justify-between max-md:w-full max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
+        <div className="mx-auto flex h-full items-center justify-between max-md:w-full max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px] xl:w-full xl:max-w-none xl:px-[340px]">
           <div className="flex items-center gap-3">
             <button
               className="max-md:flex md:flex lg:hidden items-center justify-center"
@@ -99,7 +99,7 @@ export default function Header() {
             <Link href="/subscribe" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               구독몰
             </Link>
-            <Link href="/purchase" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
+            <Link href="/products" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               단품몰
             </Link>
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>

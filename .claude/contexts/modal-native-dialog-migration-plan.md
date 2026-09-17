@@ -220,13 +220,36 @@ body:has(dialog[open]) { overflow: hidden; }
 
 **확인 못 함**: 모바일 폭 레이아웃, ESC 키 실제 닫힘 (Phase 0·1과 동일한 하네스 한계)
 
-### Phase 3 — 잔여 개별 모달
-- `MyReviewModal`, `SupportSection`, `InquiryDetailModal`, `OrderHistorySection`, `PackageNutritionGuide`
-- 각 파일의 ESC 리스너·스크롤 락 중복 제거
+### Phase 3 — 잔여 개별 모달 ✅ 구현 완료 (2026-09-17)
+- `MyReviewModal`, `SupportSection`의 FAQ 상세, `InquiryDetailModal`, `OrderHistorySection`,
+  `PackageNutritionGuide`를 모두 `ModalShell`로 전환했다.
+- FAQ·문의·주문 상세의 기존 40% 딤을 보존하도록 `backdrop="light"`, 영양정보의 기존
+  투명 배경을 보존하도록 `backdrop="none"` 옵션을 추가했다.
+- FAQ·문의의 수동 body 스크롤 락과 ESC 전역 리스너를 제거했다. `MyReviewModal`은 ESC만
+  `ModalShell`로 이관하고 기존 좌우 화살표 리뷰 탐색 리스너는 유지했다.
+- 기존 접근성 이름이 있던 `MyReviewModal`·주문 상세는 `label`로 유지하고, 없던 FAQ·문의·
+  영양정보에는 새 이름을 임의로 추가하지 않았다.
 
-### Phase 4 — 정리
-- 스크롤 락이 CSS 한 줄로 단일화됐는지 확인, 죽은 z-index 잔재 제거
-- `CLAUDE.md` 또는 본 문서에 "새 모달은 `ModalShell`로" 규칙 추가
+### Phase 4 — 정리 ✅ 구현 완료 (2026-09-17)
+- 모달 스크롤 락은 `body:has(dialog:modal) { overflow: hidden; }` 한 곳으로 단일화했다.
+  모달이 아닌 모바일 헤더 메뉴의 수동 락은 범위 밖이므로 유지했다.
+- 마이그레이션된 카드 래퍼의 죽은 `z-10`만 제거하고, 내부 absolute 요소의 기준인
+  `relative`와 카드 내부 요소 간 쌓임에 필요한 z-index는 유지했다.
+- `CLAUDE.md`에 신규 모달은 `ModalShell`을 사용하고 수동 backdrop·ESC·스크롤 락을
+  중복 구현하지 않는다는 필수 규칙을 추가했다.
+
+### Phase 3·4 검증 (2026-09-17)
+
+| 항목 | 결과 |
+|---|---|
+| `tsc --noEmit --incremental false` | 통과 |
+| `pnpm lint` (저장소 전체) | 통과 |
+| 잔여 수동 모달 래퍼 검색 | Phase 3 대상 및 기존 마이그레이션 범위에서 `fixed inset-0` 0건 |
+| 잔여 수동 스크롤 락 검색 | 모달 범위에서 `document.body.style.overflow` 0건 |
+| 잔여 카드 래퍼 `relative z-10` 검색 | 마이그레이션된 모달 카드에서 0건 |
+| `pnpm build` | 통과 (Next.js 16.1.7, 47개 페이지 생성) |
+| 관련 브라우저 E2E | `checklist`·`mypage`·`order`·`referral`·`inquiry` Chromium **88/88 통과** |
+| Phase 3 타깃 브라우저 검증 | 임시 하네스로 5개 모달을 직접 열어 native `:modal`, CSS 스크롤 락, ESC, 배경 클릭, 40%·투명 backdrop, 리뷰 모바일 390×844 전체화면을 검증 — **5/5 통과** 후 하네스 제거 |
 
 ### 단계별 공통 검증
 `npx tsc --noEmit` → `pnpm lint` → 관련 E2E(`checklist` `mypage` `order` `referral` `inquiry`) → Phase 1·2는 VR 태블릿까지

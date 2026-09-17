@@ -581,6 +581,14 @@ dialog::backdrop {
   background: rgb(0 0 0 / 0.6);
 }
 
+dialog[data-backdrop="none"]::backdrop {
+  background: transparent;
+}
+
+dialog[data-backdrop="light"]::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
 dialog[data-backdrop="soft"]::backdrop {
   background: rgb(0 0 0 / 0.5);
 }

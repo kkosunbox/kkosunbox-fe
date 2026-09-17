@@ -178,7 +178,7 @@ export default function ProfileSwitchModal({ onClose }: Props) {
 
   return (
     <ModalShell label="프로필 변경" onClose={onClose}>
-      <div className="relative z-10 w-full max-w-[416px] rounded-[24px] bg-white shadow-[0px_6px_20px_rgba(78,78,78,0.8)]">
+      <div className="relative w-full max-w-[416px] rounded-[24px] bg-white shadow-[0px_6px_20px_rgba(78,78,78,0.8)]">
         <div className="flex flex-col items-center gap-3 p-7">
           <div className="relative flex w-full items-center">
             <h2 className="pr-8 text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">

@@ -12,8 +12,10 @@ export interface ReviewPlan {
 
 export interface ReviewResponse {
   id: number;
-  planId: number;
-  plan: ReviewPlan;
+  planId: number | null;
+  plan: ReviewPlan | null;
+  productId: number | null;
+  product: ReviewProduct | null;
   rating: number;
   content: string;
   createdAt: string;
@@ -24,6 +26,8 @@ export interface ReviewResponse {
   snapshotUserEmail: string | null;
   userId: number | null;
 }
+
+export interface ReviewProduct { id: number; name: string; imageUrl?: string | null }
 
 export interface PlanReviewsResponse {
   items: ReviewResponse[];
@@ -46,12 +50,24 @@ export interface PlanReviewEligibility {
   reviewId: number | null;
 }
 
+export interface ProductReviewEligibility {
+  productId: number;
+  productName: string;
+  imageUrl?: string | null;
+  canReview: boolean;
+  hasReview: boolean;
+  isEditable: boolean;
+  reviewId: number | null;
+}
+
 export interface ReviewEligibilityResponse {
   plans: PlanReviewEligibility[];
+  products: ProductReviewEligibility[];
 }
 
 export interface CreateReviewRequest {
-  planId: number;
+  planId?: number;
+  productId?: number;
   rating: number;
   content: string;
   imageUrls?: string[];

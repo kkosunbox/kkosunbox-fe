@@ -1,6 +1,7 @@
 import { apiClient } from "@/shared/lib/api";
 import type {
   ConfirmProductOrderRequest,
+  CancelProductOrderRequest,
   CreateProductOrderRequest,
   CreateProductOrderResponse,
   GetProductCouponInfoRequest,
@@ -66,8 +67,8 @@ export function confirmProductOrder(body: ConfirmProductOrderRequest) {
 }
 
 /** 단건 주문 취소 (환불) — 결제 완료 + 배송 전 상태 주문만 가능 */
-export function cancelProductOrder(id: number) {
-  return apiClient.post<void>(`/v1/products/orders/${id}/cancel`);
+export function cancelProductOrder(id: number, body?: CancelProductOrderRequest) {
+  return apiClient.post<ProductOrderDto>(`/v1/products/orders/${id}/cancel`, body);
 }
 
 /** 단건 주문 결제 영수증 PDF URL 조회 */

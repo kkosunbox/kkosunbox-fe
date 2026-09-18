@@ -1,5 +1,6 @@
 ﻿"use client";
 
+/* eslint-disable @next/next/no-img-element -- 플랜 썸네일은 서버의 동적 원격 URL이다. */
 import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
@@ -129,7 +130,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                       background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
                     }}
                   >
-                    {theme.tierLabel}
+                    {plan.slug ?? theme.tierLabel}
                   </button>
                 );
               })}
@@ -139,7 +140,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
         <div className="px-6">
           <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
-            <Image
+            {selectedPlan.imageUrl ? <img src={selectedPlan.imageUrl} alt={`${selectedPlan.name} 대표 이미지`} className="h-full w-full object-cover" /> : <Image
               src={packageThumbnail}
               alt={`${selectedPlan.name} 대표 이미지`}
               fill
@@ -147,7 +148,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               quality={HIGH_IMAGE_QUALITY}
               className="object-cover"
               priority
-            />
+            />}
             <PlanImageBadges
               tags={selectedPlan.tags}
               className="absolute right-3 top-3 z-10 flex items-center gap-1.5"
@@ -355,7 +356,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                       background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
                     }}
                   >
-                    {theme.tierLabel}
+                    {plan.slug ?? theme.tierLabel}
                   </button>
                 );
               })}
@@ -368,7 +369,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           <div className="grid gap-8 lg:mx-auto lg:w-[1013px] lg:grid-cols-[508px_438px] lg:justify-between lg:gap-0">
             <div className="mx-auto min-w-0 w-full max-w-[508px] lg:mx-0">
               <div className="relative h-[508px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
-                <Image
+                {selectedPlan.imageUrl ? <img src={selectedPlan.imageUrl} alt={`${selectedPlan.name} 대표 이미지`} className="h-full w-full object-cover" /> : <Image
                   src={packageThumbnail}
                   alt={`${selectedPlan.name} 대표 이미지`}
                   fill
@@ -376,7 +377,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   quality={HIGH_IMAGE_QUALITY}
                   className="object-cover"
                   priority
-                />
+                />}
                 <PlanImageBadges
                   tags={selectedPlan.tags}
                   className="absolute right-4 top-4 z-10 flex items-center gap-2"

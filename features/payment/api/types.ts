@@ -55,11 +55,16 @@ export type PaymentDeliveryAddressDto = DeliveryAddress;
 export interface CombinedPaymentDto {
   /** 결제/주문 ID — `orderType`이 다르면 ID가 겹칠 수 있으므로 단독 key로 쓰지 말 것 */
   id: number;
+  orderId: string;
   orderType: OrderType;
   /** 플랜명(구독) 또는 상품명(단건) */
   name: string;
   /** 최종 결제 금액 (부가세 포함) */
   amount: number;
+  refundedAmount?: number;
+  itemsAmount?: number;
+  couponDiscountAmount?: number;
+  shippingFee?: number;
   status: CombinedPaymentStatus;
   displayStatus: CombinedPaymentDisplayStatus;
   createdAt: string; // date-time
@@ -72,23 +77,42 @@ export interface CombinedPaymentDto {
   method?: string | null;
   /** 결제 종류 — 구독 결제만 */
   paymentType?: CombinedPaymentType;
-  /** 상품 ID — 단건 주문만 */
-  productId?: number;
-  /** 수량 — 단건 주문만 */
-  quantity?: number;
+  imageUrl?: string | null;
+  planSlug?: string | null;
+  items: CombinedPaymentItemDto[];
+  itemCount?: number;
   /** 구독 ID — 구독 결제만 */
   subscriptionId?: number;
   trackingNumber?: string | null;
 }
 
+export interface CombinedPaymentItemDto {
+  id: number;
+  productId: number | null;
+  productName: string;
+  imageUrl?: string | null;
+  unitPrice: number;
+  quantity: number;
+  allocatedAmount: number;
+  refundedQuantity: number;
+  relatedPlanId?: number | null;
+  relatedPlanSlug?: string | null;
+}
+
 // ── 요청 ──────────────────────────────────────────────────────────
 
 export interface GetCombinedPaymentHistoryParams {
+  orderType?: OrderType;
   deliveryStatus?: CombinedDeliveryStatus;
   /** 페이지 번호 (기본값 1) */
   page?: number;
   /** 페이지당 항목 수 (기본값 20) */
   limit?: number;
+}
+
+export interface CombinedPaymentTypeSummaryResponse {
+  subscriptionCount: number;
+  productCount: number;
 }
 
 // ── 응답 ──────────────────────────────────────────────────────────

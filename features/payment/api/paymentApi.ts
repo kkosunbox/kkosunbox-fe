@@ -2,6 +2,8 @@ import { apiClient } from "@/shared/lib/api";
 import { paymentHistoryQuery } from "../lib/paymentHistoryQuery";
 import type {
   CombinedDeliveryStatusSummaryResponse,
+  CombinedPaymentDto,
+  CombinedPaymentTypeSummaryResponse,
   GetCombinedPaymentHistoryParams,
   PaginatedCombinedPaymentHistoryResponse,
 } from "./types";
@@ -19,4 +21,12 @@ export function getCombinedPaymentHistory(params?: GetCombinedPaymentHistoryPara
 /** 구독 + 단건 배송 상태 요약 조회 */
 export function getCombinedDeliveryStatusSummary() {
   return apiClient.get<CombinedDeliveryStatusSummaryResponse>("/v1/payments/delivery-summary");
+}
+
+export function getCombinedPaymentTypeSummary() {
+  return apiClient.get<CombinedPaymentTypeSummaryResponse>("/v1/payments/type-summary");
+}
+
+export function getCombinedPayment(orderType: "subscription" | "product", id: number) {
+  return apiClient.get<CombinedPaymentDto>(`/v1/payments/${orderType}/${id}`);
 }

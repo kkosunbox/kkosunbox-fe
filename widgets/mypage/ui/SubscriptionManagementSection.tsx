@@ -283,7 +283,7 @@ function SubscriptionRow({
       <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-[129px] md:min-h-[170px] lg:min-h-[170px] md:w-[182px] lg:w-[182px]">
         {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
         <img
-          src={TIER_BOX_IMAGES[theme.tier].src}
+          src={plan.imageUrl ?? TIER_BOX_IMAGES[theme.tier].src}
           alt={`${plan.name} 이미지`}
           width={TIER_BOX_IMAGES[theme.tier].width}
           height={TIER_BOX_IMAGES[theme.tier].height}

@@ -51,6 +51,8 @@ export default async function PurchaseOrderPage({
       purchaseProduct={effectivePurchaseProduct}
       initialAddresses={addresses}
       productId={product?.id ?? null}
+      imageUrl={product?.imageUrl ?? null}
+      relatedPlanSlug={product?.relatedPlanSlug ?? null}
       initialQuantity={initialQuantity}
     />
   );

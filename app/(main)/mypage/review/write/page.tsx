@@ -14,11 +14,12 @@ function toPositiveInt(value: string | undefined): number | null {
 export default async function ReviewWritePage({
   searchParams,
 }: {
-  searchParams: Promise<{ planId?: string; reviewId?: string }>;
+  searchParams: Promise<{ planId?: string; productId?: string; reviewId?: string }>;
 }) {
-  const { planId: planIdStr, reviewId: reviewIdStr } = await searchParams;
+  const { planId: planIdStr, productId: productIdStr, reviewId: reviewIdStr } = await searchParams;
   const planId = toPositiveInt(planIdStr);
+  const productId = toPositiveInt(productIdStr);
   const reviewId = toPositiveInt(reviewIdStr);
 
-  return <ReviewWriteSection planId={planId} reviewId={reviewId} />;
+  return <ReviewWriteSection planId={planId} productId={productId} reviewId={reviewId} />;
 }

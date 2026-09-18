@@ -1,5 +1,6 @@
 ﻿"use client";
 
+/* eslint-disable @next/next/no-img-element -- 플랜 썸네일은 서버의 동적 원격 URL이다. */
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -148,7 +149,6 @@ function ResultAvatar({
 }) {
   if (avatarSrc) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
       <img src={avatarSrc} alt="반려견 프로필" className="h-full w-full object-cover" />
     );
   }
@@ -547,7 +547,7 @@ export default function ChecklistResult({
                   >
                     {/* 패키지 이미지 */}
                     <div className="relative overflow-hidden max-md:h-[120px] max-md:w-[128px] max-md:shrink-0 max-md:rounded-[12px] md:aspect-square md:w-full md:rounded-[16px] lg:aspect-auto lg:h-[252px]">
-                      <PackageSummaryThumbnail src={img} alt={pkg.name} />
+                      {plan.imageUrl ? <img src={plan.imageUrl} alt={plan.name} className="h-full w-full object-cover" /> : <PackageSummaryThumbnail src={img} alt={pkg.name} />}
                     </div>
 
                     {/* 텍스트 영역 */}

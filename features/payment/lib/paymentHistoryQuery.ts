@@ -6,6 +6,7 @@ import type { GetCombinedPaymentHistoryParams } from "../api/types";
  */
 export function paymentHistoryQuery(params?: GetCombinedPaymentHistoryParams): string {
   const parts: string[] = [];
+  if (params?.orderType) parts.push(`orderType=${params.orderType}`);
   if (params?.deliveryStatus) parts.push(`deliveryStatus=${params.deliveryStatus}`);
   if (params?.page !== undefined) parts.push(`page=${params.page}`);
   if (params?.limit !== undefined) parts.push(`limit=${params.limit}`);

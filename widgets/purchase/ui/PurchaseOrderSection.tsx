@@ -11,6 +11,8 @@ interface PurchaseOrderSectionProps {
   initialAddresses: DeliveryAddress[];
   /** 백엔드 상품 카탈로그에서 매칭된 실제 상품 ID. 카탈로그가 비어있으면 null — 결제 시 안내 후 차단 */
   productId: number | null;
+  imageUrl?: string | null;
+  relatedPlanSlug?: string | null;
   /** 상세 페이지에서 이어받은 초기 수량 (1~99, 기본 1) */
   initialQuantity?: number;
 }
@@ -20,8 +22,10 @@ export default function PurchaseOrderSection({
   purchaseProduct,
   initialAddresses,
   productId,
+  imageUrl,
+  relatedPlanSlug,
   initialQuantity = 1,
 }: PurchaseOrderSectionProps) {
   const vm = usePurchaseOrderSection({ purchaseProduct, initialAddresses, productId, initialQuantity });
-  return <PurchaseOrderSectionView pkg={pkg} purchaseProduct={purchaseProduct} vm={vm} />;
+  return <PurchaseOrderSectionView pkg={pkg} purchaseProduct={purchaseProduct} imageUrl={imageUrl} relatedPlanSlug={relatedPlanSlug} vm={vm} />;
 }

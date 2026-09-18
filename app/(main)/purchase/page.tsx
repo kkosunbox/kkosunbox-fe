@@ -45,25 +45,25 @@ export default async function PurchasePage() {
     "@type": "ItemList",
     name: "꼬순박스 강아지 수제간식 단품",
     url: `${SITE_URL}/purchase`,
-    numberOfItems: COMPARE_PACKAGES.length,
-    itemListElement: COMPARE_PACKAGES.map((pkg, index) => {
-      const product = productsByTier[pkg.tier];
-      const price = product?.price ?? getPackagePurchaseProduct(pkg.tier)!.price;
+    numberOfItems: products.length || COMPARE_PACKAGES.length,
+    itemListElement: (products.length ? products : COMPARE_PACKAGES.map((pkg) => ({ ...getPackagePurchaseProduct(pkg.tier)!, id: 0, name: pkg.name, description: null, imageUrl: null }))).map((product, index) => {
+      const fallbackPkg = COMPARE_PACKAGES[index] ?? COMPARE_PACKAGES[0];
+      const price = product.price;
 
       return {
         "@type": "ListItem",
         position: index + 1,
         item: {
           "@type": "Product",
-          name: product?.name ?? pkg.name,
+          name: product.name,
           description:
-            product?.description || `${pkg.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
-          image: product?.imageUrl || `${SITE_URL}${TIER_BOX_IMAGES[pkg.tier].src}`,
-          url: `${SITE_URL}/purchase/detail?tier=${pkg.tier}`,
+            product.description || `${product.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
+          image: product.imageUrl || `${SITE_URL}${TIER_BOX_IMAGES[fallbackPkg.tier].src}`,
+          url: product.id ? `${SITE_URL}/purchase/detail?productId=${product.id}` : `${SITE_URL}/purchase/detail?tier=${fallbackPkg.tier}`,
           brand: { "@type": "Brand", name: "꼬순박스" },
           offers: {
             "@type": "Offer",
-            url: `${SITE_URL}/purchase/detail?tier=${pkg.tier}`,
+            url: product.id ? `${SITE_URL}/purchase/detail?productId=${product.id}` : `${SITE_URL}/purchase/detail?tier=${fallbackPkg.tier}`,
             priceCurrency: "KRW",
             price,
             availability: "https://schema.org/InStock",
@@ -82,7 +82,7 @@ export default async function PurchasePage() {
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>
-      <PurchaseListSection productsByTier={productsByTier} ratingByTier={ratingByTier} />
+      <PurchaseListSection productsByTier={productsByTier} products={products} ratingByTier={ratingByTier} />
     </>
   );
 }

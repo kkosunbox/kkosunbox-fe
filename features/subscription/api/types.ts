@@ -21,6 +21,8 @@ export interface SubscriptionPlanDto {
    */
   sortOrder: number;
   isRecommended: boolean;
+  imageUrl?: string | null;
+  slug?: string;
   /** 플랜 평균 별점 */
   averageRating: number;
   description?: string | null;

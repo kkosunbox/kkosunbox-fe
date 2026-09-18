@@ -67,7 +67,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
           <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
             <img
-              src={TIER_BOX_IMAGES[theme.tier].src}
+              src={subscription.plan.imageUrl ?? TIER_BOX_IMAGES[theme.tier].src}
               alt={`${subscription.plan.name} 이미지`}
               width={TIER_BOX_IMAGES[theme.tier].width}
               height={TIER_BOX_IMAGES[theme.tier].height}

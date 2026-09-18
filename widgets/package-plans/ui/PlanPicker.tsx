@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- 플랜 썸네일은 서버의 동적 원격 URL이다. */
 import { useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
@@ -569,7 +570,7 @@ export default function PlanPicker({
                   ].join(" ")}
                 >
                   <div className={`relative ${isSelected ? "h-[159px] w-[172px]" : "h-[148px] w-[160px]"} shrink-0 self-center overflow-hidden rounded-[16px] bg-white ${isSelected ? "ml-0" : "ml-3"}`}>
-                    <PackageSummaryThumbnail src={img} alt={pkg.name} />
+                    {plan?.imageUrl ? <img src={plan.imageUrl} alt={plan.name} className="h-full w-full object-cover" /> : <PackageSummaryThumbnail src={img} alt={pkg.name} />}
                     {isPlanCurrent ? (
                       <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
                         <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">
@@ -663,7 +664,7 @@ export default function PlanPicker({
                   ].join(" ")}
                 >
                   <div className="relative h-[148px] w-[160px] shrink-0 overflow-hidden rounded-[16px] bg-white">
-                    <PackageSummaryThumbnail src={img} alt={pkg.name} />
+                    {plan?.imageUrl ? <img src={plan.imageUrl} alt={plan.name} className="h-full w-full object-cover" /> : <PackageSummaryThumbnail src={img} alt={pkg.name} />}
                     {isPlanCurrent ? (
                       <div className="absolute left-3 top-3 z-10 md:left-4 md:top-4">
                         <span className="rounded-full bg-[var(--color-text)] px-2.5 py-0.5 text-[12px] font-semibold leading-[15px] text-white md:px-3 md:py-1 md:text-[14px] md:leading-[17px]">

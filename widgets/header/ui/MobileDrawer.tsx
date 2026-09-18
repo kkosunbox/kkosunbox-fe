@@ -157,14 +157,21 @@ export function MobileDrawer({
             <p className="absolute left-1/2 top-[175px] -translate-x-1/2 whitespace-nowrap text-[14px] leading-[18px] font-medium text-[var(--color-text-secondary)]">{email}</p>
           )}
 
-          {/* 단축 아이콘 3종 */}
-          <div className="absolute left-1/2 top-[221px] flex w-[268px] -translate-x-1/2 items-start justify-between">
+          {/* 단축 아이콘 */}
+          <div className="absolute left-1/2 top-[221px] flex w-[330px] -translate-x-1/2 items-start justify-between">
             <button
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage" : "/login"); }}
               className="flex w-[60px] flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
             >
               <DropdownUserIcon />
               <span className={shortcutLabelClass(isMyPageActive)}>마이페이지</span>
+            </button>
+            <button
+              onClick={() => { onClose(); router.push(isLoggedIn ? "/orders" : "/login?next=/orders"); }}
+              className="flex w-14 flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
+            >
+              <DropdownClipboardIcon />
+              <span className={shortcutLabelClass(pathname.startsWith("/orders"))}>주문내역</span>
             </button>
             <button
               onClick={() => { onClose(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}

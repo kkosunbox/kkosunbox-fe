@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getReviews } from "@/features/review/api";
+import { getProductReviews, getReviews } from "@/features/review/api";
 import type { ReviewResponse, ReviewSortOrder } from "@/features/review/api";
 import type { ReviewLightboxState } from "./ReviewImageLightbox";
 
@@ -11,7 +11,7 @@ export const REVIEWS_PER_PAGE = 10;
  * 구독 상품 상세의 리뷰 도메인 상태(패칭·정렬·페이지네이션·라이트박스)를 캡슐화한다.
  * initialPlanId가 null이면 전체 리뷰로 시작하고, 플랜 필터 변경 시 첫 페이지로 돌아간다.
  */
-export function useProductReviews(initialPlanId: number | null = null) {
+export function useProductReviews(initialPlanId: number | null = null, productId: number | null = null) {
   const [reviews, setReviews] = useState<ReviewResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [tabTotal, setTabTotal] = useState(0);
@@ -36,7 +36,9 @@ export function useProductReviews(initialPlanId: number | null = null) {
     async (id: number | null, p: number, sortOrder: ReviewSortOrder) => {
       setLoading(true);
       try {
-        const data = await getReviews(id, p, REVIEWS_PER_PAGE, sortOrder);
+        const data = productId !== null
+          ? await getProductReviews(productId, p, REVIEWS_PER_PAGE, sortOrder)
+          : await getReviews(id, p, REVIEWS_PER_PAGE, sortOrder);
         setReviews(data.items);
         setTotal(data.total);
         if (id === initialPlanId) setTabTotal(data.total);
@@ -50,7 +52,7 @@ export function useProductReviews(initialPlanId: number | null = null) {
         setLoading(false);
       }
     },
-    [initialPlanId],
+    [initialPlanId, productId],
   );
 
   useEffect(() => {
@@ -61,7 +63,9 @@ export function useProductReviews(initialPlanId: number | null = null) {
   useEffect(() => {
     let cancelled = false;
 
-    getReviews(selectedPlanId, 1, REVIEWS_PER_PAGE, "LATEST")
+    (productId !== null
+      ? getProductReviews(productId, 1, REVIEWS_PER_PAGE, "LATEST")
+      : getReviews(selectedPlanId, 1, REVIEWS_PER_PAGE, "LATEST"))
       .then((data) => {
         if (!cancelled) {
           setReviewImages(data.items.flatMap((review) => review.imageUrls ?? []));
@@ -74,7 +78,7 @@ export function useProductReviews(initialPlanId: number | null = null) {
     return () => {
       cancelled = true;
     };
-  }, [selectedPlanId]);
+  }, [selectedPlanId, productId]);
 
   const totalPages = Math.max(1, Math.ceil(total / REVIEWS_PER_PAGE));
 

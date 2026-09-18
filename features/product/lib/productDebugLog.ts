@@ -54,7 +54,7 @@ export function logConfirmSuccess(order: ProductOrderDto): void {
   if (!enabled()) return;
   console.info(
     `${PREFIX} ${stamp()} ✓ confirm 성공`,
-    JSON.stringify({ id: order.id, productId: order.productId, status: order.status, amount: order.amount }),
+    JSON.stringify({ id: order.id, orderId: order.orderId, itemCount: order.items.length, status: order.status, amount: order.amount }),
   );
 }
 

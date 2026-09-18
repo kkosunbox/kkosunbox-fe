@@ -10,7 +10,7 @@ interface Props {
   planName: string;
   tierLabel: string;
   tierColorVar: string;
-  thumbnail: StaticImageData;
+  thumbnail: StaticImageData | string;
   /** 작성 후 24시간 이내 — 수정 버튼 노출 여부 */
   isEditable: boolean;
   onEdit: () => void;
@@ -178,10 +178,10 @@ export default function MyReviewModal({
               <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-surface-light)] md:h-[88px] md:w-[88px]">
                 {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 썸네일 원본 품질 유지 */}
                 <img
-                  src={thumbnail.src}
+                  src={typeof thumbnail === "string" ? thumbnail : thumbnail.src}
                   alt={`${planName} 이미지`}
-                  width={thumbnail.width}
-                  height={thumbnail.height}
+                  width={typeof thumbnail === "string" ? 88 : thumbnail.width}
+                  height={typeof thumbnail === "string" ? 88 : thumbnail.height}
                   decoding="async"
                   className="absolute inset-0 h-full w-full object-cover object-center scale-105"
                 />

@@ -8,7 +8,7 @@ import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { deleteReview } from "@/features/review/api";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { subscriptionPaidAmount } from "@/features/subscription/lib/subscriptionAmount";
-import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
+import type { PlanReviewEligibility, ProductReviewEligibility, ReviewResponse } from "@/features/review/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { packageThemeForPlan, PACKAGES, CURRENT_PURCHASE_TIER } from "@/entities/package";
@@ -212,6 +212,7 @@ interface ReviewState {
   review: ReviewResponse;
   plan: SubscriptionPlanLike;
   isEditable: boolean;
+  editQuery: string;
 }
 
 /** 구독 슬라이드와 단건 구매 슬라이드를 같은 캐러셀에서 다룬다 */
@@ -228,7 +229,7 @@ interface SlideView {
   manageLabel: string;
   paymentAmount: number | null;
   boxQuantity: number | null;
-  planId: number | null;
+  reviewHref: string | null;
   canReview: boolean;
   myReview: ReviewResponse | null;
 }
@@ -349,7 +350,7 @@ function SlidePanel({
         </Link>
 
         {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성. 연관 플랜이 없는 구매(단건)는 노출하지 않음 */}
-        {view.planId !== null && (
+        {view.reviewHref !== null && (
           <div className="max-lg:mt-2 lg:mt-2.5">
             {view.myReview ? (
               <button
@@ -363,7 +364,7 @@ function SlidePanel({
               </button>
             ) : view.canReview ? (
               <Link
-                href={`/mypage/review/write?planId=${view.planId}`}
+                href={view.reviewHref}
                 prefetch={false}
                 tabIndex={hidden ? -1 : undefined}
                 className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
@@ -420,12 +421,14 @@ export function SubscriptionCard({
   myReviews = [],
   purchaseGroups = [],
   productPlanSummaries = [],
+  eligibleProducts = [],
 }: {
   subscriptions: UserSubscriptionDto[];
   eligiblePlans?: PlanReviewEligibility[];
   myReviews?: ReviewResponse[];
   purchaseGroups?: ProductPurchaseGroup[];
   productPlanSummaries?: ProductOrderPlanSummaryDto[];
+  eligibleProducts?: ProductReviewEligibility[];
 }) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -451,9 +454,21 @@ export function SubscriptionCard({
 
   const reviewByPlan = useMemo(() => {
     const map = new Map<number, ReviewResponse>();
-    for (const r of myReviews) map.set(r.planId, r);
+    for (const r of myReviews) if (r.planId !== null) map.set(r.planId, r);
     return map;
   }, [myReviews]);
+
+  const reviewByProduct = useMemo(() => {
+    const map = new Map<number, ReviewResponse>();
+    for (const review of myReviews) if (review.productId !== null) map.set(review.productId, review);
+    return map;
+  }, [myReviews]);
+
+  const eligibilityByProduct = useMemo(() => {
+    const map = new Map<number, ProductReviewEligibility>();
+    for (const item of eligibleProducts) map.set(item.productId, item);
+    return map;
+  }, [eligibleProducts]);
 
   // relatedPlanId(단건 구매) → 리뷰 작성 가능 여부 요약
   const productSummaryByPlan = useMemo(() => {
@@ -508,10 +523,20 @@ export function SubscriptionCard({
 
     // 리뷰 상태 (리뷰는 플랜당 1개 단위). 구독 슬라이드는 plan.id, 구매 슬라이드는 상품의 relatedPlanId 기준
     const planId = subscription?.plan.id ?? group?.relatedPlanId ?? null;
-    const canReview = isSubscriptionSlide
-      ? eligibilityByPlan.get(planId ?? -1)?.canReview ?? false
-      : productSummaryByPlan.get(planId ?? -1)?.canReview ?? false;
-    const myReview = planId !== null ? reviewByPlan.get(planId) ?? null : null;
+    const independentProductId = !isSubscriptionSlide && planId === null ? group?.productId ?? null : null;
+    const reviewHref = planId !== null
+      ? `/mypage/review/write?planId=${planId}`
+      : independentProductId !== null
+        ? `/mypage/review/write?productId=${independentProductId}`
+        : null;
+    const canReview = planId !== null
+      ? (isSubscriptionSlide ? eligibilityByPlan.get(planId)?.canReview : productSummaryByPlan.get(planId)?.canReview) ?? false
+      : (independentProductId !== null ? eligibilityByProduct.get(independentProductId)?.canReview ?? false : false);
+    const myReview = planId !== null
+      ? reviewByPlan.get(planId) ?? null
+      : independentProductId !== null
+        ? reviewByProduct.get(independentProductId) ?? null
+        : null;
 
     return {
       colorVar,
@@ -521,7 +546,7 @@ export function SubscriptionCard({
       manageLabel,
       paymentAmount,
       boxQuantity,
-      planId,
+      reviewHref,
       canReview,
       myReview,
     };
@@ -531,19 +556,32 @@ export function SubscriptionCard({
   const reviewStates = useMemo<ReviewState[]>(() => {
     const states: ReviewState[] = [];
     for (const r of myReviews) {
+      if (r.planId === null) continue;
       const plan = planById.get(r.planId);
       if (!plan) continue;
       states.push({
         review: r,
         plan,
+        editQuery: `planId=${r.planId}`,
         isEditable:
           eligibilityByPlan.get(r.planId)?.isEditable ??
           productSummaryByPlan.get(r.planId)?.isEditable ??
           false,
       });
     }
+    for (const r of myReviews) {
+      if (r.planId !== null || r.productId === null) continue;
+      const group = purchaseGroups.find((item) => item.productId === r.productId);
+      const name = r.product?.name ?? group?.productName ?? "단품 상품";
+      states.push({
+        review: r,
+        plan: { id: r.productId, name, sortOrder: 0 },
+        editQuery: `productId=${r.productId}`,
+        isEditable: eligibleProducts.find((item) => item.productId === r.productId)?.isEditable ?? false,
+      });
+    }
     return states;
-  }, [myReviews, planById, eligibilityByPlan, productSummaryByPlan]);
+  }, [myReviews, planById, eligibilityByPlan, productSummaryByPlan, purchaseGroups, eligibleProducts]);
 
   // "내 리뷰보러가기"로 띄우는 모달 — reviewStates 내 활성 인덱스
   const [reviewIndex, setReviewIndex] = useState<number | null>(null);
@@ -604,9 +642,9 @@ export function SubscriptionCard({
 
   function handleEditReview() {
     if (!activeReviewState) return;
-    const { plan, review } = activeReviewState;
+    const { editQuery, review } = activeReviewState;
     setReviewIndex(null);
-    router.push(`/mypage/review/write?planId=${plan.id}&reviewId=${review.id}`);
+    router.push(`/mypage/review/write?${editQuery}&reviewId=${review.id}`);
   }
 
   function handlePrevReview() {
@@ -850,9 +888,9 @@ export function SubscriptionCard({
           key={activeReviewState.review.id}
           review={activeReviewState.review}
           planName={activeReviewState.plan.name}
-          tierLabel={reviewTheme.tierLabel}
+          tierLabel={activeReviewState.plan.slug ?? reviewTheme.tierLabel}
           tierColorVar={reviewTheme.colorVar}
-          thumbnail={TIER_BOX_IMAGES[reviewTheme.tier]}
+          thumbnail={activeReviewState.plan.imageUrl ?? TIER_BOX_IMAGES[reviewTheme.tier]}
           isEditable={activeReviewState.isEditable}
           onEdit={handleEditReview}
           onDelete={handleDeleteReview}

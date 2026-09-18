@@ -16,6 +16,8 @@ import { MobileDrawer } from "./MobileDrawer";
 import { LogoWhiteIcon } from "./icons";
 import { isTransparentRoute } from "@/shared/config/headerVariants";
 import { useHeaderScroll } from "./useHeaderScroll";
+import { getCartCount } from "@/features/cart";
+import { CART_UPDATED_EVENT } from "@/features/cart/lib/events";
 
 export default function Header() {
   const { isLoggedIn, user, isAuthLoading, logout } = useAuth();
@@ -24,6 +26,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const { isScrolled, isBannerCollapsed } = useHeaderScroll(pathname);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
@@ -47,6 +50,14 @@ export default function Header() {
 
   const isSolid = !isTransparentRoute(pathname) || isMenuOpen || isScrolled || isHovered;
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const refresh = () => { void getCartCount().then((data) => setCartCount(data.itemCount)).catch(() => setCartCount(0)); };
+    refresh();
+    window.addEventListener(CART_UPDATED_EVENT, refresh);
+    return () => window.removeEventListener(CART_UPDATED_EVENT, refresh);
+  }, [isLoggedIn]);
 
   return (
     <div>
@@ -102,6 +113,13 @@ export default function Header() {
             </Link>
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               고객센터
+            </Link>
+            <Link href={isLoggedIn ? "/cart" : "/login?next=/cart"} aria-label={`장바구니 ${cartCount}개`} className="relative inline-flex h-8 w-8 items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 4H5L7.2 15.2A2 2 0 0 0 9.16 16.8H17.8A2 2 0 0 0 19.75 15.25L21 8H6" stroke={isSolid ? "var(--color-text)" : "white"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="9" cy="20" r="1.2" fill={isSolid ? "var(--color-text)" : "white"} /><circle cx="18" cy="20" r="1.2" fill={isSolid ? "var(--color-text)" : "white"} />
+              </svg>
+              {isLoggedIn && cartCount > 0 && <span className="absolute -right-1 -top-1 min-w-4 rounded-full bg-[var(--color-primary)] px-1 text-center text-[10px] font-bold leading-4 text-white">{cartCount > 99 ? "99+" : cartCount}</span>}
             </Link>
             {isAuthLoading ? (
               <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />

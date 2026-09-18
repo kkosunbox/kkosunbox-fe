@@ -51,7 +51,7 @@ export default function Header() {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <>
+    <div>
       <HeaderBanner isBannerCollapsed={isBannerCollapsed} />
 
       {/* 흰색 헤더 전용: 하단 그라데이션 separator */}
@@ -158,6 +158,6 @@ export default function Header() {
         isInfluencer={user?.isInfluencer ?? false}
         onLogout={logout}
       />
-    </>
+    </div>
   );
 }

@@ -111,7 +111,7 @@
   --color-why-choose-bg: #FFF2D8;    /* WhyChoose 텍스트 블록 라운드 컨테이너 배경 (크림/피치) — 섹션 자체 배경은 흰색, 안쪽 카드만 이 색 */
   --color-why-choose-text: #43270B;  /* WhyChoose 헤딩·서브텍스트 (딥 브라운, 피치 배경 위) */
   --color-reviews-bg: #EDF5FF;       /* Reviews 섹션 배경 (연블루, 리디자인 — 구 오렌지 대체) */
-  --color-footer-bg: #F89602;     /* Footer 배경 (리디자인 — 오렌지, 구 #4A4440 다크브라운 대체, 사이트 전역 적용) */
+  --color-footer-bg: #F89602;     /* Footer 배경 — 메인 리디자인 오렌지 (구 #4A4440 사용 금지) */
   --color-footer-divider: rgba(255, 255, 255, 0.3); /* Footer 상·하단 구분선 */
   --color-footer-text: #F6E1CD;   /* Footer 본문·링크·SNS 아이콘 (리디자인 — 크림, 구 #999999 대체) */
   --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
@@ -273,7 +273,7 @@
   --gradient-checklist-hero: linear-gradient(268.21deg, rgba(255, 223, 173, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
   /* 구독 플랜 페이지 히어로 (Figma Rectangle 4281, 블루→피치) */
   --gradient-subscribe-plans-hero: linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
-  /* 파트너 CTA 배너 — Figma의 좌우 반전(matrix(-1))을 최종 렌더 방향으로 환산 */
+  /* 파트너 CTA 배너 — 메인 리디자인의 웜 옐로우, 구 피치→블루 그라디언트 사용 금지 */
   --gradient-support-banner: linear-gradient(90deg, #FFF2DA 0%, #FFDDAF 100%);
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-checklist-button-border: linear-gradient(90deg, #FEEAD7 0%, #ADCEFF 100%); /* 체크리스트 CTA 외곽선 — 가로 블루→피치 */
@@ -956,4 +956,14 @@ body:has(dialog:modal) {
 
 .scrollbar-checklist-summary::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-text-secondary);
+}
+
+/* 소셜 회원가입 약관 본문 — OS 기본 버튼을 포함한 네이티브 스크롤바 전체를 숨긴다. */
+.scrollbar-agreement-native {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-agreement-native::-webkit-scrollbar {
+  display: none;
 }

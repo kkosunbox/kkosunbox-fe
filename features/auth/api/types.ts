@@ -5,6 +5,7 @@ export type UserStatus = "active" | "inactive" | "suspended";
 export interface User {
   id: number;
   email: string;
+  phone: string | null;
   status: UserStatus;
   lastLoginAt: string;
   isAllowTerms: boolean;
@@ -45,6 +46,8 @@ export interface VerifyEmailResponse {
 export interface SignupRequest {
   emailVerifiedToken: string;
   password: string;
+  /** 숫자만 포함한 휴대전화 번호 */
+  phone: string;
   isAllowTerms: boolean;
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;
@@ -121,6 +124,16 @@ export interface TermsRequest {
   isAllowTerms: boolean;
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;
+}
+
+export interface CompleteSignupRequest extends TermsRequest {
+  /** 숫자만 포함한 휴대전화 번호 */
+  phone: string;
+}
+
+export interface UpdatePhoneRequest {
+  /** 숫자만 포함한 휴대전화 번호 */
+  phone: string;
 }
 
 export interface WithdrawRequest {

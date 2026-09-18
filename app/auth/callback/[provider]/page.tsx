@@ -57,6 +57,12 @@ export default function OAuthCallbackPage() {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
         }
         if (result.user) setUser(result.user);
+        // 신규 소셜 사용자는 access token을 가진 상태로 약관·연락처 입력을 마쳐야 한다.
+        if (result.isNewUser) {
+          router.replace("/register/social");
+          return;
+        }
+        router.refresh();
         router.replace(consumeOAuthReturnPath() ?? "/");
       },
       () => {

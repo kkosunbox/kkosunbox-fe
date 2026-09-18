@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { signupAction } from "@/features/auth/lib/actions";
 import { tokenStore } from "@/shared/lib/api/token";
@@ -35,6 +35,24 @@ export function useRegisterSection() {
 
   /* 단일 isPending — 인증코드 발송·OTP 확인·회원가입 버튼 라벨을 모두 제어 */
   const [isPending, start] = useTransition();
+  const [phone, setPhone] = useState("");
+
+  const phoneDigits = phone.replace(/\D/g, "");
+  const phoneValid = /^01\d{8,9}$/.test(phoneDigits);
+
+  function updatePhone(value: string) {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    if (digits.length < 4) {
+      setPhone(digits);
+      return;
+    }
+    if (digits.length < 8) {
+      setPhone(`${digits.slice(0, 3)}-${digits.slice(3)}`);
+      return;
+    }
+    const splitAt = digits.length === 11 ? 7 : 6;
+    setPhone(`${digits.slice(0, 3)}-${digits.slice(3, splitAt)}-${digits.slice(splitAt)}`);
+  }
 
   /** 에러를 알림 모달로 표시 */
   function showError(msg: string) {
@@ -46,6 +64,7 @@ export function useRegisterSection() {
   const agree = useAgreements();
 
   const canSubmit =
+    phoneValid &&
     email.emailVerified &&
     pw.passwordValid &&
     pw.passwordsMatch &&
@@ -55,6 +74,7 @@ export function useRegisterSection() {
 
   /* ── 회원가입 ── */
   function handleSignup() {
+    if (!phoneValid) { showError("올바른 휴대전화 번호를 입력해주세요."); return; }
     if (!agree.agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
     if (!agree.agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
     if (!meetsMinPasswordLength(pw.password)) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
@@ -73,6 +93,7 @@ export function useRegisterSection() {
         const result = await signupAction(
           email.emailVerifiedToken,
           pw.password,
+          phoneDigits,
           agree.agreements.terms,
           agree.agreements.privacy,
           agree.agreements.marketing,
@@ -94,6 +115,8 @@ export function useRegisterSection() {
   return {
     isPending,
     canSubmit,
+    phone,
+    updatePhone,
     email,
     pw,
     agree,

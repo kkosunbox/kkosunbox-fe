@@ -252,13 +252,13 @@ export default function SocialRegisterSection() {
 
   return (
     <section className="bg-white max-md:min-h-dvh max-md:pt-[calc(var(--header-offset)+68px)] md:pt-[calc(var(--header-offset)+64px)]">
-      <div className="mx-auto w-full max-w-[1240px] max-md:px-6 md:px-8 lg:px-0">
+      <div className="mx-auto max-w-[1240px] max-md:w-full max-md:px-6 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)]">
         <h1>
           <Image
             src={socialRegisterTitle}
             alt="꼬순박스가 처음이시군요. 가입절차를 완료해주세요."
             priority
-            className="h-auto w-[285px] md:w-[380px]"
+            className="max-md:h-16 max-md:w-auto md:h-auto md:w-[380px]"
           />
         </h1>
 

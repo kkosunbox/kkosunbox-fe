@@ -14,6 +14,7 @@ export const REVIEWS_PER_PAGE = 10;
 export function useProductReviews(initialPlanId: number | null = null) {
   const [reviews, setReviews] = useState<ReviewResponse[]>([]);
   const [total, setTotal] = useState(0);
+  const [tabTotal, setTabTotal] = useState(0);
   const [average, setAverage] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -31,16 +32,18 @@ export function useProductReviews(initialPlanId: number | null = null) {
         const data = await getReviews(id, p, REVIEWS_PER_PAGE, sortOrder);
         setReviews(data.items);
         setTotal(data.total);
+        if (id === initialPlanId) setTabTotal(data.total);
         setAverage(data.averageRating);
       } catch {
         setReviews([]);
         setTotal(0);
+        if (id === initialPlanId) setTabTotal(0);
         setAverage(0);
       } finally {
         setLoading(false);
       }
     },
-    [],
+    [initialPlanId],
   );
 
   useEffect(() => {
@@ -92,6 +95,7 @@ export function useProductReviews(initialPlanId: number | null = null) {
   return {
     reviews,
     total,
+    tabTotal,
     average,
     page,
     setPage,

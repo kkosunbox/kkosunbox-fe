@@ -125,7 +125,7 @@ export default function AlertModal({
             data-autofocus
             type="button"
             onClick={handlePrimary}
-            className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button-soft)] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
+            className="w-full h-12 rounded-[8px] bg-[var(--color-cta-button)] text-white text-[16px] font-semibold leading-[150%] tracking-[-0.02em] hover:opacity-90 active:opacity-80 transition-opacity"
           >
             {primaryLabel}
           </button>

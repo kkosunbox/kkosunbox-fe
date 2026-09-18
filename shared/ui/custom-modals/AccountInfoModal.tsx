@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
-import { changePassword } from "@/features/auth/api";
+import { changePassword, updatePhone } from "@/features/auth/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { PASSWORD_MAX_LENGTH } from "@/shared/config/inputLimits";
@@ -30,6 +30,18 @@ function BackIcon() {
       <path d="M15 5L7 12l8 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
+}
+
+function phoneDigits(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+function formatPhone(value: string) {
+  const digits = phoneDigits(value).slice(0, 11);
+  if (digits.length < 4) return digits;
+  if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  const splitAt = digits.length === 11 ? 7 : 6;
+  return `${digits.slice(0, 3)}-${digits.slice(3, splitAt)}-${digits.slice(splitAt)}`;
 }
 
 function EyeOffIcon() {
@@ -115,7 +127,7 @@ function FooterButtons({ leftLabel, rightLabel, onLeft, onRight, rightDisabled, 
 }
 
 export default function AccountInfoModal({ onClose }: Props) {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const router = useRouter();
   const { openAlert, openModal } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
@@ -125,10 +137,39 @@ export default function AccountInfoModal({ onClose }: Props) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState(user?.phone ?? "");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  useEffect(() => {
+    setPhone(user?.phone ?? "");
+  }, [user?.phone]);
+
+  function handlePhoneUpdate() {
+    const normalizedPhone = phoneDigits(phone);
+    if (normalizedPhone === phoneDigits(user?.phone ?? "")) {
+      onClose();
+      return;
+    }
+    if (!/^01\d{8,9}$/.test(normalizedPhone)) {
+      openAlert({ title: "올바른 휴대전화 번호를 입력해주세요." });
+      return;
+    }
+    showLoading("연락처를 수정하고 있습니다...");
+    startTransition(async () => {
+      try {
+        await updatePhone({ phone: normalizedPhone });
+        await refreshUser();
+        openAlert({ type: "success", title: "연락처가 수정되었습니다.", onPrimary: () => router.refresh() });
+      } catch (error) {
+        openAlert({ title: getErrorMessage(error, "연락처 수정에 실패했습니다. 다시 시도해주세요.") });
+      } finally {
+        hideLoading();
+      }
+    });
+  }
 
   function resetPasswordForm() {
     setCurrentPassword("");
@@ -187,6 +228,20 @@ export default function AccountInfoModal({ onClose }: Props) {
           {/* 콘텐츠 박스 */}
           <div className="mt-3 rounded-[20px] bg-[var(--color-background)] px-7 py-6">
             <div className="flex flex-col gap-4">
+              <div className="flex items-center">
+                <label htmlFor="account-phone" className="w-[91px] shrink-0 text-body-13-m text-[var(--color-text)]">연락처</label>
+                <input
+                  id="account-phone"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
+                  value={formatPhone(phone)}
+                  onChange={(event) => setPhone(formatPhone(event.target.value))}
+                  placeholder="휴대전화 번호 입력"
+                  className="h-10 min-w-0 flex-1 rounded-[4px] bg-[var(--color-surface-light)] px-3 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+                />
+              </div>
+
               {/* 이메일 행 */}
               <div className="flex items-center">
                 <span className="w-[91px] shrink-0 text-body-13-m text-[var(--color-text)]">이메일</span>
@@ -226,9 +281,10 @@ export default function AccountInfoModal({ onClose }: Props) {
           <FooterButtons
             className="mt-4"
             leftLabel="취소"
-            rightLabel="확인"
+            rightLabel={isPending ? "저장 중..." : "확인"}
             onLeft={onClose}
-            onRight={onClose}
+            onRight={handlePhoneUpdate}
+            rightDisabled={isPending}
           />
         </div>
       </ModalShell>

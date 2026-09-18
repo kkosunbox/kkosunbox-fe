@@ -247,7 +247,7 @@ export default function PurchaseProductDetailPage({
                           : "text-body-13-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tabLabel(tab, reviewState.total)}
+                      {tabLabel(tab, reviewState.tabTotal)}
                     </button>
                     {idx < TABS.length - 1 && <span className="mx-1 h-3 w-px bg-[var(--color-text-secondary)]" />}
                   </Fragment>
@@ -428,7 +428,7 @@ export default function PurchaseProductDetailPage({
                           : "text-body-16-m text-[var(--color-text-secondary)]"
                       }
                     >
-                      {tabLabel(tab, reviewState.total)}
+                      {tabLabel(tab, reviewState.tabTotal)}
                     </button>
                     {idx < TABS.length - 1 && <span className="mx-2 h-3 w-px bg-[var(--color-text-secondary)]" />}
                   </Fragment>

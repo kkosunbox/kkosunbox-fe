@@ -63,6 +63,7 @@ export async function loginAction(
 export async function signupAction(
   emailVerifiedToken: string,
   password: string,
+  phone: string,
   isAllowTerms: boolean,
   isAllowPrivacy: boolean,
   isAllowMarketing: boolean,
@@ -76,6 +77,7 @@ export async function signupAction(
     const data = await signupApi({
       emailVerifiedToken,
       password,
+      phone,
       isAllowTerms,
       isAllowPrivacy,
       isAllowMarketing,

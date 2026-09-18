@@ -46,6 +46,8 @@ export interface VerifyEmailResponse {
 export interface SignupRequest {
   emailVerifiedToken: string;
   password: string;
+  /** 숫자만 포함한 휴대전화 번호 */
+  phone: string;
   isAllowTerms: boolean;
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;

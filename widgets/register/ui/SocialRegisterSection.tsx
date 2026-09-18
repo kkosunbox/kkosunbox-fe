@@ -110,12 +110,8 @@ function AgreementToggle({
   );
 }
 
-interface SocialRegisterSectionProps {
-  preview?: boolean;
-}
-
 /** 소셜 로그인 신규 사용자가 연락처와 필수 약관 동의를 제출해 가입을 마무리한다. */
-export default function SocialRegisterSection({ preview = false }: SocialRegisterSectionProps) {
+export default function SocialRegisterSection() {
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, startTransition] = useTransition();
@@ -132,10 +128,6 @@ export default function SocialRegisterSection({ preview = false }: SocialRegiste
 
   function handleCancel() {
     if (isPending) return;
-    if (preview) {
-      openAlert({ title: "디자인 검수용 페이지입니다." });
-      return;
-    }
     showLoading("로그인 화면으로 이동하고 있습니다...");
     startTransition(async () => {
       try {
@@ -158,11 +150,6 @@ export default function SocialRegisterSection({ preview = false }: SocialRegiste
       openAlert({ title: "필수 약관에 동의해주세요." });
       return;
     }
-    if (preview) {
-      openAlert({ type: "success", title: "디자인 검수용 페이지입니다." });
-      return;
-    }
-
     showLoading("회원가입을 완료하고 있습니다...");
     startTransition(async () => {
       try {
@@ -188,7 +175,7 @@ export default function SocialRegisterSection({ preview = false }: SocialRegiste
   }
 
   return (
-    <section className="bg-white max-md:min-h-dvh max-md:pt-[68px] md:pt-[calc(var(--header-offset)+64px)]">
+    <section className="bg-white max-md:min-h-dvh max-md:pt-[calc(var(--header-offset)+68px)] md:pt-[calc(var(--header-offset)+64px)]">
       <div className="mx-auto w-full max-w-[1240px] max-md:px-6 md:px-8 lg:px-0">
         <h1>
           <Image

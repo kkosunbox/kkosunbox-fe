@@ -2,6 +2,9 @@ export interface AuthUser {
   id: number;
   email: string;
   phone: string | null;
+  isAllowTerms: boolean;
+  isAllowPrivacy: boolean;
+  isAllowMarketing: boolean;
   isInfluencer: boolean;
 }
 

@@ -6,6 +6,9 @@ export function toAuthUser(user: User): AuthUser {
     id: user.id,
     email: user.email,
     phone: user.phone,
+    isAllowTerms: user.isAllowTerms,
+    isAllowPrivacy: user.isAllowPrivacy,
+    isAllowMarketing: user.isAllowMarketing,
     isInfluencer: user.isInfluencer,
   };
 }

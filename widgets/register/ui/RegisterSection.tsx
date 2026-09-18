@@ -23,7 +23,7 @@ import type { OAuthProvider } from "@/features/auth";
 /* ═══════════════════════════════════════════════════════════════ */
 /* Widget (표현 전담 — 상태·이펙트는 useRegisterSection 소유) */
 export default function RegisterSection() {
-  const { isPending, canSubmit, email, pw, agree, handleSignup } = useRegisterSection();
+  const { isPending, canSubmit, phone, updatePhone, email, pw, agree, handleSignup } = useRegisterSection();
   const { emailVerified } = email;
 
   function handleSocialSignup(provider: OAuthProvider) {
@@ -109,6 +109,24 @@ export default function RegisterSection() {
         {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
         <AuthMobileShell active="register">
           <div className="flex flex-col gap-6">
+            {/* 연락처 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-phone-mobile" className={authLabelCls}>
+                연락처
+              </label>
+              <input
+                id="reg-phone-mobile"
+                type="tel"
+                inputMode="numeric"
+                maxLength={13}
+                placeholder="연락처를 입력하세요"
+                value={phone}
+                onChange={(e) => updatePhone(e.target.value)}
+                className={authUnderlineInputCls}
+                autoComplete="tel"
+              />
+            </div>
+
             {/* 이메일 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="reg-email-mobile" className={authLabelCls}>
@@ -331,6 +349,24 @@ export default function RegisterSection() {
           tabsGapPx={40}
         >
           <div className="flex flex-col gap-6">
+            {/* 연락처 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-phone-desktop" className={authLabelCls}>
+                연락처
+              </label>
+              <input
+                id="reg-phone-desktop"
+                type="tel"
+                inputMode="numeric"
+                maxLength={13}
+                placeholder="연락처를 입력하세요"
+                value={phone}
+                onChange={(e) => updatePhone(e.target.value)}
+                className={authUnderlineInputCls}
+                autoComplete="tel"
+              />
+            </div>
+
             {/* 이메일 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="reg-email-desktop" className={authLabelCls}>

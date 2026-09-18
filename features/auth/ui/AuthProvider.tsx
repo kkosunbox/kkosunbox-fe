@@ -15,6 +15,7 @@ import { OAUTH_CALLBACK_PATH_PREFIX } from "../lib/oauth";
 import { tokenStore } from "@/shared/lib/api/token";
 import type { AuthContextValue, AuthUser } from "../model/types";
 import { toAuthUser } from "../lib/mapUser";
+import { requiresSignupCompletion } from "../lib/signupCompletion";
 import { trackLogin } from "@/shared/lib/analytics";
 
 
@@ -185,6 +186,12 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     window.addEventListener("ggosoon:unauthorized", handleUnauthorized);
     return () => window.removeEventListener("ggosoon:unauthorized", handleUnauthorized);
   }, [logout]);
+
+  // 미완료 사용자는 이탈·새로고침·세션 복구 후에도 가입 완료 화면으로 돌아간다.
+  useEffect(() => {
+    if (!user || isOAuthCallback || pathname === "/register/social") return;
+    if (requiresSignupCompletion(user)) router.replace("/register/social");
+  }, [user, isOAuthCallback, pathname, router]);
 
   // usePathname 구독으로 이 Provider는 이제 매 내비게이션마다 리렌더된다(아래 isOAuthCallback 계산에
   // 필요). value를 메모이즈하지 않으면 매번 새 객체가 되어, 트리 전역(22곳+)의 useAuth() 소비자가

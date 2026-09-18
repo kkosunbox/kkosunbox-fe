@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { socialLoginAction, getCallbackUrl, consumeOAuthReturnPath, useAuth } from "@/features/auth";
+import {
+  socialLoginAction,
+  getCallbackUrl,
+  consumeOAuthReturnPath,
+  requiresSignupCompletion,
+  useAuth,
+} from "@/features/auth";
 import { tokenStore } from "@/shared/lib/api/token";
 import { LoadingOverlay } from "@/shared/ui";
 import type { OAuthProvider } from "@/features/auth";
@@ -57,8 +63,8 @@ export default function OAuthCallbackPage() {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
         }
         if (result.user) setUser(result.user);
-        // 신규 소셜 사용자는 access token을 가진 상태로 약관·연락처 입력을 마쳐야 한다.
-        if (result.isNewUser) {
+        // 신규 여부와 무관하게 서버의 실제 가입 완료 상태를 기준으로 판정한다.
+        if (result.user && requiresSignupCompletion(result.user)) {
           router.replace("/register/social");
           return;
         }

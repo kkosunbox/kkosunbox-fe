@@ -4,6 +4,7 @@ export {
   verifyEmail,
   resendEmailVerification,
   signup,
+  completeSignup,
   // 로그인
   login,
   loginWithGoogle,
@@ -19,6 +20,7 @@ export {
   // 유저/약관/탈퇴
   getUser,
   agreeToTerms,
+  updatePhone,
   withdraw,
 } from "./authApi";
 
@@ -32,6 +34,8 @@ export type {
   SocialLoginResponse,
   SignupRequest,
   SignupResponse,
+  CompleteSignupRequest,
+  UpdatePhoneRequest,
   VerifyEmailResponse,
   VerifyPasswordResetCodeResponse,
   ChangePasswordRequest,

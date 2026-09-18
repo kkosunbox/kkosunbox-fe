@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { PRIVACY_OFFICER } from "@/shared/config/companyInfo";
 
 /* ─── 서비스 이용약관 ─── */
-const TERMS_CONTENT = [
+export const TERMS_CONTENT = [
   {
     title: "제1조 (목적)",
     content:
@@ -81,7 +81,7 @@ const TERMS_CONTENT = [
 ];
 
 /* ─── 개인정보처리방침 ─── */
-const PRIVACY_CONTENT = [
+export const PRIVACY_CONTENT = [
   {
     title: "1. 수집하는 개인정보 항목",
     items: [
@@ -149,7 +149,7 @@ const PRIVACY_CONTENT = [
 ];
 
 /* ─── 마케팅 정보 수신 동의 ─── */
-const MARKETING_CONTENT = [
+export const MARKETING_CONTENT = [
   {
     title: "마케팅 정보 수신 동의 안내",
     content:
@@ -201,7 +201,7 @@ const MARKETING_CONTENT = [
   },
 ];
 
-type AgreementKey = "terms" | "privacy" | "marketing";
+export type AgreementKey = "terms" | "privacy" | "marketing";
 
 const MODAL_TITLE: Record<AgreementKey, string> = {
   terms: "서비스 이용약관",

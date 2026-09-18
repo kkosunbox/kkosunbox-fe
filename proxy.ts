@@ -22,6 +22,10 @@ const PROTECTED = ["/mypage", "/order"];
  */
 const DEV_ONLY_ROUTES = ["/test"];
 
+/** 이미 로그인 상태에서 접근 시 홈으로 보낼 라우트 */
+const AUTH_ONLY = new Set(["/login", "/register"]);
+const SOCIAL_REGISTER_ROUTE = "/register/social";
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProductionHost = request.nextUrl.hostname === PRODUCTION_HOST;
@@ -80,6 +84,19 @@ export function proxy(request: NextRequest) {
     url.pathname = "/login";
     const returnTo = `${pathname}${request.nextUrl.search}`;
     url.searchParams.set("next", returnTo);
+    return NextResponse.redirect(url);
+  }
+
+  if (pathname === SOCIAL_REGISTER_ROUTE && !authed) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  if (AUTH_ONLY.has(pathname) && authed) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.searchParams.delete("next");
     return NextResponse.redirect(url);
   }
 

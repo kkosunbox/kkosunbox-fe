@@ -51,6 +51,8 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
    */
   const isOAuthCallback = pathname?.startsWith(OAUTH_CALLBACK_PATH_PREFIX) ?? false;
   const logoutInProgress = useRef(false);
+  // 개발 모드 Strict Mode의 effect 재실행에서도 세션 복구 요청은 하나만 공유한다.
+  const restoreSessionPromiseRef = useRef<Promise<AuthUser> | null>(null);
   // user state의 최신값을 이벤트 핸들러에서 읽기 위한 ref.
   // 클로저 안에 user를 캡처하면 stale 참조가 된다.
   const userRef = useRef(user);
@@ -91,39 +93,46 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
 
     let cancelled = false;
 
-    async function restoreSession() {
-      setIsAuthLoading(true);
-      try {
-        if (hasRefresh) {
-          const { ensureClientAccessToken } = await import("@/shared/lib/api/client");
-          if (!(await ensureClientAccessToken())) throw new Error("refresh failed");
-        } else if (initialUser) {
-          const { bootstrapClientAccessTokenAction } = await import("../lib/actions");
-          const cookieToken = await bootstrapClientAccessTokenAction();
-          if (cancelled) return;
-          if (cookieToken) tokenStore.setAccess(cookieToken);
-        }
+    async function restoreSession(): Promise<AuthUser> {
+      // SSR에서 이미 검증한 사용자가 있으면 같은 /auth/user 요청을 반복하지 않는다.
+      // httpOnly 쿠키의 accessToken만 클라이언트 메모리에 올리면 된다.
+      if (initialUser) {
+        const { bootstrapClientAccessTokenAction } = await import("../lib/actions");
+        const cookieToken = await bootstrapClientAccessTokenAction();
+        if (!cookieToken) throw new Error("no cookie access token");
+        tokenStore.setAccess(cookieToken);
+        return initialUser;
+      }
 
-        if (!tokenStore.getAccess()) throw new Error("no access token");
+      // SSR 세션은 없지만 refreshToken이 남은 복구 상황만 갱신 후 재검증한다.
+      const { ensureClientAccessToken } = await import("@/shared/lib/api/client");
+      if (!(await ensureClientAccessToken())) throw new Error("refresh failed");
 
-        const { getUser } = await import("../api/authApi");
-        const apiUser = await getUser();
+      const { getUser } = await import("../api/authApi");
+      const restoredUser = toAuthUser(await getUser());
+      const newAccess = tokenStore.getAccess();
+      if (newAccess) await syncAuthCookieAction(newAccess).catch(() => {});
+      return restoredUser;
+    }
+
+    setIsAuthLoading(true);
+    const restorePromise = restoreSessionPromiseRef.current ??= restoreSession();
+    void restorePromise.then(
+      (restoredUser) => {
         if (cancelled) return;
-
-        setUser(toAuthUser(apiUser));
-        const newAccess = tokenStore.getAccess();
-        if (newAccess) await syncAuthCookieAction(newAccess).catch(() => {});
-      } catch {
+        restoreSessionPromiseRef.current = null;
+        setUser(restoredUser);
+        setIsAuthLoading(false);
+      },
+      async () => {
         if (cancelled) return;
+        restoreSessionPromiseRef.current = null;
         tokenStore.clear();
         setUser(null);
         await logoutAction().catch(() => {});
-      } finally {
-        if (!cancelled) setIsAuthLoading(false);
-      }
-    }
-
-    void restoreSession();
+        setIsAuthLoading(false);
+      },
+    );
     return () => {
       cancelled = true;
     };
@@ -148,6 +157,13 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
     },
     [router],
   );
+
+  const refreshUser = useCallback(async () => {
+    const { getUser } = await import("../api/authApi");
+    const refreshedUser = toAuthUser(await getUser());
+    setUser(refreshedUser);
+    return refreshedUser;
+  }, []);
 
   const logout = useCallback(async () => {
     await logoutAction();
@@ -174,8 +190,8 @@ export function AuthProvider({ children, initialUser }: AuthProviderProps) {
   // 필요). value를 메모이즈하지 않으면 매번 새 객체가 되어, 트리 전역(22곳+)의 useAuth() 소비자가
   // 라우트만 바뀌어도 전부 리렌더된다 — user/isAuthLoading이 실제로 안 바뀌었어도.
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isLoggedIn: user !== null, isAuthLoading, login, logout, setUser }),
-    [user, isAuthLoading, login, logout],
+    () => ({ user, isLoggedIn: user !== null, isAuthLoading, refreshUser, login, logout, setUser }),
+    [user, isAuthLoading, refreshUser, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

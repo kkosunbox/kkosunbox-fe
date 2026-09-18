@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import {
   completeSignupAction,
   consumeOAuthReturnPath,
@@ -23,6 +23,9 @@ type AgreementSection = {
   content?: string;
   items?: string[];
 };
+
+const AGREEMENT_SCROLL_THUMB_HEIGHT = 54;
+const AGREEMENT_SCROLL_VERTICAL_INSET = 13;
 
 const INITIAL_AGREEMENTS: AgreementState = {
   terms: false,
@@ -69,15 +72,88 @@ function Checkbox({ checked }: { checked: boolean }) {
 }
 
 function AgreementCopy({ sections }: { sections: AgreementSection[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [thumbTop, setThumbTop] = useState(0);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  const syncThumb = useCallback(() => {
+    const viewport = scrollRef.current;
+    if (!viewport) return;
+
+    const maxScrollTop = viewport.scrollHeight - viewport.clientHeight;
+    const maxThumbTop = Math.max(
+      0,
+      viewport.clientHeight - AGREEMENT_SCROLL_THUMB_HEIGHT - AGREEMENT_SCROLL_VERTICAL_INSET * 2,
+    );
+    setHasOverflow(maxScrollTop > 0);
+    setThumbTop(maxScrollTop > 0 ? (viewport.scrollTop / maxScrollTop) * maxThumbTop : 0);
+  }, []);
+
+  useEffect(() => {
+    const viewport = scrollRef.current;
+    if (!viewport) return;
+
+    syncThumb();
+    const observer = new ResizeObserver(syncThumb);
+    observer.observe(viewport);
+    if (viewport.firstElementChild) observer.observe(viewport.firstElementChild);
+    return () => observer.disconnect();
+  }, [syncThumb]);
+
+  function handleThumbPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    const viewport = scrollRef.current;
+    if (!viewport) return;
+    const scrollViewport: HTMLDivElement = viewport;
+
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const startY = event.clientY;
+    const startScrollTop = scrollViewport.scrollTop;
+
+    function handlePointerMove(moveEvent: PointerEvent) {
+      const maxScrollTop = scrollViewport.scrollHeight - scrollViewport.clientHeight;
+      const maxThumbTop =
+        scrollViewport.clientHeight - AGREEMENT_SCROLL_THUMB_HEIGHT - AGREEMENT_SCROLL_VERTICAL_INSET * 2;
+      if (maxScrollTop <= 0 || maxThumbTop <= 0) return;
+      scrollViewport.scrollTop = startScrollTop + ((moveEvent.clientY - startY) / maxThumbTop) * maxScrollTop;
+    }
+
+    function handlePointerUp() {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+    }
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
+  }
+
   return (
-    <div className="h-[136px] space-y-4 overflow-y-auto rounded-[12px] border border-[var(--color-text-muted)] bg-white px-6 py-4 md:h-36 md:px-7">
-      {sections.map((section) => (
-        <article key={section.title} className="text-[13px] font-medium leading-4 text-black">
-          <h3 className="font-semibold">{section.title}</h3>
-          {section.content && <p>{section.content}</p>}
-          {section.items?.map((item) => <p key={item}>{item}</p>)}
-        </article>
-      ))}
+    <div className="relative h-[136px] overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] bg-white md:h-36">
+      <div
+        ref={scrollRef}
+        onScroll={syncThumb}
+        className="scrollbar-agreement-native h-full overflow-y-auto px-6 py-4 md:px-7"
+      >
+        <div className="space-y-4">
+          {sections.map((section) => (
+            <article key={section.title} className="text-[13px] font-medium leading-4 text-black">
+              <h3 className="font-semibold">{section.title}</h3>
+              {section.content && <p>{section.content}</p>}
+              {section.items?.map((item) => <p key={item}>{item}</p>)}
+            </article>
+          ))}
+        </div>
+      </div>
+      {hasOverflow && (
+        <div
+          aria-hidden="true"
+          onPointerDown={handleThumbPointerDown}
+          className="absolute right-[9px] top-[13px] z-10 w-[6px] cursor-grab touch-none rounded-[6px] bg-[var(--color-ui-disabled)] active:cursor-grabbing"
+          style={{ height: AGREEMENT_SCROLL_THUMB_HEIGHT, transform: `translateY(${thumbTop}px)` }}
+        />
+      )}
     </div>
   );
 }

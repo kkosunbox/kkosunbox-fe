@@ -8,7 +8,7 @@ import "./pretendard-subset.css";
 import { AuthProvider } from "@/features/auth";
 import { getAuthUser } from "@/features/auth/lib/session";
 import { ProfileProvider } from "@/features/profile/ui/ProfileProvider";
-import { ModalProvider, LoadingOverlayProvider, ChannelTalkProvider, GoogleAnalyticsTracker, JsonLd } from "@/shared/ui";
+import { ModalProvider, LoadingOverlayProvider, KakaoTalkProvider, GoogleAnalyticsTracker, JsonLd } from "@/shared/ui";
 import { GA_ID } from "@/shared/lib/analytics";
 import { SITE_URL, PRODUCTION_HOST, NOINDEX_METADATA } from "@/shared/lib/seo";
 
@@ -131,7 +131,7 @@ export default async function RootLayout({
           <ProfileProvider>
             <LoadingOverlayProvider>
               <ModalProvider>
-                <ChannelTalkProvider />
+                <KakaoTalkProvider />
                 {children}
               </ModalProvider>
             </LoadingOverlayProvider>

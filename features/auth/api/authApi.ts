@@ -1,6 +1,7 @@
 import { apiClient } from "@/shared/lib/api";
 import type {
   ChangePasswordRequest,
+  CompleteSignupRequest,
   LoginRequest,
   LoginResponse,
   MessageResponse,
@@ -13,6 +14,7 @@ import type {
   SocialLoginRequest,
   SocialLoginResponse,
   TermsRequest,
+  UpdatePhoneRequest,
   User,
   VerifyEmailRequest,
   VerifyEmailResponse,
@@ -60,6 +62,11 @@ export function resendEmailVerification(
  */
 export function signup(body: SignupRequest) {
   return apiClient.post<SignupResponse>("/v1/auth/signup", body);
+}
+
+/** 소셜 로그인 신규 사용자의 약관 동의와 연락처를 저장해 가입을 완료한다. */
+export function completeSignup(body: CompleteSignupRequest) {
+  return apiClient.post<User>("/v1/auth/complete-signup", body);
 }
 
 // ── 로그인 ────────────────────────────────────────────────────────
@@ -142,6 +149,11 @@ export function getUser() {
 /** 이용 약관 동의 (로그인 상태 필수) */
 export function agreeToTerms(body: TermsRequest) {
   return apiClient.post<User>("/v1/auth/terms", body);
+}
+
+/** 현재 로그인 사용자의 연락처를 수정한다. */
+export function updatePhone(body: UpdatePhoneRequest) {
+  return apiClient.patch<User>("/v1/auth/phone", body);
 }
 
 /** 회원 탈퇴 (로그인 상태 필수) */

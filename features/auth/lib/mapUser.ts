@@ -5,6 +5,7 @@ export function toAuthUser(user: User): AuthUser {
   return {
     id: user.id,
     email: user.email,
+    phone: user.phone,
     isInfluencer: user.isInfluencer,
   };
 }

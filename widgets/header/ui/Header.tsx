@@ -21,6 +21,7 @@ export default function Header() {
   const { isLoggedIn, user, isAuthLoading, logout } = useAuth();
   const { profile } = useProfile();
   const pathname = usePathname();
+  const hideOnMobile = pathname === "/register/social" || pathname === "/register/social-preview";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -49,7 +50,7 @@ export default function Header() {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <>
+    <div className={hideOnMobile ? "max-md:hidden" : undefined}>
       <HeaderBanner isBannerCollapsed={isBannerCollapsed} />
 
       {/* 흰색 헤더 전용: 하단 그라데이션 separator */}
@@ -149,6 +150,6 @@ export default function Header() {
         isInfluencer={user?.isInfluencer ?? false}
         onLogout={logout}
       />
-    </>
+    </div>
   );
 }

@@ -3,7 +3,8 @@
 import { cookies } from "next/headers";
 import { COOKIE_NAME, COOKIE_MAX_AGE_SEC } from "./constants";
 import { login as loginApi, signup as signupApi } from "../api/authApi";
-import { ApiError, getErrorMessage } from "@/shared/lib/api";
+import { apiClient, ApiError, getErrorMessage } from "@/shared/lib/api";
+import type { User } from "../api/types";
 import type { AuthUser } from "../model/types";
 import { toAuthUser } from "./mapUser";
 
@@ -70,7 +71,7 @@ export async function signupAction(
     });
 
     // API 스펙상 200이어도 null 가능
-    if (!data.accessToken || !data.refreshToken || !data.user) {
+    if (!data.accessToken || !data.refreshToken) {
       return { error: "회원가입 처리 중 오류가 발생했습니다." };
     }
 
@@ -78,12 +79,35 @@ export async function signupAction(
     cookieStore.set(COOKIE_NAME, data.accessToken, COOKIE_OPTS);
 
     return {
-      user: toAuthUser(data.user),
+      ...(data.user ? { user: toAuthUser(data.user) } : {}),
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
     };
   } catch (err) {
     return { error: getErrorMessage(err, "회원가입 중 오류가 발생했습니다.") };
+  }
+}
+
+/** 소셜 신규 가입의 약관 동의와 연락처 입력을 완료한다. */
+export async function completeSignupAction(
+  isAllowTerms: boolean,
+  isAllowPrivacy: boolean,
+  isAllowMarketing: boolean,
+  phone: string,
+): Promise<{ user?: AuthUser; error?: string }> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+    if (!token) return { error: "로그인 정보가 만료되었습니다. 다시 로그인해주세요." };
+
+    const data = await apiClient.post<User>(
+      "/v1/auth/complete-signup",
+      { isAllowTerms, isAllowPrivacy, isAllowMarketing, phone },
+      { token, skipRefresh: true },
+    );
+    return { user: toAuthUser(data) };
+  } catch (err) {
+    return { error: getErrorMessage(err, "회원가입을 완료하지 못했습니다.") };
   }
 }
 

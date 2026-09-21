@@ -11,6 +11,7 @@ import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import FallbackAvatar from "../FallbackAvatar";
+import ModalShell from "../modal/ModalShell";
 
 interface Props {
   onClose: () => void;
@@ -176,15 +177,8 @@ export default function ProfileSwitchModal({ onClose }: Props) {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label="프로필 변경"
-    >
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-
-      <div className="relative z-10 w-full max-w-[416px] rounded-[24px] bg-white shadow-[0px_6px_20px_rgba(78,78,78,0.8)]">
+    <ModalShell label="프로필 변경" onClose={onClose}>
+      <div className="relative w-full max-w-[416px] rounded-[24px] bg-white shadow-[0px_6px_20px_rgba(78,78,78,0.8)]">
         <div className="flex flex-col items-center gap-3 p-7">
           <div className="relative flex w-full items-center">
             <h2 className="pr-8 text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-[var(--color-text)]">
@@ -238,6 +232,6 @@ export default function ProfileSwitchModal({ onClose }: Props) {
           )}
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

@@ -30,7 +30,7 @@ const NAV_ITEMS = [
   { href: "/", label: "홈", Icon: MobileDrawerHomeIcon },
   { href: "/about", label: "꼬순박스 소개", Icon: MobileDrawerDocumentIcon },
   { href: "/subscribe", label: "구독몰", Icon: MobileDrawerSubscribeIcon },
-  { href: "/purchase", label: "단품몰", Icon: MobileDrawerPurchaseIcon },
+  { href: "/products", label: "단품몰", Icon: MobileDrawerPurchaseIcon },
   { href: "/support", label: "고객센터", Icon: MobileDrawerSupportIcon },
 ];
 

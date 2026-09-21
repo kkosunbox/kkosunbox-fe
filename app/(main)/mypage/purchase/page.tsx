@@ -41,7 +41,7 @@ export default async function PurchaseManagementPage({ searchParams }: PageProps
           아직 구매하신 상품이 없어요.
         </p>
         <Link
-          href="/purchase"
+          href="/products"
           className="inline-flex h-10 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 text-body-16-sb text-white transition-opacity hover:opacity-90"
         >
           구매하러 가기

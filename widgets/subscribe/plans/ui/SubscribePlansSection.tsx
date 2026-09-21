@@ -14,18 +14,21 @@ import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subs
 import { PlanPicker } from "@/widgets/package-plans";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
+import type { PackageTier } from "@/entities/package";
 import { trackViewItemList } from "@/shared/lib/analytics";
 
 interface Props {
   plans: SubscriptionPlanDto[];
   initialProfile?: Profile | null;
   showChecklistRecommend?: boolean;
+  initialSelectedTier?: PackageTier | null;
 }
 
 export default function SubscribePlansSection({
   plans,
   initialProfile = null,
   showChecklistRecommend = true,
+  initialSelectedTier = null,
 }: Props) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
@@ -102,6 +105,7 @@ export default function SubscribePlansSection({
           ) : (
             <PlanPicker
               plans={plans}
+              initialSelectedTier={initialSelectedTier}
               primaryButtonVariant="orange"
               getPrimaryButton={(plan) => ({
                 label: "제품 상세보기",

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Button, PROFILE_PET_SUBMIT_BTN } from "@/shared/ui";
+import { Button, ModalShell, PROFILE_PET_SUBMIT_BTN } from "@/shared/ui";
 import type {
   ChecklistFormOptions,
   OpenChecklistFormDetail,
@@ -101,30 +101,19 @@ function ChecklistFormModalInner({
     primaryAction,
   } = useChecklistForm(options, onClose);
 
-  /* body 스크롤 잠금 */
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
+  /* body 스크롤 잠금은 globals.css의 `body:has(dialog:modal)`가 담당한다 */
 
   return (
-    <div
-      className="fixed inset-0 z-[200] md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-label={headerTitle}
+    /* 모바일은 카드가 뷰포트를 꽉 채우는 시트라 중앙정렬을 쓰지 않는다(::backdrop도 카드에 가려 안 보인다).
+     * 데스크탑에서만 중앙정렬 + 여백을 준다 — 기존 래퍼의 md: 클래스를 그대로 옮긴 것. */
+    <ModalShell
+      label={headerTitle}
+      onClose={handleCloseRequest}
+      backdrop="soft"
+      className="h-full md:flex md:items-center md:justify-center md:overflow-y-auto md:p-4"
     >
-      {/* 배경 — 데스크탑 전용 */}
-      <div
-        className="absolute inset-0 bg-black/50 max-md:hidden"
-        onClick={handleCloseRequest}
-        aria-hidden="true"
-      />
-
       {/* 모달 카드 — 모바일: 뷰포트 전체(상단 safe-area 포함) */}
-      <div className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden bg-white max-md:min-h-[100dvh] md:h-[610px] md:w-full md:max-w-[908px] md:rounded-[20px] md:shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white max-md:min-h-[100dvh] md:h-[610px] md:w-full md:max-w-[908px] md:rounded-[20px] md:shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
         {/* 헤더 */}
         <div
           className="shrink-0 px-6 max-md:pt-[env(safe-area-inset-top,0px)]"
@@ -212,7 +201,7 @@ function ChecklistFormModalInner({
         )}
 
       </div>
-    </div>
+    </ModalShell>
   );
 }
 

@@ -5,7 +5,7 @@ export { default as DatePicker } from "./DatePicker";
 export type { DatePickerProps } from "./DatePicker";
 export { default as BreedCombobox } from "./BreedCombobox";
 export type { BreedComboboxProps } from "./BreedCombobox";
-export { ModalProvider, useModal, openAlertModal } from "./modal";
+export { ModalProvider, useModal, openAlertModal, ModalShell } from "./modal";
 export type { ModalType, AlertModalOptions, AlertModalType } from "./modal";
 export { ChecklistRecommendModal, PlanChangeModal, ChecklistDeferModal, CouponIssuedModal } from "./custom-modals";
 export { default as ButtonWithPawEffect } from "./ButtonWithPawEffect";
@@ -32,7 +32,7 @@ export {
 } from "./profilePetFormStyles";
 export { default as DefaultPetIcon } from "./DefaultPetIcon";
 export { default as CheckCircleIcon } from "./CheckCircleIcon";
-export { ChannelTalkProvider } from "./ChannelTalkProvider";
+export { KakaoTalkProvider } from "./KakaoTalkProvider";
 export { default as FallbackAvatar } from "./FallbackAvatar";
 export { default as GoogleAnalyticsTracker } from "./GoogleAnalyticsTracker";
 export { default as ErrorBoundary } from "./ErrorBoundary";

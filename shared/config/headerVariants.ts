@@ -3,6 +3,7 @@ const TRANSPARENT_ROUTES = [
   "/about",
   "/subscribe",
   "/purchase",
+  "/products",
   "/support",
   "/inquiry",
   "/partnership",

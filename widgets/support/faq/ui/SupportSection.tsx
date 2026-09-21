@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
-import { ScrollReveal, PawCircleIcon } from "@/shared/ui";
+import { ModalShell, ScrollReveal, PawCircleIcon } from "@/shared/ui";
 import { SupportHero } from "@/widgets/support/shared";
 import PartnershipHandshake from "../assets/partnership-handshake.webp";
 import { FAQ_ITEMS, type FaqItem } from "../model/faqItems";
@@ -90,27 +90,13 @@ function SearchIcon() {
 
 /* ── FAQ 상세 모달 ──────────────────────────────────────── */
 function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void }) {
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
-
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
-      role="dialog"
-      aria-modal="true"
+    <ModalShell
+      onClose={onClose}
+      backdrop="light"
+      className="flex min-h-full items-center justify-center px-4"
     >
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
-      <div className="relative z-10 flex max-h-[80vh] w-full max-w-[480px] flex-col gap-4 overflow-y-auto rounded-[20px] bg-white p-6 shadow-lg">
+      <div className="relative flex max-h-[80vh] w-full max-w-[480px] flex-col gap-4 overflow-y-auto rounded-[20px] bg-white p-6 shadow-lg">
         <div className="flex items-start justify-between">
           <PawCircleIcon />
           <button
@@ -126,7 +112,7 @@ function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void 
         <p className="text-body-14-sb text-[var(--color-text)]">{item.question}</p>
         <p className="min-h-[160px] text-body-14-m leading-[160%] text-[var(--color-text)]">{item.fullAnswer}</p>
       </div>
-    </div>
+    </ModalShell>
   );
 }
 

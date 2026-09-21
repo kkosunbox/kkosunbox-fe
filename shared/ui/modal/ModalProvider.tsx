@@ -86,22 +86,11 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     });
   }, [openAlert, closeModal]);
 
-  const isOpen = !!active || !!alertOptions;
-
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
-
-  /* ESC로 닫기 — 모든 커스텀/알림 모달 공통 */
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeModal();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [isOpen, closeModal]);
+  /* ESC 닫기와 배경 스크롤 잠금은 더 이상 여기서 다루지 않는다.
+   * 모든 모달이 네이티브 <dialog>(ModalShell)라서 ESC는 top layer 최상단 다이얼로그가 받고,
+   * 스크롤 잠금은 globals.css의 `body:has(dialog:modal)`가 건다.
+   * 예전 방식은 모달마다 잠금 구현이 흩어져 있어, 중첩 시 안쪽 모달이 닫히면
+   * 바깥 모달이 열려 있는데도 cleanup이 잠금을 풀어버리는 문제가 있었다. */
 
   const handleConfirm = activeConfirm
     ? () => { activeConfirm(); closeModal(); }

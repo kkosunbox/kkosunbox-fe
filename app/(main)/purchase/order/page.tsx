@@ -24,7 +24,7 @@ export default async function PurchaseOrderPage({
   const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;
 
   if (!pkg || !purchaseProduct) {
-    redirect("/purchase");
+    redirect("/products");
   }
 
   // 1~99 범위 외 또는 정수 아님 → 기본값 1로 폴백 (상세 페이지를 거치지 않고 직접 접근해도 안전)

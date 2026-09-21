@@ -180,6 +180,24 @@ if (err instanceof ApiError && err.isConflict) setError("이미 가입된...");
 1. `shared/lib/api/errorMessages.ts`의 `ERROR_MESSAGES`에 코드-메시지 쌍 추가
 2. 호출부에서는 `getErrorMessage()`만 사용, 표시는 판단 기준에 따라 모달 또는 인라인
 
+### 모달 구현 규칙 (필수)
+
+새 모달은 `@/shared/ui`의 `ModalShell`을 사용한다. 직접 `fixed inset-0` 래퍼, backdrop div,
+`role="dialog"`, `aria-modal`, ESC 전역 리스너, `document.body.style.overflow` 스크롤 락을
+중복 구현하지 않는다. 배경 딤 강도는 `ModalShell`의 `backdrop` 옵션으로 지정한다.
+
+```tsx
+{isOpen && (
+  <ModalShell label="모달 제목" onClose={onClose} backdrop="light">
+    <div className="relative rounded-[20px] bg-white">...</div>
+  </ModalShell>
+)}
+```
+
+카드의 `relative`는 내부 absolute 요소의 기준이 될 수 있으므로 유지하되, backdrop 위에
+올리기 위한 외부 래퍼용 `z-index`는 추가하지 않는다. top layer 모달의 중첩 순서는
+`z-index`가 아니라 `showModal()` 호출 순서로 결정된다.
+
 
 ## 작업 검증 규칙 (필수)
 

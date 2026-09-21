@@ -99,7 +99,7 @@ export default function OrderCompleteSection({
         </div>
 
         {/* 주문상품 정보 · 결제정보 */}
-        <div className="mt-6 flex flex-col overflow-hidden rounded-[12px] border border-[var(--color-text-muted)] md:flex-row">
+        <div className="mt-6 flex flex-col overflow-hidden rounded-[20px] border border-[var(--color-text-muted)] md:flex-row">
           {/* 주문상품 정보 */}
           <div className="flex-1 p-6 md:px-9 md:py-6">
             <h2 className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text-emphasis)]">주문상품 정보</h2>
@@ -190,7 +190,7 @@ export default function OrderCompleteSection({
             주문 상세보기
           </Link>
           <Link
-            href="/purchase"
+            href="/products"
             className="inline-flex h-10 w-40 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 max-sm:w-full"
           >
             쇼핑 계속하기

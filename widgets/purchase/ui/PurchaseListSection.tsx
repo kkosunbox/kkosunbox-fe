@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { COMPARE_PACKAGES, getPackagePurchaseProduct, TIER_BOX_IMAGES, type PackageTier } from "@/entities/package";
+import { COMPARE_PACKAGES, getPackageProductPath, getPackagePurchaseProduct, TIER_BOX_IMAGES, type PackageTier } from "@/entities/package";
 import type { ProductDto } from "@/features/product/api/types";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
@@ -66,7 +66,7 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
           description: product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식",
           price: product.price,
           image: product.imageUrl || (matchedPackage ? TIER_BOX_IMAGES[matchedPackage.tier] : TIER_BOX_IMAGES.Basic),
-          href: matchedPackage ? `/purchase/detail?tier=${matchedPackage.tier}` : null,
+          href: matchedPackage ? getPackageProductPath(matchedPackage.tier) : null,
           category: resolveCategory(product.name),
         };
       });
@@ -78,7 +78,7 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
       description: "꼬순박스를 부담 없이 경험할 수 있는 수제간식 패키지",
       price: getPackagePurchaseProduct(pkg.tier)!.price,
       image: TIER_BOX_IMAGES[pkg.tier],
-      href: `/purchase/detail?tier=${pkg.tier}`,
+      href: getPackageProductPath(pkg.tier),
       category: "etc",
     }));
   }, [products, productsByTier]);

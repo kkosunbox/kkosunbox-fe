@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
-import { COMPARE_PACKAGES, TIER_BOX_IMAGES, getPackagePurchaseProduct } from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
-import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
-import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL, PRODUCT_SHIPPING_DETAILS_JSONLD, PRODUCT_RETURN_POLICY_JSONLD } from "@/shared/lib/seo";
 
@@ -35,16 +32,14 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function PurchasePage() {
-  const [products, plans] = await Promise.all([fetchProducts(), fetchSubscriptionPlans()]);
-  const productsByTier = resolveProductsByTier(products, plans);
+  const products = await fetchProducts();
   const productListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "꼬순박스 강아지 수제간식 단품",
     url: `${SITE_URL}/purchase`,
-    numberOfItems: products.length || COMPARE_PACKAGES.length,
-    itemListElement: (products.length ? products : COMPARE_PACKAGES.map((pkg) => ({ ...getPackagePurchaseProduct(pkg.tier)!, id: 0, name: pkg.name, description: null, imageUrl: null }))).map((product, index) => {
-      const fallbackPkg = COMPARE_PACKAGES[index] ?? COMPARE_PACKAGES[0];
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => {
       const price = product.price;
 
       return {
@@ -55,12 +50,12 @@ export default async function PurchasePage() {
           name: product.name,
           description:
             product.description || `${product.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
-          image: product.imageUrl || `${SITE_URL}${TIER_BOX_IMAGES[fallbackPkg.tier].src}`,
-          url: product.id ? `${SITE_URL}/purchase/detail?productId=${product.id}` : `${SITE_URL}/purchase/detail?tier=${fallbackPkg.tier}`,
+          ...(product.imageUrl ? { image: product.imageUrl } : {}),
+          url: `${SITE_URL}/purchase/detail?productId=${product.id}`,
           brand: { "@type": "Brand", name: "꼬순박스" },
           offers: {
             "@type": "Offer",
-            url: product.id ? `${SITE_URL}/purchase/detail?productId=${product.id}` : `${SITE_URL}/purchase/detail?tier=${fallbackPkg.tier}`,
+            url: `${SITE_URL}/purchase/detail?productId=${product.id}`,
             priceCurrency: "KRW",
             price,
             availability: "https://schema.org/InStock",
@@ -79,7 +74,7 @@ export default async function PurchasePage() {
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>
-      <PurchaseListSection productsByTier={productsByTier} products={products} />
+      <PurchaseListSection products={products} />
     </>
   );
 }

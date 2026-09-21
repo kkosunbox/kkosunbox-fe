@@ -10,13 +10,16 @@ interface PurchaseOrderSummaryCardProps {
   originalShippingFee: number;
   shippingFee: number;
   total: number;
+  quantity: number;
   agreeOpen: boolean;
   agreeTerms: boolean;
   agreePrivacy: boolean;
+  agreeAge: boolean;
   agreeAll: boolean;
   onToggleAgreePanel: () => void;
   onToggleTerms: () => void;
   onTogglePrivacy: () => void;
+  onToggleAge: () => void;
   onAgreeAll: () => void;
   submitError: string | null;
   isPaying: boolean;
@@ -32,13 +35,16 @@ export function PurchaseOrderSummaryCard({
   originalShippingFee,
   shippingFee,
   total,
+  quantity,
   agreeOpen,
   agreeTerms,
   agreePrivacy,
+  agreeAge,
   agreeAll,
   onToggleAgreePanel,
   onToggleTerms,
   onTogglePrivacy,
+  onToggleAge,
   onAgreeAll,
   submitError,
   isPaying,
@@ -50,11 +56,11 @@ export function PurchaseOrderSummaryCard({
       <div className="flex flex-col max-md:gap-4 md:gap-8">
         <div className="flex flex-col max-md:gap-4 md:gap-4">
           <div className="flex items-center justify-between">
-            <span className="text-body-13-m text-[var(--color-text)]">주문상품금액</span>
+            <span className="text-body-13-m text-[var(--color-text)]">주문상품금액{quantity > 1 ? ` ×${quantity}` : ""}</span>
             <span className="text-body-13-m text-[var(--color-text)]">{formatKrwPrice(basePrice)}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-body-13-m text-[var(--color-text)]">총 쿠폰 할인금액</span>
+            <span className="text-body-13-m text-[var(--color-text)]">총 할인금액</span>
             <span className="text-body-13-m text-[var(--color-text)]">-{formatKrwPrice(totalDiscount)}</span>
           </div>
           <div className="flex items-center justify-between">
@@ -80,10 +86,12 @@ export function PurchaseOrderSummaryCard({
           agreeOpen={agreeOpen}
           agreeTerms={agreeTerms}
           agreePrivacy={agreePrivacy}
+          agreeAge={agreeAge}
           agreeAll={agreeAll}
           onToggleAgreePanel={onToggleAgreePanel}
           onToggleTerms={onToggleTerms}
           onTogglePrivacy={onTogglePrivacy}
+          onToggleAge={onToggleAge}
           onAgreeAll={onAgreeAll}
         />
 

@@ -32,7 +32,7 @@ export function PurchaseProductInfoCard({
   return (
     <SectionCard title="제품 정보" open={open} onToggle={onToggle}>
       <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
-        <div className="relative shrink-0 overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
+        <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
           {imageUrl ? <img src={imageUrl} alt={pkg.name} className="h-full w-full object-cover" /> : <Image
             src={TIER_BOX_IMAGES[pkg.tier]}
             alt={pkg.name}
@@ -50,14 +50,14 @@ export function PurchaseProductInfoCard({
             {relatedPlanSlug ?? TIER_LABEL[pkg.tier]}
           </span>
           <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">{pkg.name}</span>
-          <span className="text-price-16-eb text-[var(--color-surface-dark)]">{formatKrwPrice(unitPrice)}</span>
+          <span className="text-price-16-eb text-[var(--color-surface-dark)]">단품 구매 {formatKrwPrice(unitPrice)}</span>
           <div className="mt-1 flex items-center gap-3">
             <button
               type="button"
               aria-label="수량 감소"
               onClick={onDecrease}
               disabled={quantity <= QUANTITY_MIN}
-              className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[var(--color-border)] text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+              className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
             >
               <span className="max-md:hidden" aria-hidden>−</span>
               <span className="md:hidden">
@@ -70,7 +70,7 @@ export function PurchaseProductInfoCard({
               aria-label="수량 증가"
               onClick={onIncrease}
               disabled={quantity >= QUANTITY_MAX}
-              className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-[var(--color-border)] text-body-14-sb text-[var(--color-text)] disabled:opacity-30"
+              className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
             >
               <span className="max-md:hidden" aria-hidden>+</span>
               <span className="md:hidden">

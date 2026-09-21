@@ -3,18 +3,15 @@
 /* eslint-disable @next/next/no-img-element -- 상품 이미지는 서버가 제공하는 동적 원격 URL이다. */
 
 import { useMemo, useState } from "react";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
-import { COMPARE_PACKAGES, getPackagePurchaseProduct, TIER_BOX_IMAGES, type PackageTier } from "@/entities/package";
 import type { ProductDto } from "@/features/product/api/types";
-import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
 import PurchaseBannerCoupon from "../assets/purchase-banner-coupon.png";
 
 type Category = "all" | "yogurt" | "meal" | "gum";
 
 interface PurchaseListSectionProps {
-  productsByTier: Record<PackageTier, ProductDto | null>;
   products: ProductDto[];
 }
 
@@ -23,8 +20,8 @@ interface DisplayProduct {
   name: string;
   description: string;
   price: number;
-  image: string | StaticImageData;
-  href: string | null;
+  imageUrl: string | null;
+  href: string;
   category: Exclude<Category, "all"> | "etc";
   isSoldOut: boolean;
   isSalesPaused: boolean;
@@ -54,40 +51,23 @@ function Chevron({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-export default function PurchaseListSection({ productsByTier, products }: PurchaseListSectionProps) {
+export default function PurchaseListSection({ products }: PurchaseListSectionProps) {
   const [category, setCategory] = useState<Category>("all");
   const [page, setPage] = useState(1);
 
   const catalog = useMemo<DisplayProduct[]>(() => {
-    if (products.length > 0) {
-      return products.map((product) => {
-        const matchedPackage = COMPARE_PACKAGES.find((pkg) => productsByTier[pkg.tier]?.id === product.id);
-        return {
-          id: String(product.id),
-          name: product.name,
-          description: product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식",
-          price: product.price,
-          image: product.imageUrl || (matchedPackage ? TIER_BOX_IMAGES[matchedPackage.tier] : TIER_BOX_IMAGES.Basic),
-          href: `/purchase/detail?productId=${product.id}`,
-          category: resolveCategory(product.name),
-          isSoldOut: product.isSoldOut,
-          isSalesPaused: product.isSalesPaused,
-        };
-      });
-    }
-
-    return COMPARE_PACKAGES.map((pkg) => ({
-      id: pkg.tier,
-      name: pkg.name,
-      description: "꼬순박스를 부담 없이 경험할 수 있는 수제간식 패키지",
-      price: getPackagePurchaseProduct(pkg.tier)!.price,
-      image: TIER_BOX_IMAGES[pkg.tier],
-      href: `/purchase/detail?tier=${pkg.tier}`,
-      category: "etc",
-      isSoldOut: false,
-      isSalesPaused: false,
+    return products.map((product) => ({
+      id: String(product.id),
+      name: product.name,
+      description: product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식",
+      price: product.price,
+      imageUrl: product.imageUrl ?? null,
+      href: `/purchase/detail?productId=${product.id}`,
+      category: resolveCategory(product.name),
+      isSoldOut: product.isSoldOut,
+      isSalesPaused: product.isSalesPaused,
     }));
-  }, [products, productsByTier]);
+  }, [products]);
 
   const filteredProducts = category === "all" ? catalog : catalog.filter((product) => product.category === category);
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
@@ -153,11 +133,7 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
               const content = (
                 <>
                   <div className="relative aspect-[290/270] overflow-hidden rounded-2xl bg-[var(--color-surface-light)]">
-                    {typeof product.image === "string" ? (
-                      <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
-                    ) : (
-                      <Image src={product.image} alt={product.name} fill quality={HIGH_IMAGE_QUALITY} className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" sizes="(max-width: 639px) 100vw, (max-width: 1199px) 50vw, 25vw" />
-                    )}
+                    {product.imageUrl ? <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" /> : <div className="h-full w-full bg-[var(--color-surface-light)]" aria-hidden="true" />}
                     {(product.isSoldOut || product.isSalesPaused) && (
                       <span className="absolute inset-0 flex items-center justify-center bg-black/45 text-body-16-b text-white">
                         {product.isSoldOut ? "품절" : "판매 중지"}
@@ -174,11 +150,7 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
                 </>
               );
 
-              return product.href ? (
-                <Link key={product.id} href={product.href} className="group block">{content}</Link>
-              ) : (
-                <article key={product.id} className="group">{content}</article>
-              );
+              return <Link key={product.id} href={product.href} className="group block">{content}</Link>;
             })}
           </div>
         ) : (

@@ -22,8 +22,10 @@ export default async function PurchaseOrderPage({
   const { tier, quantity: quantityStr, cartItemIds: cartItemIdsParam } = await searchParams;
   const cartItemIds = cartItemIdsParam?.split(",").map(Number).filter((id) => Number.isInteger(id) && id > 0) ?? [];
   if (cartItemIds.length > 0) {
-    if (!(await getServerToken())) redirect(`/login?next=${encodeURIComponent(`/purchase/order?cartItemIds=${cartItemIds.join(",")}`)}`);
-    return <CartOrderSection cartItemIds={cartItemIds} />;
+    const token = await getServerToken();
+    if (!token) redirect(`/login?next=${encodeURIComponent(`/purchase/order?cartItemIds=${cartItemIds.join(",")}`)}`);
+    const addresses = await fetchDeliveryAddresses(token);
+    return <CartOrderSection cartItemIds={cartItemIds} initialAddresses={addresses} />;
   }
   const pkg = PACKAGES.find((p) => p.tier === tier);
   const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;

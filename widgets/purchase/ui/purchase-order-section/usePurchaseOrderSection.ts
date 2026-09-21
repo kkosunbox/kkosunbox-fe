@@ -46,13 +46,16 @@ export function usePurchaseOrderSection({
     agreeOpen,
     agreeTerms,
     agreePrivacy,
+    agreeAge,
     agreeAll,
     handleAgreeAll,
     toggleAgreePanel,
     toggleTerms,
     togglePrivacy,
+    toggleAge,
   } = useOrderAgreements();
   const coupon = usePurchaseCoupon();
+  const [couponEnabled, setCouponEnabled] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState(false);
 
@@ -60,7 +63,7 @@ export function usePurchaseOrderSection({
 
   // 확정(canUse)된 쿠폰 코드만 quote에 실어 보낸다 — 실제 주문 생성 시 보내는 조건과 동일.
   const appliedCouponCode =
-    coupon.couponInfo?.canUse && coupon.couponCodeInput.trim()
+    couponEnabled && coupon.couponInfo?.canUse && coupon.couponCodeInput.trim()
       ? coupon.couponCodeInput.trim()
       : undefined;
 
@@ -126,7 +129,7 @@ export function usePurchaseOrderSection({
         deliveryAddressId,
         quantity,
         couponCode:
-          coupon.couponInfo?.canUse && coupon.couponCodeInput.trim()
+          couponEnabled && coupon.couponInfo?.canUse && coupon.couponCodeInput.trim()
             ? coupon.couponCodeInput.trim()
             : undefined,
       });
@@ -159,11 +162,13 @@ export function usePurchaseOrderSection({
     agreeOpen,
     agreeTerms,
     agreePrivacy,
+    agreeAge,
     agreeAll,
     handleAgreeAll,
     toggleAgreePanel,
     toggleTerms,
     togglePrivacy,
+    toggleAge,
     submitError,
     isPaying,
     basePrice,
@@ -175,6 +180,8 @@ export function usePurchaseOrderSection({
     isQuoting,
     couponCodeInput: coupon.couponCodeInput,
     setCouponCodeInput: coupon.setCouponCodeInput,
+    couponEnabled,
+    toggleCoupon: () => setCouponEnabled((enabled) => !enabled),
     couponInfo: coupon.couponInfo,
     couponError: coupon.couponError,
     handleApplyCoupon: coupon.handleApplyCoupon,

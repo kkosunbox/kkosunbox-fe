@@ -9,7 +9,6 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { ShippingFeeWaiver } from "@/shared/ui";
 import orderCompleteHeroIcon from "../assets/order-complete-hero-icon.svg";
-import orderCompleteHeading from "../assets/order-complete-heading.svg";
 import orderCompleteDeliveryIcon from "../assets/order-complete-delivery-icon.png";
 
 function formatOrderDate(iso: string): string {
@@ -78,13 +77,9 @@ export default function OrderCompleteSection({
       {/* 히어로 */}
       <div className="relative flex flex-col items-center bg-[var(--color-subscription-detail-header-bg)] px-6 py-10 text-center md:py-14">
         <img src={orderCompleteHeroIcon.src} alt="" aria-hidden="true" width={108} height={106} />
-        <img
-          src={orderCompleteHeading.src}
-          alt="주문이 완료되었습니다!"
-          width={251}
-          height={24}
-          className="mt-4 h-6 w-auto"
-        />
+        <h1 className="mt-4 text-[28px] font-extrabold leading-[33px] tracking-[-0.04em] text-[var(--color-cta-button)]">
+          주문이 완료되었습니다!
+        </h1>
         <p className="mt-3 text-body-16-m text-[var(--color-why-choose-text)]">
           소중한 주문 감사합니다. 꼼꼼하게 포장해서 보내드릴게요!
         </p>

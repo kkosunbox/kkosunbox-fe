@@ -25,7 +25,7 @@ export interface CartDto {
   hasUnorderableItem: boolean;
 }
 
-export interface CartCountDto { itemCount: number }
+export interface CartCountDto { count: number }
 export interface AddCartItemRequest { productId: number; quantity: number }
 export interface UpdateCartItemRequest { quantity: number }
 export interface CartCheckoutRequest {

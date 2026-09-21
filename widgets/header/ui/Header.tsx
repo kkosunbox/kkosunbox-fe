@@ -54,7 +54,7 @@ export default function Header() {
 
   useEffect(() => {
     if (!isLoggedIn) return;
-    const refresh = () => { void getCartCount().then((data) => setCartCount(data.itemCount)).catch(() => setCartCount(0)); };
+    const refresh = () => { void getCartCount().then((data) => setCartCount(data.count)).catch(() => setCartCount(0)); };
     refresh();
     window.addEventListener(CART_UPDATED_EVENT, refresh);
     return () => window.removeEventListener(CART_UPDATED_EVENT, refresh);

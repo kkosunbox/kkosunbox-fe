@@ -70,9 +70,7 @@ export default async function ProductPage({ params }: Props) {
       url,
       priceCurrency: "KRW",
       price: product.price,
-      availability: product.isSalesPaused
-        ? "https://schema.org/OutOfStock"
-        : "https://schema.org/InStock",
+      availability: "https://schema.org/InStock",
       shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
       hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
     } : undefined,
@@ -95,7 +93,6 @@ export default async function ProductPage({ params }: Props) {
         pkg={catalog.pkg}
         purchaseProduct={{ ...purchaseProduct, price: product?.price ?? purchaseProduct.price }}
         relatedPlanId={product?.relatedPlanId ?? null}
-        isSalesPaused={product?.isSalesPaused ?? true}
       />
     </>
   );

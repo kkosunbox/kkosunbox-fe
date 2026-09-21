@@ -59,9 +59,7 @@ export default async function ProductsPage() {
             url,
             priceCurrency: "KRW",
             price,
-            availability: product.isSalesPaused
-              ? "https://schema.org/OutOfStock"
-              : "https://schema.org/InStock",
+            availability: "https://schema.org/InStock",
             shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
             hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
           } : undefined,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PurchaseOrderSection } from "@/widgets/purchase";
-import { PACKAGES, getPackageProductPath, getPackagePurchaseProduct } from "@/entities/package";
+import { PACKAGES, getPackagePurchaseProduct } from "@/entities/package";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
 import { fetchProducts } from "@/features/product/api/queries";
@@ -41,9 +41,6 @@ export default async function PurchaseOrderPage({
   ]);
   // 백엔드 상품 카탈로그가 아직 비어있을 수 있음 — 그 경우 결제 시점에 안내 후 차단(PurchaseOrderSection 참고)
   const product = resolveProductsByTier(products, plans)[pkg.tier];
-  if (product?.isSalesPaused) {
-    redirect(getPackageProductPath(pkg.tier));
-  }
   // 화면에 보이는 가격과 실제 청구 금액이 다르면 안 되므로, 매칭된 실제 상품이 있으면 가격을 그걸로 덮어쓴다.
   // (productId만 넘기고 가격은 더미로 두면 결제 직전 위젯 금액만 몰래 바뀌는 꼴이 된다 — 화면·청구 불일치)
   const effectivePurchaseProduct = { ...purchaseProduct, price: product?.price ?? purchaseProduct.price };

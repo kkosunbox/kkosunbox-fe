@@ -155,7 +155,7 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
                   </div>
                   <div className="pt-6">
                     <h2 className="text-subtitle-24-b text-[var(--color-text-price)] max-md:text-subtitle-18-b">{product.name}</h2>
-                    <p className="mt-3 line-clamp-2 min-h-12 text-body-20-m tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:min-h-10 max-md:text-body-14-r">{product.description}</p>
+                    <p className="mt-3 line-clamp-2 text-body-20-m tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:text-body-14-r">{product.description}</p>
                     <div className="mt-3 flex items-baseline gap-2">
                       <strong className="text-[28px] font-extrabold leading-[33px] tracking-[-0.05em] text-[var(--color-text-price)] max-md:text-[22px]">{formatKrwPrice(product.price)}</strong>
                     </div>

@@ -965,3 +965,29 @@ body:has(dialog:modal) {
 .scrollbar-agreement-native::-webkit-scrollbar {
   display: none;
 }
+
+@keyframes kakao-widget-enter {
+  0% { opacity: 0; transform: translateY(14px) scale(0.9); }
+  65% { opacity: 1; transform: translateY(-2px) scale(1.015); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes kakao-speech-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+.kakao-widget-enter {
+  animation: kakao-widget-enter 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.kakao-speech-float {
+  animation: kakao-speech-float 3.2s ease-in-out 0.7s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kakao-widget-enter,
+  .kakao-speech-float {
+    animation: none;
+  }
+}

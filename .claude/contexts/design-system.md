@@ -51,6 +51,7 @@
 | `--color-recommend-reason-title` | `#AB4B00` | 체크리스트 추천이유 ✔ 제목 색상 |
 | `--color-stats-bar-bg` | `#101010` | 메인 StatsBar 배경 |
 | `--color-footer-bg` | `#F89602` | 사이트 푸터 배경 (메인 리디자인 오렌지) |
+| `--color-purchase-banner-bg` | `#04522A` | 단품몰 상단 프로모션 배너 배경 |
 | `--color-footer-divider` | `#6F6969` | 푸터 구분선 |
 | `--color-footer-text` | `#999999` | 푸터 본문·내비·SNS 아이콘 |
 | `--color-beige` | `#E8CFB9` | Beige — 테두리, 불릿, 서클 bg 등 장식 요소 |

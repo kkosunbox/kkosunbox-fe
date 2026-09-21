@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import {
-  COMPARE_PACKAGES,
-  TIER_BOX_IMAGES,
-  getPackageProductPath,
-  getPackagePurchaseProduct,
-} from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
-import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
-import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import {
   PRODUCT_RETURN_POLICY_JSONLD,
   PRODUCT_SHIPPING_DETAILS_JSONLD,
@@ -31,38 +23,35 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
-  const [products, plans] = await Promise.all([fetchProducts(), fetchSubscriptionPlans()]);
-  const productsByTier = resolveProductsByTier(products, plans);
+  const products = await fetchProducts();
   const data = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "꼬순박스 강아지 수제간식",
     url: `${SITE_URL}/products`,
-    itemListElement: COMPARE_PACKAGES.map((pkg, index) => {
-      const product = productsByTier[pkg.tier];
-      const price = product?.price ?? getPackagePurchaseProduct(pkg.tier)!.price;
-      const url = `${SITE_URL}${getPackageProductPath(pkg.tier)}`;
+    itemListElement: products.map((product, index) => {
+      const url = `${SITE_URL}/purchase/detail?productId=${product.id}`;
       return {
         "@type": "ListItem",
         position: index + 1,
         item: {
           "@type": "Product",
-          name: product?.name ?? pkg.name,
-          description: product?.description || `${pkg.name} 강아지 수제간식 패키지`,
-          image: product?.imageUrl || `${SITE_URL}${TIER_BOX_IMAGES[pkg.tier].src}`,
+          name: product.name,
+          description: product.description || `${product.name} 강아지 수제간식`,
+          ...(product.imageUrl ? { image: product.imageUrl } : {}),
           url,
           brand: { "@type": "Brand", name: "꼬순박스" },
-          offers: product ? {
+          offers: {
             "@type": "Offer",
             url,
             priceCurrency: "KRW",
-            price,
-            availability: product.isSalesPaused
+            price: product.price,
+            availability: product.isSalesPaused || product.isSoldOut
               ? "https://schema.org/OutOfStock"
               : "https://schema.org/InStock",
             shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
             hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
-          } : undefined,
+          },
         },
       };
     }),
@@ -73,7 +62,7 @@ export default async function ProductsPage() {
       <h1 className="sr-only">꼬순박스 강아지 수제간식 단품몰</h1>
       <JsonLd data={data} />
       <Suspense fallback={null}><PurchasePaymentErrorNotice /></Suspense>
-      <PurchaseListSection productsByTier={productsByTier} products={products} />
+      <PurchaseListSection products={products} />
     </>
   );
 }

@@ -1,5 +1,6 @@
 export {
   getProducts,
+  getProductCategories,
   getProduct,
   createProductOrder,
   getProductOrders,
@@ -14,6 +15,9 @@ export {
 
 export type {
   ProductDto,
+  ProductCategoryDto,
+  ProductSortOrder,
+  GetProductsParams,
   ProductOrderStatus,
   ProductDeliveryStatus,
   ProductOrderDisplayStatus,
@@ -26,6 +30,7 @@ export type {
   ConfirmProductOrderRequest,
   GetProductCouponInfoRequest,
   ProductListResponse,
+  ProductCategoryListResponse,
   PaginatedProductOrderResponse,
   CreateProductOrderResponse,
   ProductOrderReceiptResponse,

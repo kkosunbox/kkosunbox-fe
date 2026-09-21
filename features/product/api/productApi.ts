@@ -6,8 +6,10 @@ import type {
   CreateProductOrderResponse,
   GetProductCouponInfoRequest,
   GetProductOrdersParams,
+  GetProductsParams,
   PaginatedProductOrderResponse,
   ProductCouponInfo,
+  ProductCategoryListResponse,
   ProductDto,
   ProductListResponse,
   ProductOrderDto,
@@ -20,8 +22,17 @@ import type {
 // POST /v1/products/webhook/toss는 Toss → 백엔드 서버 간 웹훅이라 프론트에서 호출하지 않으므로 여기 포함하지 않는다.
 
 /** 단건 판매 상품 목록 조회 */
-export function getProducts() {
-  return apiClient.get<ProductListResponse>("/v1/products");
+export function getProducts(params?: GetProductsParams) {
+  const searchParams = new URLSearchParams();
+  if (params?.categoryId !== undefined) searchParams.set("categoryId", String(params.categoryId));
+  if (params?.sortOrder !== undefined) searchParams.set("sortOrder", params.sortOrder);
+  const query = searchParams.size > 0 ? `?${searchParams.toString()}` : "";
+  return apiClient.get<ProductListResponse>(`/v1/products${query}`);
+}
+
+/** 단품몰 카테고리 칩 목록 (활성 카테고리, sortOrder 오름차순) */
+export function getProductCategories() {
+  return apiClient.get<ProductCategoryListResponse>("/v1/products/categories");
 }
 
 /** 단건 판매 상품 상세 조회 */

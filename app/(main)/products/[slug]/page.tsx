@@ -93,7 +93,11 @@ export default async function ProductPage({ params }: Props) {
       <JsonLd data={breadcrumbJsonLd} />
       <PurchaseProductDetailPage
         pkg={catalog.pkg}
-        purchaseProduct={{ ...purchaseProduct, price: product?.price ?? purchaseProduct.price }}
+        purchaseProduct={{
+          ...purchaseProduct,
+          price: product?.price ?? purchaseProduct.price,
+          originalPrice: product?.originalPrice ?? null,
+        }}
         relatedPlanId={product?.relatedPlanId ?? null}
         productId={product?.id ?? null}
         isSoldOut={product?.isSoldOut ?? false}

@@ -63,7 +63,11 @@ export default async function PurchaseDetailPage({
   if (!pkg || !purchaseProduct) redirect("/purchase");
   // 화면 가격은 실제 매칭 상품이 있으면 그걸로 덮어써서 /purchase/order와 정합성을 맞춘다.
   const product = requestedProduct ?? resolveProductsByTier(products, plans)[pkg.tier];
-  const effectivePurchaseProduct = { ...purchaseProduct, price: product?.price ?? purchaseProduct.price };
+  const effectivePurchaseProduct = {
+    ...purchaseProduct,
+    price: product?.price ?? purchaseProduct.price,
+    originalPrice: product?.originalPrice ?? null,
+  };
 
   return (
     <PurchaseProductDetailPage

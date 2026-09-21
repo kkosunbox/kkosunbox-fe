@@ -101,23 +101,23 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
 
   return (
     <div className="bg-[var(--color-background)]">
-      <section className="mt-[var(--header-offset)] h-[104px] bg-[var(--color-purchase-banner-bg)] max-md:h-[86px]" aria-label="단품몰 안내">
-        <div className="mx-auto flex h-full max-w-[1520px] items-center justify-center gap-10 px-6 max-md:gap-4">
+      <section className="mt-[var(--header-offset)] h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="단품몰 안내">
+        <div className="mx-auto flex h-full items-center justify-center gap-[53px] max-md:w-full max-md:gap-4 max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
           <p className="text-body-20-b tracking-[-0.04em] text-white max-md:text-body-14-b">
             첫 만남은 가볍게, <span className="text-[var(--color-banner-bg)]">꼬순박스를 단품으로 만나보기</span>
           </p>
           <Image
             src={PurchaseBannerCoupon}
             alt=""
-            width={256}
-            height={91}
-            className="h-[91px] w-64 self-end object-contain max-md:h-[68px] max-md:w-[191px]"
+            width={172}
+            height={61}
+            className="h-[61px] w-[172px] self-end object-contain max-md:h-[54px] max-md:w-[152px]"
             aria-hidden="true"
           />
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[1520px] px-6 pb-24 pt-[66px] md:px-8 lg:px-10 xl:px-0 max-md:pb-16 max-md:pt-10">
+      <section className="mx-auto pb-24 pt-16 max-md:w-full max-md:px-6 max-md:pb-16 max-md:pt-10 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
         <h1 className="text-title-36-b text-[var(--color-text-price)] max-md:text-title-28-b">All Product</h1>
 
         <div className="mt-6 flex items-end justify-between gap-6 max-md:flex-col max-md:items-start">
@@ -148,11 +148,11 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
         </div>
 
         {visibleProducts.length > 0 ? (
-          <div className="mt-[30px] grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 lg:grid-cols-4 max-md:gap-y-12">
+          <div className="mt-[30px] grid grid-cols-1 gap-x-8 gap-y-[92px] sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-[26px] max-md:gap-y-12">
             {visibleProducts.map((product) => {
               const content = (
                 <>
-                  <div className="relative aspect-[356/330] overflow-hidden rounded-2xl bg-[var(--color-surface-light)]">
+                  <div className="relative aspect-[290/270] overflow-hidden rounded-2xl bg-[var(--color-surface-light)]">
                     {typeof product.image === "string" ? (
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
                     ) : (
@@ -164,11 +164,11 @@ export default function PurchaseListSection({ productsByTier, products }: Purcha
                       </span>
                     )}
                   </div>
-                  <div className="pt-6">
-                    <h2 className="text-subtitle-24-b text-[var(--color-text-price)] max-md:text-subtitle-18-b">{product.name}</h2>
-                    <p className="mt-3 line-clamp-2 text-body-20-m tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:text-body-14-r">{product.description}</p>
+                  <div className="pt-5">
+                    <h2 className="text-subtitle-20-b text-[var(--color-text-price)] max-md:text-subtitle-18-b">{product.name}</h2>
+                    <p className="mt-3 line-clamp-2 text-body-16-m tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:text-body-14-r">{product.description}</p>
                     <div className="mt-3 flex items-baseline gap-2">
-                      <strong className="text-[28px] font-extrabold leading-[33px] tracking-[-0.05em] text-[var(--color-text-price)] max-md:text-[22px]">{formatKrwPrice(product.price)}</strong>
+                      <strong className="text-[24px] font-extrabold leading-[29px] tracking-[-0.05em] text-[var(--color-text-price)] max-md:text-[22px]">{formatKrwPrice(product.price)}</strong>
                     </div>
                   </div>
                 </>

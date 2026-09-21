@@ -61,16 +61,16 @@ export function KakaoTalkProvider() {
         <button
           type="button"
           onClick={openKakaoChat}
-          className="kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[132px] w-[120px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6"
+          className="kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[86px] w-[86px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6"
           aria-label="카카오톡으로 상담하기"
         >
           <span className="block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-transform duration-200 group-hover:scale-[1.025] group-active:scale-[0.98]">
-            <span className="kakao-speech-float absolute -left-[13px] -top-[9px] z-10 h-[57px] w-[143px]">
-              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="143px" className="object-contain" priority />
+            <span className="kakao-speech-float absolute -left-2 -top-1.5 z-10 h-10 w-[102px]">
+              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="102px" className="object-contain" priority />
             </span>
-            <span className="absolute bottom-0 left-[13px] h-24 w-24 rounded-full bg-[var(--color-cta-button)]">
-              <span className="absolute inset-1 overflow-hidden rounded-full bg-white">
-                <Image src="/images/kakao-consult-dog.png" alt="" fill sizes="88px" className="object-cover object-[center_43%]" priority />
+            <span className="absolute bottom-0 left-[13px] h-[60px] w-[60px] rounded-full bg-[var(--color-cta-button)]">
+              <span className="absolute inset-0.5 overflow-hidden rounded-full bg-white">
+                <Image src="/images/kakao-consult-dog.png" alt="" fill sizes="56px" className="object-cover object-[center_43%]" priority />
               </span>
             </span>
           </span>

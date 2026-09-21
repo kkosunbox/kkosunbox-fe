@@ -5,7 +5,6 @@ import {
   TIER_BOX_IMAGES,
   getPackageProductPath,
   getPackagePurchaseProduct,
-  resolveAverageRatingByTier,
 } from "@/entities/package";
 import { fetchProducts } from "@/features/product/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
@@ -34,7 +33,6 @@ export const dynamic = "force-dynamic";
 export default async function ProductsPage() {
   const [products, plans] = await Promise.all([fetchProducts(), fetchSubscriptionPlans()]);
   const productsByTier = resolveProductsByTier(products, plans);
-  const ratingByTier = resolveAverageRatingByTier(plans);
   const data = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -73,7 +71,7 @@ export default async function ProductsPage() {
       <h1 className="sr-only">꼬순박스 강아지 수제간식 단품몰</h1>
       <JsonLd data={data} />
       <Suspense fallback={null}><PurchasePaymentErrorNotice /></Suspense>
-      <PurchaseListSection productsByTier={productsByTier} ratingByTier={ratingByTier} />
+      <PurchaseListSection productsByTier={productsByTier} products={products} />
     </>
   );
 }

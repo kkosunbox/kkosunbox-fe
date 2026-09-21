@@ -114,6 +114,7 @@
   --color-footer-bg: #F89602;     /* Footer 배경 — 메인 리디자인 오렌지 (구 #4A4440 사용 금지) */
   --color-footer-divider: rgba(255, 255, 255, 0.3); /* Footer 상·하단 구분선 */
   --color-footer-text: #F6E1CD;   /* Footer 본문·링크·SNS 아이콘 (리디자인 — 크림, 구 #999999 대체) */
+  --color-purchase-banner-bg: #04522A; /* 단품몰 상단 프로모션 배너 배경 */
   --color-beige: #E8CFB9;         /* Beige — 테두리, 불릿, 서클 bg 등 장식 요소 */
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
@@ -410,6 +411,7 @@
   --color-footer-bg: var(--color-footer-bg);
   --color-footer-divider: var(--color-footer-divider);
   --color-footer-text: var(--color-footer-text);
+  --color-purchase-banner-bg: var(--color-purchase-banner-bg);
   --color-beige: var(--color-beige);
   --color-cta-logo-bg: var(--color-cta-logo-bg);
   --color-cta-sage-bg: var(--color-cta-sage-bg);

@@ -11,6 +11,7 @@ import { getErrorMessage } from "@/shared/lib/api";
 import { TOSS_WIDGET_CLIENT_KEY } from "@/shared/lib/payments/tossWidgetClient";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { Button, LoadingOverlay } from "@/shared/ui";
+import { CartEmptyState } from "@/widgets/cart";
 
 type PaymentMethodsWidget = ReturnType<PaymentWidgetInstance["renderPaymentMethods"]>;
 
@@ -100,7 +101,7 @@ export default function CartPageClient() {
   return (
     <div className="mx-auto w-full max-w-[1100px] px-6 pb-20 pt-[calc(var(--header-offset)+40px)]">
       <div className="mb-8 flex items-center justify-between"><h1 className="text-[28px] font-bold text-[var(--color-text)]">장바구니</h1>{cart?.items.length ? <button onClick={() => void clearCart().then(refresh)} className="text-body-13-r text-[var(--color-text-secondary)] underline">전체 비우기</button> : null}</div>
-      {!cart?.items.length ? <div className="rounded-2xl bg-[var(--color-surface-warm)] p-12 text-center"><p className="mb-6 text-[var(--color-text-secondary)]">장바구니가 비어 있습니다.</p><Button as={Link} href="/purchase">단품몰 보기</Button></div> : (
+      {!cart?.items.length ? <CartEmptyState /> : (
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-3">
             {cart.items.map((item) => <article key={item.id} className={`flex gap-4 rounded-2xl border p-4 ${item.isOrderable ? "border-[var(--color-divider-neutral)]" : "border-[var(--color-primary)] opacity-70"}`}>

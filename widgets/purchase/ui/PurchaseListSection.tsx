@@ -7,6 +7,7 @@ import {
   getPackagePurchaseProduct,
   TIER_BOX_IMAGES,
   PlanRatingStars,
+  getPackageProductPath,
   type PackageTier,
 } from "@/entities/package";
 import type { ProductDto } from "@/features/product/api/types";
@@ -110,7 +111,7 @@ export default function PurchaseListSection({
             return (
               <Link
                 key={pkg.tier}
-                href={`/purchase/detail?tier=${pkg.tier}`}
+                href={getPackageProductPath(pkg.tier)}
                 className="group flex w-full flex-col"
               >
                 <div

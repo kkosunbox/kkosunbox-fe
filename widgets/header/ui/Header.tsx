@@ -13,6 +13,7 @@ import { HeaderBanner } from "./HeaderBanner";
 import { ProfileThumbnail } from "./ProfileThumbnail";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { MobileDrawer } from "./MobileDrawer";
+import { CartLink } from "./CartLink";
 import { LogoWhiteIcon } from "./icons";
 import { isTransparentRoute } from "@/shared/config/headerVariants";
 import { useHeaderScroll } from "./useHeaderScroll";
@@ -114,13 +115,7 @@ export default function Header() {
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               고객센터
             </Link>
-            <Link href={isLoggedIn ? "/cart" : "/login?next=/cart"} aria-label={`장바구니 ${cartCount}개`} className="relative inline-flex h-8 w-8 items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M3 4H5L7.2 15.2A2 2 0 0 0 9.16 16.8H17.8A2 2 0 0 0 19.75 15.25L21 8H6" stroke={isSolid ? "var(--color-text)" : "white"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="9" cy="20" r="1.2" fill={isSolid ? "var(--color-text)" : "white"} /><circle cx="18" cy="20" r="1.2" fill={isSolid ? "var(--color-text)" : "white"} />
-              </svg>
-              {isLoggedIn && cartCount > 0 && <span className="absolute -right-1 -top-1 min-w-4 rounded-full bg-[var(--color-primary)] px-1 text-center text-[10px] font-bold leading-4 text-white">{cartCount > 99 ? "99+" : cartCount}</span>}
-            </Link>
+            {isLoggedIn && <CartLink count={cartCount} isSolid={isSolid} />}
             {isAuthLoading ? (
               <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
             ) : isLoggedIn ? (

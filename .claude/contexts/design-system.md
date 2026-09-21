@@ -155,6 +155,8 @@
 | `--color-avatar-fallback` | `#B3A79D` | 유저 폴백 아바타 배경 |
 | `--color-review-text` | `#2C2C2C` | 리뷰 카드 본문·이름 텍스트 |
 | `--color-review-chip` | `#A16240` | 리뷰 카드 구독 기간 칩 |
+| `--color-badge-count-bg` | `#D83232` | 헤더 장바구니 개수 뱃지 배경 |
+| `--color-header-icon` | `#555555` | 헤더 아이콘 선 (장바구니 등) |
 
 ### Gradient
 

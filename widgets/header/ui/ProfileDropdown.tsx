@@ -14,6 +14,7 @@ import {
   DropdownUserIcon,
   DropdownPinIcon,
   DropdownClipboardIcon,
+  DropdownOrderIcon,
   DropdownPointIcon,
   DropdownLogoutIcon,
 } from "./DropdownMenuIcons";
@@ -123,7 +124,7 @@ export function ProfileDropdown({
           계정정보
         </button>
         <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isSubscriptionActive)}>
-          <DropdownClipboardIcon />
+          <DropdownOrderIcon />
           구독관리
         </button>
         <button onClick={() => { onClose(); router.push("/orders"); }} className={menuItemClass(isOrdersActive)}>

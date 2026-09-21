@@ -5,10 +5,11 @@ import { getServerToken } from "@/features/auth/lib/session";
 import { fetchCombinedPaymentHistory, fetchCombinedPaymentTypeSummary } from "@/features/payment/api/queries";
 import type { OrderType } from "@/features/payment/api/types";
 import { formatKrwPrice } from "@/shared/lib/format";
+import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
 const STATUS_LABEL = { pending: "결제 대기", failed: "결제 실패", preparing: "배송 준비중", shipping: "배송중", delivered: "배송완료", refunded: "전액 환불", partially_refunded: "부분 환불" } as const;
 
-export const metadata = { title: "주문내역 | 꼬순박스" };
+export const metadata = { title: "주문내역 | 꼬순박스", ...NOINDEX_METADATA };
 
 export default async function OrdersPage({ searchParams }: { searchParams: Promise<{ orderType?: string; page?: string }> }) {
   const token = await getServerToken();

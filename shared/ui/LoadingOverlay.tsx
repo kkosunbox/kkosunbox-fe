@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useMemo } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 
 /* ── Context ──────────────────────────────────────────────── */
@@ -67,17 +67,49 @@ export default function LoadingOverlay({ visible, message }: LoadingOverlayProps
 /* ── 내부 UI ──────────────────────────────────────────────── */
 
 function LoadingOverlayUI({ message }: { message?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  /*
+   * top layer로 올린다 — 모달이 네이티브 <dialog>로 넘어가면서 z-index 사다리가 무력화되기
+   * 때문이다(top layer는 z-index를 무시한다). 그대로 두면 스피너가 모달 뒤로 숨는다.
+   *
+   * <dialog>가 아니라 popover를 쓰는 이유:
+   *  - role="status" / aria-live 시맨틱을 유지해야 한다(이건 대화상자가 아니다)
+   *  - showModal()은 auto 팝오버만 닫는다. manual은 모달이 열려도 살아남는다
+   *  - ESC로 닫히지 않는다 (로딩 중엔 닫히면 안 된다)
+   *
+   * 다만 top layer 순서는 "나중에 연 것이 위"라 항상 최상단은 아니다. 스피너 도중 뜬
+   * 에러 알림이 위로 오는 게 맞는 동작이라 수용한다 (계획서 §2-4).
+   *
+   * popover 미지원 브라우저에선 attribute가 무시되어 기존의 z-[9999] 고정 오버레이로 동작한다.
+   */
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof el.showPopover !== "function") return;
+    el.showPopover();
+    return () => {
+      if (el.isConnected && el.matches(":popover-open")) el.hidePopover();
+    };
+  }, []);
+
   return (
+    /* display 계열 클래스를 여기 두면 안 된다 — 작성자 스타일이 UA의
+     * `[popover]:not(:popover-open) { display: none }`을 이겨서 닫힌 상태에서도 보이게 된다.
+     * 정렬은 안쪽 div가 맡는다. */
     <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+      ref={ref}
+      popover="manual"
+      className="fixed inset-0 z-[9999] m-0 h-auto max-h-none w-auto max-w-none border-0 p-0"
       style={{ background: "rgba(255, 255, 255, 0.65)", backdropFilter: "blur(2px)" }}
       aria-live="assertive"
       role="status"
     >
-      <PawSpinner />
-      {message && (
-        <p className="mt-4 text-body-14-sb text-[var(--color-text)]">{message}</p>
-      )}
+      <div className="flex h-full flex-col items-center justify-center">
+        <PawSpinner />
+        {message && (
+          <p className="mt-4 text-body-14-sb text-[var(--color-text)]">{message}</p>
+        )}
+      </div>
     </div>
   );
 }

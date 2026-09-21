@@ -14,6 +14,7 @@ import {
 import {
   DropdownClipboardIcon,
   DropdownLogoutIcon,
+  DropdownOrderIcon,
   DropdownPinIcon,
   DropdownPointIcon,
   DropdownUserIcon,
@@ -30,7 +31,7 @@ const NAV_ITEMS = [
   { href: "/", label: "홈", Icon: MobileDrawerHomeIcon },
   { href: "/about", label: "꼬순박스 소개", Icon: MobileDrawerDocumentIcon },
   { href: "/subscribe", label: "구독몰", Icon: MobileDrawerSubscribeIcon },
-  { href: "/purchase", label: "단품몰", Icon: MobileDrawerPurchaseIcon },
+  { href: "/products", label: "단품몰", Icon: MobileDrawerPurchaseIcon },
   { href: "/support", label: "고객센터", Icon: MobileDrawerSupportIcon },
 ];
 
@@ -67,6 +68,7 @@ export function MobileDrawer({
   const isMyPageActive = pathname === "/mypage";
   const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
   const isPointActive = pathname.startsWith("/mypage/point");
+  const isOrdersActive = pathname.startsWith("/orders");
   const shortcutLabelClass = (active: boolean) =>
     `tracking-[-0.02em] ${
       active
@@ -216,6 +218,22 @@ export function MobileDrawer({
               </Link>
             );
           })}
+          {isLoggedIn && (
+            <Link
+              href="/orders"
+              onClick={onClose}
+              aria-current={isOrdersActive ? "page" : undefined}
+              className={[
+                "flex h-[58px] items-center gap-4 rounded-xl px-3 tracking-[-0.02em]",
+                isOrdersActive ? "bg-[var(--color-drawer-item-active)]" : "",
+              ].join(" ")}
+            >
+              <span className="[&>svg]:h-6 [&>svg]:w-6"><DropdownOrderIcon /></span>
+              <span className={isOrdersActive ? "text-[14px] leading-[17px] font-bold text-[var(--color-text)]" : "text-[14px] leading-[17px] font-medium text-[var(--color-text)]"}>
+                주문내역
+              </span>
+            </Link>
+          )}
           {isLoggedIn && isInfluencer && (
             <Link
               href="/mypage/point"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
@@ -11,8 +11,6 @@ const HOME_HERO_VIDEOS = [
   { src: "/videos/home-hero.mp4", type: "video/mp4" },
 ] as const;
 const HOME_HERO_POSTER_SRC = "/videos/home-hero-poster.webp";
-const SNAP_LOCK_MS = 900;
-const SWIPE_THRESHOLD = 48;
 const HERO_SIDE_SHADE_STYLE = {
   width: "clamp(120px, calc((100vw - 480px) / 2), 664px)",
 };
@@ -23,80 +21,21 @@ export default function HeroSection() {
   const { isLoggedIn } = useAuth();
   const { profile } = useProfile();
   const router = useRouter();
-  const sectionRef = useRef<HTMLElement>(null);
-  const snapLockedRef = useRef(false);
-  const touchStartYRef = useRef<number | null>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [posterLoaded, setPosterLoaded] = useState(false);
+  const posterRef = useRef<HTMLImageElement>(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const currentVideo = HOME_HERO_VIDEOS[currentVideoIndex];
 
-  const snapToContent = useCallback(() => {
-    if (snapLockedRef.current) return;
-
-    const content = document.getElementById("home-content");
-    if (!content) return;
-
-    snapLockedRef.current = true;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const headerHeight = Number.parseFloat(
-      window.getComputedStyle(document.documentElement).getPropertyValue("--header-height"),
-    ) || 0;
-    const targetTop = content.getBoundingClientRect().top + window.scrollY - headerHeight;
-    window.scrollTo({
-      top: targetTop,
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
-    window.setTimeout(() => {
-      snapLockedRef.current = false;
-    }, SNAP_LOCK_MS);
-  }, []);
-
+  // 포스터는 SSR로 이미 마크업에 있어 하이드레이션 전에 브라우저가 로드를 끝낼 수 있다.
+  // 그 경우 onLoad는 React가 리스너를 붙이기 전에 이미 발생해 유실된다 — 마운트 시점에
+  // img.complete로 그 상태를 한 번 더 확인해야 video가 영원히 안 뜨는 걸 막는다.
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    function isHeroActive() {
-      if (!section) return false;
-      const rect = section.getBoundingClientRect();
-      const bannerHeight = Number.parseFloat(
-        window.getComputedStyle(document.documentElement).getPropertyValue("--banner-height"),
-      ) || 0;
-      return rect.top <= bannerHeight + 1 && rect.bottom > window.innerHeight * 0.45;
+    if (posterRef.current?.complete) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 하이드레이션 이전에 이미 끝난 로드를 마운트 시점에 한 번만 확인
+      setPosterLoaded(true);
     }
-
-    function handleWheel(event: WheelEvent) {
-      if (event.deltaY <= 0 || !isHeroActive()) return;
-      event.preventDefault();
-      snapToContent();
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (!isHeroActive()) return;
-      if (!["ArrowDown", "PageDown", " "].includes(event.key)) return;
-      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
-      event.preventDefault();
-      snapToContent();
-    }
-
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [snapToContent]);
-
-  function handleTouchStart(event: React.TouchEvent<HTMLElement>) {
-    touchStartYRef.current = event.touches[0]?.clientY ?? null;
-  }
-
-  function handleTouchEnd(event: React.TouchEvent<HTMLElement>) {
-    const startY = touchStartYRef.current;
-    touchStartYRef.current = null;
-    const endY = event.changedTouches[0]?.clientY;
-    if (startY === null || endY === undefined || startY - endY < SWIPE_THRESHOLD) return;
-    snapToContent();
-  }
+  }, []);
 
   function handleCta() {
     if (!isLoggedIn) {
@@ -114,39 +53,44 @@ export default function HeroSection() {
 
   return (
     <section
-      ref={sectionRef}
       aria-label="꼬순박스 소개 영상"
-      className="relative h-[calc(100svh-var(--banner-height))] overflow-hidden bg-black [touch-action:pan-x]"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      className="relative h-[590px] overflow-hidden bg-black md:h-[630px] lg:h-[670px] xl:h-[710px]"
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- generated first-frame poster */}
       <img
+        ref={posterRef}
         src={HOME_HERO_POSTER_SRC}
         alt="간식을 기다리는 강아지들"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        className="absolute inset-0 h-full w-full scale-[1.06] object-cover object-[center_52%]"
         fetchPriority="high"
+        onLoad={() => setPosterLoaded(true)}
       />
 
-      <video
-        key={currentVideo.src}
-        className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        poster={HOME_HERO_POSTER_SRC}
-        aria-hidden="true"
-        onCanPlay={() => setVideoReady(true)}
-        onError={() => setVideoReady(false)}
-        onEnded={() => {
-          setVideoReady(false);
-          setCurrentVideoIndex((index) => (index + 1) % HOME_HERO_VIDEOS.length);
-        }}
-      >
-        <source src={currentVideo.src} type={currentVideo.type} />
-      </video>
+      {/* 영상(5MB)은 포스터가 그려지기 전까지 대역폭을 선점해 LCP를 늦춘다(2026-09-11
+          Lighthouse 실측). preload="metadata"는 autoPlay가 무력화하므로, video 엘리먼트
+          자체를 포스터 로드 완료 후에만 마운트해 리소스 선택 알고리즘이 그 시점에야
+          돌게 한다 — <source>만 나중에 끼워 넣으면 브라우저가 다시 스캔하지 않는다. */}
+      {posterLoaded && (
+        <video
+          key={currentVideo.src}
+          className={`absolute inset-0 h-full w-full scale-[1.06] object-cover object-[center_52%] transition-opacity duration-700 ${videoReady ? "opacity-100" : "opacity-0"}`}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster={HOME_HERO_POSTER_SRC}
+          aria-hidden="true"
+          onCanPlay={() => setVideoReady(true)}
+          onError={() => setVideoReady(false)}
+          onEnded={() => {
+            setVideoReady(false);
+            setCurrentVideoIndex((index) => (index + 1) % HOME_HERO_VIDEOS.length);
+          }}
+        >
+          <source src={currentVideo.src} type={currentVideo.type} />
+        </video>
+      )}
 
       <div
         className="absolute inset-0"
@@ -175,8 +119,8 @@ export default function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
-        <div className="max-w-[510px] pb-[18svh] text-white">
+      <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
+        <div className="max-w-[510px] pb-10 text-white md:pb-12 lg:pb-14">
           <h2>
             {/* eslint-disable-next-line @next/next/no-img-element -- exact supplied heading artwork */}
             <img
@@ -201,22 +145,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={snapToContent}
-        className="absolute left-1/2 z-20 -translate-x-1/2 text-white transition-opacity hover:opacity-70 max-md:bottom-5 md:bottom-7"
-        aria-label="다음 섹션으로 이동"
-      >
-        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-          <path
-            d="M44.3327 32.6667L27.9994 49L11.666 32.6667M27.9994 49V7"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
     </section>
   );
 }

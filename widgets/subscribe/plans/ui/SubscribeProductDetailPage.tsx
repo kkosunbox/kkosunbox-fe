@@ -86,6 +86,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const discountedUnitPrice = price.price;
   const hasDiscount = price.strikePrice != null;
   const salePrice = discountedUnitPrice * quantity;
+  const isSalesPaused = selectedPlan.isSalesPaused;
 
   function handleSelectPlan(plan: SubscriptionPlanDto) {
     setSelectedPlan(plan);
@@ -267,10 +268,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             <button
               type="button"
               onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-              style={{ background: "var(--color-cta-button)" }}
+              disabled={isSalesPaused}
+              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:hover:opacity-100"
+              style={{ background: isSalesPaused ? "var(--color-ui-disabled)" : "var(--color-cta-button)" }}
             >
-              구독하기
+              {isSalesPaused ? "품절되었습니다" : "구독하기"}
             </button>
           </div>
 
@@ -481,10 +483,11 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                 <button
                   type="button"
                   onClick={() => router.push(`/order?planId=${selectedPlan.id}&quantity=${quantity}`)}
-                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
-                  style={{ background: "var(--color-cta-button)" }}
+                  disabled={isSalesPaused}
+                  className="flex h-[48px] w-full items-center justify-center md:mt-8 lg:mt-8 rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:hover:opacity-100"
+                  style={{ background: isSalesPaused ? "var(--color-ui-disabled)" : "var(--color-cta-button)" }}
                 >
-                  구독하기
+                  {isSalesPaused ? "품절되었습니다" : "구독하기"}
                 </button>
               </div>
             </div>

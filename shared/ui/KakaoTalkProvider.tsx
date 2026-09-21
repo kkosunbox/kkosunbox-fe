@@ -65,8 +65,8 @@ export function KakaoTalkProvider() {
           aria-label="카카오톡으로 상담하기"
         >
           <span className="block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-transform duration-200 group-hover:scale-[1.025] group-active:scale-[0.98]">
-            <span className="kakao-speech-float absolute -left-2 -top-1.5 z-10 h-10 w-[102px]">
-              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="102px" className="object-contain" priority />
+            <span className="kakao-speech-float absolute -left-[27.5px] -top-[13px] z-10 h-[55px] w-[141px]">
+              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="141px" className="object-contain" priority />
             </span>
             <span className="absolute bottom-0 left-[13px] h-[60px] w-[60px] rounded-full bg-[var(--color-cta-button)]">
               <span className="absolute inset-0.5 overflow-hidden rounded-full bg-white">

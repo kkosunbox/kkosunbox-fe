@@ -68,6 +68,11 @@ const ERROR_MESSAGES: Record<string, string> = {
 
   // 단건 구매(product)
   PRODUCT_NOT_FOUND: "상품을 찾을 수 없습니다.",
+  PRODUCT_SALES_PAUSED: "현재 판매가 일시 중단된 상품입니다.",
+  PRODUCT_OUT_OF_STOCK: "상품 재고가 부족합니다.",
+  CART_ITEM_NOT_FOUND: "장바구니 상품을 찾을 수 없습니다.",
+  CART_EMPTY: "장바구니에 결제할 상품이 없습니다.",
+  PRODUCT_ORDER_ITEM_NOT_FOUND: "주문 상품을 찾을 수 없습니다.",
   PRODUCT_ORDER_AMOUNT_MISMATCH: "결제 금액이 일치하지 않습니다.",
   PRODUCT_ORDER_PAYMENT_FAILED: "결제에 실패했습니다. 다시 시도해주세요.",
 
@@ -79,6 +84,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 
   // 리뷰
   REVIEW_NOT_ELIGIBLE: "배송 완료된 구독 이력이 있는 경우에만 리뷰를 작성할 수 있습니다.",
+  REVIEW_INVALID_TARGET: "리뷰 대상을 확인해주세요.",
   REVIEW_ALREADY_EXISTS: "이미 해당 플랜에 리뷰를 작성하셨습니다.",
   REVIEW_NOT_FOUND: "리뷰를 찾을 수 없습니다.",
   REVIEW_NOT_OWNER: "본인이 작성한 리뷰만 수정·삭제할 수 있습니다.",

@@ -14,10 +14,12 @@ import type { usePurchaseOrderSection } from "./usePurchaseOrderSection";
 interface PurchaseOrderSectionViewProps {
   pkg: PackageData;
   purchaseProduct: PackagePurchaseProduct;
+  imageUrl?: string | null;
+  relatedPlanSlug?: string | null;
   vm: ReturnType<typeof usePurchaseOrderSection>;
 }
 
-export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseOrderSectionViewProps) {
+export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relatedPlanSlug, vm }: PurchaseOrderSectionViewProps) {
   return (
     <div className="pt-[var(--header-offset)]">
       <Script
@@ -43,6 +45,8 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
             <div className="flex flex-col max-md:gap-9 md:gap-4">
               <PurchaseProductInfoCard
                 pkg={pkg}
+                imageUrl={imageUrl}
+                relatedPlanSlug={relatedPlanSlug}
                 unitPrice={purchaseProduct.price}
                 quantity={vm.quantity}
                 onDecrease={() => vm.setQuantity((q) => Math.max(QUANTITY_MIN, q - 1))}

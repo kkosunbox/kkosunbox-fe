@@ -95,7 +95,10 @@ export default async function ProductPage({ params }: Props) {
         pkg={catalog.pkg}
         purchaseProduct={{ ...purchaseProduct, price: product?.price ?? purchaseProduct.price }}
         relatedPlanId={product?.relatedPlanId ?? null}
+        productId={product?.id ?? null}
+        isSoldOut={product?.isSoldOut ?? false}
         isSalesPaused={product?.isSalesPaused ?? true}
+        imageUrl={product?.imageUrl ?? null}
       />
     </>
   );

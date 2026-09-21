@@ -40,11 +40,12 @@ export default async function PurchaseOrderSuccessPage({
       fetchProducts(token),
       fetchSubscriptionPlans(token),
     ]);
-    const product = products.find((p) => p.id === confirmedOrder.productId) ?? null;
+    const firstItem = confirmedOrder.items[0];
+    const product = products.find((p) => p.id === firstItem?.productId) ?? null;
     order = confirmedOrder;
     tier = product ? resolveProductTier(product, plans) : null;
     // 주문 응답에는 할인 전 금액이 없다. 쿠폰 할인액을 보여주려면 상품 단가로 역산해야 한다.
-    basePrice = product ? product.price * confirmedOrder.quantity : null;
+    basePrice = confirmedOrder.itemsAmount;
   } catch (err) {
     const code = err instanceof ApiError ? err.code : "UNKNOWN_ERROR";
     redirect(`/purchase?confirmError=${encodeURIComponent(code)}`);
@@ -54,11 +55,12 @@ export default async function PurchaseOrderSuccessPage({
     <OrderCompleteSection
       orderId={orderId}
       createdAt={order.createdAt}
-      productName={order.productName}
-      quantity={order.quantity}
+      productName={order.orderName}
+      quantity={order.totalQuantity}
       amount={order.amount}
       basePrice={basePrice}
-      productId={order.productId}
+      productId={order.items[0]?.productId ?? null}
+      imageUrl={order.items[0]?.imageUrl ?? null}
       method={order.method}
       tier={tier}
     />

@@ -224,7 +224,7 @@ function MobileReviewList({
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
                   <div className="flex flex-wrap items-center gap-2">
-                    <ReviewPlanBadge plan={review.plan} />
+                    <ReviewPlanBadge plan={review.plan ?? { id: review.productId ?? review.id, name: review.product?.name ?? "단품" }} />
                     <Stars rating={review.rating} size={24} />
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
@@ -434,7 +434,7 @@ function DesktopReviewList({
                 </div>
                 <div className="flex-1">
                   <div className="mb-[3px] flex flex-wrap items-center gap-2">
-                    <ReviewPlanBadge plan={review.plan} />
+                    <ReviewPlanBadge plan={review.plan ?? { id: review.productId ?? review.id, name: review.product?.name ?? "단품" }} />
                     <Stars rating={review.rating} size={24} />
                   </div>
                   <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">

@@ -7,12 +7,27 @@ import { apiClient } from "@/shared/lib/api";
 import { paymentHistoryQuery } from "../lib/paymentHistoryQuery";
 import type {
   CombinedDeliveryStatusSummaryResponse,
+  CombinedPaymentDto,
+  CombinedPaymentTypeSummaryResponse,
+  OrderType,
   GetCombinedPaymentHistoryParams,
   PaginatedCombinedPaymentHistoryResponse,
 } from "./types";
 
 function serverOpts(token?: string) {
   return { token, skipRefresh: true } as const;
+}
+
+export async function fetchCombinedPaymentTypeSummary(token?: string): Promise<CombinedPaymentTypeSummaryResponse> {
+  return apiClient
+    .get<CombinedPaymentTypeSummaryResponse>("/v1/payments/type-summary", serverOpts(token))
+    .catch(() => ({ subscriptionCount: 0, productCount: 0 }));
+}
+
+export async function fetchCombinedPayment(orderType: OrderType, id: number, token?: string): Promise<CombinedPaymentDto | null> {
+  return apiClient
+    .get<CombinedPaymentDto>(`/v1/payments/${orderType}/${id}`, serverOpts(token))
+    .catch(() => null);
 }
 
 /** 구독 + 단건 배송 상태 요약 */

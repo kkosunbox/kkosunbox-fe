@@ -6,7 +6,6 @@ import {
   COMPARE_PACKAGES,
   getPackagePurchaseProduct,
   TIER_BOX_IMAGES,
-  TIER_LABEL,
   PlanRatingStars,
   getPackageProductPath,
   type PackageTier,
@@ -22,14 +21,28 @@ import PurchaseHeroImageMobile from "../assets/purchase-hero-mobile.webp";
 interface PurchaseListSectionProps {
   /** 티어별로 백엔드 카탈로그에서 매칭된 실제 상품 (없으면 더미 가격으로 폴백) */
   productsByTier: Record<PackageTier, ProductDto | null>;
+  products: ProductDto[];
   /** 티어별 실제 평균 별점 (구독 플랜 `averageRating`). 0이면 리뷰가 없다는 뜻이라 별점을 숨긴다. */
   ratingByTier: Record<PackageTier, number>;
 }
 
 export default function PurchaseListSection({
   productsByTier,
+  products,
   ratingByTier,
 }: PurchaseListSectionProps) {
+  function ProductCard({ product, pkg }: { product: ProductDto; pkg?: (typeof COMPARE_PACKAGES)[number] }) {
+    const displayPrice = product.price;
+    const href = `/purchase/detail?productId=${product.id}`;
+    return <Link href={href} className="group flex w-full flex-col">
+      <div className="relative aspect-[272/252] w-full overflow-hidden rounded-[16px]" style={{ boxShadow: "var(--shadow-card-soft)" }}>
+        {product.imageUrl ? <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" /> : pkg ? <Image src={TIER_BOX_IMAGES[pkg.tier]} alt={product.name} fill quality={HIGH_IMAGE_QUALITY} className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 33vw" /> : <div className="h-full w-full bg-[var(--color-surface-warm)]" />}
+        {product.relatedPlanId && product.relatedPlanSlug ? <span className="absolute left-3 top-3 inline-flex items-center justify-center rounded-[30px] bg-[var(--color-primary)] px-3 py-1 text-body-13-sb text-white">{product.relatedPlanSlug}</span> : null}
+        {(product.isSoldOut || product.isSalesPaused) && <span className="absolute inset-0 flex items-center justify-center bg-black/45 text-body-16-b text-white">{product.isSoldOut ? "품절" : "판매 중지"}</span>}
+      </div>
+      <div className="flex flex-col gap-2 pt-6"><span className="text-subtitle-18-sb text-[var(--color-text-emphasis)] transition-colors group-hover:text-[var(--color-primary)]">{product.name}</span><div className="flex flex-wrap items-center gap-2"><span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span><span className="text-price-20-eb text-[var(--color-text-emphasis)]">{formatKrwPrice(displayPrice)}</span><FreeShippingBadge /></div><div className="flex items-center gap-2"><PlanRatingStars rating={product.averageRating} size={16} /><span className="text-body-13-r text-[var(--color-text-secondary)]">리뷰 {product.reviewCount}개</span></div></div>
+    </Link>;
+  }
   return (
     <div>
       {/* Hero */}
@@ -80,15 +93,21 @@ export default function PurchaseListSection({
       </section>
 
       <div className="mx-auto w-full max-w-content max-md:px-6 md:px-8 lg:px-0 max-md:pt-1 md:max-lg:pt-2 lg:pt-0 max-md:pb-8 md:pb-0 lg:pb-12">
-        {/* 상품 그리드 — Basic·Standard·Premium 단품 (왼쪽→오른쪽, 위→아래 순서) */}
+        {/* 상품 그리드 — API가 내려준 전체 단품 목록과 순서를 그대로 사용한다. */}
         <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
-          {COMPARE_PACKAGES.map((pkg) => {
+          {products.length > 0 ? products.map((product) => {
+            const pkg = COMPARE_PACKAGES.find(
+              (item) => productsByTier[item.tier]?.id === product.id,
+            );
+            return <ProductCard key={product.id} product={product} pkg={pkg} />;
+          }) : COMPARE_PACKAGES.map((pkg) => {
             const apiProduct = productsByTier[pkg.tier];
             const displayName = apiProduct?.name ?? pkg.name;
             // 가격은 카탈로그가 비었을 때만 더미로 폴백한다(결제는 productId === null 가드가 차단).
             const displayPrice = apiProduct?.price ?? getPackagePurchaseProduct(pkg.tier)!.price;
             const rating = ratingByTier[pkg.tier];
 
+            if (apiProduct) return <ProductCard key={apiProduct.id} product={apiProduct} pkg={pkg} />;
             return (
               <Link
                 key={pkg.tier}
@@ -107,12 +126,6 @@ export default function PurchaseListSection({
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 639px) 100vw, (max-width: 767px) 50vw, 33vw"
                   />
-                  <span
-                    className="absolute left-3 top-3 inline-flex items-center justify-center rounded-[30px] px-3 py-1 text-body-13-sb text-white"
-                    style={{ background: pkg.colorVar }}
-                  >
-                    {TIER_LABEL[pkg.tier]}
-                  </span>
                 </div>
                 <div className="flex flex-col gap-2 pt-6">
                   <span className="text-subtitle-18-sb text-[var(--color-text-emphasis)] group-hover:text-[var(--color-primary)] transition-colors">

@@ -1,4 +1,4 @@
-export { getCombinedPaymentHistory, getCombinedDeliveryStatusSummary } from "./paymentApi";
+export { getCombinedPaymentHistory, getCombinedDeliveryStatusSummary, getCombinedPaymentTypeSummary, getCombinedPayment } from "./paymentApi";
 
 export type {
   OrderType,
@@ -8,6 +8,8 @@ export type {
   CombinedPaymentDisplayStatus,
   PaymentDeliveryAddressDto,
   CombinedPaymentDto,
+  CombinedPaymentItemDto,
+  CombinedPaymentTypeSummaryResponse,
   GetCombinedPaymentHistoryParams,
   PaginatedCombinedPaymentHistoryResponse,
   CombinedDeliveryStatusSummaryResponse,

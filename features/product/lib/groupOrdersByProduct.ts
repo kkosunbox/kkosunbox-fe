@@ -18,7 +18,9 @@ export function groupOrdersByProduct(
 ): ProductPurchaseGroup[] {
   const groups = new Map<number, ProductPurchaseGroup>();
   for (const order of orders) {
-    const existing = groups.get(order.productId);
+    for (const item of order.items) {
+    if (item.productId === null) continue;
+    const existing = groups.get(item.productId);
     if (existing) {
       existing.orderCount += 1;
       if (order.createdAt > existing.latestOrder.createdAt) {
@@ -26,15 +28,16 @@ export function groupOrdersByProduct(
       }
       continue;
     }
-    const product = products.find((p) => p.id === order.productId);
-    groups.set(order.productId, {
-      productId: order.productId,
-      productName: order.productName,
-      imageUrl: product?.imageUrl ?? null,
+    const product = products.find((p) => p.id === item.productId);
+    groups.set(item.productId, {
+      productId: item.productId,
+      productName: item.productName,
+      imageUrl: item.imageUrl ?? product?.imageUrl ?? null,
       orderCount: 1,
       latestOrder: order,
       relatedPlanId: product?.relatedPlanId ?? null,
     });
+    }
   }
   return Array.from(groups.values());
 }

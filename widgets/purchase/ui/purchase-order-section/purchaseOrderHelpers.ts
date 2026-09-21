@@ -34,14 +34,13 @@ export function computePurchaseTotals({
    */
   quote?: QuoteProductPriceResponse | null;
 }): PurchaseTotals {
-  const basePrice = quote?.originalAmount ?? unitPrice * quantity;
+  const basePrice = quote?.itemsAmount ?? quote?.originalAmount ?? unitPrice * quantity;
   const couponDiscount = quote?.couponDiscountAmount ?? 0;
   const totalDiscount = couponDiscount;
-  const productTotal = quote?.amount ?? Math.max(0, basePrice - totalDiscount);
-  // 단건 구매 무료배송 이벤트 — 원래 배송비는 취소선으로만 표시하고 실제로는 0원 청구
+  const productTotal = quote?.discountedItemsAmount ?? Math.max(0, basePrice - totalDiscount);
   const originalShippingFee = PURCHASE_SHIPPING_FEE;
-  const shippingFee = 0;
-  const total = productTotal + shippingFee;
+  const shippingFee = quote?.shippingFee ?? 0;
+  const total = quote?.amount ?? productTotal + shippingFee;
 
   return { basePrice, couponDiscount, totalDiscount, productTotal, originalShippingFee, shippingFee, total };
 }

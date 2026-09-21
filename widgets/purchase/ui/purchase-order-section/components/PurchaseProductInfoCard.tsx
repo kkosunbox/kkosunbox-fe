@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- 상품 썸네일은 서버의 동적 원격 URL이다. */
 import Image from "next/image";
 import { SectionCard, QuantityMinusIcon, QuantityPlusIcon } from "@/shared/ui";
 import { TIER_BOX_IMAGES, TIER_LABEL, type PackageData } from "@/entities/package";
@@ -7,6 +8,8 @@ import { QUANTITY_MIN, QUANTITY_MAX } from "../purchaseOrderHelpers";
 
 interface PurchaseProductInfoCardProps {
   pkg: PackageData;
+  imageUrl?: string | null;
+  relatedPlanSlug?: string | null;
   unitPrice: number;
   quantity: number;
   onDecrease: () => void;
@@ -17,6 +20,8 @@ interface PurchaseProductInfoCardProps {
 
 export function PurchaseProductInfoCard({
   pkg,
+  imageUrl,
+  relatedPlanSlug,
   unitPrice,
   quantity,
   onDecrease,
@@ -28,21 +33,21 @@ export function PurchaseProductInfoCard({
     <SectionCard title="제품 정보" open={open} onToggle={onToggle}>
       <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
         <div className="relative shrink-0 overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
-          <Image
+          {imageUrl ? <img src={imageUrl} alt={pkg.name} className="h-full w-full object-cover" /> : <Image
             src={TIER_BOX_IMAGES[pkg.tier]}
             alt={pkg.name}
             fill
             quality={HIGH_IMAGE_QUALITY}
             className="object-cover"
             sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
-          />
+          />}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-3">
           <span
             className="inline-flex w-fit items-center justify-center rounded-[30px] px-3 py-1 text-body-14-sb leading-[17px] text-white"
             style={{ background: pkg.colorVar }}
           >
-            {TIER_LABEL[pkg.tier]}
+            {relatedPlanSlug ?? TIER_LABEL[pkg.tier]}
           </span>
           <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">{pkg.name}</span>
           <span className="text-price-16-eb text-[var(--color-surface-dark)]">{formatKrwPrice(unitPrice)}</span>

@@ -75,7 +75,7 @@ export default async function ProductsPage() {
       <h1 className="sr-only">꼬순박스 강아지 수제간식 단품몰</h1>
       <JsonLd data={data} />
       <Suspense fallback={null}><PurchasePaymentErrorNotice /></Suspense>
-      <PurchaseListSection productsByTier={productsByTier} ratingByTier={ratingByTier} />
+      <PurchaseListSection productsByTier={productsByTier} products={products} ratingByTier={ratingByTier} />
     </>
   );
 }

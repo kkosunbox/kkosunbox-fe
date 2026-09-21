@@ -16,8 +16,9 @@ import { MobileDrawer } from "./MobileDrawer";
 import { CartLink } from "./CartLink";
 import { LogoWhiteIcon } from "./icons";
 import { isTransparentRoute } from "@/shared/config/headerVariants";
-import { MOCK_CART_COUNT } from "@/shared/config/cartMock";
 import { useHeaderScroll } from "./useHeaderScroll";
+import { getCartCount } from "@/features/cart";
+import { CART_UPDATED_EVENT } from "@/features/cart/lib/events";
 
 export default function Header() {
   const { isLoggedIn, user, isAuthLoading, logout } = useAuth();
@@ -26,6 +27,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const { isScrolled, isBannerCollapsed } = useHeaderScroll(pathname);
   const profileRef = useRef<HTMLDivElement>(null);
   const profileImageUrl = profile?.profileImageUrl ?? null;
@@ -50,6 +52,14 @@ export default function Header() {
   const isSolid = !isTransparentRoute(pathname) || isMenuOpen || isScrolled || isHovered;
   const closeMenu = () => setIsMenuOpen(false);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const refresh = () => { void getCartCount().then((data) => setCartCount(data.itemCount)).catch(() => setCartCount(0)); };
+    refresh();
+    window.addEventListener(CART_UPDATED_EVENT, refresh);
+    return () => window.removeEventListener(CART_UPDATED_EVENT, refresh);
+  }, [isLoggedIn]);
+
   return (
     <div>
       <HeaderBanner isBannerCollapsed={isBannerCollapsed} />
@@ -72,7 +82,7 @@ export default function Header() {
           style={{ background: "var(--gradient-header-overlay)", backdropFilter: "none" }}
           aria-hidden="true"
         />
-        <div className="mx-auto flex h-full items-center justify-between max-md:w-full max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
+        <div className="mx-auto flex h-full items-center justify-between max-md:w-full max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1520px]">
           <div className="flex items-center gap-3">
             <button
               className="max-md:flex md:flex lg:hidden items-center justify-center"
@@ -99,48 +109,42 @@ export default function Header() {
             <Link href="/subscribe" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               구독몰
             </Link>
-            <Link href="/products" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
+            <Link href="/purchase" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               단품몰
             </Link>
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               고객센터
             </Link>
-            {/* 우측 액션 그룹 — 헤더 오른쪽 끝은 로그인/비로그인 동일하게 두고,
-                상태별 너비 차이는 nav 링크와의 간격(46px) 안쪽에서 흡수한다. */}
-            <div className="flex items-center gap-9">
-              {isLoggedIn && !isAuthLoading && (
-                <CartLink count={MOCK_CART_COUNT} isSolid={isSolid} />
-              )}
-              {isAuthLoading ? (
-                <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
-              ) : isLoggedIn ? (
-                <div ref={profileRef} className="relative">
-                  <button
-                    onClick={() => setIsProfileOpen((v) => !v)}
-                    aria-label="프로필 메뉴"
-                    aria-expanded={isProfileOpen}
-                    className="flex items-center justify-center hover:opacity-80 transition-opacity"
-                  >
-                    <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
-                  </button>
-                  {isProfileOpen && (
-                    <ProfileDropdown
-                      hasProfile={hasProfile}
-                      petName={profile?.name ?? null}
-                      email={user?.email ?? null}
-                      profileImageUrl={profileImageUrl}
-                      userId={user?.id ?? null}
-                      isInfluencer={user?.isInfluencer ?? false}
-                      onClose={() => setIsProfileOpen(false)}
-                    />
-                  )}
-                </div>
-              ) : (
-                <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
-                  로그인
-                </Button>
-              )}
-            </div>
+            {isLoggedIn && <CartLink count={cartCount} isSolid={isSolid} />}
+            {isAuthLoading ? (
+              <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
+            ) : isLoggedIn ? (
+              <div ref={profileRef} className="relative">
+                <button
+                  onClick={() => setIsProfileOpen((v) => !v)}
+                  aria-label="프로필 메뉴"
+                  aria-expanded={isProfileOpen}
+                  className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                >
+                  <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
+                </button>
+                {isProfileOpen && (
+                  <ProfileDropdown
+                    hasProfile={hasProfile}
+                    petName={profile?.name ?? null}
+                    email={user?.email ?? null}
+                    profileImageUrl={profileImageUrl}
+                    userId={user?.id ?? null}
+                    isInfluencer={user?.isInfluencer ?? false}
+                    onClose={() => setIsProfileOpen(false)}
+                  />
+                )}
+              </div>
+            ) : (
+              <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
+                로그인
+              </Button>
+            )}
           </div>
         </div>
       </nav>

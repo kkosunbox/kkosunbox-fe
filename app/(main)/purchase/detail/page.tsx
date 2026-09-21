@@ -1,25 +1,28 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PurchaseProductDetailPage } from "@/widgets/purchase";
-import { PACKAGES, getPackageProductPath, getPackagePurchaseProduct } from "@/entities/package";
+import { PACKAGES, getPackagePurchaseProduct } from "@/entities/package";
 import { getServerToken } from "@/features/auth/lib/session";
-import { fetchProducts } from "@/features/product/api/queries";
+import { fetchProduct, fetchProducts } from "@/features/product/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
+import { resolveProductTier } from "@/features/product/lib/resolveProductsByTier";
 import { NOINDEX_FOLLOW_METADATA } from "@/shared/lib/seo";
+import IndependentProductDetailPage from "@/widgets/purchase/ui/detail/IndependentProductDetailPage";
 
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ tier?: string }>;
+  searchParams: Promise<{ tier?: string; productId?: string }>;
 }): Promise<Metadata> {
-  const { tier } = await searchParams;
+  const { tier, productId } = await searchParams;
+  if (productId) return { title: "상품 상세 | 꼬순박스", ...NOINDEX_FOLLOW_METADATA };
   const pkg = PACKAGES.find((item) => item.tier === tier);
 
   if (!pkg) {
     return {
       title: "상품 상세 | 꼬순박스",
-      alternates: { canonical: "/products" },
+      alternates: { canonical: "/purchase" },
       ...NOINDEX_FOLLOW_METADATA,
     };
   }
@@ -29,7 +32,7 @@ export async function generateMetadata({
   return {
     title: `${pkg.name} 단품 | 꼬순박스`,
     description,
-    alternates: { canonical: getPackageProductPath(pkg.tier) },
+    alternates: { canonical: "/purchase" },
     ...NOINDEX_FOLLOW_METADATA,
   };
 }
@@ -37,21 +40,29 @@ export async function generateMetadata({
 export default async function PurchaseDetailPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tier?: string }>;
+  searchParams: Promise<{ tier?: string; productId?: string }>;
 }) {
-  const { tier } = await searchParams;
-  const pkg = PACKAGES.find((p) => p.tier === tier);
-  const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;
-
-  if (!pkg || !purchaseProduct) {
-    redirect("/products");
-  }
+  const { tier, productId: productIdParam } = await searchParams;
 
   // 비로그인 방문자도 상세 페이지 조회 가능 — 토큰이 없으면 fetchProducts가 공개 카탈로그만 반환.
   const token = await getServerToken();
-  const [products, plans] = await Promise.all([fetchProducts(token), fetchSubscriptionPlans(token)]);
+  const requestedId = productIdParam ? Number(productIdParam) : null;
+  if (productIdParam && (!requestedId || !Number.isInteger(requestedId))) redirect("/purchase");
+
+  const [requestedProduct, products, plans] = await Promise.all([
+    requestedId ? fetchProduct(requestedId, token) : Promise.resolve(null),
+    requestedId ? Promise.resolve([]) : fetchProducts(token),
+    fetchSubscriptionPlans(token),
+  ]);
+  if (requestedId && !requestedProduct) redirect("/purchase");
+  if (requestedProduct && requestedProduct.relatedPlanId == null) return <IndependentProductDetailPage product={requestedProduct} />;
+
+  const resolvedTier = requestedProduct ? resolveProductTier(requestedProduct, plans) : null;
+  const pkg = PACKAGES.find((p) => p.tier === (resolvedTier ?? tier));
+  const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;
+  if (!pkg || !purchaseProduct) redirect("/purchase");
   // 화면 가격은 실제 매칭 상품이 있으면 그걸로 덮어써서 /purchase/order와 정합성을 맞춘다.
-  const product = resolveProductsByTier(products, plans)[pkg.tier];
+  const product = requestedProduct ?? resolveProductsByTier(products, plans)[pkg.tier];
   const effectivePurchaseProduct = { ...purchaseProduct, price: product?.price ?? purchaseProduct.price };
 
   return (
@@ -59,7 +70,10 @@ export default async function PurchaseDetailPage({
       pkg={pkg}
       purchaseProduct={effectivePurchaseProduct}
       relatedPlanId={product?.relatedPlanId ?? null}
-      isSalesPaused={product?.isSalesPaused ?? true}
+      productId={product?.id ?? null}
+      isSoldOut={product?.isSoldOut ?? false}
+      isSalesPaused={product?.isSalesPaused ?? false}
+      imageUrl={product?.imageUrl ?? null}
     />
   );
 }

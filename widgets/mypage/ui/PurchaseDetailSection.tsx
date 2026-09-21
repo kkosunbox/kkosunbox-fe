@@ -3,11 +3,12 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
-import { getErrorMessage } from "@/shared/lib/api";
+import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
 import { TIER_BOX_IMAGES, CURRENT_PURCHASE_TIER, type PackageTier } from "@/entities/package";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
 import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
+import type { ProductReviewEligibility } from "@/features/review/api/types";
 import { ORDER_ENTRY_FROM_PARAM, ORDER_ENTRY_FROM_PURCHASE_PROMO } from "@/features/order";
 
 /* ── 상수 ────────────────────────────────────────────────── */
@@ -21,9 +22,15 @@ const DISPLAY_STATUS_LABEL: Record<ProductOrderDto["displayStatus"], string> = {
   partially_refunded: "부분환불",
 };
 
+const DELIVERY_STATUS_LABEL = {
+  PendingDelivery: "배송 준비중",
+  DeliveryInProgress: "배송중",
+  DeliveryCompleted: "배송완료",
+} as const;
+
 /** 주문취소는 배송 준비중(상품준비중) 상태에서만 가능하다. 배송 시작 이후는 환불 플로우로 분리해야 한다. */
 function canCancel(order: ProductOrderDto): boolean {
-  return order.status === "completed" && order.displayStatus === "preparing";
+  return order.deliveryStatus === "PendingDelivery" && order.items.some((item) => item.remainingQuantity > 0);
 }
 
 function formatDate(iso: string): string {
@@ -170,10 +177,11 @@ interface Props {
   planSummaries: ProductOrderPlanSummaryDto[];
   /** relatedPlanId로 역매핑된 실제 구매 티어. 매칭 실패 시 null(썸네일은 기본 티어로 폴백) */
   tier: PackageTier | null;
+  productEligibility: ProductReviewEligibility | null;
 }
 
 /* ── 메인 컴포넌트 ───────────────────────────────────────── */
-export default function PurchaseDetailSection({ group, product, orders, planSummaries, tier }: Props) {
+export default function PurchaseDetailSection({ group, product, orders, planSummaries, tier, productEligibility }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
   const { openAlert } = useModal();
@@ -199,8 +207,10 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
   // 리뷰는 상품에 연결된 구독 플랜(relatedPlanId) 기준으로 구독 리뷰 시스템을 그대로 재사용한다.
   const relatedPlanId = product?.relatedPlanId ?? null;
   const planSummary = relatedPlanId !== null ? planSummaries.find((s) => s.planId === relatedPlanId) : undefined;
-  const canReview = planSummary?.canReview ?? false;
-  const myReviewId = planSummary?.hasReview ? planSummary.reviewId ?? null : null;
+  const canReview = relatedPlanId !== null ? planSummary?.canReview ?? false : productEligibility?.canReview ?? false;
+  const myReviewId = relatedPlanId !== null
+    ? (planSummary?.hasReview ? planSummary.reviewId ?? null : null)
+    : (productEligibility?.hasReview ? productEligibility.reviewId : null);
 
   function handleUnavailableReviewClick() {
     openAlert({
@@ -221,41 +231,53 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
     });
   }
 
-  function handleCancelOrder(orderId: number) {
+  function cancelOrder(orderId: number, itemId?: number, quantity?: number) {
+    showLoading("주문을 환불하고 있습니다...");
+    startTransition(async () => {
+      try {
+        await cancelProductOrder(orderId, itemId && quantity ? { items: [{ itemId, quantity }] } : undefined);
+        window.location.reload();
+      } catch (err) {
+        if (itemId && isErrorCode(err, "PAYMENT_CANCELLATION_NOT_ALLOWED")) {
+          openAlert({
+            title: "부분 취소가 불가능합니다.",
+            description: "부분 취소 후 배송비가 취소 금액보다 크거나 같습니다. 전액 취소를 이용해주세요.",
+            primaryLabel: "전액 취소",
+            secondaryLabel: "닫기",
+            onPrimary: () => cancelOrder(orderId),
+          });
+        } else {
+          openAlert({ title: getErrorMessage(err, "환불 처리 중 오류가 발생했습니다.") });
+        }
+      } finally { hideLoading(); }
+    });
+  }
+
+  function handleCancelOrder(orderId: number, itemId: number, remainingQuantity: number) {
     openAlert({
       type: "info",
-      title: "주문을 환불할까요?",
-      description: "결제 완료 후 배송 전 상태의 주문만 환불할 수 있습니다.",
-      primaryLabel: "환불",
-      secondaryLabel: "닫기",
-      onPrimary: () => {
-        showLoading("주문을 환불하고 있습니다...");
-        startTransition(async () => {
-          try {
-            await cancelProductOrder(orderId);
-            window.location.reload();
-          } catch (err) {
-            openAlert({ title: getErrorMessage(err, "환불 처리 중 오류가 발생했습니다.") });
-          } finally {
-            hideLoading();
-          }
-        });
-      },
+      title: "상품을 취소할까요?",
+      description: "선택한 상품의 남은 수량을 취소하거나 주문 전체를 취소할 수 있습니다.",
+      primaryLabel: "선택 상품 취소",
+      secondaryLabel: "주문 전체 취소",
+      onPrimary: () => cancelOrder(orderId, itemId, remainingQuantity),
+      onSecondary: () => cancelOrder(orderId),
     });
   }
 
   function ReviewButton({ className }: { className: string }) {
-    if (relatedPlanId === null) return null;
+    const targetHref = relatedPlanId !== null ? `planId=${relatedPlanId}` : product ? `productId=${product.id}` : null;
+    if (targetHref === null) return null;
     if (myReviewId !== null) {
       return (
-        <Link href={`/mypage/review/write?planId=${relatedPlanId}&reviewId=${myReviewId}`} className={className}>
+        <Link href={`/mypage/review/write?${targetHref}&reviewId=${myReviewId}`} className={className}>
           리뷰쓰기
         </Link>
       );
     }
     if (canReview) {
       return (
-        <Link href={`/mypage/review/write?planId=${relatedPlanId}`} className={className}>
+        <Link href={`/mypage/review/write?${targetHref}`} className={className}>
           리뷰쓰기
         </Link>
       );
@@ -270,18 +292,24 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
   /* ── 구매내역 행 렌더 (공통) ─────────────────────────── */
   function RecordRow({ record, desktop }: { record: ProductOrderDto; desktop: boolean }) {
     const dateStr = formatDate(record.approvedAt ?? record.createdAt);
+    const line = record.items.find((item) => item.productId === group.productId);
+    if (!line) return null;
+    const deliveryProgress = record.displayStatus === "partially_refunded" && record.deliveryStatus
+      ? DELIVERY_STATUS_LABEL[record.deliveryStatus]
+      : null;
 
     if (!desktop) {
       return (
         <li className="border-b border-[var(--color-text-muted)]">
           <div className="py-4 flex flex-col gap-1.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-body-14-m text-[var(--color-text)]">{record.productName}</span>
+              <span className="text-body-14-m text-[var(--color-text)]">{line.productName}</span>
               <StatusBadge status={record.displayStatus} />
+              {deliveryProgress && <span className="text-body-13-m text-[var(--color-text-secondary)]">남은 상품 {deliveryProgress}</span>}
               {canCancel(record) && (
                 <button
                   type="button"
-                  onClick={() => handleCancelOrder(record.id)}
+                  onClick={() => handleCancelOrder(record.id, line.id, line.remainingQuantity)}
                   className="text-body-14-m text-[var(--color-accent)] underline"
                 >
                   주문취소
@@ -298,10 +326,11 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
             </div>
             <div className="flex items-center justify-between">
               <span className="text-body-14-m text-[var(--color-text)]">
-                {record.amount.toLocaleString("ko-KR")}원 · {record.quantity}개
+                {line.allocatedAmount.toLocaleString("ko-KR")}원 · {line.quantity}개
               </span>
               <span className="text-body-14-m text-[var(--color-text-tertiary)]">{dateStr}</span>
             </div>
+            {record.trackingNumber && <span className="text-body-13-r text-[var(--color-text-secondary)]">송장번호 {record.trackingNumber}</span>}
           </div>
         </li>
       );
@@ -311,11 +340,11 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
       <li className="border-b border-[var(--color-text-muted)] last:border-b-0">
         <div className="grid grid-cols-[1fr_100px_90px_130px_56px] items-center px-8 py-[14px]">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-body-14-m text-[var(--color-text)]">{record.productName}</span>
+            <span className="text-body-14-m text-[var(--color-text)]">{line.productName}</span>
             {canCancel(record) && (
               <button
                 type="button"
-                onClick={() => handleCancelOrder(record.id)}
+                onClick={() => handleCancelOrder(record.id, line.id, line.remainingQuantity)}
                 className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
               >
                 주문취소
@@ -324,7 +353,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
           </div>
           <StatusBadge status={record.displayStatus} />
           <span className="text-body-14-m text-[var(--color-text)]">
-            {record.amount.toLocaleString("ko-KR")}원
+            {line.allocatedAmount.toLocaleString("ko-KR")}원
           </span>
           <span className="text-body-14-m text-[var(--color-text)]">{dateStr}</span>
           <div className="flex justify-center">
@@ -338,6 +367,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
             </button>
           </div>
         </div>
+        {(deliveryProgress || record.trackingNumber) && <div className="px-8 pb-3 text-body-13-r text-[var(--color-text-secondary)]">{deliveryProgress ? `남은 상품 ${deliveryProgress}` : ""}{deliveryProgress && record.trackingNumber ? " · " : ""}{record.trackingNumber ? `송장번호 ${record.trackingNumber}` : ""}</div>}
       </li>
     );
   }
@@ -388,7 +418,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
           <div className="relative flex shrink-0 items-center justify-center bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
             {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
             <img
-              src={boxImage.src}
+              src={product?.imageUrl ?? group.imageUrl ?? boxImage.src}
               alt={group.productName}
               width={boxImage.width}
               height={boxImage.height}

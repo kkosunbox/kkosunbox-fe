@@ -26,6 +26,13 @@ export async function fetchProducts(token?: string): Promise<ProductDto[]> {
   return data.products;
 }
 
+/** 단건 판매 상품 상세 */
+export async function fetchProduct(id: number, token?: string): Promise<ProductDto | null> {
+  return apiClient
+    .get<ProductDto>(`/v1/products/${id}`, serverOpts(token))
+    .catch(() => null);
+}
+
 /** 내 단건 주문 목록 */
 export async function fetchProductOrders(
   token?: string,

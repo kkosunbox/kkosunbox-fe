@@ -42,8 +42,8 @@ export function ProfileDropdown({
   const pathname = usePathname();
 
   const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
-  const isPointActive = pathname.startsWith("/mypage/point");
   const isOrdersActive = pathname.startsWith("/orders");
+  const isPointActive = pathname.startsWith("/mypage/point");
   const isMypageActive = pathname.startsWith("/mypage") && !isSubscriptionActive && !isPointActive && !pathname.startsWith("/mypage/withdraw");
 
   const menuItemClass = (active: boolean) =>
@@ -124,11 +124,11 @@ export function ProfileDropdown({
           계정정보
         </button>
         <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isSubscriptionActive)}>
-          <DropdownClipboardIcon />
+          <DropdownOrderIcon />
           구독관리
         </button>
         <button onClick={() => { onClose(); router.push("/orders"); }} className={menuItemClass(isOrdersActive)}>
-          <DropdownOrderIcon />
+          <DropdownClipboardIcon />
           주문내역
         </button>
         {isInfluencer && (

@@ -1,128 +1,103 @@
 "use client";
-/* eslint-disable @next/next/no-img-element -- 상품 이미지는 백엔드 원격 URL이라 호스트가 동적이다. */
+/* eslint-disable @next/next/no-img-element -- 상품 이미지는 백엔드의 동적 URL이다. */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import { loadPaymentWidget, type PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
-import { clearCart, checkoutCart, deleteCartItem, getCart, quoteCart, updateCartItem, type CartDto, type CartPriceDto } from "@/features/cart";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { deleteCartItem, getCart, quoteCart, updateCartItem, type CartDto, type CartPriceDto } from "@/features/cart";
 import { notifyCartUpdated } from "@/features/cart/lib/events";
-import { getDeliveryAddresses, type DeliveryAddress } from "@/features/delivery-address/api";
 import { getErrorMessage } from "@/shared/lib/api";
-import { TOSS_WIDGET_CLIENT_KEY } from "@/shared/lib/payments/tossWidgetClient";
 import { formatKrwPrice } from "@/shared/lib/format";
-import { Button, LoadingOverlay } from "@/shared/ui";
+import { LoadingOverlay, QuantityMinusIcon, QuantityPlusIcon } from "@/shared/ui";
 import { CartEmptyState } from "@/widgets/cart";
 
-type PaymentMethodsWidget = ReturnType<PaymentWidgetInstance["renderPaymentMethods"]>;
+const Chevron = ({ back = false }: { back?: boolean }) => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={back ? "m15 5-7 7 7 7" : "m5 9 7 7 7-7"} stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+const PACKAGE_BADGES = {
+  basic: { label: "베이직", className: "bg-[var(--color-basic)]" },
+  standard: { label: "스탠다드", className: "bg-[var(--color-plus)]" },
+  premium: { label: "프리미엄", className: "bg-[var(--color-accent-orange)]" },
+} as const;
+
+function getPackageBadge(productName: string, relatedPlanSlug?: string | null) {
+  if (!relatedPlanSlug || !/(패키지|box)/i.test(productName)) return null;
+  const normalizedSlug = relatedPlanSlug.toLowerCase();
+  return PACKAGE_BADGES[normalizedSlug as keyof typeof PACKAGE_BADGES] ?? null;
+}
+
+function CartCheckbox({ checked, disabled = false, label, onChange }: { checked: boolean; disabled?: boolean; label: string; onChange: () => void }) {
+  return <label className={`relative inline-flex h-5 w-5 shrink-0 cursor-pointer ${disabled ? "cursor-not-allowed opacity-40" : ""}`}>
+    <input type="checkbox" className="peer sr-only" checked={checked} disabled={disabled} onChange={onChange} aria-label={label} />
+    {checked ? <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect width="20" height="20" rx="5" fill="var(--color-accent)" /><path d="M4.1665 10.8335L7.49984 14.1668L15.8332 5.8335" stroke="var(--color-surface-light)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> : <span className="h-5 w-5 rounded-[5px] border border-[var(--color-text-muted)] bg-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--color-accent)]" />}
+  </label>;
+}
 
 export default function CartPageClient() {
+  const router = useRouter();
   const [cart, setCart] = useState<CartDto | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
-  const [addresses, setAddresses] = useState<DeliveryAddress[]>([]);
-  const [addressId, setAddressId] = useState<number | null>(null);
-  const [couponCode, setCouponCode] = useState("");
   const [quote, setQuote] = useState<CartPriceDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
-  const [paying, setPaying] = useState(false);
-  const widgetRef = useRef<PaymentWidgetInstance | null>(null);
-  const methodsRef = useRef<PaymentMethodsWidget | null>(null);
   const selectedIds = useMemo(() => [...selected], [selected]);
+  const orderableIds = useMemo(() => cart?.items.filter((item) => item.isOrderable).map((item) => item.id) ?? [], [cart]);
+  const allSelected = orderableIds.length > 0 && orderableIds.every((id) => selected.has(id));
 
   const refresh = useCallback(async () => {
     const data = await getCart();
     setCart(data);
-    setSelected((current) => new Set(data.items.filter((item) => item.isOrderable && (current.size === 0 || current.has(item.id))).map((item) => item.id)));
+    setSelected((current) => new Set(data.items.filter((item) => item.isOrderable && current.has(item.id)).map((item) => item.id)));
     notifyCartUpdated();
   }, []);
 
   useEffect(() => {
-    void Promise.all([getCart(), getDeliveryAddresses()])
-      .then(([cartData, addressData]) => {
-        setCart(cartData);
-        setSelected(new Set(cartData.items.filter((item) => item.isOrderable).map((item) => item.id)));
-        setAddresses(addressData.addresses);
-        setAddressId(addressData.addresses[0]?.id ?? null);
-      })
-      .catch((err) => setError(getErrorMessage(err)))
-      .finally(() => setBusy(false));
+    void getCart().then((data) => {
+      setCart(data);
+      setSelected(new Set(data.items.filter((item) => item.isOrderable).map((item) => item.id)));
+    }).catch((err) => setError(getErrorMessage(err))).finally(() => setBusy(false));
   }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       if (selectedIds.length === 0) { setQuote(null); return; }
-      void quoteCart({ cartItemIds: selectedIds, couponCode: couponCode.trim() || undefined })
-        .then((data) => { setQuote(data); setError(null); methodsRef.current?.updateAmount(data.amount); })
-        .catch((err) => { setQuote(null); setError(getErrorMessage(err, "결제 금액을 계산하지 못했습니다.")); });
-    }, 250);
+      void quoteCart({ cartItemIds: selectedIds }).then((data) => { setQuote(data); setError(null); }).catch((err) => { setQuote(null); setError(getErrorMessage(err, "주문 금액을 계산하지 못했습니다.")); });
+    }, 200);
     return () => window.clearTimeout(timer);
-  }, [selectedIds, couponCode]);
-
-  useEffect(() => {
-    if (!quote || widgetRef.current) return;
-    const customerKey = crypto.randomUUID?.() ?? `cart-${Date.now()}`;
-    void loadPaymentWidget(TOSS_WIDGET_CLIENT_KEY, customerKey).then((widget) => {
-      widgetRef.current = widget;
-      methodsRef.current = widget.renderPaymentMethods("#cart-payment-widget", { value: quote.amount }, { variantKey: "widgetK" });
-      widget.renderAgreement("#cart-payment-agreement", { variantKey: "AGREEMENT" });
-    }).catch(() => setError("결제 UI를 불러오지 못했습니다."));
-  }, [quote]);
+  }, [selectedIds, cart]);
 
   async function changeQuantity(id: number, quantity: number) {
     if (quantity < 1 || quantity > 99) return;
-    try { setCart(await updateCartItem(id, { quantity })); notifyCartUpdated(); }
-    catch (err) { setError(getErrorMessage(err)); }
+    try { setCart(await updateCartItem(id, { quantity })); notifyCartUpdated(); } catch (err) { setError(getErrorMessage(err)); }
   }
-
   async function remove(id: number) {
-    try { await deleteCartItem(id); setSelected((prev) => { const next = new Set(prev); next.delete(id); return next; }); await refresh(); }
-    catch (err) { setError(getErrorMessage(err)); }
+    try { await deleteCartItem(id); setSelected((current) => { const next = new Set(current); next.delete(id); return next; }); await refresh(); } catch (err) { setError(getErrorMessage(err)); }
   }
-
-  async function handlePay() {
-    if (!addressId) { setError("배송지를 선택해주세요."); return; }
-    if (!quote || !widgetRef.current || selectedIds.length === 0) { setError("결제할 상품을 선택해주세요."); return; }
-    setPaying(true);
-    try {
-      const order = await checkoutCart({ cartItemIds: selectedIds, deliveryAddressId: addressId, couponCode: couponCode.trim() || undefined });
-      await methodsRef.current?.updateAmount(order.amount);
-      await widgetRef.current.requestPayment({
-        orderId: order.orderId,
-        orderName: order.orderName,
-        customerName: addresses.find((address) => address.id === addressId)?.receiverName,
-        successUrl: `${window.location.origin}/purchase/order/success`,
-        failUrl: `${window.location.origin}/purchase/order/fail`,
-      });
-    } catch (err) { setError(getErrorMessage(err, "결제 요청 중 오류가 발생했습니다.")); setPaying(false); }
+  async function removeSelected() {
+    if (!selectedIds.length) return;
+    try { await Promise.all(selectedIds.map(deleteCartItem)); setSelected(new Set()); await refresh(); } catch (err) { setError(getErrorMessage(err)); }
+  }
+  function proceedToOrder() {
+    if (!selectedIds.length) { setError("주문할 상품을 선택해주세요."); return; }
+    router.push(`/purchase/order?cartItemIds=${selectedIds.join(",")}`);
   }
 
   if (busy) return <LoadingOverlay visible />;
-
-  return (
-    <div className="mx-auto w-full max-w-[1100px] px-6 pb-20 pt-[calc(var(--header-offset)+40px)]">
-      <div className="mb-8 flex items-center justify-between"><h1 className="text-[28px] font-bold text-[var(--color-text)]">장바구니</h1>{cart?.items.length ? <button onClick={() => void clearCart().then(refresh)} className="text-body-13-r text-[var(--color-text-secondary)] underline">전체 비우기</button> : null}</div>
-      {!cart?.items.length ? <CartEmptyState /> : (
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-3">
-            {cart.items.map((item) => <article key={item.id} className={`flex gap-4 rounded-2xl border p-4 ${item.isOrderable ? "border-[var(--color-divider-neutral)]" : "border-[var(--color-primary)] opacity-70"}`}>
-              <input type="checkbox" checked={selected.has(item.id)} disabled={!item.isOrderable} onChange={() => setSelected((prev) => { const next = new Set(prev); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} aria-label={`${item.productName} 선택`} />
-              {item.imageUrl ? <img src={item.imageUrl} alt="" className="h-24 w-24 rounded-xl object-cover" /> : <div className="h-24 w-24 rounded-xl bg-[var(--color-surface-warm)]" />}
-              <div className="min-w-0 flex-1"><div className="flex justify-between gap-2"><div><p className="font-semibold text-[var(--color-text)]">{item.productName}</p>{item.relatedPlanId && item.relatedPlanSlug ? <span className="mt-1 inline-block rounded-full bg-[var(--color-secondary)] px-2 py-0.5 text-[11px]">{item.relatedPlanSlug}</span> : null}</div><button onClick={() => void remove(item.id)} aria-label={`${item.productName} 삭제`} className="text-[var(--color-text-secondary)]">×</button></div>
-                {!item.isOrderable && <p className="mt-2 text-body-13-r text-[var(--color-primary)]">{item.unavailableReason ?? "현재 주문할 수 없는 상품입니다."}</p>}
-                <div className="mt-4 flex items-center justify-between"><div className="flex items-center rounded border border-[var(--color-divider-neutral)]"><button className="h-8 w-8" onClick={() => void changeQuantity(item.id, item.quantity - 1)}>−</button><span className="w-8 text-center">{item.quantity}</span><button className="h-8 w-8" onClick={() => void changeQuantity(item.id, item.quantity + 1)}>+</button></div><strong>{formatKrwPrice(item.itemAmount)}</strong></div>
-              </div>
-            </article>)}
+  return <div className="flex flex-1 flex-col bg-white pt-[var(--header-offset)]">
+    <section className="bg-[var(--color-banner-bg)]/10"><div className="mx-auto flex h-[148px] w-full max-w-[var(--max-width-content)] flex-col justify-center px-6 lg:px-0"><div className="flex items-center gap-1"><button type="button" onClick={() => router.back()} aria-label="이전 페이지"><Chevron back /></button><h1 className="text-[24px] font-bold tracking-[-0.04em] text-[var(--color-text)]">장바구니</h1></div><p className="ml-7 mt-2 text-body-16-m text-[var(--color-text-price)]">상품과 수량을 확인하신 후 주문을 진행해 주세요.</p></div></section>
+    {!cart?.items.length ? <div className="mx-auto flex w-full max-w-[var(--max-width-content)] flex-1 justify-center px-6 pb-[106px] pt-[120px]"><CartEmptyState /></div> : <div className="mx-auto grid w-full max-w-[var(--max-width-content)] flex-1 gap-8 px-6 pb-[106px] pt-8 md:grid-cols-[minmax(0,1fr)_1px_315px] md:gap-x-12 lg:px-0">
+      <section className="min-w-0" aria-labelledby="cart-products-title">
+        <div className="flex items-center justify-between border-b border-[var(--color-text-muted)] pb-4"><div className="flex items-center gap-3 text-subtitle-16-sb"><CartCheckbox checked={allSelected} label="전체 상품 선택" onChange={() => setSelected(allSelected ? new Set() : new Set(orderableIds))} /><span id="cart-products-title">전체 상품</span></div><Chevron /></div>
+        {cart.items.map((item) => { const badge = getPackageBadge(item.productName, item.relatedPlanSlug); return <article key={item.id} className="grid grid-cols-[20px_160px_minmax(0,1fr)] gap-5 border-b border-[var(--color-text-muted)] py-6 pl-[26px] max-sm:grid-cols-[20px_112px_minmax(0,1fr)] max-sm:gap-3 max-sm:pl-0">
+          <CartCheckbox checked={selected.has(item.id)} disabled={!item.isOrderable} label={`${item.productName} 선택`} onChange={() => setSelected((current) => { const next = new Set(current); if (next.has(item.id)) next.delete(item.id); else next.add(item.id); return next; })} />
+          {item.imageUrl ? <img src={item.imageUrl} alt="" className="h-[148px] w-40 rounded-[14px] object-cover max-sm:h-28 max-sm:w-28" /> : <div className="h-[148px] w-40 rounded-[14px] bg-[var(--color-surface-warm)] max-sm:h-28 max-sm:w-28" />}
+          <div className="relative flex min-w-0 flex-col pt-4"><button type="button" onClick={() => void remove(item.id)} aria-label={`${item.productName} 삭제`} className="absolute right-0 top-0 text-[22px] leading-none text-[var(--color-text-secondary)]">×</button><div>{badge ? <span className={`inline-flex rounded-full px-3 py-1 text-body-13-sb text-white ${badge.className}`}>{badge.label}</span> : null}<h2 className="mt-3 text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">{item.productName}</h2><p className="mt-3 text-price-16-eb text-[var(--color-text-price)]">단품 구매 {formatKrwPrice(item.unitPrice)}</p></div>
+            {!item.isOrderable && <p className="mt-2 text-body-13-r text-[var(--color-primary)]">{item.unavailableReason ?? "현재 주문할 수 없는 상품입니다."}</p>}
+            <div className="mt-3 flex items-center justify-between"><div className="flex items-center gap-3"><button type="button" onClick={() => void changeQuantity(item.id, item.quantity - 1)} aria-label="수량 감소"><QuantityMinusIcon /></button><span className="min-w-3 text-center text-body-12-m">{item.quantity}</span><button type="button" onClick={() => void changeQuantity(item.id, item.quantity + 1)} aria-label="수량 증가"><QuantityPlusIcon /></button></div><strong className="text-price-20-eb text-[var(--color-text-price)] max-sm:hidden">{formatKrwPrice(item.itemAmount)}</strong></div>
           </div>
-          <aside className="space-y-5 rounded-2xl bg-[var(--color-surface-warm)] p-6 lg:sticky lg:top-24 lg:self-start">
-            <div><label htmlFor="cart-address" className="mb-2 block font-semibold">배송지</label>{addresses.length ? <select id="cart-address" value={addressId ?? ""} onChange={(event) => setAddressId(Number(event.target.value))} className="h-11 w-full rounded-lg border bg-white px-3">{addresses.map((address) => <option key={address.id} value={address.id}>{address.nickname ?? address.receiverName} · {address.address}</option>)}</select> : <Link href="/address" className="text-primary underline">배송지를 먼저 등록해주세요.</Link>}</div>
-            <div><label htmlFor="cart-coupon" className="mb-2 block font-semibold">쿠폰 코드</label><input id="cart-coupon" value={couponCode} onChange={(event) => setCouponCode(event.target.value)} className="h-11 w-full rounded-lg border bg-white px-3" placeholder="쿠폰 코드 입력" /></div>
-            <dl className="space-y-2 border-t pt-4 text-body-14-r"><div className="flex justify-between"><dt>상품 금액</dt><dd>{formatKrwPrice(quote?.itemsAmount ?? 0)}</dd></div><div className="flex justify-between"><dt>쿠폰 할인</dt><dd>-{formatKrwPrice(quote?.couponDiscountAmount ?? 0)}</dd></div><div className="flex justify-between"><dt>배송비</dt><dd>{formatKrwPrice(quote?.shippingFee ?? 0)}</dd></div><div className="flex justify-between pt-2 text-[18px] font-bold"><dt>결제 금액</dt><dd>{formatKrwPrice(quote?.amount ?? 0)}</dd></div></dl>
-            {error && <p role="alert" className="whitespace-pre-line text-body-13-r text-[var(--color-primary)]">{error}</p>}
-            <div id="cart-payment-widget" className="-mx-6" /><div id="cart-payment-agreement" className="-mx-6" />
-            <Button className="w-full" disabled={paying || !quote || !addressId} onClick={() => void handlePay()}>{paying ? "결제 준비 중…" : "결제하기"}</Button>
-          </aside>
-        </div>
-      )}
-    </div>
-  );
+        </article>; })}
+        <button type="button" onClick={() => void removeSelected()} disabled={!selectedIds.length} className="mt-3 inline-flex h-9 items-center gap-2 rounded-[6px] border border-[var(--color-text-muted)] px-4 text-body-13-m text-[var(--color-text-secondary)] disabled:opacity-40"><span aria-hidden="true">×</span> 삭제</button>
+      </section>
+      <div className="max-md:hidden bg-[var(--color-text-muted)]" />
+      <aside aria-labelledby="cart-summary-title"><div className="flex items-center justify-between border-b border-[var(--color-text-muted)] pb-4"><h2 id="cart-summary-title" className="text-subtitle-18-b">주문예상금액</h2><Chevron /></div><dl className="space-y-4 border-b border-[var(--color-text-muted)] py-6 text-body-14-m"><div className="flex justify-between"><dt>총 선택상품금액</dt><dd>{formatKrwPrice(quote?.itemsAmount ?? 0)}</dd></div><div className="flex justify-between"><dt>총 쿠폰 할인금액</dt><dd>-{formatKrwPrice(quote?.couponDiscountAmount ?? 0)}</dd></div><div className="flex justify-between"><dt>총 배송비</dt><dd>{formatKrwPrice(quote?.shippingFee ?? 0)}</dd></div></dl><div className="flex items-center justify-between py-5"><span className="text-subtitle-16-b">총 주문금액</span><strong className="text-price-20-eb-lh24">{formatKrwPrice(quote?.amount ?? 0)}</strong></div>{error && <p role="alert" className="mb-3 whitespace-pre-line text-body-13-r text-[var(--color-primary)]">{error}</p>}<button type="button" disabled={!quote || !selectedIds.length} onClick={proceedToOrder} className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-b text-white disabled:opacity-40">{selectedIds.length}건 주문하기</button><img src="/images/sidebar-banner-001.png" alt="꼬순박스 안내 배너" className="mt-6 h-auto w-full rounded-[8px]" /></aside>
+    </div>}
+  </div>;
 }

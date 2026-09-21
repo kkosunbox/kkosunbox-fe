@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { PurchaseOrderSection } from "@/widgets/purchase";
+import { CartOrderSection, PurchaseOrderSection } from "@/widgets/purchase";
 import { PACKAGES, getPackageProductPath, getPackagePurchaseProduct } from "@/entities/package";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
@@ -17,9 +17,14 @@ export const metadata: Metadata = {
 export default async function PurchaseOrderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tier?: string; quantity?: string }>;
+  searchParams: Promise<{ tier?: string; quantity?: string; cartItemIds?: string }>;
 }) {
-  const { tier, quantity: quantityStr } = await searchParams;
+  const { tier, quantity: quantityStr, cartItemIds: cartItemIdsParam } = await searchParams;
+  const cartItemIds = cartItemIdsParam?.split(",").map(Number).filter((id) => Number.isInteger(id) && id > 0) ?? [];
+  if (cartItemIds.length > 0) {
+    if (!(await getServerToken())) redirect(`/login?next=${encodeURIComponent(`/purchase/order?cartItemIds=${cartItemIds.join(",")}`)}`);
+    return <CartOrderSection cartItemIds={cartItemIds} />;
+  }
   const pkg = PACKAGES.find((p) => p.tier === tier);
   const purchaseProduct = pkg ? getPackagePurchaseProduct(pkg.tier) : undefined;
 

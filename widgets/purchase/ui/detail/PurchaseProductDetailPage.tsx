@@ -54,6 +54,29 @@ function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
     : tab.label;
 }
 
+function ProductPrice({ product }: { product: PackagePurchaseProduct }) {
+  const hasDiscount = product.originalPrice != null && product.originalPrice > product.price;
+  const discountRate = hasDiscount
+    ? Math.round((1 - product.price / product.originalPrice!) * 100)
+    : null;
+
+  return (
+    <>
+      {discountRate !== null && (
+        <>
+          <span className="text-body-16-b text-[var(--color-primary)]">{discountRate}%</span>
+          <span className="text-body-14-r text-[var(--color-text-tertiary)] line-through">
+            {formatKrwPrice(product.originalPrice!)}
+          </span>
+        </>
+      )}
+      <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
+        {formatKrwPrice(product.price)}
+      </span>
+    </>
+  );
+}
+
 export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId, productId, isSoldOut, isSalesPaused, imageUrl }: Props) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -165,11 +188,9 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
             </div>
           )}
 
-          <div className="mt-3 flex items-baseline gap-2">
+          <div className="mt-3 flex flex-wrap items-baseline gap-2">
             <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
-            <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
-              {formatKrwPrice(purchaseProduct.price)}
-            </span>
+            <ProductPrice product={purchaseProduct} />
           </div>
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] px-1.5 pt-6">
@@ -353,11 +374,9 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   </button>
                 </div>
               )}
-              <div className="mb-5 flex items-baseline gap-2">
+              <div className="mb-5 flex flex-wrap items-baseline gap-2">
                 <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
-                <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
-                  {formatKrwPrice(purchaseProduct.price)}
-                </span>
+                <ProductPrice product={purchaseProduct} />
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] px-2 pt-7">
                 <div className="space-y-4">

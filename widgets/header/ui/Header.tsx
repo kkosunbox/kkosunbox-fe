@@ -115,36 +115,38 @@ export default function Header() {
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               고객센터
             </Link>
-            {isLoggedIn && <CartLink count={cartCount} isSolid={isSolid} />}
-            {isAuthLoading ? (
-              <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
-            ) : isLoggedIn ? (
-              <div ref={profileRef} className="relative">
-                <button
-                  onClick={() => setIsProfileOpen((v) => !v)}
-                  aria-label="프로필 메뉴"
-                  aria-expanded={isProfileOpen}
-                  className="flex items-center justify-center hover:opacity-80 transition-opacity"
-                >
-                  <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
-                </button>
-                {isProfileOpen && (
-                  <ProfileDropdown
-                    hasProfile={hasProfile}
-                    petName={profile?.name ?? null}
-                    email={user?.email ?? null}
-                    profileImageUrl={profileImageUrl}
-                    userId={user?.id ?? null}
-                    isInfluencer={user?.isInfluencer ?? false}
-                    onClose={() => setIsProfileOpen(false)}
-                  />
-                )}
-              </div>
-            ) : (
-              <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
-                로그인
-              </Button>
-            )}
+            <div className="flex items-center gap-7">
+              {isLoggedIn && <CartLink count={cartCount} isSolid={isSolid} />}
+              {isAuthLoading ? (
+                <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
+              ) : isLoggedIn ? (
+                <div ref={profileRef} className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen((v) => !v)}
+                    aria-label="프로필 메뉴"
+                    aria-expanded={isProfileOpen}
+                    className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                  >
+                    <ProfileThumbnail imageUrl={profileImageUrl} userId={user?.id ?? null} size="sm" />
+                  </button>
+                  {isProfileOpen && (
+                    <ProfileDropdown
+                      hasProfile={hasProfile}
+                      petName={profile?.name ?? null}
+                      email={user?.email ?? null}
+                      profileImageUrl={profileImageUrl}
+                      userId={user?.id ?? null}
+                      isInfluencer={user?.isInfluencer ?? false}
+                      onClose={() => setIsProfileOpen(false)}
+                    />
+                  )}
+                </div>
+              ) : (
+                <Button as={Link} href="/login" size="sm" className="rounded-[4px]" style={{ borderRadius: 4 }}>
+                  로그인
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </nav>

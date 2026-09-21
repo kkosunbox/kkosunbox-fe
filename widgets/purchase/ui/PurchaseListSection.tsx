@@ -2,17 +2,17 @@
 
 /* eslint-disable @next/next/no-img-element -- 상품 이미지는 서버가 제공하는 동적 원격 URL이다. */
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { ProductDto } from "@/features/product/api/types";
+import { getProducts } from "@/features/product/api";
+import type { ProductCategoryDto, ProductDto, ProductSortOrder } from "@/features/product/api/types";
 import { formatKrwPrice } from "@/shared/lib/format";
 import PurchaseBannerCoupon from "../assets/purchase-banner-coupon.png";
 
-type Category = "all" | "yogurt" | "meal" | "gum";
-
 interface PurchaseListSectionProps {
   products: ProductDto[];
+  categories: ProductCategoryDto[];
 }
 
 interface DisplayProduct {
@@ -20,28 +20,20 @@ interface DisplayProduct {
   name: string;
   description: string;
   price: number;
+  originalPrice: number | null;
   imageUrl: string | null;
   href: string;
-  category: Exclude<Category, "all"> | "etc";
   isSoldOut: boolean;
   isSalesPaused: boolean;
 }
 
-const FILTERS: Array<{ value: Category; label: string }> = [
-  { value: "all", label: "전체" },
-  { value: "yogurt", label: "요거트볼" },
-  { value: "meal", label: "화식" },
-  { value: "gum", label: "껌" },
+const SORT_OPTIONS: Array<{ value: ProductSortOrder; label: string }> = [
+  { value: "LATEST", label: "최신순" },
+  { value: "PRICE_ASC", label: "낮은 가격순" },
+  { value: "PRICE_DESC", label: "높은 가격순" },
 ];
 
 const PAGE_SIZE = 8;
-
-function resolveCategory(name: string): DisplayProduct["category"] {
-  if (name.includes("요거트")) return "yogurt";
-  if (name.includes("화식")) return "meal";
-  if (name.includes("껌")) return "gum";
-  return "etc";
-}
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
   return (
@@ -51,40 +43,71 @@ function Chevron({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-export default function PurchaseListSection({ products }: PurchaseListSectionProps) {
-  const [category, setCategory] = useState<Category>("all");
+export default function PurchaseListSection({ products, categories }: PurchaseListSectionProps) {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<ProductSortOrder>("LATEST");
+  const [currentProducts, setCurrentProducts] = useState(products);
+  const [loading, setLoading] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [page, setPage] = useState(1);
+  const requestId = useRef(0);
+
+  async function loadProducts(categoryId: number | null, nextSortOrder: ProductSortOrder) {
+    const currentRequestId = ++requestId.current;
+    setLoading(true);
+    setLoadFailed(false);
+    try {
+      const response = await getProducts({
+        ...(categoryId !== null ? { categoryId } : {}),
+        sortOrder: nextSortOrder,
+      });
+      if (currentRequestId === requestId.current) setCurrentProducts(response.products);
+    } catch {
+      if (currentRequestId === requestId.current) {
+        setCurrentProducts([]);
+        setLoadFailed(true);
+      }
+    } finally {
+      if (currentRequestId === requestId.current) setLoading(false);
+    }
+  }
 
   const catalog = useMemo<DisplayProduct[]>(() => {
-    return products.map((product) => ({
+    return currentProducts.map((product) => ({
       id: String(product.id),
       name: product.name,
       description: product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식",
       price: product.price,
+      originalPrice: product.originalPrice,
       imageUrl: product.imageUrl ?? null,
       href: `/purchase/detail?productId=${product.id}`,
-      category: resolveCategory(product.name),
       isSoldOut: product.isSoldOut,
       isSalesPaused: product.isSalesPaused,
     }));
-  }, [products]);
+  }, [currentProducts]);
 
-  const filteredProducts = category === "all" ? catalog : catalog.filter((product) => product.category === category);
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(catalog.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
-  const visibleProducts = filteredProducts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const visibleProducts = catalog.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  function selectCategory(nextCategory: Category) {
-    setCategory(nextCategory);
+  function selectCategory(nextCategoryId: number | null) {
+    setSelectedCategoryId(nextCategoryId);
     setPage(1);
+    void loadProducts(nextCategoryId, sortOrder);
+  }
+
+  function selectSortOrder(nextSortOrder: ProductSortOrder) {
+    setSortOrder(nextSortOrder);
+    setPage(1);
+    void loadProducts(selectedCategoryId, nextSortOrder);
   }
 
   return (
     <div className="bg-[var(--color-background)]">
       <section className="mt-[var(--header-offset)] h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="단품몰 안내">
-        <div className="mx-auto flex h-full items-center justify-center gap-[53px] max-md:w-full max-md:gap-4 max-md:px-6 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
-          <p className="text-body-20-b tracking-[-0.04em] text-white max-md:text-body-14-b">
-            첫 만남은 가볍게, <span className="text-[var(--color-banner-bg)]">꼬순박스를 단품으로 만나보기</span>
+        <div className="mx-auto flex h-full items-center justify-center max-md:w-full max-md:gap-4 max-md:px-6 md:gap-[31px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:pl-[82px]">
+          <p className="text-body-16-b md:leading-[19px] tracking-[-0.04em] text-white max-md:text-body-14-b">
+            첫 만남은 가볍게, <span className="text-[var(--color-banner-bg)]">꼬순박스를 단품</span>으로 만나보기
           </p>
           <Image
             src={PurchaseBannerCoupon}
@@ -97,42 +120,43 @@ export default function PurchaseListSection({ products }: PurchaseListSectionPro
         </div>
       </section>
 
-      <section className="mx-auto pb-24 pt-16 max-md:w-full max-md:px-6 max-md:pb-16 max-md:pt-10 md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
-        <h1 className="text-title-36-b text-[var(--color-text-price)] max-md:text-title-28-b">All Product</h1>
+      <section className="mx-auto pt-10 max-md:w-full max-md:px-6 max-md:pb-16 md:pb-[108px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
+        <h1 className="text-[28px] font-semibold leading-[33px] tracking-[-0.04em] text-black">단품몰</h1>
 
-        <div className="mt-6 flex items-end justify-between gap-6 max-md:flex-col max-md:items-start">
+        <div className="mt-5 flex justify-between gap-6 max-md:flex-col max-md:items-start md:items-end">
           <div className="flex flex-wrap gap-3" role="group" aria-label="상품 카테고리">
-            {FILTERS.map((filter) => {
-              const active = category === filter.value;
+            {[{ id: null, name: "전체", sortOrder: -1 }, ...categories].map((filter) => {
+              const active = selectedCategoryId === filter.id;
               return (
                 <button
-                  key={filter.value}
+                  key={filter.id ?? "all"}
                   type="button"
-                  onClick={() => selectCategory(filter.value)}
-                  className={`flex h-10 items-center justify-center rounded-full border px-5 text-body-14-sb transition-colors ${active ? "border-[var(--color-text)] bg-[var(--color-text)] text-white" : "border-[var(--color-text-muted)] text-[var(--color-text)] hover:border-[var(--color-text)]"}`}
+                  onClick={() => selectCategory(filter.id)}
+                  className={`flex h-10 items-center justify-center rounded-full border px-5 text-[14px] font-semibold leading-[17px] transition-colors ${active ? "border-[var(--color-text)] bg-[var(--color-text)] text-white" : "border-[var(--color-text-muted)] text-[var(--color-text)] hover:border-[var(--color-text)]"}`}
                   aria-pressed={active}
                 >
-                  {filter.label}
+                  {filter.name}
                 </button>
               );
             })}
           </div>
 
-          <div className="flex items-center gap-3 text-body-16-m max-md:text-body-14-m" aria-label="상품 정렬">
-            <span className="font-semibold text-[var(--color-text)]">최신순</span>
-            <span className="h-2.5 w-px bg-[var(--color-text-secondary)]" aria-hidden="true" />
-            <button type="button" disabled className="text-[var(--color-text-secondary)]">평점 높은순</button>
-            <span className="h-2.5 w-px bg-[var(--color-text-secondary)]" aria-hidden="true" />
-            <button type="button" disabled className="text-[var(--color-text-secondary)]">평점 낮은순</button>
+          <div className="flex items-center gap-3 text-body-16-m md:leading-[22px] max-md:text-body-14-m" aria-label="상품 정렬">
+            {SORT_OPTIONS.map((option, index) => (
+              <Fragment key={option.value}>
+                {index > 0 && <span className="h-2.5 w-px bg-[var(--color-text-secondary)]" aria-hidden="true" />}
+                <button type="button" onClick={() => selectSortOrder(option.value)} disabled={loading} aria-pressed={sortOrder === option.value} className={sortOrder === option.value ? "font-semibold text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}>{option.label}</button>
+              </Fragment>
+            ))}
           </div>
         </div>
 
         {visibleProducts.length > 0 ? (
-          <div className="mt-[30px] grid grid-cols-1 gap-x-8 gap-y-[92px] sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-[26px] max-md:gap-y-12">
+          <div className="mt-5 grid max-sm:grid-cols-1 sm:max-lg:grid-cols-2 lg:grid-cols-4 max-lg:gap-x-8 lg:gap-x-[26.6667px] max-md:gap-y-12 md:gap-y-14">
             {visibleProducts.map((product) => {
               const content = (
                 <>
-                  <div className="relative aspect-[290/270] overflow-hidden rounded-2xl bg-[var(--color-surface-light)]">
+                  <div className="relative aspect-[290/270] overflow-hidden rounded-xl bg-[var(--color-surface-light)]">
                     {product.imageUrl ? <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" /> : <div className="h-full w-full bg-[var(--color-surface-light)]" aria-hidden="true" />}
                     {(product.isSoldOut || product.isSalesPaused) && (
                       <span className="absolute inset-0 flex items-center justify-center bg-black/45 text-body-16-b text-white">
@@ -141,10 +165,12 @@ export default function PurchaseListSection({ products }: PurchaseListSectionPro
                     )}
                   </div>
                   <div className="pt-5">
-                    <h2 className="text-subtitle-20-b text-[var(--color-text-price)] max-md:text-subtitle-18-b">{product.name}</h2>
-                    <p className="mt-3 line-clamp-2 text-body-16-m tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:text-body-14-r">{product.description}</p>
-                    <div className="mt-3 flex items-baseline gap-2">
-                      <strong className="text-[24px] font-extrabold leading-[29px] tracking-[-0.05em] text-[var(--color-text-price)] max-md:text-[22px]">{formatKrwPrice(product.price)}</strong>
+                    <h2 className="max-md:text-[18px] md:text-[20px] font-semibold leading-6 tracking-[-0.04em] text-[var(--color-text-price)]">{product.name}</h2>
+                    <p className="line-clamp-2 max-md:mt-3 md:mt-4 max-md:min-h-[44px] md:min-h-[38px] text-body-16-m md:leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:text-body-14-r">{product.description}</p>
+                    <div className="flex flex-wrap items-center max-md:mt-3 md:mt-5 max-md:gap-x-2 md:gap-x-3 gap-y-1">
+                      {product.originalPrice !== null && product.originalPrice > product.price && <span className="max-md:text-[22px] md:text-[24px] font-extrabold leading-[29px] tracking-[-0.05em] text-[var(--color-text-discount)]">{Math.round((1 - product.price / product.originalPrice) * 100)}%</span>}
+                      <strong className="max-md:text-[22px] md:text-[24px] font-extrabold leading-[29px] tracking-[-0.05em] text-[var(--color-text-price)]">{formatKrwPrice(product.price)}</strong>
+                      {product.originalPrice !== null && product.originalPrice > product.price && <span className="max-md:text-[14px] md:text-[20px] font-semibold leading-6 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">{formatKrwPrice(product.originalPrice)}</span>}
                     </div>
                   </div>
                 </>
@@ -154,14 +180,14 @@ export default function PurchaseListSection({ products }: PurchaseListSectionPro
             })}
           </div>
         ) : (
-          <p className="py-24 text-center text-body-18-r text-[var(--color-text-secondary)]">해당 카테고리의 상품이 없습니다.</p>
+          <p className="py-24 text-center text-body-18-r text-[var(--color-text-secondary)]">{loading ? "상품을 불러오는 중입니다." : loadFailed ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리의 상품이 없습니다."}</p>
         )}
 
         {totalPages > 1 && (
-          <nav className="mt-[72px] flex items-center justify-center gap-3" aria-label="상품 페이지">
+          <nav className="max-md:mt-[72px] md:mt-[156px] flex items-center justify-center gap-3" aria-label="상품 페이지">
             <button type="button" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={currentPage === 1} aria-label="이전 페이지" className="text-[var(--color-ui-disabled)] disabled:opacity-50"><Chevron direction="left" /></button>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-              <button key={pageNumber} type="button" onClick={() => setPage(pageNumber)} aria-current={currentPage === pageNumber ? "page" : undefined} className={`h-6 min-w-6 text-body-16-r ${currentPage === pageNumber ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}>{pageNumber}</button>
+              <button key={pageNumber} type="button" onClick={() => setPage(pageNumber)} aria-current={currentPage === pageNumber ? "page" : undefined} className={`h-5 min-w-5 text-body-16-r leading-5 ${currentPage === pageNumber ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}>{pageNumber}</button>
             ))}
             <button type="button" onClick={() => setPage((value) => Math.min(totalPages, value + 1))} disabled={currentPage === totalPages} aria-label="다음 페이지" className="text-[var(--color-ui-disabled)] disabled:opacity-50"><Chevron direction="right" /></button>
           </nav>

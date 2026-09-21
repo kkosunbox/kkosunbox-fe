@@ -5,6 +5,10 @@ export interface ProductDto {
   name: string;
   /** 판매 가격 (부가세 포함) */
   price: number;
+  /** 할인 전 표시 가격. price보다 클 때만 원가/할인율을 노출한다. */
+  originalPrice: number | null;
+  categoryId: number | null;
+  category: ProductCategoryDto | null;
   description?: string | null;
   imageUrl?: string | null;
   /** 연관 구독 플랜 ID (리뷰 공유용) */
@@ -15,6 +19,19 @@ export interface ProductDto {
   isSalesPaused: boolean;
   averageRating: number;
   reviewCount: number;
+}
+
+export interface ProductCategoryDto {
+  id: number;
+  name: string;
+  sortOrder: number;
+}
+
+export type ProductSortOrder = "LATEST" | "PRICE_DESC" | "PRICE_ASC";
+
+export interface GetProductsParams {
+  categoryId?: number;
+  sortOrder?: ProductSortOrder;
 }
 
 // ── ProductOrder ──────────────────────────────────────────────────
@@ -110,6 +127,10 @@ export interface GetProductCouponInfoRequest {
 
 export interface ProductListResponse {
   products: ProductDto[];
+}
+
+export interface ProductCategoryListResponse {
+  categories: ProductCategoryDto[];
 }
 
 export interface PaginatedProductOrderResponse {

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../shared/config/homeRedesignTokens.css";
 
 /* Tailwind 클래스 파서가 text-* 유틸을 잘못 분리하는 문제 방지 */
 @source inline("text-title-24-sb-lh42");
@@ -348,6 +349,11 @@
 }
 
 @theme inline {
+  --color-home-review-bg: var(--color-home-review-bg);
+  --color-home-step-border: var(--color-home-step-border);
+  --color-home-package-floor: var(--color-home-package-floor);
+  --color-home-faq-bg: var(--color-home-faq-bg);
+  --color-home-faq-active: var(--color-home-faq-active);
   --color-background: var(--color-background);
   --color-foreground: var(--color-text);
 

@@ -284,3 +284,15 @@
 ## Design Assets
 
 피그마 스크린샷 및 기획 이미지는 `.claude/assets/designs/`에 저장합니다.
+
+### 메인 리디자인 Figma 5526:5772 전용 토큰
+
+| 토큰 | 값 | 용도 |
+| --- | --- | --- |
+| `--color-home-review-bg` | `#FFDBAC` | 후기 섹션 배경 |
+| `--color-home-step-border` | `#FFBB79` | 구독 단계 카드 테두리 |
+| `--color-home-package-floor` | `#F6F2ED` | 패키지 사진 아래 그라디언트 |
+| `--color-home-faq-bg` | `#F6F6F6` | FAQ 섹션 배경 |
+| `--color-home-faq-active` | `#FFE3C6` | 펼친 FAQ 배경 |
+
+제목 강조와 구독 섹션은 기존 `--color-text-discount`(`#EC7700`)를 재사용한다. 기존 후기 섹션 및 공용 푸터 토큰은 변경하지 않는다.

@@ -4,6 +4,8 @@ import type { PackageTier } from "./packageData";
 export interface PackagePurchaseProduct {
   tier: PackageTier;
   price: number;
+  /** 할인 전 표시 가격. 결제 계산에는 사용하지 않는다. */
+  originalPrice?: number | null;
 }
 
 /**

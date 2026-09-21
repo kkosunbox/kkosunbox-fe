@@ -4,6 +4,9 @@ import { StatsBar } from "@/widgets/home/stats-bar";
 import { HomePackagePlansSection } from "@/widgets/home/package-plans";
 import { WhyGallerySection } from "@/widgets/home/why-gallery";
 import { ReviewsSection } from "@/widgets/home/reviews";
+import { HomeRedesign } from "@/widgets/home/redesign";
+import { FooterSection } from "@/widgets/footer";
+import { HOME_REDESIGN_ENABLED } from "@/shared/config/homeRedesign";
 
 const description = "믿을 수 있는 재료로 만든 수제간식을 매월 문 앞에. 우리 강아지를 위한 프리미엄 정기구독 서비스.";
 
@@ -35,10 +38,16 @@ export default function Home() {
         <HomeHero />
       </div>
       <div id="home-content" className="relative z-[1] scroll-mt-[var(--header-height)]">
-        <StatsBar />
-        <HomePackagePlansSection />
-        <WhyGallerySection />
-        <ReviewsSection />
+        {HOME_REDESIGN_ENABLED ? (
+          <><HomeRedesign /><FooterSection /></>
+        ) : (
+          <>
+            <StatsBar />
+            <HomePackagePlansSection />
+            <WhyGallerySection />
+            <ReviewsSection />
+          </>
+        )}
       </div>
     </div>
   );

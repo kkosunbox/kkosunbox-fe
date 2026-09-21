@@ -1,0 +1,8 @@
+/* Figma 5526:5772. Shared with globals.css; imported by the dev-only home for HMR. */
+:root {
+  --color-home-review-bg: #FFDBAC;
+  --color-home-step-border: #FFBB79;
+  --color-home-package-floor: #F6F2ED;
+  --color-home-faq-bg: #F6F6F6;
+  --color-home-faq-active: #FFE3C6;
+}

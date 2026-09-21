@@ -8,6 +8,8 @@ import { logProductFetch, logConfirmRequest, logConfirmSuccess, logConfirmFailur
 import type {
   ConfirmProductOrderRequest,
   GetProductOrdersParams,
+  GetProductsParams,
+  ProductCategoryDto,
   ProductDto,
   ProductOrderDto,
   ProductOrderPlanSummaryDto,
@@ -18,12 +20,24 @@ function serverOpts(token?: string) {
 }
 
 /** 단건 판매 상품 목록 */
-export async function fetchProducts(token?: string): Promise<ProductDto[]> {
+export async function fetchProducts(token?: string, params?: GetProductsParams): Promise<ProductDto[]> {
+  const searchParams = new URLSearchParams();
+  if (params?.categoryId !== undefined) searchParams.set("categoryId", String(params.categoryId));
+  if (params?.sortOrder !== undefined) searchParams.set("sortOrder", params.sortOrder);
+  const query = searchParams.size > 0 ? `?${searchParams.toString()}` : "";
   const data = await apiClient
-    .get<{ products: ProductDto[] }>("/v1/products", serverOpts(token))
+    .get<{ products: ProductDto[] }>(`/v1/products${query}`, serverOpts(token))
     .catch(() => ({ products: [] as ProductDto[] }));
   logProductFetch(data.products);
   return data.products;
+}
+
+/** 단품몰 활성 카테고리 목록 */
+export async function fetchProductCategories(token?: string): Promise<ProductCategoryDto[]> {
+  const data = await apiClient
+    .get<{ categories: ProductCategoryDto[] }>("/v1/products/categories", serverOpts(token))
+    .catch(() => ({ categories: [] as ProductCategoryDto[] }));
+  return data.categories;
 }
 
 /** 단건 판매 상품 상세 */

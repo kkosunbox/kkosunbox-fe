@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Image from "next/image";
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { isPopupRoute } from "@/shared/config/popupRoutes";
@@ -60,31 +61,19 @@ export function KakaoTalkProvider() {
         <button
           type="button"
           onClick={openKakaoChat}
-          className="fixed z-[50] flex flex-col items-center justify-center gap-1 rounded-[14px] bg-[var(--color-kakao)] text-[var(--color-text-primary)] shadow-[var(--shadow-card-selected)] transition-transform hover:scale-105 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-text-primary)] max-md:right-4 max-md:bottom-4 max-md:h-[60px] max-md:w-[60px] md:right-6 md:bottom-6 md:h-[68px] md:w-[68px]"
+          className="kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[132px] w-[120px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6"
           aria-label="카카오톡으로 상담하기"
         >
-          <svg
-            viewBox="0 0 40 34"
-            className="max-md:h-7 max-md:w-8 md:h-8 md:w-9"
-            aria-hidden="true"
-          >
-            <path
-              d="M20 2C10.06 2 2 8.27 2 16c0 4.93 3.3 9.27 8.29 11.76L9 33l6.02-3.48c1.59.32 3.26.48 4.98.48 9.94 0 18-6.27 18-14S29.94 2 20 2Z"
-              fill="var(--color-text-primary)"
-            />
-            <text
-              x="20"
-              y="19.5"
-              textAnchor="middle"
-              fill="var(--color-kakao)"
-              fontSize="9"
-              fontWeight="700"
-              fontFamily="sans-serif"
-            >
-              TALK
-            </text>
-          </svg>
-          <span className="text-[11px] font-bold leading-none">상담하기</span>
+          <span className="block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-transform duration-200 group-hover:scale-[1.025] group-active:scale-[0.98]">
+            <span className="kakao-speech-float absolute -left-[13px] -top-[9px] z-10 h-[57px] w-[143px]">
+              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="143px" className="object-contain" priority />
+            </span>
+            <span className="absolute bottom-0 left-[13px] h-24 w-24 rounded-full bg-[var(--color-cta-button)]">
+              <span className="absolute inset-1 overflow-hidden rounded-full bg-white">
+                <Image src="/images/kakao-consult-dog.png" alt="" fill sizes="88px" className="object-cover object-[center_43%]" priority />
+              </span>
+            </span>
+          </span>
         </button>
       )}
     </>

@@ -13,6 +13,7 @@ import PurchaseBannerCoupon from "../assets/purchase-banner-coupon.png";
 interface PurchaseListSectionProps {
   products: ProductDto[];
   categories: ProductCategoryDto[];
+  initialLoadFailed: boolean;
 }
 
 interface DisplayProduct {
@@ -43,12 +44,21 @@ function Chevron({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-export default function PurchaseListSection({ products, categories }: PurchaseListSectionProps) {
+function GiftIcon() {
+  return (
+    <svg width="58" height="58" viewBox="0 0 58 58" fill="none" aria-hidden="true">
+      <path d="M7.25 21.334c0-.9428 0-1.4142.2929-1.7071.2929-.2929.7643-.2929 1.7071-.2929h39.5c.9428 0 1.4142 0 1.7071.2929.2929.2929.2929.7643.2929 1.7071v8.0833c0 .9428 0 1.4142-.2929 1.7071-.2929.2929-.7643.2929-1.7071.2929H45.5c-.9428 0-1.4142 0-1.7071.2929-.2929.2929-.2929.7643-.2929 1.7071v12.9167c0 .9428 0 1.4142-.2929 1.7071-.2929.2929-.7643.2929-1.7071.2929h-25c-.9428 0-1.4142 0-1.7071-.2929-.2929-.2929-.2929-.7643-.2929-1.7071V33.4173c0-.9428 0-1.4142-.2929-1.7071-.2929-.2929-.7643-.2929-1.7071-.2929H9.25c-.9428 0-1.4142 0-1.7071-.2929-.2929-.2929-.2929-.7643-.2929-1.7071v-8.0833Z" stroke="var(--color-profile-meta-empty)" strokeWidth="4" strokeLinecap="round" />
+      <path d="M12.084 31.416h33.8333M29 16.916v31.4167M29.0006 16.9167l-4.2054-4.2055a15.377 15.377 0 0 0-4.2997-2.657L14.7164 8.1275c-1.295-.4317-2.6324.5323-2.6324 1.8974v5.4502c0 .8609.5508 1.625 1.3675 1.8973l5.8825 1.9607M28.9994 16.9167l4.2054-4.2055a15.377 15.377 0 0 1 4.2997-2.657l5.7791-1.9262c1.295-.4317 2.6324.5323 2.6324 1.8974v5.4502c0 .8609-.5508 1.625-1.3675 1.8973L38.666 19.3333" stroke="var(--color-profile-meta-empty)" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export default function PurchaseListSection({ products, categories, initialLoadFailed }: PurchaseListSectionProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<ProductSortOrder>("LATEST");
   const [currentProducts, setCurrentProducts] = useState(products);
   const [loading, setLoading] = useState(false);
-  const [loadFailed, setLoadFailed] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(initialLoadFailed);
   const [page, setPage] = useState(1);
   const requestId = useRef(0);
 
@@ -107,7 +117,7 @@ export default function PurchaseListSection({ products, categories }: PurchaseLi
       <section className="mt-[var(--header-offset)] h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="단품몰 안내">
         <div className="mx-auto flex h-full items-center justify-center max-md:w-full max-md:gap-4 max-md:px-6 md:gap-[31px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:pl-[82px]">
           <p className="text-body-16-b md:leading-[19px] tracking-[-0.04em] text-white max-md:text-body-14-b">
-            첫 만남은 가볍게, <span className="text-[var(--color-banner-bg)]">꼬순박스를 단품</span>으로 만나보기
+            첫 만남은 가볍게, <span className="font-extrabold text-[var(--color-banner-bg)]">꼬순박스를 단품</span>으로 만나보기
           </p>
           <Image
             src={PurchaseBannerCoupon}
@@ -180,7 +190,17 @@ export default function PurchaseListSection({ products, categories }: PurchaseLi
             })}
           </div>
         ) : (
-          <p className="py-24 text-center text-body-18-r text-[var(--color-text-secondary)]">{loading ? "상품을 불러오는 중입니다." : loadFailed ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리의 상품이 없습니다."}</p>
+          <div className="mt-[126px] flex min-h-[300px] flex-col items-center text-center max-md:mt-20">
+            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-full bg-[var(--color-surface-light)]">
+              <GiftIcon />
+            </div>
+            <h2 className="mt-6 text-[24px] font-extrabold leading-[29px] tracking-[-0.04em] text-[var(--color-text)]">
+              {loading ? "상품을 불러오는 중입니다." : loadFailed ? "상품 정보를 불러오지 못했습니다." : "카테고리에 준비된 상품이 없습니다."}
+            </h2>
+            <p className="mt-4 text-body-16-m text-[var(--color-text-secondary)]">
+              {loading ? "잠시만 기다려주세요." : loadFailed ? "잠시 후 다시 시도해주세요." : "새로운 간식을 준비하고 있어요. 조금만 기다려주세요."}
+            </p>
+          </div>
         )}
 
         {totalPages > 1 && (

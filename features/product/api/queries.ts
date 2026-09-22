@@ -21,15 +21,24 @@ function serverOpts(token?: string) {
 
 /** 단건 판매 상품 목록 */
 export async function fetchProducts(token?: string, params?: GetProductsParams): Promise<ProductDto[]> {
+  const { products } = await fetchProductsWithStatus(token, params);
+  return products;
+}
+
+/** 단건 판매 상품 목록과 초기 조회 실패 여부 */
+export async function fetchProductsWithStatus(token?: string, params?: GetProductsParams): Promise<{ products: ProductDto[]; loadFailed: boolean }> {
   const searchParams = new URLSearchParams();
   if (params?.categoryId !== undefined) searchParams.set("categoryId", String(params.categoryId));
   if (params?.sortOrder !== undefined) searchParams.set("sortOrder", params.sortOrder);
   const query = searchParams.size > 0 ? `?${searchParams.toString()}` : "";
-  const data = await apiClient
-    .get<{ products: ProductDto[] }>(`/v1/products${query}`, serverOpts(token))
-    .catch(() => ({ products: [] as ProductDto[] }));
-  logProductFetch(data.products);
-  return data.products;
+  try {
+    const data = await apiClient.get<{ products: ProductDto[] }>(`/v1/products${query}`, serverOpts(token));
+    logProductFetch(data.products);
+    return { products: data.products, loadFailed: false };
+  } catch {
+    logProductFetch([]);
+    return { products: [], loadFailed: true };
+  }
 }
 
 /** 단품몰 활성 카테고리 목록 */

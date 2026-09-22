@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
-import { fetchProductCategories, fetchProducts } from "@/features/product/api/queries";
+import { fetchProductCategories, fetchProductsWithStatus } from "@/features/product/api/queries";
 import { JsonLd } from "@/shared/ui";
 import { SITE_URL, PRODUCT_SHIPPING_DETAILS_JSONLD, PRODUCT_RETURN_POLICY_JSONLD } from "@/shared/lib/seo";
 
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function PurchasePage() {
-  const [products, categories] = await Promise.all([fetchProducts(), fetchProductCategories()]);
+  const [{ products, loadFailed }, categories] = await Promise.all([fetchProductsWithStatus(), fetchProductCategories()]);
   const productListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -74,7 +74,7 @@ export default async function PurchasePage() {
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>
-      <PurchaseListSection products={products} categories={categories} />
+      <PurchaseListSection products={products} categories={categories} initialLoadFailed={loadFailed} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { fetchProductCategories, fetchProducts } from "@/features/product/api/queries";
+import { fetchProductCategories, fetchProductsWithStatus } from "@/features/product/api/queries";
 import {
   PRODUCT_RETURN_POLICY_JSONLD,
   PRODUCT_SHIPPING_DETAILS_JSONLD,
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
-  const [products, categories] = await Promise.all([fetchProducts(), fetchProductCategories()]);
+  const [{ products, loadFailed }, categories] = await Promise.all([fetchProductsWithStatus(), fetchProductCategories()]);
   const data = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -62,7 +62,7 @@ export default async function ProductsPage() {
       <h1 className="sr-only">꼬순박스 강아지 수제간식 단품몰</h1>
       <JsonLd data={data} />
       <Suspense fallback={null}><PurchasePaymentErrorNotice /></Suspense>
-      <PurchaseListSection products={products} categories={categories} />
+      <PurchaseListSection products={products} categories={categories} initialLoadFailed={loadFailed} />
     </>
   );
 }

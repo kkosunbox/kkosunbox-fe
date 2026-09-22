@@ -8,7 +8,7 @@ import { getSubscriptionPlans, type SubscriptionPlanDto } from "@/features/subsc
 import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { useReferral } from "@/features/referral/model";
 import { getProducts, type ProductDto } from "@/features/product/api";
-import { PACKAGES, tierFromSubscriptionPlan } from "@/entities/package";
+import { PACKAGES, tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
 import { FAQ_ITEMS } from "@/shared/config/faqItems";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
@@ -29,7 +29,9 @@ import star from "../assets/review-star.svg";
 import chevron from "../assets/chevron-down.svg";
 import arrow from "../assets/product-arrow.svg";
 import truck from "../assets/delivery-truck.svg";
-import packageBackground from "../assets/package-showcase-background.png";
+import basicPackageBackground from "../assets/package-showcase-background-basic.png";
+import standardPackageBackground from "../assets/package-showcase-background.png";
+import premiumPackageBackground from "../assets/package-showcase-background-premium.png";
 import basicBox from "../assets/package-basic.png";
 import standardBox from "../assets/package-standard.png";
 import premiumBox from "../assets/package-premium.png";
@@ -57,6 +59,11 @@ const REVIEWS = [
   { name: "콩콩", tier: "Premium", label: "프리미엄", profile: profile1, text: "특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요." },
 ] as const;
 const BOX_IMAGES = { Basic: basicBox, Standard: standardBox, Premium: premiumBox };
+const PACKAGE_BACKGROUNDS = {
+  Basic: basicPackageBackground,
+  Standard: standardPackageBackground,
+  Premium: premiumPackageBackground,
+} satisfies Record<PackageTier, StaticImageData>;
 const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /연어.*요거트|요거트.*연어/, image: salmonYogurtBall },
   { matches: /꼬미칩/, image: kkomiChips },

@@ -44,8 +44,8 @@
 .stars { display: flex; flex-shrink: 0; }
 .stars img { width: 24px; height: 24px; }
 .reviewBody > p { font-size: 14px; line-height: 20px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.packages { position: relative; min-height: 878px; background: linear-gradient(to bottom, var(--color-home-package-floor) 83%, white); }
-.packageBackdrop { position: absolute; top: 0; width: 100%; height: 730px; overflow: hidden; }
+.packages { position: relative; min-height: 878px; background: white; }
+.packageBackdrop { position: absolute; inset: 0 0 auto; width: min(100%, 1920px); height: 730px; margin-inline: auto; overflow: hidden; }
 .packageBackdrop img { object-fit: cover; object-position: center top; }
 .packageHero { height: 628px; display: flex; justify-content: flex-end; padding-top: 152px; }
 .packageCopy { width: 407px; }

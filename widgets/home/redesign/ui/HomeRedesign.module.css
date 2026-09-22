@@ -44,8 +44,8 @@
 .stars { display: flex; flex-shrink: 0; }
 .stars img { width: 24px; height: 24px; }
 .reviewBody > p { font-size: 14px; line-height: 20px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.packages { position: relative; min-height: 878px; background: linear-gradient(to bottom, var(--color-home-package-floor) 83%, white); }
-.packageBackdrop { position: absolute; top: 0; width: 100%; height: 730px; overflow: hidden; }
+.packages { position: relative; min-height: 878px; background: white; }
+.packageBackdrop { position: absolute; inset: 0 0 auto; width: min(100%, 1920px); height: 730px; margin-inline: auto; overflow: hidden; }
 .packageBackdrop img { object-fit: cover; object-position: center top; }
 .packageHero { height: 628px; display: flex; justify-content: flex-end; padding-top: 152px; }
 .packageCopy { width: 407px; }
@@ -78,7 +78,7 @@
 .products { padding: 50px 0 111px; }
 .productBanner { display: flex; align-items: center; justify-content: center; gap: 30px; height: 100px; margin-bottom: 66px; border-radius: 12px; background: var(--color-purchase-banner-bg); color: white; overflow: hidden; font-size: 20px; font-weight: 700; }
 .productBanner strong { color: var(--color-banner-bg); }
-.productBanner img { align-self: flex-end; width: 172px; height: 61px; object-fit: contain; }
+.productBanner img { align-self: flex-end; width: 217px; height: 77px; object-fit: contain; }
 .products .heading, .faq .heading { line-height: 65px; }
 .productDescription { margin-top: 12px; font-size: 18px; line-height: 28px; color: black; letter-spacing: -.02em; }
 .tabs { display: flex; flex-wrap: wrap; gap: 12px; }

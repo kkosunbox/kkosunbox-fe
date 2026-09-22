@@ -8,7 +8,7 @@ import { getSubscriptionPlans, type SubscriptionPlanDto } from "@/features/subsc
 import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { useReferral } from "@/features/referral/model";
 import { getProducts, type ProductDto } from "@/features/product/api";
-import { PACKAGES, tierFromSubscriptionPlan } from "@/entities/package";
+import { PACKAGES, tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
 import { FAQ_ITEMS } from "@/shared/config/faqItems";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
@@ -29,7 +29,9 @@ import star from "../assets/review-star.svg";
 import chevron from "../assets/chevron-down.svg";
 import arrow from "../assets/product-arrow.svg";
 import truck from "../assets/delivery-truck.svg";
-import packageBackground from "../assets/package-showcase-background.png";
+import basicPackageBackground from "../assets/package-showcase-background-basic.png";
+import standardPackageBackground from "../assets/package-showcase-background.png";
+import premiumPackageBackground from "../assets/package-showcase-background-premium.png";
 import basicBox from "../assets/package-basic.png";
 import standardBox from "../assets/package-standard.png";
 import premiumBox from "../assets/package-premium.png";
@@ -44,8 +46,8 @@ import "@/shared/config/homeRedesignTokens.css";
 const STEPS = [
   { number: "01", title: "프로필 작성", description: "강아지 정보를 입력해주세요.", image: stepProfile },
   { number: "02", title: "구독 선택", description: "딱 맞는 꼬순박스를 추천드려요.", image: stepPlan },
-  { number: "03", title: "결제일 지정", description: "원하는 시작일을 선택해주세요.", image: stepPayment },
-  { number: "04", title: "집앞 배송", description: "아이스박스에 담아 신선하게 배송해요.", image: stepDelivery },
+  { number: "03", title: "결제일 지정", description: <>결제 되는 날 꼬순박스가<br />출발해요</>, image: stepPayment },
+  { number: "04", title: "집앞 배송", description: <>아이스박스에 담겨 신선하게<br />배송돼요</>, image: stepDelivery },
 ] as const;
 // 기존 공개 후기 원문 발췌. 동일 보호자의 추가 발췌에도 원래 이름을 유지한다.
 const REVIEWS = [
@@ -57,6 +59,11 @@ const REVIEWS = [
   { name: "콩콩", tier: "Premium", label: "프리미엄", profile: profile1, text: "특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요." },
 ] as const;
 const BOX_IMAGES = { Basic: basicBox, Standard: standardBox, Premium: premiumBox };
+const PACKAGE_BACKGROUNDS = {
+  Basic: basicPackageBackground,
+  Standard: standardPackageBackground,
+  Premium: premiumPackageBackground,
+} satisfies Record<PackageTier, StaticImageData>;
 const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /연어.*요거트|요거트.*연어/, image: salmonYogurtBall },
   { matches: /꼬미칩/, image: kkomiChips },
@@ -88,7 +95,7 @@ function SubscriptionStepsSection() {
 }
 function ReviewsSection() {
   return <section className={styles.reviews} aria-labelledby="reviews-title"><div className={styles.container}>
-    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>실제 고객님들의</span><br />생생한 구매평입니다.</h2><p className={styles.reviewsDescription}>꼬순박스를 직접 만나본 보호자님들의<br />솔직한 이야기를 모았습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
+    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>실제 고객님들의</span><br />생생한 구매평입니다.</h2><p className={styles.reviewsDescription}>{`'기호성 최고'라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.`}<br />수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
     <div className={styles.reviewCards}>{REVIEWS.map((review, index) => <article key={`${review.name}-${index}`} data-nosnippet aria-label={`${review.name} 보호자님의 후기 발췌`}><Image src={review.profile} alt="" width={38} height={38} className={styles.avatar} /><div className={styles.reviewBody}><div className={styles.reviewMeta}><span className={styles.tierBadge} data-tier={review.tier}>{review.label}</span><Stars /></div><p title={review.text}>{review.text}</p><span className="sr-only">{review.name} 보호자님</span></div></article>)}</div>
   </div></section>;
 }
@@ -99,7 +106,7 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
   const pkg = PACKAGES.find(item => item.tier === tier)!;
   const price = selected ? planDisplayPrice(selected) : null;
   const sorted = [...plans].sort((a, b) => ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(a)) - ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(b))).slice(0, 3);
-  return <section className={styles.packages} aria-labelledby="package-title"><div className={styles.packageBackdrop}><Image src={packageBackground} alt="" fill quality={HIGH_IMAGE_QUALITY} sizes="100vw" /></div><div className={styles.container}>
+  return <section className={styles.packages} aria-labelledby="package-title"><div className={styles.packageBackdrop}><Image key={tier} src={PACKAGE_BACKGROUNDS[tier]} alt="" fill quality={HIGH_IMAGE_QUALITY} sizes="100vw" /></div><div className={styles.container}>
     <div className={styles.packageHero}><div className={styles.packageCopy}>
       <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
       <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{selected?.description?.trim() || pkg.contents.join(" ")}</p>
@@ -121,7 +128,7 @@ function ProductShowcaseSection({ products, loading, error }: { products: Produc
   }, [products, category]);
   const visible = filtered.slice(start, start + 4);
   return <section className={styles.products} aria-labelledby="products-title"><div className={styles.container}>
-    <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={172} height={61} /></Link>
+    <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={217} height={77} /></Link>
     <h2 id="products-title" className={styles.heading}><span>원하는 제품만</span> 자유롭게 간편하게 구매하세요.</h2><p className={styles.productDescription}>체크리스트 후 우리 아이에게 적절한 패키지 박스를 추천받을 수 있습니다!</p>
     <div className={styles.tabs} role="group" aria-label="상품 카테고리">{CATEGORIES.map(item => <button key={item} type="button" aria-pressed={category === item} onClick={() => { setCategory(item); setStart(0); }}>{item}</button>)}</div>
     <div className={styles.productCarousel}><button type="button" className={`${styles.carouselArrow} ${styles.previous}`} aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><Image src={arrow} alt="" width={48} height={48} /></button>

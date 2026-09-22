@@ -78,7 +78,7 @@
 .products { padding: 50px 0 111px; }
 .productBanner { display: flex; align-items: center; justify-content: center; gap: 30px; height: 100px; margin-bottom: 66px; border-radius: 12px; background: var(--color-purchase-banner-bg); color: white; overflow: hidden; font-size: 20px; font-weight: 700; }
 .productBanner strong { color: var(--color-banner-bg); }
-.productBanner img { align-self: flex-end; width: 172px; height: 61px; object-fit: contain; }
+.productBanner img { align-self: flex-end; width: 217px; height: 77px; object-fit: contain; }
 .products .heading, .faq .heading { line-height: 65px; }
 .productDescription { margin-top: 12px; font-size: 18px; line-height: 28px; color: black; letter-spacing: -.02em; }
 .tabs { display: flex; flex-wrap: wrap; gap: 12px; }

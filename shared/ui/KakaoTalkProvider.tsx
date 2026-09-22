@@ -61,16 +61,16 @@ export function KakaoTalkProvider() {
         <button
           type="button"
           onClick={openKakaoChat}
-          className="kakao-widget-enter group fixed bottom-[14px] right-[15px] z-[50] h-[149px] w-[168.81px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)]"
+          className="kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[86px] w-[86px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6"
           aria-label="카카오톡으로 상담하기"
         >
           <span className="block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-transform duration-200 group-hover:scale-[1.025] group-active:scale-[0.98]">
-            <span className="kakao-speech-float absolute left-0 top-0 z-10 h-[48.42px] w-[168.81px]">
-              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="169px" className="object-contain" priority />
+            <span className="kakao-speech-float absolute left-1/2 top-[-17.125px] z-10 h-[63.25px] w-[162.15px] -translate-x-1/2">
+              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="163px" className="object-contain" priority />
             </span>
-            <span className="absolute left-[46px] top-[53px] h-[96px] w-[96px] rounded-full bg-[var(--color-cta-button)]">
-              <span className="absolute left-1/2 top-1/2 h-[88px] w-[88px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-                <Image src="/images/kakao-consult-dog.png" alt="" fill sizes="88px" className="object-cover object-[center_43%]" priority />
+            <span className="absolute bottom-0 left-[13px] h-[60px] w-[60px] rounded-full bg-[var(--color-cta-button)]">
+              <span className="absolute inset-0.5 overflow-hidden rounded-full bg-white">
+                <Image src="/images/kakao-consult-dog.png" alt="" fill sizes="56px" className="object-cover object-[center_43%]" priority />
               </span>
             </span>
           </span>

@@ -5,6 +5,7 @@ import { HomePackagePlansSection } from "@/widgets/home/package-plans";
 import { WhyGallerySection } from "@/widgets/home/why-gallery";
 import { ReviewsSection } from "@/widgets/home/reviews";
 import { HomeRedesign } from "@/widgets/home/redesign";
+import { ChuseokDeliveryNotice } from "@/widgets/home/delivery-notice";
 import { FooterSection } from "@/widgets/footer";
 import { HOME_REDESIGN_ENABLED } from "@/shared/config/homeRedesign";
 
@@ -30,6 +31,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="pt-[var(--banner-height)]">
+      <ChuseokDeliveryNotice />
       {/* 페이지 단일 시맨틱 h1 — Hero가 이미지 헤딩이라 검색엔진/스크린리더용 텍스트 제목을 제공한다. */}
       <h1 className="sr-only">
         꼬순박스 — 100% 국내산 휴먼그레이드 강아지 수제간식 정기구독

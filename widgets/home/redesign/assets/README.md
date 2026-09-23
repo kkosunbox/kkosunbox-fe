@@ -12,7 +12,7 @@ dev용 신규 메인 구현을 위한 준비 에셋이다. 현재 페이지에�
 | --- | --- | --- |
 | main-section-2-image.png | [brand-story-package.png](brand-story-package.png) | 1172 x 1208 |
 | main-section-3-image.png | [subscription-dog-treat.png](subscription-dog-treat.png) | 910 x 908 |
-| main-section-3-svg-step-01.svg | [subscription-step-01-profile.svg](subscription-step-01-profile.svg) | 63 x 63 |
+| Group 1000006265.svg (강아지 프로필 아이콘) | [subscription-step-01-profile.svg](subscription-step-01-profile.svg) | 72 x 62 |
 | main-section-3-svg-step-02.svg | [subscription-step-02-plan.svg](subscription-step-02-plan.svg) | 62 x 62 |
 | main-section-3-svg-step-03.svg | [subscription-step-03-payment-date.svg](subscription-step-03-payment-date.svg) | 72 x 66 |
 | main-section-3-svg-step-04.svg | [subscription-step-04-delivery.svg](subscription-step-04-delivery.svg) | 91 x 55 |

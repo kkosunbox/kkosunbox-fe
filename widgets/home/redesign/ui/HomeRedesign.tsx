@@ -11,6 +11,7 @@ import { getProducts, type ProductDto } from "@/features/product/api";
 import { PACKAGES, tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
 import { FAQ_ITEMS } from "@/shared/config/faqItems";
 import { formatKrwPrice } from "@/shared/lib/format";
+import { openKakaoChannelChat } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import logo from "@/shared/assets/logo-main.svg";
 import brandStoryPackage from "../assets/brand-story-package.png";
@@ -64,6 +65,71 @@ const PACKAGE_BACKGROUNDS = {
   Standard: standardPackageBackground,
   Premium: premiumPackageBackground,
 } satisfies Record<PackageTier, StaticImageData>;
+
+interface IncomingPackageBackground {
+  tier: PackageTier;
+  ready: boolean;
+}
+
+function PackageBackdrop({ tier }: { tier: PackageTier }) {
+  const [currentTier, setCurrentTier] = useState(tier);
+  const [incoming, setIncoming] = useState<IncomingPackageBackground | null>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (tier === currentTier) {
+        setIncoming(null);
+        return;
+      }
+
+      setIncoming({ tier, ready: false });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [currentTier, tier]);
+
+  function finishTransition(nextTier: PackageTier) {
+    setCurrentTier(nextTier);
+    setIncoming(null);
+  }
+
+  return (
+    <div className={styles.packageBackdrop}>
+      <Image
+        key={currentTier}
+        src={PACKAGE_BACKGROUNDS[currentTier]}
+        alt=""
+        fill
+        quality={HIGH_IMAGE_QUALITY}
+        sizes="100vw"
+        className={styles.packageBackdropImage}
+        data-active={!incoming?.ready}
+      />
+      {incoming && (
+        <Image
+          key={incoming.tier}
+          src={PACKAGE_BACKGROUNDS[incoming.tier]}
+          alt=""
+          fill
+          quality={HIGH_IMAGE_QUALITY}
+          sizes="100vw"
+          className={styles.packageBackdropImage}
+          data-active={incoming.ready}
+          onLoad={() => {
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+              finishTransition(incoming.tier);
+              return;
+            }
+            setIncoming(current => current?.tier === incoming.tier ? { ...current, ready: true } : current);
+          }}
+          onTransitionEnd={event => {
+            if (event.propertyName === "opacity" && incoming.ready) finishTransition(incoming.tier);
+          }}
+        />
+      )}
+    </div>
+  );
+}
 const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /연어.*요거트|요거트.*연어/, image: salmonYogurtBall },
   { matches: /꼬미칩/, image: kkomiChips },
@@ -106,7 +172,7 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
   const pkg = PACKAGES.find(item => item.tier === tier)!;
   const price = selected ? planDisplayPrice(selected) : null;
   const sorted = [...plans].sort((a, b) => ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(a)) - ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(b))).slice(0, 3);
-  return <section className={styles.packages} aria-labelledby="package-title"><div className={styles.packageBackdrop}><Image key={tier} src={PACKAGE_BACKGROUNDS[tier]} alt="" fill quality={HIGH_IMAGE_QUALITY} sizes="100vw" /></div><div className={styles.container}>
+  return <section className={styles.packages} aria-labelledby="package-title"><PackageBackdrop tier={tier} /><div className={styles.container}>
     <div className={styles.packageHero}><div className={styles.packageCopy}>
       <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
       <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{selected?.description?.trim() || pkg.contents.join(" ")}</p>
@@ -150,7 +216,7 @@ function FaqSection() {
     <div className={styles.faqGrid}><div className={styles.faqItems}>{items.map(item => {
       const expanded = open === item.question; const id = `home-faq-${FAQ_ITEMS.indexOf(item)}`;
       return <div key={item.question} className={styles.faqItem} data-open={expanded}><h3><button type="button" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(expanded ? null : item.question)}><span><em>Q.</em> {item.question}</span><Image src={chevron} alt="" width={24} height={24} /></button></h3><div id={id} hidden={!expanded} className={styles.answer}>{item.answer}</div></div>;
-    })}</div><aside className={styles.contact}><Image src={logo} alt="꼬순박스" width={132} height={44} /><h3>더 질문이 있으신가요?</h3><p>원하는 답변을 찾지 못하셨나요?<br />언제든지 문의해주세요.</p><a href="https://pf.kakao.com/_xjHxlxfX" target="_blank" rel="noopener noreferrer">카카오톡 상담하기</a><Link href="/inquiry">1:1 문의하기</Link></aside></div>
+    })}</div><aside className={styles.contact}><Image src={logo} alt="꼬순박스" width={132} height={44} /><h3>더 질문이 있으신가요?</h3><p>원하는 답변을 찾지 못하셨나요?<br />언제든지 문의해주세요.</p><button type="button" onClick={openKakaoChannelChat}>카카오톡 상담하기</button><Link href="/inquiry">고객센터</Link></aside></div>
   </div></section>;
 }
 export default function HomeRedesign() {

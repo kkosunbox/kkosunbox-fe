@@ -120,6 +120,13 @@
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
+  --color-story-card-border: #FFBB79;
+  --color-story-ingredient-bg: #F3B06C;
+  --color-story-step-one: #FEECD9;
+  --color-story-step-two: #FAF0E7;
+  --color-story-step-three: #FFF4D9;
+  --color-story-step-text: #787272;
+  --color-story-balance-bg: #FFF1E4;
   --color-about-hero-bg: #FFF2D8; /* About Hero 섹션 배경 */
   --color-about-hero-mobile-fill: #FFF2D8; /* About Hero 모바일·태블릿 이미지 양옆 채움 색상 */
   --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
@@ -349,6 +356,13 @@
 }
 
 @theme inline {
+  --color-story-card-border: var(--color-story-card-border);
+  --color-story-ingredient-bg: var(--color-story-ingredient-bg);
+  --color-story-step-one: var(--color-story-step-one);
+  --color-story-step-two: var(--color-story-step-two);
+  --color-story-step-three: var(--color-story-step-three);
+  --color-story-step-text: var(--color-story-step-text);
+  --color-story-balance-bg: var(--color-story-balance-bg);
   --color-home-review-bg: var(--color-home-review-bg);
   --color-home-step-border: var(--color-home-step-border);
   --color-home-package-floor: var(--color-home-package-floor);

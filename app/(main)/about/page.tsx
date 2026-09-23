@@ -35,8 +35,7 @@ const breadcrumbJsonLd = {
 
 export default function AboutPage() {
   return (
-    <div className="max-lg:mt-[var(--banner-height)]">
-      <h1 className="sr-only">꼬순박스가 만드는 휴먼그레이드 강아지 수제간식</h1>
+    <div className="pt-[calc(var(--banner-height)+54px)]">
       <JsonLd data={breadcrumbJsonLd} />
       <AboutSection />
     </div>

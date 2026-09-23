@@ -14,6 +14,18 @@
 
 ## Color System
 
+### 브랜드스토리
+
+| Token | HEX | 용도 |
+|---|---|---|
+| `--color-story-card-border` | `#FFBB79` | 고민 아이콘 카드 테두리 |
+| `--color-story-ingredient-bg` | `#F3B06C` | 원료 섹션 그라디언트 |
+| `--color-story-step-one` | `#FEECD9` | 소량 제작 카드 |
+| `--color-story-step-two` | `#FAF0E7` | 직접 확인 카드 |
+| `--color-story-step-three` | `#FFF4D9` | 포장 카드 |
+| `--color-story-step-text` | `#787272` | 제작 과정 설명 |
+| `--color-story-balance-bg` | `#FFF1E4` | 맛과 건강 섹션 배경 |
+
 레퍼런스: `.claude/assets/screenshots/image-001.png`
 구현 파일: `app/globals.css`
 

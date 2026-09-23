@@ -25,6 +25,11 @@ const CHANNEL_PUBLIC_ID =
 const KAKAO_SDK_URL =
   "https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js";
 
+export function openKakaoChannelChat() {
+  if (!CHANNEL_PUBLIC_ID) return;
+  window.Kakao?.Channel.chat({ channelPublicId: CHANNEL_PUBLIC_ID });
+}
+
 export function KakaoTalkProvider() {
   const pathname = usePathname();
   const isPopup = isPopupRoute(pathname);
@@ -39,10 +44,6 @@ export function KakaoTalkProvider() {
     }
 
     setIsSdkReady(kakao.isInitialized());
-  }, []);
-
-  const openKakaoChat = useCallback(() => {
-    window.Kakao?.Channel.chat({ channelPublicId: CHANNEL_PUBLIC_ID });
   }, []);
 
   if (isPopup || !JAVASCRIPT_KEY || !CHANNEL_PUBLIC_ID) return null;
@@ -60,7 +61,7 @@ export function KakaoTalkProvider() {
       {isSdkReady && (
         <button
           type="button"
-          onClick={openKakaoChat}
+          onClick={openKakaoChannelChat}
           className="kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[86px] w-[86px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6"
           aria-label="카카오톡으로 상담하기"
         >

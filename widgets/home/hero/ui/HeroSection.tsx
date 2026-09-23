@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import heroVideoHeading from "../assets/hero-video-heading.svg";
 
 const HOME_HERO_VIDEOS = [
   { src: "/videos/home-hero.mp4", type: "video/mp4" },
@@ -121,26 +120,19 @@ export default function HeroSection() {
 
       <div className="relative z-10 mx-auto flex h-full items-end max-md:w-full max-md:px-5 md:max-lg:w-full md:max-lg:px-8 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
         <div className="max-w-[510px] pb-10 text-white md:pb-12 lg:pb-14">
-          <h2>
-            {/* eslint-disable-next-line @next/next/no-img-element -- exact supplied heading artwork */}
-            <img
-              src={heroVideoHeading.src}
-              alt="강아지가 먼저 찾는 간식"
-              width={heroVideoHeading.width}
-              height={heroVideoHeading.height}
-              className="h-auto max-md:w-[230px] md:w-[286px]"
-            />
+          <p className="mb-3 text-body-16-m text-white/85 max-md:text-body-13-r">휴먼그레이드 · 수제간식 · 정기배송</p>
+          <h2 className="font-bold leading-[1.2] tracking-[-0.04em] max-md:text-[28px] md:text-[40px]">
+            좋은 것만 주고 싶은 마음<br />꼬순박스에 담았습니다.
           </h2>
           <p className="mt-8 font-medium leading-[1.6] tracking-[-0.02em] text-white/85 max-md:text-[15px] md:text-[18px]">
-            먹는 순간 표정이 달라지는
-            <br className="md:hidden" /> 휴먼그레이드 수제 간식 구독
+            좋은 재료를 고르고, 영양을 생각하고, 정성껏 만듭니다.
           </p>
           <button
             type="button"
             onClick={handleCta}
             className="mt-6 rounded-[12px] bg-[var(--color-cta-button)] font-semibold tracking-[-0.03em] text-white transition-opacity hover:opacity-90 max-md:h-12 max-md:px-6 max-md:text-[14px] md:h-[52px] md:w-[282px] md:text-[16px]"
           >
-            10초 진단하고 우리 아이 맞춤 추천 받기
+            우리 아이한테 딱 맞는 간식 알아보기
           </button>
         </div>
       </div>

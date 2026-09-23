@@ -11,6 +11,10 @@
 .storyDescription { margin-top: 30px; font-size: 16px; line-height: 28px; color: black; }
 .storyButton { margin-top: 60px; color: var(--color-purchase-banner-bg); border-color: var(--color-purchase-banner-bg); }
 .storyImage { width: 100%; height: auto; border-radius: 32px; }
+@media (min-width: 1288px) {
+  .storyGrid { grid-template-columns: minmax(0, 1fr) 586px; gap: 40px; }
+  .storyDescription { white-space: nowrap; }
+}
 .steps { padding: 95px 0; background: var(--color-text-discount); }
 .stepsGrid { display: grid; grid-template-columns: minmax(0, 694fr) minmax(0, 455fr); gap: 91px; align-items: center; }
 .stepsContent { padding-top: 28px; }
@@ -45,7 +49,8 @@
 .stars { display: flex; flex-shrink: 0; }
 .stars img { width: 24px; height: 24px; }
 .reviewBody > p { font-size: 14px; line-height: 20px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.packages { position: relative; padding-top: 71px; background: white; }
+.packages { position: relative; padding-top: 95px; background: white; }
+.packageIntro { margin-bottom: 64px; }
 .packagePanel { padding-bottom: 81px; isolation: isolate; }
 .packageBackdrop { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: 32px 32px 0 0; background: var(--color-home-package-floor); pointer-events: none; }
 .packageBackdropPhoto { position: absolute; inset: 0 0 auto; height: 598px; mask-image: linear-gradient(to bottom, black calc(100% - 100px), transparent); }
@@ -213,6 +218,7 @@
   .contact a:last-child { grid-column: 2; grid-row: 3; margin-top: 0; }
 }
 @media (max-width: 767px) {
+  .packageIntro { margin-bottom: 32px; }
   .heading { font-size: 28px; line-height: 40px; word-break: keep-all; }
   .products .heading, .faq .heading { line-height: 40px; }
   .storyGrid { gap: 32px; }

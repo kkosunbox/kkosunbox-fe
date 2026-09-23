@@ -127,6 +127,7 @@
   --color-story-step-three: #FFF4D9;
   --color-story-step-text: #787272;
   --color-story-balance-bg: #FFF1E4;
+  --color-story-cta-bg: #EFEFEF;
   --color-about-hero-bg: #FFF2D8; /* About Hero 섹션 배경 */
   --color-about-hero-mobile-fill: #FFF2D8; /* About Hero 모바일·태블릿 이미지 양옆 채움 색상 */
   --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
@@ -363,6 +364,7 @@
   --color-story-step-three: var(--color-story-step-three);
   --color-story-step-text: var(--color-story-step-text);
   --color-story-balance-bg: var(--color-story-balance-bg);
+  --color-story-cta-bg: var(--color-story-cta-bg);
   --color-home-review-bg: var(--color-home-review-bg);
   --color-home-step-border: var(--color-home-step-border);
   --color-home-package-floor: var(--color-home-package-floor);

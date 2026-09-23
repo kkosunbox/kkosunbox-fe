@@ -25,6 +25,7 @@
 | `--color-story-step-three` | `#FFF4D9` | 포장 카드 |
 | `--color-story-step-text` | `#787272` | 제작 과정 설명 |
 | `--color-story-balance-bg` | `#FFF1E4` | 맛과 건강 섹션 배경 |
+| `--color-story-cta-bg` | `#EFEFEF` | 브랜드 스토리 CTA 배경 및 1920px 이미지 좌우 여백 |
 
 레퍼런스: `.claude/assets/screenshots/image-001.png`
 구현 파일: `app/globals.css`

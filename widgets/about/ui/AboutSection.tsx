@@ -98,7 +98,7 @@ export default function AboutSection() {
 
       <section className={styles.cta} aria-labelledby="story-cta">
         <div className={styles.ctaBackdrop}>
-          <Image src={cta} alt="편안하게 누워 쉬는 웰시코기" fill quality={HIGH_IMAGE_QUALITY} sizes="100vw" className={styles.backgroundImage} />
+          <Image src={cta} alt="편안하게 누워 쉬는 웰시코기" fill quality={HIGH_IMAGE_QUALITY} sizes="(min-width: 1920px) 1920px, 100vw" className={styles.backgroundImage} />
         </div>
         <div className={`${styles.container} ${styles.ctaInner}`}>
           <h2 id="story-cta" className={styles.heading}>“우리 강아지에게도<br /><span>마음 놓고 먹일 수 있을까?”</span></h2>

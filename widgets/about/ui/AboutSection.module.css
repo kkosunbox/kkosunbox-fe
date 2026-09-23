@@ -38,8 +38,8 @@
 .balance .body { margin-top: 24px; }
 .meals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; margin-top: 48px; }
 .meals img { width: 100%; height: auto; border-radius: 24px; }
-.cta { position: relative; color: var(--color-why-choose-text); }
-.ctaBackdrop { position: absolute; inset: 0; }
+.cta { position: relative; color: var(--color-why-choose-text); background: var(--color-story-cta-bg); }
+.ctaBackdrop { position: absolute; inset: 0; width: 100%; max-width: 1920px; margin-inline: auto; }
 .ctaInner { min-height: 713px; padding-top: 181px; padding-bottom: 180px; }
 .cta .body { margin-top: 38px; }
 .ctaButton { position: absolute; bottom: 65px; left: 50%; transform: translateX(-50%); width: 288px; height: 52px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 12px; background: var(--color-cta-button); color: var(--color-background); box-shadow: 0 4px 8px rgb(0 0 0 / 32%); font-size: 16px; font-weight: 600; line-height: 30px; }
@@ -94,7 +94,6 @@
   .balance { padding-block: 56px; }
   .meals { grid-template-columns: 1fr; gap: 24px; margin-top: 32px; }
   .ctaInner { min-height: 740px; padding-top: 56px; padding-bottom: 360px; }
-  .cta { background: var(--color-surface-light); }
   .ctaBackdrop { top: auto; bottom: 100px; height: 270px; }
   .cta .backgroundImage { object-position: 73% bottom; }
   .cta .body { margin-top: 24px; }

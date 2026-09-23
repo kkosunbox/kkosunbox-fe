@@ -93,14 +93,15 @@ function PackageBackdrop({ tier }: { tier: PackageTier }) {
   }
 
   return (
-    <div className={styles.packageBackdrop}>
+    <div className={styles.packageBackdrop} aria-hidden="true">
+      <div className={styles.packageBackdropPhoto}>
       <Image
         key={currentTier}
         src={PACKAGE_BACKGROUNDS[currentTier]}
         alt=""
         fill
         quality={HIGH_IMAGE_QUALITY}
-        sizes="100vw"
+        sizes="(min-width: 1288px) 1240px, calc(100vw - 48px)"
         className={styles.packageBackdropImage}
         data-active={!incoming?.ready}
       />
@@ -111,7 +112,7 @@ function PackageBackdrop({ tier }: { tier: PackageTier }) {
           alt=""
           fill
           quality={HIGH_IMAGE_QUALITY}
-          sizes="100vw"
+          sizes="(min-width: 1288px) 1240px, calc(100vw - 48px)"
           className={styles.packageBackdropImage}
           data-active={incoming.ready}
           onLoad={() => {
@@ -126,6 +127,7 @@ function PackageBackdrop({ tier }: { tier: PackageTier }) {
           }}
         />
       )}
+      </div>
     </div>
   );
 }
@@ -190,7 +192,7 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
   const pkg = PACKAGES.find(item => item.tier === tier)!;
   const price = selected ? planDisplayPrice(selected) : null;
   const sorted = [...plans].sort((a, b) => ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(a)) - ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(b))).slice(0, 3);
-  return <section className={styles.packages} aria-labelledby="package-title"><PackageBackdrop tier={tier} /><div className={styles.container}>
+  return <section className={styles.packages} aria-labelledby="package-title"><div className={`${styles.container} ${styles.packagePanel}`}><PackageBackdrop tier={tier} />
     <div className={styles.packageHero}><div className={styles.packageCopy}>
       <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
       <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{selected?.description?.trim() || pkg.contents.join(" ")}</p>

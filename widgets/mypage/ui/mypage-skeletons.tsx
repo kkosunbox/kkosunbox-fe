@@ -83,17 +83,14 @@ export function SubscriptionCardSkeleton() {
   );
 }
 
-/** PaymentCard — DashboardCard + 3행 */
+/** PaymentCard — 주문 유형별 건수 카드 2열 */
 export function PaymentCardSkeleton() {
   return (
     <div className={`${DASHBOARD_CARD_SURFACE_CLASS} gap-0 lg:h-[186px]`}>
       <SectionHeaderSkeleton />
-      <div className="flex min-h-0 flex-1 flex-col max-lg:gap-4 lg:gap-2">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex items-center gap-4">
-            <Bone className="h-4 w-16 shrink-0 lg:w-[88px]" />
-            <Bone className="h-4 flex-1 max-w-[200px]" />
-          </div>
+      <div className="grid grid-cols-2 max-md:gap-3 md:gap-5">
+        {[0, 1].map((i) => (
+          <Bone key={i} className="h-[85px] rounded-[12px]" />
         ))}
       </div>
     </div>

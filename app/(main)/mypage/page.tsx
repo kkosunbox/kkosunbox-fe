@@ -35,7 +35,7 @@ export default function MyPage() {
         </ErrorBoundary>
       }
       paymentCard={
-        <ErrorBoundary fallback={<CardErrorFallback title="결제관리" />}>
+        <ErrorBoundary fallback={<CardErrorFallback title="주문관리" />}>
           <Suspense fallback={<PaymentCardSkeleton />}>
             <PaymentCardLoader />
           </Suspense>

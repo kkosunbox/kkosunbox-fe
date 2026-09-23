@@ -1,125 +1,51 @@
-"use client";
-
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Text } from "@/shared/ui";
-import { openCenteredPopup } from "@/shared/lib/popup";
-import { DashboardCard, PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS, SectionHeader } from "../lib/dashboard-shared";
-import type { BillingInfo } from "@/features/billing/api/types";
-import { useBillingUpdatedAlert } from "@/features/billing/lib/billingSync";
-import { formatCardLabel } from "@/features/billing/lib/formatBillingLabel";
-import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
-import { formatDateToYMD } from "@/features/order";
-import type { UserSubscriptionDto } from "@/features/subscription/api/types";
+import Link from "next/link";
+import type { CombinedPaymentTypeSummaryResponse } from "@/features/payment/api/types";
+import { DashboardCard, SectionHeader } from "../lib/dashboard-shared";
 
 interface PaymentCardProps {
-  billingInfo: BillingInfo | null;
-  subscription: UserSubscriptionDto | null;
+  summary: CombinedPaymentTypeSummaryResponse;
 }
 
-function PaymentRow({
-  label,
-  children,
-  align = "center",
-}: {
-  label: string;
-  children: ReactNode;
-  align?: "center" | "start";
-}) {
+function OrderTypeIcon({ subscription }: { subscription: boolean }) {
   return (
-    <div className={`flex ${align === "start" ? "items-start" : "items-center"} gap-4`}>
-      <Text
-        variant="body-13-r"
-        className="w-[64px] shrink-0 font-medium text-[var(--color-text-secondary)] lg:w-[88px]"
-      >
-        {label}
-      </Text>
-      <div className="min-w-0 flex-1">{children}</div>
-    </div>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-[var(--color-footer-bg)]">
+      {subscription ? <>
+        <circle cx="17" cy="7" r="6" fill="currentColor" />
+        <circle cx="11" cy="13" r="9" fill="currentColor" fillOpacity="0.32" />
+        <path d="m7 12 3 3 6-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </> : <>
+        <path d="M7.5 9V7a4.5 4.5 0 0 1 9 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <path d="M4 7h16l1 14H3L4 7Z" fill="currentColor" fillOpacity="0.32" />
+        <path d="M7 12h9M7 16h6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      </>}
+    </svg>
   );
 }
 
-export function PaymentCard({ billingInfo: initialBillingInfo, subscription }: PaymentCardProps) {
-  const router = useRouter();
-  const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(initialBillingInfo);
-
-  // 서버 재조회(router.refresh) 결과가 로컬 state를 덮어쓰도록 동기화한다.
-  useEffect(() => {
-    setBillingInfo(initialBillingInfo);
-  }, [initialBillingInfo]);
-
-  // 다른 창에서 카드 등록/변경이 끝나면 서버에서 최신 결제수단을 다시 조회하고 완료 모달을 띄운다.
-  // 등록/변경 문구는 서버 prop 기준으로 분기한다(로컬 state는 postMessage로 먼저 바뀔 수 있음).
-  useBillingUpdatedAlert({
-    hadBilling: initialBillingInfo !== null,
-    onUpdated: () => router.refresh(),
-  });
-
-  const handlePaymentMessage = useCallback((e: MessageEvent) => {
-    if (e.origin !== window.location.origin) return;
-    if (e.data?.type === "PAYMENT_SELECTED" && e.data.billing) {
-      setBillingInfo(e.data.billing as BillingInfo);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("message", handlePaymentMessage);
-    return () => window.removeEventListener("message", handlePaymentMessage);
-  }, [handlePaymentMessage]);
-
-  // 결제수단 변경 팝업. 등록된 카드가 있으면 확인 1단계, 없으면 곧바로 Toss 카드 등록창이 뜬다.
-  function handleOpenPayment() {
-    openCenteredPopup("/payment?mode=change", "paymentPopup", { width: 650, height: 700 });
-  }
-
-  const hasMethod = billingInfo !== null;
-  const cardLabel = hasMethod ? formatCardLabel(billingInfo) : "미등록";
-  const nextDateLabel = getNextBillingDateLabel(
-    subscription?.nextBillingDate ?? null,
-    formatDateToYMD(new Date()),
-  );
-  const nextDate = nextDateLabel === "-" ? "-" : `${nextDateLabel} (카드결제)`;
+export function PaymentCard({ summary }: PaymentCardProps) {
+  const types = [
+    { value: "subscription", label: "구독제품", count: summary.subscriptionCount },
+    { value: "product", label: "단품제품", count: summary.productCount },
+  ] as const;
 
   return (
     <DashboardCard className="lg:h-[186px]">
-      <SectionHeader title="결제관리" linkLabel="결제관리" spacing="wide" />
-
-      <div className="flex min-h-0 flex-1 flex-col max-lg:gap-4 lg:gap-2">
-        <PaymentRow label="결제수단">
-          <Text
-            variant="body-13-r"
-            className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
+      <SectionHeader title="주문관리" href="/orders" linkLabel="주문내역" spacing="wide" />
+      <div className="grid grid-cols-2 max-md:gap-3 md:gap-5">
+        {types.map(({ value, label, count }) => (
+          <Link
+            key={value}
+            href={`/orders?orderType=${value}`}
+            aria-label={`${label} ${count}건 주문 내역 보기`}
+            className="flex min-h-[85px] min-w-0 rounded-[12px] bg-white transition-shadow hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)] max-md:flex-col max-md:justify-center max-md:gap-2 max-md:px-2 max-md:py-3 md:items-center md:justify-between md:gap-2 md:px-3"
           >
-            {hasMethod ? "신용카드 결제" : "미등록"}
-          </Text>
-        </PaymentRow>
-
-        <PaymentRow label="카드 정보" align="start">
-          <div className="flex min-w-0 items-center gap-2 max-lg:flex-wrap lg:flex-nowrap">
-            <Text
-              variant="body-13-r"
-              className={`min-w-0 truncate font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
-            >
-              {cardLabel}
-            </Text>
-            <button
-              type="button"
-              onClick={handleOpenPayment}
-              className={PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS}
-            >
-              결제등록/변경
-            </button>
-          </div>
-        </PaymentRow>
-
-        <PaymentRow label="다음 결제일">
-          <Text
-            variant="body-13-r"
-            className={`font-semibold ${hasMethod ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
-          >
-            {hasMethod ? nextDate : "-"}
-          </Text>
-        </PaymentRow>
+            <span className="flex items-center gap-2 max-md:justify-center">
+              <OrderTypeIcon subscription={value === "subscription"} />
+              <span className="whitespace-nowrap text-subtitle-16-b text-[var(--color-text)] max-md:text-body-14-sb">{label}</span>
+            </span>
+            <span className="break-words text-center text-title-20-b text-[var(--color-cta-button)]">{count.toLocaleString("ko-KR")}건</span>
+          </Link>
+        ))}
       </div>
     </DashboardCard>
   );

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getSubscriptionPlans, type SubscriptionPlanDto } from "@/features/subscription/api";
 import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { useReferral } from "@/features/referral/model";
-import { getProducts, type ProductDto } from "@/features/product/api";
+import { getProductCategories, getProducts, type ProductCategoryDto, type ProductDto } from "@/features/product/api";
 import { PACKAGES, tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { openKakaoChannelChat } from "@/shared/ui";
@@ -158,9 +158,6 @@ const HOME_FAQ_ITEMS = [
     answer: "현재 계정 데이터 전체를 한 번에 백업하는 기능은 제공하지 않습니다. 주문·결제 내역의 영수증은 마이페이지의 해당 주문 상세에서 다운로드할 수 있으며, 다른 자료가 필요하면 고객센터로 문의해 주세요.",
   },
 ] as const;
-const CATEGORIES = ["전체", "요거트볼", "껌류", "칩류", "화식"] as const;
-type Category = (typeof CATEGORIES)[number];
-
 function Stars({ rating = 5 }: { rating?: number }) {
   return <span className={styles.stars} role="img" aria-label={`평점 5점 만점에 ${rating}점`}>{Array.from({ length: 5 }, (_, index) => <Image key={index} src={star} width={24} height={24} alt="" style={{ clipPath: `inset(0 ${100 - Math.min(1, Math.max(0, rating - index)) * 100}% 0 0)` }} />)}</span>;
 }
@@ -206,18 +203,18 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
     }) : <p className={styles.empty}>{error ? "패키지 정보를 불러오지 못했습니다." : "현재 신청 가능한 패키지가 없습니다."} <Link href="/subscribe">구독몰에서 확인하기</Link></p>}</div>
   </div></section>;
 }
-function ProductShowcaseSection({ products, loading, error }: { products: ProductDto[]; loading: boolean; error: boolean }) {
-  const [category, setCategory] = useState<Category>("전체"); const [start, setStart] = useState(0);
+function ProductShowcaseSection({ products, categories, loading, error }: { products: ProductDto[]; categories: ProductCategoryDto[]; loading: boolean; error: boolean }) {
+  const [categoryId, setCategoryId] = useState<number | null>(null); const [start, setStart] = useState(0);
   const filtered = useMemo(() => {
-    const matching = products.filter(product => category === "전체" || product.name.includes(category === "껌류" ? "껌" : category === "칩류" ? "칩" : category));
+    const matching = products.filter(product => categoryId === null || product.categoryId === categoryId);
     const rank = (name: string) => { const index = PRODUCT_ART.findIndex(art => art.matches.test(name)); return index < 0 ? PRODUCT_ART.length : index; };
     return [...matching].sort((a, b) => rank(a.name) - rank(b.name));
-  }, [products, category]);
+  }, [products, categoryId]);
   const visible = filtered.slice(start, start + 4);
   return <section className={styles.products} aria-labelledby="products-title"><div className={styles.container}>
     <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={217} height={77} /></Link>
     <h2 id="products-title" className={styles.heading}><span>원하는 제품만</span> 자유롭게 간편하게 구매하세요.</h2><p className={styles.productDescription}>체크리스트 후 우리 아이에게 적절한 패키지 박스를 추천받을 수 있습니다!</p>
-    <div className={styles.tabs} role="group" aria-label="상품 카테고리">{CATEGORIES.map(item => <button key={item} type="button" aria-pressed={category === item} onClick={() => { setCategory(item); setStart(0); }}>{item}</button>)}</div>
+    <div className={styles.tabs} role="group" aria-label="상품 카테고리">{[{ id: null, name: "전체" }, ...categories].map(item => <button key={item.id ?? "all"} type="button" aria-pressed={categoryId === item.id} onClick={() => { setCategoryId(item.id); setStart(0); }}>{item.name}</button>)}</div>
     <div className={styles.productCarousel}><button type="button" className={`${styles.carouselArrow} ${styles.previous}`} aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
       <div className={styles.productCards}>{loading ? Array.from({ length: 4 }, (_, i) => <div key={i} className={styles.productSkeleton} aria-label="상품 불러오는 중" />) : visible.length ? visible.map(product => {
         const art = PRODUCT_ART.find(item => item.matches.test(product.name))?.image; const unavailable = product.isSoldOut || product.isSalesPaused;
@@ -240,7 +237,7 @@ function FaqSection() {
 }
 export default function HomeRedesign() {
   const { refCode } = useReferral();
-  const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]); const [products, setProducts] = useState<ProductDto[]>([]);
+  const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]); const [products, setProducts] = useState<ProductDto[]>([]); const [productCategories, setProductCategories] = useState<ProductCategoryDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true); const [productsLoading, setProductsLoading] = useState(true);
   const [plansError, setPlansError] = useState(false); const [productsError, setProductsError] = useState(false);
   useEffect(() => { let alive = true;
@@ -248,8 +245,11 @@ export default function HomeRedesign() {
     return () => { alive = false; };
   }, [refCode]);
   useEffect(() => { let alive = true;
-    getProducts().then(response => { if (alive) { setProducts(response.products); setProductsError(false); } }).catch(() => { if (alive) { setProducts([]); setProductsError(true); } }).finally(() => { if (alive) setProductsLoading(false); });
+    Promise.all([
+      getProducts().then(response => ({ products: response.products, failed: false })).catch(() => ({ products: [] as ProductDto[], failed: true })),
+      getProductCategories().then(response => response.categories).catch(() => [] as ProductCategoryDto[]),
+    ]).then(([productsResult, categories]) => { if (alive) { setProducts(productsResult.products); setProductCategories(categories); setProductsError(productsResult.failed); } }).finally(() => { if (alive) setProductsLoading(false); });
     return () => { alive = false; };
   }, []);
-  return <div className={styles.home}><BrandStorySection /><SubscriptionStepsSection /><ReviewsSection /><PackageShowcaseSection plans={plans} loading={plansLoading} error={plansError} /><ProductShowcaseSection products={products} loading={productsLoading} error={productsError} /><FaqSection /></div>;
+  return <div className={styles.home}><BrandStorySection /><SubscriptionStepsSection /><ReviewsSection /><PackageShowcaseSection plans={plans} loading={plansLoading} error={plansError} /><ProductShowcaseSection products={products} categories={productCategories} loading={productsLoading} error={productsError} /><FaqSection /></div>;
 }

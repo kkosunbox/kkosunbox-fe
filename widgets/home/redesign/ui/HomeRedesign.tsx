@@ -165,9 +165,9 @@ function Stars({ rating = 5 }: { rating?: number }) {
 }
 function BrandStorySection() {
   return <section className={styles.story} aria-labelledby="brand-story-title"><div className={`${styles.container} ${styles.storyGrid}`}>
-    <div><h2 id="brand-story-title" className={styles.heading}><span>까다로운 입맛과 예민한 건강</span>을 위해,<br />{" "}결국 보호자가 직접 만들었습니다.</h2>
-      <p className={styles.storyDescription}>&apos;기호성 최고&apos;라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.<br />{" "}수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p>
-      <Link href="/about" className={`${styles.outlineButton} ${styles.storyButton}`}>브랜드 스토리 보러가기</Link></div>
+    <div><h2 id="brand-story-title" className={styles.heading}><span>매일 먹는 간식이니까</span><br />더 꼼꼼하게 생각했습니다.</h2>
+      <p className={styles.storyDescription}>꼬순박스를 만드는 우리도 같은 보호자입니다. 잘 먹는 것도 중요하지만,<br />{" "}어떤 재료로 어떻게 만들었는지도 중요하다는 걸 잘 알고 있습니다.<br /><br />그래서 맛은 물론, 원료와 영양까지 꼼꼼하게 살펴 우리 강아지에게 안심하고 줄 수 있는 간식을 만듭니다.</p>
+      <Link href="/about" className={`${styles.outlineButton} ${styles.storyButton}`}>꼬순박스 이야기</Link></div>
     <Image src={brandStoryPackage} alt="꼬순박스 수제간식은 까다롭게 직접 만들었습니다. 스탠다드 패키지 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
   </div></section>;
 }
@@ -181,7 +181,7 @@ function SubscriptionStepsSection() {
 }
 function ReviewsSection() {
   return <section className={styles.reviews} aria-labelledby="reviews-title"><div className={styles.container}>
-    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>실제 고객님들의</span><br />생생한 구매평입니다.</h2><p className={styles.reviewsDescription}>{`'기호성 최고'라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.`}<br />{" "}수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
+    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>먼저 경험한 보호자들의</span><br />이야기를 들어보세요.</h2><p className={styles.reviewsDescription}>아이들이 얼마나 잘 먹었는지, 어떤 점이 마음에 들었는지<br />{" "}꼬순박스를 직접 경험한 보호자들의 솔직한 후기를 모았습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
     <div className={styles.reviewCards}>{REVIEWS.map((review, index) => <article key={`${review.name}-${index}`} data-nosnippet aria-label={`${review.name} 보호자님의 후기 발췌`}><Image src={review.profile} alt="" width={38} height={38} className={styles.avatar} /><div className={styles.reviewBody}><div className={styles.reviewMeta}><span className={styles.tierBadge} data-tier={review.tier}>{review.label}</span><Stars /></div><p title={review.text}>{review.text}</p><span className="sr-only">{review.name} 보호자님</span></div></article>)}</div>
   </div></section>;
 }
@@ -192,7 +192,12 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
   const pkg = PACKAGES.find(item => item.tier === tier)!;
   const price = selected ? planDisplayPrice(selected) : null;
   const sorted = [...plans].sort((a, b) => ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(a)) - ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(b))).slice(0, 3);
-  return <section className={styles.packages} aria-labelledby="package-title"><div className={`${styles.container} ${styles.packagePanel}`}><PackageBackdrop tier={tier} />
+  return <section className={styles.packages} aria-labelledby="package-intro-title">
+    <div className={`${styles.container} ${styles.packageIntro}`}>
+      <h2 id="package-intro-title" className={styles.heading}><span>꼬순박스를</span> 정기구독으로 만나보세요.</h2>
+      <p className={styles.productDescription}>맛과 영양을 생각해 구성한 다양한 수제 간식을 정해진 주기에 맞춰 신선하게 보내드려요.</p>
+    </div>
+    <div className={`${styles.container} ${styles.packagePanel}`}><PackageBackdrop tier={tier} />
     <div className={styles.packageHero}><div className={styles.packageCopy}>
       <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
       <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{selected?.description?.trim() || pkg.contents.join(" ")}</p>
@@ -215,7 +220,7 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
   const visible = filtered.slice(start, start + 4);
   return <section className={styles.products} aria-labelledby="products-title"><div className={styles.container}>
     <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={217} height={77} /></Link>
-    <h2 id="products-title" className={styles.heading}><span>원하는 제품만</span> 자유롭게 간편하게 구매하세요.</h2><p className={styles.productDescription}>체크리스트 후 우리 아이에게 적절한 패키지 박스를 추천받을 수 있습니다!</p>
+    <h2 id="products-title" className={styles.heading}><span>마음에 드는 간식만</span> 골라서 만나보세요.</h2><p className={styles.productDescription}>꼬순박스에서 만나보던 수제 간식을 원하는 제품만 골라 단품으로 만나보세요.</p>
     <div className={styles.tabs} role="group" aria-label="상품 카테고리">{[{ id: null, name: "전체" }, ...categories].map(item => <button key={item.id ?? "all"} type="button" aria-pressed={categoryId === item.id} onClick={() => { setCategoryId(item.id); setStart(0); }}>{item.name}</button>)}</div>
     <div className={styles.productCarousel}><button type="button" className={`${styles.carouselArrow} ${styles.previous}`} aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
       <div className={styles.productCards}>{loading ? Array.from({ length: 4 }, (_, i) => <div key={i} className={styles.productSkeleton} aria-label="상품 불러오는 중" />) : visible.length ? visible.map(product => {
@@ -230,7 +235,7 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
 function FaqSection() {
   const [open, setOpen] = useState<string | null>(HOME_FAQ_ITEMS[0].question);
   return <section className={styles.faq} aria-labelledby="faq-title"><div className={styles.container}>
-    <h2 id="faq-title" className={styles.heading}><span>꼬순박스에 대해 궁금하신가요?</span></h2><p className={styles.faqDescription}>꼬순박스에 대해 궁금한 것이 있으시면 언제든지 문의해주세요.</p>
+    <h2 id="faq-title" className={`${styles.heading} text-black`}><span>꼬순박스에 대해</span> 궁금하신가요?</h2><p className={styles.faqDescription}>꼬순박스에 대해 궁금한 것이 있으시면 언제든지 문의해주세요.</p>
     <div className={styles.faqGrid}><div className={styles.faqItems}>{HOME_FAQ_ITEMS.map((item, index) => {
       const expanded = open === item.question; const id = `home-faq-${index}`;
       return <div key={item.question} className={styles.faqItem} data-open={expanded}><h3><button type="button" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(expanded ? null : item.question)}><span><em>Q.</em> {item.question}</span><Image src={chevron} alt="" width={24} height={24} /></button></h3><div id={id} hidden={!expanded} className={styles.answer}>{item.answer}</div></div>;

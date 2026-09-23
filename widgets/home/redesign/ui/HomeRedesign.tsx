@@ -165,8 +165,8 @@ function Stars({ rating = 5 }: { rating?: number }) {
 }
 function BrandStorySection() {
   return <section className={styles.story} aria-labelledby="brand-story-title"><div className={`${styles.container} ${styles.storyGrid}`}>
-    <div><h2 id="brand-story-title" className={styles.heading}><span>까다로운 입맛과 예민한 건강</span>을 위해,<br />결국 보호자가 직접 만들었습니다.</h2>
-      <p className={styles.storyDescription}>&apos;기호성 최고&apos;라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.<br />수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p>
+    <div><h2 id="brand-story-title" className={styles.heading}><span>까다로운 입맛과 예민한 건강</span>을 위해,<br />{" "}결국 보호자가 직접 만들었습니다.</h2>
+      <p className={styles.storyDescription}>&apos;기호성 최고&apos;라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.<br />{" "}수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p>
       <Link href="/about" className={`${styles.outlineButton} ${styles.storyButton}`}>브랜드 스토리 보러가기</Link></div>
     <Image src={brandStoryPackage} alt="꼬순박스 수제간식은 까다롭게 직접 만들었습니다. 스탠다드 패키지 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
   </div></section>;
@@ -174,14 +174,14 @@ function BrandStorySection() {
 function SubscriptionStepsSection() {
   return <section className={styles.steps} aria-labelledby="steps-title"><div className={`${styles.container} ${styles.stepsGrid}`}>
     <div className={styles.stepsContent}><h2 id="steps-title" className={styles.heading}><span className={styles.white}>이렇게 간편하게</span><br />매달 우리 아이의 영양을 챙겨주세요.</h2>
-      <p className={styles.stepsDescription}>복잡한 과정은 줄이고, 더 중요한 것에만 집중했어요.<br />지금부터 4단계로 간편하게 시작해보세요.</p>
+      <p className={styles.stepsDescription}>복잡한 과정은 줄이고, 더 중요한 것에만 집중했어요.<br />{" "}지금부터 4단계로 간편하게 시작해보세요.</p>
       <ol className={styles.stepCards}>{STEPS.map(step => <li key={step.number}><Image src={step.image} alt="" width={63} height={63} /><div><strong>{step.number}.</strong><h3>{step.title}</h3></div><p>{step.description}</p></li>)}</ol></div>
     <Image src={subscriptionDogTreat} alt="꼬순박스 간식을 기다리는 강아지" quality={HIGH_IMAGE_QUALITY} className={styles.stepsImage} sizes="(min-width: 768px) 455px, calc(100vw - 48px)" />
   </div></section>;
 }
 function ReviewsSection() {
   return <section className={styles.reviews} aria-labelledby="reviews-title"><div className={styles.container}>
-    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>실제 고객님들의</span><br />생생한 구매평입니다.</h2><p className={styles.reviewsDescription}>{`'기호성 최고'라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.`}<br />수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
+    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>실제 고객님들의</span><br />생생한 구매평입니다.</h2><p className={styles.reviewsDescription}>{`'기호성 최고'라는 간식 다 사줘봤지만, 며칠 먹다 외면하기 일쑤였습니다.`}<br />{" "}수많은 고민 끝에 간식을 직접 만들고 엄선해 보기로 했습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
     <div className={styles.reviewCards}>{REVIEWS.map((review, index) => <article key={`${review.name}-${index}`} data-nosnippet aria-label={`${review.name} 보호자님의 후기 발췌`}><Image src={review.profile} alt="" width={38} height={38} className={styles.avatar} /><div className={styles.reviewBody}><div className={styles.reviewMeta}><span className={styles.tierBadge} data-tier={review.tier}>{review.label}</span><Stars /></div><p title={review.text}>{review.text}</p><span className="sr-only">{review.name} 보호자님</span></div></article>)}</div>
   </div></section>;
 }

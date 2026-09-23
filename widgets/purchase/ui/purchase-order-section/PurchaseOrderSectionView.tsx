@@ -14,10 +14,12 @@ import type { usePurchaseOrderSection } from "./usePurchaseOrderSection";
 interface PurchaseOrderSectionViewProps {
   pkg: PackageData;
   purchaseProduct: PackagePurchaseProduct;
+  imageUrl?: string | null;
+  relatedPlanSlug?: string | null;
   vm: ReturnType<typeof usePurchaseOrderSection>;
 }
 
-export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseOrderSectionViewProps) {
+export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relatedPlanSlug, vm }: PurchaseOrderSectionViewProps) {
   return (
     <div className="pt-[var(--header-offset)]">
       <Script
@@ -33,9 +35,9 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
         total={vm.total}
       />
 
-      <div className="bg-white">
+      <div className="bg-white lg:overflow-x-auto">
         <div
-          className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:px-0"
+          className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:min-w-[900px] lg:px-0"
           style={{ maxWidth: "var(--max-width-content)" }}
         >
           <div className="grid items-start max-md:gap-y-9 md:grid-cols-[55%_1px_1fr] md:gap-x-6 lg:grid-cols-[1fr_1px_327px] lg:gap-x-8">
@@ -43,6 +45,8 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
             <div className="flex flex-col max-md:gap-9 md:gap-4">
               <PurchaseProductInfoCard
                 pkg={pkg}
+                imageUrl={imageUrl}
+                relatedPlanSlug={relatedPlanSlug}
                 unitPrice={purchaseProduct.price}
                 quantity={vm.quantity}
                 onDecrease={() => vm.setQuantity((q) => Math.max(QUANTITY_MIN, q - 1))}
@@ -71,6 +75,8 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
                 onRetry={vm.reloadWidget}
                 couponCodeInput={vm.couponCodeInput}
                 setCouponCodeInput={vm.setCouponCodeInput}
+                couponEnabled={vm.couponEnabled}
+                onToggleCoupon={vm.toggleCoupon}
                 couponInfo={vm.couponInfo}
                 couponError={vm.couponError}
                 couponDiscount={vm.couponDiscount}
@@ -95,13 +101,16 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, vm }: PurchaseO
                 originalShippingFee={vm.originalShippingFee}
                 shippingFee={vm.shippingFee}
                 total={vm.total}
+                quantity={vm.quantity}
                 agreeOpen={vm.agreeOpen}
                 agreeTerms={vm.agreeTerms}
                 agreePrivacy={vm.agreePrivacy}
+                agreeAge={vm.agreeAge}
                 agreeAll={vm.agreeAll}
                 onToggleAgreePanel={vm.toggleAgreePanel}
                 onToggleTerms={vm.toggleTerms}
                 onTogglePrivacy={vm.togglePrivacy}
+                onToggleAge={vm.toggleAge}
                 onAgreeAll={vm.handleAgreeAll}
                 submitError={vm.submitError}
                 isPaying={vm.isPaying}

@@ -55,7 +55,7 @@ function buildSubscriptionJsonLd(plans: SubscriptionPlanDto[]) {
             name: plan.name,
             description:
               plan.description || `${plan.name} 강아지 맞춤 수제간식 정기구독 플랜`,
-            image: `${SITE_URL}${TIER_BOX_IMAGES[tierFromSubscriptionPlan(plan)].src}`,
+            image: plan.imageUrl || `${SITE_URL}${TIER_BOX_IMAGES[tierFromSubscriptionPlan(plan)].src}`,
             url: `${SITE_URL}/subscribe/detail?planId=${plan.id}`,
             brand: { "@type": "Brand", name: "꼬순박스" },
             offers: {

@@ -70,7 +70,9 @@ export default async function ProductPage({ params }: Props) {
       url,
       priceCurrency: "KRW",
       price: product.price,
-      availability: "https://schema.org/InStock",
+      availability: product.isSalesPaused
+        ? "https://schema.org/OutOfStock"
+        : "https://schema.org/InStock",
       shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
       hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
     } : undefined,
@@ -91,8 +93,16 @@ export default async function ProductPage({ params }: Props) {
       <JsonLd data={breadcrumbJsonLd} />
       <PurchaseProductDetailPage
         pkg={catalog.pkg}
-        purchaseProduct={{ ...purchaseProduct, price: product?.price ?? purchaseProduct.price }}
+        purchaseProduct={{
+          ...purchaseProduct,
+          price: product?.price ?? purchaseProduct.price,
+          originalPrice: product?.originalPrice ?? null,
+        }}
         relatedPlanId={product?.relatedPlanId ?? null}
+        productId={product?.id ?? null}
+        isSoldOut={product?.isSoldOut ?? false}
+        isSalesPaused={product?.isSalesPaused ?? true}
+        imageUrl={product?.imageUrl ?? null}
       />
     </>
   );

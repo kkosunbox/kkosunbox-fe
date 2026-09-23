@@ -14,6 +14,7 @@ import {
 import {
   DropdownClipboardIcon,
   DropdownLogoutIcon,
+  DropdownOrderIcon,
   DropdownPinIcon,
   DropdownPointIcon,
   DropdownUserIcon,
@@ -67,6 +68,7 @@ export function MobileDrawer({
   const isMyPageActive = pathname === "/mypage";
   const isSubscriptionActive = pathname.startsWith("/mypage/subscription");
   const isPointActive = pathname.startsWith("/mypage/point");
+  const isOrdersActive = pathname.startsWith("/orders");
   const shortcutLabelClass = (active: boolean) =>
     `tracking-[-0.02em] ${
       active
@@ -157,14 +159,21 @@ export function MobileDrawer({
             <p className="absolute left-1/2 top-[175px] -translate-x-1/2 whitespace-nowrap text-[14px] leading-[18px] font-medium text-[var(--color-text-secondary)]">{email}</p>
           )}
 
-          {/* 단축 아이콘 3종 */}
-          <div className="absolute left-1/2 top-[221px] flex w-[268px] -translate-x-1/2 items-start justify-between">
+          {/* 단축 아이콘 */}
+          <div className="absolute left-1/2 top-[221px] flex w-[330px] -translate-x-1/2 items-start justify-between">
             <button
               onClick={() => { onClose(); router.push(isLoggedIn ? "/mypage" : "/login"); }}
               className="flex w-[60px] flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
             >
               <DropdownUserIcon />
               <span className={shortcutLabelClass(isMyPageActive)}>마이페이지</span>
+            </button>
+            <button
+              onClick={() => { onClose(); router.push(isLoggedIn ? "/orders" : "/login?next=/orders"); }}
+              className="flex w-14 flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
+            >
+              <DropdownClipboardIcon />
+              <span className={shortcutLabelClass(pathname.startsWith("/orders"))}>주문내역</span>
             </button>
             <button
               onClick={() => { onClose(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
@@ -209,6 +218,22 @@ export function MobileDrawer({
               </Link>
             );
           })}
+          {isLoggedIn && (
+            <Link
+              href="/orders"
+              onClick={onClose}
+              aria-current={isOrdersActive ? "page" : undefined}
+              className={[
+                "flex h-[58px] items-center gap-4 rounded-xl px-3 tracking-[-0.02em]",
+                isOrdersActive ? "bg-[var(--color-drawer-item-active)]" : "",
+              ].join(" ")}
+            >
+              <span className="[&>svg]:h-6 [&>svg]:w-6"><DropdownOrderIcon /></span>
+              <span className={isOrdersActive ? "text-[14px] leading-[17px] font-bold text-[var(--color-text)]" : "text-[14px] leading-[17px] font-medium text-[var(--color-text)]"}>
+                주문내역
+              </span>
+            </Link>
+          )}
           {isLoggedIn && isInfluencer && (
             <Link
               href="/mypage/point"

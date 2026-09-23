@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- 플랜 썸네일은 서버의 동적 원격 URL이다. */
 import type { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
@@ -31,7 +32,7 @@ export function OrderProductSection({
       <div>
         <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
           <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
-            <Image
+            {plan.imageUrl ? <img src={plan.imageUrl} alt={plan.name} className="h-full w-full object-cover" /> : <Image
               src={TIER_BOX_IMAGES[orderPlanTheme.tier]}
               alt={plan.name}
               fill
@@ -39,7 +40,7 @@ export function OrderProductSection({
               className="object-cover object-center scale-105"
               sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
               priority
-            />
+            />}
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-3">
             <span

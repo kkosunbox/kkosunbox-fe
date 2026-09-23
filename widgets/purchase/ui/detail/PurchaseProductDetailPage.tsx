@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- 상품 썸네일은 서버의 동적 원격 URL이다. */
 import { Fragment, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -22,12 +23,20 @@ import ProductReviewList from "@/widgets/subscribe/plans/ui/reviews/ProductRevie
 import ProductInfoImages from "@/widgets/subscribe/plans/ui/detail/ProductInfoImages";
 import ProductDeliveryInfo from "@/widgets/subscribe/plans/ui/detail/ProductDeliveryInfo";
 import ProductSupportTab from "@/widgets/subscribe/plans/ui/detail/ProductSupportTab";
+import { addCartItem } from "@/features/cart";
+import { notifyCartUpdated } from "@/features/cart/lib/events";
+import { getErrorMessage } from "@/shared/lib/api";
+import { useModal } from "@/shared/ui";
 
 interface Props {
   pkg: PackageData;
   purchaseProduct: PackagePurchaseProduct;
   /** 리뷰 조회용 — 백엔드 카탈로그 매칭 전이면 null(평점·리뷰 UI 숨김) */
   relatedPlanId: number | null;
+  productId: number | null;
+  isSoldOut: boolean;
+  isSalesPaused: boolean;
+  imageUrl: string | null;
 }
 
 type TabKey = "info" | "review" | "delivery" | "support";
@@ -45,15 +54,40 @@ function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
     : tab.label;
 }
 
-export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId }: Props) {
+function ProductPrice({ product }: { product: PackagePurchaseProduct }) {
+  const hasDiscount = product.originalPrice != null && product.originalPrice > product.price;
+  const discountRate = hasDiscount
+    ? Math.round((1 - product.price / product.originalPrice!) * 100)
+    : null;
+
+  return (
+    <>
+      {discountRate !== null && (
+        <>
+          <span className="text-body-16-b text-[var(--color-primary)]">{discountRate}%</span>
+          <span className="text-body-14-r text-[var(--color-text-tertiary)] line-through">
+            {formatKrwPrice(product.originalPrice!)}
+          </span>
+        </>
+      )}
+      <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
+        {formatKrwPrice(product.price)}
+      </span>
+    </>
+  );
+}
+
+export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId, productId, isSoldOut, isSalesPaused, imageUrl }: Props) {
   const router = useRouter();
+  const { openAlert } = useModal();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
   const desktopTabsRef = useRef<HTMLDivElement | null>(null);
 
-  const reviewState = useProductReviews(relatedPlanId ?? 0);
-  const hasReviews = relatedPlanId !== null;
+  const reviewState = useProductReviews(relatedPlanId, relatedPlanId === null ? productId : null);
+  const hasReviews = productId !== null;
+  const isUnavailable = isSoldOut || isSalesPaused || productId === null;
 
   function handleReviewCountClick() {
     setActiveTab("review");
@@ -70,7 +104,19 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 
   function handleBuy() {
+    if (isUnavailable) return;
     router.push(`/purchase/order?tier=${pkg.tier}&quantity=${quantity}`);
+  }
+
+  async function handleAddToCart() {
+    if (isUnavailable || productId === null) return;
+    try {
+      await addCartItem({ productId, quantity });
+      notifyCartUpdated();
+      openAlert({ title: "장바구니에 담았습니다.", primaryLabel: "장바구니 보기", onPrimary: () => router.push("/cart"), secondaryLabel: "계속 쇼핑하기" });
+    } catch (error) {
+      openAlert({ title: getErrorMessage(error, "장바구니에 담지 못했습니다.") });
+    }
   }
 
   const TopBar = (
@@ -106,7 +152,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
         <div className="px-6">
           <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
-            <Image
+            {imageUrl ? <img src={imageUrl} alt={`${pkg.name} 대표 이미지`} className="h-full w-full object-cover" /> : <Image
               src={TIER_BOX_IMAGES[pkg.tier]}
               alt={`${pkg.name} 대표 이미지`}
               fill
@@ -114,7 +160,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
               quality={HIGH_IMAGE_QUALITY}
               className="object-cover"
               priority
-            />
+            />}
           </div>
           <p className="mt-2 text-center text-[10px] font-medium leading-[14px] text-[var(--color-text-caption)]">
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -142,11 +188,9 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
             </div>
           )}
 
-          <div className="mt-3 flex items-baseline gap-2">
+          <div className="mt-3 flex flex-wrap items-baseline gap-2">
             <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
-            <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
-              {formatKrwPrice(purchaseProduct.price)}
-            </span>
+            <ProductPrice product={purchaseProduct} />
           </div>
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] px-1.5 pt-6">
@@ -214,14 +258,18 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                 {formatKrwPrice(total)}
               </span>
             </div>
+            <div className="grid grid-cols-2 gap-2">
+            <button type="button" onClick={handleAddToCart} disabled={isUnavailable} className="flex h-12 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
             <button
               type="button"
               onClick={handleBuy}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80"
+              disabled={isUnavailable}
+              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
               style={{ background: "var(--color-cta-button)" }}
             >
-              구매하기
+              {isSoldOut ? "품절" : isSalesPaused ? "판매 중지" : "구매하기"}
             </button>
+            </div>
           </div>
 
           <div ref={mobileTabsRef} className="mt-6 scroll-mt-4 border-b border-[var(--color-text-muted)] pb-3">
@@ -290,7 +338,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
           <div className="grid gap-8 lg:mx-auto lg:w-[1013px] lg:grid-cols-[508px_438px] lg:justify-between lg:gap-0">
             <div className="mx-auto min-w-0 w-full max-w-[508px] lg:mx-0">
               <div className="relative h-[508px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
-                <Image
+                {imageUrl ? <img src={imageUrl} alt={`${pkg.name} 대표 이미지`} className="h-full w-full object-cover" /> : <Image
                   src={TIER_BOX_IMAGES[pkg.tier]}
                   alt={`${pkg.name} 대표 이미지`}
                   fill
@@ -298,7 +346,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   quality={HIGH_IMAGE_QUALITY}
                   className="object-cover"
                   priority
-                />
+                />}
               </div>
               <p className="mt-2 text-center text-[12px] font-medium leading-[14px] text-[var(--color-text-caption)]">
                 ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
@@ -326,11 +374,9 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   </button>
                 </div>
               )}
-              <div className="mb-5 flex items-baseline gap-2">
+              <div className="mb-5 flex flex-wrap items-baseline gap-2">
                 <span className="text-body-16-b text-[var(--color-text-body-warm)]">단품 구매</span>
-                <span className="text-price-20-eb text-[var(--color-text-emphasis)]">
-                  {formatKrwPrice(purchaseProduct.price)}
-                </span>
+                <ProductPrice product={purchaseProduct} />
               </div>
               <div className="mb-8 border-t border-[var(--color-text-muted)] px-2 pt-7">
                 <div className="space-y-4">
@@ -392,14 +438,18 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                     {formatKrwPrice(total)}
                   </span>
                 </div>
+                <div className="grid grid-cols-2 gap-2 md:mt-8 lg:mt-8">
+                <button type="button" onClick={handleAddToCart} disabled={isUnavailable} className="flex h-[48px] items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
                 <button
                   type="button"
                   onClick={handleBuy}
-                  className="flex h-[48px] w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 md:mt-8 lg:mt-8"
+                  disabled={isUnavailable}
+                  className="flex h-[48px] w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
                   style={{ background: "var(--color-cta-button)" }}
                 >
-                  구매하기
+                  {isSoldOut ? "품절" : isSalesPaused ? "판매 중지" : "구매하기"}
                 </button>
+                </div>
               </div>
             </div>
           </div>

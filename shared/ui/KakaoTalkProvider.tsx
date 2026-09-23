@@ -25,6 +25,11 @@ const CHANNEL_PUBLIC_ID =
 const KAKAO_SDK_URL =
   "https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js";
 
+export function openKakaoChannelChat() {
+  if (!CHANNEL_PUBLIC_ID) return;
+  window.Kakao?.Channel.chat({ channelPublicId: CHANNEL_PUBLIC_ID });
+}
+
 export function KakaoTalkProvider() {
   const pathname = usePathname();
   const isPopup = isPopupRoute(pathname);
@@ -39,10 +44,6 @@ export function KakaoTalkProvider() {
     }
 
     setIsSdkReady(kakao.isInitialized());
-  }, []);
-
-  const openKakaoChat = useCallback(() => {
-    window.Kakao?.Channel.chat({ channelPublicId: CHANNEL_PUBLIC_ID });
   }, []);
 
   if (isPopup || !JAVASCRIPT_KEY || !CHANNEL_PUBLIC_ID) return null;
@@ -60,13 +61,13 @@ export function KakaoTalkProvider() {
       {isSdkReady && (
         <button
           type="button"
-          onClick={openKakaoChat}
+          onClick={openKakaoChannelChat}
           className="kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[86px] w-[86px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6"
           aria-label="카카오톡으로 상담하기"
         >
           <span className="block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-transform duration-200 group-hover:scale-[1.025] group-active:scale-[0.98]">
-            <span className="kakao-speech-float absolute -left-2 -top-1.5 z-10 h-10 w-[102px]">
-              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="102px" className="object-contain" priority />
+            <span className="kakao-speech-float absolute left-1/2 top-[-17.125px] z-10 h-[63.25px] w-[162.15px] -translate-x-1/2 max-md:top-[-12.844px] max-md:h-[47.438px] max-md:w-[121.613px]">
+              <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="(max-width: 767px) 122px, 163px" className="object-contain" priority />
             </span>
             <span className="absolute bottom-0 left-[13px] h-[60px] w-[60px] rounded-full bg-[var(--color-cta-button)]">
               <span className="absolute inset-0.5 overflow-hidden rounded-full bg-white">

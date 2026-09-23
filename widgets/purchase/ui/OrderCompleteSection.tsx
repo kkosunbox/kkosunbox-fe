@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- 주문 이미지 스냅샷은 서버의 동적 원격 URL이다. */
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +9,6 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { ShippingFeeWaiver } from "@/shared/ui";
 import orderCompleteHeroIcon from "../assets/order-complete-hero-icon.svg";
-import orderCompleteHeading from "../assets/order-complete-heading.svg";
 import orderCompleteDeliveryIcon from "../assets/order-complete-delivery-icon.png";
 
 function formatOrderDate(iso: string): string {
@@ -28,7 +28,8 @@ interface OrderCompleteSectionProps {
    * 카탈로그에서 상품을 못 찾으면 null — 이 경우 할인 행을 0원으로 표시한다.
    */
   basePrice: number | null;
-  productId: number;
+  productId: number | null;
+  imageUrl?: string | null;
   method?: string | null;
   tier: PackageTier | null;
 }
@@ -41,6 +42,7 @@ export default function OrderCompleteSection({
   amount,
   basePrice,
   productId,
+  imageUrl,
   method,
   tier,
 }: OrderCompleteSectionProps) {
@@ -74,16 +76,10 @@ export default function OrderCompleteSection({
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* 히어로 */}
       <div className="relative flex flex-col items-center bg-[var(--color-subscription-detail-header-bg)] px-6 py-10 text-center md:py-14">
-        {/* eslint-disable-next-line @next/next/no-img-element -- 그라디언트+원형 벡터 아이콘, Next/Image 재인코딩 불필요 */}
         <img src={orderCompleteHeroIcon.src} alt="" aria-hidden="true" width={108} height={106} />
-        {/* eslint-disable-next-line @next/next/no-img-element -- 미등록 폰트(GangwonEduPower) 텍스트를 벡터로 내보낸 헤딩 자산 */}
-        <img
-          src={orderCompleteHeading.src}
-          alt="주문이 완료되었습니다!"
-          width={251}
-          height={24}
-          className="mt-4 h-6 w-auto"
-        />
+        <h1 className="mt-4 text-[28px] font-extrabold leading-[33px] tracking-[-0.04em] text-[var(--color-cta-button)]">
+          주문이 완료되었습니다!
+        </h1>
         <p className="mt-3 text-body-16-m text-[var(--color-why-choose-text)]">
           소중한 주문 감사합니다. 꼼꼼하게 포장해서 보내드릴게요!
         </p>
@@ -105,14 +101,14 @@ export default function OrderCompleteSection({
             <h2 className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text-emphasis)]">주문상품 정보</h2>
             <div className="mt-5 flex items-center gap-4 sm:gap-6 md:gap-9">
               <div className="relative shrink-0 overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] lg:h-[148px] lg:w-[160px]">
-                <Image
+                {imageUrl ? <img src={imageUrl} alt={productName} className="h-full w-full object-cover" /> : <Image
                   src={boxImage}
                   alt={productName}
                   fill
                   quality={HIGH_IMAGE_QUALITY}
                   className="object-cover"
                   sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, (max-width: 1199px) 117px, 160px"
-                />
+                />}
               </div>
               <div className="flex min-w-0 flex-1 flex-col gap-3">
                 {pkg && (
@@ -184,7 +180,7 @@ export default function OrderCompleteSection({
         {/* 액션 버튼 */}
         <div className="mt-8 flex justify-center gap-3 max-sm:flex-col">
           <Link
-            href={`/mypage/purchase?productId=${productId}`}
+            href={productId ? `/mypage/purchase?productId=${productId}` : "/mypage"}
             className="inline-flex h-10 w-40 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] bg-white text-body-14-sb text-[var(--color-cta-button)] transition-opacity hover:opacity-80 max-sm:w-full"
           >
             주문 상세보기

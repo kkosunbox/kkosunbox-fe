@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../shared/config/homeRedesignTokens.css";
 
 /* Tailwind 클래스 파서가 text-* 유틸을 잘못 분리하는 문제 방지 */
 @source inline("text-title-24-sb-lh42");
@@ -119,6 +120,13 @@
   --color-cta-logo-bg: #F9D5B4;   /* About CTA 로고 카드 배경 (피치) */
   --color-cta-sage-bg: #D3E2BE;   /* About CTA 텍스트 카드 배경 (세이지 그린) */
   --color-text-cta: #595045;      /* About CTA 헤딩/본문 텍스트 (웜 다크 그레이) */
+  --color-story-card-border: #FFBB79;
+  --color-story-ingredient-bg: #F3B06C;
+  --color-story-step-one: #FEECD9;
+  --color-story-step-two: #FAF0E7;
+  --color-story-step-three: #FFF4D9;
+  --color-story-step-text: #787272;
+  --color-story-balance-bg: #FFF1E4;
   --color-about-hero-bg: #FFF2D8; /* About Hero 섹션 배경 */
   --color-about-hero-mobile-fill: #FFF2D8; /* About Hero 모바일·태블릿 이미지 양옆 채움 색상 */
   --color-about-hero-accent: #FFA348; /* About Hero 강조 문구 */
@@ -223,6 +231,8 @@
   --color-badge-warm-bg: #FFF1CD;       /* 상품 뱃지 '가장 리뷰 많은' 배경 */
   --color-badge-warm-text: #F66F00;     /* 상품 뱃지 '가장 리뷰 많은' 텍스트 */
   --color-badge-best-bg: #DFEEF7;       /* 상품 뱃지 'BEST' 배경 */
+  --color-badge-count-bg: #D83232;      /* 헤더 장바구니 개수 뱃지 배경 (레드) */
+  --color-header-icon: #555555;         /* 헤더 아이콘 선 (장바구니 등) */
   --color-cta-button: #EC7700;          /* WhyChoose CTA 버튼 (진한 오렌지) */
   --color-cta-button-soft: #E0770C;     /* 범용 모달 CTA 버튼 — cta-button의 채도만 낮춘 변형(S 100%→90%, hue·명도 동일). dim 배경 위에서 과채도로 읽히는 것 완화 */
   --color-banner-bg: #F89602;           /* 띠 배너 배경 (그랜드 오픈) */
@@ -346,6 +356,18 @@
 }
 
 @theme inline {
+  --color-story-card-border: var(--color-story-card-border);
+  --color-story-ingredient-bg: var(--color-story-ingredient-bg);
+  --color-story-step-one: var(--color-story-step-one);
+  --color-story-step-two: var(--color-story-step-two);
+  --color-story-step-three: var(--color-story-step-three);
+  --color-story-step-text: var(--color-story-step-text);
+  --color-story-balance-bg: var(--color-story-balance-bg);
+  --color-home-review-bg: var(--color-home-review-bg);
+  --color-home-step-border: var(--color-home-step-border);
+  --color-home-package-floor: var(--color-home-package-floor);
+  --color-home-faq-bg: var(--color-home-faq-bg);
+  --color-home-faq-active: var(--color-home-faq-active);
   --color-background: var(--color-background);
   --color-foreground: var(--color-text);
 
@@ -382,6 +404,8 @@
   --color-badge-warm-bg: var(--color-badge-warm-bg);
   --color-badge-warm-text: var(--color-badge-warm-text);
   --color-badge-best-bg: var(--color-badge-best-bg);
+  --color-badge-count-bg: var(--color-badge-count-bg);
+  --color-header-icon: var(--color-header-icon);
   --color-cta-button: var(--color-cta-button);
   --color-cta-button-soft: var(--color-cta-button-soft);
   --color-banner-bg: var(--color-banner-bg);

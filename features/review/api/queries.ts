@@ -10,6 +10,7 @@ import type {
   PlanReviewEligibility,
   MyReviewsResponse,
   ReviewResponse,
+  ProductReviewEligibility,
 } from "./types";
 
 function serverOpts(token?: string) {
@@ -35,6 +36,13 @@ export async function fetchEligiblePlans(token?: string): Promise<PlanReviewElig
   return apiClient
     .get<ReviewEligibilityResponse>("/v1/reviews/eligible-plans", serverOpts(token))
     .then((res) => res.plans)
+    .catch(() => []);
+}
+
+export async function fetchEligibleProducts(token?: string): Promise<ProductReviewEligibility[]> {
+  return apiClient
+    .get<ReviewEligibilityResponse>("/v1/reviews/eligible-plans", serverOpts(token))
+    .then((res) => res.products ?? [])
     .catch(() => []);
 }
 

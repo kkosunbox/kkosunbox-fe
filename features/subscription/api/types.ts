@@ -21,8 +21,12 @@ export interface SubscriptionPlanDto {
    */
   sortOrder: number;
   isRecommended: boolean;
+  imageUrl?: string | null;
+  slug?: string;
   /** 플랜 평균 별점 */
   averageRating: number;
+  /** true면 판매 일시중지 상태로 신규 구독을 받을 수 없음 */
+  isSalesPaused?: boolean;
   description?: string | null;
   tags: SubscriptionPlanTagDto[];
   /**

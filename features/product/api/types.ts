@@ -5,10 +5,33 @@ export interface ProductDto {
   name: string;
   /** 판매 가격 (부가세 포함) */
   price: number;
+  /** 할인 전 표시 가격. price보다 클 때만 원가/할인율을 노출한다. */
+  originalPrice: number | null;
+  categoryId: number | null;
+  category: ProductCategoryDto | null;
   description?: string | null;
   imageUrl?: string | null;
   /** 연관 구독 플랜 ID (리뷰 공유용) */
   relatedPlanId?: number | null;
+  relatedPlanSlug?: string | null;
+  stockQuantity?: number | null;
+  isSoldOut: boolean;
+  isSalesPaused: boolean;
+  averageRating: number;
+  reviewCount: number;
+}
+
+export interface ProductCategoryDto {
+  id: number;
+  name: string;
+  sortOrder: number;
+}
+
+export type ProductSortOrder = "LATEST" | "PRICE_DESC" | "PRICE_ASC";
+
+export interface GetProductsParams {
+  categoryId?: number;
+  sortOrder?: ProductSortOrder;
 }
 
 // ── ProductOrder ──────────────────────────────────────────────────
@@ -37,10 +60,15 @@ export type ProductOrderDisplayStatus =
 
 export interface ProductOrderDto {
   id: number;
-  productId: number;
-  productName: string;
-  quantity: number;
+  orderId: string;
+  orderName: string;
+  items: ProductOrderItemDto[];
+  totalQuantity: number;
+  itemsAmount: number;
+  couponDiscountAmount: number;
+  shippingFee: number;
   amount: number;
+  refundedAmount: number;
   status: ProductOrderStatus;
   displayStatus: ProductOrderDisplayStatus;
   deliveryStatus?: ProductDeliveryStatus;
@@ -50,6 +78,22 @@ export interface ProductOrderDto {
   deliveredAt?: string | null; // date-time
   approvedAt?: string | null; // date-time
   createdAt: string; // date-time
+}
+
+export interface ProductOrderItemDto {
+  id: number;
+  productId: number | null;
+  productName: string;
+  imageUrl?: string | null;
+  unitPrice: number;
+  quantity: number;
+  itemAmount: number;
+  allocatedAmount: number;
+  refundedQuantity: number;
+  refundedAmount: number;
+  remainingQuantity: number;
+  relatedPlanId?: number | null;
+  relatedPlanSlug?: string | null;
 }
 
 // ── 요청 ──────────────────────────────────────────────────────────
@@ -85,6 +129,10 @@ export interface ProductListResponse {
   products: ProductDto[];
 }
 
+export interface ProductCategoryListResponse {
+  categories: ProductCategoryDto[];
+}
+
 export interface PaginatedProductOrderResponse {
   orders: ProductOrderDto[];
   total: number;
@@ -93,6 +141,7 @@ export interface PaginatedProductOrderResponse {
 }
 
 export interface CreateProductOrderResponse {
+  id: number;
   /** 주문 ID (토스 결제위젯에 전달) */
   orderId: string;
   /** 결제 금액 (토스 결제위젯에 전달) */
@@ -116,15 +165,32 @@ export interface QuoteProductPriceRequest {
 
 /** POST /v1/products/{id}/price 응답 — 서버가 확정한 결제 예정 금액 */
 export interface QuoteProductPriceResponse {
-  /** 상품 단가 (부가세 포함) */
-  unitPrice: number;
-  quantity: number;
-  /** 할인 전 금액 (단가 × 수량) */
-  originalAmount: number;
+  lines?: ProductPriceQuoteLine[];
+  totalQuantity?: number;
+  itemsAmount?: number;
+  /** @deprecated 구형 API 호환 */ unitPrice?: number;
+  /** @deprecated 구형 API 호환 */ quantity?: number;
+  /** @deprecated 구형 API 호환 */ originalAmount?: number;
   /** 쿠폰 할인 금액 */
   couponDiscountAmount: number;
-  /** 실제 결제 금액 (쿠폰 적용 후 100원 단위 내림) */
+  discountedItemsAmount?: number;
+  shippingFee?: number;
   amount: number;
+}
+
+export interface ProductPriceQuoteLine {
+  productId: number;
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  itemAmount: number;
+  allocatedAmount: number;
+}
+
+export interface CancelProductOrderItemRequest { itemId: number; quantity: number }
+export interface CancelProductOrderRequest {
+  items?: CancelProductOrderItemRequest[];
+  cancelReason?: string;
 }
 
 // ── ProductCoupon ────────────────────────────────────────────────

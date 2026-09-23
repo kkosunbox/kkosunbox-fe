@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
-import { fetchProducts } from "@/features/product/api/queries";
-import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
-import { resolveProductsByTier } from "@/features/product/lib/resolveProductsByTier";
-import { NOINDEX_FOLLOW_METADATA } from "@/shared/lib/seo";
+import { fetchProductCategories, fetchProductsWithStatus } from "@/features/product/api/queries";
+import { JsonLd } from "@/shared/ui";
+import { SITE_URL, PRODUCT_SHIPPING_DETAILS_JSONLD, PRODUCT_RETURN_POLICY_JSONLD } from "@/shared/lib/seo";
 
 const purchaseTitle = "단품몰 | 강아지 수제간식 단품 - 꼬순박스";
 
 export const metadata: Metadata = {
   title: purchaseTitle,
   description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
-  alternates: { canonical: "/products" },
-  ...NOINDEX_FOLLOW_METADATA,
+  alternates: { canonical: "/purchase" },
   openGraph: {
     title: purchaseTitle,
     description: "꼬순박스의 프리미엄 강아지 수제간식 패키지를 단품으로 만나보세요.",
-    url: "/products",
+    url: "/purchase",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "꼬순박스 수제간식 단품" }],
   },
   twitter: {
@@ -34,15 +32,49 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function PurchasePage() {
-  const [products, plans] = await Promise.all([fetchProducts(), fetchSubscriptionPlans()]);
-  const productsByTier = resolveProductsByTier(products, plans);
+  const [{ products, loadFailed }, categories] = await Promise.all([fetchProductsWithStatus(), fetchProductCategories()]);
+  const productListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "꼬순박스 강아지 수제간식 단품",
+    url: `${SITE_URL}/purchase`,
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => {
+      const price = product.price;
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: product.name,
+          description:
+            product.description || `${product.name} 휴먼그레이드 강아지 수제간식 단품 패키지`,
+          ...(product.imageUrl ? { image: product.imageUrl } : {}),
+          url: `${SITE_URL}/purchase/detail?productId=${product.id}`,
+          brand: { "@type": "Brand", name: "꼬순박스" },
+          offers: {
+            "@type": "Offer",
+            url: `${SITE_URL}/purchase/detail?productId=${product.id}`,
+            priceCurrency: "KRW",
+            price,
+            availability: "https://schema.org/InStock",
+            shippingDetails: PRODUCT_SHIPPING_DETAILS_JSONLD,
+            hasMerchantReturnPolicy: PRODUCT_RETURN_POLICY_JSONLD,
+          },
+        },
+      };
+    }),
+  };
+
   return (
     <>
       <h1 className="sr-only">꼬순박스 강아지 수제간식 단품</h1>
+      <JsonLd data={productListJsonLd} />
       <Suspense fallback={null}>
         <PurchasePaymentErrorNotice />
       </Suspense>
-      <PurchaseListSection productsByTier={productsByTier} products={products} />
+      <PurchaseListSection products={products} categories={categories} initialLoadFailed={loadFailed} />
     </>
   );
 }

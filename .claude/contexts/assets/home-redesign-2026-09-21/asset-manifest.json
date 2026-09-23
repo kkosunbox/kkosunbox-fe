@@ -1,0 +1,93 @@
+[
+  {
+    "original": "main-section-2-image.png",
+    "file": "brand-story-package.png",
+    "dimensions": "1172 x 1208",
+    "bytes": 1960358,
+    "sha256": "f3476ab9e771aaedcc00088f2a1d2ec2d87eb9a8562c8ed99ea705939c7a7a09"
+  },
+  {
+    "original": "main-section-3-image.png",
+    "file": "subscription-dog-treat.png",
+    "dimensions": "910 x 908",
+    "bytes": 1018538,
+    "sha256": "8b8299bdc29cbd99d0ebd9224cb0005274dc88385d8e05ab47e5fbe07ebf26c2"
+  },
+  {
+    "original": "main-section-3-svg-step-01.svg",
+    "file": "subscription-step-01-profile.svg",
+    "dimensions": "63 x 63",
+    "bytes": 1829,
+    "sha256": "1427179baa33a1d458f9a3068abbd6fc8d2dad3f1f64e9a2a7bc23ec19807171"
+  },
+  {
+    "original": "main-section-3-svg-step-02.svg",
+    "file": "subscription-step-02-plan.svg",
+    "dimensions": "62 x 62",
+    "bytes": 2654,
+    "sha256": "d8650ed95db2727e42e7a104f7ef595ca1917ccbe360d5a734bd990e5cf86806"
+  },
+  {
+    "original": "main-section-3-svg-step-03.svg",
+    "file": "subscription-step-03-payment-date.svg",
+    "dimensions": "72 x 66",
+    "bytes": 3156,
+    "sha256": "c438b4726042f71fe07cd62157c40b32ad998c815ab8e460cb06cbd15545deb5"
+  },
+  {
+    "original": "main-section-3-svg-step-04.svg",
+    "file": "subscription-step-04-delivery.svg",
+    "dimensions": "91 x 55",
+    "bytes": 3133,
+    "sha256": "fb8f81e53cc20b670b100d6f54a3398fbbfa18f63a3d41cafdf5f70d56906196"
+  },
+  {
+    "original": "main-section-4-image-left.png",
+    "file": "review-dog-bowl.png",
+    "dimensions": "328 x 382",
+    "bytes": 205497,
+    "sha256": "e6c1c9c63501136968f2f0d0b796006d42d841735aeb2975b2114c1524f0cb56"
+  },
+  {
+    "original": "main-section-4-image-right.png",
+    "file": "review-dog-products.png",
+    "dimensions": "422 x 422",
+    "bytes": 298706,
+    "sha256": "26b8d7b33a3bc38e1651d757ce17541d5ae5fbe0f122eb6786b1c5bb2f02b3fa"
+  },
+  {
+    "original": "main-section-5-image-background.png",
+    "file": "package-showcase-background.png",
+    "dimensions": "3840 x 1460",
+    "bytes": 6305643,
+    "sha256": "d7dcc878b90cbfab0f79ef2939f297985f4fa70953fad9b5278e32b99c224a79"
+  },
+  {
+    "original": "main-section-5-image-asset-01.png",
+    "file": "product-salmon-yogurt-ball.png",
+    "dimensions": "290 x 270",
+    "bytes": 127056,
+    "sha256": "044369d21a2607d330a03c4eda89a24be01ffe5c9e9240b67c7cdd85c4c1c35b"
+  },
+  {
+    "original": "main-section-5-image-asset-02.png",
+    "file": "product-kkomi-chips.png",
+    "dimensions": "290 x 270",
+    "bytes": 127688,
+    "sha256": "0f55e462dff35177b82a09e0955df2e17a6dfc05008bf15841c446f6c04b9c70"
+  },
+  {
+    "original": "main-section-5-image-asset-03.png",
+    "file": "product-beef-meal.png",
+    "dimensions": "290 x 270",
+    "bytes": 156279,
+    "sha256": "4bc3c77cb74a6234a01a45543eaa8670c591dcb3872d1e2f1183799cd22ff80f"
+  },
+  {
+    "original": "main-section-5-image-asset-04.png",
+    "file": "product-duck-yogurt-ball.png",
+    "dimensions": "290 x 270",
+    "bytes": 130229,
+    "sha256": "072001d73a07a44e8910a0fd75126cc2ae8bf847996cc6607227c8cb2a668ab3"
+  }
+]

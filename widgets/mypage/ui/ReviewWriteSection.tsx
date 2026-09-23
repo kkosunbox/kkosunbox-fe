@@ -109,9 +109,11 @@ function StarRating({
 
 export default function ReviewWriteSection({
   planId,
+  productId,
   reviewId = null,
 }: {
   planId: number | null;
+  productId: number | null;
   reviewId?: number | null;
 }) {
   const router = useRouter();
@@ -127,8 +129,9 @@ export default function ReviewWriteSection({
   const isEditMode = reviewId != null;
   const [isLoadingReview, setIsLoadingReview] = useState(isEditMode);
 
-  const reviewWriteHref = planId
-    ? `/mypage/review/write?planId=${planId}${isEditMode ? `&reviewId=${reviewId}` : ""}`
+  const targetQuery = planId ? `planId=${planId}` : productId ? `productId=${productId}` : "";
+  const reviewWriteHref = targetQuery
+    ? `/mypage/review/write?${targetQuery}${isEditMode ? `&reviewId=${reviewId}` : ""}`
     : "/mypage/review/write";
 
   useEffect(() => {
@@ -224,8 +227,8 @@ export default function ReviewWriteSection({
     e.preventDefault();
     const trimmed = content.trim();
 
-    if (isEditMode ? reviewId == null : !planId) {
-      openAlert({ title: "리뷰를 작성할 구독 정보를 찾을 수 없습니다." });
+    if (isEditMode ? reviewId == null : (!planId && !productId)) {
+      openAlert({ title: "리뷰를 작성할 상품 정보를 찾을 수 없습니다." });
       return;
     }
     if (rating < 1) {
@@ -269,9 +272,9 @@ export default function ReviewWriteSection({
             title: "리뷰가 수정되었습니다.",
             description: "소중한 리뷰를 남겨주셔서 감사합니다.",
           });
-        } else if (planId) {
+        } else if (planId || productId) {
           await createReview({
-            planId,
+            ...(planId ? { planId } : { productId: productId! }),
             rating,
             content: trimmed,
             imageUrls: imageUrls ?? undefined,
@@ -303,7 +306,7 @@ export default function ReviewWriteSection({
   const hasNewUpload = attachments.some((att) => att.kind === "new");
 
   const isSubmittable =
-    (isEditMode ? reviewId != null : !!planId) &&
+    (isEditMode ? reviewId != null : !!(planId || productId)) &&
     rating >= 1 &&
     content.trim().length > 0;
 

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- 결제 스냅샷 이미지는 동적 원격 URL이다. */
 
 import { useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -136,6 +137,7 @@ function DeliveryItemCard({
 }) {
   const theme = packageThemeForPlan({ id: 0, name: payment.name, sortOrder: 0 });
   const planLabel = payment.name || "패키지";
+  const productItems = payment.orderType === "product" ? payment.items : [];
   const orderDate = formatDate(payment.createdAt);
   // 배송지는 결제 건별 스냅샷이다. 삭제된 배송지는 null로 내려오며,
   // 이때 다른 배송지로 대체하지 않고 섹션 자체를 감춘다(엉뚱한 주소 표시 방지).
@@ -184,7 +186,9 @@ function DeliveryItemCard({
   return (
     <article className="overflow-hidden rounded-2xl bg-white">
       <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-4">
-        <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex min-w-0 gap-3">
+          {(payment.orderType === "subscription" ? payment.imageUrl : payment.items[0]?.imageUrl) ? <img src={(payment.orderType === "subscription" ? payment.imageUrl : payment.items[0]?.imageUrl)!} alt="" className="h-14 w-14 shrink-0 rounded-lg object-cover" /> : null}
+          <div className="flex min-w-0 flex-col gap-2">
           <span
             className={[
               "inline-flex h-5 w-fit items-center rounded-full px-3 text-btn-12-m leading-[14px] font-semibold text-white",
@@ -208,13 +212,27 @@ function DeliveryItemCard({
             <p className="text-body-13-m leading-[1.4] text-[var(--color-text-label)]">
               주문접수 : {orderDate}
             </p>
+            <p className="text-body-12-m leading-[1.4] text-[var(--color-text-secondary)]">주문번호 : {payment.orderId}</p>
             <p className="text-body-13-m leading-[1.4] text-[var(--color-text-label)]">
               송장번호 : {payment.trackingNumber ?? "-"}
             </p>
           </div>
+          </div>
         </div>
         {actionButton}
       </div>
+
+      {productItems.length > 0 && (
+        <div className="mx-5 mb-4 space-y-2 border-t border-[var(--color-text-muted)] pt-3">
+          {productItems.map((item) => (
+            <div key={item.id} className="flex items-center gap-3">
+              {item.imageUrl ? <img src={item.imageUrl} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <div className="h-10 w-10 rounded-lg bg-[var(--color-surface-light)]" />}
+              <div className="min-w-0 flex-1"><p className="truncate text-body-13-m text-[var(--color-text)]">{item.productName}</p><p className="text-body-12-m text-[var(--color-text-secondary)]">수량 {item.quantity}개{item.refundedQuantity > 0 ? ` · 환불 ${item.refundedQuantity}개` : ""}</p></div>
+              {item.relatedPlanId && item.relatedPlanSlug ? <span className="rounded-full bg-[var(--color-secondary)] px-2 py-0.5 text-body-10-m">{item.relatedPlanSlug}</span> : null}
+            </div>
+          ))}
+        </div>
+      )}
 
       {deliveryAddress && (
         <>

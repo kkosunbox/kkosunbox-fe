@@ -12,6 +12,8 @@ export type SubscriptionPlanLike = {
   id: number;
   name: string;
   sortOrder: number;
+  imageUrl?: string | null;
+  slug?: string;
 };
 
 export function tierFromSubscriptionPlan(plan: SubscriptionPlanLike): PackageTier {

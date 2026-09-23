@@ -8,6 +8,8 @@ import { logProductFetch, logConfirmRequest, logConfirmSuccess, logConfirmFailur
 import type {
   ConfirmProductOrderRequest,
   GetProductOrdersParams,
+  GetProductsParams,
+  ProductCategoryDto,
   ProductDto,
   ProductOrderDto,
   ProductOrderPlanSummaryDto,
@@ -18,12 +20,40 @@ function serverOpts(token?: string) {
 }
 
 /** 단건 판매 상품 목록 */
-export async function fetchProducts(token?: string): Promise<ProductDto[]> {
+export async function fetchProducts(token?: string, params?: GetProductsParams): Promise<ProductDto[]> {
+  const { products } = await fetchProductsWithStatus(token, params);
+  return products;
+}
+
+/** 단건 판매 상품 목록과 초기 조회 실패 여부 */
+export async function fetchProductsWithStatus(token?: string, params?: GetProductsParams): Promise<{ products: ProductDto[]; loadFailed: boolean }> {
+  const searchParams = new URLSearchParams();
+  if (params?.categoryId !== undefined) searchParams.set("categoryId", String(params.categoryId));
+  if (params?.sortOrder !== undefined) searchParams.set("sortOrder", params.sortOrder);
+  const query = searchParams.size > 0 ? `?${searchParams.toString()}` : "";
+  try {
+    const data = await apiClient.get<{ products: ProductDto[] }>(`/v1/products${query}`, serverOpts(token));
+    logProductFetch(data.products);
+    return { products: data.products, loadFailed: false };
+  } catch {
+    logProductFetch([]);
+    return { products: [], loadFailed: true };
+  }
+}
+
+/** 단품몰 활성 카테고리 목록 */
+export async function fetchProductCategories(token?: string): Promise<ProductCategoryDto[]> {
   const data = await apiClient
-    .get<{ products: ProductDto[] }>("/v1/products", serverOpts(token))
-    .catch(() => ({ products: [] as ProductDto[] }));
-  logProductFetch(data.products);
-  return data.products;
+    .get<{ categories: ProductCategoryDto[] }>("/v1/products/categories", serverOpts(token))
+    .catch(() => ({ categories: [] as ProductCategoryDto[] }));
+  return data.categories;
+}
+
+/** 단건 판매 상품 상세 */
+export async function fetchProduct(id: number, token?: string): Promise<ProductDto | null> {
+  return apiClient
+    .get<ProductDto>(`/v1/products/${id}`, serverOpts(token))
+    .catch(() => null);
 }
 
 /** 내 단건 주문 목록 */

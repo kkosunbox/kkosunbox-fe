@@ -14,6 +14,18 @@
 
 ## Color System
 
+### 브랜드스토리
+
+| Token | HEX | 용도 |
+|---|---|---|
+| `--color-story-card-border` | `#FFBB79` | 고민 아이콘 카드 테두리 |
+| `--color-story-ingredient-bg` | `#F3B06C` | 원료 섹션 그라디언트 |
+| `--color-story-step-one` | `#FEECD9` | 소량 제작 카드 |
+| `--color-story-step-two` | `#FAF0E7` | 직접 확인 카드 |
+| `--color-story-step-three` | `#FFF4D9` | 포장 카드 |
+| `--color-story-step-text` | `#787272` | 제작 과정 설명 |
+| `--color-story-balance-bg` | `#FFF1E4` | 맛과 건강 섹션 배경 |
+
 레퍼런스: `.claude/assets/screenshots/image-001.png`
 구현 파일: `app/globals.css`
 
@@ -156,6 +168,8 @@
 | `--color-avatar-fallback` | `#B3A79D` | 유저 폴백 아바타 배경 |
 | `--color-review-text` | `#2C2C2C` | 리뷰 카드 본문·이름 텍스트 |
 | `--color-review-chip` | `#A16240` | 리뷰 카드 구독 기간 칩 |
+| `--color-badge-count-bg` | `#D83232` | 헤더 장바구니 개수 뱃지 배경 |
+| `--color-header-icon` | `#555555` | 헤더 아이콘 선 (장바구니 등) |
 
 ### Gradient
 
@@ -282,3 +296,15 @@
 ## Design Assets
 
 피그마 스크린샷 및 기획 이미지는 `.claude/assets/designs/`에 저장합니다.
+
+### 메인 리디자인 Figma 5526:5772 전용 토큰
+
+| 토큰 | 값 | 용도 |
+| --- | --- | --- |
+| `--color-home-review-bg` | `#FFDBAC` | 후기 섹션 배경 |
+| `--color-home-step-border` | `#FFBB79` | 구독 단계 카드 테두리 |
+| `--color-home-package-floor` | `#F6F2ED` | 패키지 사진 아래 그라디언트 |
+| `--color-home-faq-bg` | `#F6F6F6` | FAQ 섹션 배경 |
+| `--color-home-faq-active` | `#FFE3C6` | 펼친 FAQ 배경 |
+
+제목 강조와 구독 섹션은 기존 `--color-text-discount`(`#EC7700`)를 재사용한다. 기존 후기 섹션 및 공용 푸터 토큰은 변경하지 않는다.

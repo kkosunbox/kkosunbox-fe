@@ -70,7 +70,7 @@ export function KakaoTalkProvider() {
             </span>
             <span className="absolute bottom-0 left-[13px] h-[60px] w-[60px] rounded-full bg-[var(--color-cta-button)]">
               <span className="absolute inset-0.5 overflow-hidden rounded-full bg-white">
-                <Image src="/images/kakao-consult-dog.png" alt="" fill sizes="56px" className="object-cover object-[center_43%]" priority />
+                <Image src="/images/kakao-consult-dog.jpg" alt="" fill sizes="56px" className="translate-y-[2px] scale-[1.3] object-cover object-[center_34%]" priority />
               </span>
             </span>
           </span>

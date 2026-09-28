@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { tierFromSubscriptionPlan, tierLabel } from "@/entities/package";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
@@ -20,30 +20,12 @@ const MEDIA_POSITIONS: Record<number, string> = {
 };
 
 function ReviewArrow({ direction }: { direction: "left" | "right" }) {
-  const filterId = useId();
-
   return (
-    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <g filter={`url(#${filterId})`}>
-        <rect x="10" y="10" width="48" height="48" rx="24" fill="white" shapeRendering="crispEdges" />
-        <path d={direction === "left" ? "M39.3333 23.334L27.3333 34.0007L39.3333 44.6673" : "M28.6666 23.334L40.6666 34.0007L28.6666 44.6673"} stroke="var(--color-text-secondary)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      </g>
-      <defs>
-        <filter id={filterId} x="0" y="0" width="72" height="72" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix" />
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-          <feOffset dx="2" dy="2" />
-          <feGaussianBlur stdDeviation="6" />
-          <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.24 0" />
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-        </filter>
-      </defs>
+    <svg width="16" height="26" viewBox="0 0 16 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d={direction === "left" ? "M14 2L2 12.6667L14 23.3333" : "M2 2L14 12.6667L2 23.3333"} stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
-
 const REVIEWS = [
   {
     id: 1,
@@ -109,7 +91,7 @@ const REVIEWS = [
     id: 8,
     content: "간식 봉지만 네 개 늘어놓았는데 금별이가 바로 옆으로 와서 코부터 들이밀더라고요. ㅋㅋㅋㅋ 아직 개봉도 안 했는데 자기 것인 줄은 어쩜 이렇게 잘 아는지 ㅋㅋ 한 가지 수제간식만 계속 주면 금방 익숙해질 수 있는데, 이렇게 형태가 다른 제품이 들어 있으니 그날그날 골라 주기 좋았어요. ㅎㅎ",
     email: "ch****@naver.com",
-    tier: "Basic",
+    tier: "Standard",
     media: "/images/home/reviews/review-08.mp4",
     poster: "/images/home/reviews/review-08-poster.webp",
     kind: "video",
@@ -159,7 +141,7 @@ const REVIEWS = [
     id: 14,
     content: "너무 딱딱하지 않고 봉지를 열었을 때 기분 나쁜 냄새가 나지 않아서 걱정하지 않고 급여 할 수 있을 것 같았어요",
     email: "an****@naver.com",
-    tier: "Basic",
+    tier: "Standard",
     media: "/images/home/reviews/review-14.mp4",
     poster: "/images/home/reviews/review-14-poster.webp",
     kind: "video",
@@ -176,15 +158,48 @@ const REVIEWS = [
     id: 16,
     content: "은근 향이 좋지 않은 우유껌도 많은데 꼬순박스 베이직 패키지 박스 우유껌은 제가 씹어보고 싶을 정도로 맛있는 냄새가 나서 걱정하지 않고 급여할 수 있었답니다~",
     email: "lu****@naver.com",
-    tier: "Basic",
+    tier: "Standard",
     media: "/images/home/reviews/review-16.webp",
     kind: "image",
   },
 ] as const;
 
 export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] }) {
-  const [page, setPage] = useState(1);
-  const reviews = REVIEWS.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const [slide, setSlide] = useState(1);
+  const [animate, setAnimate] = useState(true);
+  const moving = useRef(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const frame = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+  }, []);
+
+  function move(direction: number) {
+    if (moving.current) return;
+    moving.current = true;
+    const next = slide + direction;
+    setAnimate(true);
+    setSlide(next);
+    timer.current = setTimeout(() => {
+      setAnimate(false);
+      setSlide(next === 0 ? 2 : next === 3 ? 1 : next);
+      frame.current = requestAnimationFrame(() => {
+        frame.current = requestAnimationFrame(() => {
+          moving.current = false;
+        });
+      });
+    }, 460);
+  }
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    trackRef.current?.querySelectorAll("video").forEach(video => {
+      if (video.closest("[inert]")) video.pause();
+      else void video.play().catch(() => {});
+    });
+  }, [slide]);
 
   return (
     <section className={styles.section} aria-labelledby="reviews-title">
@@ -192,8 +207,11 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
         <h2 id="reviews-title" className={styles.heading}><span>먼저 경험한 보호자들의</span> 이야기를 들어보세요.</h2>
         <p className={styles.description}>꼬순박스를 직접 경험한 보호자들의 솔직한 후기를 모았습니다.</p>
         <div className={styles.carousel}>
-          <div className={styles.cards}>
-            {reviews.map(review => {
+          <div className={styles.viewport}>
+          <div ref={trackRef} className={styles.track} style={{ transform: `translateX(calc(${-slide} * (100% + 40px)))`, transition: animate ? undefined : "none" }}>
+          {[2, 1, 2, 1].map((pageNumber, index) => (
+          <div key={index} className={styles.cards} inert={slide !== index} aria-hidden={slide !== index}>
+            {REVIEWS.slice((pageNumber - 1) * PAGE_SIZE, pageNumber * PAGE_SIZE).map(review => {
               const plan = plans.find(item => tierFromSubscriptionPlan(item) === review.tier);
               const planHref = plan
                 ? `/subscribe/detail?planId=${plan.id}`
@@ -202,8 +220,9 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
               return (
               <article key={review.id} className={styles.card}>
                 <div className={styles.photo}>
+                  <div className={review.id === 14 ? styles.croppedMedia : styles.media}>
                   {review.kind === "video" ? (
-                    <video style={{ objectPosition: MEDIA_POSITIONS[review.id] }} autoPlay muted loop playsInline preload="auto" poster={review.poster} aria-label={`${review.id}번 리뷰 영상`}>
+                    <video style={{ objectPosition: MEDIA_POSITIONS[review.id] }} autoPlay={slide === index} muted loop playsInline preload="auto" poster={review.poster} aria-label={`${review.id}번 리뷰 영상`}>
                       <source src={review.media} type="video/mp4" />
                       브라우저에서 영상을 재생할 수 없습니다.
                     </video>
@@ -211,6 +230,7 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
                     // eslint-disable-next-line @next/next/no-img-element -- 앱 정적 폴더의 리뷰 에셋.
                     <img style={{ objectPosition: MEDIA_POSITIONS[review.id] }} src={review.media} alt={`${review.id}번 리뷰 사진`} loading="lazy" />
                   )}
+                </div>
                 </div>
                 <div className={styles.body}>
                   <div className={styles.meta}>
@@ -224,9 +244,12 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
               );
             })}
           </div>
+          ))}
+          </div>
+          </div>
           <nav className={styles.controls} aria-label="후기 페이지">
-            <button type="button" disabled={page === 1} onClick={() => setPage(1)} aria-label="첫 번째 후기 페이지"><ReviewArrow direction="left" /></button>
-            <button type="button" disabled={page === 2} onClick={() => setPage(2)} aria-label="두 번째 후기 페이지"><ReviewArrow direction="right" /></button>
+            <button type="button" onClick={() => move(-1)} aria-label="이전 후기 페이지"><ReviewArrow direction="left" /></button>
+            <button type="button" onClick={() => move(1)} aria-label="다음 후기 페이지"><ReviewArrow direction="right" /></button>
           </nav>
         </div>
       </div>

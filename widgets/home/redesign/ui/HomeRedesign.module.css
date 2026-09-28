@@ -10,7 +10,11 @@
 .storyGrid { display: grid; grid-template-columns: minmax(0, 542fr) minmax(0, 586fr); gap: 112px; align-items: center; }
 .storyDescription { margin-top: 30px; font-size: 16px; line-height: 28px; color: black; }
 .storyButton { margin-top: 60px; color: var(--color-purchase-banner-bg); border-color: var(--color-purchase-banner-bg); }
+.storyVisual { position: relative; width: 100%; overflow: hidden; border-radius: 32px; }
 .storyImage { width: 100%; height: auto; border-radius: 32px; }
+.storyCaption { position: absolute; inset-inline: 40px; bottom: 26px; display: flex; flex-direction: column; color: white; }
+.storyCaption strong { font-size: 24px; line-height: 32px; font-weight: 800; }
+.storyCaption span { margin-top: 8px; font-size: 16px; line-height: 24px; font-weight: 500; }
 @media (min-width: 1288px) {
   .storyGrid { grid-template-columns: minmax(0, 1fr) 586px; gap: 40px; }
   .storyDescription { white-space: nowrap; }
@@ -149,7 +153,7 @@
   /* About의 문장 단위 줄바꿈과 기존 24px 컨테이너 여백을 유지한다. */
   .home { word-break: keep-all; overflow-wrap: anywhere; }
   .storyGrid { grid-template-columns: 1fr; gap: 40px; }
-  .storyImage { max-width: 586px; justify-self: center; }
+  .storyVisual { max-width: 586px; justify-self: center; }
   .story, .steps, .reviews, .faq { padding-block: 64px; }
   .stepsGrid { grid-template-columns: 1fr; gap: 40px; }
   .stepsContent { padding-top: 0; }
@@ -226,7 +230,10 @@
   .storyDescription br { display: none; }
   .story .heading br, .stepsDescription br { display: none; }
   .storyButton { margin-top: 32px; }
-  .storyImage { border-radius: 24px; }
+  .storyVisual, .storyImage { border-radius: 24px; }
+  .storyCaption { inset-inline: 24px; bottom: 20px; }
+  .storyCaption strong { font-size: 20px; line-height: 28px; }
+  .storyCaption span { margin-top: 4px; font-size: 14px; line-height: 20px; }
   .stepsDescription { font-size: 16px; line-height: 26px; }
   .stepCards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 32px; }
   .reviewsIntro { grid-template-columns: 1fr; gap: 32px; }

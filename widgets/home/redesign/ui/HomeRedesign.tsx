@@ -147,7 +147,10 @@ function BrandStorySection() {
     <div><h2 id="brand-story-title" className={styles.heading}><span>매일 먹는 간식이니까</span><br />더 꼼꼼하게 생각했습니다.</h2>
       <p className={styles.storyDescription}>꼬순박스를 만드는 우리도 같은 보호자입니다. 잘 먹는 것도 중요하지만,<br />{" "}어떤 재료로 어떻게 만들었는지도 중요하다는 걸 잘 알고 있습니다.<br /><br />그래서 맛은 물론, 원료와 영양까지 꼼꼼하게 살펴 우리 강아지에게 안심하고 줄 수 있는 간식을 만듭니다.</p>
       <Link href="/about" className={`${styles.outlineButton} ${styles.storyButton}`}>꼬순박스 이야기</Link></div>
-    <Image src={brandStoryPackage} alt="꼬순박스 수제간식은 까다롭게 직접 만들었습니다. 스탠다드 패키지 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
+    <figure className={styles.storyVisual}>
+      <Image src={brandStoryPackage} alt="꼬순박스 스탠다드 패키지와 수제간식 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
+      <figcaption className={styles.storyCaption}><strong>꼬순박스, 먹여보면 다릅니다.</strong><span>스탠다드 패키지 구성</span></figcaption>
+    </figure>
   </div></section>;
 }
 function SubscriptionStepsSection() {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import logo from "@/shared/assets/logo-main@2x.webp";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import hero from "../assets/brand-story-hero.png";
-import paper from "../assets/brand-story-paper.png";
+import paper from "../assets/ivory-paper-texture-tile-400.png";
 import restingDog from "../assets/brand-story-rest.png";
 import ingredients from "../assets/brand-story-ingredients.png";
 import allergy from "../assets/about-section-2-svg-01.svg";
@@ -31,8 +31,7 @@ const steps = [
 export default function AboutSection() {
   return (
     <div className={styles.story}>
-      <section className={styles.hero} aria-labelledby="story-title">
-        <Image src={paper} alt="" fill priority sizes="100vw" className={styles.paper} />
+      <section className={styles.hero} style={{ backgroundImage: `url(${paper.src})` }} aria-labelledby="story-title">
         <div className={`${styles.container} ${styles.heroInner}`}>
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}><Image src={logo} alt="꼬순박스" width={51} /> 브랜드 스토리</p>

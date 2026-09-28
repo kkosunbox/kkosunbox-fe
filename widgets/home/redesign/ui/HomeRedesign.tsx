@@ -147,7 +147,10 @@ function BrandStorySection() {
     <div><h2 id="brand-story-title" className={styles.heading}><span>매일 먹는 간식이니까</span><br />더 꼼꼼하게 생각했습니다.</h2>
       <p className={styles.storyDescription}>꼬순박스를 만드는 우리도 같은 보호자입니다. 잘 먹는 것도 중요하지만,<br />{" "}어떤 재료로 어떻게 만들었는지도 중요하다는 걸 잘 알고 있습니다.<br /><br />그래서 맛은 물론, 원료와 영양까지 꼼꼼하게 살펴 우리 강아지에게 안심하고 줄 수 있는 간식을 만듭니다.</p>
       <Link href="/about" className={`${styles.outlineButton} ${styles.storyButton}`}>꼬순박스 이야기</Link></div>
-    <Image src={brandStoryPackage} alt="꼬순박스 수제간식은 까다롭게 직접 만들었습니다. 스탠다드 패키지 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
+    <figure className={styles.storyVisual}>
+      <Image src={brandStoryPackage} alt="꼬순박스 스탠다드 패키지와 수제간식 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
+      <figcaption className={styles.storyCaption}><strong>꼬순박스, 먹여보면 다릅니다.</strong><span>스탠다드 패키지 구성</span></figcaption>
+    </figure>
   </div></section>;
 }
 function SubscriptionStepsSection() {
@@ -179,8 +182,8 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
     <div className={`${styles.container} ${styles.packagePanel}`}><PackageBackdrop tier={tier} />
     <div className={styles.packageHero}><div className={styles.packageCopy}>
       <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
-      <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{selected?.description?.trim() || pkg.contents.join(" ")}</p>
-      {price && <div className={styles.packagePrice}><span>월 요금제</span>{!!price.discountPct && <em>{price.discountPct}%</em>}<strong>{formatKrwPrice(price.price)}</strong>{price.strikePrice && <del>{formatKrwPrice(price.strikePrice)}</del>}</div>}
+      <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{pkg.contents.join(" ")}</p>
+      {price && <div className={styles.packagePrice}><span>월 요금제</span><span className={styles.packageCurrentPrice}>{!!price.discountPct && <em>{price.discountPct}%</em>}<strong>{formatKrwPrice(price.price)}</strong></span>{price.strikePrice && <del>{formatKrwPrice(price.strikePrice)}</del>}</div>}
       {selected && !selected.isSalesPaused ? <Link href={`/subscribe/detail?planId=${selected.id}`} className={styles.outlineButton}>제품 보러가기</Link> : <button className={styles.outlineButton} disabled>{loading ? "패키지 불러오는 중" : selected?.isSalesPaused ? "현재 신청이 어려워요" : "패키지 준비 중"}</button>}
     </div></div>
     <div className={styles.packageCards}>{loading ? Array.from({ length: 3 }, (_, i) => <div key={i} className={styles.packageSkeleton} aria-label="패키지 불러오는 중" />) : sorted.length ? sorted.map(plan => {

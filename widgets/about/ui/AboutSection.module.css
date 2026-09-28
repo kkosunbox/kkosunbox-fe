@@ -5,13 +5,13 @@
 .heading .white { color: var(--color-background); }
 .body { margin-top: 40px; font-size: 18px; line-height: 32px; font-weight: 500; word-break: keep-all; }
 .hero { position: relative; background-color: var(--color-about-hero-bg); background-repeat: repeat; background-size: 400px 400px; overflow: hidden; }
-.heroInner { min-height: 694px; }
-.heroCopy { position: relative; z-index: 1; padding-top: 178px; }
+.heroInner { min-height: 576px; }
+.heroCopy { position: relative; z-index: 1; padding-top: 148px; }
 .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 32px; font-weight: 600; color: var(--color-why-choose-text); }
 .eyebrow img { width: 51px; height: auto; }
 .heroTitle { margin-top: 5px; font-size: 52px; line-height: 58px; font-weight: 800; }
 .heroCopy .body { max-width: 450px; }
-.heroImage { position: absolute; width: 714px; height: auto; top: 90px; right: -26px; }
+.heroImage { position: absolute; width: auto; height: 450px; top: 50%; right: -26px; transform: translateY(-50%); }
 .concerns { padding-block: 140px; }
 .concernsInner { display: grid; grid-template-columns: minmax(0, 694fr) minmax(0, 455fr); gap: 91px; align-items: center; }
 .concernCards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin-top: 48px; }
@@ -49,7 +49,7 @@
   .heroInner { min-height: 600px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
   .heroCopy { padding-top: 0; }
   .heroTitle { font-size: 40px; line-height: 52px; word-break: keep-all; }
-  .heroImage { position: static; width: 100%; }
+  .heroImage { position: static; width: 100%; height: auto; transform: none; }
   .heroCopy .body { max-width: none; }
   .heading { font-size: 32px; line-height: 46px; }
   .concerns { padding-block: 88px; }

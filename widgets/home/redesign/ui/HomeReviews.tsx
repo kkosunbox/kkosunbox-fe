@@ -64,7 +64,7 @@ const REVIEWS = [
   },
   {
     id: 5,
-    content: "숮간식이다보니 아무래도 포장이나 보관 부분도 신경쓰일 수 밖에 없는데, 아이스박스 + 아이스팩으로 배송되어 더욱 안심이 되었어요 :)",
+    content: "수제간식이다보니 아무래도 포장이나 보관 부분도 신경쓰일 수 밖에 없는데, 아이스박스 + 아이스팩으로 배송되어 더욱 안심이 되었어요 :)",
     email: "eh****@naver.com",
     tier: "Basic",
     media: "/images/home/reviews/review-05.webp",
@@ -158,7 +158,7 @@ const REVIEWS = [
     id: 16,
     content: "은근 향이 좋지 않은 우유껌도 많은데 꼬순박스 베이직 패키지 박스 우유껌은 제가 씹어보고 싶을 정도로 맛있는 냄새가 나서 걱정하지 않고 급여할 수 있었답니다~",
     email: "lu****@naver.com",
-    tier: "Standard",
+    tier: "Basic",
     media: "/images/home/reviews/review-16.webp",
     kind: "image",
   },

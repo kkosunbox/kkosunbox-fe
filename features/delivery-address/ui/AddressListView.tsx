@@ -10,6 +10,7 @@ import { deleteDeliveryAddress } from "../api/deliveryAddressApi";
 interface Props {
   addresses: DeliveryAddress[];
   selectedId: number | null;
+  selectionMode: boolean;
   onSelect: (id: number) => void;
   onAddNew: () => void;
   onEdit: (address: DeliveryAddress) => void;
@@ -20,6 +21,7 @@ interface Props {
 export default function AddressListView({
   addresses,
   selectedId,
+  selectionMode,
   onSelect,
   onAddNew,
   onEdit,
@@ -119,7 +121,7 @@ export default function AddressListView({
                     <span className="truncate text-body-13-m leading-4 tracking-[-0.04em] text-[var(--color-text)]">
                       {addr.receiverName}
                     </span>
-                    {isSelected && (
+                    {selectionMode && isSelected && (
                       <CheckCircleIcon color="var(--color-cta-button)" />
                     )}
                   </div>
@@ -138,7 +140,7 @@ export default function AddressListView({
                 </div>
 
                 {/* Select button */}
-                {isSelected ? (
+                {selectionMode && (isSelected ? (
                   <span className="absolute right-[19px] top-[27px] text-body-13-m leading-4 text-[var(--color-cta-button)]">
                     선택됨
                   </span>
@@ -150,7 +152,7 @@ export default function AddressListView({
                   >
                     선택
                   </button>
-                )}
+                ))}
               </div>
 
               {/* Action buttons */}

@@ -55,8 +55,8 @@ export function useAddressState({
 
   function handleChangeAddress() {
     const url = selectedAddressId
-      ? `/address?selectedId=${selectedAddressId}`
-      : "/address";
+      ? `/address?mode=select&selectedId=${selectedAddressId}`
+      : "/address?mode=select";
     openCenteredPopup(url, "addressPopup", { width: 480, height: 700 });
   }
 

@@ -10,18 +10,18 @@ type View = "list" | "form" | "search";
 
 interface Props {
   initialAddresses: DeliveryAddress[];
+  /** 주문 등에서 배송지를 고르는 팝업으로 열렸는지 여부 */
+  selectionMode?: boolean;
   /** 외부에서 전달받은 선택 ID (예: order 페이지에서 현재 사용 중인 배송지) */
   initialSelectedId?: number | null;
 }
 
-export default function AddressManager({ initialAddresses, initialSelectedId }: Props) {
+export default function AddressManager({ initialAddresses, selectionMode = false, initialSelectedId }: Props) {
   const [view, setView] = useState<View>("list");
   const [addresses, setAddresses] =
     useState<DeliveryAddress[]>(initialAddresses);
   const [selectedId, setSelectedId] = useState<number | null>(
-    initialSelectedId !== undefined && initialSelectedId !== null
-      ? initialSelectedId
-      : initialAddresses[0]?.id ?? null,
+    initialSelectedId ?? null,
   );
   const [editingAddress, setEditingAddress] = useState<DeliveryAddress | null>(
     null,
@@ -109,7 +109,8 @@ export default function AddressManager({ initialAddresses, initialSelectedId }: 
       {view === "list" && (
         <AddressListView
           addresses={addresses}
-          selectedId={selectedId}
+          selectedId={selectionMode ? selectedId : null}
+          selectionMode={selectionMode}
           onSelect={handleSelect}
           onAddNew={handleAddNew}
           onEdit={handleEdit}

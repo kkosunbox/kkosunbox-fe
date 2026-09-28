@@ -6,12 +6,12 @@ import { AddressManager } from "@/features/delivery-address/ui";
 export default async function AddressPage({
   searchParams,
 }: {
-  searchParams: Promise<{ selectedId?: string }>;
+  searchParams: Promise<{ mode?: string; selectedId?: string }>;
 }) {
   const token = await getServerToken();
   if (!token) redirect("/login?next=/address");
 
-  const { selectedId: selectedIdStr } = await searchParams;
+  const { mode, selectedId: selectedIdStr } = await searchParams;
   const selectedId = selectedIdStr ? Number(selectedIdStr) : null;
 
   const addresses = await fetchDeliveryAddresses(token);
@@ -19,6 +19,7 @@ export default async function AddressPage({
   return (
     <AddressManager
       initialAddresses={addresses}
+      selectionMode={mode === "select"}
       initialSelectedId={Number.isFinite(selectedId) ? selectedId : null}
     />
   );

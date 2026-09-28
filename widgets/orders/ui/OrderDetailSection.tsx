@@ -17,7 +17,7 @@ const CARD = "grid rounded-[20px] border border-[var(--color-text-muted)] max-md
 const RIGHT = "min-w-0 border-[var(--color-text-muted)] max-md:border-t max-md:pt-6 md:border-l md:pl-[35px]";
 const HEADING = "mb-4 text-subtitle-18-b text-[var(--color-text)]";
 
-function DeliveryProgress({ payment }: { payment: CombinedPaymentDto }) {
+function DeliveryProgress({ payment, showTrackingNumber = true }: { payment: CombinedPaymentDto; showTrackingNumber?: boolean }) {
   const deliveryStep = payment.deliveryStatus === "DeliveryCompleted" ? 2 : payment.deliveryStatus === "DeliveryInProgress" ? 1 : payment.deliveryStatus === "PendingDelivery" ? 0 : null;
   const step = payment.displayStatus === "preparing" ? 0 : payment.displayStatus === "shipping" ? 1 : payment.displayStatus === "delivered" ? 2 : payment.displayStatus === "partially_refunded" ? deliveryStep : null;
   const labels = ["배송준비중", "배송중", "배송완료"];
@@ -29,7 +29,7 @@ function DeliveryProgress({ payment }: { payment: CombinedPaymentDto }) {
       <ol className="mt-6 flex justify-between text-body-13-r text-[var(--color-text-secondary)]">{labels.map((label, index) => <li key={label} aria-current={step === index ? "step" : undefined} className={step === index ? "rounded-full bg-[var(--color-surface-warm)] px-3 text-[var(--color-cta-button)]" : undefined}>{label}</li>)}</ol>
       {payment.displayStatus === "partially_refunded" && <p className="mt-2 text-body-13-r text-[var(--color-text-secondary)]">부분 환불</p>}
     </div>}
-    {payment.trackingNumber && <p className="mt-3 break-all text-body-13-r text-[var(--color-text-secondary)]">송장번호 {payment.trackingNumber}</p>}
+    {showTrackingNumber && payment.trackingNumber && <p className="mt-3 break-all text-body-13-r text-[var(--color-text-secondary)]">송장번호 {payment.trackingNumber}</p>}
   </>;
 }
 
@@ -86,8 +86,8 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
         <time dateTime={payment.createdAt} className="text-[var(--color-text-secondary)] md:ml-auto">주문일자 : {payment.createdAt.slice(0, 10).replace(/-/g, ".")}</time>
       </div>
       <div className={CARD}>
-        <section className="min-w-0 md:pr-[35px]"><h2 className={HEADING}>배송지</h2>{address ? <div className="space-y-1 text-body-14-m text-[var(--color-text)]"><p className="text-subtitle-16-b">{address.receiverName}{address.nickname ? `(${address.nickname})` : ""}</p><p>{address.phoneNumber}</p><p className="break-words">{address.address} {address.addressDetail} ({address.zipCode})</p>{address.memo && <p className="text-[var(--color-text-secondary)]">배송 메모: {address.memo}</p>}</div> : <p className="text-body-14-r text-[var(--color-text-secondary)]">주문 당시 배송지 정보가 없습니다.</p>}</section>
-        <section className={RIGHT}><h2 className={HEADING}>배송조회</h2><DeliveryProgress payment={payment} /></section>
+        <section className="min-w-0 md:pr-[35px]"><h2 className={HEADING}>배송지</h2>{address ? <div className="space-y-1 text-body-14-m text-[var(--color-text)]"><p className="text-subtitle-16-b">{address.receiverName}{address.nickname ? `(${address.nickname})` : ""}</p><p>{address.phoneNumber}</p><p className="break-words">{address.address} {address.addressDetail} ({address.zipCode})</p>{!subscription && address.memo && <p className="text-[var(--color-text-secondary)]">배송 메모: {address.memo}</p>}</div> : <p className="text-body-14-r text-[var(--color-text-secondary)]">주문 당시 배송지 정보가 없습니다.</p>}</section>
+        <section className={RIGHT}><h2 className={HEADING}>배송조회</h2><DeliveryProgress payment={payment} showTrackingNumber={!subscription} /></section>
       </div>
       <div className={`${CARD} mt-6`}>
         <section className="min-w-0 md:pr-[35px]"><h2 className={HEADING}>주문상품 정보</h2><div className="space-y-5">{products.map(item => {

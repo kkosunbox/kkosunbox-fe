@@ -61,15 +61,17 @@
 .packageBackdrop::after { content: ""; position: absolute; inset: auto 0 0; height: 188px; background: linear-gradient(to bottom, rgb(255 255 255 / 0), white); }
 .packageBackdropImage { object-fit: cover; object-position: center top; opacity: 0; transition: opacity .45s ease-in-out; }
 .packageBackdropImage[data-active="true"] { opacity: 1; }
-.packageHero { min-height: 468px; display: flex; justify-content: flex-end; padding: 88px 80px 38px 30px; }
-.packageCopy { width: 407px; }
+.packageHero { min-height: 468px; display: flex; justify-content: flex-end; padding: 88px 130px 38px 30px; }
+.packageCopy { width: 352px; }
 .packageBadges { display: flex; gap: 12px; align-items: center; }
-.packageBadges .tierBadge { font-size: 22px; line-height: 26px; padding: 6px 12px; }
-.shippingBadge { display: inline-flex; align-items: center; gap: 4px; background: white; padding: 7px 12px; border-radius: 30px; font-size: 20px; line-height: 24px; font-weight: 600; }
-.packageCopy h2 { margin-top: 36px; font-size: 44px; line-height: 48px; font-weight: 800; }
-.packageDescription { max-width: 350px; margin-top: 28px; font-size: 24px; line-height: 26px; font-weight: 500; word-break: keep-all; }
-.packagePrice { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 26px; letter-spacing: -.05em; }
-.packagePrice > span, .packagePrice del { color: var(--color-text-tertiary); font-size: 20px; font-weight: 600; }
+.packageBadges .tierBadge { min-height: 31px; font-size: 16px; line-height: 19px; padding: 6px 12px; }
+.shippingBadge { display: inline-flex; align-items: center; gap: 4px; min-height: 31px; background: white; padding: 3px 12px; border-radius: 30px; font-size: 16px; line-height: 19px; font-weight: 600; }
+.packageCopy h2 { margin-top: 17px; font-size: 36px; line-height: 48px; font-weight: 800; }
+.packageDescription { width: 324px; margin-top: 16px; font-size: 18px; line-height: 26px; font-weight: 500; word-break: keep-all; }
+.packagePrice { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 8px; margin-top: 12px; letter-spacing: -.05em; white-space: nowrap; }
+.packagePrice > span:first-child { color: var(--color-text-tertiary); font-size: 16px; line-height: 19px; font-weight: 700; }
+.packageCurrentPrice { display: flex; align-items: center; gap: 10px; }
+.packagePrice del { color: var(--color-text-tertiary); font-size: 18px; line-height: 21px; font-weight: 600; }
 .packagePrice em, .packagePrice strong { font-size: 32px; font-weight: 800; line-height: 38px; }
 .packagePrice em, .cardDiscount em { color: var(--color-text-discount); font-style: normal; }
 .packageCopy .outlineButton { margin-top: 24px; }

@@ -182,8 +182,8 @@ function PackageShowcaseSection({ plans, loading, error }: { plans: Subscription
     <div className={`${styles.container} ${styles.packagePanel}`}><PackageBackdrop tier={tier} />
     <div className={styles.packageHero}><div className={styles.packageCopy}>
       <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
-      <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{selected?.description?.trim() || pkg.contents.join(" ")}</p>
-      {price && <div className={styles.packagePrice}><span>월 요금제</span>{!!price.discountPct && <em>{price.discountPct}%</em>}<strong>{formatKrwPrice(price.price)}</strong>{price.strikePrice && <del>{formatKrwPrice(price.strikePrice)}</del>}</div>}
+      <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{pkg.contents.join(" ")}</p>
+      {price && <div className={styles.packagePrice}><span>월 요금제</span><span className={styles.packageCurrentPrice}>{!!price.discountPct && <em>{price.discountPct}%</em>}<strong>{formatKrwPrice(price.price)}</strong></span>{price.strikePrice && <del>{formatKrwPrice(price.strikePrice)}</del>}</div>}
       {selected && !selected.isSalesPaused ? <Link href={`/subscribe/detail?planId=${selected.id}`} className={styles.outlineButton}>제품 보러가기</Link> : <button className={styles.outlineButton} disabled>{loading ? "패키지 불러오는 중" : selected?.isSalesPaused ? "현재 신청이 어려워요" : "패키지 준비 중"}</button>}
     </div></div>
     <div className={styles.packageCards}>{loading ? Array.from({ length: 3 }, (_, i) => <div key={i} className={styles.packageSkeleton} aria-label="패키지 불러오는 중" />) : sorted.length ? sorted.map(plan => {

@@ -20,12 +20,6 @@ import stepProfile from "../assets/subscription-step-01-profile.svg";
 import stepPlan from "../assets/subscription-step-02-plan.svg";
 import stepPayment from "../assets/subscription-step-03-payment-date.svg";
 import stepDelivery from "../assets/subscription-step-04-delivery.svg";
-import reviewDogBowl from "../assets/review-dog-bowl.png";
-import reviewDogProducts from "../assets/review-dog-products.png";
-import profile1 from "../assets/review-profile-01.webp";
-import profile2 from "../assets/review-profile-02.webp";
-import profile3 from "../assets/review-profile-03.webp";
-import profile4 from "../assets/review-profile-04.webp";
 import star from "../assets/review-star.svg";
 import chevron from "../assets/chevron-down.svg";
 import arrow from "../assets/product-arrow.svg";
@@ -42,6 +36,7 @@ import kkomiChips from "../assets/product-kkomi-chips.png";
 import beefMeal from "../assets/product-beef-meal.png";
 import duckYogurtBall from "../assets/product-duck-yogurt-ball.png";
 import styles from "./HomeRedesign.module.css";
+import ReviewsSection from "./HomeReviews";
 import "@/shared/config/homeRedesignTokens.css";
 
 const STEPS = [
@@ -49,15 +44,6 @@ const STEPS = [
   { number: "02", title: "구독 선택", description: "딱 맞는 꼬순박스를 추천드려요.", image: stepPlan },
   { number: "03", title: "결제일 지정", description: <>결제 되는 날 꼬순박스가<br />출발해요</>, image: stepPayment },
   { number: "04", title: "집앞 배송", description: <>아이스박스에 담겨 신선하게<br />배송돼요</>, image: stepDelivery },
-] as const;
-// 기존 공개 후기 원문 발췌. 동일 보호자의 추가 발췌에도 원래 이름을 유지한다.
-const REVIEWS = [
-  { name: "콩콩", tier: "Premium", label: "프리미엄", profile: profile1, text: "원래 간식 진짜 가리는 애라서 이것저것 다 사봤는데 이건 처음으로 먼저 달라고 찾아요!" },
-  { name: "보리", tier: "Standard", label: "스탠다드", profile: profile2, text: "알러지 때문에 간식 고르는 게 항상 스트레스였는데 여기는 맞춤으로 추천해줘서 너무 편하고 좋아요." },
-  { name: "루루", tier: "Standard", label: "스탠다드", profile: profile4, text: "처음엔 반신반의하면서 시작했는데 지금은 간식 시간만 되면 눈빛이 완전 달라져요ㅋㅋ" },
-  { name: "보리", tier: "Standard", label: "스탠다드", profile: profile2, text: "성분도 깔끔해서 믿고 먹일 수 있고 무엇보다 아이가 너무 잘 먹어서 계속 구독 중입니다." },
-  { name: "몽땅", tier: "Basic", label: "베이직", profile: profile3, text: "일반 간식 주면 꼭 항상 반 정도 남기던 애인데 이건 끝까지 다 먹어요. 특히 종류가 다양해서 질려하지 않는 게 가장 좋아요." },
-  { name: "콩콩", tier: "Premium", label: "프리미엄", profile: profile1, text: "특히 수제라 그런지 냄새부터 다르고 먹고 나서도 탈이 없어서 너무 만족하고 있어요." },
 ] as const;
 const BOX_IMAGES = { Basic: basicBox, Standard: standardBox, Premium: premiumBox };
 const PACKAGE_BACKGROUNDS = {
@@ -145,7 +131,7 @@ function Stars({ rating = 5 }: { rating?: number }) {
 function BrandStorySection() {
   return <section className={styles.story} aria-labelledby="brand-story-title"><div className={`${styles.container} ${styles.storyGrid}`}>
     <div><h2 id="brand-story-title" className={styles.heading}><span>매일 먹는 간식이니까</span><br />더 꼼꼼하게 생각했습니다.</h2>
-      <p className={styles.storyDescription}>꼬순박스를 만드는 우리도 같은 보호자입니다. 잘 먹는 것도 중요하지만,<br />{" "}어떤 재료로 어떻게 만들었는지도 중요하다는 걸 잘 알고 있습니다.<br /><br />그래서 맛은 물론, 원료와 영양까지 꼼꼼하게 살펴 우리 강아지에게 안심하고 줄 수 있는 간식을 만듭니다.</p>
+      <p className={styles.storyDescription}>꼬순박스를 만드는 우리도 같은 보호자입니다. 잘 먹는 것도 중요하지만,<br className={styles.desktopSentenceBreak} />{" "}어떤 재료로 어떻게 만들었는지도 중요하다는 걸 잘 알고 있습니다.<br /><br />그래서 맛은 물론, 원료와 영양까지 꼼꼼하게 살펴 우리 강아지에게 안심하고 줄 수 있는 간식을 만듭니다.</p>
       <Link href="/about" className={`${styles.outlineButton} ${styles.storyButton}`}>꼬순박스 이야기</Link></div>
     <figure className={styles.storyVisual}>
       <Image src={brandStoryPackage} alt="꼬순박스 스탠다드 패키지와 수제간식 구성" quality={HIGH_IMAGE_QUALITY} className={styles.storyImage} sizes="(min-width: 1288px) 586px, (min-width: 1200px) 46vw, (min-width: 768px) 586px, calc(100vw - 48px)" />
@@ -159,12 +145,6 @@ function SubscriptionStepsSection() {
       <p className={styles.stepsDescription}>복잡한 과정은 줄이고, 더 중요한 것에만 집중했어요.<br />{" "}지금부터 4단계로 간편하게 시작해보세요.</p>
       <ol className={styles.stepCards}>{STEPS.map(step => <li key={step.number}><Image src={step.image} alt="" width={63} height={63} /><div><strong>{step.number}.</strong><h3>{step.title}</h3></div><p>{step.description}</p></li>)}</ol></div>
     <Image src={subscriptionDogTreat} alt="꼬순박스 간식을 기다리는 강아지" quality={HIGH_IMAGE_QUALITY} className={styles.stepsImage} sizes="(min-width: 768px) 455px, calc(100vw - 48px)" />
-  </div></section>;
-}
-function ReviewsSection() {
-  return <section className={styles.reviews} aria-labelledby="reviews-title"><div className={styles.container}>
-    <div className={styles.reviewsIntro}><div><h2 id="reviews-title" className={styles.heading}><span>먼저 경험한 보호자들의</span><br />이야기를 들어보세요.</h2><p className={styles.reviewsDescription}>아이들이 얼마나 잘 먹었는지, 어떤 점이 마음에 들었는지<br />{" "}꼬순박스를 직접 경험한 보호자들의 솔직한 후기를 모았습니다.</p></div><div className={styles.reviewPhotos}><Image src={reviewDogBowl} alt="꼬순박스를 먹는 강아지" width={164} height={191} sizes="164px" /><Image src={reviewDogProducts} alt="꼬순박스 간식과 함께 있는 강아지" width={211} height={211} sizes="211px" /></div></div>
-    <div className={styles.reviewCards}>{REVIEWS.map((review, index) => <article key={`${review.name}-${index}`} data-nosnippet aria-label={`${review.name} 보호자님의 후기 발췌`}><Image src={review.profile} alt="" width={38} height={38} className={styles.avatar} /><div className={styles.reviewBody}><div className={styles.reviewMeta}><span className={styles.tierBadge} data-tier={review.tier}>{review.label}</span><Stars /></div><p title={review.text}>{review.text}</p><span className="sr-only">{review.name} 보호자님</span></div></article>)}</div>
   </div></section>;
 }
 function PackageShowcaseSection({ plans, loading, error }: { plans: SubscriptionPlanDto[]; loading: boolean; error: boolean }) {
@@ -208,7 +188,18 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
       <div className={styles.productCards}>{loading ? Array.from({ length: 4 }, (_, i) => <div key={i} className={styles.productSkeleton} aria-label="상품 불러오는 중" />) : visible.length ? visible.map(product => {
         const art = PRODUCT_ART.find(item => item.matches.test(product.name))?.image; const unavailable = product.isSoldOut || product.isSalesPaused;
         const content = <><div className={styles.productImage}>{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : art ? <Image src={art} alt={product.name} fill sizes="(min-width: 1288px) 290px, (min-width: 768px) 23vw, 44vw" quality={HIGH_IMAGE_QUALITY} /> : <span>이미지 준비 중</span>}{unavailable && <span className={styles.unavailable}>{product.isSoldOut ? "품절" : "판매 중지"}</span>}</div><h3>{product.name}</h3><p>{product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식"}</p><span className={styles.productPrice}>{product.originalPrice != null && product.originalPrice > product.price && <em>{Math.round((1 - product.price / product.originalPrice) * 100)}%</em>}<strong>{formatKrwPrice(product.price)}</strong>{product.originalPrice != null && product.originalPrice > product.price && <del>{formatKrwPrice(product.originalPrice)}</del>}</span></>;
-        return unavailable ? <article key={product.id}>{content}</article> : <Link key={product.id} href={`/purchase/detail?productId=${product.id}`}>{content}</Link>;
+        const rating = product.reviewCount > 0 && product.averageRating > 0 ? (
+          <div className={styles.productRating} aria-label={`평점 ${product.averageRating.toFixed(1)}점, 리뷰 ${product.reviewCount}건`}>
+            <span>
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z" fill="var(--color-star)" />
+              </svg>
+              {product.averageRating.toFixed(1)}
+            </span>
+            <span className={styles.productReviewCount}>리뷰 {product.reviewCount.toLocaleString("ko-KR")}건</span>
+          </div>
+        ) : null;
+        return unavailable ? <article key={product.id}>{content}{rating}</article> : <Link key={product.id} href={`/purchase/detail?productId=${product.id}`}>{content}{rating}</Link>;
       }) : <p className={styles.empty}>{error ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리에 판매 중인 상품이 없습니다."} <Link href="/products">단품몰에서 확인하기</Link></p>}</div>
       <button type="button" className={`${styles.carouselArrow} ${styles.next}`} aria-label="다음 상품" disabled={start + 4 >= filtered.length} onClick={() => setStart(value => Math.min(Math.max(0, filtered.length - 4), value + 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
     </div>
@@ -241,5 +232,5 @@ export default function HomeRedesign() {
     ]).then(([productsResult, categories]) => { if (alive) { setProducts(productsResult.products); setProductCategories(categories); setProductsError(productsResult.failed); } }).finally(() => { if (alive) setProductsLoading(false); });
     return () => { alive = false; };
   }, []);
-  return <div className={styles.home}><BrandStorySection /><SubscriptionStepsSection /><ReviewsSection /><PackageShowcaseSection plans={plans} loading={plansLoading} error={plansError} /><ProductShowcaseSection products={products} categories={productCategories} loading={productsLoading} error={productsError} /><FaqSection /></div>;
+  return <div className={styles.home}><BrandStorySection /><SubscriptionStepsSection /><ReviewsSection plans={plans} /><PackageShowcaseSection plans={plans} loading={plansLoading} error={plansError} /><ProductShowcaseSection products={products} categories={productCategories} loading={productsLoading} error={productsError} /><FaqSection /></div>;
 }

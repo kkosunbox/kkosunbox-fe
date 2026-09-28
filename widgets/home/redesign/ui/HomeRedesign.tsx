@@ -12,6 +12,7 @@ import { PACKAGES, tierFromSubscriptionPlan, type PackageTier } from "@/entities
 import { formatKrwPrice } from "@/shared/lib/format";
 import { openKakaoChannelChat } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
+import { FAQ_ITEMS } from "@/shared/config/faqItems";
 import logo from "@/shared/assets/logo-main.svg";
 import brandStoryPackage from "../assets/brand-story-package.png";
 import subscriptionDogTreat from "../assets/subscription-dog-treat.png";
@@ -138,28 +139,6 @@ const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /오리.*요거트|요거트.*오리/, image: duckYogurtBall },
 ];
 
-const HOME_FAQ_ITEMS = [
-  {
-    question: "비밀번호를 잊어버렸습니다. 어떻게 재설정할 수 있나요?",
-    answer: "로그인 화면에서 [비밀번호 찾기]를 클릭하신 후, 가입 시 등록한 이메일로 인증을 받으시면 비밀번호를 새로 설정할 수 있습니다. 관리자에게 문의하지 않고 사용자 본인이 직접 처리할 수 있습니다.",
-  },
-  {
-    question: "알림 기능을 끄고 싶습니다. 어떻게 설정하는 건가요?",
-    answer: "마이페이지의 알림 설정에서 수신 동의를 변경할 수 있습니다. 다만 주문·결제·배송 상태와 같은 필수 안내는 서비스 이용을 위해 발송될 수 있습니다.",
-  },
-  {
-    question: "결제 수단(카드)을 변경하고 싶어요.",
-    answer: "마이페이지 > 구독 관리의 결제수단 영역에서 카드를 변경할 수 있습니다. 새로 등록한 카드는 다음 결제부터 적용됩니다.",
-  },
-  {
-    question: "베이직에서 프리미엄으로 변경하고 싶은데 가격이 얼마나 추가되며, 어떤 차이가 있나요?",
-    answer: "마이페이지 > 구독 관리 > 플랜 변경에서 각 플랜의 구성과 결제 금액을 비교할 수 있습니다. 프리미엄을 선택하면 변경될 금액이 화면에 안내되며, 변경 내용은 다음 결제 회차부터 적용됩니다.",
-  },
-  {
-    question: "데이터를 백업하거나 다운로드 할 수 있나요?",
-    answer: "현재 계정 데이터 전체를 한 번에 백업하는 기능은 제공하지 않습니다. 주문·결제 내역의 영수증은 마이페이지의 해당 주문 상세에서 다운로드할 수 있으며, 다른 자료가 필요하면 고객센터로 문의해 주세요.",
-  },
-] as const;
 function Stars({ rating = 5 }: { rating?: number }) {
   return <span className={styles.stars} role="img" aria-label={`평점 5점 만점에 ${rating}점`}>{Array.from({ length: 5 }, (_, index) => <Image key={index} src={star} width={24} height={24} alt="" style={{ clipPath: `inset(0 ${100 - Math.min(1, Math.max(0, rating - index)) * 100}% 0 0)` }} />)}</span>;
 }
@@ -233,12 +212,13 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
   </div></section>;
 }
 function FaqSection() {
-  const [open, setOpen] = useState<string | null>(HOME_FAQ_ITEMS[0].question);
+  const [open, setOpen] = useState<string | null>(FAQ_ITEMS[0].question);
+  const items = FAQ_ITEMS.slice(0, 5);
   return <section className={styles.faq} aria-labelledby="faq-title"><div className={styles.container}>
     <h2 id="faq-title" className={`${styles.heading} text-black`}><span>꼬순박스에 대해</span> 궁금하신가요?</h2><p className={styles.faqDescription}>꼬순박스에 대해 궁금한 것이 있으시면 언제든지 문의해주세요.</p>
-    <div className={styles.faqGrid}><div className={styles.faqItems}>{HOME_FAQ_ITEMS.map((item, index) => {
+    <div className={styles.faqGrid}><div className={styles.faqItems}>{items.map((item, index) => {
       const expanded = open === item.question; const id = `home-faq-${index}`;
-      return <div key={item.question} className={styles.faqItem} data-open={expanded}><h3><button type="button" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(expanded ? null : item.question)}><span><em>Q.</em> {item.question}</span><Image src={chevron} alt="" width={24} height={24} /></button></h3><div id={id} hidden={!expanded} className={styles.answer}>{item.answer}</div></div>;
+      return <div key={item.question} className={styles.faqItem} data-open={expanded}><h3><button type="button" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(expanded ? null : item.question)}><span><em>Q.</em> {item.question}</span><Image src={chevron} alt="" width={24} height={24} /></button></h3><div id={id} hidden={!expanded} className={styles.answer}>{item.fullAnswer}</div></div>;
     })}</div><aside className={styles.contact}><Image src={logo} alt="꼬순박스" width={132} height={44} /><h3>더 질문이 있으신가요?</h3><p>원하는 답변을 찾지 못하셨나요?<br />언제든지 문의해주세요.</p><button type="button" onClick={openKakaoChannelChat}>카카오톡 상담하기</button><Link href="/inquiry">고객센터</Link></aside></div>
   </div></section>;
 }

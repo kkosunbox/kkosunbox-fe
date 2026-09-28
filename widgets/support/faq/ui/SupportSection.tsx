@@ -110,7 +110,7 @@ function FaqDetailModal({ item, onClose }: { item: FaqItem; onClose: () => void 
           </button>
         </div>
         <p className="text-body-14-sb text-[var(--color-text)]">{item.question}</p>
-        <p className="min-h-[160px] text-body-14-m leading-[160%] text-[var(--color-text)]">{item.fullAnswer}</p>
+        <p className="min-h-[160px] whitespace-pre-line text-body-14-m leading-[160%] text-[var(--color-text)]">{item.fullAnswer}</p>
       </div>
     </ModalShell>
   );
@@ -134,7 +134,7 @@ export default function SupportSection({
     if (!q) return FAQ_ITEMS;
     return FAQ_ITEMS.filter(
       (item) =>
-        item.question.toLowerCase().includes(q) || item.answer.toLowerCase().includes(q),
+        item.question.toLowerCase().includes(q) || item.fullAnswer.toLowerCase().includes(q) || item.category.includes(q),
     );
   }, [query]);
 

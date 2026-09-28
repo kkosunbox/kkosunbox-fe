@@ -4,8 +4,7 @@
 .heading span, .heroTitle span { color: var(--color-cta-button); }
 .heading .white { color: var(--color-background); }
 .body { margin-top: 40px; font-size: 18px; line-height: 32px; font-weight: 500; word-break: keep-all; }
-.hero { position: relative; background: var(--color-about-hero-bg); overflow: hidden; }
-.paper { object-fit: cover; transform: scale(1.15); }
+.hero { position: relative; background-color: var(--color-about-hero-bg); background-repeat: repeat; background-size: 400px 400px; overflow: hidden; }
 .heroInner { min-height: 694px; }
 .heroCopy { position: relative; z-index: 1; padding-top: 178px; }
 .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 32px; font-weight: 600; color: var(--color-why-choose-text); }

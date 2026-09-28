@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Claude 컨텍스트·참고용 파일(예제 스니펫 등)은 앱 소스가 아니므로 린트 제외
     ".claude/**",
+    // 로컬 조사 산출물은 Git 관리 및 앱 소스 대상이 아니므로 린트 제외
+    "reports/**",
   ]),
 ]);
 

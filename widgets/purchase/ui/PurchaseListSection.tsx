@@ -26,6 +26,8 @@ interface DisplayProduct {
   href: string;
   isSoldOut: boolean;
   isSalesPaused: boolean;
+  averageRating: number;
+  reviewCount: number;
 }
 
 const SORT_OPTIONS: Array<{ value: ProductSortOrder; label: string }> = [
@@ -49,6 +51,17 @@ function GiftIcon() {
     <svg width="58" height="58" viewBox="0 0 58 58" fill="none" aria-hidden="true">
       <path d="M7.25 21.334c0-.9428 0-1.4142.2929-1.7071.2929-.2929.7643-.2929 1.7071-.2929h39.5c.9428 0 1.4142 0 1.7071.2929.2929.2929.2929.7643.2929 1.7071v8.0833c0 .9428 0 1.4142-.2929 1.7071-.2929.2929-.7643.2929-1.7071.2929H45.5c-.9428 0-1.4142 0-1.7071.2929-.2929.2929-.2929.7643-.2929 1.7071v12.9167c0 .9428 0 1.4142-.2929 1.7071-.2929.2929-.7643.2929-1.7071.2929h-25c-.9428 0-1.4142 0-1.7071-.2929-.2929-.2929-.2929-.7643-.2929-1.7071V33.4173c0-.9428 0-1.4142-.2929-1.7071-.2929-.2929-.7643-.2929-1.7071-.2929H9.25c-.9428 0-1.4142 0-1.7071-.2929-.2929-.2929-.2929-.7643-.2929-1.7071v-8.0833Z" stroke="var(--color-profile-meta-empty)" strokeWidth="4" strokeLinecap="round" />
       <path d="M12.084 31.416h33.8333M29 16.916v31.4167M29.0006 16.9167l-4.2054-4.2055a15.377 15.377 0 0 0-4.2997-2.657L14.7164 8.1275c-1.295-.4317-2.6324.5323-2.6324 1.8974v5.4502c0 .8609.5508 1.625 1.3675 1.8973l5.8825 1.9607M28.9994 16.9167l4.2054-4.2055a15.377 15.377 0 0 1 4.2997-2.657l5.7791-1.9262c1.295-.4317 2.6324.5323 2.6324 1.8974v5.4502c0 .8609-.5508 1.625-1.3675 1.8973L38.666 19.3333" stroke="var(--color-profile-meta-empty)" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function RatingStarIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" className="shrink-0">
+      <path
+        d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2Z"
+        fill="var(--color-star)"
+      />
     </svg>
   );
 }
@@ -93,6 +106,8 @@ export default function PurchaseListSection({ products, categories, initialLoadF
       href: `/purchase/detail?productId=${product.id}`,
       isSoldOut: product.isSoldOut,
       isSalesPaused: product.isSalesPaused,
+      averageRating: product.averageRating,
+      reviewCount: product.reviewCount,
     }));
   }, [currentProducts]);
 
@@ -162,7 +177,7 @@ export default function PurchaseListSection({ products, categories, initialLoadF
         </div>
 
         {visibleProducts.length > 0 ? (
-          <div className="mt-5 grid max-sm:grid-cols-1 sm:max-lg:grid-cols-2 lg:grid-cols-4 max-lg:gap-x-8 lg:gap-x-[26.6667px] max-md:gap-y-12 md:gap-y-14">
+          <div className="mt-5 grid max-sm:grid-cols-1 sm:max-md:grid-cols-2 md:max-lg:grid-cols-3 lg:grid-cols-4 max-md:gap-x-4 md:max-lg:gap-x-6 lg:gap-x-[26.6667px] max-lg:gap-y-8 lg:gap-y-10">
             {visibleProducts.map((product) => {
               const content = (
                 <>
@@ -174,19 +189,28 @@ export default function PurchaseListSection({ products, categories, initialLoadF
                       </span>
                     )}
                   </div>
-                  <div className="pt-5">
-                    <h2 className="max-md:text-[18px] md:text-[20px] font-semibold leading-6 tracking-[-0.04em] text-[var(--color-text-price)]">{product.name}</h2>
-                    <p className="line-clamp-2 max-md:mt-3 md:mt-4 max-md:min-h-[44px] md:min-h-[38px] text-body-16-m md:leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] max-md:text-body-14-r">{product.description}</p>
-                    <div className="flex flex-wrap items-center max-md:mt-3 md:mt-5 max-md:gap-x-2 md:gap-x-3 gap-y-1">
-                      {product.originalPrice !== null && product.originalPrice > product.price && <span className="max-md:text-[22px] md:text-[24px] font-extrabold leading-[29px] tracking-[-0.05em] text-[var(--color-text-discount)]">{Math.round((1 - product.price / product.originalPrice) * 100)}%</span>}
-                      <strong className="max-md:text-[22px] md:text-[24px] font-extrabold leading-[29px] tracking-[-0.05em] text-[var(--color-text-price)]">{formatKrwPrice(product.price)}</strong>
-                      {product.originalPrice !== null && product.originalPrice > product.price && <span className="max-md:text-[14px] md:text-[20px] font-semibold leading-6 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">{formatKrwPrice(product.originalPrice)}</span>}
+                  <div className="max-lg:pt-4 lg:pt-5">
+                    <h2 className="font-semibold tracking-[-0.04em] text-[var(--color-text-price)] max-lg:text-[16px] max-lg:leading-[22px] lg:text-[18px] lg:leading-[21px]">{product.name}</h2>
+                    <p className="line-clamp-2 font-medium tracking-[-0.05em] text-[var(--color-text-secondary)] max-lg:mt-2 max-lg:min-h-[36px] max-lg:text-[13px] max-lg:leading-[18px] lg:mt-2.5 lg:min-h-[34px] lg:text-[14px] lg:leading-[17px]">{product.description}</p>
+                    <div className="flex flex-wrap items-center gap-y-1 max-lg:mt-2 max-lg:gap-x-1.5 lg:mt-2.5 lg:gap-x-2">
+                      {product.originalPrice !== null && product.originalPrice > product.price && <span className="font-bold tracking-[-0.05em] text-[var(--color-text-discount)] max-lg:text-[18px] max-lg:leading-[22px] lg:text-price-20-b">{Math.round((1 - product.price / product.originalPrice) * 100)}%</span>}
+                      <strong className="font-bold tracking-[-0.05em] text-[var(--color-text-price)] max-lg:text-[18px] max-lg:leading-[22px] lg:text-price-20-b">{formatKrwPrice(product.price)}</strong>
+                      {product.originalPrice !== null && product.originalPrice > product.price && <span className="font-medium tracking-[-0.05em] text-[var(--color-text-secondary)] line-through max-md:text-[14px] max-md:leading-[22px] md:max-lg:text-[16px] md:max-lg:leading-[22px] lg:text-[20px] lg:leading-6">{formatKrwPrice(product.originalPrice)}</span>}
                     </div>
+                    {product.reviewCount > 0 && product.averageRating > 0 && (
+                      <div className="flex flex-wrap items-center font-medium leading-[17px] tracking-[-0.02em] max-lg:mt-2 max-lg:gap-1.5 max-lg:text-[13px] lg:mt-2.5 lg:gap-2 lg:text-[14px]" aria-label={`평점 ${product.averageRating.toFixed(1)}점, 리뷰 ${product.reviewCount}건`}>
+                        <span className="flex items-center gap-2 text-black">
+                          <RatingStarIcon />
+                          {product.averageRating.toFixed(1)}
+                        </span>
+                        <span className="border-l border-[var(--color-text-muted)] pl-2 text-[var(--color-text-secondary)]">리뷰 {product.reviewCount.toLocaleString("ko-KR")}건</span>
+                      </div>
+                    )}
                   </div>
                 </>
               );
 
-              return <Link key={product.id} href={product.href} className="group block">{content}</Link>;
+              return <Link key={product.id} href={product.href} className="group block min-w-0 w-full max-lg:max-w-[290px] max-lg:justify-self-center">{content}</Link>;
             })}
           </div>
         ) : (
@@ -204,7 +228,7 @@ export default function PurchaseListSection({ products, categories, initialLoadF
         )}
 
         {totalPages > 1 && (
-          <nav className="max-md:mt-[72px] md:mt-[156px] flex items-center justify-center gap-3" aria-label="상품 페이지">
+          <nav className="max-md:mt-[72px] md:mt-12 flex items-center justify-center gap-3" aria-label="상품 페이지">
             <button type="button" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={currentPage === 1} aria-label="이전 페이지" className="text-[var(--color-ui-disabled)] disabled:opacity-50"><Chevron direction="left" /></button>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
               <button key={pageNumber} type="button" onClick={() => setPage(pageNumber)} aria-current={currentPage === pageNumber ? "page" : undefined} className={`h-5 min-w-5 text-body-16-r leading-5 ${currentPage === pageNumber ? "text-[var(--color-text)]" : "text-[var(--color-text-tertiary)]"}`}>{pageNumber}</button>

@@ -58,6 +58,7 @@
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-drawer-item-active` | `#FFF7EC` | 모바일 드로워 네비 활성 아이템 배경 |
 | `--color-support-faq-surface` | `#FFF7E8` | 고객센터 FAQ 패널 배경 |
+| `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 |
 | `--color-withdraw-profile-bg` | `#FDF5E7` | 탈퇴 확인 페이지 프로필 배너 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
 | `--color-recommend-reason-bg` | `#FFFBE9` | 체크리스트 추천이유 패널 배경 |

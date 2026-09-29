@@ -34,8 +34,6 @@ export interface OrderSectionProps {
    * **쿠폰 적용 전 단가**가 모두 이 값에서 나온다 — 플랜 선택 화면과 같은 소스라 값이 어긋나지 않는다.
    */
   referral: ReferralContext;
-  /** 단건 구매 관리의 구독 유도 배너를 통해 진입한 경우에만 true — "구독 시작일" 필드 노출 */
-  showStartDateOption?: boolean;
 }
 
 export function useOrderSectionState({
@@ -44,7 +42,6 @@ export function useOrderSectionState({
   initialBilling,
   initialQuantity = 1,
   referral,
-  showStartDateOption = false,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -150,7 +147,7 @@ export function useOrderSectionState({
       return;
     }
 
-    if (showStartDateOption && startDate.startDateMode === "scheduled" && !startDate.scheduledDate) {
+    if (startDate.startDateMode === "scheduled" && !startDate.scheduledDate) {
       setSubmitError("구독 시작일을 선택해 주세요.");
       return;
     }
@@ -206,7 +203,7 @@ export function useOrderSectionState({
               ? invite.inviteCodeInput.trim()
               : undefined,
           startDate:
-            showStartDateOption && startDate.startDateMode === "scheduled" && startDate.scheduledDate
+            startDate.startDateMode === "scheduled" && startDate.scheduledDate
               ? formatDateToYMD(startDate.scheduledDate)
               : undefined,
         });
@@ -252,7 +249,6 @@ export function useOrderSectionState({
     handleSearchAddress: address.handleSearchAddress,
 
     // ── start date ──
-    showStartDateOption,
     startDateMode: startDate.startDateMode,
     scheduledDate: startDate.scheduledDate,
     minScheduledDate: startDate.minScheduledDate,

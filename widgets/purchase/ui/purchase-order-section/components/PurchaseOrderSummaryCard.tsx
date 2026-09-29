@@ -52,8 +52,8 @@ export function PurchaseOrderSummaryCard({
   onPay,
 }: PurchaseOrderSummaryCardProps) {
   return (
-    <SectionCard title="결제정보" open={open} onToggle={onToggle}>
-      <div className="flex flex-col max-md:gap-4 md:gap-8">
+    <SectionCard variant="order" title="결제정보" open={open} onToggle={onToggle}>
+      <div className="flex flex-col gap-5">
         <div className="flex flex-col max-md:gap-4 md:gap-4">
           <div className="flex items-center justify-between">
             <span className="text-body-13-m text-[var(--color-text)]">주문상품금액{quantity > 1 ? ` ×${quantity}` : ""}</span>
@@ -78,7 +78,7 @@ export function PurchaseOrderSummaryCard({
         <div className="border-t border-[var(--color-border-light)]" />
 
         <div className="flex items-center justify-between">
-          <span className="text-body-14-b text-[var(--color-text)]">단품구매</span>
+          <span className="text-body-14-b text-[var(--color-text)]">총 주문금액</span>
           <span className="text-price-20-eb text-[var(--color-text)]">{formatKrwPrice(total)}</span>
         </div>
 

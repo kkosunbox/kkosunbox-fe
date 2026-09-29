@@ -44,7 +44,7 @@ export function usePaymentState({
     hadBilling: initialBilling !== null,
     onUpdated: () => router.refresh(),
   });
-  const [couponEnabled, setCouponEnabled] = useState(false);
+  const [couponEnabled, setCouponEnabled] = useState(true);
   const [couponCodeInput, setCouponCodeInput] = useState("");
   const [couponInfo, setCouponInfo] = useState<CouponInfo | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);

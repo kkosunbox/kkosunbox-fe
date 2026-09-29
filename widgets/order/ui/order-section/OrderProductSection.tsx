@@ -28,17 +28,17 @@ export function OrderProductSection({
   setQuantity,
 }: OrderProductSectionProps) {
   return (
-    <SectionCard title="제품 정보" open={open} onToggle={onToggle}>
+    <SectionCard variant="order" title="제품정보" open={open} onToggle={onToggle}>
       <div>
-        <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
-          <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
+        <div className="flex w-full items-center max-sm:gap-4 sm:gap-6 md:px-6">
+          <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:max-md:h-[122px] sm:max-md:w-[132px] md:h-[148px] md:w-[160px]">
             {plan.imageUrl ? <img src={plan.imageUrl} alt={plan.name} className="h-full w-full object-cover" /> : <Image
               src={TIER_BOX_IMAGES[orderPlanTheme.tier]}
               alt={plan.name}
               fill
               quality={HIGH_IMAGE_QUALITY}
               className="object-cover object-center scale-105"
-              sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
+              sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 160px"
               priority
             />}
           </div>
@@ -61,10 +61,9 @@ export function OrderProductSection({
                 aria-label="수량 감소"
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 disabled={quantity <= 1}
-                className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
+                className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 h-6 w-6"
               >
-                <span className="max-md:hidden" aria-hidden>−</span>
-                <span className="md:hidden">
+                <span>
                   <QuantityMinusIcon />
                 </span>
               </button>
@@ -76,10 +75,9 @@ export function OrderProductSection({
                 aria-label="수량 증가"
                 onClick={() => setQuantity((q) => Math.min(99, q + 1))}
                 disabled={quantity >= 99}
-                className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
+                className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 h-6 w-6"
               >
-                <span className="max-md:hidden" aria-hidden>+</span>
-                <span className="md:hidden">
+                <span>
                   <QuantityPlusIcon />
                 </span>
               </button>

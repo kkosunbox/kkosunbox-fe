@@ -22,6 +22,9 @@
 .packageBackdropImage[data-active="true"] { opacity: 1; }
 .packageHero { min-height: 468px; display: flex; justify-content: flex-end; padding: 88px 130px 38px 30px; }
 .packageCopy { width: 352px; }
+.popularBadge, .popularCardBadge { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 80px; height: 24px; background: var(--color-text); color: white; font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: -.02em; white-space: nowrap; }
+.popularBadge { border-radius: 12px; }
+.popularCardBadge { position: absolute; top: 0; left: 0; justify-content: flex-start; padding-left: 9px; border-radius: 12px 0; }
 .packageBadges { display: flex; gap: 12px; align-items: center; }
 .packageBadges .tierBadge { min-height: 31px; font-size: 16px; line-height: 19px; padding: 6px 12px; }
 .shippingBadge { display: inline-flex; align-items: center; gap: 4px; min-height: 31px; background: white; padding: 3px 12px; border-radius: 30px; font-size: 16px; line-height: 19px; font-weight: 600; }
@@ -37,7 +40,7 @@
 .packageCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-inline: 30px; }
 .packageCard { display: flex; align-items: center; gap: 24px; min-height: 196px; padding: 24px; background: white; border-radius: 24px; box-shadow: 0 4px 16px rgb(0 0 0 / 16%); text-align: left; transition: transform .2s; }
 .packageCard[aria-pressed="true"] { transform: translateY(-15px); }
-.packageCardImage { width: 160px; height: 148px; flex-shrink: 0; border-radius: 16px; object-fit: cover; }
+.packageCardImage { width: 160px; height: 148px; flex-shrink: 0; border-radius: 12px; object-fit: cover; }
 .packageCardImage { position: relative; display: block; overflow: hidden; }
 .packageCardImage img { width: 100%; height: 100%; object-fit: cover; }
 .packageCardImage[data-tier="Standard"] img { position: absolute; width: 149.17%; max-width: none; height: 107.19%; left: -28.33%; top: -1.2%; }

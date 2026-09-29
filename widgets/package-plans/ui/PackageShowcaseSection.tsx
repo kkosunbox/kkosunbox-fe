@@ -144,6 +144,7 @@ export function PackageShowcaseSection({
             <div className={styles.packageBadges}>
               <span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span>
               <span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span>
+              {selected && tier === "Standard" && <span className={styles.popularBadge}>인기 PICK 🌟</span>}
             </div>
             <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2>
             <p className={styles.packageDescription}>{pkg.contents.join(" ")}</p>
@@ -180,6 +181,7 @@ export function PackageShowcaseSection({
                 aria-controls="package-title" onClick={() => setSelectedId(plan.id)} className={styles.packageCard}>
                 <span className={styles.packageCardImage} data-tier={cardTier}>
                   <Image src={BOX_IMAGES[cardTier]} alt="" width={160} height={148} sizes="(max-width: 767px) 116px, (max-width: 1199px) 240px, 160px" />
+                  {cardTier === "Standard" && <span className={styles.popularCardBadge}>인기 PICK 🌟</span>}
                 </span>
                 <span className={styles.packageCardCopy}>
                   <strong>{plan.name}</strong>

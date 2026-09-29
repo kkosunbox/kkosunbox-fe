@@ -218,7 +218,7 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
                 : `/subscribe?tier=${review.tier}`;
 
               return (
-              <article key={review.id} className={styles.card}>
+              <Link key={review.id} className={styles.card} href={planHref} aria-label={`${review.id}번 후기, ${tierLabel(review.tier)} 패키지 상세 보기`}>
                 <div className={styles.photo}>
                   <div className={review.id === 14 ? styles.croppedMedia : styles.media}>
                   {review.kind === "video" ? (
@@ -235,12 +235,12 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
                 <div className={styles.body}>
                   <div className={styles.meta}>
                     <span className={styles.stars}><Stars rating={5} size={20} /></span>
-                    <Link className={styles.packageLink} href={planHref}>{tierLabel(review.tier)} 패키지</Link>
+                    <span className={styles.packageLink}>{tierLabel(review.tier)} 패키지</span>
                   </div>
                   <p className={styles.content}>{review.content}</p>
                   <span className={styles.author}>{review.email}</span>
                 </div>
-              </article>
+              </Link>
               );
             })}
           </div>

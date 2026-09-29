@@ -1,16 +1,18 @@
 .section { width: calc(100% - 48px); max-width: 1240px; margin: 24px auto 68px; color: var(--color-why-choose-text); letter-spacing: -.04em; }
 .section h2 span { color: var(--color-text-discount); }
 .section > p { margin-top: 12px; }
-.scroller { position: relative; margin-top: 44px; padding: 16px; border-radius: 32px; background: var(--color-subscription-compare-bg); overflow-x: auto; }
+.scroller { position: relative; margin-top: 44px; padding: 16px; border-radius: 32px; background: var(--color-subscription-compare-bg); overflow-x: auto; isolation: isolate; }
+.scroller::before { content: ""; position: absolute; z-index: -2; top: 16px; right: 16px; bottom: 16px; left: 22.26%; border-radius: 32px; background: white; }
+.scroller::after { content: ""; position: absolute; z-index: -1; top: 28px; bottom: 28px; left: 48.39%; width: 24.27%; border-radius: 32px; background: var(--color-subscription-compare-highlight); }
 .scroller:focus-visible { outline: 2px solid var(--color-text-discount); outline-offset: 4px; }
-.table { width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 0; table-layout: fixed; color: var(--color-text); }
+.table { position: relative; z-index: 1; width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 0; table-layout: fixed; color: var(--color-text); }
 .labelColumn { width: 21.5%; }
 .table th, .table td { height: 57px; padding: 12px 10px; text-align: center; font-size: 16px; line-height: 22px; }
 .table thead th { height: 78px; font-size: 18px; font-weight: 800; }
 .table th:first-child { text-align: left; padding-left: 66px; font-weight: 700; }
 .table thead th:first-child img { display: block; }
-.table td, .table thead th:not(:first-child) { background: white; }
-.table td:nth-child(3), .table thead th:nth-child(3) { background: var(--color-subscription-compare-highlight); }
+.table td, .table thead th:not(:first-child) { background: transparent; }
+.table td:nth-child(3), .table thead th:nth-child(3) { background: transparent; }
 .table thead th:nth-child(2), .table thead th:nth-child(3) { border-radius: 32px 0 0 0; }
 .table thead th:last-child { border-radius: 0 32px 0 0; }
 .table tbody tr:last-child td:nth-child(2) { border-radius: 0 0 0 32px; }
@@ -23,6 +25,7 @@
 .item { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
 .item svg { flex-shrink: 0; }
 .scrollHint { display: none; }
+.mobileTabs, .mobileComparison { display: none; }
 @media (max-width: 1199px) {
   .table th:first-child { padding-left: 24px; }
   .section { margin-top: 32px; }
@@ -30,12 +33,77 @@
   .scroller { margin-top: 24px; }
 }
 @media (max-width: 767px) {
-  .section { margin-bottom: 48px; }
-  .section h2 { font-size: 24px; line-height: 32px; }
-  .section > p { font-size: 14px; line-height: 22px; }
-  .scroller { padding: 12px; border-radius: 24px; }
-  .table { min-width: 820px; }
+  .section { margin-top: 48px; margin-bottom: 64px; }
+  .section h2 { font-size: 24px; line-height: 29px; }
+  .section > p { margin-top: 12px; font-size: 14px; line-height: 17px; }
+  .scrollHint, .scroller { display: none; }
+  .mobileTabs { display: flex; align-items: center; gap: 8px; margin-top: 20px; }
+  .mobileTabs button { display: inline-flex; align-items: center; justify-content: center; min-width: 65px; height: 32px; padding: 4px 14px; border: 1px solid var(--color-border-light); border-radius: 30px; color: var(--color-text); font-size: 14px; line-height: 17px; font-weight: 600; white-space: nowrap; }
+  .mobileTabs button[aria-pressed="true"] { border-color: var(--color-text); background: var(--color-text); color: white; font-weight: 700; }
+  .mobileComparison { position: relative; display: block; width: 100%; height: 385px; margin-top: 29px; border-radius: 24px; background: var(--color-subscription-compare-bg); color: var(--color-text); }
+  .mobileLogo { position: absolute; top: 36px; left: 28px; width: 84px; height: 28px; object-fit: contain; }
+  .mobileValuePanel { position: absolute; inset: 16px 16px 16px auto; width: 190px; border-radius: 12px; background: white; text-align: center; }
+  .mobileValuePanel h3 { height: 57px; padding: 25px 8px 0; font-size: 16px; line-height: 19px; font-weight: 800; }
+  .mobileValues { display: grid; grid-template-rows: repeat(5, 49px); margin-top: 56px; font-size: 14px; line-height: 17px; font-weight: 500; }
+  .mobileValues > span { display: flex; align-items: center; justify-content: center; gap: 4px; padding-inline: 4px; white-space: nowrap; }
+  .mobileValue svg { flex-shrink: 0; }
+  .mobileSummary { position: absolute; z-index: 1; top: 73px; left: 11px; right: 11px; display: grid; grid-template-columns: 110px minmax(0, 1fr); align-items: center; height: 48px; border-radius: 8px; background: white; box-shadow: 0 4px 24px rgb(0 0 0 / 12%); font-size: 14px; line-height: 17px; font-weight: 700; }
+  .mobileSummary strong, .mobileSummary span { text-align: center; white-space: nowrap; }
+  .mobileSummary span { letter-spacing: -.05em; }
+  .mobileLabels { position: absolute; top: 129px; left: 0; display: grid; grid-template-rows: repeat(5, 49px); width: 121px; font-size: 14px; line-height: 17px; font-weight: 600; }
+  .mobileLabels strong { display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .mobileControls { position: absolute; z-index: 2; top: 160px; left: -16px; right: -16px; display: flex; justify-content: space-between; pointer-events: none; }
+  .mobileControls button { pointer-events: auto; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 80px; background: white; color: var(--color-text-secondary); box-shadow: 2px 2px 4px rgb(0 0 0 / 12%); }
 }
 @media (max-width: 359px) {
   .section { width: calc(100% - 32px); }
+  .mobileTabs { gap: 6px; }
+  .mobileTabs button { min-width: 0; padding-inline: 12px; }
+  .mobileComparison { height: 373px; }
+  .mobileValuePanel { right: 12px; bottom: 12px; width: 176px; }
+  .mobileValuePanel h3 { padding-inline: 4px; }
+  .mobileValues { grid-template-rows: repeat(5, 47px); margin-top: 52px; }
+  .mobileSummary { left: 8px; right: 8px; grid-template-columns: 96px minmax(0, 1fr); }
+  .mobileSummary span { padding-inline: 4px; font-size: 12px; line-height: 15px; white-space: normal; }
+  .mobileLabels { width: 112px; }
+  .mobileLabels { top: 125px; grid-template-rows: repeat(5, 47px); font-size: 13px; }
+  .mobileLogo { left: 16px; width: 74px; height: 25px; }
+  .mobileValues { font-size: 13px; }
+}
+@media (max-width: 319px) {
+  .section { width: calc(100% - 24px); }
+  .section > p { word-break: keep-all; }
+  .mobileTabs button { padding-inline: 10px; }
+  .mobileLogo { left: 12px; width: 64px; height: 22px; }
+  .mobileValuePanel { width: 176px; }
+  .mobileSummary { grid-template-columns: 88px minmax(0, 1fr); }
+  .mobileSummary span { font-size: 11px; line-height: 14px; }
+  .mobileLabels { width: 104px; font-size: 12px; }
+  .mobileValues { font-size: 12px; line-height: 14px; }
+  .mobileValues > span { padding-inline: 3px; white-space: normal; }
+}
+
+@media (min-width: 600px) and (max-width: 1024px) {
+  .section { margin-top: 48px; }
+  .scrollHint, .mobileTabs, .mobileComparison { display: none; }
+  .scroller { display: block; margin-top: 28px; padding: 12px; border-radius: 24px; overflow-x: visible; }
+  .table { min-width: 0; }
+  .labelColumn { width: 22%; }
+  .table th, .table td { height: 52px; padding: 10px 6px; font-size: 14px; line-height: 19px; }
+  .table thead th { height: 66px; font-size: 16px; }
+  .table th:first-child { padding-left: 16px; }
+  .table thead th:first-child img { width: 84px; height: 28px; }
+  .table .summary th, .table .summary td { height: 58px; }
+  .item { gap: 3px; }
+  .item svg { width: 16px; height: 16px; }
+}
+
+@media (min-width: 600px) and (max-width: 767px) {
+  .table th, .table td { height: 48px; padding: 8px 4px; font-size: 12px; line-height: 17px; }
+  .table thead th { height: 60px; font-size: 14px; }
+  .table th:first-child { padding-left: 12px; }
+  .table thead th:first-child img { width: 72px; height: 24px; }
+  .table .summary th, .table .summary td { height: 54px; }
+  .table tbody tr:last-child th, .table tbody tr:last-child td { height: 56px; padding-bottom: 16px; }
+  .item svg { width: 14px; height: 14px; }
 }

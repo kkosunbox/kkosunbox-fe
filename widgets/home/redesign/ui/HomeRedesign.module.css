@@ -80,11 +80,15 @@
 .productRating > span:first-child { display: flex; align-items: center; gap: 8px; }
 .productRating svg { flex-shrink: 0; }
 .productReviewCount { border-left: 1px solid var(--color-text-muted); padding-left: 8px; color: var(--color-text-secondary); }
-.carouselArrow { position: absolute; z-index: 1; top: 111px; width: 48px; height: 48px; border-radius: 50%; }
-.carouselArrow:disabled { opacity: .45; cursor: not-allowed; }
-.carouselArrow img { width: 48px; height: 48px; }
-.previous { left: -24px; }
-.next { right: -24px; transform: rotate(180deg); }
+.productControls { position: absolute; z-index: 1; inset: 111px -24px auto; display: flex; justify-content: space-between; pointer-events: none; }
+.productControls button { pointer-events: auto; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 80px; background: white; color: var(--color-text-secondary); box-shadow: 2px 2px 12px rgb(0 0 0 / 24%); transition: box-shadow 180ms ease; }
+.productControls button:disabled { opacity: .45; cursor: not-allowed; }
+.productControls button svg { display: block; pointer-events: none; transition: transform 180ms ease; }
+@media (hover: hover) {
+  .productControls button:not(:disabled):hover { box-shadow: 2px 4px 16px rgb(0 0 0 / 28%); }
+  .productControls button:first-child:not(:disabled):hover svg { transform: translateX(-3px); }
+  .productControls button:last-child:not(:disabled):hover svg { transform: translateX(3px); }
+}
 .unavailable { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background: rgb(0 0 0 / 45%); color: white; font-size: 16px; font-weight: 700; }
 .faq { padding: 104px 0 113px; background: var(--color-home-faq-bg); }
 .faqDescription { margin-top: 4px; font-size: 16px; line-height: 28px; letter-spacing: -.02em; color: black; }
@@ -134,11 +138,8 @@
   .reviewCards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .reviewCards article { padding: 24px; }
   .reviewMeta { flex-wrap: wrap; height: auto; min-height: 40px; gap: 8px; padding-block: 4px; }
-  /* 이미지 위의 돌출 화살표 대신 같은 캐러셀 안에 조작 영역을 확보한다. */
-  .productCarousel { padding-bottom: 72px; }
-  .carouselArrow { top: auto; bottom: 0; }
-  .previous { left: calc(50% - 56px); right: auto; }
-  .next { right: calc(50% - 56px); }
+  /* 좁은 화면에서는 두 버튼을 하나의 행으로 묶어 수평 중심을 맞춘다. */
+  .productControls { position: static; justify-content: center; gap: 16px; margin-top: 24px; }
   .products .tabs button { min-height: 44px; }
   .productCards > a, .productCards > article { width: 100%; max-width: 290px; justify-self: center; }
   .productCards h3 { margin-top: 16px; font-size: 16px; line-height: 22px; }
@@ -191,17 +192,16 @@
   .reviewMeta { gap: 8px; }
   .stars img { width: 20px; height: 20px; }
   .products { padding: 16px 0 64px; }
-  .productBanner { height: auto; min-height: 100px; gap: 8px; padding: 20px 16px 0; margin-bottom: 48px; font-size: 14px; }
-  .productBanner > span { padding-bottom: 20px; }
-  .productBanner img { width: 110px; height: 50px; flex-shrink: 0; }
+  .productBanner { position: relative; height: 70px; min-height: 70px; justify-content: flex-start; gap: 0; padding: 0 16px; margin-bottom: 48px; font-size: 14px; }
+  .productBanner > span { position: relative; z-index: 1; padding-bottom: 0; white-space: nowrap; }
+  .productBanner > span strong { display: block; }
+  .productBanner img { position: absolute; right: 0; bottom: 0; width: 136px; height: 59px; transform: translateY(6px); }
   .productDescription { font-size: 16px; line-height: 26px; }
   .products .tabs { margin-top: 28px; }
   .tabs { gap: 8px; }
   .tabs button { padding-inline: 16px; }
   .productCards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; }
   .productPrice del { font-size: 14px; }
-  .carouselArrow { width: 48px; height: 48px; }
-  .carouselArrow img { width: 48px; height: 48px; }
   .faq { min-height: 0; }
   .faqDescription { margin-top: 12px; }
   .faqGrid { grid-template-columns: 1fr; gap: 32px; }
@@ -209,6 +209,10 @@
   .answer { padding: 0 20px 24px; }
   .contact { min-height: 0; padding: 48px 28px; }
   .contact h3 { margin-top: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .productControls button, .productControls button svg { transition: none; }
+  .productControls button:first-child:not(:disabled):hover svg, .productControls button:last-child:not(:disabled):hover svg { transform: none; }
 }
 @media (max-width: 359px) {
   .container { width: calc(100% - 32px); }

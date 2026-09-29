@@ -26,11 +26,27 @@ describe("장바구니 담기 모달", () => {
   });
   it("품절·판매중지·재고 0 상품을 제외하고 최대 3개를 추천한다", () => {
     const products = [product(1, { isSoldOut: true }), product(2, { isSalesPaused: true }), product(3, { stockQuantity: 0 }), product(4), product(5), product(6), product(7)];
-    expect(getCartRecommendations(products, cart).map((p) => p.id)).toEqual([4, 5, 6]);
+    expect(getCartRecommendations(products, cart, () => 0.999).map((p) => p.id)).toEqual([4, 5, 6]);
   });
-  it("이미 담은 상품과 중복 상품은 추천하지 않는다", () => {
-    const withItem: CartDto = { ...cart, items: [{ id: 1, productId: 1, productName: "상품 1", unitPrice: 8500, quantity: 1, itemAmount: 8500, stockQuantity: null, isOrderable: true, createdAt: "" }] };
-    expect(getCartRecommendations([product(1), product(2), product(2), product(3)], withItem).map((p) => p.id)).toEqual([2, 3]);
+  it("방금 담은 상품·장바구니 상품·중복 상품은 추천하지 않는다", () => {
+    const withItems: CartDto = {
+      ...cart,
+      items: [
+        { id: 1, productId: 1, productName: "상품 1", unitPrice: 8500, quantity: 1, itemAmount: 8500, stockQuantity: null, isOrderable: true, createdAt: "" },
+        { id: 2, productId: 2, productName: "상품 2", unitPrice: 8500, quantity: 1, itemAmount: 8500, stockQuantity: null, isOrderable: true, createdAt: "" },
+      ],
+    };
+    const recommendations = getCartRecommendations(
+      [product(1), product(2), product(3), product(3), product(4)],
+      withItems,
+      () => 0.999,
+      [3],
+    );
+    expect(recommendations.map((p) => p.id)).toEqual([4]);
+  });
+  it("모달을 열 때 추천 후보를 무작위로 섞어 3개를 선택한다", () => {
+    const products = [product(1), product(2), product(3), product(4), product(5)];
+    expect(getCartRecommendations(products, cart, () => 0).map((p) => p.id)).toEqual([2, 3, 4]);
   });
   it("추천 상품이 없어도 빈 배열을 반환한다", () => {
     expect(getCartRecommendations([], cart)).toEqual([]);

@@ -14,12 +14,27 @@ export function getCartShippingProgress(cart: CartDto) {
   };
 }
 
-export function getCartRecommendations(products: ProductDto[], cart: CartDto) {
-  const excluded = new Set(cart.items.map((item) => item.productId));
-  return products.filter((product) => {
+export function getCartRecommendations(
+  products: ProductDto[],
+  cart: CartDto,
+  random: () => number = Math.random,
+  additionallyExcludedProductIds: Iterable<number> = [],
+) {
+  const excluded = new Set([
+    ...cart.items.map((item) => item.productId),
+    ...additionallyExcludedProductIds,
+  ]);
+  const candidates = products.filter((product) => {
     if (excluded.has(product.id) || product.isSoldOut || product.isSalesPaused ||
       (product.stockQuantity != null && product.stockQuantity <= 0)) return false;
     excluded.add(product.id);
     return true;
-  }).slice(0, 3);
+  });
+
+  for (let index = candidates.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [candidates[index], candidates[swapIndex]] = [candidates[swapIndex], candidates[index]];
+  }
+
+  return candidates.slice(0, 3);
 }

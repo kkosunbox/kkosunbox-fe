@@ -140,6 +140,8 @@
   .reviewMeta { flex-wrap: wrap; height: auto; min-height: 40px; gap: 8px; padding-block: 4px; }
   /* 좁은 화면에서는 두 버튼을 하나의 행으로 묶어 수평 중심을 맞춘다. */
   .productControls { position: static; justify-content: center; gap: 16px; margin-top: 24px; }
+  .productControls button { width: 32px; height: 32px; }
+  .productControls button svg { width: 11px; height: 17px; }
   .products .tabs button { min-height: 44px; }
   .productCards > a, .productCards > article { width: 100%; max-width: 290px; justify-self: center; }
   .productCards h3 { margin-top: 16px; font-size: 16px; line-height: 22px; }

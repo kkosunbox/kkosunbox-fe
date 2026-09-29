@@ -31,6 +31,8 @@
   .controls button:last-child:not(:disabled):hover svg { transform: translateX(3px); }
 }
 @media (max-width: 1199px) {
+  .controls button { width: 32px; height: 32px; }
+  .controls button svg { width: 11px; height: 17px; }
   .section { padding: 64px 0; }
   .heading { font-size: 32px; line-height: 46px; }
   .carousel { margin-top: 32px; }

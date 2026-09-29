@@ -11,7 +11,7 @@ import { getCartRecommendations } from "./cartAdded";
 export function useAddToCart() {
   const { openAlert } = useModal();
   const [cart, setCart] = useState<CartDto | null>(null);
-  const [products, setProducts] = useState<ProductDto[]>([]);
+  const [recommendations, setRecommendations] = useState<ProductDto[]>([]);
   const [pendingProductId, setPendingProductId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const busy = useRef(false);
@@ -22,6 +22,7 @@ export function useAddToCart() {
   function close() {
     session.current += 1;
     setCart(null);
+    setRecommendations([]);
     setError(null);
   }
 
@@ -38,10 +39,12 @@ export function useAddToCart() {
       if (currentSession !== session.current) return;
       setCart(updated);
       if (!fromModal) {
-        setProducts([]);
+        setRecommendations([]);
         // 추천 조회 실패가 이미 성공한 장바구니 담기를 실패로 바꾸지 않도록 분리한다.
         void getProducts().then(({ products: list }) => {
-          if (currentSession === session.current) setProducts(list);
+          if (currentSession === session.current) {
+            setRecommendations(getCartRecommendations(list, updated, Math.random, [productId]));
+          }
         }).catch(() => {});
       }
     } catch (cause) {
@@ -55,5 +58,5 @@ export function useAddToCart() {
     }
   }
 
-  return { cart, recommendations: cart ? getCartRecommendations(products, cart) : [], pendingProductId, error, add, close };
+  return { cart, recommendations, pendingProductId, error, add, close };
 }

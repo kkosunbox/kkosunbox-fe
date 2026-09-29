@@ -7,7 +7,7 @@
 .viewport { overflow: hidden; margin: -16px; padding: 16px; }
 .track { display: flex; gap: 40px; transition: transform 420ms cubic-bezier(.22, .61, .36, 1); }
 .cards { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px; align-content: start; }
-.card { min-width: 0; overflow: hidden; border-radius: 16px; background: white; box-shadow: 0 4px 8px 2px rgb(0 0 0 / 5%); }
+.card { display: block; min-width: 0; overflow: hidden; border-radius: 16px; background: white; color: inherit; box-shadow: 0 4px 8px 2px rgb(0 0 0 / 5%); }
 .photo { position: relative; aspect-ratio: 280 / 181; background: var(--color-surface-light); display: grid; place-items: center; overflow: hidden; color: var(--color-text-tertiary); font-size: 13px; }
 .photo img, .photo video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 240ms ease; }
 .media, .croppedMedia { position: absolute; inset: 0; }
@@ -18,7 +18,7 @@
 .stars > span { gap: 1px; }
 .footer { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
 .packageLink { flex-shrink: 0; margin-left: auto; font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-secondary); text-align: right; letter-spacing: -.04em; text-transform: capitalize; white-space: nowrap; }
-.packageLink:hover { color: var(--color-text-tertiary); }
+.card:hover .packageLink { color: var(--color-text-tertiary); }
 .card:hover .photo img, .card:hover .photo video, .card:focus-within .photo img, .card:focus-within .photo video { transform: scale(1.25); }
 .content { margin-top: 8px; font-size: 14px; line-height: 19px; font-weight: 500; min-height: 38px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
 .author { min-width: 0; overflow: hidden; font-size: 12px; line-height: 17px; font-weight: 500; color: var(--color-text-secondary); text-overflow: ellipsis; white-space: nowrap; }

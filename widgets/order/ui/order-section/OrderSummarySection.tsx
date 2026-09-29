@@ -49,8 +49,8 @@ export function OrderSummarySection({
   handlePay,
 }: OrderSummarySectionProps) {
   return (
-    <SectionCard title="결제정보" open={open} onToggle={onToggle}>
-      <div className="flex flex-col max-md:gap-4 md:gap-8">
+    <SectionCard variant="order" title="결제정보" open={open} onToggle={onToggle}>
+      <div className="flex flex-col gap-5">
           <div className="flex flex-col max-md:gap-4 md:gap-4">
             <div className="flex justify-between items-center">
               <span className="text-body-13-m text-[var(--color-text)]">
@@ -79,7 +79,7 @@ export function OrderSummarySection({
 
           <div>
             <div className="flex items-center justify-between">
-              <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="모두 동의합니다." />
+              <Checkbox checked={agreeAll} onChange={handleAgreeAll} label="약관 및 주문 내용을 확인하였으며, 정보 제공 등에 동의합니다." />
               <button
                 type="button"
                 aria-label={agreeOpen ? "약관 항목 접기" : "약관 항목 펼치기"}

@@ -1,11 +1,11 @@
-import Image from "next/image";
+import { CheckoutPromotionBanner } from "@/shared/ui";
 import Script from "next/script";
 import { CheckoutAddressSection } from "@/features/delivery-address/ui";
-import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import type { PackageData, PackagePurchaseProduct } from "@/entities/package";
 import { OrderPriceSummaryBar } from "@/widgets/order/ui/order-section/OrderPriceSummaryBar";
 import { OrderDeliveryMethodSection } from "@/widgets/order/ui/order-section/OrderDeliveryMethodSection";
 import { QUANTITY_MIN, QUANTITY_MAX } from "./purchaseOrderHelpers";
+import { PurchaseInviteCodeCard } from "./components/PurchaseInviteCodeCard";
 import { PurchaseProductInfoCard } from "./components/PurchaseProductInfoCard";
 import { PurchasePaymentMethodCard } from "./components/PurchasePaymentMethodCard";
 import { PurchaseOrderSummaryCard } from "./components/PurchaseOrderSummaryCard";
@@ -31,18 +31,16 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
         basePrice={vm.basePrice}
         totalDiscount={vm.totalDiscount}
         shippingFee={vm.shippingFee}
-        originalShippingFee={vm.originalShippingFee}
         total={vm.total}
       />
 
-      <div className="bg-white lg:overflow-x-auto">
+      <div className="bg-white">
         <div
-          className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:min-w-[900px] lg:px-0"
-          style={{ maxWidth: "var(--max-width-content)" }}
+          className="mx-auto w-full max-w-[1288px] px-6 max-md:py-6 md:pt-[52px] md:pb-[110px]"
         >
-          <div className="grid items-start max-md:gap-y-9 md:grid-cols-[55%_1px_1fr] md:gap-x-6 lg:grid-cols-[1fr_1px_327px] lg:gap-x-8">
+          <div className="grid items-start max-md:gap-y-9 md:grid-cols-[minmax(0,1fr)_1px_280px] md:gap-x-6 lg:grid-cols-[minmax(0,835fr)_1px_minmax(0,300fr)] lg:gap-x-[52px]">
             {/* 좌측 — 제품 · 배송지 · 결제수단 · 배송방법 */}
-            <div className="flex flex-col max-md:gap-9 md:gap-4">
+            <div className="flex flex-col max-md:gap-9 md:gap-10">
               <PurchaseProductInfoCard
                 pkg={pkg}
                 imageUrl={imageUrl}
@@ -56,6 +54,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
               />
 
               <CheckoutAddressSection
+                variant="order"
                 open={vm.openSections.customer}
                 onToggle={() => vm.toggleSection("customer")}
                 selectedAddress={vm.address.selectedAddress}
@@ -83,6 +82,8 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
                 onApplyCoupon={() => void vm.handleApplyCoupon()}
               />
 
+              <PurchaseInviteCodeCard />
+
               <OrderDeliveryMethodSection
                 open={vm.openSections.delivery}
                 onToggle={() => vm.toggleSection("delivery")}
@@ -92,7 +93,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
             <div className="max-md:hidden self-stretch bg-[var(--color-text-muted)]" />
 
             {/* 우측 — 결제 정보 · 약관 · 결제 버튼 */}
-            <div className="flex flex-col max-md:gap-9 md:gap-4">
+            <div className="flex min-w-0 flex-col gap-6">
               <PurchaseOrderSummaryCard
                 open={vm.openSections.summary}
                 onToggle={() => vm.toggleSection("summary")}
@@ -118,17 +119,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
                 onPay={() => void vm.handlePay()}
               />
 
-              <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:mx-3 md:rounded-[8px]">
-                <Image
-                  src="/images/sidebar-banner-001.png"
-                  alt="꼬순박스 배너"
-                  width={375}
-                  height={126}
-                  quality={HIGH_IMAGE_QUALITY}
-                  className="h-auto w-full"
-                  sizes="(min-width: 1024px) 303px, 100vw"
-                />
-              </div>
+              <CheckoutPromotionBanner />
             </div>
           </div>
         </div>

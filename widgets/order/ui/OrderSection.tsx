@@ -1,10 +1,8 @@
 ﻿"use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import Script from "next/script";
-import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import { STANDARD_SHIPPING_FEE } from "@/shared/config/shipping";
+import { CheckoutPromotionBanner } from "@/shared/ui";
 import { trackBeginCheckout } from "@/shared/lib/analytics";
 import {
   useOrderSectionState,
@@ -71,7 +69,6 @@ export default function OrderSection(props: OrderSectionProps) {
     handlePay,
     handleChangeAddress,
     handleSearchAddress,
-    showStartDateOption,
     startDateMode,
     scheduledDate,
     minScheduledDate,
@@ -89,7 +86,7 @@ export default function OrderSection(props: OrderSectionProps) {
   } = useOrderSectionState(props);
 
   const leftSections = (
-    <div className="flex flex-col max-md:gap-9 md:gap-4">
+    <div className="flex flex-col max-md:gap-9 md:gap-10">
       <OrderProductSection
         plan={props.plan}
         open={openSections.product}
@@ -99,19 +96,18 @@ export default function OrderSection(props: OrderSectionProps) {
         quantity={quantity}
         setQuantity={setQuantity}
       />
-      {showStartDateOption && (
-        <OrderStartDateSection
-          open={openSections.startDate}
-          onToggle={() => toggleSection("startDate")}
-          startDateMode={startDateMode}
-          onStartDateModeChange={handleStartDateModeChange}
-          scheduledDate={scheduledDate}
-          onScheduledDateChange={handleScheduledDateChange}
-          minScheduledDate={minScheduledDate}
-          maxScheduledDate={maxScheduledDate}
-        />
-      )}
+      <OrderStartDateSection
+        open={openSections.startDate}
+        onToggle={() => toggleSection("startDate")}
+        startDateMode={startDateMode}
+        onStartDateModeChange={handleStartDateModeChange}
+        scheduledDate={scheduledDate}
+        onScheduledDateChange={handleScheduledDateChange}
+        minScheduledDate={minScheduledDate}
+        maxScheduledDate={maxScheduledDate}
+      />
       <CheckoutAddressSection
+        variant="order"
         open={openSections.customer}
         onToggle={() => toggleSection("customer")}
         selectedAddress={selectedAddress}
@@ -161,7 +157,7 @@ export default function OrderSection(props: OrderSectionProps) {
   );
 
   const rightColumn = (
-    <div className="flex flex-col max-md:gap-9 md:gap-4">
+    <div className="flex min-w-0 flex-col gap-6">
       <OrderSummarySection
         open={openSections.summary}
         onToggle={() => toggleSection("summary")}
@@ -185,18 +181,8 @@ export default function OrderSection(props: OrderSectionProps) {
         hasBilling={billing !== null}
         handlePay={handlePay}
       />
-      <div className="overflow-hidden max-md:mx-[calc(50%_-_50vw)] max-md:rounded-none md:mx-3 md:rounded-[8px]">
-        <Image
-          src="/images/sidebar-banner-001.png"
-          alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
-          width={375}
-          height={126}
-          quality={HIGH_IMAGE_QUALITY}
-          className="h-auto w-full"
-          sizes="(min-width: 1024px) 303px, 100vw"
-          priority
-        />
-      </div>
+      <CheckoutPromotionBanner />
+
     </div>
   );
 
@@ -207,19 +193,19 @@ export default function OrderSection(props: OrderSectionProps) {
         strategy="afterInteractive"
       />
       <OrderPriceSummaryBar
+        productLabel="구독상품금액"
+        totalLabel="월 요금제"
         basePrice={basePrice}
         totalDiscount={totalDiscount}
         shippingFee={0}
-        originalShippingFee={STANDARD_SHIPPING_FEE}
         total={total}
       />
 
-      <div className="bg-white lg:overflow-x-auto">
+      <div className="bg-white">
         <div
-          className="mx-auto max-lg:px-6 max-md:pt-6 md:py-8 lg:px-0 lg:min-w-[900px]"
-          style={{ maxWidth: "var(--max-width-content)" }}
+          className="mx-auto w-full max-w-[1288px] px-6 max-md:py-6 md:pt-[52px] md:pb-[190px]"
         >
-          <div className="grid items-start max-md:gap-y-9 md:grid-cols-[55%_1px_1fr] md:gap-x-6 lg:grid-cols-[1fr_1px_327px] lg:gap-x-8">
+          <div className="grid items-start max-md:gap-y-9 md:grid-cols-[minmax(0,1fr)_1px_280px] md:gap-x-6 lg:grid-cols-[minmax(0,835fr)_1px_minmax(0,300fr)] lg:gap-x-[52px]">
             {leftSections}
             <div className="max-md:hidden self-stretch bg-[var(--color-text-muted)]" />
             {rightColumn}

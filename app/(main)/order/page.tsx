@@ -4,7 +4,6 @@ import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
 import { resolveOrderReferralContext } from "@/features/referral/lib/resolveReferralContext";
-import { ORDER_ENTRY_FROM_PARAM, ORDER_ENTRY_FROM_PURCHASE_PROMO } from "@/features/order";
 import { OrderSection } from "@/widgets/order";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
@@ -16,11 +15,10 @@ export const metadata = {
 export default async function OrderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ planId?: string; quantity?: string; [ORDER_ENTRY_FROM_PARAM]?: string }>;
+  searchParams: Promise<{ planId?: string; quantity?: string }>;
 }) {
-  const { planId: planIdStr, quantity: quantityStr, [ORDER_ENTRY_FROM_PARAM]: from } = await searchParams;
+  const { planId: planIdStr, quantity: quantityStr } = await searchParams;
   const planId = planIdStr ? Number(planIdStr) : NaN;
-  const showStartDateOption = from === ORDER_ENTRY_FROM_PURCHASE_PROMO;
   if (!Number.isFinite(planId) || planId <= 0) {
     redirect("/subscribe");
   }
@@ -62,7 +60,6 @@ export default async function OrderPage({
       initialBilling={billing}
       initialQuantity={initialQuantity}
       referral={referral}
-      showStartDateOption={showStartDateOption}
     />
   );
 }

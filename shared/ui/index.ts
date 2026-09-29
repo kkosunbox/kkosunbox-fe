@@ -45,3 +45,5 @@ export { default as DesktopHeroSideBackground } from "./DesktopHeroSideBackgroun
 export { default as PlanImageBadges } from "./PlanImageBadges";
 export { default as ShippingFeeWaiver } from "./ShippingFeeWaiver";
 export { default as FreeShippingBadge } from "./FreeShippingBadge";
+
+export { CheckoutPromotionBanner } from "./CheckoutPromotionBanner";

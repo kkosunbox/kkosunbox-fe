@@ -95,6 +95,14 @@ function PackageBackdrop({ tier }: { tier: PackageTier }) {
 function Stars({ rating = 5 }: { rating?: number }) {
   return <span className={styles.stars} role="img" aria-label={`평점 5점 만점에 ${rating}점`}>{Array.from({ length: 5 }, (_, index) => <Image key={index} src={star} width={24} height={24} alt="" style={{ clipPath: `inset(0 ${100 - Math.min(1, Math.max(0, rating - index)) * 100}% 0 0)` }} />)}</span>;
 }
+
+function MobilePackageArrow({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d={direction === "left" ? "M8.5 1.5L2 8L8.5 14.5" : "M1.5 1.5L8 8L1.5 14.5"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 interface PackageShowcaseProps {
   plans: SubscriptionPlanDto[];
   loading?: boolean;
@@ -122,6 +130,12 @@ export function PackageShowcaseSection({
     const plan = plans.find(item => tierFromSubscriptionPlan(item) === pkg.tier);
     return plan ? [plan] : [];
   });
+  function selectAdjacent(direction: number) {
+    if (sorted.length < 2) return;
+    const currentIndex = Math.max(0, sorted.findIndex(plan => plan.id === selected?.id));
+    const nextIndex = (currentIndex + direction + sorted.length) % sorted.length;
+    setSelectedId(sorted[nextIndex].id);
+  }
 
   return (
     <section className={styles.packages} data-variant={variant} aria-labelledby="package-intro-title">
@@ -137,8 +151,23 @@ export function PackageShowcaseSection({
             : "맛과 영양을 생각해 구성한 다양한 수제 간식을 정해진 주기에 맞춰 신선하게 보내드려요."}
         </p>
       </div>
+      <div className={`${styles.container} ${styles.mobileTierTabs}`} role="group" aria-label="정기구독 패키지 선택">
+        {PACKAGES.map(item => {
+          const plan = sorted.find(candidate => tierFromSubscriptionPlan(candidate) === item.tier);
+          return (
+            <button key={item.tier} type="button" disabled={!plan} aria-pressed={tier === item.tier}
+              onClick={() => plan && setSelectedId(plan.id)}>
+              {item.name.replace(/ 패키지 BOX$/, "")}
+            </button>
+          );
+        })}
+      </div>
       <div className={`${styles.container} ${styles.packagePanel}`}>
         <PackageBackdrop tier={tier} />
+        <nav className={styles.mobilePackageControls} aria-label="패키지 이미지 이동">
+          <button type="button" aria-label="이전 패키지" disabled={sorted.length < 2} onClick={() => selectAdjacent(-1)}><MobilePackageArrow direction="left" /></button>
+          <button type="button" aria-label="다음 패키지" disabled={sorted.length < 2} onClick={() => selectAdjacent(1)}><MobilePackageArrow direction="right" /></button>
+        </nav>
         <div className={styles.packageHero}>
           <div className={styles.packageCopy}>
             <div className={styles.packageBadges}>
@@ -146,7 +175,10 @@ export function PackageShowcaseSection({
               <span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span>
               {selected && tier === "Standard" && <span className={styles.popularBadge}>인기 PICK 🌟</span>}
             </div>
-            <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2>
+            <div className={styles.packageTitleRow}>
+              <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2>
+              <span className={styles.mobileShippingBadge}><Image src={truck} alt="" width={20} height={20} />무료배송</span>
+            </div>
             <p className={styles.packageDescription}>{pkg.contents.join(" ")}</p>
             {price && (
               <div className={styles.packagePrice}>

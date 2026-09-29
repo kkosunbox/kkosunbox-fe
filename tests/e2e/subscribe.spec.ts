@@ -69,13 +69,34 @@ test.describe("구독 플랜 목록 (/subscribe)", () => {
 
   // ── 상세 페이지 이동 ─────────────────────────────────────────────
 
-  test("'제품 상세보기' 클릭 → /subscribe/detail?planId= 이동", async ({ page }) => {
+  test("패키지 선택 후 '제품 보러가기' 클릭 → 선택한 상세로 이동", async ({ page }) => {
     await loginAndGoTo(page, "/subscribe");
     await dismissChecklistRecommendModalIfVisible(page);
 
-    // sortOrder 순 첫 번째 카드(베이직, id=1)의 버튼 클릭
-    await page.getByRole("button", { name: "제품 상세보기" }).first().click();
+    const basic = MOCK_PLANS[0];
+    const card = page.getByRole("button").filter({ hasText: basic.name });
+    await card.click();
+    await expect(card).toHaveAttribute("aria-pressed", "true");
+    const detailLink = page.getByRole("link", { name: "제품 보러가기" });
+    await expect(detailLink).toHaveAttribute("href", `/subscribe/detail?planId=${basic.id}`);
+    await detailLink.click();
 
     await page.waitForURL(/\/subscribe\/detail\?planId=\d+/, { timeout: 10_000 });
+  });
+
+  test("시안 기본 선택과 전체 구성 비교표 표시", async ({ page }) => {
+    await loginAndGoTo(page, "/subscribe");
+    await dismissChecklistRecommendModalIfVisible(page);
+    await expect(page.getByRole("button").filter({ hasText: "스탠다드 패키지" })).toHaveAttribute("aria-pressed", "true");
+    const table = page.getByRole("table", { name: "베이직, 스탠다드, 프리미엄 패키지 간식 구성 비교" });
+    await expect(table).toBeVisible();
+    await expect(table.getByRole("columnheader")).toHaveCount(4);
+    await expect(table.getByRole("rowheader")).toHaveCount(6);
+  });
+
+  test("tier 진입 파라미터는 기본 스탠다드 선택보다 우선", async ({ page }) => {
+    await loginAndGoTo(page, "/subscribe?tier=Premium");
+    await dismissChecklistRecommendModalIfVisible(page);
+    await expect(page.getByRole("button").filter({ hasText: "프리미엄 패키지" })).toHaveAttribute("aria-pressed", "true");
   });
 });

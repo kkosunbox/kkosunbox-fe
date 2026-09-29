@@ -8,7 +8,7 @@ import Link from "next/link";
 import { getProducts } from "@/features/product/api";
 import type { ProductCategoryDto, ProductDto, ProductSortOrder } from "@/features/product/api/types";
 import { formatKrwPrice } from "@/shared/lib/format";
-import PurchaseBannerCoupon from "../assets/purchase-banner-coupon.png";
+import PurchaseBannerCoupon from "@/shared/assets/promotion-coupon.png";
 
 interface PurchaseListSectionProps {
   products: ProductDto[];

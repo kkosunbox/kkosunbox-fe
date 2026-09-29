@@ -143,6 +143,9 @@
   --color-btn-dark-warm: #584B40;         /* 구독 변경·재시작 버튼 다크 웜 브라운 */
   --color-profile-gender-selected-bg: #FFE8DC; /* 프로필 작성 모달 성별 선택 배경 (Figma) */
 
+  --color-subscription-compare-bg: #FFE7BD;
+  --color-subscription-compare-highlight: #F5F5F5;
+
   /* Tier */
   --color-premium: #EE681A;
   --color-plus: #3E9ED9;
@@ -357,6 +360,8 @@
 }
 
 @theme inline {
+  --color-subscription-compare-bg: var(--color-subscription-compare-bg);
+  --color-subscription-compare-highlight: var(--color-subscription-compare-highlight);
   --color-story-card-border: var(--color-story-card-border);
   --color-story-ingredient-bg: var(--color-story-ingredient-bg);
   --color-story-step-one: var(--color-story-step-one);

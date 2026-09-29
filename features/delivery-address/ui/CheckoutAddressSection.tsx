@@ -16,6 +16,7 @@ import {
 } from "@/shared/config/inputLimits";
 
 interface CheckoutAddressSectionProps {
+  variant?: "default" | "order";
   open: boolean;
   onToggle: () => void;
   selectedAddress: DeliveryAddress | null;
@@ -28,6 +29,7 @@ interface CheckoutAddressSectionProps {
 }
 
 export function CheckoutAddressSection({
+  variant = "default",
   open,
   onToggle,
   selectedAddress,
@@ -38,8 +40,10 @@ export function CheckoutAddressSection({
   setPhoneError,
   onSearchAddress,
 }: CheckoutAddressSectionProps) {
+  const isOrder = variant === "order";
+  const contactInputCls = `${inputCls} ${isOrder ? "" : "md:max-w-[220px]"}`;
   return (
-    <SectionCard title="주문고객 / 배송지 정보" open={open} onToggle={onToggle}>
+    <SectionCard variant={variant} title="주문고객 / 배송지 정보" open={open} onToggle={onToggle}>
       {selectedAddress ? (
         /* ── 저장된 배송지 읽기 전용 뷰 ── */
         <div className="flex flex-col gap-3 pb-1">
@@ -78,20 +82,20 @@ export function CheckoutAddressSection({
         </div>
       ) : (
         /* ── 새 배송지 입력 폼 ── */
-        <div className="flex flex-col gap-4">
+        <div className={isOrder ? "flex flex-col gap-5" : "flex flex-col gap-4"}>
           {/* 받는분 / 휴대폰 */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className={isOrder ? "grid max-lg:grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10" : "grid grid-cols-1 gap-4 md:grid-cols-2"}>
             <FormRow label="받는분">
               <input
                 maxLength={DELIVERY_RECEIVER_NAME_MAX_LENGTH}
                 value={newAddr.receiverName}
                 onChange={(e) => setNewAddr((s) => ({ ...s, receiverName: e.target.value }))}
-                className={`${inputCls} md:max-w-[220px]`}
-                placeholder="이름"
+                className={contactInputCls}
+                placeholder={isOrder ? "성함을 입력하세요" : "이름"}
                 aria-label="받는분"
               />
             </FormRow>
-            <FormRow label="휴대폰">
+            <FormRow label={isOrder ? "연락처" : "휴대폰"}>
               <div className="flex flex-col gap-1">
                 <input
                   value={newAddr.phoneNumber}
@@ -108,8 +112,8 @@ export function CheckoutAddressSection({
                       setPhoneError("올바른 전화번호 형식이 아닙니다.");
                     }
                   }}
-                  className={`${inputCls} md:max-w-[220px]`}
-                  placeholder="010-0000-0000"
+                  className={contactInputCls}
+                  placeholder={isOrder ? "연락처를 입력하세요" : "010-0000-0000"}
                   inputMode="numeric"
                   aria-label="휴대폰"
                 />
@@ -125,7 +129,8 @@ export function CheckoutAddressSection({
               <input
                 value={newAddr.zipCode}
                 readOnly
-                className={`${inputCls} min-w-0 cursor-default bg-[var(--color-surface-light)] md:max-w-[220px]`}
+                className={`${inputCls} min-w-0 cursor-default ${isOrder ? "md:max-w-[248px]" : "md:max-w-[220px]"}`}
+                placeholder={isOrder ? "우편번호를 입력하세요" : undefined}
                 aria-label="우편번호"
               />
               <button
@@ -172,7 +177,7 @@ export function CheckoutAddressSection({
             <input
               value={newAddr.memo}
               onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
-              className={`${inputCls} md:max-w-[220px]`}
+              className={`${inputCls} ${isOrder ? "md:max-w-[328px]" : "md:max-w-[220px]"}`}
               placeholder="배송 시 요청사항을 입력해주세요"
               maxLength={50}
               aria-label="배송메모"

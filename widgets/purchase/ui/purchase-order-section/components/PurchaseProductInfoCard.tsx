@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- 상품 썸네일은 서버의 동적 원격 URL이다. */
 import Image from "next/image";
 import { SectionCard, QuantityMinusIcon, QuantityPlusIcon } from "@/shared/ui";
-import { TIER_BOX_IMAGES, TIER_LABEL, type PackageData } from "@/entities/package";
+import { TIER_BOX_IMAGES, type PackageData } from "@/entities/package";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { QUANTITY_MIN, QUANTITY_MAX } from "../purchaseOrderHelpers";
@@ -21,7 +21,6 @@ interface PurchaseProductInfoCardProps {
 export function PurchaseProductInfoCard({
   pkg,
   imageUrl,
-  relatedPlanSlug,
   unitPrice,
   quantity,
   onDecrease,
@@ -30,37 +29,33 @@ export function PurchaseProductInfoCard({
   onToggle,
 }: PurchaseProductInfoCardProps) {
   return (
-    <SectionCard title="제품 정보" open={open} onToggle={onToggle}>
-      <div className="flex w-full items-center max-sm:gap-4 sm:gap-6">
-        <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:h-[122px] sm:w-[132px] md:h-[117px] md:w-[117px] md:rounded-[16px]">
+    <SectionCard variant="order" title="제품정보" open={open} onToggle={onToggle}>
+      <div className="flex w-full items-center max-sm:gap-4 sm:gap-6 md:px-6">
+        <div className="relative flex shrink-0 items-center justify-center overflow-hidden rounded-[12px] max-sm:h-[104px] max-sm:w-[112px] sm:max-md:h-[122px] sm:max-md:w-[132px] md:h-[148px] md:w-[160px]">
           {imageUrl ? <img src={imageUrl} alt={pkg.name} className="h-full w-full object-cover" /> : <Image
             src={TIER_BOX_IMAGES[pkg.tier]}
             alt={pkg.name}
             fill
             quality={HIGH_IMAGE_QUALITY}
             className="object-cover"
-            sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 117px"
+            sizes="(max-width: 359px) 112px, (max-width: 767px) 132px, 160px"
           />}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <span
-            className="inline-flex w-fit items-center justify-center rounded-[30px] px-3 py-1 text-body-14-sb leading-[17px] text-white"
-            style={{ background: pkg.colorVar }}
-          >
-            {relatedPlanSlug ?? TIER_LABEL[pkg.tier]}
-          </span>
-          <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">{pkg.name}</span>
-          <span className="text-price-16-eb text-[var(--color-surface-dark)]">단품 구매 {formatKrwPrice(unitPrice)}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text)]">{pkg.name}</span>
+            <span className="rounded-[3px] bg-[var(--color-surface-light)] px-1 text-body-12-r text-[var(--color-text-secondary)]">단품</span>
+          </div>
+          <span className="text-body-14-m text-[var(--color-text-secondary)]">단품구매</span>
           <div className="mt-1 flex items-center gap-3">
             <button
               type="button"
               aria-label="수량 감소"
               onClick={onDecrease}
               disabled={quantity <= QUANTITY_MIN}
-              className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
+              className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 h-6 w-6"
             >
-              <span className="max-md:hidden" aria-hidden>−</span>
-              <span className="md:hidden">
+              <span>
                 <QuantityMinusIcon />
               </span>
             </button>
@@ -70,14 +65,14 @@ export function PurchaseProductInfoCard({
               aria-label="수량 증가"
               onClick={onIncrease}
               disabled={quantity >= QUANTITY_MAX}
-              className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 max-md:h-6 max-md:w-6 md:h-7 md:w-7 md:rounded-[5px] md:border md:border-[var(--color-border)]"
+              className="flex items-center justify-center text-body-14-sb text-[var(--color-text)] disabled:opacity-30 h-6 w-6"
             >
-              <span className="max-md:hidden" aria-hidden>+</span>
-              <span className="md:hidden">
+              <span>
                 <QuantityPlusIcon />
               </span>
             </button>
           </div>
+          <span className="text-price-16-eb text-[var(--color-surface-dark)]">{formatKrwPrice(unitPrice)}</span>
         </div>
       </div>
     </SectionCard>

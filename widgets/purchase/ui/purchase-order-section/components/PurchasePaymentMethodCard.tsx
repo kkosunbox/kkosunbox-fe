@@ -35,45 +35,9 @@ export function PurchasePaymentMethodCard({
   onApplyCoupon,
 }: PurchasePaymentMethodCardProps) {
   return (
-    <SectionCard title="결제수단 선택" open={open} onToggle={onToggle}>
+    <SectionCard variant="order" title="결제수단 선택" open={open} onToggle={onToggle}>
       <div className="flex flex-col pb-1">
-        <div className="flex flex-col gap-3 pt-4">
-          <Checkbox checked={couponEnabled} onChange={onToggleCoupon} label="쿠폰사용" />
-          {couponEnabled && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-start gap-0 md:items-center md:gap-4">
-                <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px] md:pt-0">
-                  쿠폰입력
-                </span>
-                <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <input
-                    value={couponCodeInput}
-                    onChange={(e) => setCouponCodeInput(e.target.value)}
-                    maxLength={30}
-                    className={`${inputCls} min-w-0 flex-1`}
-                    placeholder="코드 입력"
-                    aria-label="쿠폰 코드"
-                  />
-                  <button type="button" onClick={onApplyCoupon} className={actionChipCls}>
-                    쿠폰적용
-                  </button>
-                </div>
-              </div>
-              {couponInfo?.canUse ? (
-                <p className="text-body-13-m text-[var(--color-text-secondary)] max-md:pl-[82px] md:pl-[86px]">
-                  {couponInfo.name ?? "할인쿠폰"} -{formatKrwPrice(couponDiscount)}
-                </p>
-              ) : null}
-              {couponError ? (
-                <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]" role="alert">
-                  {couponError}
-                </p>
-              ) : null}
-            </div>
-          )}
-        </div>
-
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="flex flex-col gap-4">
           {widgetLoadError ? (
             <div className="flex flex-col items-center gap-3 py-6">
               <p className="text-center text-body-13-m text-red-600" role="alert">
@@ -89,7 +53,6 @@ export function PurchasePaymentMethodCard({
             </div>
           ) : (
             <>
-              <p className="pl-[30px] text-subtitle-16-b-tight text-[var(--color-text)]">결제 방법</p>
               <div id={PURCHASE_WIDGET_ELEMENT_ID} />
               <div id={PURCHASE_AGREEMENT_ELEMENT_ID} />
               {!paymentReady ? (
@@ -98,6 +61,40 @@ export function PurchasePaymentMethodCard({
             </>
           )}
         </div>
+        <div className="mt-6 flex items-start gap-3">
+          <div className="shrink-0 pt-2.5"><Checkbox checked={couponEnabled} onChange={onToggleCoupon} label="쿠폰사용" /></div>
+          {couponEnabled && (
+            <div className="flex min-w-0 flex-1 flex-col gap-2 md:max-w-[328px]">
+              <div className="flex items-start gap-0 md:items-center">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <input
+                    value={couponCodeInput}
+                    onChange={(e) => setCouponCodeInput(e.target.value)}
+                    maxLength={30}
+                    className={`${inputCls} min-w-0 flex-1`}
+                    placeholder="쿠폰번호를 입력하세요"
+                    aria-label="쿠폰 코드"
+                  />
+                  <button type="button" onClick={onApplyCoupon} className={actionChipCls}>
+                    쿠폰적용
+                  </button>
+                </div>
+              </div>
+              {couponInfo?.canUse ? (
+                <p className="text-body-13-m text-[var(--color-text-secondary)]">
+                  {couponInfo.name ?? "할인쿠폰"} -{formatKrwPrice(couponDiscount)}
+                </p>
+              ) : null}
+              {couponError ? (
+                <p className="text-body-13-m text-red-600" role="alert">
+                  {couponError}
+                </p>
+              ) : null}
+            </div>
+          )}
+        </div>
+
+
       </div>
     </SectionCard>
   );

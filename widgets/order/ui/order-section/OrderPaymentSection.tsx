@@ -46,7 +46,7 @@ export function OrderPaymentSection({
   onApplyCoupon,
 }: OrderPaymentSectionProps) {
   return (
-    <SectionCard title="결제수단 선택" open={open} onToggle={onToggle}>
+    <SectionCard variant="order" title="결제수단 선택" open={open} onToggle={onToggle}>
       <div className="flex flex-col gap-4">
         {/* 결제 수단 라디오 + 카드 정보 — 같은 행 */}
         <div className="flex items-center gap-4 flex-wrap">
@@ -72,7 +72,7 @@ export function OrderPaymentSection({
                 <button
                   type="button"
                   onClick={onChangeCard}
-                  className={`${actionChipSmallCls} ml-auto`}
+                  className={actionChipSmallCls}
                 >
                   카드 변경
                 </button>
@@ -81,7 +81,7 @@ export function OrderPaymentSection({
               <button
                 type="button"
                 onClick={onChangeCard}
-                className={`${actionChipCls} ml-auto`}
+                className={actionChipCls}
               >
                 카드 등록
               </button>
@@ -89,25 +89,24 @@ export function OrderPaymentSection({
         </div>
 
         {/* 쿠폰 사용 */}
-        <div className="flex flex-col gap-3 pt-4">
-          <Checkbox
-            checked={couponEnabled}
-            onChange={onToggleCoupon}
-            label="쿠폰사용"
-          />
+        <div className="flex items-start gap-3 pt-2">
+          <div className="shrink-0 pt-2.5">
+            <Checkbox
+              checked={couponEnabled}
+              onChange={onToggleCoupon}
+              label="쿠폰사용"
+            />
+          </div>
           {couponEnabled && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-start gap-0 md:items-center md:gap-4">
-                <span className="shrink-0 pt-3 text-body-13-m leading-[16px] text-[var(--color-text)] max-md:w-[82px] md:w-[70px] md:pt-0">
-                  쿠폰입력
-                </span>
-                <div className="flex flex-1 items-center gap-3 min-w-0">
+            <div className="flex min-w-0 flex-1 flex-col gap-2 md:max-w-[328px]">
+              <div className="flex items-start gap-0 md:items-center">
+                <div className="flex flex-1 items-center gap-3 min-w-0 md:max-w-[328px]">
                   <input
                     value={couponCodeInput}
                     onChange={(e) => setCouponCodeInput(e.target.value)}
                     maxLength={30} // 백엔드 스펙: 쿠폰 코드 최대 30자
                     className={`${inputCls} flex-1 min-w-0`}
-                    placeholder="코드 입력"
+                    placeholder="쿠폰번호를 입력하세요"
                     aria-label="쿠폰 코드"
                   />
                   <button
@@ -122,12 +121,12 @@ export function OrderPaymentSection({
               {/* 적용된 쿠폰 정보는 입력 줄 오른쪽이 아니라 아랫줄에 둔다 — 같은 줄에 두면 쿠폰명 길이만큼
                   입력창이 밀려 좁아지고, 에러 메시지와 노출 위치도 어긋난다. */}
               {couponInfo?.canUse ? (
-                <p className="text-body-13-m text-[var(--color-text-secondary)] max-md:pl-[82px] md:pl-[86px]">
+                <p className="text-body-13-m text-[var(--color-text-secondary)]">
                   {couponInfo.name ?? `할인쿠폰`} -{formatPrice(couponDiscount)}
                 </p>
               ) : null}
               {couponError ? (
-                <p className="text-body-13-m text-red-600 max-md:pl-[82px] md:pl-[86px]">{couponError}</p>
+                <p className="text-body-13-m text-red-600">{couponError}</p>
               ) : null}
             </div>
           )}

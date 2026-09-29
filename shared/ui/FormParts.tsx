@@ -54,27 +54,29 @@ export function SectionCard({
   open,
   onToggle,
   children,
+  variant = "default",
 }: {
   title: string;
   open: boolean;
   onToggle: () => void;
   children: ReactNode;
+  variant?: "default" | "order";
 }) {
   const contentId = useId();
 
   return (
-    <div className="max-md:rounded-none max-md:px-0 md:rounded-[20px] md:bg-white md:px-3">
+    <div className={variant === "order" ? "min-w-0" : "max-md:rounded-none max-md:px-0 md:rounded-[20px] md:bg-white md:px-3"}>
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
         aria-controls={contentId}
-        className="flex w-full items-center justify-between border-b border-[var(--color-text-muted)] text-left max-md:pb-3 md:pt-7 md:pb-5"
+        className={`flex w-full items-center justify-between border-b border-[var(--color-text-muted)] text-left max-md:pb-3 md:pb-5 ${variant === "default" ? "md:pt-7" : ""}`}
       >
         <span className="tracking-[-0.04em] text-[var(--color-text)] max-md:text-subtitle-16-b md:text-subtitle-18-b">{title}</span>
-        <ChevronIcon open={open} />
+        <ChevronIcon open={variant === "order" ? !open : open} />
       </button>
-      <CollapsiblePanel id={contentId} open={open} innerClassName="max-md:pt-5 md:pt-5 md:pb-5">
+      <CollapsiblePanel id={contentId} open={open} innerClassName={variant === "order" ? "pt-5" : "max-md:pt-5 md:pt-5 md:pb-5"}>
         {children}
       </CollapsiblePanel>
     </div>

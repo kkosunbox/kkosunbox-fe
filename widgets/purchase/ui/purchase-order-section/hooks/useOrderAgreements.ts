@@ -6,7 +6,7 @@ import { useState } from "react";
  * 약관 동의(이용약관·개인정보·연령 확인) + 접기 패널 상태를 소유하는 단위 훅.
  */
 export function useOrderAgreements() {
-  const [agreeOpen, setAgreeOpen] = useState(true);
+  const [agreeOpen, setAgreeOpen] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);

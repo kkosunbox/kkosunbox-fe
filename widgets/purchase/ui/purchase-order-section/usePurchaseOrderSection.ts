@@ -55,7 +55,7 @@ export function usePurchaseOrderSection({
     toggleAge,
   } = useOrderAgreements();
   const coupon = usePurchaseCoupon();
-  const [couponEnabled, setCouponEnabled] = useState(false);
+  const [couponEnabled, setCouponEnabled] = useState(true);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState(false);
 

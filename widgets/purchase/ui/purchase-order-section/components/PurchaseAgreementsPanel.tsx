@@ -29,7 +29,7 @@ export function PurchaseAgreementsPanel({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <Checkbox checked={agreeAll} onChange={onAgreeAll} label="모두 동의합니다." />
+        <Checkbox checked={agreeAll} onChange={onAgreeAll} label="약관 및 주문 내용을 확인하였으며, 정보 제공 등에 동의합니다." />
         <button
           type="button"
           aria-label={agreeOpen ? "약관 항목 접기" : "약관 항목 펼치기"}

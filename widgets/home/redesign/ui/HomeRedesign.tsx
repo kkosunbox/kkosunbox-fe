@@ -5,10 +5,9 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getSubscriptionPlans, type SubscriptionPlanDto } from "@/features/subscription/api";
-import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
 import { useReferral } from "@/features/referral/model";
 import { getProductCategories, getProducts, type ProductCategoryDto, type ProductDto } from "@/features/product/api";
-import { PACKAGES, tierFromSubscriptionPlan, type PackageTier } from "@/entities/package";
+import { PackageShowcaseSection } from "@/widgets/package-plans";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { openKakaoChannelChat } from "@/shared/ui";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
@@ -20,16 +19,7 @@ import stepProfile from "../assets/subscription-step-01-profile.svg";
 import stepPlan from "../assets/subscription-step-02-plan.svg";
 import stepPayment from "../assets/subscription-step-03-payment-date.svg";
 import stepDelivery from "../assets/subscription-step-04-delivery.svg";
-import star from "../assets/review-star.svg";
 import chevron from "../assets/chevron-down.svg";
-import arrow from "../assets/product-arrow.svg";
-import truck from "../assets/delivery-truck.svg";
-import basicPackageBackground from "../assets/package-showcase-background-basic.png";
-import standardPackageBackground from "../assets/package-showcase-background.png";
-import premiumPackageBackground from "../assets/package-showcase-background-premium.png";
-import basicBox from "../assets/package-basic.png";
-import standardBox from "../assets/package-standard.png";
-import premiumBox from "../assets/package-premium.png";
 import coupon from "../assets/product-banner-coupon.png";
 import salmonYogurtBall from "../assets/product-salmon-yogurt-ball.png";
 import kkomiChips from "../assets/product-kkomi-chips.png";
@@ -45,79 +35,6 @@ const STEPS = [
   { number: "03", title: "결제일 지정", description: <>결제 되는 날 꼬순박스가<br />출발해요</>, image: stepPayment },
   { number: "04", title: "집앞 배송", description: <>아이스박스에 담겨 신선하게<br />배송돼요</>, image: stepDelivery },
 ] as const;
-const BOX_IMAGES = { Basic: basicBox, Standard: standardBox, Premium: premiumBox };
-const PACKAGE_BACKGROUNDS = {
-  Basic: basicPackageBackground,
-  Standard: standardPackageBackground,
-  Premium: premiumPackageBackground,
-} satisfies Record<PackageTier, StaticImageData>;
-
-interface IncomingPackageBackground {
-  tier: PackageTier;
-  ready: boolean;
-}
-
-function PackageBackdrop({ tier }: { tier: PackageTier }) {
-  const [currentTier, setCurrentTier] = useState(tier);
-  const [incoming, setIncoming] = useState<IncomingPackageBackground | null>(null);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      if (tier === currentTier) {
-        setIncoming(null);
-        return;
-      }
-
-      setIncoming({ tier, ready: false });
-    }, 0);
-
-    return () => window.clearTimeout(timer);
-  }, [currentTier, tier]);
-
-  function finishTransition(nextTier: PackageTier) {
-    setCurrentTier(nextTier);
-    setIncoming(null);
-  }
-
-  return (
-    <div className={styles.packageBackdrop} aria-hidden="true">
-      <div className={styles.packageBackdropPhoto}>
-      <Image
-        key={currentTier}
-        src={PACKAGE_BACKGROUNDS[currentTier]}
-        alt=""
-        fill
-        quality={HIGH_IMAGE_QUALITY}
-        sizes="(min-width: 1288px) 1240px, calc(100vw - 48px)"
-        className={styles.packageBackdropImage}
-        data-active={!incoming?.ready}
-      />
-      {incoming && (
-        <Image
-          key={incoming.tier}
-          src={PACKAGE_BACKGROUNDS[incoming.tier]}
-          alt=""
-          fill
-          quality={HIGH_IMAGE_QUALITY}
-          sizes="(min-width: 1288px) 1240px, calc(100vw - 48px)"
-          className={styles.packageBackdropImage}
-          data-active={incoming.ready}
-          onLoad={() => {
-            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-              finishTransition(incoming.tier);
-              return;
-            }
-            setIncoming(current => current?.tier === incoming.tier ? { ...current, ready: true } : current);
-          }}
-          onTransitionEnd={event => {
-            if (event.propertyName === "opacity" && incoming.ready) finishTransition(incoming.tier);
-          }}
-        />
-      )}
-      </div>
-    </div>
-  );
-}
 const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /연어.*요거트|요거트.*연어/, image: salmonYogurtBall },
   { matches: /꼬미칩/, image: kkomiChips },
@@ -125,9 +42,14 @@ const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /오리.*요거트|요거트.*오리/, image: duckYogurtBall },
 ];
 
-function Stars({ rating = 5 }: { rating?: number }) {
-  return <span className={styles.stars} role="img" aria-label={`평점 5점 만점에 ${rating}점`}>{Array.from({ length: 5 }, (_, index) => <Image key={index} src={star} width={24} height={24} alt="" style={{ clipPath: `inset(0 ${100 - Math.min(1, Math.max(0, rating - index)) * 100}% 0 0)` }} />)}</span>;
+function ProductArrow({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg width="16" height="26" viewBox="0 0 16 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d={direction === "left" ? "M14 2L2 12.6667L14 23.3333" : "M2 2L14 12.6667L2 23.3333"} stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
+
 function BrandStorySection() {
   return <section className={styles.story} aria-labelledby="brand-story-title"><div className={`${styles.container} ${styles.storyGrid}`}>
     <div><h2 id="brand-story-title" className={styles.heading}><span>매일 먹는 간식이니까</span><br />더 꼼꼼하게 생각했습니다.</h2>
@@ -147,31 +69,6 @@ function SubscriptionStepsSection() {
     <Image src={subscriptionDogTreat} alt="꼬순박스 간식을 기다리는 강아지" quality={HIGH_IMAGE_QUALITY} className={styles.stepsImage} sizes="(min-width: 768px) 455px, calc(100vw - 48px)" />
   </div></section>;
 }
-function PackageShowcaseSection({ plans, loading, error }: { plans: SubscriptionPlanDto[]; loading: boolean; error: boolean }) {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const selected = plans.find(plan => plan.id === selectedId) ?? plans.find(plan => tierFromSubscriptionPlan(plan) === "Standard") ?? plans[0];
-  const tier = selected ? tierFromSubscriptionPlan(selected) : "Standard";
-  const pkg = PACKAGES.find(item => item.tier === tier)!;
-  const price = selected ? planDisplayPrice(selected) : null;
-  const sorted = [...plans].sort((a, b) => ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(a)) - ["Basic", "Standard", "Premium"].indexOf(tierFromSubscriptionPlan(b))).slice(0, 3);
-  return <section className={styles.packages} aria-labelledby="package-intro-title">
-    <div className={`${styles.container} ${styles.packageIntro}`}>
-      <h2 id="package-intro-title" className={styles.heading}><span>꼬순박스를</span> 정기구독으로 만나보세요.</h2>
-      <p className={styles.productDescription}>맛과 영양을 생각해 구성한 다양한 수제 간식을 정해진 주기에 맞춰 신선하게 보내드려요.</p>
-    </div>
-    <div className={`${styles.container} ${styles.packagePanel}`}><PackageBackdrop tier={tier} />
-    <div className={styles.packageHero}><div className={styles.packageCopy}>
-      <div className={styles.packageBadges}><span className={styles.tierBadge} data-tier={tier}>{pkg.name.replace(/ 패키지 BOX$/, "")}</span><span className={styles.shippingBadge}><Image src={truck} alt="" width={24} height={24} />무료배송</span></div>
-      <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2><p className={styles.packageDescription}>{pkg.contents.join(" ")}</p>
-      {price && <div className={styles.packagePrice}><span>월 요금제</span><span className={styles.packageCurrentPrice}>{!!price.discountPct && <em>{price.discountPct}%</em>}<strong>{formatKrwPrice(price.price)}</strong></span>{price.strikePrice && <del>{formatKrwPrice(price.strikePrice)}</del>}</div>}
-      {selected && !selected.isSalesPaused ? <Link href={`/subscribe/detail?planId=${selected.id}`} className={styles.outlineButton}>제품 보러가기</Link> : <button className={styles.outlineButton} disabled>{loading ? "패키지 불러오는 중" : selected?.isSalesPaused ? "현재 신청이 어려워요" : "패키지 준비 중"}</button>}
-    </div></div>
-    <div className={styles.packageCards}>{loading ? Array.from({ length: 3 }, (_, i) => <div key={i} className={styles.packageSkeleton} aria-label="패키지 불러오는 중" />) : sorted.length ? sorted.map(plan => {
-      const cardTier = tierFromSubscriptionPlan(plan); const cardPrice = planDisplayPrice(plan);
-      return <button key={plan.id} type="button" aria-pressed={selected?.id === plan.id} onClick={() => setSelectedId(plan.id)} className={styles.packageCard}><span className={styles.packageCardImage} data-tier={cardTier}><Image src={BOX_IMAGES[cardTier]} alt="" width={160} height={148} sizes="240px" /></span><span className={styles.packageCardCopy}><strong>{plan.name}</strong><span className={styles.cardDiscount}>{!!cardPrice.discountPct && <em>{cardPrice.discountPct}%</em>}{cardPrice.strikePrice && <del>{formatKrwPrice(cardPrice.strikePrice)}</del>}</span><span className={styles.cardPrice}>월 요금제 <b>{formatKrwPrice(cardPrice.price)}</b></span>{plan.averageRating > 0 ? <span className={styles.cardRating}><Stars rating={plan.averageRating} /><span>{plan.averageRating.toFixed(1)}</span></span> : <span className={styles.cardAction}>{plan.isSalesPaused ? "현재 신청이 어려워요" : "구성 살펴보기"}</span>}</span></button>;
-    }) : <p className={styles.empty}>{error ? "패키지 정보를 불러오지 못했습니다." : "현재 신청 가능한 패키지가 없습니다."} <Link href="/subscribe">구독몰에서 확인하기</Link></p>}</div>
-  </div></section>;
-}
 function ProductShowcaseSection({ products, categories, loading, error }: { products: ProductDto[]; categories: ProductCategoryDto[]; loading: boolean; error: boolean }) {
   const [categoryId, setCategoryId] = useState<number | null>(null); const [start, setStart] = useState(0);
   const filtered = useMemo(() => {
@@ -184,7 +81,7 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
     <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={217} height={77} /></Link>
     <h2 id="products-title" className={styles.heading}><span>마음에 드는 간식만</span> 골라서 만나보세요.</h2><p className={styles.productDescription}>꼬순박스에서 만나보던 수제 간식을 원하는 제품만 골라 단품으로 만나보세요.</p>
     <div className={styles.tabs} role="group" aria-label="상품 카테고리">{[{ id: null, name: "전체" }, ...categories].map(item => <button key={item.id ?? "all"} type="button" aria-pressed={categoryId === item.id} onClick={() => { setCategoryId(item.id); setStart(0); }}>{item.name}</button>)}</div>
-    <div className={styles.productCarousel}><button type="button" className={`${styles.carouselArrow} ${styles.previous}`} aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
+    <div className={styles.productCarousel}>
       <div className={styles.productCards}>{loading ? Array.from({ length: 4 }, (_, i) => <div key={i} className={styles.productSkeleton} aria-label="상품 불러오는 중" />) : visible.length ? visible.map(product => {
         const art = PRODUCT_ART.find(item => item.matches.test(product.name))?.image; const unavailable = product.isSoldOut || product.isSalesPaused;
         const content = <><div className={styles.productImage}>{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : art ? <Image src={art} alt={product.name} fill sizes="(min-width: 1288px) 290px, (min-width: 768px) 23vw, 44vw" quality={HIGH_IMAGE_QUALITY} /> : <span>이미지 준비 중</span>}{unavailable && <span className={styles.unavailable}>{product.isSoldOut ? "품절" : "판매 중지"}</span>}</div><h3>{product.name}</h3><p>{product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식"}</p><span className={styles.productPrice}>{product.originalPrice != null && product.originalPrice > product.price && <em>{Math.round((1 - product.price / product.originalPrice) * 100)}%</em>}<strong>{formatKrwPrice(product.price)}</strong>{product.originalPrice != null && product.originalPrice > product.price && <del>{formatKrwPrice(product.originalPrice)}</del>}</span></>;
@@ -201,7 +98,10 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
         ) : null;
         return unavailable ? <article key={product.id}>{content}{rating}</article> : <Link key={product.id} href={`/purchase/detail?productId=${product.id}`}>{content}{rating}</Link>;
       }) : <p className={styles.empty}>{error ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리에 판매 중인 상품이 없습니다."} <Link href="/products">단품몰에서 확인하기</Link></p>}</div>
-      <button type="button" className={`${styles.carouselArrow} ${styles.next}`} aria-label="다음 상품" disabled={start + 4 >= filtered.length} onClick={() => setStart(value => Math.min(Math.max(0, filtered.length - 4), value + 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
+      <nav className={styles.productControls} aria-label="단품 상품 페이지">
+        <button type="button" aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><ProductArrow direction="left" /></button>
+        <button type="button" aria-label="다음 상품" disabled={start + 4 >= filtered.length} onClick={() => setStart(value => Math.min(Math.max(0, filtered.length - 4), value + 1))}><ProductArrow direction="right" /></button>
+      </nav>
     </div>
   </div></section>;
 }

@@ -23,10 +23,7 @@ import ProductReviewList from "@/widgets/subscribe/plans/ui/reviews/ProductRevie
 import ProductInfoImages from "@/widgets/subscribe/plans/ui/detail/ProductInfoImages";
 import ProductDeliveryInfo from "@/widgets/subscribe/plans/ui/detail/ProductDeliveryInfo";
 import ProductSupportTab from "@/widgets/subscribe/plans/ui/detail/ProductSupportTab";
-import { addCartItem } from "@/features/cart";
-import { notifyCartUpdated } from "@/features/cart/lib/events";
-import { getErrorMessage } from "@/shared/lib/api";
-import { useModal } from "@/shared/ui";
+import { CartAddedModal, useAddToCart } from "@/features/cart";
 
 interface Props {
   pkg: PackageData;
@@ -79,7 +76,7 @@ function ProductPrice({ product }: { product: PackagePurchaseProduct }) {
 
 export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId, productId, isSoldOut, isSalesPaused, imageUrl }: Props) {
   const router = useRouter();
-  const { openAlert } = useModal();
+  const cartAction = useAddToCart();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
@@ -108,15 +105,8 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
     router.push(`/purchase/order?tier=${pkg.tier}&quantity=${quantity}`);
   }
 
-  async function handleAddToCart() {
-    if (isUnavailable || productId === null) return;
-    try {
-      await addCartItem({ productId, quantity });
-      notifyCartUpdated();
-      openAlert({ title: "장바구니에 담았습니다.", primaryLabel: "장바구니 보기", onPrimary: () => router.push("/cart"), secondaryLabel: "계속 쇼핑하기" });
-    } catch (error) {
-      openAlert({ title: getErrorMessage(error, "장바구니에 담지 못했습니다.") });
-    }
+  function handleAddToCart() {
+    if (!isUnavailable && productId !== null) void cartAction.add(productId, quantity);
   }
 
   const TopBar = (
@@ -135,6 +125,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
+      {cartAction.cart && <CartAddedModal cart={cartAction.cart} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={(id) => void cartAction.add(id)} onClose={cartAction.close} />}
       {reviewState.lightbox ? (
         <ReviewImageLightbox
           urls={reviewState.lightbox.urls}
@@ -259,7 +250,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={handleAddToCart} disabled={isUnavailable} className="flex h-12 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
+            <button type="button" onClick={handleAddToCart} disabled={isUnavailable || cartAction.pendingProductId !== null} className="flex h-12 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
             <button
               type="button"
               onClick={handleBuy}
@@ -439,7 +430,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 md:mt-8 lg:mt-8">
-                <button type="button" onClick={handleAddToCart} disabled={isUnavailable} className="flex h-[48px] items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
+                <button type="button" onClick={handleAddToCart} disabled={isUnavailable || cartAction.pendingProductId !== null} className="flex h-[48px] items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
                 <button
                   type="button"
                   onClick={handleBuy}

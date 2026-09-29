@@ -56,3 +56,5 @@ export {
   PackageCompareHeartIcon,
   PackageCompareCloseButton,
 } from "./ui/packageCompareParts";
+
+export { PACKAGE_COMPARISON_ROWS } from "./lib/packageComparison";

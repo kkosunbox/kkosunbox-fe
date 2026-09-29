@@ -1,0 +1,5 @@
+.hero { display: flex; align-items: center; justify-content: center; gap: 32px; width: 100%; min-height: 70px; margin-top: var(--header-offset); padding: 0 24px; overflow: hidden; background: var(--color-purchase-banner-bg); color: white; }
+.hero p { font-size: 16px; line-height: 20px; font-weight: 700; letter-spacing: -.04em; }
+.hero strong { color: var(--color-star); font-weight: 800; }
+.illustration { align-self: flex-end; width: 143px; height: 63px; object-fit: contain; }
+@media (max-width: 767px) { .hero { min-height: 84px; gap: 8px; padding-inline: 20px; } .hero p { max-width: 220px; font-size: 14px; line-height: 20px; } .illustration { width: 114px; height: auto; } }

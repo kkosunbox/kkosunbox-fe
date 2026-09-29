@@ -26,14 +26,14 @@ export function OrderStartDateSection({
   maxScheduledDate,
 }: OrderStartDateSectionProps) {
   return (
-    <SectionCard title="구독 시작일" open={open} onToggle={onToggle}>
+    <SectionCard variant="order" title="구독 시작일" open={open} onToggle={onToggle}>
       <div className="flex flex-col gap-6">
         <RadioButton
           checked={startDateMode === "immediate"}
           onChange={() => onStartDateModeChange("immediate")}
           label="지금 바로 첫 구독 상품 결제하기"
         />
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-6">
           <RadioButton
             checked={startDateMode === "scheduled"}
             onChange={() => onStartDateModeChange("scheduled")}

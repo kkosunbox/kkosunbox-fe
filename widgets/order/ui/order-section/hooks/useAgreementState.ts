@@ -14,7 +14,7 @@ export interface AgreementState {
 }
 
 export function useAgreementState(): AgreementState {
-  const [agreeOpen, setAgreeOpen] = useState(true);
+  const [agreeOpen, setAgreeOpen] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);

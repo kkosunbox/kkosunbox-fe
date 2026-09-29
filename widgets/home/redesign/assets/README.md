@@ -18,9 +18,9 @@ dev용 신규 메인 구현을 위한 준비 에셋이다. 현재 페이지에�
 | main-section-3-svg-step-04.svg | [subscription-step-04-delivery.svg](subscription-step-04-delivery.svg) | 91 x 55 |
 | main-section-4-image-left.png | [review-dog-bowl.png](review-dog-bowl.png) | 328 x 382 |
 | main-section-4-image-right.png | [review-dog-products.png](review-dog-products.png) | 422 x 422 |
-| main-section-5-image-background.png | [package-showcase-background.png](package-showcase-background.png) | 3840 x 1460 |
-| 사용자 제공 베이직 패키지 배경 | [package-showcase-background-basic.png](package-showcase-background-basic.png) | 3840 x 1460 |
-| 사용자 제공 프리미엄 패키지 배경 | [package-showcase-background-premium.png](package-showcase-background-premium.png) | 3840 x 1460 |
+| main-section-5-image-background.png | [package-showcase-background.png](../../../package-plans/assets/package-showcase-background.png) | 3840 x 1460 |
+| 사용자 제공 베이직 패키지 배경 | [package-showcase-background-basic.png](../../../package-plans/assets/package-showcase-background-basic.png) | 3840 x 1460 |
+| 사용자 제공 프리미엄 패키지 배경 | [package-showcase-background-premium.png](../../../package-plans/assets/package-showcase-background-premium.png) | 3840 x 1460 |
 | main-section-5-image-asset-01.png | [product-salmon-yogurt-ball.png](product-salmon-yogurt-ball.png) | 290 x 270 |
 | main-section-5-image-asset-02.png | [product-kkomi-chips.png](product-kkomi-chips.png) | 290 x 270 |
 | main-section-5-image-asset-03.png | [product-beef-meal.png](product-beef-meal.png) | 290 x 270 |
@@ -44,3 +44,5 @@ dev용 신규 메인 구현을 위한 준비 에셋이다. 현재 페이지에�
 - `product-banner-coupon.png`: 기존 `widgets/purchase/assets/purchase-banner-coupon.png` 원본 복사.
 - `review-profile-01~04.webp`: 기존 공개 후기 프로필 원본 복사. 상단 강아지 사진과 구분한다.
 - 준비 에셋은 현재 dev 전용 메인에 연결되어 있다. 단품 사진은 API 상품명이 해당 상품과 일치할 때만 사용한다.
+
+패키지 쇼케이스 이미지·별점·배송 아이콘은 메인과 구독몰의 공용 위젯 `widgets/package-plans/assets/`로 이동했습니다.

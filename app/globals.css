@@ -102,6 +102,7 @@
   --color-hero-subtext: #6C411F;      /* Hero 서브카피 텍스트 */
   --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
   --color-support-faq-surface: #FFF7E8;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
+  --color-support-faq-active: #FFF2DA;    /* Support FAQ 열린 아코디언 배경 */
   --color-withdraw-profile-bg: #FDF5E7;   /* 탈퇴 확인 페이지 프로필 배너 배경 */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-support-hero-side-bg: #FFF2D8; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
@@ -142,6 +143,9 @@
   --color-feature-card-sage: #E7F2CA;  /* Section 4 카드 3 배경 (맞춤 간식) */
   --color-btn-dark-warm: #584B40;         /* 구독 변경·재시작 버튼 다크 웜 브라운 */
   --color-profile-gender-selected-bg: #FFE8DC; /* 프로필 작성 모달 성별 선택 배경 (Figma) */
+
+  --color-subscription-compare-bg: #FFE7BD;
+  --color-subscription-compare-highlight: #F5F5F5;
 
   /* Tier */
   --color-premium: #EE681A;
@@ -357,6 +361,8 @@
 }
 
 @theme inline {
+  --color-subscription-compare-bg: var(--color-subscription-compare-bg);
+  --color-subscription-compare-highlight: var(--color-subscription-compare-highlight);
   --color-story-card-border: var(--color-story-card-border);
   --color-story-ingredient-bg: var(--color-story-ingredient-bg);
   --color-story-step-one: var(--color-story-step-one);
@@ -370,6 +376,7 @@
   --color-home-package-floor: var(--color-home-package-floor);
   --color-home-faq-bg: var(--color-home-faq-bg);
   --color-home-faq-active: var(--color-home-faq-active);
+  --color-support-faq-active: var(--color-support-faq-active);
   --color-background: var(--color-background);
   --color-foreground: var(--color-text);
 

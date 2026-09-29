@@ -84,7 +84,7 @@ export default async function SubscribePage({
   const { refCode } = await resolveReferralContext();
   const plans = await fetchSubscriptionPlans(token, undefined, refCode ?? undefined);
 
-  // 띠배너 등 특정 진입 경로에서만 초기 선택 티어를 지정 — 일반 진입 시에는 PlanPicker 기본값을 따른다.
+  // 띠배너 등 특정 진입 경로에서만 초기 선택 티어를 지정 — 일반 진입 시에는 쇼케이스 기본값(스탠다드)을 따른다.
   const { tier } = await searchParams;
   const initialSelectedTier = PACKAGES.find((item) => item.tier === tier)?.tier ?? null;
 

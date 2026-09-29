@@ -1,0 +1,41 @@
+.section { width: calc(100% - 48px); max-width: 1240px; margin: 24px auto 68px; color: var(--color-why-choose-text); letter-spacing: -.04em; }
+.section h2 span { color: var(--color-text-discount); }
+.section > p { margin-top: 12px; }
+.scroller { position: relative; margin-top: 44px; padding: 16px; border-radius: 32px; background: var(--color-subscription-compare-bg); overflow-x: auto; }
+.scroller:focus-visible { outline: 2px solid var(--color-text-discount); outline-offset: 4px; }
+.table { width: 100%; min-width: 860px; border-collapse: separate; border-spacing: 0; table-layout: fixed; color: var(--color-text); }
+.labelColumn { width: 21.5%; }
+.table th, .table td { height: 57px; padding: 12px 10px; text-align: center; font-size: 16px; line-height: 22px; }
+.table thead th { height: 78px; font-size: 18px; font-weight: 800; }
+.table th:first-child { text-align: left; padding-left: 66px; font-weight: 700; }
+.table thead th:first-child img { display: block; }
+.table td, .table thead th:not(:first-child) { background: white; }
+.table td:nth-child(3), .table thead th:nth-child(3) { background: var(--color-subscription-compare-highlight); }
+.table thead th:nth-child(2), .table thead th:nth-child(3) { border-radius: 32px 0 0 0; }
+.table thead th:last-child { border-radius: 0 32px 0 0; }
+.table tbody tr:last-child td:nth-child(2) { border-radius: 0 0 0 32px; }
+.table tbody tr:last-child td:last-child { border-radius: 0 0 32px 0; }
+.table tbody tr:last-child th, .table tbody tr:last-child td { height: 67px; padding-bottom: 22px; }
+.summary { filter: drop-shadow(0 4px 12px rgb(0 0 0 / 12%)); }
+.table .summary th, .table .summary td { height: 62px; background: white; font-weight: 700; }
+.summary th { border-radius: 12px 0 0 12px; }
+.summary td:last-child { border-radius: 0 12px 12px 0; }
+.item { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+.item svg { flex-shrink: 0; }
+.scrollHint { display: none; }
+@media (max-width: 1199px) {
+  .table th:first-child { padding-left: 24px; }
+  .section { margin-top: 32px; }
+  .scrollHint { display: block; font-size: 13px; color: var(--color-text-label); }
+  .scroller { margin-top: 24px; }
+}
+@media (max-width: 767px) {
+  .section { margin-bottom: 48px; }
+  .section h2 { font-size: 24px; line-height: 32px; }
+  .section > p { font-size: 14px; line-height: 22px; }
+  .scroller { padding: 12px; border-radius: 24px; }
+  .table { min-width: 820px; }
+}
+@media (max-width: 359px) {
+  .section { width: calc(100% - 32px); }
+}

@@ -1,17 +1,14 @@
 ﻿"use client";
-/* eslint-disable @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */
 
+import Image from "next/image";
+import coupon from "@/shared/assets/promotion-coupon.png";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChecklistRecommendModal, DesktopHeroSideBackground, ScrollReveal } from "@/shared/ui";
+import { ChecklistRecommendModal } from "@/shared/ui";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { useAuth } from "@/features/auth";
 import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { hasChecklistAnswers } from "@/features/profile/lib/profileStatus";
-import SubscribePlansHeroImage from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-renewal.webp";
-import SubscribePlansHeroImageTablet from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-tablet-renewal.webp";
-import SubscribePlansHeroImageMobile from "@/widgets/subscribe/plans/assets/subscribe-plans-hero-mobile-renewal.webp";
-import { PlanPicker } from "@/widgets/package-plans";
+import { PackageShowcaseSection, PackageComparison } from "@/widgets/package-plans";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import type { Profile } from "@/features/profile/api/types";
 import type { PackageTier } from "@/entities/package";
@@ -30,7 +27,6 @@ export default function SubscribePlansSection({
   showChecklistRecommend = true,
   initialSelectedTier = null,
 }: Props) {
-  const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { profile: clientProfile, isProfilesReady } = useProfile();
   const [isDismissed, setIsDismissed] = useState(false);
@@ -52,69 +48,18 @@ export default function SubscribePlansSection({
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <section className="flex min-h-full flex-1 flex-col bg-white pb-16 md:pb-20">
-        <div className="flex w-full flex-1 flex-col">
-          {/* Hero */}
-          <ScrollReveal variant="fade-in" duration={600}>
-            <div className="max-lg:mb-1">
-              {/* 모바일 (<768px) */}
-              <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
-                <img
-                  src={SubscribePlansHeroImageMobile.src}
-                  alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                  className="h-[156px] w-full shrink-0 object-cover object-center"
-                />
-              </div>
-              {/* 태블릿 (768px~1199px) */}
-              <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden">
-                <img
-                  src={SubscribePlansHeroImageTablet.src}
-                  alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                  className="h-[156px] w-full shrink-0 object-cover object-center"
-                />
-              </div>
-              {/* 데스크톱 (≥1200px) */}
-              <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
-                <div className="relative w-full h-[306px]">
-                  <DesktopHeroSideBackground />
-                  <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-                    <img
-                      src={SubscribePlansHeroImage.src}
-                      alt="이제 수제 간식도 맞춤형으로 구독하세요"
-                      className="absolute inset-0 h-full w-full object-cover object-center"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-
-          {plans.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
-              <p className="text-body-16-m text-[var(--color-text-secondary)]">
-                잠시 후 다시 시도해 주세요.
-              </p>
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="text-body-14-sb text-[var(--color-accent)] underline underline-offset-2"
-              >
-                새로고침
-              </button>
-            </div>
-          ) : (
-            <PlanPicker
-              plans={plans}
-              initialSelectedTier={initialSelectedTier}
-              primaryButtonVariant="orange"
-              getPrimaryButton={(plan) => ({
-                label: "제품 상세보기",
-                onClick: () => router.push(`/subscribe/detail?planId=${plan.id}`),
-              })}
-            />
-          )}
-        </div>
-      </section>
+      <div className="bg-white pb-px">
+        <section className="mt-[var(--header-offset)] min-h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="구독몰 안내">
+          <div className="mx-auto flex min-h-[70px] max-w-[1240px] items-center justify-center gap-6 px-6 max-md:gap-3">
+            <p className="text-body-16-b max-md:text-body-14-b tracking-[-0.04em] text-white">
+              첫 만남은 가볍게, <span className="text-[var(--color-banner-bg)]">꼬순박스를 구독</span>으로 만나보기
+            </p>
+            <Image src={coupon} alt="" width={172} height={61} className="h-[61px] w-[172px] self-end object-contain max-md:w-[110px]" />
+          </div>
+        </section>
+        <PackageShowcaseSection plans={plans} initialSelectedTier={initialSelectedTier} variant="subscription" />
+        <PackageComparison />
+      </div>
     </>
   );
 }

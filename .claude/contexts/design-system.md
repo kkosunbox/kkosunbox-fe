@@ -309,3 +309,10 @@
 | `--color-home-faq-active` | `#FFE3C6` | 펼친 FAQ 배경 |
 
 제목 강조와 구독 섹션은 기존 `--color-text-discount`(`#EC7700`)를 재사용한다. 기존 후기 섹션 및 공용 푸터 토큰은 변경하지 않는다.
+
+### 구독몰 패키지 비교표
+
+| 토큰 | 값 | 용도 |
+|---|---|---|
+| `--color-subscription-compare-bg` | `#FFE7BD` | 비교표 외곽과 항목 열 배경 |
+| `--color-subscription-compare-highlight` | `#F5F5F5` | 스탠다드 비교 열 배경 |

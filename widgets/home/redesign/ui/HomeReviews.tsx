@@ -235,10 +235,12 @@ export default function HomeReviews({ plans }: { plans: SubscriptionPlanDto[] })
                 <div className={styles.body}>
                   <div className={styles.meta}>
                     <span className={styles.stars}><Stars rating={5} size={20} /></span>
-                    <Link className={styles.packageLink} href={planHref}>{tierLabel(review.tier)} 패키지</Link>
                   </div>
                   <p className={styles.content}>{review.content}</p>
-                  <span className={styles.author}>{review.email}</span>
+                  <div className={styles.footer}>
+                    <span className={styles.author}>{review.email}</span>
+                    <Link className={styles.packageLink} href={planHref}>{tierLabel(review.tier)} 패키지</Link>
+                  </div>
                 </div>
               </article>
               );

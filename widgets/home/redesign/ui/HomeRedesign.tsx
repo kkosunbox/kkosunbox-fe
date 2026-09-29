@@ -20,7 +20,6 @@ import stepPlan from "../assets/subscription-step-02-plan.svg";
 import stepPayment from "../assets/subscription-step-03-payment-date.svg";
 import stepDelivery from "../assets/subscription-step-04-delivery.svg";
 import chevron from "../assets/chevron-down.svg";
-import arrow from "../assets/product-arrow.svg";
 import coupon from "../assets/product-banner-coupon.png";
 import salmonYogurtBall from "../assets/product-salmon-yogurt-ball.png";
 import kkomiChips from "../assets/product-kkomi-chips.png";
@@ -42,6 +41,14 @@ const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /소고기.*화식|화식.*소고기/, image: beefMeal },
   { matches: /오리.*요거트|요거트.*오리/, image: duckYogurtBall },
 ];
+
+function ProductArrow({ direction }: { direction: "left" | "right" }) {
+  return (
+    <svg width="16" height="26" viewBox="0 0 16 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d={direction === "left" ? "M14 2L2 12.6667L14 23.3333" : "M2 2L14 12.6667L2 23.3333"} stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 function BrandStorySection() {
   return <section className={styles.story} aria-labelledby="brand-story-title"><div className={`${styles.container} ${styles.storyGrid}`}>
@@ -74,7 +81,7 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
     <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={217} height={77} /></Link>
     <h2 id="products-title" className={styles.heading}><span>마음에 드는 간식만</span> 골라서 만나보세요.</h2><p className={styles.productDescription}>꼬순박스에서 만나보던 수제 간식을 원하는 제품만 골라 단품으로 만나보세요.</p>
     <div className={styles.tabs} role="group" aria-label="상품 카테고리">{[{ id: null, name: "전체" }, ...categories].map(item => <button key={item.id ?? "all"} type="button" aria-pressed={categoryId === item.id} onClick={() => { setCategoryId(item.id); setStart(0); }}>{item.name}</button>)}</div>
-    <div className={styles.productCarousel}><button type="button" className={`${styles.carouselArrow} ${styles.previous}`} aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
+    <div className={styles.productCarousel}>
       <div className={styles.productCards}>{loading ? Array.from({ length: 4 }, (_, i) => <div key={i} className={styles.productSkeleton} aria-label="상품 불러오는 중" />) : visible.length ? visible.map(product => {
         const art = PRODUCT_ART.find(item => item.matches.test(product.name))?.image; const unavailable = product.isSoldOut || product.isSalesPaused;
         const content = <><div className={styles.productImage}>{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : art ? <Image src={art} alt={product.name} fill sizes="(min-width: 1288px) 290px, (min-width: 768px) 23vw, 44vw" quality={HIGH_IMAGE_QUALITY} /> : <span>이미지 준비 중</span>}{unavailable && <span className={styles.unavailable}>{product.isSoldOut ? "품절" : "판매 중지"}</span>}</div><h3>{product.name}</h3><p>{product.description?.trim() || "꼬순박스가 정성껏 만든 건강한 수제간식"}</p><span className={styles.productPrice}>{product.originalPrice != null && product.originalPrice > product.price && <em>{Math.round((1 - product.price / product.originalPrice) * 100)}%</em>}<strong>{formatKrwPrice(product.price)}</strong>{product.originalPrice != null && product.originalPrice > product.price && <del>{formatKrwPrice(product.originalPrice)}</del>}</span></>;
@@ -91,7 +98,10 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
         ) : null;
         return unavailable ? <article key={product.id}>{content}{rating}</article> : <Link key={product.id} href={`/purchase/detail?productId=${product.id}`}>{content}{rating}</Link>;
       }) : <p className={styles.empty}>{error ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리에 판매 중인 상품이 없습니다."} <Link href="/products">단품몰에서 확인하기</Link></p>}</div>
-      <button type="button" className={`${styles.carouselArrow} ${styles.next}`} aria-label="다음 상품" disabled={start + 4 >= filtered.length} onClick={() => setStart(value => Math.min(Math.max(0, filtered.length - 4), value + 1))}><Image src={arrow} alt="" width={48} height={48} /></button>
+      <nav className={styles.productControls} aria-label="단품 상품 페이지">
+        <button type="button" aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><ProductArrow direction="left" /></button>
+        <button type="button" aria-label="다음 상품" disabled={start + 4 >= filtered.length} onClick={() => setStart(value => Math.min(Math.max(0, filtered.length - 4), value + 1))}><ProductArrow direction="right" /></button>
+      </nav>
     </div>
   </div></section>;
 }

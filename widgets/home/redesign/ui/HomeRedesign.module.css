@@ -63,6 +63,9 @@
 .packageBackdropImage[data-active="true"] { opacity: 1; }
 .packageHero { min-height: 468px; display: flex; justify-content: flex-end; padding: 88px 130px 38px 30px; }
 .packageCopy { width: 352px; }
+.popularBadge, .popularCardBadge { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 80px; height: 24px; background: var(--color-text); color: white; font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: -.02em; white-space: nowrap; }
+.popularBadge { border-radius: 12px; }
+.popularCardBadge { position: absolute; top: 0; left: 0; justify-content: flex-start; padding-left: 9px; border-radius: 12px 0; }
 .packageBadges { display: flex; gap: 12px; align-items: center; }
 .packageBadges .tierBadge { min-height: 31px; font-size: 16px; line-height: 19px; padding: 6px 12px; }
 .shippingBadge { display: inline-flex; align-items: center; gap: 4px; min-height: 31px; background: white; padding: 3px 12px; border-radius: 30px; font-size: 16px; line-height: 19px; font-weight: 600; }

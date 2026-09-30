@@ -211,7 +211,9 @@ export default function InquirySection() {
       <SupportHero />
 
       {/* 폼 영역 */}
-      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pb-10`}>
+      <div
+        className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:max-lg:pt-12 md:pb-10 lg:pt-[38px]`}
+      >
         <form className="relative z-10" onSubmit={handleSubmit}>
           <div className="rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
             {/* 뒤로가기 — 카드 상단 여백 왼쪽, 세로 중앙 */}

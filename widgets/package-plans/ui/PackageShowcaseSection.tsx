@@ -64,6 +64,7 @@ function PackageBackdrop({ tier }: { tier: PackageTier }) {
         quality={HIGH_IMAGE_QUALITY}
         sizes="(min-width: 1288px) 1240px, calc(100vw - 48px)"
         className={styles.packageBackdropImage}
+        data-tier={currentTier}
         data-active={!incoming?.ready}
       />
       {incoming && (
@@ -75,6 +76,7 @@ function PackageBackdrop({ tier }: { tier: PackageTier }) {
           quality={HIGH_IMAGE_QUALITY}
           sizes="(min-width: 1288px) 1240px, calc(100vw - 48px)"
           className={styles.packageBackdropImage}
+          data-tier={incoming.tier}
           data-active={incoming.ready}
           onLoad={() => {
             if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

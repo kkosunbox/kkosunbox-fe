@@ -58,7 +58,7 @@
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-drawer-item-active` | `#FFF7EC` | 모바일 드로워 네비 활성 아이템 배경 |
 | `--color-support-faq-surface` | `#FFF7E8` | 고객센터 FAQ 패널 배경 |
-| `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 |
+| `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 (`--support-faq-active-color` 원본 참조) |
 | `--color-withdraw-profile-bg` | `#FDF5E7` | 탈퇴 확인 페이지 프로필 배너 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
 | `--color-recommend-reason-bg` | `#FFFBE9` | 체크리스트 추천이유 패널 배경 |
@@ -145,6 +145,7 @@
 | `--color-text-caption` | `#C8C8C8` | 이미지 연출 면책 문구 등 부가 캡션 |
 | `--color-text-warm` | `#917F71` | Warm Gray — 웜 섹션 서브텍스트 |
 | `--color-text-on-warm` | `#555555` | 웜 섹션 헤딩 |
+| `--color-page-header-description` | `#43270B` | 페이지 상단 배경 밴드 설명 텍스트 (`--page-header-description-color` 원본 참조) |
 | `--color-text-body-warm` | `#5B5B5B` | 웜 섹션 본문 |
 | `--color-text-price` | `#171713` | 강조 가격 텍스트 |
 | `--color-text-discount` | `#EC7700` | 할인율 텍스트 (오렌지) |

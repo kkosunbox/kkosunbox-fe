@@ -83,12 +83,12 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
 
   return <div className="bg-white pt-[var(--header-offset)]">
     <header className="bg-[var(--color-subscription-header-bg)]">
-      <div className="mx-auto w-full max-w-[1060px] px-6 max-md:py-8 md:py-[38px]">
+      <div className="mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 max-md:py-8 md:py-[38px]">
         <div className="flex items-center gap-1"><Link href="/mypage" aria-label="마이페이지로 돌아가기" className="text-[var(--color-text-secondary)]"><Chevron back /></Link><h1 className="text-title-24-b text-[var(--color-text)] max-md:text-display-20-eb">주문내역</h1></div>
-        <p className="mt-2 pl-7 text-body-16-m text-[var(--color-text-on-warm)] max-md:text-body-13-r">지금까지의 주문 내역을 한눈에 확인해보세요.</p>
+        <p className="mt-2 pl-7 text-body-16-m text-[var(--color-page-header-description)] max-md:text-body-13-r">지금까지의 주문 내역을 한눈에 확인해보세요.</p>
       </div>
     </header>
-    <section aria-label="주문 내역" className="mx-auto w-full max-w-[1060px] px-6 pt-8 max-md:pb-12 md:pb-[52px]">
+    <section aria-label="주문 내역" className="mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 pt-8 max-md:pb-12 md:pb-[52px]">
       <nav className="flex flex-wrap gap-2" aria-label="주문 유형">{tabs.map((tab) => { const active = tab.value === orderType; return <Link key={tab.label} href={tab.value ? `/orders?orderType=${tab.value}` : "/orders"} aria-current={active ? "page" : undefined} className={`inline-flex min-h-9 items-center rounded-full border px-5 text-btn-14-m max-md:px-4 ${active ? "border-[var(--color-cta-button)] bg-[var(--color-cta-button)] text-white" : "border-[var(--color-text-muted)] text-[var(--color-text-label)] hover:bg-[var(--color-surface-light)]"}`}>{tab.label} {tab.count}</Link>; })}</nav>
       <div className="mt-8 max-md:space-y-4 md:space-y-8">{history.payments.length === 0 ? <p className="rounded-2xl bg-[var(--color-surface-warm)] px-6 py-20 text-center text-[var(--color-text-secondary)]">주문 내역이 없습니다.</p> : history.payments.map((payment) => <OrderCard key={`${payment.orderType}-${payment.id}`} payment={payment} />)}</div>
       {totalPages > 1 && <nav className="mt-6 flex items-center justify-center gap-1" aria-label="주문내역 페이지">

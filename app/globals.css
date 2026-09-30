@@ -102,7 +102,7 @@
   --color-hero-subtext: #6C411F;      /* Hero 서브카피 텍스트 */
   --color-ingredients-bg: rgba(254, 234, 215, 0.3); /* Ingredients 섹션 배경 */
   --color-support-faq-surface: #FFF7E8;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
-  --color-support-faq-active: #FFF2DA;    /* Support FAQ 열린 아코디언 배경 */
+  --support-faq-active-color: #FFF2DA;    /* Support 열린 FAQ 아코디언 원본 색상 */
   --color-withdraw-profile-bg: #FDF5E7;   /* 탈퇴 확인 페이지 프로필 배너 배경 */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-support-hero-side-bg: #FFF2D8; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
@@ -191,6 +191,7 @@
   --color-ui-disabled: #D0D0D0;    /* Disabled — 비활성 UI 요소 (페이지네이션 화살표 등) */
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
+  --page-header-description-color: #43270B; /* 페이지 상단 배경 밴드 설명 원본 색상 */
   --color-text-body-warm: #5B5B5B; /* 웜 섹션 본문 */
   --color-text-price: #171713;     /* 강조 가격 텍스트 */
   --color-text-discount: #EC7700;  /* 할인율 텍스트 (오렌지) */
@@ -376,7 +377,6 @@
   --color-home-package-floor: var(--color-home-package-floor);
   --color-home-faq-bg: var(--color-home-faq-bg);
   --color-home-faq-active: var(--color-home-faq-active);
-  --color-support-faq-active: var(--color-support-faq-active);
   --color-background: var(--color-background);
   --color-foreground: var(--color-text);
 
@@ -431,6 +431,7 @@
   --color-hero-heading: var(--color-hero-heading);
   --color-hero-subtext: var(--color-hero-subtext);
   --color-support-faq-surface: var(--color-support-faq-surface);
+  --color-support-faq-active: var(--support-faq-active-color);
   --color-withdraw-profile-bg: var(--color-withdraw-profile-bg);
   --color-support-banner-heading: var(--color-support-banner-heading);
   --color-support-hero-side-bg: var(--color-support-hero-side-bg);
@@ -524,6 +525,7 @@
   --color-ui-disabled: var(--color-ui-disabled);
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);
+  --color-page-header-description: var(--page-header-description-color);
   --color-text-body-warm: var(--color-text-body-warm);
   --color-text-price: var(--color-text-price);
   --color-text-discount: var(--color-text-discount);

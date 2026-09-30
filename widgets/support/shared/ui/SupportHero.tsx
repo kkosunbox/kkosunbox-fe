@@ -5,7 +5,9 @@ import styles from "./SupportHero.module.css";
 export function SupportHero() {
   return (
     <section className={styles.hero} aria-label="고객센터 안내">
-      <p><strong>궁금한 점이 있다면</strong> 꼬순박스에 편하게 문의하기</p>
+      <p>
+        <strong>궁금한 점이 있다면</strong> 꼬순박스에 편하게 문의하기
+      </p>
       <Image
         src={contactBanner}
         alt=""
@@ -13,6 +15,7 @@ export function SupportHero() {
         width={143}
         height={63}
         className={styles.illustration}
+        priority
       />
     </section>
   );

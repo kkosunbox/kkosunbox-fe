@@ -117,14 +117,14 @@ function FaqSection() {
   </div></section>;
 }
 export default function HomeRedesign() {
-  const { refCode } = useReferral();
+  const { refCode, hasDisplayableReferralOffer } = useReferral();
   const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]); const [products, setProducts] = useState<ProductDto[]>([]); const [productCategories, setProductCategories] = useState<ProductCategoryDto[]>([]);
   const [plansLoading, setPlansLoading] = useState(true); const [productsLoading, setProductsLoading] = useState(true);
   const [plansError, setPlansError] = useState(false); const [productsError, setProductsError] = useState(false);
   useEffect(() => { let alive = true;
-    getSubscriptionPlans(undefined, refCode ?? undefined).then(response => { if (alive) { setPlans(response.plans); setPlansError(false); } }).catch(() => { if (alive) { setPlans([]); setPlansError(true); } }).finally(() => { if (alive) setPlansLoading(false); });
+    getSubscriptionPlans(undefined, hasDisplayableReferralOffer ? refCode ?? undefined : undefined).then(response => { if (alive) { setPlans(response.plans); setPlansError(false); } }).catch(() => { if (alive) { setPlans([]); setPlansError(true); } }).finally(() => { if (alive) setPlansLoading(false); });
     return () => { alive = false; };
-  }, [refCode]);
+  }, [refCode, hasDisplayableReferralOffer]);
   useEffect(() => { let alive = true;
     Promise.all([
       getProducts().then(response => ({ products: response.products, failed: false })).catch(() => ({ products: [] as ProductDto[], failed: true })),

@@ -81,8 +81,12 @@ export default async function SubscribePage({
 }) {
   const token = await getServerToken();
   // 초대 맥락이 있으면 코드를 함께 넘겨 서버가 채운 할인가를 그대로 표시한다.
-  const { refCode } = await resolveReferralContext();
-  const plans = await fetchSubscriptionPlans(token, undefined, refCode ?? undefined);
+  const { refCode, referralPricingEligible } = await resolveReferralContext();
+  const plans = await fetchSubscriptionPlans(
+    token,
+    undefined,
+    referralPricingEligible ? refCode ?? undefined : undefined,
+  );
 
   // 띠배너 등 특정 진입 경로에서만 초기 선택 티어를 지정 — 일반 진입 시에는 쇼케이스 기본값(스탠다드)을 따른다.
   const { tier } = await searchParams;

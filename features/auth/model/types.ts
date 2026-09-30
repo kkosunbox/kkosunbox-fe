@@ -6,6 +6,10 @@ export interface AuthUser {
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;
   isInfluencer: boolean;
+  referrer: {
+    referralCode: string;
+    displayName: string;
+  } | null;
 }
 
 export interface AuthContextValue {

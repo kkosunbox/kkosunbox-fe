@@ -19,11 +19,23 @@ import {
   authMobileCtaButtonCls,
 } from "@/features/auth";
 import type { OAuthProvider } from "@/features/auth";
+import { SignupReferralCodeField } from "./SignupReferralCodeField";
 
 /* ═══════════════════════════════════════════════════════════════ */
 /* Widget (표현 전담 — 상태·이펙트는 useRegisterSection 소유) */
-export default function RegisterSection() {
-  const { isPending, canSubmit, phone, updatePhone, email, pw, agree, handleSignup } = useRegisterSection();
+export default function RegisterSection({ hasStoredReferralCode }: { hasStoredReferralCode: boolean }) {
+  const {
+    isPending,
+    canSubmit,
+    phone,
+    updatePhone,
+    referralCode,
+    setReferralCode,
+    email,
+    pw,
+    agree,
+    handleSignup,
+  } = useRegisterSection();
   const { emailVerified } = email;
 
   function handleSocialSignup(provider: OAuthProvider) {
@@ -297,6 +309,14 @@ export default function RegisterSection() {
                 </p>
               )}
             </div>
+
+            {!hasStoredReferralCode && (
+              <SignupReferralCodeField
+                value={referralCode}
+                onChange={setReferralCode}
+                variant="mobile"
+              />
+            )}
           </div>
 
           <div className="mt-6">{agreementsBlock}</div>
@@ -519,6 +539,14 @@ export default function RegisterSection() {
                 </p>
               )}
             </div>
+
+            {!hasStoredReferralCode && (
+              <SignupReferralCodeField
+                value={referralCode}
+                onChange={setReferralCode}
+                variant="desktop"
+              />
+            )}
           </div>
 
           <div className="mt-6">{agreementsBlock}</div>

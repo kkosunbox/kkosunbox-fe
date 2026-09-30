@@ -125,7 +125,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
-      {cartAction.cart && <CartAddedModal cart={cartAction.cart} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={(id) => void cartAction.add(id)} onClose={cartAction.close} />}
+      {cartAction.cart && <CartAddedModal cart={cartAction.cart} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={cartAction.add} onReplaceRecommendation={cartAction.replaceRecommendation} onClose={cartAction.close} />}
       {reviewState.lightbox ? (
         <ReviewImageLightbox
           urls={reviewState.lightbox.urls}

@@ -15,6 +15,7 @@ import {
   TERMS_CONTENT,
 } from "@/shared/ui/custom-modals/TermsViewModal";
 import socialRegisterTitle from "../assets/social-register-title.svg";
+import { SignupReferralCodeField } from "./SignupReferralCodeField";
 
 type AgreementKey = "terms" | "privacy" | "marketing";
 type AgreementState = Record<AgreementKey, boolean>;
@@ -52,16 +53,16 @@ function Checkbox({ checked }: { checked: boolean }) {
       className={[
         "flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border transition-colors",
         checked
-          ? "border-[var(--color-cta-button)] bg-[var(--color-cta-button)]"
+          ? "border-[var(--color-checkbox-checked)] bg-[var(--color-checkbox-checked)]"
           : "border-[var(--color-border)] bg-white",
       ].join(" ")}
     >
       {checked && (
-        <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path
-            d="M1 4L4 7.5L10 1"
-            stroke="white"
-            strokeWidth="1.5"
+            d="M4.1665 10.833L7.49984 14.1663L15.8332 5.83301"
+            stroke="var(--color-surface-light)"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -187,11 +188,12 @@ function AgreementToggle({
 }
 
 /** 소셜 로그인 신규 사용자가 연락처와 필수 약관 동의를 제출해 가입을 마무리한다. */
-export default function SocialRegisterSection() {
+export default function SocialRegisterSection({ hasStoredReferralCode }: { hasStoredReferralCode: boolean }) {
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, startTransition] = useTransition();
   const [phone, setPhone] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [agreements, setAgreements] = useState<AgreementState>(INITIAL_AGREEMENTS);
 
   const isPhoneValid = /^01\d{8,9}$/.test(toPhoneDigits(phone));
@@ -234,6 +236,7 @@ export default function SocialRegisterSection() {
           agreements.privacy,
           agreements.marketing,
           toPhoneDigits(phone),
+          referralCode,
         );
         if (result.error || !result.user) {
           openAlert({ title: result.error ?? "회원가입을 완료하지 못했습니다." });
@@ -287,6 +290,14 @@ export default function SocialRegisterSection() {
             주문/배송 안내 및 알림톡 발송을 위해 사용됩니다.
           </p>
         </section>
+
+        {!hasStoredReferralCode && (
+          <SignupReferralCodeField
+            value={referralCode}
+            onChange={setReferralCode}
+            variant="social"
+          />
+        )}
 
         <section className="mt-6 rounded-[12px] bg-[var(--color-surface-light)] px-8 py-6 max-md:px-4 max-md:py-4">
           <button

@@ -20,8 +20,8 @@ interface ReferralState extends ReferralContext {
   /** 표시용 인플루언서 이름 — 값이 없을 때의 대체 문자열까지 포함한 최종값 */
   influencerName: string;
   /**
-   * **마케팅 화면의 유일한 표시 기준.** 계정 적격성(`inviteEligible`)은 보지 않는다 —
-   * 실제 적용 가능 여부는 `/order`가 판정하고 부적격 사유까지 안내한다.
+   * **마케팅 화면의 유일한 표시 기준.** 비로그인은 가입 전 미리보기를 허용하고,
+   * 로그인 사용자는 구독 이력이 없을 때만 혜택을 표시한다.
    *
    * 가격·취소선·배지 퍼센트·추가할인 칩·CTA 문구가 **전부 이 값 하나**를 읽어야 한다.
    * 컴포넌트에서 `isReferral`·`inviteEligible`을 다시 조합하면 같은 화면 안에서 상태가 갈린다.
@@ -63,6 +63,7 @@ const DEFAULT_STATE: ReferralState = {
   isReferral: false,
   firstSubscriptionEligible: false,
   inviteEligible: false,
+  referralPricingEligible: false,
   hasDisplayableReferralOffer: false,
   hasInfluencerIdentity: false,
   markInviteConsumed: () => {},
@@ -147,11 +148,13 @@ export function ReferralProvider({
       //                                  — "서버 적격"이나 "현재 적용 가능"을 뜻하지 않는다.
       //                                    `?r=CODE`가 validate 실패로 요율 0을 받는 경우를 함께 막는다.
       //                                    없으면 "첫 달 0%추가할인" 칩이 렌더된다.
+      //   referralPricingEligible       비로그인 또는 구독 이력이 없는 로그인 사용자
       //   !inviteConsumed                같은 세션에서 방금 소비하지 않음 (전이 구간 가드)
       hasDisplayableReferralOffer:
         effectiveContext.referralSource !== "none" &&
         effectiveContext.referralSource !== "own-slug" &&
         effectiveContext.discountRate > 0 &&
+        effectiveContext.referralPricingEligible &&
         !inviteConsumed,
       hasInfluencerIdentity: effectiveContext.influencerName !== null,
       markInviteConsumed: () => setInviteConsumed(true),
@@ -200,6 +203,7 @@ function isSameReferralContext(a: ReferralContext, b: ReferralContext): boolean 
     a.profileImageUrl === b.profileImageUrl &&
     a.isReferral === b.isReferral &&
     a.firstSubscriptionEligible === b.firstSubscriptionEligible &&
-    a.inviteEligible === b.inviteEligible
+    a.inviteEligible === b.inviteEligible &&
+    a.referralPricingEligible === b.referralPricingEligible
   );
 }

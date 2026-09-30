@@ -39,6 +39,7 @@
 | `--color-accent` | `#7FB3FF` | Soft Sky Blue — 링크, 강조 요소, CTA |
 | `--color-accent-soft` | `#E5F0FF` | Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) |
 | `--color-accent-orange` | `#EE681A` | Warm Orange — 데코 강조 ("for you" 등) |
+| `--color-checkbox-checked` | `#F1923A` | 체크박스 선택 상태 배경 |
 | `--color-cta-button` | `#EC7700` | 진한 오렌지 — 사이트 전역 CTA 버튼 (WhyChoose, PlanPicker, 주문 등) |
 | `--color-cta-button-soft` | `#E0770C` | `--color-cta-button`의 저채도 변형 (S 100%→90%, hue·명도 동일) — dim 배경 위 모달 CTA 전용 |
 | `--color-profile-gender-selected-bg` | `#FFE8DC` | 프로필 작성 모달 성별 선택 배경 |
@@ -56,9 +57,10 @@
 | `--color-subscription-detail-header-bg` | `#FFF7E8` | 구독상세 페이지 상단 배경 밴드 |
 | `--color-subscribe-promo-bg` | `#FFF7E8` | 구매관리 하단 구독 유도 배너 배경 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
+| `--color-product-detail-gif-gap` | `#F8F6E1` | 단품 상세 GIF 하단 피그마 여백 |
 | `--color-drawer-item-active` | `#FFF7EC` | 모바일 드로워 네비 활성 아이템 배경 |
 | `--color-support-faq-surface` | `#FFF7E8` | 고객센터 FAQ 패널 배경 |
-| `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 |
+| `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 (`--support-faq-active-color` 원본 참조) |
 | `--color-withdraw-profile-bg` | `#FDF5E7` | 탈퇴 확인 페이지 프로필 배너 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
 | `--color-recommend-reason-bg` | `#FFFBE9` | 체크리스트 추천이유 패널 배경 |
@@ -145,6 +147,8 @@
 | `--color-text-caption` | `#C8C8C8` | 이미지 연출 면책 문구 등 부가 캡션 |
 | `--color-text-warm` | `#917F71` | Warm Gray — 웜 섹션 서브텍스트 |
 | `--color-text-on-warm` | `#555555` | 웜 섹션 헤딩 |
+| `--color-page-header-description` | `#43270B` | 페이지 상단 배경 밴드 설명 텍스트 (`--page-header-description-color` 원본 참조) |
+| `--color-page-header-bg` | `#FFF2D899` | 장바구니·주문 페이지 상단 배경 밴드 (`--page-header-bg-color` 원본 참조) |
 | `--color-text-body-warm` | `#5B5B5B` | 웜 섹션 본문 |
 | `--color-text-price` | `#171713` | 강조 가격 텍스트 |
 | `--color-text-discount` | `#EC7700` | 할인율 텍스트 (오렌지) |

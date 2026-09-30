@@ -3,7 +3,6 @@ import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { fetchBillingInfo } from "@/features/billing/api/queries";
 import { fetchDeliveryAddresses } from "@/features/delivery-address/api/queries";
 import { fetchSubscriptionPlans } from "@/features/subscription/api/queries";
-import { resolveOrderReferralContext } from "@/features/referral/lib/resolveReferralContext";
 import { OrderSection } from "@/widgets/order";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
 
@@ -36,13 +35,10 @@ export default async function OrderPage({
     redirect(`/login?next=${encodeURIComponent(`/order?planId=${planId}`)}`);
   }
 
-  const [plans, addresses, billing, referral] = await Promise.all([
+  const [plans, addresses, billing] = await Promise.all([
     fetchSubscriptionPlans(token),
     fetchDeliveryAddresses(token),
     fetchBillingInfo(token),
-    // 초대코드·할인율·적격 여부를 서버에서 한 번에 확정한다. 주문서가 구독 이력을 따로 조회하면
-    // 같은 요청에서도 /subscribe와 답이 갈려 쿠폰 적용 전 가격이 어긋난다.
-    resolveOrderReferralContext(),
   ]);
 
   const plan = plans.find((p) => p.id === planId);
@@ -59,7 +55,6 @@ export default async function OrderPage({
       initialAddresses={addresses}
       initialBilling={billing}
       initialQuantity={initialQuantity}
-      referral={referral}
     />
   );
 }

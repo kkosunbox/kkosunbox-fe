@@ -14,10 +14,10 @@ export default function PackagePlansSection() {
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { refCode } = useReferral();
+  const { refCode, hasDisplayableReferralOffer } = useReferral();
 
   useEffect(() => {
-    getSubscriptionPlans(undefined, refCode ?? undefined)
+    getSubscriptionPlans(undefined, hasDisplayableReferralOffer ? refCode ?? undefined : undefined)
       .then((response) => {
         setApiPlans(response.plans);
         setPlansReady(true);
@@ -25,7 +25,7 @@ export default function PackagePlansSection() {
       .catch(() => {
         setPlansReady(true);
       });
-  }, [refCode]);
+  }, [refCode, hasDisplayableReferralOffer]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 0);

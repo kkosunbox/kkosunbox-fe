@@ -7,6 +7,8 @@ import { apiClient, ApiError, getErrorMessage } from "@/shared/lib/api";
 import type { User } from "../api/types";
 import type { AuthUser } from "../model/types";
 import { toAuthUser } from "./mapUser";
+import { getStoredInviteCodeFromServer } from "@/features/referral/lib/serverInviteCode";
+import { isValidInviteCode } from "@/features/referral/lib/inviteCodeCookie";
 
 const COOKIE_OPTS = {
   httpOnly: true,
@@ -56,6 +58,7 @@ export async function signupAction(
   isAllowTerms: boolean,
   isAllowPrivacy: boolean,
   isAllowMarketing: boolean,
+  enteredReferralCode?: string,
 ): Promise<{
   user?: AuthUser;
   accessToken?: string;
@@ -63,6 +66,7 @@ export async function signupAction(
   error?: string;
 }> {
   try {
+    const referralCode = await resolveSignupReferralCode(enteredReferralCode);
     const data = await signupApi({
       emailVerifiedToken,
       password,
@@ -70,6 +74,7 @@ export async function signupAction(
       isAllowTerms,
       isAllowPrivacy,
       isAllowMarketing,
+      ...(referralCode ? { referralCode } : {}),
     });
 
     // API 스펙상 200이어도 null 가능
@@ -96,21 +101,37 @@ export async function completeSignupAction(
   isAllowPrivacy: boolean,
   isAllowMarketing: boolean,
   phone: string,
+  enteredReferralCode?: string,
 ): Promise<{ user?: AuthUser; error?: string }> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(COOKIE_NAME)?.value;
     if (!token) return { error: "로그인 정보가 만료되었습니다. 다시 로그인해주세요." };
 
+    const referralCode = await resolveSignupReferralCode(enteredReferralCode);
     const data = await apiClient.post<User>(
       "/v1/auth/complete-signup",
-      { isAllowTerms, isAllowPrivacy, isAllowMarketing, phone },
+      {
+        isAllowTerms,
+        isAllowPrivacy,
+        isAllowMarketing,
+        phone,
+        ...(referralCode ? { referralCode } : {}),
+      },
       { token, skipRefresh: true },
     );
     return { user: toAuthUser(data) };
   } catch (err) {
     return { error: getErrorMessage(err, "회원가입을 완료하지 못했습니다.") };
   }
+}
+
+async function resolveSignupReferralCode(enteredReferralCode?: string): Promise<string | undefined> {
+  const storedCode = await getStoredInviteCodeFromServer();
+  if (storedCode) return storedCode;
+
+  const enteredCode = enteredReferralCode?.trim() ?? "";
+  return enteredCode && isValidInviteCode(enteredCode) ? enteredCode : undefined;
 }
 
 export async function socialLoginAction(

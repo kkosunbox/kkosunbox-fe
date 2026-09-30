@@ -13,7 +13,6 @@ import { OrderPriceSummaryBar } from "./order-section/OrderPriceSummaryBar";
 import { OrderProductSection } from "./order-section/OrderProductSection";
 import { OrderStartDateSection } from "./order-section/OrderStartDateSection";
 import { OrderPaymentSection } from "./order-section/OrderPaymentSection";
-import { OrderInviteSection } from "./order-section/OrderInviteSection";
 import { OrderDeliveryMethodSection } from "./order-section/OrderDeliveryMethodSection";
 import { OrderSummarySection } from "./order-section/OrderSummarySection";
 
@@ -37,11 +36,6 @@ export default function OrderSection(props: OrderSectionProps) {
     couponInfo,
     couponError,
     couponDiscount,
-    inviteSectionMode,
-    isInviteInputLocked,
-    inviteCodeInput,
-    inviteStatus,
-    inviteBlockedMsg,
     agreeOpen,
     onToggleAgreePanel,
     agreeTerms,
@@ -75,10 +69,6 @@ export default function OrderSection(props: OrderSectionProps) {
     maxScheduledDate,
     handleStartDateModeChange,
     handleScheduledDateChange,
-    handleApplyInviteCode,
-    handleRetryInviteValidation,
-    handleDismissStoredInviteCode,
-    handleInviteCodeChange,
     handleToggleCoupon,
     handleSelectPaymentMethod,
     handleChangeCard,
@@ -134,21 +124,6 @@ export default function OrderSection(props: OrderSectionProps) {
         couponDiscount={couponDiscount}
         onApplyCoupon={() => void handleApplyCoupon()}
       />
-      {inviteSectionMode !== "hidden" && (
-        <OrderInviteSection
-          open={openSections.invite}
-          onToggle={() => toggleSection("invite")}
-          inviteSectionMode={inviteSectionMode}
-          inviteCodeInput={inviteCodeInput}
-          onInviteCodeChange={handleInviteCodeChange}
-          inviteStatus={inviteStatus}
-          inviteBlockedMsg={inviteBlockedMsg}
-          isInviteInputLocked={isInviteInputLocked}
-          onApplyInviteCode={handleApplyInviteCode}
-          onRetryInviteValidation={handleRetryInviteValidation}
-          onDismissStoredInviteCode={handleDismissStoredInviteCode}
-        />
-      )}
       <OrderDeliveryMethodSection
         open={openSections.date}
         onToggle={() => toggleSection("date")}

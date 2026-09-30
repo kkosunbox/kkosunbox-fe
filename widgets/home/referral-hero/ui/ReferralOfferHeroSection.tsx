@@ -58,7 +58,7 @@ export default function ReferralOfferHeroSection() {
 
         <div className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center max-md:top-[445px] md:max-lg:top-[398px] lg:top-[453px]">
           <p className="mb-[16px] text-[14px] font-semibold leading-[17px] tracking-[-0.04em] text-[var(--color-hero-heading)] max-md:text-[13px]">
-            이 페이지에서만 가능한 특별한 혜택!
+            지금 회원가입하면 첫 구독 시 {discountPct}% 할인 혜택!
           </p>
           <Button
             onClick={() => router.push("/subscribe")}

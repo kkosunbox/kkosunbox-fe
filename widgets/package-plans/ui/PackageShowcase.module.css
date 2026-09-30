@@ -159,7 +159,9 @@
   .packages .packageBackdrop { position: relative; inset: auto; z-index: auto; width: 100%; height: auto; aspect-ratio: 327 / 215; overflow: hidden; border-radius: 12px; background: var(--color-surface-light); }
   .packages .packageBackdropPhoto { position: absolute; inset: 0; height: auto; mask-image: none; }
   .packages .packageBackdrop::after { display: none; }
-  .packages .packageBackdropImage { object-position: left center; }
+  .packages .packageBackdropImage[data-tier="Basic"] { object-position: 10% center; transform: scale(1.04); transform-origin: center top; }
+  .packages .packageBackdropImage[data-tier="Standard"] { object-position: 11% center; transform: scale(1.04); transform-origin: center top; }
+  .packages .packageBackdropImage[data-tier="Premium"] { object-position: 17% center; transform: scale(1.07); transform-origin: center top; }
   .packages .mobilePackageControls { position: absolute; z-index: 2; top: calc((100vw - 48px) * 215 / 327 / 2); left: -16px; right: -16px; display: flex; justify-content: space-between; transform: translateY(-50%); pointer-events: none; }
   .packages .mobilePackageControls button { pointer-events: auto; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 80px; background: white; color: var(--color-text-secondary); box-shadow: 2px 2px 4px rgb(0 0 0 / 12%); }
   .packages .mobilePackageControls button:disabled { opacity: .45; cursor: not-allowed; }

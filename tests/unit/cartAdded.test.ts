@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getCartRecommendations, getCartShippingProgress } from "@/features/cart/lib/cartAdded";
+import { getCartRecommendationPool, getCartRecommendations, getCartShippingProgress } from "@/features/cart/lib/cartAdded";
 import type { CartDto } from "@/features/cart/api/types";
 import type { ProductDto } from "@/features/product/api/types";
 
@@ -50,5 +50,13 @@ describe("장바구니 담기 모달", () => {
   });
   it("추천 상품이 없어도 빈 배열을 반환한다", () => {
     expect(getCartRecommendations([], cart)).toEqual([]);
+  });
+  it("순환 추천 풀은 제외 상품과 중복 상품을 빼고 전체 후보를 반환한다", () => {
+    const pool = getCartRecommendationPool(
+      [product(1), product(2), product(2), product(3), product(4, { isSoldOut: true })],
+      () => 0.999,
+      [1, 3],
+    );
+    expect(pool.map((item) => item.id)).toEqual([2]);
   });
 });

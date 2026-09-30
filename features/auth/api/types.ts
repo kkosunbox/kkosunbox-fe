@@ -2,6 +2,12 @@
 
 export type UserStatus = "active" | "inactive" | "suspended";
 
+/** 현재 사용자가 초대 관계로 추종 중인 추천인 정보 */
+export interface UserReferrer {
+  referralCode: string;
+  displayName: string;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -12,6 +18,7 @@ export interface User {
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;
   isInfluencer: boolean;
+  referrer: UserReferrer | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +58,8 @@ export interface SignupRequest {
   isAllowTerms: boolean;
   isAllowPrivacy: boolean;
   isAllowMarketing: boolean;
+  /** 가입 시 계정에 귀속할 추천인 코드. 없으면 생략한다. */
+  referralCode?: string;
 }
 
 // API 스펙: 성공(200)이어도 accessToken / refreshToken / user 가 null 일 수 있음
@@ -129,6 +138,8 @@ export interface TermsRequest {
 export interface CompleteSignupRequest extends TermsRequest {
   /** 숫자만 포함한 휴대전화 번호 */
   phone: string;
+  /** 소셜 가입 완료 시 계정에 귀속할 추천인 코드. 없으면 생략한다. */
+  referralCode?: string;
 }
 
 export interface UpdatePhoneRequest {

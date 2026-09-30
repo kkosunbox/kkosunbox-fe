@@ -104,7 +104,7 @@ export function Checkbox({
         aria-hidden="true"
         className={[
           "w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 transition-colors",
-          checked ? "bg-[var(--color-accent)]" : "border border-[var(--color-border)] bg-white",
+          checked ? "bg-[var(--color-checkbox-checked)]" : "border border-[var(--color-border)] bg-white",
         ].join(" ")}
       >
         {checked && <CheckIcon />}

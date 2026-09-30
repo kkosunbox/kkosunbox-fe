@@ -85,8 +85,12 @@ export default async function SubscribeDetailPage({
   }
 
   const token = await getServerToken();
-  const { refCode } = await resolveReferralContext();
-  const plans = await fetchSubscriptionPlans(token, undefined, refCode ?? undefined);
+  const { refCode, referralPricingEligible } = await resolveReferralContext();
+  const plans = await fetchSubscriptionPlans(
+    token,
+    undefined,
+    referralPricingEligible ? refCode ?? undefined : undefined,
+  );
 
   if (plans.length === 0) {
     redirect("/subscribe");

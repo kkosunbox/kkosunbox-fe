@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { CombinedPaymentDto } from "@/features/payment/api/types";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
-import { getPaymentReceipt } from "@/features/subscription/api";
-import { getPackageTierBySlug, TIER_BOX_IMAGES } from "@/entities/package";
-import { useModal } from "@/shared/ui";
+import { cancelSubscription, getPaymentReceipt } from "@/features/subscription/api";
+import { getPackageTierBySlug, TIER_BOX_IMAGES, TIER_LABEL, type PackageTier } from "@/entities/package";
+import { PageHeaderBand, useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { formatKrwPrice } from "@/shared/lib/format";
 
@@ -16,6 +16,11 @@ const STATUS_LABEL = { pending: "결제 대기", failed: "결제 실패", prepar
 const CARD = "grid rounded-[20px] border border-[var(--color-text-muted)] max-md:grid-cols-1 max-md:gap-6 max-md:p-5 md:grid-cols-2 md:px-[35px] md:py-5";
 const RIGHT = "min-w-0 border-[var(--color-text-muted)] max-md:border-t max-md:pt-6 md:border-l md:pl-[35px]";
 const HEADING = "mb-4 text-subtitle-18-b text-[var(--color-text)]";
+const TIER_STYLE: Record<PackageTier, string> = {
+  Premium: "bg-[var(--color-premium)]",
+  Standard: "bg-[var(--color-plus)]",
+  Basic: "bg-[var(--color-basic)]",
+};
 
 function DeliveryProgress({ payment, showTrackingNumber = true }: { payment: CombinedPaymentDto; showTrackingNumber?: boolean }) {
   const deliveryStep = payment.deliveryStatus === "DeliveryCompleted" ? 2 : payment.deliveryStatus === "DeliveryInProgress" ? 1 : payment.deliveryStatus === "PendingDelivery" ? 0 : null;
@@ -35,7 +40,7 @@ function DeliveryProgress({ payment, showTrackingNumber = true }: { payment: Com
 
 export default function OrderDetailSection({ payment }: { payment: CombinedPaymentDto }) {
   const router = useRouter();
-  const { openAlert } = useModal();
+  const { openAlert, openModal } = useModal();
   const [busy, setBusy] = useState(false);
   const subscription = payment.orderType === "subscription";
   const address = payment.deliveryAddress;
@@ -72,14 +77,21 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
     } finally { setBusy(false); }
   }
 
+  async function cancelCurrentSubscription() {
+    if (!payment.subscriptionId || busy) return;
+    setBusy(true);
+    try {
+      await cancelSubscription(payment.subscriptionId);
+      router.push("/mypage/subscription");
+      router.refresh();
+    } catch (error) {
+      openAlert({ title: getErrorMessage(error, "구독 해지 처리 중 오류가 발생했습니다.") });
+    } finally { setBusy(false); }
+  }
+
   return <div className="bg-white pt-[var(--header-offset)]">
-    <header className="bg-[var(--color-subscription-header-bg)]">
-      <div className="mx-auto max-w-[1060px] px-6 max-md:py-8 md:py-[38px]">
-        <div className="flex items-center gap-1"><Link href="/orders" aria-label="주문내역으로 돌아가기" className="text-[var(--color-text-secondary)]"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link><h1 className="text-title-24-b text-[var(--color-text)] max-md:text-display-20-eb">주문 상세정보</h1></div>
-        <p className="mt-2 pl-7 text-body-16-m text-[var(--color-text-on-warm)] max-md:text-body-13-r">주문하신 상품의 상세정보입니다.</p>
-      </div>
-    </header>
-    <div className="mx-auto max-w-[1060px] px-6 pb-[74px] pt-9">
+    <PageHeaderBand title="주문 상세정보" description="주문하신 상품의 상세정보입니다." backControl={<Link href="/orders" aria-label="주문내역으로 돌아가기" className="text-[var(--color-text-secondary)]"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>} />
+    <div className="mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 pb-[74px] pt-9">
       <div className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-[12px] bg-[var(--color-surface-light)] px-6 py-3 text-body-14-m max-md:px-4">
         <p className="break-all font-semibold text-[var(--color-text)]">주문번호 No.{payment.orderId}</p>
         <button type="button" disabled={!canReceipt || busy} onClick={openReceipt} className="inline-flex items-center gap-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3M12 3v11m-4-4 4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>구매 영수증</button>
@@ -90,10 +102,10 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
         <section className={RIGHT}><h2 className={HEADING}>배송조회</h2><DeliveryProgress payment={payment} showTrackingNumber={!subscription} /></section>
       </div>
       <div className={`${CARD} mt-6`}>
-        <section className="min-w-0 md:pr-[35px]"><h2 className={HEADING}>주문상품 정보</h2><div className="space-y-5">{products.map(item => {
+        <section className="min-w-0 md:pr-[35px]"><div className="mb-4 flex items-center justify-between gap-4"><h2 className="text-subtitle-18-b text-[var(--color-text)]">주문상품 정보</h2>{subscription && <Link href={payment.subscriptionId ? `/mypage/subscription/detail?subscriptionId=${payment.subscriptionId}` : "/mypage/subscription"} className="inline-flex min-h-10 min-w-[100px] shrink-0 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] px-4 text-btn-14-m text-[var(--color-cta-button)] transition-colors hover:bg-[var(--color-surface-warm)]">구독관리</Link>}</div><div className="space-y-5">{products.map(item => {
           const tier = getPackageTierBySlug(item.relatedPlanSlug ?? "") ?? (/프리미엄|premium/i.test(item.productName) ? "Premium" : /스탠다드|standard/i.test(item.productName) ? "Standard" : /베이직|basic/i.test(item.productName) ? "Basic" : null);
           const image = item.imageUrl || (tier ? TIER_BOX_IMAGES[tier].src : null);
-          return <article key={item.id} className="flex items-center max-md:gap-4 md:gap-9"><div className="shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-surface-light)] max-md:h-[100px] max-md:w-[100px] md:h-[148px] md:w-[160px]">{image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <span className="flex h-full items-center justify-center text-body-13-r text-[var(--color-text-secondary)]">상품 이미지</span>}</div><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h3 className="break-words text-subtitle-16-b text-[var(--color-text)]">{item.productName}</h3><span className="rounded bg-[var(--color-surface-light)] px-1 text-btn-12-m text-[var(--color-text-secondary)]">{subscription ? "구독" : "단품"}</span></div><p className="mt-2 text-subtitle-16-b text-[var(--color-text)]">{subscription ? "정기구독" : "단품구매"}</p>{item.quantity !== undefined && <p className="mt-2 text-body-16-r text-[var(--color-text-secondary)]">수량 {item.quantity}개</p>}{item.refundedQuantity > 0 && <p className="mt-1 text-body-13-r text-[var(--color-text-secondary)]">환불 {item.refundedQuantity}개</p>}</div></article>;
+          return <article key={item.id} className="flex items-center max-md:gap-4 md:gap-9"><div className="shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-surface-light)] max-md:h-[100px] max-md:w-[100px] md:h-[148px] md:w-[160px]">{image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <span className="flex h-full items-center justify-center text-body-13-r text-[var(--color-text-secondary)]">상품 이미지</span>}</div><div className="min-w-0">{subscription && tier && <span className={`inline-flex rounded-full px-3 py-0.5 text-btn-14-m text-white ${TIER_STYLE[tier]}`}>{TIER_LABEL[tier]}</span>}<div className={`flex flex-wrap items-center gap-2 ${subscription && tier ? "mt-2" : ""}`}><h3 className="break-words text-subtitle-16-b text-[var(--color-text)]">{item.productName}</h3>{!subscription && <span className="rounded bg-[var(--color-surface-light)] px-1 text-btn-12-m text-[var(--color-text-secondary)]">단품</span>}</div><p className={subscription ? "mt-2 text-body-16-r text-[var(--color-text-secondary)]" : "mt-2 text-subtitle-16-b text-[var(--color-text)]"}>{subscription ? "구독상품" : "단품구매"}</p>{item.quantity !== undefined && <p className="mt-2 text-body-16-r text-[var(--color-text-secondary)]">수량 {item.quantity}개</p>}{item.refundedQuantity > 0 && <p className="mt-1 text-body-13-r text-[var(--color-text-secondary)]">환불 {item.refundedQuantity}개</p>}</div></article>;
         })}</div></section>
         <section className={RIGHT}><h2 className={HEADING}>결제정보</h2><dl className="space-y-2 text-body-14-m text-[var(--color-text)]">
           <div className="flex justify-between gap-4"><dt>주문상품금액</dt><dd>{payment.itemsAmount !== undefined ? formatKrwPrice(payment.itemsAmount) : "-"}</dd></div>
@@ -104,7 +116,7 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
           <div className="flex justify-between gap-4"><dt>결제방식</dt><dd>{payment.method ?? "-"}</dd></div>
         </dl></section>
       </div>
-      {!subscription && <button type="button" disabled={!canCancel || busy} onClick={() => openAlert({ title: "주문을 취소할까요?", description: "주문에 포함된 남은 상품 전체가 취소됩니다.", primaryLabel: "주문취소", secondaryLabel: "돌아가기", onPrimary: cancelOrder })} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "주문취소"}</button>}
+      {subscription ? <button type="button" disabled={!payment.subscriptionId || busy} onClick={() => openModal("subscription-cancel", cancelCurrentSubscription)} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "구독 취소"}</button> : <button type="button" disabled={!canCancel || busy} onClick={() => openAlert({ title: "주문을 취소할까요?", description: "주문에 포함된 남은 상품 전체가 취소됩니다.", primaryLabel: "주문취소", secondaryLabel: "돌아가기", onPrimary: cancelOrder })} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "주문취소"}</button>}
     </div>
   </div>;
 }

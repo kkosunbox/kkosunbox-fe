@@ -29,12 +29,24 @@ const SOCIAL_REGISTER_ROUTE = "/register/social";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProductionHost = request.nextUrl.hostname === PRODUCTION_HOST;
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  const authed = Boolean(token);
+  const ref = request.nextUrl.searchParams.get("r");
+  const isReferralLanding = /^\/r\/[^/]+\/?$/.test(pathname);
+
+  // 로그인 사용자는 이미 가입이 끝났으므로 새 초대코드를 포착하지 않는다.
+  // 가입 전에 저장된 기존 어트리뷰션 쿠키는 첫 구독 미리보기를 위해 그대로 둔다.
+  if (authed && (ref || isReferralLanding)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
 
   // 레퍼럴 캡처 — 인증 가드보다 먼저 처리한다.
   // `?r=CODE`로 진입하면 코드를 쿠키에 저장하고 r을 제거한 깨끗한 URL로 보낸다.
   // 인증과 독립된 non-httpOnly 쿠키이므로 로그인/로그아웃에도 유지되고,
   // 비로그인 상태로 보호 라우트에 진입해도 이 리다이렉트 후 followup 요청에서 로그인 가드가 적용된다.
-  const ref = request.nextUrl.searchParams.get("r");
   if (ref) {
     const url = request.nextUrl.clone();
     url.searchParams.delete("r");
@@ -47,7 +59,7 @@ export function proxy(request: NextRequest) {
         maxAge: INVITE_CODE_MAX_AGE_SEC,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
-        // httpOnly 미지정 → 주문 페이지(클라이언트)에서 읽어 validate에 사용
+        // httpOnly 미지정 → 레퍼럴 랜딩 Provider와 가입 흐름이 동일한 어트리뷰션을 유지
       });
 
       // 새 초대 링크는 이전 초대를 대체한다 — 이전 slug 쿠키를 함께 정리한다.
@@ -75,9 +87,6 @@ export function proxy(request: NextRequest) {
     url.search = "";
     return NextResponse.redirect(url);
   }
-
-  const token  = request.cookies.get(COOKIE_NAME)?.value;
-  const authed = Boolean(token);
 
   if (PROTECTED.some((r) => pathname.startsWith(r)) && !authed) {
     const url = request.nextUrl.clone();

@@ -54,7 +54,6 @@ const supportJsonLd = {
 export default function SupportPage() {
   return (
     <>
-      <h1 className="sr-only">꼬순박스 고객센터 및 자주 묻는 질문</h1>
       <JsonLd data={supportJsonLd} />
       <SupportSection fillViewport />
     </>

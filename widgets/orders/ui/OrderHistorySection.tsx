@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { TIER_BOX_IMAGES, type PackageTier } from "@/entities/package";
-import { ModalShell } from "@/shared/ui";
+import { ModalShell, PageHeaderBand } from "@/shared/ui";
 
 type OrderKind = "subscription" | "purchase";
 type DeliveryStatus = "배송중" | "배송준비중" | "배송완료";
@@ -114,12 +114,7 @@ export default function OrderHistorySection() {
 
   return (
     <div className="bg-white pt-[var(--header-offset)]">
-      <section className="bg-[var(--color-page-header-bg)]">
-        <div className="mx-auto max-w-content px-6 py-10 lg:px-0 lg:py-[38px]">
-          <h1 className="flex items-center gap-1 text-display-28-eb text-[var(--color-text)] max-md:text-display-20-eb"><BackIcon />주문내역</h1>
-          <p className="mt-2 pl-7 text-body-14-m text-[var(--color-page-header-description)] max-md:pl-0 max-md:text-body-13-r">지금까지의 주문 내역을 한눈에 확인해보세요.</p>
-        </div>
-      </section>
+      <PageHeaderBand title="주문내역" description="지금까지의 주문 내역을 한눈에 확인해보세요." backControl={<BackIcon />} />
 
       <section className="mx-auto min-h-[880px] max-w-content px-6 py-8 pb-16 lg:px-0 lg:py-8 lg:pb-[76px]">
         <div className="flex gap-2" role="tablist" aria-label="주문 유형">

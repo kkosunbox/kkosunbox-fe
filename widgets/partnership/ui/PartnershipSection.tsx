@@ -1,17 +1,16 @@
 "use client";
 
 import { Fragment, useEffect, useRef, useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/ui/AuthProvider";
 import { createPartnershipInquiry } from "@/features/partnership-inquiry";
-import { PAGE_CONTENT_WRAPPER_CLASS } from "@/shared/config/layout";
 import { EMAIL_MAX_LENGTH } from "@/shared/config/inputLimits";
 import { getPartnershipInquiryPresignedUrl, uploadToS3 } from "@/shared/lib/asset";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
+import { FeedbackFormLayout } from "@/shared/ui";
 import { useModal } from "@/shared/ui/modal/ModalProvider";
-import { PartnershipHero } from "./PartnershipHero";
+import { SupportHero } from "@/widgets/support/shared";
 
 const MAX_COMPANY_NAME_LENGTH = 100;
 const MAX_CONTACT_NAME_LENGTH = 50;
@@ -59,7 +58,7 @@ const initialForm: PartnershipFormState = {
 };
 
 const fieldClass =
-  "h-10 w-full rounded-[8px] bg-[var(--color-surface-light)] px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]";
+  "h-10 w-full rounded-[8px] border border-[var(--color-text-muted)] bg-white px-5 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-cta-button)]";
 
 const labelClass =
   "text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80";
@@ -67,7 +66,7 @@ const labelClass =
 function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
     <label htmlFor={htmlFor} className={labelClass}>
-      {children} <span className="text-[var(--color-stats-icon-blue)]">*</span>
+      {children} <span className="text-[var(--color-cta-button)]">*</span>
     </label>
   );
 }
@@ -303,36 +302,25 @@ export default function PartnershipSection() {
 
   return (
     <div className="bg-white">
-      <PartnershipHero />
-
-      <div
-        className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pt-0 md:pb-10 lg:pb-[64px]`}
-      >
-        <form className="relative z-10" noValidate onSubmit={handleSubmit}>
-          <section
-            className="flex rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)] max-md:min-h-0 max-md:flex-col md:min-h-[688px] md:flex-col"
-            aria-labelledby="partnership-form-title"
-          >
-            <div className="flex max-md:min-h-[72px] max-md:items-center max-md:px-5 md:min-h-[94px] md:items-start md:px-11 md:pt-8">
-              <Link
-                href="/support"
-                className="inline-flex items-center gap-1 text-body-20-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d="M15 6L9 12L15 18"
-                    stroke="var(--color-text-secondary)"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span id="partnership-form-title">제휴·입점 문의</span>
-              </Link>
-            </div>
-
-            <div className="mx-auto flex w-full max-w-[782px] flex-1 flex-col max-md:px-5 max-md:pb-8 md:px-8 md:pb-10">
-              <div className="grid max-md:grid-cols-1 max-md:gap-y-4 md:grid-cols-2 md:gap-x-[26px] md:gap-y-3">
-                <div className="flex min-w-0 flex-col gap-2">
+      <SupportHero label="제휴·입점 문의 안내">꼬순박스와 함께할 파트너를 기다립니다.</SupportHero>
+      <form noValidate onSubmit={handleSubmit}>
+        <FeedbackFormLayout
+          title="제휴·입점 문의"
+          backHref="/support"
+          introTitle="꼬순박스와 함께 더 좋은 반려문화를 만들어갈 파트너를 기다립니다."
+          introDescription={<><p>제휴, 입점, 공동 프로모션 등 협업 내용을 자유롭게 남겨주세요.</p><p>담당자가 내용을 검토한 후 입력하신 연락처 또는 이메일로 안내드리겠습니다.</p></>}
+          action={
+            <button
+              type="submit"
+              disabled={isPending}
+              className="inline-flex h-12 w-full max-w-[320px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 text-body-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {isPending ? (attachments.length > 0 ? "업로드 중…" : "접수 중…") : "제출하기"}
+            </button>
+          }
+        >
+          <div className="mt-9 grid w-full max-md:grid-cols-1 max-md:gap-y-4 md:grid-cols-2 md:gap-x-[26px] md:gap-y-3">
+                <div className="flex w-full max-w-[346px] min-w-0 flex-col gap-2">
                   <RequiredLabel htmlFor="companyName">회사 / 브랜드명</RequiredLabel>
                   <input
                     id="companyName"
@@ -351,7 +339,7 @@ export default function PartnershipSection() {
                   <InlineFieldError id="companyName-error" message={fieldErrors.companyName} />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-2">
+                <div className="flex w-full max-w-[346px] min-w-0 flex-col gap-2">
                   <RequiredLabel htmlFor="managerName">담당자명 / 직급</RequiredLabel>
                   <input
                     id="managerName"
@@ -370,7 +358,7 @@ export default function PartnershipSection() {
                   <InlineFieldError id="managerName-error" message={fieldErrors.managerName} />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-2">
+                <div className="flex w-full max-w-[346px] min-w-0 flex-col gap-2">
                   <RequiredLabel htmlFor="partnership-contact">연락처</RequiredLabel>
                   <input
                     id="partnership-contact"
@@ -393,7 +381,7 @@ export default function PartnershipSection() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-2">
+                <div className="flex w-full max-w-[346px] min-w-0 flex-col gap-2">
                   <RequiredLabel htmlFor="partnership-email">이메일</RequiredLabel>
                   <input
                     id="partnership-email"
@@ -412,7 +400,7 @@ export default function PartnershipSection() {
                   <InlineFieldError id="partnership-email-error" message={fieldErrors.email} />
                 </div>
 
-                <div className="flex min-w-0 flex-col md:col-span-2">
+                <div className="flex w-full min-w-0 flex-col md:col-span-2">
                   <div className="flex flex-col gap-2">
                     <RequiredLabel htmlFor="partnership-content">문의내용</RequiredLabel>
                     <textarea
@@ -427,7 +415,7 @@ export default function PartnershipSection() {
                       onBlur={() => handleFieldBlur("content")}
                       aria-invalid={Boolean(fieldErrors.content)}
                       aria-describedby={fieldErrors.content ? "partnership-content-error" : undefined}
-                      className="h-[124px] w-full resize-none rounded-[8px] bg-[var(--color-surface-light)] px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)]"
+                      className="h-[124px] w-full resize-none rounded-[8px] border border-[var(--color-text-muted)] bg-white px-5 py-3 text-body-14-m leading-[1.4] text-[var(--color-text)] outline-none transition-colors placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-cta-button)]"
                     />
                     <InlineFieldError
                       id="partnership-content-error"
@@ -439,7 +427,7 @@ export default function PartnershipSection() {
                   </p>
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-2">
+                <div className="flex w-full max-w-[346px] min-w-0 flex-col gap-2">
                   <span id="partnership-file-label" className={labelClass}>
                     첨부파일
                   </span>
@@ -485,7 +473,7 @@ export default function PartnershipSection() {
                   />
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-2">
+                <div className="flex w-full max-w-[346px] min-w-0 flex-col gap-2">
                   <label htmlFor="referenceLink" className={labelClass}>
                     참고링크
                   </label>
@@ -525,25 +513,9 @@ export default function PartnershipSection() {
                     </Fragment>
                   ))}
                 </div>
-              </div>
-
-              <div className="mt-auto flex justify-center max-md:pt-10 md:pt-10">
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="inline-flex h-12 w-full max-w-[320px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 text-body-16-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-                >
-                  {isPending
-                    ? attachments.length > 0
-                      ? "업로드 중…"
-                      : "접수 중…"
-                    : "제출하기"}
-                </button>
-              </div>
-            </div>
-          </section>
-        </form>
-      </div>
+          </div>
+        </FeedbackFormLayout>
+      </form>
     </div>
   );
 }

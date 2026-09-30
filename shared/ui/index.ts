@@ -48,3 +48,4 @@ export { default as FreeShippingBadge } from "./FreeShippingBadge";
 
 export { CheckoutPromotionBanner } from "./CheckoutPromotionBanner";
 export { default as PageHeaderBand } from "./PageHeaderBand";
+export { default as FeedbackFormLayout } from "./FeedbackFormLayout";

@@ -11,6 +11,8 @@ export interface ProductDto {
   category: ProductCategoryDto | null;
   description?: string | null;
   imageUrl?: string | null;
+  /** 상품 상세 페이지 전용 대표 이미지 URL. 없으면 imageUrl을 사용한다. */
+  detailThumbnailUrl?: string | null;
   /** 연관 구독 플랜 ID (리뷰 공유용) */
   relatedPlanId?: number | null;
   relatedPlanSlug?: string | null;

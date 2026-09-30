@@ -57,10 +57,10 @@ function PaperclipIcon() {
 function ConsentCheckboxChecked() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <rect width="20" height="20" rx="5" fill="var(--color-accent)" />
+      <rect width="20" height="20" rx="5" fill="var(--color-checkbox-checked)" />
       <path
         d="M4.16699 10.833L7.50033 14.1663L15.8337 5.83301"
-        stroke="white"
+        stroke="var(--color-surface-light)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

@@ -79,6 +79,7 @@
   --color-accent-soft: #E5F0FF;   /* Light Sky — 폼 세그먼트·칩 선택 배경 (체크리스트 성별 등) */
   --color-accent-orange: #EE681A;       /* Warm Orange — 데코 강조 ("for you" 등) */
   --color-accent-orange-light: #FEF0E6; /* Warm Orange Light — 오렌지 선택 배경 (성별 버튼 등) */
+  --color-checkbox-checked: #F1923A;    /* Checkbox Orange — 체크박스 선택 상태 */
 
   /* Surface */
   --color-background: #FFFFFF;    /* White — 전체 기본 배경 */
@@ -389,6 +390,7 @@
   --color-accent-soft: var(--color-accent-soft);
   --color-accent-orange: var(--color-accent-orange);
   --color-accent-orange-light: var(--color-accent-orange-light);
+  --color-checkbox-checked: var(--color-checkbox-checked);
 
   /* Surface */
   --color-surface-dark: var(--color-surface-dark);

@@ -23,10 +23,10 @@ export function ChevronIcon({ open, size = 24 }: { open: boolean; size?: number 
 
 function CheckIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
       <path
-        d="M2 6L4.5 8.5L10 3.5"
-        stroke="white"
+        d="M4.1665 10.833L7.49984 14.1663L15.8332 5.83301"
+        stroke="var(--color-surface-light)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

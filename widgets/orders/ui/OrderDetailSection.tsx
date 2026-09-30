@@ -7,7 +7,7 @@ import type { CombinedPaymentDto } from "@/features/payment/api/types";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
 import { cancelSubscription, getPaymentReceipt } from "@/features/subscription/api";
 import { getPackageTierBySlug, TIER_BOX_IMAGES, TIER_LABEL, type PackageTier } from "@/entities/package";
-import { useModal } from "@/shared/ui";
+import { PageHeaderBand, useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { formatKrwPrice } from "@/shared/lib/format";
 
@@ -90,12 +90,7 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
   }
 
   return <div className="bg-white pt-[var(--header-offset)]">
-    <header className="bg-[var(--color-page-header-bg)]">
-      <div className="mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 max-md:py-8 md:py-[38px]">
-        <div className="flex items-center gap-1"><Link href="/orders" aria-label="주문내역으로 돌아가기" className="text-[var(--color-text-secondary)]"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link><h1 className="text-title-24-b text-[var(--color-text)] max-md:text-display-20-eb">주문 상세정보</h1></div>
-        <p className="mt-2 pl-7 text-body-16-m text-[var(--color-page-header-description)] max-md:text-body-13-r">주문하신 상품의 상세정보입니다.</p>
-      </div>
-    </header>
+    <PageHeaderBand title="주문 상세정보" description="주문하신 상품의 상세정보입니다." backControl={<Link href="/orders" aria-label="주문내역으로 돌아가기" className="text-[var(--color-text-secondary)]"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>} />
     <div className="mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 pb-[74px] pt-9">
       <div className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-[12px] bg-[var(--color-surface-light)] px-6 py-3 text-body-14-m max-md:px-4">
         <p className="break-all font-semibold text-[var(--color-text)]">주문번호 No.{payment.orderId}</p>

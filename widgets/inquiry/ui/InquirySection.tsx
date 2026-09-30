@@ -57,10 +57,10 @@ function PaperclipIcon() {
 function ConsentCheckboxChecked() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <rect width="20" height="20" rx="5" fill="var(--color-accent)" />
+      <rect width="20" height="20" rx="5" fill="var(--color-checkbox-checked)" />
       <path
         d="M4.16699 10.833L7.50033 14.1663L15.8337 5.83301"
-        stroke="white"
+        stroke="var(--color-surface-light)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -211,7 +211,9 @@ export default function InquirySection() {
       <SupportHero />
 
       {/* 폼 영역 */}
-      <div className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:pb-10`}>
+      <div
+        className={`${PAGE_CONTENT_WRAPPER_CLASS} max-md:py-6 md:max-lg:pt-12 md:pb-10 lg:pt-[38px]`}
+      >
         <form className="relative z-10" onSubmit={handleSubmit}>
           <div className="rounded-[20px] bg-white shadow-[0px_4px_24px_rgba(0,0,0,0.08)]">
             {/* 뒤로가기 — 카드 상단 여백 왼쪽, 세로 중앙 */}

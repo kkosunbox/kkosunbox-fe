@@ -20,10 +20,22 @@ export function getCartRecommendations(
   random: () => number = Math.random,
   additionallyExcludedProductIds: Iterable<number> = [],
 ) {
-  const excluded = new Set([
+  return getCartRecommendationPool(
+    products,
+    random,
+    [
     ...cart.items.map((item) => item.productId),
     ...additionallyExcludedProductIds,
-  ]);
+    ],
+  ).slice(0, 3);
+}
+
+export function getCartRecommendationPool(
+  products: ProductDto[],
+  random: () => number = Math.random,
+  excludedProductIds: Iterable<number> = [],
+) {
+  const excluded = new Set(excludedProductIds);
   const candidates = products.filter((product) => {
     if (excluded.has(product.id) || product.isSoldOut || product.isSalesPaused ||
       (product.stockQuantity != null && product.stockQuantity <= 0)) return false;
@@ -36,5 +48,5 @@ export function getCartRecommendations(
     [candidates[index], candidates[swapIndex]] = [candidates[swapIndex], candidates[index]];
   }
 
-  return candidates.slice(0, 3);
+  return candidates;
 }

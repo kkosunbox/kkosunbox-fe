@@ -7,7 +7,7 @@ import { deleteCartItem, getCart, quoteCart, updateCartItem, type CartDto, type 
 import { notifyCartUpdated } from "@/features/cart/lib/events";
 import { getErrorMessage } from "@/shared/lib/api";
 import { formatKrwPrice } from "@/shared/lib/format";
-import { CheckoutPromotionBanner, LoadingOverlay, QuantityMinusIcon, QuantityPlusIcon } from "@/shared/ui";
+import { CheckoutPromotionBanner, LoadingOverlay, PageHeaderBand, QuantityMinusIcon, QuantityPlusIcon } from "@/shared/ui";
 import { CartEmptyState } from "@/widgets/cart";
 
 const Chevron = ({ back = false }: { back?: boolean }) => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={back ? "m15 5-7 7 7 7" : "m5 9 7 7 7-7"} stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -27,7 +27,7 @@ function getPackageBadge(productName: string, relatedPlanSlug?: string | null) {
 function CartCheckbox({ checked, disabled = false, label, onChange }: { checked: boolean; disabled?: boolean; label: string; onChange: () => void }) {
   return <label className={`relative inline-flex h-5 w-5 shrink-0 cursor-pointer ${disabled ? "cursor-not-allowed opacity-40" : ""}`}>
     <input type="checkbox" className="peer sr-only" checked={checked} disabled={disabled} onChange={onChange} aria-label={label} />
-    {checked ? <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect width="20" height="20" rx="5" fill="var(--color-accent)" /><path d="M4.1665 10.8335L7.49984 14.1668L15.8332 5.8335" stroke="var(--color-surface-light)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> : <span className="h-5 w-5 rounded-[5px] border border-[var(--color-text-muted)] bg-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--color-accent)]" />}
+    {checked ? <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect width="20" height="20" rx="5" fill="var(--color-checkbox-checked)" /><path d="M4.1665 10.833L7.49984 14.1663L15.8332 5.83301" stroke="var(--color-surface-light)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> : <span className="h-5 w-5 rounded-[5px] border border-[var(--color-text-muted)] bg-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--color-checkbox-checked)]" />}
   </label>;
 }
 
@@ -82,7 +82,7 @@ export default function CartPageClient() {
 
   if (busy) return <LoadingOverlay visible />;
   return <div className="flex flex-1 flex-col bg-white pt-[var(--header-offset)]">
-    <section className="bg-[var(--color-page-header-bg)]"><div className="mx-auto flex h-[148px] w-full max-w-[1240px] flex-col justify-center max-xl:px-6 xl:px-0"><div className="flex items-center gap-1"><button type="button" onClick={() => router.back()} aria-label="이전 페이지"><Chevron back /></button><h1 className="text-[24px] font-bold tracking-[-0.04em] text-[var(--color-text)]">장바구니</h1></div><p className="ml-7 mt-2 text-body-16-m text-[var(--color-page-header-description)]">상품과 수량을 확인하신 후 주문을 진행해 주세요.</p></div></section>
+    <PageHeaderBand title="장바구니" description="상품과 수량을 확인하신 후 주문을 진행해 주세요." backControl={<button type="button" onClick={() => router.back()} aria-label="이전 페이지"><Chevron back /></button>} />
     {!cart?.items.length ? <div className="mx-auto flex w-full max-w-[1240px] flex-1 justify-center max-xl:px-6 xl:px-0 pb-[106px] pt-[120px]"><CartEmptyState /></div> : <div className="mx-auto grid w-full max-w-[1240px] flex-1 gap-8 max-xl:px-6 xl:px-0 pb-[106px] pt-8 md:grid-cols-[minmax(0,1fr)_1px_301px] md:gap-x-12">
       <section className="min-w-0" aria-labelledby="cart-products-title">
         <div className="flex items-center justify-between border-b border-[var(--color-text-muted)] pb-4"><div className="flex items-center gap-3 text-subtitle-16-sb"><CartCheckbox checked={allSelected} label="전체 상품 선택" onChange={() => setSelected(allSelected ? new Set() : new Set(orderableIds))} /><span id="cart-products-title">전체 상품</span></div><Chevron /></div>

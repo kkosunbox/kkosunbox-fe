@@ -102,7 +102,7 @@ export default async function ProductPage({ params }: Props) {
         productId={product?.id ?? null}
         isSoldOut={product?.isSoldOut ?? false}
         isSalesPaused={product?.isSalesPaused ?? true}
-        imageUrl={product?.imageUrl ?? null}
+        imageUrl={product?.detailThumbnailUrl ?? product?.imageUrl ?? null}
       />
     </>
   );

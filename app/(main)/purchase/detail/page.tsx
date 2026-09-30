@@ -77,7 +77,7 @@ export default async function PurchaseDetailPage({
       productId={product?.id ?? null}
       isSoldOut={product?.isSoldOut ?? false}
       isSalesPaused={product?.isSalesPaused ?? false}
-      imageUrl={product?.imageUrl ?? null}
+      imageUrl={product?.detailThumbnailUrl ?? product?.imageUrl ?? null}
     />
   );
 }

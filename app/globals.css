@@ -192,6 +192,7 @@
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
   --page-header-description-color: #43270B; /* 페이지 상단 배경 밴드 설명 원본 색상 */
+  --page-header-bg-color: #FFF2D899; /* 장바구니·주문 페이지 상단 배경 밴드 */
   --color-text-body-warm: #5B5B5B; /* 웜 섹션 본문 */
   --color-text-price: #171713;     /* 강조 가격 텍스트 */
   --color-text-discount: #EC7700;  /* 할인율 텍스트 (오렌지) */
@@ -526,6 +527,7 @@
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);
   --color-page-header-description: var(--page-header-description-color);
+  --color-page-header-bg: var(--page-header-bg-color);
   --color-text-body-warm: var(--color-text-body-warm);
   --color-text-price: var(--color-text-price);
   --color-text-discount: var(--color-text-discount);

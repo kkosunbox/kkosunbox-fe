@@ -534,10 +534,10 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* Desktop upper solid color band — mobile background follows hero content height */}
-      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:hidden md:h-[258px] bg-[var(--color-subscription-header-bg)]" />
+      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:hidden md:h-[258px] bg-[var(--color-page-header-bg)]" />
 
       {/* Mobile: ivory background wraps the full hero and always leaves 24px below it. */}
-      <section className="relative max-md:bg-[var(--color-subscription-header-bg)] max-md:pb-6">
+      <section className="relative max-md:bg-[var(--color-page-header-bg)] max-md:pb-6">
         {/* Hero content — desktop overlaps the 258px boundary */}
         <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
           {/* Back + title */}

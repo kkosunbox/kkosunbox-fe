@@ -2,8 +2,7 @@
 
 import type { ReactNode } from "react";
 import Image from "next/image";
-import authBanner from "@/shared/assets/auth-banner.webp";
-import authBannerHeading from "../assets/auth-banner-heading.svg";
+import authBanner from "@/shared/assets/auth-banner-renewal.png";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { AuthTabs, type AuthTabKey } from "./AuthTabs";
 
@@ -35,18 +34,11 @@ export function AuthDesktopShell({
   children: ReactNode;
 }) {
   return (
-    // 1920 HD 기준 블록(max-w 1804 + 좌우 48px)을 뷰포트 가로·세로 중앙에 둔다.
-    // 더 넓은 모니터에서도 상단 치우침 없이 가운데 유지. 뷰포트가 콘텐츠보다 짧으면 py-10으로 스크롤 여유.
-    // 좌우 여백 48px(px-12) — 1804px 도달 전까지 바깥 여백이 콘텐츠를 밀어주고,
-    // 뷰포트가 1804+96(=1900)px를 넘으면 max-w-[1804px]가 먼저 막아서 더는 안 벌어진다.
-    <div className="max-lg:hidden lg:flex lg:min-h-svh lg:items-center lg:justify-center lg:px-12 lg:py-10">
-      <div className="mx-auto flex w-full max-w-[1804px] items-stretch gap-6">
-        {/* 좌측 — 배너. 높이 837px 고정, 너비 650~890px 가변. 뷰포트가 좁아질 때 우측 폼보다
-            천천히(shrink-[1]) 줄어들도록 — 좌상단 문구가 화면 밖으로 밀리지 않게 한다.
-            min-w는 lg 진입 직후(1200px)에도 폼(401px 고정)·gap(24px)·좌우 패딩(96px)과 함께
-            한 화면에 다 들어가도록 역산한 값 — 702px였을 때는 1200~1223px 구간에서 합이
-            뷰포트를 넘겨 우측 패딩이 눌리고 레이아웃이 한쪽으로 쏠렸다. */}
-        <div className="relative h-[837px] min-w-[650px] max-w-[890px] grow shrink-[1] basis-[890px] overflow-hidden rounded-[40px]">
+    // 1920px 시안 기준: 좌측 753×733, 간격 43, 우측 753×837을 한 묶음으로 중앙 정렬한다.
+    // 1200~1548px 구간에서는 폼의 최소 너비(401px)를 지키며 배너와 간격만 유연하게 줄인다.
+    <div className="max-lg:hidden lg:flex lg:min-h-svh lg:items-center lg:justify-center lg:px-10 lg:py-[75px] min-[1800px]:pl-[229px] min-[1800px]:pr-[142px]">
+      <div className="mx-auto flex w-full max-w-[1549px] items-center gap-[clamp(24px,2.24vw,43px)]">
+        <div className="relative aspect-[753/733] min-w-0 max-w-[753px] grow basis-[753px] overflow-hidden rounded-[24px]">
           <Image
             src={authBanner}
             alt=""
@@ -54,23 +46,31 @@ export function AuthDesktopShell({
             fill
             quality={HIGH_IMAGE_QUALITY}
             className="object-cover object-center"
-            sizes="890px"
+            sizes="753px"
             priority
           />
-          {/* 헤딩 문구 — 좌상단 기준 left 48px / top 40px 고정 배치 */}
-          {/* eslint-disable-next-line @next/next/no-img-element -- 벡터 SVG, Next/Image 재인코딩 불필요 */}
-          <img
-            src={authBannerHeading.src}
-            alt="우리 아이를 위한 맞춤 건강간식, 꼬순박스"
-            width={authBannerHeading.width}
-            height={authBannerHeading.height}
-            className="absolute left-[48px] top-[40px]"
-          />
+          <div
+            className="absolute left-[56px] top-[41px]"
+            style={{ fontFamily: AUTH_HEADING_FONT }}
+          >
+            <h2 className="h-[46px] w-[368px] text-[32px] font-extrabold leading-[46px] tracking-[-0.04em] text-[var(--color-why-choose-text)] capitalize">
+              우리 아이를 위한 맞춤 건강간식
+            </h2>
+            <p
+              className="mt-3 h-[50px] w-[248px] text-[14px] font-bold leading-[180%] tracking-[-0.04em] text-white"
+              style={{
+                textShadow: "2px 4px 8px rgba(252, 226, 206, 0.2)",
+              }}
+            >
+              매일 신선하게 만드는 휴먼 그레이드 수제 간식을
+              <br />
+              정기구독으로 편하게 받아보세요.
+            </p>
+          </div>
         </div>
 
-        {/* 우측 — 탭 + 폼 카드. 카드 자체는 401~890px 가변, 내부 콘텐츠(입력·버튼)는 401px로 고정·중앙정렬.
-            좌측 배너보다 훨씬 빠르게(shrink-[6]) 줄어들어 401px 바닥에 먼저 도달한다 */}
-        <div className="flex min-w-[401px] max-w-[890px] grow shrink-[6] basis-[890px] flex-col items-center justify-center rounded-[40px] bg-white">
+        {/* 우측 카드의 외곽은 최대 753px, 실제 입력 콘텐츠는 시안대로 401px로 유지한다. */}
+        <div className="flex min-h-[837px] min-w-[401px] max-w-[753px] grow shrink-[6] basis-[753px] flex-col items-center justify-center rounded-[40px] bg-white">
           <div className="w-full max-w-[401px]">
             {active && <AuthTabs active={active} />}
 

@@ -25,15 +25,15 @@ import ReferralTitleSvg from "./ReferralTitleSvg";
 export default function ReferralPackagePlansSection() {
   const router = useRouter();
   // 초대 코드를 플랜 조회에 함께 넘겨 서버가 채워준 할인가를 그대로 쓴다.
-  const { influencerName, hasInfluencerIdentity, refCode } = useReferral();
+  const { influencerName, hasInfluencerIdentity, refCode, hasDisplayableReferralOffer } = useReferral();
   const [apiPlans, setApiPlans] = useState<SubscriptionPlanDto[]>([]);
   const [plansReady, setPlansReady] = useState(false);
 
   useEffect(() => {
-    getSubscriptionPlans(undefined, refCode ?? undefined)
+    getSubscriptionPlans(undefined, hasDisplayableReferralOffer ? refCode ?? undefined : undefined)
       .then((res) => { setApiPlans(res.plans); setPlansReady(true); })
       .catch(() => { setPlansReady(true); });
-  }, [refCode]);
+  }, [refCode, hasDisplayableReferralOffer]);
 
   /** 백엔드 추천픽이 없으면 Standard 폴백 — ReferralPlanPicker 내부 배지와 동일 기준 */
   const recommendedPlanIds = useMemo(() => resolveRecommendedPlanIds(apiPlans), [apiPlans]);

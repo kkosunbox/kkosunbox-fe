@@ -45,6 +45,8 @@ export interface ReferralContext {
   firstSubscriptionEligible: boolean;
   /** 실제로 할인을 받을 수 있는가 — **가격 적용 기준** (`isReferral && firstSubscriptionEligible`) */
   inviteEligible: boolean;
+  /** 플랜 할인가 미리보기 가능 여부 — 비로그인 또는 로그인 상태에서 구독 이력이 없을 때만 true */
+  referralPricingEligible: boolean;
 }
 
 /** 초대 맥락이 전혀 없는 상태 */
@@ -58,4 +60,5 @@ export const INERT_REFERRAL_CONTEXT: ReferralContext = {
   isReferral: false,
   firstSubscriptionEligible: false,
   inviteEligible: false,
+  referralPricingEligible: false,
 };

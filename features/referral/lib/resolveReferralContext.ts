@@ -3,7 +3,7 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
 import { probeSubscriptionHistory } from "@/features/subscription/api/queries";
-import { fetchMyReferralCode, fetchReferralPage, fetchReferralValidation } from "../api/queries";
+import { fetchMyReferralCode, fetchReferralPage } from "../api/queries";
 import { INVITE_CODE_COOKIE, INVITE_SLUG_COOKIE, isValidInviteCode } from "./inviteCodeCookie";
 import {
   INERT_REFERRAL_CONTEXT,
@@ -51,44 +51,27 @@ export const resolveReferralContext = cache(
     const token = await getServerToken();
     // 판정 불가(null)도 부적격으로 본다 — 위 fail-closed 설명 참고.
     const firstSubscriptionEligible = (await probeSubscriptionHistory(token)) === false;
-    const base = { ...INERT_REFERRAL_CONTEXT, firstSubscriptionEligible };
+    const base = {
+      ...INERT_REFERRAL_CONTEXT,
+      firstSubscriptionEligible,
+      referralPricingEligible: !token || firstSubscriptionEligible,
+    };
 
     // 자기감지(`ownSlug`)로 성립한 맥락은 "초대"가 아니다 — 아무도 이 사용자를 초대하지 않았다.
     // 마케팅 표시 술어가 이 경로를 제외하므로 출처를 구분해 기록한다.
     const resolvedSlug = slug ?? ownSlug;
     if (resolvedSlug) return fromSlug(resolvedSlug, base, slug ? "slug" : "own-slug");
 
-    // slug 없이 코드만 있는 경로(`?r=CODE`). 할인율·적용 가능 여부를 서버가 판정한다.
-    //
-    // 코드가 무효(400 → null)여도 `isReferral`은 유지한다. 캡처된 코드를 서버가 조용히
-    // 버리면 초대 링크로 들어온 사용자에게 "왜 할인이 안 붙는지" 알릴 방법이 사라진다.
-    // 주문서는 이 코드를 잠긴 입력으로 보여주고, 재검증 실패 메시지와 삭제 버튼으로 안내한다.
-    const validation = await fetchReferralValidation(code!, token);
+    // slug 없이 코드만 있는 레거시 `?r=CODE` 경로. validate API는 폐기되었으므로
+    // 코드는 가입 요청에 전달할 어트리뷰션으로만 유지하고, 할인율은 여기서 추정하지 않는다.
     return {
       ...base,
       referralSource: "code",
       refCode: code!,
-      discountRate: validation?.discountRate ?? 0,
       isReferral: true,
-      inviteEligible: firstSubscriptionEligible && (validation?.isApplicable ?? false),
     };
   },
 );
-
-/**
- * 주문서 전용 — 초대 맥락이 없어도 "이 계정이 초대코드를 쓸 수 있는지"까지 확정한다.
- * 주문서는 코드가 없는 사용자에게 입력칸을 열어줄지 판단해야 하는 유일한 화면이다.
- * 조회는 `probeSubscriptionHistory`(요청 단위 캐시)를 공유하므로 중복 호출이 되지 않는다.
- */
-export const resolveOrderReferralContext = cache(async (): Promise<ReferralContext> => {
-  const context = await resolveReferralContext();
-  if (context.isReferral) return context;
-  const token = await getServerToken();
-  return {
-    ...context,
-    firstSubscriptionEligible: (await probeSubscriptionHistory(token)) === false,
-  };
-});
 
 async function fromSlug(
   slug: string,

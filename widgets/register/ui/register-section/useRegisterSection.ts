@@ -36,6 +36,7 @@ export function useRegisterSection() {
   /* 단일 isPending — 인증코드 발송·OTP 확인·회원가입 버튼 라벨을 모두 제어 */
   const [isPending, start] = useTransition();
   const [phone, setPhone] = useState("");
+  const [referralCode, setReferralCode] = useState("");
 
   const phoneDigits = phone.replace(/\D/g, "");
   const phoneValid = /^01\d{8,9}$/.test(phoneDigits);
@@ -97,6 +98,7 @@ export function useRegisterSection() {
           agree.agreements.terms,
           agree.agreements.privacy,
           agree.agreements.marketing,
+          referralCode,
         );
         if (result.error) { showError(result.error); return; }
 
@@ -117,6 +119,8 @@ export function useRegisterSection() {
     canSubmit,
     phone,
     updatePhone,
+    referralCode,
+    setReferralCode,
     email,
     pw,
     agree,

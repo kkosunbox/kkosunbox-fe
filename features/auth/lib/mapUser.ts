@@ -10,5 +10,6 @@ export function toAuthUser(user: User): AuthUser {
     isAllowPrivacy: user.isAllowPrivacy,
     isAllowMarketing: user.isAllowMarketing,
     isInfluencer: user.isInfluencer,
+    referrer: user.referrer,
   };
 }

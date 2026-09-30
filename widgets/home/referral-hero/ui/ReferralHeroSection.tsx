@@ -229,7 +229,7 @@ export default function ReferralHeroSection() {
 
           {/* 혜택 안내 문구 */}
           <p className="text-[var(--color-hero-heading)] font-semibold max-md:mb-3 md:mb-[26px] lg:mb-3 max-lg:text-[13px] lg:text-[14px]">
-            이 페이지에서만 가능한 특별한 혜택!
+            지금 회원가입하면 첫 구독 시 {discountPct}% 할인 혜택!
           </p>
 
           {/* CTA 버튼 */}

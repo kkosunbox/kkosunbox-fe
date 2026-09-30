@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useAgreementState } from "./hooks/useAgreementState";
-import { useInviteState } from "./hooks/useInviteState";
 import { usePaymentState } from "./hooks/usePaymentState";
 import { useStartDateState } from "./hooks/useStartDateState";
 import { useSubscriptionPriceQuote } from "./hooks/useSubscriptionPriceQuote";
@@ -16,7 +15,6 @@ import { useProfile } from "@/features/profile/ui/ProfileProvider";
 import { createSubscription } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { clearStoredInviteCode, clearStoredInviteSlug } from "@/features/referral/lib";
-import type { ReferralContext } from "@/features/referral/lib/referralContext";
 import { useReferral } from "@/features/referral/model";
 import { formatDateToYMD } from "@/features/order";
 import { packageThemeForPlan } from "@/entities/package";
@@ -29,11 +27,6 @@ export interface OrderSectionProps {
   initialAddresses: DeliveryAddress[];
   initialBilling: BillingInfo | null;
   initialQuantity?: number;
-  /**
-   * 서버가 확정한 초대 상태(`resolveReferralContext`). 초대코드 섹션 분기와
-   * **쿠폰 적용 전 단가**가 모두 이 값에서 나온다 — 플랜 선택 화면과 같은 소스라 값이 어긋나지 않는다.
-   */
-  referral: ReferralContext;
 }
 
 export function useOrderSectionState({
@@ -41,7 +34,6 @@ export function useOrderSectionState({
   initialAddresses,
   initialBilling,
   initialQuantity = 1,
-  referral,
 }: OrderSectionProps) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -52,7 +44,6 @@ export function useOrderSectionState({
   const agreement = useAgreementState();
   const address = useAddressState({ initialAddresses });
   const payment = usePaymentState({ initialBilling });
-  const invite = useInviteState({ referral });
   const startDate = useStartDateState();
 
   const [openSections, setOpenSections] = useState({
@@ -60,7 +51,6 @@ export function useOrderSectionState({
     startDate: true,
     customer: true,
     payment: true,
-    invite: true,
     date: true,
     summary: true,
   });
@@ -76,41 +66,15 @@ export function useOrderSectionState({
 
   const unitPrice = plan.monthlyPrice;
 
-  /**
-   * 초대코드 할인 적용 상태 — 두 경로를 모두 받는다.
-   *
-   * 1. **캡처된 코드**(초대 링크 진입): 서버가 확정한 `referral.inviteEligible`을 따른다.
-   *    플랜 선택 화면이 쓰는 값과 같은 소스이므로 쿠폰 적용 전 단가가 어긋나지 않는다.
-   *    결제 직전 재검증이 `blocked`를 주면 그때만 내린다.
-   * 2. **직접 입력**(open 모드): 서버 컨텍스트에는 코드가 없으므로 재검증 결과가 유일한 근거다.
-   *    `applicable`이면 그 요율로 적용한다.
-   */
-  const referralDiscount = useMemo(() => {
-    const manuallyApplied = invite.inviteStatus === "applicable";
-    return {
-      inviteEligible:
-        manuallyApplied || (referral.inviteEligible && invite.inviteStatus !== "blocked"),
-      discountRate: manuallyApplied ? invite.inviteDiscountRate : referral.discountRate,
-    };
-  }, [referral.inviteEligible, referral.discountRate, invite.inviteStatus, invite.inviteDiscountRate]);
-
   // 확정(canUse)된 쿠폰 코드만 quote에 실어 보낸다 — 실제 구독 생성 시 보내는 조건과 동일.
   const appliedCouponCode =
     payment.couponInfo?.canUse && payment.couponCodeInput.trim()
       ? payment.couponCodeInput.trim()
       : undefined;
-  // 초대코드는 referralDiscount.inviteEligible(캡처된 코드의 낙관적 표시 포함)을 그대로 게이트로 쓴다 —
-  // 재검증 왕복이 끝나기 전에도 플랜 화면과 같은 할인이 바로 보이도록.
-  const appliedReferralCode =
-    referralDiscount.inviteEligible && invite.inviteCodeInput.trim()
-      ? invite.inviteCodeInput.trim()
-      : undefined;
-
   const { quote, isQuoting, quoteError } = useSubscriptionPriceQuote({
     planId: plan.id,
     quantity,
     couponCode: appliedCouponCode,
-    referralCode: appliedReferralCode,
   });
 
   // 금액은 서버 quote(`/v1/subscriptions/price`)가 확정한 값을 그대로 쓴다. 응답이 아직 없으면
@@ -197,11 +161,6 @@ export function useOrderSectionState({
             payment.couponInfo?.canUse && payment.couponCodeInput.trim()
               ? payment.couponCodeInput.trim()
               : undefined,
-          // 검증을 통과(applicable)한 초대 코드만 전송한다. 서버가 첫 구독자에 한해 할인을 반영한다.
-          referralCode:
-            invite.inviteStatus === "applicable" && invite.inviteCodeInput.trim()
-              ? invite.inviteCodeInput.trim()
-              : undefined,
           startDate:
             startDate.startDateMode === "scheduled" && startDate.scheduledDate
               ? formatDateToYMD(startDate.scheduledDate)
@@ -271,18 +230,7 @@ export function useOrderSectionState({
     handleToggleCoupon: payment.handleToggleCoupon,
     handleApplyCoupon: payment.handleApplyCoupon,
 
-    // ── invite ──
-    inviteSectionMode: invite.inviteSectionMode,
-    isInviteInputLocked: invite.isInviteInputLocked,
-    inviteCodeInput: invite.inviteCodeInput,
-    inviteStatus: invite.inviteStatus,
-    inviteBlockedMsg: invite.inviteBlockedMsg,
-    handleApplyInviteCode: invite.handleApplyInviteCode,
-    handleRetryInviteValidation: invite.handleRetryInviteValidation,
-    handleDismissStoredInviteCode: invite.handleDismissStoredInviteCode,
-    handleInviteCodeChange: invite.handleInviteCodeChange,
-
-    // ── pricing (product·payment·invite 교차) ──
+    // ── pricing ──
     unitPrice,
     quantity,
     setQuantity,

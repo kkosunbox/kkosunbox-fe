@@ -67,7 +67,7 @@
   color-scheme: only light;
 
   /* Layout heights — 배너/헤더 높이 한 곳에서 관리. 배너 제거 시 --banner-height: 0px 으로만 변경 */
-  --header-height: 54px;
+  --header-height: 80px;
   --banner-height: 30px;
   --header-offset: calc(var(--header-height) + var(--banner-height));
 

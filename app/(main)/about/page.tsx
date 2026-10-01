@@ -35,7 +35,7 @@ const breadcrumbJsonLd = {
 
 export default function AboutPage() {
   return (
-    <div className="pt-[calc(var(--banner-height)+54px)]">
+    <div className="pt-[var(--header-offset)]">
       <JsonLd data={breadcrumbJsonLd} />
       <AboutSection />
     </div>

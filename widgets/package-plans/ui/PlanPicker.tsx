@@ -205,7 +205,7 @@ export interface PlanPickerProps {
   /** 모바일(<768px) 슬롯. 제공 시 기본 셰브론+도트 네비를 대체한다. onTierSelect는 재탭 시 primary 버튼과 동일 동작. */
   mobileSlot?: (tier: PackageTier, onTierSelect: (tier: PackageTier) => void, order: PackageTier[]) => ReactNode;
   /** primary 버튼(제품 상세보기 등) 색상 변형.
-   * - "default": 다크 웜 브라운(--color-btn-dark-warm)
+   * - "default": CTA 오렌지(--color-cta-button)
    * - "orange": --color-cta-button 배경 + 모바일 48px 높이
    * - "charcoal": #2F2F2F(--color-text) — 메인 홈 제품 상세보기 전용
    */
@@ -315,7 +315,7 @@ export default function PlanPicker({
         ? "bg-[var(--color-cta-button)]"
         : primaryButtonVariant === "charcoal"
           ? "bg-[var(--color-text)]"
-          : "bg-[var(--color-btn-dark-warm)]";
+          : "bg-[var(--color-cta-button)]";
 
     return (
       <button

@@ -53,13 +53,7 @@ function AnalyzingSpinner() {
           }}
         />
       </div>
-      <p
-        className="text-center text-body-15-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]"
-        style={{
-          fontFamily:
-            '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-        }}
-      >
+      <p className="text-center text-body-15-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]">
         체크리스트를 분석하고 있습니다.
         <br />
         잠시만 기다려주세요

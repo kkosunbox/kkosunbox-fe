@@ -12,7 +12,7 @@ export default function ErrorTestPage() {
         actions={
           <button
             onClick={() => window.location.reload()}
-            className="h-12 w-full max-w-[360px] rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-16-sb text-white transition-opacity hover:opacity-90"
+            className="h-12 w-full max-w-[360px] rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb text-white transition-opacity hover:opacity-90"
           >
             새로고침
           </button>

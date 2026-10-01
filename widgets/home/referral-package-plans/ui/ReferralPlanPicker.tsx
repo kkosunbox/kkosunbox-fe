@@ -202,7 +202,7 @@ export default function ReferralPlanPicker({
         type="button"
         onClick={handlePrimaryClick}
         disabled={!activePlan || activePrimaryButton.disabled}
-        className={`${className} bg-[var(--color-btn-dark-warm)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
+        className={`${className} bg-[var(--color-cta-button)] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60`}
       >
         {activePrimaryButton.label}
       </button>

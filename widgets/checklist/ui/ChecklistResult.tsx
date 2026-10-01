@@ -20,6 +20,7 @@ import { trackChecklistCtaClick } from "@/shared/lib/analytics";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { FallbackAvatar, useModal } from "@/shared/ui";
 import basicImage from "@/widgets/checklist/assets/checklist-result-basic.png";
+import checklistResultBannerImage from "@/widgets/checklist/assets/checklist-result-banner.png";
 import premiumImage from "@/widgets/checklist/assets/checklist-result-premium.png";
 import standardImage from "@/widgets/checklist/assets/checklist-result-standard.png";
 import type { PetInfo, RecommendedTier } from "./types";
@@ -99,20 +100,18 @@ function RetryButton() {
 function ResultBanner() {
   return (
     <div className="flex h-[70px] items-center justify-center overflow-hidden bg-[var(--color-purchase-banner-bg)] px-6 text-white">
-      <div className="flex items-center gap-5 max-md:gap-3">
+      <div className="flex h-full items-center gap-5 max-md:gap-3">
         <p className="text-subtitle-16-sb max-md:text-body-13-sb">
           우리 아이 취향저격 <strong className="text-[var(--color-banner-bg)]">꼬순박스 완성하기</strong>
         </p>
-        <svg width="106" height="63" viewBox="0 0 106 63" fill="none" aria-hidden className="shrink-0">
-          <path d="M13 48h80v15H13z" fill="var(--color-banner-bg)" />
-          <path d="M18 39h70l5 9H13l5-9Z" fill="var(--color-accent-orange)" />
-          <rect x="35" y="7" width="38" height="42" rx="5" fill="var(--color-secondary)" />
-          <rect x="43" y="3" width="22" height="9" rx="4.5" fill="var(--color-banner-bg)" />
-          <path d="m43 21 3 3 5-6m-8 15 3 3 5-6" stroke="var(--color-accent-orange)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M56 22h10M56 34h10" stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round" />
-          <path d="m82 17 2.4 5.1 5.6.7-4.1 3.8 1.1 5.5-5-2.8-5 2.8 1.1-5.5-4.1-3.8 5.6-.7L82 17Z" fill="var(--color-banner-bg)" />
-          <path d="M25 20 27 15m-10 9-5-2m16 8 5 2" stroke="var(--color-secondary)" strokeWidth="3" strokeLinecap="round" />
-        </svg>
+        <Image
+          src={checklistResultBannerImage}
+          alt=""
+          width={106}
+          height={63}
+          aria-hidden
+          className="shrink-0 self-end"
+        />
       </div>
     </div>
   );

@@ -110,7 +110,12 @@ interface PackageShowcaseProps {
   loading?: boolean;
   error?: boolean;
   initialSelectedTier?: PackageTier | null;
-  variant?: "home" | "subscription";
+  variant?: "home" | "subscription" | "change";
+  getPrimaryAction?: (plan: SubscriptionPlanDto) => {
+    label: string;
+    disabled?: boolean;
+    onClick: () => void;
+  };
 }
 
 export function PackageShowcaseSection({
@@ -119,6 +124,7 @@ export function PackageShowcaseSection({
   error = false,
   initialSelectedTier = null,
   variant = "home",
+  getPrimaryAction,
 }: PackageShowcaseProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const selected = plans.find(plan => plan.id === selectedId)
@@ -127,6 +133,7 @@ export function PackageShowcaseSection({
   const tier = selected ? tierFromSubscriptionPlan(selected) : "Standard";
   const pkg = PACKAGES.find(item => item.tier === tier)!;
   const price = selected ? planDisplayPrice(selected) : null;
+  const primaryAction = selected ? getPrimaryAction?.(selected) : undefined;
   // One card per tier, in the same order as the comparison table.
   const sorted = PACKAGES.flatMap(pkg => {
     const plan = plans.find(item => tierFromSubscriptionPlan(item) === pkg.tier);
@@ -140,15 +147,17 @@ export function PackageShowcaseSection({
   }
 
   return (
-    <section className={styles.packages} data-variant={variant} aria-labelledby="package-intro-title">
+    <section className={styles.packages} data-variant={variant === "change" ? "subscription" : variant} aria-labelledby="package-intro-title">
       <div className={`${styles.container} ${styles.packageIntro}`}>
         <h2 id="package-intro-title" className={styles.heading}>
-          {variant === "subscription"
-            ? <>우리 강아지에게 맞는 <span>구독을 선택하세요</span></>
-            : <><span>꼬순박스를</span> 정기구독으로 만나보세요.</>}
+          {variant === "change"
+            ? <><span>기존 구독을 변경하려면</span> 새로운 구독을 선택하세요.</>
+            : variant === "subscription"
+              ? <>우리 강아지에게 맞는 <span>구독을 선택하세요</span></>
+              : <><span>꼬순박스를</span> 정기구독으로 만나보세요.</>}
         </h2>
         <p className={styles.productDescription}>
-          {variant === "subscription"
+          {variant !== "home"
             ? "꼬순박스가 엄선한 건강한 재료로, 매달 새로운 행복을 보내드려요."
             : "맛과 영양을 생각해 구성한 다양한 수제 간식을 정해진 주기에 맞춰 신선하게 보내드려요."}
         </p>
@@ -193,10 +202,21 @@ export function PackageShowcaseSection({
               </div>
             )}
             {selected && !selected.isSalesPaused ? (
-              <Link href={`/subscribe/detail?planId=${selected.id}`} className={styles.outlineButton}
-                onClick={() => trackSelectItem({ plan_tier: selected.name })}>
-                제품 보러가기
-              </Link>
+              primaryAction ? (
+                <button
+                  type="button"
+                  className={styles.outlineButton}
+                  disabled={primaryAction.disabled}
+                  onClick={primaryAction.onClick}
+                >
+                  {primaryAction.label}
+                </button>
+              ) : (
+                <Link href={`/subscribe/detail?planId=${selected.id}`} className={styles.outlineButton}
+                  onClick={() => trackSelectItem({ plan_tier: selected.name })}>
+                  제품 보러가기
+                </Link>
+              )
             ) : (
               <button type="button" className={styles.outlineButton} disabled>
                 {loading ? "패키지 불러오는 중" : selected?.isSalesPaused ? "현재 신청이 어려워요" : "패키지 준비 중"}
@@ -236,7 +256,7 @@ export function PackageShowcaseSection({
           }) : (
             <p className={styles.empty}>
               {error ? "패키지 정보를 불러오지 못했습니다." : "현재 신청 가능한 패키지가 없습니다."}
-              {variant === "subscription"
+              {variant !== "home"
                 ? <button type="button" onClick={() => window.location.reload()}>새로고침</button>
                 : <Link href="/subscribe">구독몰에서 확인하기</Link>}
             </p>

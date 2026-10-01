@@ -1,18 +1,17 @@
 ﻿"use client";
-/* eslint-disable @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */
-
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { DesktopHeroSideBackground, ScrollReveal, useLoadingOverlay, useModal } from "@/shared/ui";
+import { useLoadingOverlay, useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api";
 import { changePlan } from "@/features/subscription/api/subscriptionApi";
 import type { SubscriptionPlanDto, UserSubscriptionDto } from "@/features/subscription/api/types";
 import { tierFromSubscriptionPlan } from "@/entities/package";
-import { PlanPicker } from "@/widgets/package-plans";
+import {
+  PackageComparison,
+  PackageShowcaseSection,
+  SubscriptionPromoBanner,
+} from "@/widgets/package-plans";
 import { trackSubscriptionPlanChange } from "@/shared/lib/analytics";
-import subscriptionChangeHeroMobile from "../assets/subscription-change-hero-mobile-renewal.webp";
-import subscriptionChangeHeroTablet from "../assets/subscription-change-hero-tablet-renewal.webp";
-import subscriptionChangeHeroDesktop from "../assets/subscription-change-hero-desktop-renewal.webp";
 
 interface Props {
   plans: SubscriptionPlanDto[];
@@ -45,98 +44,60 @@ export default function SubscriptionChangePlansSection({
       return;
     }
 
-    showLoading("플랜 변경을 처리하고 있습니다...");
+    showLoading("구독 변경을 처리하고 있습니다...");
     startTransition(async () => {
       try {
         await changePlan(targetSubscription.id, { newPlanId: plan.id });
         trackSubscriptionPlanChange({ plan_tier: plan.name });
         openAlert({
           type: "success",
-          title: "플랜이 변경되었습니다.",
+          title: "구독이 변경되었습니다.",
           description: "변경 사항은 다음 결제일에 반영됩니다.",
         });
         router.push("/mypage/subscription");
         router.refresh();
       } catch (err) {
-        openAlert({ title: getErrorMessage(err, "플랜 변경 처리 중 오류가 발생했습니다.") });
+        openAlert({ title: getErrorMessage(err, "구독 변경 처리 중 오류가 발생했습니다.") });
       } finally {
         hideLoading();
       }
     });
   }
 
-  const heroAlt = "기존 구독을 변경하려면 새로운 구독을 선택하세요";
-
   return (
-    <section className="flex min-h-full flex-1 flex-col bg-white pb-16 md:pb-20">
-      <div className="flex w-full flex-1 flex-col">
-        {/* Hero */}
-        <ScrollReveal variant="fade-in" duration={600}>
-          <div className="max-lg:mb-1">
-            {/* 모바일 (<768px) */}
-            <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
-              <img
-                src={subscriptionChangeHeroMobile.src}
-                alt={heroAlt}
-                className="h-[156px] w-full shrink-0 object-cover object-center"
-              />
-            </div>
-            {/* 태블릿 (768px~1199px) */}
-            <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden">
-              <img
-                src={subscriptionChangeHeroTablet.src}
-                alt={heroAlt}
-                className="h-[156px] w-full shrink-0 object-cover object-center"
-              />
-            </div>
-            {/* 데스크톱 (≥1200px) */}
-            <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
-              <div className="relative w-full h-[306px]">
-                <DesktopHeroSideBackground />
-                <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-                  <img
-                    src={subscriptionChangeHeroDesktop.src}
-                    alt={heroAlt}
-                    className="absolute inset-0 h-full w-full object-cover object-center"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </ScrollReveal>
-
-        {plans.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 py-20 text-center">
-            <p className="text-body-16-m text-[var(--color-text-secondary)]">
-              잠시 후 다시 시도해 주세요.
-            </p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="text-body-14-sb text-[var(--color-accent)] underline underline-offset-2"
-            >
-              새로고침
-            </button>
-          </div>
-        ) : (
-          <PlanPicker
-            // 결제 계층 — `/order`를 거치지 않고 "변경하기"가 changePlan()을 직접 호출하므로
-            // 가격을 확인시켜줄 경계가 없다. 초대 쿠키가 남아 있어도 실제 청구가를 보여줘야 한다.
+    <section className="min-h-full flex-1 bg-white pb-px pt-[var(--header-offset)]">
+      <SubscriptionPromoBanner />
+      {plans.length === 0 ? (
+        <div className="flex min-h-[420px] flex-col items-center justify-center gap-3 px-6 text-center">
+          <p className="text-body-16-m text-[var(--color-text-secondary)]">
+            잠시 후 다시 시도해 주세요.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="text-body-14-sb text-[var(--color-accent)] underline underline-offset-2"
+          >
+            새로고침
+          </button>
+        </div>
+      ) : (
+        <>
+          <PackageShowcaseSection
             plans={plans}
             initialSelectedTier={initialSelectedTier}
-            isCurrentPlan={checkIsCurrentPlan}
-            primaryButtonVariant="orange"
-            getPrimaryButton={(plan) => {
+            variant="change"
+            getPrimaryAction={(plan) => {
               const isCurrent = checkIsCurrentPlan(plan);
               return {
-                label: isCurrent ? "현재 구독중" : isChangeMode ? "변경하기" : "구독하기",
+                label: isCurrent ? "현재 구독중" : isChangeMode ? "구독 변경하기" : "구독하기",
                 disabled: isPending || isCurrent,
                 onClick: () => handlePlanAction(plan),
               };
             }}
           />
-        )}
-      </div>
+          <PackageComparison />
+        </>
+      )}
     </section>
   );
 }

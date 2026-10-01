@@ -83,7 +83,7 @@ function ReviewActionButtons({
     <button
       type="button"
       onClick={onEdit}
-      className="rounded-[8px] bg-[var(--color-btn-dark-warm)] px-4 py-2.5 text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90 md:px-5 md:py-3"
+      className="rounded-[8px] bg-[var(--color-cta-button)] px-4 py-2.5 text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90 md:px-5 md:py-3"
     >
       리뷰 수정하기
     </button>
@@ -93,7 +93,7 @@ function ReviewActionButtons({
     <button
       type="button"
       onClick={onDelete}
-      className="rounded-[8px] border border-[var(--color-btn-dark-warm)] bg-white px-4 py-2.5 text-body-14-sb leading-[1] text-[var(--color-btn-dark-warm)] transition-opacity hover:opacity-90 md:px-5 md:py-3"
+      className="rounded-[8px] border border-[var(--color-cta-button)] bg-white px-4 py-2.5 text-body-14-sb leading-[1] text-[var(--color-cta-button)] transition-opacity hover:opacity-90 md:px-5 md:py-3"
     >
       리뷰 삭제
     </button>
@@ -277,7 +277,7 @@ export default function MyReviewModal({
             <button
               type="button"
               onClick={onEdit}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90"
+              className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90"
             >
               리뷰 수정하기
             </button>

@@ -167,13 +167,6 @@ export function MobileDrawer({
               <span className={shortcutLabelClass(isMyPageActive)}>마이페이지</span>
             </button>
             <button
-              onClick={() => { onClose(); router.push(isLoggedIn ? "/orders" : "/login?next=/orders"); }}
-              className="flex w-14 flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
-            >
-              <DropdownClipboardIcon />
-              <span className={shortcutLabelClass(pathname.startsWith("/orders"))}>주문내역</span>
-            </button>
-            <button
               onClick={() => { onClose(); if (isLoggedIn) { openModal("account-info"); } else { router.push("/login"); } }}
               className="flex w-14 flex-col items-center gap-[9px] [&>svg]:h-8 [&>svg]:w-8"
             >

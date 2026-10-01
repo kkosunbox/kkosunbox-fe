@@ -1,18 +1,19 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import withdrawHeroDesktop from "../assets/withdraw-confirm-hero-web-renewal.webp";
-import withdrawHeroTablet from "../assets/withdraw-confirm-hero-tablet-renewal.webp";
-import withdrawHeroMobile from "../assets/withdraw-confirm-hero-mobile-renewal.webp";
 import { useAuth } from "@/features/auth";
 import { withdraw } from "@/features/auth/api";
 import type { Profile } from "@/features/profile/api/types";
-import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { WITHDRAWAL_REASON_MAX_LENGTH } from "@/shared/config/inputLimits";
-import { DesktopHeroSideBackground, useLoadingOverlay, useModal } from "@/shared/ui";
-
-/* ── 탈퇴 사유 옵션 ──────────────────────────────────────────────── */
+import { getErrorMessage } from "@/shared/lib/api/errorMessages";
+import {
+  FallbackAvatar,
+  FeedbackFormLayout,
+  useLoadingOverlay,
+  useModal,
+} from "@/shared/ui";
+import { SupportHero } from "@/widgets/support/shared";
 
 const WITHDRAW_REASONS = [
   "매달 내는 구독료가 부담돼요.",
@@ -24,45 +25,60 @@ const WITHDRAW_REASONS = [
 
 const REASON_ETC = "기타";
 
-/* ── 헬퍼 ─────────────────────────────────────────────────────────── */
+const WITHDRAW_NOTICES = [
+  "회원 탈퇴 시 모든 정보는 삭제되며 복구되지 않습니다. 단, 관련 법령에 따라 일부 정보는 일정 기간 보관될 수 있습니다.",
+  "보유 중인 적립금 및 쿠폰은 모두 소멸됩니다.",
+  "진행 중인 주문이 있을 경우 탈퇴가 제한됩니다.",
+  "탈퇴 후 180일 이내 재가입 시 신규 혜택은 제공되지 않습니다.",
+  "‘탈퇴하기’ 버튼을 누르면 위 내용에 동의한 것으로 간주됩니다.",
+] as const;
 
-function daysSince(dateStr: string): number {
-  const created = new Date(dateStr);
+function daysSince(dateString: string): number {
+  const createdAt = new Date(dateString);
   const now = new Date();
-  return Math.max(1, Math.floor((now.getTime() - created.getTime()) / 86_400_000));
+  return Math.max(1, Math.floor((now.getTime() - createdAt.getTime()) / 86_400_000));
 }
 
-/* ── 라디오 버튼 ──────────────────────────────────────────────────── */
-
-function RadioButton({
+function WithdrawReasonOption({
   checked,
-  onClick,
   label,
+  onChange,
 }: {
   checked: boolean;
-  onClick: () => void;
   label: string;
+  onChange: () => void;
 }) {
   return (
-    <button type="button" onClick={onClick} className="flex items-center gap-3">
+    <label
+      className={[
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-[8px] border bg-white px-4 py-3 transition-colors",
+        checked
+          ? "border-[var(--color-cta-button)]"
+          : "border-[var(--color-text-muted)]",
+      ].join(" ")}
+    >
+      <input
+        type="radio"
+        name="withdraw-reason"
+        checked={checked}
+        onChange={onChange}
+        className="sr-only"
+      />
       <span
+        aria-hidden="true"
         className={[
-          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-colors",
+          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border",
           checked
-            ? "border-[var(--color-accent)]"
+            ? "border-[var(--color-cta-button)]"
             : "border-[var(--color-border)]",
         ].join(" ")}
       >
-        {checked && (
-          <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)]" />
-        )}
+        {checked ? <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-cta-button)]" /> : null}
       </span>
       <span className="text-body-14-m text-[var(--color-text)]">{label}</span>
-    </button>
+    </label>
   );
 }
-
-/* ── 메인 컴포넌트 ────────────────────────────────────────────────── */
 
 interface WithdrawConfirmSectionProps {
   profile: Profile | null;
@@ -72,14 +88,11 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   const { openAlert } = useModal();
   const { logout } = useAuth();
   const { showLoading, hideLoading } = useLoadingOverlay();
-  const [isPending, start] = useTransition();
-
+  const [isPending, startTransition] = useTransition();
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [etcText, setEtcText] = useState("");
 
   const daysWithUs = profile?.createdAt ? daysSince(profile.createdAt) : null;
-  const profileImageUrl = profile?.profileImageUrl ?? null;
-
   const isEtc = selectedReason === REASON_ETC;
   const canSubmit = selectedReason !== null && (!isEtc || etcText.trim().length > 0);
 
@@ -88,7 +101,7 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
 
     const reason = isEtc ? etcText.trim() : selectedReason!;
 
-    start(() => {
+    startTransition(() => {
       showLoading();
       void withdraw({ reason })
         .then(() => logout())
@@ -101,291 +114,111 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
     });
   }
 
-  /* ── 데스크톱 ──────────────────────────────────────────────────── */
+  const action = (
+    <div className="flex w-full max-w-[652px] gap-3 max-sm:flex-col-reverse">
+      <Link
+        href="/mypage"
+        className="inline-flex h-12 flex-1 items-center justify-center rounded-[8px] border border-[var(--color-text-muted)] bg-white px-6 text-body-16-sb text-[var(--color-text)] transition-opacity hover:opacity-80"
+      >
+        유지하기
+      </Link>
+      <button
+        type="button"
+        onClick={handleWithdraw}
+        disabled={!canSubmit || isPending}
+        className="inline-flex h-12 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 text-body-16-sb text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {isPending ? "처리 중..." : "탈퇴하기"}
+      </button>
+    </div>
+  );
 
-  const desktopLayout = (
-    <div className="max-md:hidden mx-auto w-full max-w-[1013px] px-5 pb-[104px]">
-      {/* 프로필 배너 */}
-      <div className="overflow-hidden rounded-[20px] bg-[var(--color-withdraw-profile-bg)] px-14 py-7">
-        <div className="flex items-center gap-9">
-          {/* 프로필 이미지 */}
-          <div className="h-[78px] w-[78px] shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
-            {profileImageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
+  return (
+    <div className="flex min-h-full flex-1 flex-col bg-white">
+      <SupportHero label="회원 탈퇴 안내">
+        정말로 <strong>꼬순박스를 탈퇴</strong>하실건가요?
+      </SupportHero>
+
+      <FeedbackFormLayout
+        title="회원 탈퇴"
+        backHref="/mypage"
+        introTitle="탈퇴 전에 꼭 확인해주세요."
+        introDescription={
+          <>
+            <p>회원 탈퇴가 완료되면 계정과 관련된 혜택 및 맞춤 정보는 복구할 수 없습니다.</p>
+            <p>진행 중인 주문과 구독 상태를 확인한 후 신중하게 결정해주세요.</p>
+          </>
+        }
+        action={action}
+      >
+        <section className="mt-8 flex items-center gap-5 rounded-[12px] bg-white p-5 max-md:mt-6 max-md:items-start max-md:p-4" aria-label="회원 정보">
+          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)] bg-[var(--color-avatar-fallback)]">
+            {profile?.profileImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL은 도메인이 가변적이다.
               <img
-                src={profileImageUrl}
+                src={profile.profileImageUrl}
                 alt="프로필"
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[var(--color-cta-logo-bg)]">
-                <svg viewBox="0 0 40 40" className="h-10 w-10" aria-hidden="true">
-                  <circle cx="20" cy="16" r="8" fill="var(--color-brown)" opacity="0.6" />
-                  <ellipse cx="20" cy="34" rx="14" ry="10" fill="var(--color-brown)" opacity="0.4" />
-                </svg>
-              </div>
+              <FallbackAvatar userId={profile?.id} className="h-full w-full" />
             )}
           </div>
+          <div className="min-w-0 self-center">
+            <p className="text-subtitle-16-b text-[var(--color-text-emphasis)]">
+              {profile?.name ? `${profile.name}와 함께한 소중한 시간` : "꼬순박스와 함께한 소중한 시간"}
+            </p>
+            <p className="mt-1 text-body-14-m text-[var(--color-text-secondary)]">
+              {daysWithUs
+                ? `꼬순박스와 함께한 지 ${daysWithUs}일째예요.`
+                : "그동안 꼬순박스와 함께해주셔서 감사합니다."}
+            </p>
+          </div>
+        </section>
 
-          {/* 메시지 */}
-          <p className="text-body-16-r-griun text-[var(--color-text)]">
-            {daysWithUs ? (
-              <>
-                꼬순박스와 함께한 지{" "}
-                <span className="text-[24px]">
-                  <span className="text-[var(--color-primary)]">{daysWithUs}</span>일째,
-                </span>
-              </>
-            ) : (
-              "꼬순박스 회원님,"
-            )}
-            <br />
-            관련된 모든 구독 서비스를 탈퇴하시겠습니까?
+        <fieldset className="mt-8 max-md:mt-6">
+          <legend className="text-subtitle-18-b text-[var(--color-text-emphasis)]">
+            탈퇴 이유
+          </legend>
+          <p className="mt-2 text-body-13-m text-[var(--color-text-secondary)]">
+            서비스 개선을 위해 가장 가까운 이유를 선택해주세요.
           </p>
-        </div>
-      </div>
-
-      {/* 탈퇴 이유 섹션 */}
-      <div className="mt-4 rounded-[20px] bg-[var(--color-surface-light)] px-7 py-7">
-        <h2 className="text-subtitle-18-b tracking-[-0.04em] text-[var(--color-text-emphasis)]">
-          탈퇴 이유
-        </h2>
-
-        <div className="mt-[18px]">
-          <div className="grid grid-cols-2 gap-y-5 items-start">
-            {WITHDRAW_REASONS.slice(0, 4).map((reason) => (
-              <RadioButton
+          <div className="mt-5 grid grid-cols-2 gap-3 max-md:grid-cols-1">
+            {[...WITHDRAW_REASONS, REASON_ETC].map((reason) => (
+              <WithdrawReasonOption
                 key={reason}
                 checked={selectedReason === reason}
-                onClick={() => setSelectedReason(reason)}
                 label={reason}
+                onChange={() => setSelectedReason(reason)}
               />
             ))}
+            {isEtc ? (
+              <div className="col-span-2 max-md:col-span-1">
+                <input
+                  type="text"
+                  value={etcText}
+                  onChange={(event) => setEtcText(event.target.value)}
+                  maxLength={WITHDRAWAL_REASON_MAX_LENGTH}
+                  placeholder="탈퇴 이유를 작성해주세요."
+                  className="h-10 w-full rounded-[8px] border border-[var(--color-text-muted)] bg-white px-4 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-cta-button)]"
+                />
+                <p className="mt-1 text-right text-body-13-m text-[var(--color-text-secondary)]">
+                  {etcText.length}/{WITHDRAWAL_REASON_MAX_LENGTH}
+                </p>
+              </div>
+            ) : null}
           </div>
-          {/* 3행 — input(h-10) 높이 보정으로 상단 간격 축소, 왼쪽은 오른쪽 열 높이에 맞춰 세로 중앙 정렬 */}
-          <div className="mt-2.5 grid grid-cols-2 items-center">
-            <RadioButton
-              checked={selectedReason === WITHDRAW_REASONS[4]}
-              onClick={() => setSelectedReason(WITHDRAW_REASONS[4])}
-              label={WITHDRAW_REASONS[4]}
-            />
-            <div className="flex items-center gap-3">
-              <RadioButton
-                checked={isEtc}
-                onClick={() => setSelectedReason(REASON_ETC)}
-                label={REASON_ETC}
-              />
-              <input
-                type="text"
-                value={etcText}
-                onChange={(e) => setEtcText(e.target.value)}
-                maxLength={WITHDRAWAL_REASON_MAX_LENGTH}
-                placeholder="탈퇴 이유를 작성해주세요."
-                disabled={!isEtc}
-                className="h-10 w-[271px] rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)] disabled:opacity-50"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+        </fieldset>
 
-      {/* 안내 문구 */}
-      <p className="mt-4 text-[13px] font-medium leading-[150%] text-[var(--color-text-secondary)]">
-        1. 회원 탈퇴 시 모든 정보는 삭제되며 복구되지 않습니다. (단, 관련 법령에 따라 일부 정보는 일정 기간 보관될 수 있습니다.)
-        <br />
-        2. 보유 중인 적립금 및 쿠폰은 모두 소멸됩니다.
-        <br />
-        3. 진행 중인 주문이 있을 경우 탈퇴가 제한됩니다.
-        <br />
-        4. 탈퇴 후 180일 이내 재가입 시 신규 혜택은 제공되지 않습니다.
-        <br />
-        5. [탈퇴하기] 버튼을 누르면 위 내용에 동의한 것으로 간주됩니다.
-      </p>
-
-      {/* 버튼 */}
-      <div className="mt-[44px] flex justify-center gap-[17px]">
-        <Link
-          href="/mypage"
-          className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
-        >
-          유지하기
-        </Link>
-        <button
-          type="button"
-          onClick={handleWithdraw}
-          disabled={!canSubmit || isPending}
-          className="inline-flex h-9 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
-          {isPending ? "처리 중..." : "탈퇴하기"}
-        </button>
-      </div>
-    </div>
-  );
-
-  /* ── 모바일 ────────────────────────────────────────────────────── */
-
-  const mobileLayout = (
-    <div className="md:hidden lg:hidden bg-white px-5 pb-10 pt-6">
-      {/* 프로필 배너 */}
-      <div className="relative mt-6">
-        {/* 배너 본체 */}
-        <div className="relative h-[115px] overflow-hidden rounded-[20px] bg-[var(--color-withdraw-profile-bg)]">
-          {/* 메시지 */}
-          <p
-            className="absolute inset-x-0 text-center text-[var(--color-text)]"
-            style={{
-              top: "46px",
-              fontFamily: '"Griun PolFairness", "Pretendard", sans-serif',
-              fontSize: 14,
-              lineHeight: "150%",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {daysWithUs ? (
-              <>
-                꼬순박스와 함께한 지{" "}
-                <span className="text-[18px]">
-                  <span className="text-[var(--color-primary)]">{daysWithUs}</span>일째,
-                </span>
-              </>
-            ) : (
-              "꼬순박스 회원님,"
-            )}
-            <br />
-            관련된 모든 구독 서비스를 탈퇴하시겠어요?
-          </p>
-        </div>
-
-        {/* 프로필 이미지 (배너 상단에 걸쳐있음) */}
-        <div className="absolute left-1/2 -top-8 z-10 h-16 w-16 -translate-x-1/2 overflow-hidden rounded-full border border-[var(--color-text-muted)] bg-white">
-          {profileImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
-            <img
-              src={profileImageUrl}
-              alt="프로필"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[var(--color-cta-logo-bg)]">
-              <svg viewBox="0 0 40 40" className="h-9 w-9" aria-hidden="true">
-                <circle cx="20" cy="16" r="8" fill="var(--color-brown)" opacity="0.6" />
-                <ellipse cx="20" cy="34" rx="14" ry="10" fill="var(--color-brown)" opacity="0.4" />
-              </svg>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 탈퇴 이유 */}
-      <div className="mt-4 rounded-[20px] bg-[var(--color-surface-light)] px-5 py-5">
-        <h3 className="text-subtitle-16-b tracking-[-0.04em] text-[var(--color-text-emphasis)]">
-          탈퇴 이유
-        </h3>
-
-        <div className="mt-4 flex flex-col gap-4">
-          {WITHDRAW_REASONS.map((reason) => (
-            <RadioButton
-              key={reason}
-              checked={selectedReason === reason}
-              onClick={() => setSelectedReason(reason)}
-              label={reason}
-            />
-          ))}
-
-          <div className="flex flex-col gap-2">
-            <RadioButton
-              checked={isEtc}
-              onClick={() => setSelectedReason(REASON_ETC)}
-              label={REASON_ETC}
-            />
-            {isEtc && (
-              <input
-                type="text"
-                value={etcText}
-                onChange={(e) => setEtcText(e.target.value)}
-                maxLength={WITHDRAWAL_REASON_MAX_LENGTH}
-                placeholder="탈퇴 이유를 작성해주세요."
-                className="ml-8 h-10 rounded-[4px] bg-white px-3 text-body-13-m text-[var(--color-text)] placeholder:text-[var(--color-text-secondary)]"
-              />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* 안내 문구 */}
-      <p className="mt-4 text-[13px] font-medium leading-[150%] text-[var(--color-text-secondary)]">
-        1. 회원 탈퇴 시 모든 정보는 삭제되며 복구되지 않습니다. (단, 관련 법령에 따라 일부 정보는 일정 기간 보관될 수 있습니다.)
-        <br />
-        2. 보유 중인 적립금 및 쿠폰은 모두 소멸됩니다.
-        <br />
-        3. 진행 중인 주문이 있을 경우 탈퇴가 제한됩니다.
-        <br />
-        4. 탈퇴 후 180일 이내 재가입 시 신규 혜택은 제공되지 않습니다.
-        <br />
-        5. [탈퇴하기] 버튼을 누르면 위 내용에 동의한 것으로 간주됩니다.
-      </p>
-
-      {/* 버튼 */}
-      <div className="mt-6 flex justify-center gap-3">
-        <Link
-          href="/mypage"
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-80"
-        >
-          유지하기
-        </Link>
-        <button
-          type="button"
-          onClick={handleWithdraw}
-          disabled={!canSubmit || isPending}
-          className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
-          {isPending ? "처리 중..." : "탈퇴하기"}
-        </button>
-      </div>
-    </div>
-  );
-
-  const HERO_ALT = "정말로 꼬순박스를 탈퇴하실 건가요?";
-
-  return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white">
-      {/* Hero 배너 */}
-      <section aria-label="탈퇴 페이지 안내">
-        {/* 모바일 (<768px) */}
-        <div className="flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden md:hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
-          <img
-            src={withdrawHeroMobile.src}
-            alt={HERO_ALT}
-            className="h-[156px] w-full object-cover object-center"
-          />
-        </div>
-        {/* 태블릿 (768px~1199px) */}
-        <div className="max-md:hidden lg:hidden flex h-[calc(156px+var(--banner-height))] items-end overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지는 고해상도 원본 유지가 필요해 Next/Image 미사용 */}
-          <img
-            src={withdrawHeroTablet.src}
-            alt={HERO_ALT}
-            className="h-[156px] w-full shrink-0 object-cover object-center"
-          />
-        </div>
-        {/* 데스크톱 (≥1200px) */}
-        <div className="max-lg:hidden flex h-[calc(306px+var(--banner-height))] w-full items-end overflow-hidden">
-          <div className="relative w-full h-[306px]">
-            <DesktopHeroSideBackground />
-            <div className="relative mx-auto h-[306px] w-full max-w-[1920px] overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element -- 히어로 이미지 원본 품질 유지 */}
-              <img
-                src={withdrawHeroDesktop.src}
-                alt={HERO_ALT}
-                className="absolute inset-0 h-full w-full object-cover object-center"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-      {desktopLayout}
-      {mobileLayout}
+        <section className="mt-8 rounded-[12px] border border-[var(--color-text-muted)] bg-white p-5 max-md:mt-6 max-md:p-4" aria-labelledby="withdraw-notice-title">
+          <h2 id="withdraw-notice-title" className="text-subtitle-16-b text-[var(--color-text-emphasis)]">
+            회원 탈퇴 유의사항
+          </h2>
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-body-13-m leading-[150%] text-[var(--color-text-secondary)]">
+            {WITHDRAW_NOTICES.map((notice) => <li key={notice}>{notice}</li>)}
+          </ol>
+        </section>
+      </FeedbackFormLayout>
     </div>
   );
 }

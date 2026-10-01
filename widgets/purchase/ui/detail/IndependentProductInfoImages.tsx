@@ -77,6 +77,16 @@ import salmonQuinoaFryDetail02 from "../../assets/product-detail/product-015-det
 import salmonQuinoaFryDetail03 from "../../assets/product-detail/product-015-detail-003.png";
 import salmonQuinoaFryDetail04 from "../../assets/product-detail/product-015-detail-004.png";
 import salmonQuinoaFryDetail05 from "../../assets/product-detail/product-015-detail-005.png";
+import lambChunkyStewDetail01 from "../../assets/product-detail/product-016-detail-001.png";
+import lambChunkyStewDetail02 from "../../assets/product-detail/product-016-detail-002.png";
+import lambChunkyStewDetail03 from "../../assets/product-detail/product-016-detail-003.png";
+import lambChunkyStewDetail04 from "../../assets/product-detail/product-016-detail-004.png";
+import lambChunkyStewDetail05 from "../../assets/product-detail/product-016-detail-005.png";
+import moonfishPerillaStewDetail01 from "../../assets/product-detail/product-017-detail-001.png";
+import moonfishPerillaStewDetail02 from "../../assets/product-detail/product-017-detail-002.png";
+import moonfishPerillaStewDetail03 from "../../assets/product-detail/product-017-detail-003.png";
+import moonfishPerillaStewDetail04 from "../../assets/product-detail/product-017-detail-004.png";
+import moonfishPerillaStewDetail05 from "../../assets/product-detail/product-017-detail-005.png";
 import unionDetail01 from "../../assets/product-detail/product-union-01.png";
 import unionDetail02 from "../../assets/product-detail/product-union-02.png";
 import unionDetail02Gif from "../../assets/product-detail/product-union-02-gif.gif";
@@ -310,6 +320,36 @@ const SALMON_QUINOA_FRY_DETAIL_IMAGES = [
   unionDetail07,
 ] as const satisfies readonly StaticImageData[];
 
+const LAMB_CHUNKY_STEW_DETAIL_IMAGES = [
+  lambChunkyStewDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  lambChunkyStewDetail02,
+  lambChunkyStewDetail03,
+  lambChunkyStewDetail04,
+  lambChunkyStewDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
+const MOONFISH_PERILLA_STEW_DETAIL_IMAGES = [
+  moonfishPerillaStewDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  moonfishPerillaStewDetail02,
+  moonfishPerillaStewDetail03,
+  moonfishPerillaStewDetail04,
+  moonfishPerillaStewDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
 function getDetailImages(productName: string): readonly StaticImageData[] | null {
   const normalizedName = productName.replace(/\s/g, "");
   if (normalizedName.includes("연어요거트볼")) return SALMON_YOGURT_BALL_DETAIL_IMAGES;
@@ -327,6 +367,8 @@ function getDetailImages(productName: string): readonly StaticImageData[] | null
   if (normalizedName.includes("오트콕크런칩")) return OAT_COCK_CRUNCH_CHIP_DETAIL_IMAGES;
   if (normalizedName.includes("자연식오골계탕")) return NATURAL_SILKIE_SOUP_DETAIL_IMAGES;
   if (normalizedName.includes("연어퀴노아프라이")) return SALMON_QUINOA_FRY_DETAIL_IMAGES;
+  if (normalizedName.includes("양고기청키스튜")) return LAMB_CHUNKY_STEW_DETAIL_IMAGES;
+  if (normalizedName.includes("달고기들깨스튜")) return MOONFISH_PERILLA_STEW_DETAIL_IMAGES;
   return null;
 }
 

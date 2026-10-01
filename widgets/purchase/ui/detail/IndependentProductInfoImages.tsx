@@ -42,6 +42,16 @@ import beefChewDetail02 from "../../assets/product-detail/product-008-detail-002
 import beefChewDetail03 from "../../assets/product-detail/product-008-detail-003.png";
 import beefChewDetail04 from "../../assets/product-detail/product-008-detail-004.png";
 import beefChewDetail05 from "../../assets/product-detail/product-008-detail-005.png";
+import threeColorMilkChewDetail01 from "../../assets/product-detail/product-009-detail-001.png";
+import threeColorMilkChewDetail02 from "../../assets/product-detail/product-009-detail-002.png";
+import threeColorMilkChewDetail03 from "../../assets/product-detail/product-009-detail-003.png";
+import threeColorMilkChewDetail04 from "../../assets/product-detail/product-009-detail-004.png";
+import threeColorMilkChewDetail05 from "../../assets/product-detail/product-009-detail-005.png";
+import yellowVeggieChuruDetail01 from "../../assets/product-detail/product-010-detail-001.png";
+import yellowVeggieChuruDetail02 from "../../assets/product-detail/product-010-detail-002.png";
+import yellowVeggieChuruDetail03 from "../../assets/product-detail/product-010-detail-003.png";
+import yellowVeggieChuruDetail04 from "../../assets/product-detail/product-010-detail-004.png";
+import yellowVeggieChuruDetail05 from "../../assets/product-detail/product-010-detail-005.png";
 import unionDetail01 from "../../assets/product-detail/product-union-01.png";
 import unionDetail02 from "../../assets/product-detail/product-union-02.png";
 import unionDetail02Gif from "../../assets/product-detail/product-union-02-gif.gif";
@@ -170,6 +180,36 @@ const BEEF_CHEW_DETAIL_IMAGES = [
   unionDetail07,
 ] as const satisfies readonly StaticImageData[];
 
+const THREE_COLOR_MILK_CHEW_DETAIL_IMAGES = [
+  threeColorMilkChewDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  threeColorMilkChewDetail02,
+  threeColorMilkChewDetail03,
+  threeColorMilkChewDetail04,
+  threeColorMilkChewDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
+const YELLOW_VEGGIE_CHURU_DETAIL_IMAGES = [
+  yellowVeggieChuruDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  yellowVeggieChuruDetail02,
+  yellowVeggieChuruDetail03,
+  yellowVeggieChuruDetail04,
+  yellowVeggieChuruDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
 function getDetailImages(productName: string): readonly StaticImageData[] | null {
   const normalizedName = productName.replace(/\s/g, "");
   if (normalizedName.includes("연어요거트볼")) return SALMON_YOGURT_BALL_DETAIL_IMAGES;
@@ -180,6 +220,8 @@ function getDetailImages(productName: string): readonly StaticImageData[] | null
   if (normalizedName.includes("가자미화식")) return FLATFISH_FRESH_MEAL_DETAIL_IMAGES;
   if (normalizedName.includes("꼬미칩")) return KKOMI_CHIP_DETAIL_IMAGES;
   if (normalizedName.includes("소고기껌")) return BEEF_CHEW_DETAIL_IMAGES;
+  if (normalizedName.includes("삼색우유껌")) return THREE_COLOR_MILK_CHEW_DETAIL_IMAGES;
+  if (normalizedName.includes("옐로베지츄르")) return YELLOW_VEGGIE_CHURU_DETAIL_IMAGES;
   return null;
 }
 

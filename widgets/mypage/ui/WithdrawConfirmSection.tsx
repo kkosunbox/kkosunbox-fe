@@ -115,21 +115,21 @@ export default function WithdrawConfirmSection({ profile }: WithdrawConfirmSecti
   }
 
   const action = (
-    <div className="flex w-full max-w-[652px] gap-3 max-sm:flex-col-reverse">
-      <Link
-        href="/mypage"
-        className="inline-flex h-12 flex-1 items-center justify-center rounded-[8px] border border-[var(--color-text-muted)] bg-white px-6 text-body-16-sb text-[var(--color-text)] transition-opacity hover:opacity-80"
-      >
-        유지하기
-      </Link>
+    <div className="flex w-full max-w-[652px] gap-3 max-md:gap-2">
       <button
         type="button"
         onClick={handleWithdraw}
         disabled={!canSubmit || isPending}
-        className="inline-flex h-12 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 text-body-16-sb text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex h-12 min-w-0 flex-1 items-center justify-center rounded-[8px] border border-[var(--color-text-muted)] bg-white px-6 text-body-16-sb text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-cta-button)] hover:text-[var(--color-cta-button)] disabled:cursor-not-allowed disabled:opacity-50 max-md:px-3 max-md:text-body-14-sb"
       >
         {isPending ? "처리 중..." : "탈퇴하기"}
       </button>
+      <Link
+        href="/mypage"
+        className="inline-flex h-12 min-w-0 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-6 text-body-16-sb text-white transition-opacity hover:opacity-90 max-md:px-3 max-md:text-body-14-sb"
+      >
+        유지하기
+      </Link>
     </div>
   );
 

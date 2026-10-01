@@ -1,5 +1,6 @@
 import Image, { type StaticImageData } from "next/image";
 import {
+  CheckoutPromotionBanner,
   QuantityMinusIcon,
   QuantityPlusIcon,
 } from "@/shared/ui";
@@ -209,15 +210,7 @@ function DesktopOrderSummary() {
       </div>
       <button type="button" className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-b text-white">{MOCK_CART_COUNT}건 주문하기</button>
       <div className="mt-6 overflow-hidden rounded-[8px]">
-        <Image
-          src="/images/sidebar-banner-001.png"
-          alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
-          width={375}
-          height={126}
-          quality={HIGH_IMAGE_QUALITY}
-          className="h-auto w-full"
-          sizes="263px"
-        />
+        <CheckoutPromotionBanner />
       </div>
     </aside>
   );

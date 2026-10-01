@@ -1,10 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { useRouter, usePathname } from "next/navigation";
-import { useModal } from "@/shared/ui";
+import { CheckoutPromotionBanner, useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
 import { ProfileThumbnail } from "./ProfileThumbnail";
@@ -263,15 +261,7 @@ export function MobileDrawer({
 
         {/* 하단 배너 — 화면이 짧으면 드로워 전체가 스크롤된다 */}
         <div className="mt-auto shrink-0">
-          <Image
-            src="/images/sidebar-banner-001.png"
-            alt="꼬순박스 배너 — 체크리스트 작성하러 가기"
-            width={375}
-            height={121}
-            quality={HIGH_IMAGE_QUALITY}
-            className="block"
-            style={{ width: "100%", height: "auto" }}
-          />
+          <CheckoutPromotionBanner />
         </div>
       </div>
     </>

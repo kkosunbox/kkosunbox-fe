@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Image, { type StaticImageData } from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import { PACKAGE_DETAIL_COMMON_IMAGES } from "@/entities/package";
 import salmonYogurtBallDetail01 from "../../assets/product-detail/product-001-detail-001.png";
 import salmonYogurtBallDetail02 from "../../assets/product-detail/product-001-detail-002.png";
 import salmonYogurtBallDetail03 from "../../assets/product-detail/product-001-detail-003.png";
@@ -92,13 +93,16 @@ import beefPollackSeaweedPorridgeDetail02 from "../../assets/product-detail/prod
 import beefPollackSeaweedPorridgeDetail03 from "../../assets/product-detail/product-018-detail-003.png";
 import beefPollackSeaweedPorridgeDetail04 from "../../assets/product-detail/product-018-detail-004.png";
 import beefPollackSeaweedPorridgeDetail05 from "../../assets/product-detail/product-018-detail-005.png";
-import unionDetail01 from "../../assets/product-detail/product-union-01.png";
-import unionDetail02 from "../../assets/product-detail/product-union-02.png";
-import unionDetail02Gif from "../../assets/product-detail/product-union-02-gif.gif";
 import unionDetail03 from "../../assets/product-detail/product-union-03.png";
-import unionDetail04 from "../../assets/product-detail/product-union-04.png";
-import unionDetail05 from "../../assets/product-detail/product-union-05.png";
 import unionDetail07 from "../../assets/product-detail/product-union-07.png";
+
+const {
+  concern: unionDetail01,
+  brandIntro: unionDetail02,
+  reactionGif: unionDetail02Gif,
+  ingredients: unionDetail04,
+  freeFrom: unionDetail05,
+} = PACKAGE_DETAIL_COMMON_IMAGES;
 
 const SALMON_YOGURT_BALL_DETAIL_IMAGES = [
   salmonYogurtBallDetail01,

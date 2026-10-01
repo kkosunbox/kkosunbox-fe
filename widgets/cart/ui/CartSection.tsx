@@ -225,7 +225,7 @@ function DesktopOrderSummary() {
 
 export default function CartSection() {
   return (
-    <div className="flex flex-1 flex-col bg-white max-md:pt-[88px] md:pt-[84px]">
+    <div className="flex flex-1 flex-col bg-white pt-[var(--header-offset)]">
       <PriceSummaryBar />
       <div className="mx-auto flex w-full max-w-content flex-1 max-md:px-6 max-md:py-9 md:gap-[52px] md:px-8 md:py-10 lg:px-0">
         <section className="min-w-0 flex-1" aria-labelledby="cart-title">

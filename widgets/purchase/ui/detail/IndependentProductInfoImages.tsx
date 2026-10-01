@@ -87,6 +87,11 @@ import moonfishPerillaStewDetail02 from "../../assets/product-detail/product-017
 import moonfishPerillaStewDetail03 from "../../assets/product-detail/product-017-detail-003.png";
 import moonfishPerillaStewDetail04 from "../../assets/product-detail/product-017-detail-004.png";
 import moonfishPerillaStewDetail05 from "../../assets/product-detail/product-017-detail-005.png";
+import beefPollackSeaweedPorridgeDetail01 from "../../assets/product-detail/product-018-detail-001.png";
+import beefPollackSeaweedPorridgeDetail02 from "../../assets/product-detail/product-018-detail-002.png";
+import beefPollackSeaweedPorridgeDetail03 from "../../assets/product-detail/product-018-detail-003.png";
+import beefPollackSeaweedPorridgeDetail04 from "../../assets/product-detail/product-018-detail-004.png";
+import beefPollackSeaweedPorridgeDetail05 from "../../assets/product-detail/product-018-detail-005.png";
 import unionDetail01 from "../../assets/product-detail/product-union-01.png";
 import unionDetail02 from "../../assets/product-detail/product-union-02.png";
 import unionDetail02Gif from "../../assets/product-detail/product-union-02-gif.gif";
@@ -350,6 +355,21 @@ const MOONFISH_PERILLA_STEW_DETAIL_IMAGES = [
   unionDetail07,
 ] as const satisfies readonly StaticImageData[];
 
+const BEEF_POLLACK_SEAWEED_PORRIDGE_DETAIL_IMAGES = [
+  beefPollackSeaweedPorridgeDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  beefPollackSeaweedPorridgeDetail02,
+  beefPollackSeaweedPorridgeDetail03,
+  beefPollackSeaweedPorridgeDetail04,
+  beefPollackSeaweedPorridgeDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
 function getDetailImages(productName: string): readonly StaticImageData[] | null {
   const normalizedName = productName.replace(/\s/g, "");
   if (normalizedName.includes("연어요거트볼")) return SALMON_YOGURT_BALL_DETAIL_IMAGES;
@@ -369,6 +389,7 @@ function getDetailImages(productName: string): readonly StaticImageData[] | null
   if (normalizedName.includes("연어퀴노아프라이")) return SALMON_QUINOA_FRY_DETAIL_IMAGES;
   if (normalizedName.includes("양고기청키스튜")) return LAMB_CHUNKY_STEW_DETAIL_IMAGES;
   if (normalizedName.includes("달고기들깨스튜")) return MOONFISH_PERILLA_STEW_DETAIL_IMAGES;
+  if (normalizedName.includes("소고기황태미역죽")) return BEEF_POLLACK_SEAWEED_PORRIDGE_DETAIL_IMAGES;
   return null;
 }
 

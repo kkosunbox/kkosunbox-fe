@@ -220,7 +220,7 @@ export function ProfileManagementView({
                 type="button"
                 onClick={save.handleSave}
                 disabled={isActionsDisabled}
-                className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="inline-flex h-10 flex-1 items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               >
                 {save.isPending ? "저장 중..." : "확인"}
               </button>
@@ -385,7 +385,7 @@ export function ProfileManagementView({
                       type="button"
                       onClick={save.handleSave}
                       disabled={isActionsDisabled}
-                      className="inline-flex h-10 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-why-bg)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                      className="inline-flex h-10 w-[132px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90 disabled:opacity-60"
                     >
                       {save.isPending ? "저장 중..." : "확인"}
                     </button>

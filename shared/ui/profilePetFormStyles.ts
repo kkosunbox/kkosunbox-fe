@@ -27,7 +27,7 @@ export function profilePetGenderBtnClass(selected: boolean): string {
 }
 
 export const PROFILE_PET_SUBMIT_BTN =
-  "flex !h-10 !w-full items-center justify-center rounded-[8px] border-0 !bg-[var(--color-btn-dark-warm)] text-body-14-sb-tight !tracking-[-0.02em] !text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-50";
+  "flex !h-10 !w-full items-center justify-center rounded-[8px] border-0 !bg-[var(--color-cta-button)] text-body-14-sb-tight !tracking-[-0.02em] !text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-50";
 
 export const PROFILE_PET_BREED_INPUT_CLASS =
   "!h-10 !rounded-[8px] !border-0 !bg-[var(--color-surface-light)] !px-5 !pr-[48px] !text-body-14-m !font-medium !leading-[1.4] !tracking-normal !text-[var(--color-text)] placeholder:!text-[var(--color-text-secondary)] focus:!border-0 focus:!ring-0";

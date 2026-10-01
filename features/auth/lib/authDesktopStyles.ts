@@ -6,7 +6,7 @@ export const authUnderlineInputCls =
   "w-full border-0 border-b border-[var(--color-input-underline)] bg-transparent pb-[10px] text-[14px] font-medium leading-[140%] text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] transition-colors focus:border-[var(--color-accent)] disabled:cursor-not-allowed disabled:opacity-50";
 
 export const authInlineActionBtnCls =
-  "h-10 shrink-0 rounded-[8px] bg-[var(--color-btn-dark-warm)] px-4 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
+  "h-10 shrink-0 rounded-[8px] bg-[var(--color-cta-button)] px-4 text-[13px] font-medium text-white whitespace-nowrap transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50";
 
 /** 모바일 인증번호 전송 등 — 흰 배경 + 오렌지 텍스트 (피그마 모바일) */
 export const authMobileInlineActionBtnCls =

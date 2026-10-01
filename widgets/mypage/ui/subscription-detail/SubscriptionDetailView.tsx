@@ -196,7 +196,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
                   <button
                     type="button"
                     onClick={handleResubscribe}
-                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
+                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
                   >
                     구독 재시작
                   </button>
@@ -242,7 +242,7 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
               <button
                 type="button"
                 onClick={handleResubscribe}
-                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-14-sb text-white transition-opacity hover:opacity-90"
+                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90"
               >
                 구독 재시작
               </button>

@@ -143,7 +143,7 @@
   --color-feature-card-warm: #FFDBB7;  /* Section 4 카드 1 배경 (건강한 재료) */
   --color-feature-card-peach: #FEEAD5; /* Section 4 카드 2 배경 (수제간식) */
   --color-feature-card-sage: #E7F2CA;  /* Section 4 카드 3 배경 (맞춤 간식) */
-  --color-btn-dark-warm: #584B40;         /* 구독 변경·재시작 버튼 다크 웜 브라운 */
+  --color-btn-dark-warm: #584B40;         /* 오류·결제 안내 아이콘의 웜 브라운 장식 */
   --color-profile-gender-selected-bg: #FFE8DC; /* 프로필 작성 모달 성별 선택 배경 (Figma) */
 
   --color-subscription-compare-bg: #FFE7BD;

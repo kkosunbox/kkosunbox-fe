@@ -151,7 +151,7 @@ export default function ReferralPackagePlansSection() {
                           if (activePlan) router.push(`/subscribe/detail?planId=${activePlan.id}`);
                         }}
                         disabled={!activePlan}
-                        className="flex h-10 w-[108px] shrink-0 items-center justify-center self-center rounded-[8px] bg-[var(--color-btn-dark-warm)] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="flex h-10 w-[108px] shrink-0 items-center justify-center self-center rounded-[8px] bg-[var(--color-cta-button)] text-center text-[14px] font-semibold leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         제품 상세보기
                       </button>

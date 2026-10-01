@@ -21,7 +21,7 @@ export default function OrderError({
         <div className="flex w-full max-w-[360px] flex-col gap-3">
           <button
             onClick={reset}
-            className="h-12 w-full rounded-[8px] bg-[var(--color-btn-dark-warm)] text-body-16-sb text-white transition-opacity hover:opacity-90"
+            className="h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb text-white transition-opacity hover:opacity-90"
           >
             새로고침
           </button>

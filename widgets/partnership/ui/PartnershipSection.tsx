@@ -302,7 +302,9 @@ export default function PartnershipSection() {
 
   return (
     <div className="bg-white">
-      <SupportHero label="제휴·입점 문의 안내">꼬순박스와 함께할 파트너를 기다립니다.</SupportHero>
+      <SupportHero label="제휴·입점 문의 안내">
+        꼬순박스와 <strong>함께할 파트너를</strong> 기다립니다.
+      </SupportHero>
       <form noValidate onSubmit={handleSubmit}>
         <FeedbackFormLayout
           title="제휴·입점 문의"

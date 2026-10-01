@@ -23,10 +23,10 @@ export default function NotFoundSection() {
           요청하신 페이지를 찾을 수 없습니다.
         </p>
 
-        {/* 버튼 — 서브텍스트 하단 44px, Brown #584B40 */}
+        {/* 버튼 — 서브텍스트 하단 44px */}
         <Link
           href="/"
-          className="mt-11 flex h-12 w-[360px] items-center justify-center rounded-[8px] bg-[var(--color-btn-dark-warm)] px-[10px] text-[16px] font-semibold leading-[140%] tracking-[0.2px] text-white transition-opacity hover:opacity-90 active:opacity-80"
+          className="mt-11 flex h-12 w-[360px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] px-[10px] text-[16px] font-semibold leading-[140%] tracking-[0.2px] text-white transition-opacity hover:opacity-90 active:opacity-80"
         >
           처음으로 돌아가기
         </Link>

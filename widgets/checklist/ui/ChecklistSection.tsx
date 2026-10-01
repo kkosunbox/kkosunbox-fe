@@ -53,12 +53,7 @@ export default function ChecklistSection() {
             style={{ borderTopColor: "var(--color-basic)", borderRightColor: "var(--color-basic)" }}
           />
         </div>
-        <p
-          className="text-center max-md:text-body-16-r md:text-subtitle-18-m lg:text-subtitle-18-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]"
-          style={{
-            fontFamily: '"Griun PolFairness", "Pretendard", "Apple SD Gothic Neo", sans-serif',
-          }}
-        >
+        <p className="text-center max-md:text-body-16-r md:text-subtitle-18-m lg:text-subtitle-18-m leading-[1.7] tracking-[-0.02em] text-[var(--color-text)]">
           체크리스트를 생성하고 있습니다.
           <br />
           잠시만 기다려주세요

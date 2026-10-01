@@ -8,3 +8,4 @@ export type { PrimaryButtonConfig, PlanPickerProps } from "./ui/PlanPicker";
 
 export { PackageShowcaseSection } from "./ui/PackageShowcaseSection";
 export { PackageComparison } from "./ui/PackageComparison";
+export { SubscriptionPromoBanner } from "./ui/SubscriptionPromoBanner";

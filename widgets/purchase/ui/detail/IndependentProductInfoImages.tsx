@@ -52,6 +52,31 @@ import yellowVeggieChuruDetail02 from "../../assets/product-detail/product-010-d
 import yellowVeggieChuruDetail03 from "../../assets/product-detail/product-010-detail-003.png";
 import yellowVeggieChuruDetail04 from "../../assets/product-detail/product-010-detail-004.png";
 import yellowVeggieChuruDetail05 from "../../assets/product-detail/product-010-detail-005.png";
+import greenVeggieChuruDetail01 from "../../assets/product-detail/product-011-detail-001.png";
+import greenVeggieChuruDetail02 from "../../assets/product-detail/product-011-detail-002.png";
+import greenVeggieChuruDetail03 from "../../assets/product-detail/product-011-detail-003.png";
+import greenVeggieChuruDetail04 from "../../assets/product-detail/product-011-detail-004.png";
+import greenVeggieChuruDetail05 from "../../assets/product-detail/product-011-detail-005.png";
+import chickenRiceBallDetail01 from "../../assets/product-detail/product-012-detail-001.png";
+import chickenRiceBallDetail02 from "../../assets/product-detail/product-012-detail-002.png";
+import chickenRiceBallDetail03 from "../../assets/product-detail/product-012-detail-003.png";
+import chickenRiceBallDetail04 from "../../assets/product-detail/product-012-detail-004.png";
+import chickenRiceBallDetail05 from "../../assets/product-detail/product-012-detail-005.png";
+import oatCockCrunchChipDetail01 from "../../assets/product-detail/product-013-detail-001.png";
+import oatCockCrunchChipDetail02 from "../../assets/product-detail/product-013-detail-002.png";
+import oatCockCrunchChipDetail03 from "../../assets/product-detail/product-013-detail-003.png";
+import oatCockCrunchChipDetail04 from "../../assets/product-detail/product-013-detail-004.png";
+import oatCockCrunchChipDetail05 from "../../assets/product-detail/product-013-detail-005.png";
+import naturalSilkieSoupDetail01 from "../../assets/product-detail/product-014-detail-001.png";
+import naturalSilkieSoupDetail02 from "../../assets/product-detail/product-014-detail-002.png";
+import naturalSilkieSoupDetail03 from "../../assets/product-detail/product-014-detail-003.png";
+import naturalSilkieSoupDetail04 from "../../assets/product-detail/product-014-detail-004.png";
+import naturalSilkieSoupDetail05 from "../../assets/product-detail/product-014-detail-005.png";
+import salmonQuinoaFryDetail01 from "../../assets/product-detail/product-015-detail-001.png";
+import salmonQuinoaFryDetail02 from "../../assets/product-detail/product-015-detail-002.png";
+import salmonQuinoaFryDetail03 from "../../assets/product-detail/product-015-detail-003.png";
+import salmonQuinoaFryDetail04 from "../../assets/product-detail/product-015-detail-004.png";
+import salmonQuinoaFryDetail05 from "../../assets/product-detail/product-015-detail-005.png";
 import unionDetail01 from "../../assets/product-detail/product-union-01.png";
 import unionDetail02 from "../../assets/product-detail/product-union-02.png";
 import unionDetail02Gif from "../../assets/product-detail/product-union-02-gif.gif";
@@ -210,6 +235,81 @@ const YELLOW_VEGGIE_CHURU_DETAIL_IMAGES = [
   unionDetail07,
 ] as const satisfies readonly StaticImageData[];
 
+const GREEN_VEGGIE_CHURU_DETAIL_IMAGES = [
+  greenVeggieChuruDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  greenVeggieChuruDetail02,
+  greenVeggieChuruDetail03,
+  greenVeggieChuruDetail04,
+  greenVeggieChuruDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
+const CHICKEN_RICE_BALL_DETAIL_IMAGES = [
+  chickenRiceBallDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  chickenRiceBallDetail02,
+  chickenRiceBallDetail03,
+  chickenRiceBallDetail04,
+  chickenRiceBallDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
+const OAT_COCK_CRUNCH_CHIP_DETAIL_IMAGES = [
+  oatCockCrunchChipDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  oatCockCrunchChipDetail02,
+  oatCockCrunchChipDetail03,
+  oatCockCrunchChipDetail04,
+  oatCockCrunchChipDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
+const NATURAL_SILKIE_SOUP_DETAIL_IMAGES = [
+  naturalSilkieSoupDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  naturalSilkieSoupDetail02,
+  naturalSilkieSoupDetail03,
+  naturalSilkieSoupDetail04,
+  naturalSilkieSoupDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
+const SALMON_QUINOA_FRY_DETAIL_IMAGES = [
+  salmonQuinoaFryDetail01,
+  unionDetail01,
+  unionDetail02,
+  unionDetail02Gif,
+  unionDetail03,
+  unionDetail04,
+  unionDetail05,
+  salmonQuinoaFryDetail02,
+  salmonQuinoaFryDetail03,
+  salmonQuinoaFryDetail04,
+  salmonQuinoaFryDetail05,
+  unionDetail07,
+] as const satisfies readonly StaticImageData[];
+
 function getDetailImages(productName: string): readonly StaticImageData[] | null {
   const normalizedName = productName.replace(/\s/g, "");
   if (normalizedName.includes("연어요거트볼")) return SALMON_YOGURT_BALL_DETAIL_IMAGES;
@@ -222,6 +322,11 @@ function getDetailImages(productName: string): readonly StaticImageData[] | null
   if (normalizedName.includes("소고기껌")) return BEEF_CHEW_DETAIL_IMAGES;
   if (normalizedName.includes("삼색우유껌")) return THREE_COLOR_MILK_CHEW_DETAIL_IMAGES;
   if (normalizedName.includes("옐로베지츄르")) return YELLOW_VEGGIE_CHURU_DETAIL_IMAGES;
+  if (normalizedName.includes("그린베지츄르")) return GREEN_VEGGIE_CHURU_DETAIL_IMAGES;
+  if (normalizedName.includes("꼬꼬주먹밥")) return CHICKEN_RICE_BALL_DETAIL_IMAGES;
+  if (normalizedName.includes("오트콕크런칩")) return OAT_COCK_CRUNCH_CHIP_DETAIL_IMAGES;
+  if (normalizedName.includes("자연식오골계탕")) return NATURAL_SILKIE_SOUP_DETAIL_IMAGES;
+  if (normalizedName.includes("연어퀴노아프라이")) return SALMON_QUINOA_FRY_DETAIL_IMAGES;
   return null;
 }
 

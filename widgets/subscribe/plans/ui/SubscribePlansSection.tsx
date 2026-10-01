@@ -48,8 +48,8 @@ export default function SubscribePlansSection({
     <>
       {showModal && <ChecklistRecommendModal onClose={handleClose} onConfirm={handleConfirm} />}
 
-      <div className="bg-white pb-px">
-        <section className="mt-[var(--header-offset)] min-h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="구독몰 안내">
+      <div className="bg-white pb-px pt-[var(--header-offset)]">
+        <section className="min-h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="구독몰 안내">
           <div className="mx-auto flex min-h-[70px] max-w-[1240px] items-center justify-center gap-6 px-6 max-md:gap-3">
             <p className="text-body-16-b max-md:text-body-14-b tracking-[-0.04em] text-white">
               첫 만남은 가볍게, <span className="text-[var(--color-banner-bg)]">꼬순박스를 구독</span>으로 만나보기

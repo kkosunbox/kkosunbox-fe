@@ -66,13 +66,13 @@ export default function Header() {
 
       {/* 흰색 헤더 전용: 하단 그라데이션 separator */}
       <div
-        className={`fixed inset-x-0 max-md:top-[88px] top-[84px] z-[49] h-6 pointer-events-none transition-[opacity,transform] duration-300 ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "opacity-100" : "opacity-0"}`}
+        className={`fixed inset-x-0 max-md:top-[114px] md:top-[110px] z-[49] h-6 pointer-events-none transition-[opacity,transform] duration-[225ms] ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "opacity-100" : "opacity-0"}`}
         style={{ background: "var(--gradient-header-separator)" }}
         aria-hidden="true"
       />
 
       <nav
-        className={`fixed inset-x-0 max-md:top-[34px] top-[30px] z-50 h-[54px] transition-[background-color,transform] duration-300 ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "bg-white" : "bg-transparent"}`}
+        className={`fixed inset-x-0 max-md:top-[34px] md:top-[30px] z-50 h-[var(--header-height)] transition-[background-color,transform] duration-[225ms] ${isBannerCollapsed ? "max-md:-translate-y-[34px] md:-translate-y-[30px]" : ""} ${isSolid ? "bg-white" : "bg-transparent"}`}
         onMouseEnter={() => { if (window.matchMedia("(hover: hover)").matches) setIsHovered(true); }}
         onMouseLeave={() => setIsHovered(false)}
       >

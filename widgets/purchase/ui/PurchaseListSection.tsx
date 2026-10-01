@@ -128,8 +128,8 @@ export default function PurchaseListSection({ products, categories, initialLoadF
   }
 
   return (
-    <div className="bg-[var(--color-background)]">
-      <section className="mt-[var(--header-offset)] h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="단품몰 안내">
+    <div className="bg-[var(--color-background)] pt-[var(--header-offset)]">
+      <section className="h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="단품몰 안내">
         <div className="mx-auto flex h-full items-center justify-center max-md:w-full max-md:gap-4 max-md:px-6 md:gap-[31px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:pl-[82px]">
           <p className="text-body-16-b md:leading-[19px] tracking-[-0.04em] text-white max-md:text-body-14-b">
             첫 만남은 가볍게, <span className="font-extrabold text-[var(--color-banner-bg)]">꼬순박스를 단품</span>으로 만나보기

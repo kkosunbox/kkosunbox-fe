@@ -5,7 +5,7 @@ import notFoundImage from "@/public/images/404-not-found.webp";
 
 export default function NotFoundSection() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-54px)] bg-[var(--color-surface-light)]">
+    <div className="flex min-h-[calc(100vh-var(--header-offset))] flex-col items-center justify-center bg-[var(--color-surface-light)]">
       <div className="flex flex-col items-center">
         {/* 404 NOT FOUND 이미지 — 웹 240×151, 모바일 180 auto */}
         <Image

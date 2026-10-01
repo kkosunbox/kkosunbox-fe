@@ -39,7 +39,7 @@ export default function ChecklistSection() {
 
   if (isAnalyzing) {
     return (
-      <div className="flex min-h-[calc(100vh-54px)] flex-col items-center justify-center gap-6 bg-white px-4">
+      <div className="flex min-h-[calc(100vh-var(--header-height))] flex-col items-center justify-center gap-6 bg-white px-4">
         <div className="relative h-16 w-16">
           <div
             className="absolute inset-0 animate-spin rounded-full border-4 border-transparent"
@@ -81,7 +81,7 @@ export default function ChecklistSection() {
 
   return (
     <>
-      <div className="min-h-[calc(100vh-54px)] bg-white pb-12 bg-white md:pb-16 lg:pb-16">
+      <div className="min-h-[calc(100vh-var(--header-height))] bg-white pb-12 md:pb-16 lg:pb-16">
         {step === 0 ? (
           <ChecklistHero />
         ) : (

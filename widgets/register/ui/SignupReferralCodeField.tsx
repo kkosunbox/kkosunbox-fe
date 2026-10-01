@@ -42,7 +42,7 @@ export function SignupReferralCodeField({
           />
         </div>
         <p className="mt-3 text-[13px] font-medium leading-4 text-[var(--color-text)]">
-          초대코드를 입력하고 첫 구독 할인 혜택을 챙겨보세요.
+          초대코드를 입력하고 첫 구독 15% 할인을 챙겨보세요.
         </p>
       </section>
     );

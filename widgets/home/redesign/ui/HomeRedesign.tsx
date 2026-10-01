@@ -41,6 +41,7 @@ const PRODUCT_ART: Array<{ matches: RegExp; image: StaticImageData }> = [
   { matches: /소고기.*화식|화식.*소고기/, image: beefMeal },
   { matches: /오리.*요거트|요거트.*오리/, image: duckYogurtBall },
 ];
+const PRODUCT_PAGE_SIZE = 4;
 
 function ProductArrow({ direction }: { direction: "left" | "right" }) {
   return (
@@ -76,7 +77,11 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
     const rank = (name: string) => { const index = PRODUCT_ART.findIndex(art => art.matches.test(name)); return index < 0 ? PRODUCT_ART.length : index; };
     return [...matching].sort((a, b) => rank(a.name) - rank(b.name));
   }, [products, categoryId]);
-  const visible = filtered.slice(start, start + 4);
+  const visible = filtered.slice(start, start + PRODUCT_PAGE_SIZE);
+  const lastPageStart = Math.max(
+    0,
+    Math.floor((filtered.length - 1) / PRODUCT_PAGE_SIZE) * PRODUCT_PAGE_SIZE,
+  );
   return <section className={styles.products} aria-labelledby="products-title"><div className={styles.container}>
     <Link href="/products" className={styles.productBanner}><span>첫 만남은 가볍게, <strong>꼬순박스를 단품으로 만나보기</strong></span><Image src={coupon} alt="" width={217} height={77} /></Link>
     <h2 id="products-title" className={styles.heading}><span>마음에 드는 간식만</span> 골라서 만나보세요.</h2><p className={styles.productDescription}>꼬순박스에서 만나보던 수제 간식을 원하는 제품만 골라 단품으로 만나보세요.</p>
@@ -99,8 +104,8 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
         return unavailable ? <article key={product.id}>{content}{rating}</article> : <Link key={product.id} href={`/purchase/detail?productId=${product.id}`}>{content}{rating}</Link>;
       }) : <p className={styles.empty}>{error ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리에 판매 중인 상품이 없습니다."} <Link href="/products">단품몰에서 확인하기</Link></p>}</div>
       <nav className={styles.productControls} aria-label="단품 상품 페이지">
-        <button type="button" aria-label="이전 상품" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - 1))}><ProductArrow direction="left" /></button>
-        <button type="button" aria-label="다음 상품" disabled={start + 4 >= filtered.length} onClick={() => setStart(value => Math.min(Math.max(0, filtered.length - 4), value + 1))}><ProductArrow direction="right" /></button>
+        <button type="button" aria-label="이전 상품 페이지" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - PRODUCT_PAGE_SIZE))}><ProductArrow direction="left" /></button>
+        <button type="button" aria-label="다음 상품 페이지" disabled={start >= lastPageStart} onClick={() => setStart(value => Math.min(lastPageStart, value + PRODUCT_PAGE_SIZE))}><ProductArrow direction="right" /></button>
       </nav>
     </div>
   </div></section>;

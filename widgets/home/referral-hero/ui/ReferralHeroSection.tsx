@@ -5,11 +5,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useReferral } from "@/features/referral/model";
-import logo from "@/shared/assets/logo-main.svg";
 import cloverIcon from "../assets/referral-hero-clover.svg";
 import ribbonIcon from "../assets/referral-hero-ribbon.svg";
 import dotIcon from "../assets/referral-hero-dot.svg";
 import couponStem from "../assets/referral-hero-coupon-stem.svg";
+import profileFallback from "../assets/referral-hero-profile-fallback.webp";
 import ReferralHeroFrame from "./ReferralHeroFrame";
 import styles from "./ReferralHero.module.css";
 
@@ -67,16 +67,18 @@ function ReferralCoupon({ discountPct, className }: { discountPct: number; class
             height={177}
             className="absolute left-[28.06px] top-[-23.3px] origin-[1.69px_176.7px] -rotate-[7.04deg] scale-y-[0.994]"
           />
+          {/* 모바일은 쿠폰 전체가 0.426배로 줄어 글자가 너무 작아지므로, Figma 모바일 시안 비율로 문구만 따로 키운다
+              (특별 할인혜택 약 1.2배 — 탭과 여백 유지, COUPON 약 1.4배, 15%는 0.9배). */}
           <p
-            className="absolute left-[72px] top-[29.6px] whitespace-nowrap text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-referral-coupon-title"
+            className="absolute whitespace-nowrap font-bold tracking-[-0.04em] text-referral-coupon-title max-md:left-[72px] max-md:top-[27.5px] max-md:text-[19px] max-md:leading-[23px] md:left-[72px] md:top-[29.6px] md:text-[16px] md:leading-[19px]"
             style={{ textShadow: "0 1.3px 0 rgba(255, 255, 255, 0.55)" }}
           >
             첫 구독 특별 할인혜택
           </p>
-          <strong className="absolute left-[139px] top-[94px] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-[family-name:var(--font-gantari)] text-[76px] font-bold leading-[64px] tracking-[-0.04em] text-[var(--color-why-choose-text)]">
+          <strong className="absolute left-[139px] top-[94px] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-[family-name:var(--font-gantari)] font-bold tracking-[-0.04em] text-[var(--color-why-choose-text)] max-md:text-[68px] max-md:leading-[58px] md:text-[76px] md:leading-[64px]">
             {discountPct}%
           </strong>
-          <span className="absolute left-[283.5px] top-[77px] -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-[16px] font-bold tracking-[0.08em] text-white">
+          <span className="absolute left-[283.5px] top-[77px] -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap font-bold tracking-[0.08em] text-white max-md:text-[23px] md:text-[16px]">
             COUPON
           </span>
         </div>
@@ -92,13 +94,14 @@ export default function ReferralHeroSection() {
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const showPhoto = !!profileImageUrl && failedImageUrl !== profileImageUrl;
 
-  // Figma 비주얼 박스(622×549, 데스크탑 기준) 하나만 두고, 감싸는 영역 너비에 맞춰 통째로 비율 축소한다.
-  // 태블릿은 문구 옆, 모바일은 문구 위에서 같은 구도를 유지한다. 캡션 글자만 최소 크기를 보장한다.
+  // 비주얼 박스를 감싸는 영역 너비에 맞춰 통째로 비율 축소한다. 캡션 글자만 최소 크기를 보장한다.
+  // - 768px 이상: 데스크탑 구도(622×549). 태블릿은 문구 옆 남은 폭에 맞춰 축소.
+  // - 768px 미만: Figma 모바일 구도(375 기준 302×286) — 카드 189px, 쿠폰 0.426배, 문구 위에 놓는다.
   const visual = (
-    <div className="relative aspect-[622/549] min-w-0 [container-type:inline-size] max-md:mx-auto max-md:mb-8 max-md:mt-6 max-md:w-full max-md:max-w-[440px] md:max-lg:ml-auto md:max-lg:max-w-[622px] md:max-lg:flex-1 lg:mb-[68px] lg:w-[622px] lg:shrink-0">
-      <div className={`absolute left-0 top-0 h-[549px] w-[622px] ${styles.visualStage}`}>
-        <figure className="absolute right-0 top-0 flex w-[374px] flex-col overflow-hidden rounded-[48px_48px_0_48px] shadow-[0_12px_12px_rgba(0,0,0,0.25)]">
-          <div className="relative flex h-[445px] items-center justify-center bg-referral-hero-photo-bg">
+    <div className="relative min-w-0 [container-type:inline-size] max-md:-mt-[11px] max-md:mb-[14px] max-md:aspect-[302/286] max-md:w-full max-md:max-w-[420px] max-md:self-center md:aspect-[622/549] md:max-lg:ml-auto md:max-lg:max-w-[622px] md:max-lg:flex-1 lg:mb-[68px] lg:w-[622px] lg:shrink-0">
+      <div className={`absolute left-0 top-0 max-md:h-[286px] max-md:w-[302px] md:h-[549px] md:w-[622px] ${styles.visualStage}`}>
+        <figure className="absolute right-0 top-0 flex flex-col overflow-hidden shadow-[0_12px_12px_rgba(0,0,0,0.25)] max-md:w-[189px] max-md:rounded-[20px_20px_0_20px] md:w-[374px] md:rounded-[48px_48px_0_48px]">
+          <div className="relative flex items-center justify-center bg-referral-hero-photo-bg max-md:h-[212px] md:h-[445px]">
             {showPhoto ? (
               <img
                 src={profileImageUrl}
@@ -109,16 +112,27 @@ export default function ReferralHeroSection() {
                 onError={() => setFailedImageUrl(profileImageUrl)}
               />
             ) : (
-              <Image src={logo} alt="" className="h-auto w-[45%] opacity-40" />
+              // 프로필 사진이 없거나 불러오지 못하면 기본 일러스트 — 인물 하단이 잘린 그림이라 아래에 붙인다.
+              <Image
+                src={profileFallback}
+                alt=""
+                fill
+                sizes="(min-width: 768px) 374px, 189px"
+                loading="eager"
+                className="object-contain object-bottom"
+              />
             )}
           </div>
-          {/* 캡션은 기본 104px, 화면이 아주 좁아 최소 글자 크기가 적용되면 내용만큼 늘어난다. */}
-          <figcaption className="flex min-h-[104px] flex-col items-center bg-referral-hero-caption-bg px-6 pb-[20px] pt-[14px] text-center">
+          {/* 캡션은 기본 104px(모바일 74px), 화면이 아주 좁아 최소 글자 크기가 적용되면 내용만큼 늘어난다. */}
+          <figcaption className="flex flex-col items-center bg-referral-hero-caption-bg text-center max-md:min-h-[74px] max-md:px-3 max-md:pb-[8px] max-md:pt-[5px] md:min-h-[104px] md:px-6 md:pb-[20px] md:pt-[14px]">
             <strong className={`block max-w-full truncate font-[600] tracking-[-0.04em] text-[var(--color-cta-button)] ${styles.captionHandle}`}>
               @{influencerName}
             </strong>
-            <span className={`mt-2 block break-keep font-[600] tracking-[-0.04em] text-[var(--color-text)] ${styles.captionBody}`}>
-              반려생활을 함께하는{" "}
+            <span className={`block break-keep font-[600] max-md:mt-[7px] md:mt-2 tracking-[-0.04em] text-[var(--color-text)] ${styles.captionBody}`}>
+              반려생활을 함께하는
+              {/* 모바일 시안은 "반려생활을 함께하는 / {이름}이 / 꼬순박스를 추천해요." 세 줄 */}
+              <span className="max-md:hidden"> </span>
+              <br className="md:hidden" />
               <span className="whitespace-nowrap">
                 {influencerName}
                 {subjectParticle(influencerName)}
@@ -129,11 +143,14 @@ export default function ReferralHeroSection() {
           </figcaption>
         </figure>
 
-        <ReferralCoupon discountPct={discountPct} className="left-0 top-[247px]" />
+        <ReferralCoupon
+          discountPct={discountPct}
+          className="left-0 max-md:top-[141px] max-md:origin-top-left max-md:scale-[0.426] md:top-[247px]"
+        />
 
-        <Image src={dotIcon} alt="" width={16} height={14} className={`absolute left-[183px] top-[96px] w-[16px] ${styles.dotTwinkle}`} />
-        <Image src={cloverIcon} alt="" width={34} height={34} className={`absolute left-[101px] top-[142px] w-[34px] ${styles.cloverWiggle}`} />
-        <Image src={ribbonIcon} alt="" width={94} height={78} className={`absolute left-[171px] top-[159px] w-[94px] ${styles.ribbonSway}`} />
+        <Image src={dotIcon} alt="" width={16} height={14} className={`absolute max-md:left-[79px] max-md:top-[73.5px] max-md:w-[7px] md:left-[183px] md:top-[96px] md:w-[16px] ${styles.dotTwinkle}`} />
+        <Image src={cloverIcon} alt="" width={34} height={34} className={`absolute max-md:left-[43px] max-md:top-[94.5px] max-md:w-[14.5px] md:left-[101px] md:top-[142px] md:w-[34px] ${styles.cloverWiggle}`} />
+        <Image src={ribbonIcon} alt="" width={94} height={78} className={`absolute max-md:left-[80px] max-md:top-[101px] max-md:w-[41.5px] md:left-[171px] md:top-[159px] md:w-[94px] ${styles.ribbonSway}`} />
       </div>
     </div>
   );

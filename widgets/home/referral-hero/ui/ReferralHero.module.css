@@ -1,5 +1,6 @@
 /*
- * 비주얼 비율 축소 — 감싸는 영역(container)의 너비 ÷ 디자인 너비(622px)를 배율로 쓴다.
+ * 비주얼 비율 축소 — 감싸는 영역(container)의 너비 ÷ 디자인 너비를 배율로 쓴다.
+ * 디자인 너비: 768px 이상은 데스크탑 구도(622px), 768px 미만은 모바일 구도(302px, Figma 375 기준).
  * tan(atan2(길이, 길이))는 두 길이의 비를 단위 없는 숫자로 얻는 표준 CSS 방법이다.
  * 미지원 브라우저는 앞선 고정 배율로 대체된다.
  */
@@ -20,6 +21,25 @@
   font-size: 16px;
   font-size: max(16px, calc(11px / tan(atan2(100cqw, 622px))));
   line-height: 1.19;
+}
+
+@media (width < 48rem) {
+  .visualStage {
+    scale: 1;
+    scale: tan(atan2(100cqw, 302px));
+  }
+
+  /* 모바일 시안: 핸들 14px, 본문 11px(줄 간격 12px). 360px 미만에서 더 줄면 12px / 10px까지만. */
+  .captionHandle {
+    font-size: 14px;
+    font-size: max(14px, calc(12px / tan(atan2(100cqw, 302px))));
+  }
+
+  .captionBody {
+    font-size: 11px;
+    font-size: max(11px, calc(10px / tan(atan2(100cqw, 302px))));
+    line-height: 1.1;
+  }
 }
 
 /*

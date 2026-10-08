@@ -47,7 +47,7 @@ export default function ReferralHeroFrame({
         viewBox="0 0 786 473"
         fill="none"
         aria-hidden="true"
-        className="absolute text-referral-hero-blob max-md:-left-[63px] max-md:-top-[77px] max-md:w-[430px] md:max-lg:-left-[88px] md:max-lg:-top-[107px] md:max-lg:w-[600px] lg:-left-[115px] lg:-top-[140px] lg:w-[786px]"
+        className="absolute text-referral-hero-blob max-md:-left-[162px] max-md:-top-[52px] max-md:w-[477px] md:max-lg:-left-[88px] md:max-lg:-top-[107px] md:max-lg:w-[600px] lg:-left-[115px] lg:-top-[140px] lg:w-[786px]"
       >
         <path
           d="M332.209 439.252L83.5182 330.131C44.2938 312.897 11.1351 274.459 3.85636 243.962C-21.2958 139.289 80.0406 57.9649 207.257 40.4929L489.591 1.6574C606.537 -14.3851 781.146 88.3027 785.837 211.322C789.314 302.414 736.988 383.262 658.863 427.418C557.365 484.917 441.147 487.062 332.128 439.252H332.209Z"
@@ -64,16 +64,16 @@ export default function ReferralHeroFrame({
 
       {/* 768px 이상은 문구 왼쪽·비주얼 오른쪽 구도를 유지하고 비주얼만 축소, 768px 미만은 비주얼을 문구 위로 쌓는다.
           (DOM 순서는 문구가 먼저 — 제목·버튼이 스크린리더·검색엔진에 먼저 읽히도록 flex-col-reverse로 순서만 뒤집는다.) */}
-      <div className="relative z-10 mx-auto flex max-md:flex-col-reverse max-md:px-5 max-md:pt-[var(--header-height)] md:max-lg:items-center md:max-lg:gap-6 md:max-lg:px-8 md:max-lg:pb-14 md:max-lg:pt-[calc(var(--header-height)_+_56px)] lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between lg:pt-[var(--header-height)]">
-        <div className="shrink-0 max-md:pb-12 md:max-lg:w-[300px] lg:mb-[124px]">
+      <div className="relative z-10 mx-auto flex max-md:flex-col-reverse max-md:px-9 max-md:pt-[var(--header-height)] md:max-lg:items-center md:max-lg:gap-6 md:max-lg:px-8 md:max-lg:pb-14 md:max-lg:pt-[calc(var(--header-height)_+_56px)] lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between lg:pt-[var(--header-height)]">
+        <div className="shrink-0 max-md:pb-12 md:max-lg:w-[330px] lg:mb-[124px]">
           <span
-            className={`${introItem} inline-flex h-[29px] items-center rounded-full bg-referral-hero-badge px-[15px] text-[14px] font-medium tracking-[-0.04em] text-white`}
+            className={`${introItem} flex w-fit items-center rounded-full bg-referral-hero-badge font-medium tracking-[-0.04em] text-white max-md:h-[25px] max-md:px-[9px] max-md:text-[11px] md:h-[29px] md:px-[15px] md:text-[14px]`}
           >
             정기구독 첫 달 할인 적용
           </span>
           <h1
             id="referral-hero-title"
-            className={`${introItem} mt-[14px] font-extrabold tracking-[-0.04em] text-[var(--color-text)] max-md:text-[30px] max-md:leading-[38px] md:max-lg:text-[34px] md:max-lg:leading-[44px] lg:text-[48px] lg:leading-[58px]`}
+            className={`${introItem} break-keep font-extrabold tracking-[-0.04em] text-[var(--color-text)] max-md:mt-3 max-md:text-[28px] max-md:leading-[33px] md:mt-[14px] md:max-lg:text-[34px] md:max-lg:leading-[44px] lg:text-[48px] lg:leading-[58px]`}
           >
             <span className="text-[var(--color-cta-button)]">
               꼬순박스 PICK
@@ -81,14 +81,14 @@ export default function ReferralHeroFrame({
             <br />첫 구독 {discountPct}% 할인 이벤트
           </h1>
           <p
-            className={`${introItem} font-medium tracking-[-0.02em] text-[var(--color-text)] max-md:mt-4 max-md:text-[15px] md:max-lg:mt-5 md:max-lg:text-[16px] lg:mt-6 lg:text-[18px]`}
+            className={`${introItem} font-medium tracking-[-0.02em] text-[var(--color-text)] max-md:mt-2.5 max-md:text-[14px] max-md:leading-[20px] md:max-lg:mt-5 md:max-lg:text-[16px] lg:mt-6 lg:text-[18px] lg:leading-[21px]`}
           >
             지금 회원가입을 하고 첫 구독 할인을 받아보세요.
           </p>
           <button
             type="button"
             onClick={handleCta}
-            className={`${introItem} rounded-[12px] bg-[var(--color-cta-button)] font-[600] tracking-[-0.04em] text-white transition-opacity hover:opacity-90 max-md:mt-6 max-md:h-12 max-md:px-6 max-md:text-[14px] md:mt-8 md:h-[52px] md:w-[282px] md:text-[16px]`}
+            className={`${introItem} bg-[var(--color-cta-button)] font-[600] tracking-[-0.04em] text-white transition-opacity hover:opacity-90 max-md:mt-6 max-md:h-10 max-md:min-w-[230px] max-md:rounded-[10px] max-md:px-5 max-md:text-[13px] md:mt-8 md:rounded-[12px] md:h-[52px] md:w-[282px] md:text-[16px]`}
           >
             우리 아이한테 딱 맞는 간식 알아보기
           </button>

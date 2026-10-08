@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
     // dev 장시간 실행 시 Turbopack 캐시가 4GB+까지 불어나는 문제 대응.
     // 하드 상한이 아니라 목표치 — 초과 시 오래된 캐시를 비워 재계산한다.
     turbopackMemoryLimit: 2 * 1024 * 1024 * 1024,
+    // Next 16 기본값(true)인 dev 파일시스템 캐시를 끈다. globals.css 변경이 가끔 반영되지 않을 때
+    // 그 stale 결과가 .next에 저장돼 dev 재시작으로도 복구되지 않던 문제 대응 — 이제 재시작만으로 복구된다.
+    turbopackFileSystemCacheForDev: false,
   },
   async redirects() {
     return [

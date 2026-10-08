@@ -96,7 +96,7 @@
 | `--color-referral-hero-badge` | `#4C6E1B` | 초대 Hero 상단 배지 |
 | `--color-referral-hero-blob` | `#FDD59F` | 초대 Hero 좌상단 블롭 |
 | `--color-referral-hero-caption-bg` | `#FFF5DB` | 초대 Hero 인플루언서 카드 캡션 배경 |
-| `--color-referral-hero-photo-bg` | `#F6E1CD` | 초대 Hero 인플루언서 사진 없음/로딩 배경 |
+| `--color-referral-hero-photo-bg` | `#FFC16E` | 초대 Hero 인플루언서 사진 없음/로딩 배경 |
 | `--color-referral-coupon-title` | `#F27A00` | 초대 Hero 쿠폰 타이틀 텍스트 |
 | `--color-referral-coupon-shadow` | `#C97A3E` | 초대 Hero 쿠폰 카드 그림자 |
 | `--color-referral-coupon-face-edge` | `#FFE7C6` | 초대 Hero 쿠폰 카드 면 가장자리 |

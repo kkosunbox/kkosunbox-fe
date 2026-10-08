@@ -18,7 +18,11 @@ interface ReferralHeroFrameProps {
  * 초대 랜딩(`/r/{slug}`) Hero 공통 틀.
  * Figma 1920 기준: 상단 배너 아래 높이 713px, 텍스트는 1240 컨테이너 좌측에 정렬된다.
  */
-export default function ReferralHeroFrame({ discountPct, visual, animateIntro = false }: ReferralHeroFrameProps) {
+export default function ReferralHeroFrame({
+  discountPct,
+  visual,
+  animateIntro = false,
+}: ReferralHeroFrameProps) {
   const handleCta = useHeroChecklistCta();
   const introItem = animateIntro ? styles.introItem : "";
 
@@ -62,18 +66,23 @@ export default function ReferralHeroFrame({ discountPct, visual, animateIntro = 
           (DOM 순서는 문구가 먼저 — 제목·버튼이 스크린리더·검색엔진에 먼저 읽히도록 flex-col-reverse로 순서만 뒤집는다.) */}
       <div className="relative z-10 mx-auto flex max-md:flex-col-reverse max-md:px-5 max-md:pt-[var(--header-height)] md:max-lg:items-center md:max-lg:gap-6 md:max-lg:px-8 md:max-lg:pb-14 md:max-lg:pt-[calc(var(--header-height)_+_56px)] lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between lg:pt-[var(--header-height)]">
         <div className="shrink-0 max-md:pb-12 md:max-lg:w-[300px] lg:mb-[124px]">
-          <span className={`${introItem} inline-flex h-[29px] items-center rounded-full bg-referral-hero-badge px-[15px] text-[14px] font-medium tracking-[-0.04em] text-white`}>
+          <span
+            className={`${introItem} inline-flex h-[29px] items-center rounded-full bg-referral-hero-badge px-[15px] text-[14px] font-medium tracking-[-0.04em] text-white`}
+          >
             정기구독 첫 달 할인 적용
           </span>
           <h1
             id="referral-hero-title"
             className={`${introItem} mt-[14px] font-extrabold tracking-[-0.04em] text-[var(--color-text)] max-md:text-[30px] max-md:leading-[38px] md:max-lg:text-[34px] md:max-lg:leading-[44px] lg:text-[48px] lg:leading-[58px]`}
           >
-            <span className="text-[var(--color-cta-button)]">꼬순박스 PICK</span>
-            <br />
-            첫 구독 {discountPct}% 이벤트
+            <span className="text-[var(--color-cta-button)]">
+              꼬순박스 PICK
+            </span>
+            <br />첫 구독 {discountPct}% 할인 이벤트
           </h1>
-          <p className={`${introItem} font-medium tracking-[-0.02em] text-[var(--color-text)] max-md:mt-4 max-md:text-[15px] md:max-lg:mt-5 md:max-lg:text-[16px] lg:mt-6 lg:text-[18px]`}>
+          <p
+            className={`${introItem} font-medium tracking-[-0.02em] text-[var(--color-text)] max-md:mt-4 max-md:text-[15px] md:max-lg:mt-5 md:max-lg:text-[16px] lg:mt-6 lg:text-[18px]`}
+          >
             지금 회원가입을 하고 첫 구독 할인을 받아보세요.
           </p>
           <button

@@ -49,7 +49,9 @@ function LookupFormFields({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <label htmlFor={orderIdId} className={authLabelCls}>주문번호</label>
+        <label htmlFor={orderIdId} className={authLabelCls}>
+          주문번호
+        </label>
         <input
           id={orderIdId}
           type="text"
@@ -65,7 +67,9 @@ function LookupFormFields({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor={phoneId} className={authLabelCls}>주문자 연락처</label>
+        <label htmlFor={phoneId} className={authLabelCls}>
+          주문자 연락처
+        </label>
         <input
           id={phoneId}
           type="tel"
@@ -84,7 +88,9 @@ function LookupFormFields({
 function LookupNotice() {
   return (
     <ul className="mt-[15px] flex flex-col gap-1 text-body-13-r text-[var(--color-text-secondary)]">
-      <li className="flex gap-1.5 before:content-['·']">주문 시 입력하셨던 주문번호와 주문자 연락처를 입력해 주세요.</li>
+      <li className="flex gap-1.5 before:content-['·']">
+        주문 시 입력하셨던 주문자 연락처와 주문번호를 입력해 주세요.
+      </li>
     </ul>
   );
 }
@@ -94,14 +100,22 @@ function RegisterLink({ className }: { className: string }) {
     <div className={`flex items-center justify-center gap-2 ${className}`}>
       <span
         className="text-body-14-m text-[var(--color-auth-hint)] opacity-40"
-        style={{ fontWeight: 500, lineHeight: "140%", letterSpacing: "-0.02em" }}
+        style={{
+          fontWeight: 500,
+          lineHeight: "140%",
+          letterSpacing: "-0.02em",
+        }}
       >
         아직 계정이 없으신가요?
       </span>
       <Link
         href="/register"
         className="text-body-14-sb text-[var(--color-link-warm)]"
-        style={{ fontWeight: 600, lineHeight: "140%", letterSpacing: "-0.02em" }}
+        style={{
+          fontWeight: 600,
+          lineHeight: "140%",
+          letterSpacing: "-0.02em",
+        }}
       >
         회원가입하기
       </Link>
@@ -117,7 +131,8 @@ export default function GuestOrderLookupPage() {
   const [isPending, startTransition] = useTransition();
   const { showLoading, hideLoading } = useLoadingOverlay();
   const router = useRouter();
-  const isFormValid = isGuestOrderIdComplete(orderId) && isValidGuestPhone(phone);
+  const isFormValid =
+    isGuestOrderIdComplete(orderId) && isValidGuestPhone(phone);
 
   function handleSocialLogin(provider: OAuthProvider) {
     localStorage.setItem(LAST_LOGIN_KEY, provider);
@@ -137,7 +152,12 @@ export default function GuestOrderLookupPage() {
         saveGuestOrderAccess({ orderId: normalizedId, ordererPhone: phone });
         router.push(`/guest-orders/${normalizedId}`);
       } catch (err) {
-        setError(getGuestOrderAccessErrorMessage(err, "주문을 조회하지 못했습니다. 잠시 후 다시 시도해 주세요."));
+        setError(
+          getGuestOrderAccessErrorMessage(
+            err,
+            "주문을 조회하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+          ),
+        );
       } finally {
         hideLoading();
       }
@@ -145,7 +165,11 @@ export default function GuestOrderLookupPage() {
   }
 
   const errorText = error && (
-    <p role="alert" className="mt-3 text-center text-body-13-m" style={{ color: "var(--color-accent-rust)" }}>
+    <p
+      role="alert"
+      className="mt-3 text-center text-body-13-m"
+      style={{ color: "var(--color-accent-rust)" }}
+    >
       {error}
     </p>
   );
@@ -169,19 +193,30 @@ export default function GuestOrderLookupPage() {
         {errorText}
 
         <div className="mt-[52px]">
-          <button type="submit" disabled={!isFormValid || isPending} className={authMobileCtaButtonCls}>
+          <button
+            type="submit"
+            disabled={!isFormValid || isPending}
+            className={authMobileCtaButtonCls}
+          >
             {isPending ? "조회 중..." : "주문 조회"}
           </button>
         </div>
 
         <p
           className="mt-[18px] text-center text-body-14-m text-[var(--color-text-secondary)]"
-          style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
+          style={{
+            fontWeight: 500,
+            letterSpacing: "0.2px",
+            lineHeight: "140%",
+          }}
         >
           - 간편로그인 -
         </p>
         <div className="mt-7">
-          <SocialLoginButtons onSelect={handleSocialLogin} lastLoginMethod={null} />
+          <SocialLoginButtons
+            onSelect={handleSocialLogin}
+            lastLoginMethod={null}
+          />
         </div>
         <RegisterLink className="mt-4" />
       </AuthMobileShell>
@@ -205,19 +240,30 @@ export default function GuestOrderLookupPage() {
         {errorText}
 
         <div className="mt-[52px]">
-          <button type="submit" disabled={!isFormValid || isPending} className={authCtaButtonCls}>
+          <button
+            type="submit"
+            disabled={!isFormValid || isPending}
+            className={authCtaButtonCls}
+          >
             {isPending ? "조회 중..." : "주문 조회"}
           </button>
         </div>
 
         <p
           className="mt-6 text-center text-body-14-m text-[var(--color-text-secondary)]"
-          style={{ fontWeight: 500, letterSpacing: "0.2px", lineHeight: "140%" }}
+          style={{
+            fontWeight: 500,
+            letterSpacing: "0.2px",
+            lineHeight: "140%",
+          }}
         >
           - 간편로그인 -
         </p>
         <div className="mt-6">
-          <SocialLoginButtons onSelect={handleSocialLogin} lastLoginMethod={null} />
+          <SocialLoginButtons
+            onSelect={handleSocialLogin}
+            lastLoginMethod={null}
+          />
         </div>
         <RegisterLink className="mt-6" />
       </AuthDesktopShell>

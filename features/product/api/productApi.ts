@@ -17,6 +17,13 @@ import type {
   ProductOrderReceiptResponse,
   QuoteProductPriceRequest,
   QuoteProductPriceResponse,
+  QuoteGuestOrderRequest,
+  GuestOrderQuoteResponse,
+  CreateGuestOrderRequest,
+  CreateGuestOrderResponse,
+  GuestOrderAccessRequest,
+  CancelGuestOrderRequest,
+  GuestProductOrderDetail,
 } from "./types";
 
 // POST /v1/products/webhook/toss는 Toss → 백엔드 서버 간 웹훅이라 프론트에서 호출하지 않으므로 여기 포함하지 않는다.
@@ -97,4 +104,36 @@ export function getProductCouponInfo(body: GetProductCouponInfoRequest) {
 /** 단품 결제 예정 금액 조회 — 서버가 쿠폰까지 반영해 확정한 금액을 반환한다 */
 export function getProductPriceQuote(id: number, body: QuoteProductPriceRequest) {
   return apiClient.post<QuoteProductPriceResponse>(`/v1/products/${id}/price`, body);
+}
+
+// ── 비회원 단품 주문 (로그인 불필요) ────────────────────────────────
+
+/** 비회원 결제 예정 금액 조회 — 쿠폰 불가 */
+export function quoteGuestOrder(body: QuoteGuestOrderRequest) {
+  return apiClient.post<GuestOrderQuoteResponse>("/v1/guest/products/price", body);
+}
+
+/** 비회원 주문 생성 (Pending) — 응답의 orderId/amount/orderName으로 토스 결제위젯을 연다 */
+export function createGuestOrder(body: CreateGuestOrderRequest) {
+  return apiClient.post<CreateGuestOrderResponse>("/v1/guest/products/orders", body);
+}
+
+/** 비회원 결제 승인 */
+export function confirmGuestOrder(body: ConfirmProductOrderRequest) {
+  return apiClient.post<GuestProductOrderDetail>("/v1/guest/products/orders/confirm", body);
+}
+
+/** 비회원 주문 조회 — 주문번호 + 주문자 연락처 */
+export function lookupGuestOrder(body: GuestOrderAccessRequest) {
+  return apiClient.post<GuestProductOrderDetail>("/v1/guest/products/orders/lookup", body);
+}
+
+/** 비회원 주문 취소 — 결제 완료 + 배송 전만 가능 */
+export function cancelGuestOrder(body: CancelGuestOrderRequest) {
+  return apiClient.post<boolean>("/v1/guest/products/orders/cancel", body);
+}
+
+/** 비회원 결제 영수증 PDF URL */
+export function getGuestOrderReceipt(body: GuestOrderAccessRequest) {
+  return apiClient.post<ProductOrderReceiptResponse>("/v1/guest/products/orders/receipt", body);
 }

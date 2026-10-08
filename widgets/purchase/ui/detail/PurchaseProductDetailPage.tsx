@@ -3,7 +3,6 @@
 /* eslint-disable @next/next/no-img-element -- 상품 썸네일은 서버의 동적 원격 URL이다. */
 import { Fragment, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
@@ -24,6 +23,7 @@ import ProductInfoImages from "@/widgets/subscribe/plans/ui/detail/ProductInfoIm
 import ProductDeliveryInfo from "@/widgets/subscribe/plans/ui/detail/ProductDeliveryInfo";
 import ProductSupportTab from "@/widgets/subscribe/plans/ui/detail/ProductSupportTab";
 import { CartAddedModal, useAddToCart } from "@/features/cart";
+import { usePurchaseChoice } from "@/features/guest-order";
 
 interface Props {
   pkg: PackageData;
@@ -75,7 +75,7 @@ function ProductPrice({ product }: { product: PackagePurchaseProduct }) {
 }
 
 export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId, productId, isSoldOut, isSalesPaused, imageUrl }: Props) {
-  const router = useRouter();
+  const { requestPurchase, purchaseChoiceModal } = usePurchaseChoice();
   const cartAction = useAddToCart();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
@@ -101,8 +101,11 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 
   function handleBuy() {
-    if (isUnavailable) return;
-    router.push(`/purchase/order?tier=${pkg.tier}&quantity=${quantity}`);
+    if (isUnavailable || productId === null) return;
+    requestPurchase({
+      memberHref: `/purchase/order?tier=${pkg.tier}&quantity=${quantity}`,
+      guestHref: `/purchase/guest-order?productId=${productId}&quantity=${quantity}`,
+    });
   }
 
   function handleAddToCart() {
@@ -125,6 +128,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
+      {purchaseChoiceModal}
       {cartAction.cart && <CartAddedModal cart={cartAction.cart} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={cartAction.add} onReplaceRecommendation={cartAction.replaceRecommendation} onClose={cartAction.close} />}
       {reviewState.lightbox ? (
         <ReviewImageLightbox

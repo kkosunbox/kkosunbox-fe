@@ -119,7 +119,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
       )}
       <div className="min-h-svh bg-white max-lg:bg-[var(--color-login-top)]">
         {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
-        <AuthMobileShell active="register">
+        <AuthMobileShell active="login">
           <div className="flex flex-col gap-6">
             {/* 연락처 */}
             <div className="flex flex-col gap-2">
@@ -362,7 +362,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
 
         {/* ══════════════════ 데스크톱(lg+) ══════════════════ */}
         <AuthDesktopShell
-          active="register"
+          active="login"
           headingTop="간단한 정보만 입력하고 바로 시작해요!"
           headingBottom="꼬순박스와 함께해요"
           contentGapPx={24}

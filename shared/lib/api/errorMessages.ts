@@ -75,6 +75,10 @@ const ERROR_MESSAGES: Record<string, string> = {
   PRODUCT_ORDER_ITEM_NOT_FOUND: "주문 상품을 찾을 수 없습니다.",
   PRODUCT_ORDER_AMOUNT_MISMATCH: "결제 금액이 일치하지 않습니다.",
   PRODUCT_ORDER_PAYMENT_FAILED: "결제에 실패했습니다. 다시 시도해주세요.",
+  MINIMUM_ORDER_AMOUNT_NOT_MET: "최소 주문 금액을 충족하지 않습니다.",
+
+  // 비회원 주문
+  GUEST_ORDER_ACCESS_LIMITED: "조회 시도가 너무 많습니다. 10분 후 다시 시도해 주세요.",
 
   // 파일 업로드
   INVALID_FILE_FORMAT: "지원하지 않는 파일 형식입니다.",

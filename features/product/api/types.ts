@@ -241,3 +241,77 @@ export interface ProductOrderPlanSummaryDto {
 export interface ProductOrderPlanSummariesResponse {
   summaries: ProductOrderPlanSummaryDto[];
 }
+
+// ── GuestProductOrder (비회원 단품 주문) ─────────────────────────────
+
+export interface GuestOrderLine {
+  productId: number;
+  /** 1~99 */
+  quantity: number;
+}
+
+export interface QuoteGuestOrderRequest {
+  lines: GuestOrderLine[];
+}
+
+/** POST /v1/guest/products/price 응답 — 회원 견적 응답 + 최소 주문 금액 */
+export interface GuestOrderQuoteResponse {
+  lines: ProductPriceQuoteLine[];
+  totalQuantity: number;
+  /** 상품 정가 합계 — 최소 주문 금액 판정 기준 */
+  itemsAmount: number;
+  couponDiscountAmount: number;
+  discountedItemsAmount: number;
+  shippingFee: number;
+  /** 토스 위젯 금액 */
+  amount: number;
+  /** 최소 주문 금액. 0이면 제한 없음 */
+  minimumOrderAmount: number;
+  /** 무료배송 기준 (itemsAmount 이상이면 shippingFee 0). 0이면 기준 없음 */
+  freeShippingThreshold: number;
+}
+
+export interface CreateGuestOrderRequest {
+  lines: GuestOrderLine[];
+  ordererName: string;
+  /** 이후 조회·취소·영수증 키 */
+  ordererPhone: string;
+  receiverName: string;
+  /** 배송 알림톡 전용 */
+  receiverPhone: string;
+  zipCode: string;
+  address: string;
+  addressDetail?: string;
+  memo?: string;
+  isAllowTerms: true;
+  isAllowPrivacy: true;
+}
+
+export interface CreateGuestOrderResponse extends CreateProductOrderResponse {
+  shippingFee: number;
+}
+
+export interface GuestOrderAccessRequest {
+  /** 하이픈·공백·대소문자 무관 */
+  orderId: string;
+  ordererPhone: string;
+}
+
+export interface CancelGuestOrderRequest extends GuestOrderAccessRequest {
+  /** 생략하면 남은 전량 취소 */
+  items?: CancelProductOrderItemRequest[];
+  cancelReason?: string;
+}
+
+/** 비회원 주문 상세 — 연락처는 숫자만 */
+export interface GuestProductOrderDetail {
+  order: ProductOrderDto;
+  ordererName: string;
+  ordererPhone: string;
+  receiverName: string;
+  receiverPhone: string;
+  zipCode: string;
+  address: string;
+  addressDetail?: string | null;
+  memo?: string | null;
+}

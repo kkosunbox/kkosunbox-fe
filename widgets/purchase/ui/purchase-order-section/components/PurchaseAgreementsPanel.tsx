@@ -5,12 +5,13 @@ interface PurchaseAgreementsPanelProps {
   agreeOpen: boolean;
   agreeTerms: boolean;
   agreePrivacy: boolean;
-  agreeAge: boolean;
+  /** 생략하면 만 14세 확인 항목을 표시하지 않는다 (비회원 주문) */
+  agreeAge?: boolean;
   agreeAll: boolean;
   onToggleAgreePanel: () => void;
   onToggleTerms: () => void;
   onTogglePrivacy: () => void;
-  onToggleAge: () => void;
+  onToggleAge?: () => void;
   onAgreeAll: () => void;
 }
 
@@ -80,11 +81,13 @@ export function PurchaseAgreementsPanel({
             </span>
           }
         />
-        <Checkbox
-          checked={agreeAge}
-          onChange={onToggleAge}
-          label="만 14세 이상 확인 (필수)"
-        />
+        {onToggleAge ? (
+          <Checkbox
+            checked={agreeAge ?? false}
+            onChange={onToggleAge}
+            label="만 14세 이상 확인 (필수)"
+          />
+        ) : null}
       </CollapsiblePanel>
     </div>
   );

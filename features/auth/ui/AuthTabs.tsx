@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 
-export type AuthTabKey = "login" | "register";
+/** 회원가입은 로그인 탭에 속한다 (로그인 탭 안의 링크로 진입) */
+export type AuthTabKey = "login" | "guest-order";
 
 const TABS: { key: AuthTabKey; label: string; href: string }[] = [
   { key: "login", label: "로그인", href: "/login" },
-  { key: "register", label: "회원가입", href: "/register" },
+  { key: "guest-order", label: "비회원 주문조회", href: "/login/guest" },
 ];
 
-/** 로그인·회원가입 전환 탭 — 각 라우트로 이동한다 */
+/** 로그인·비회원 주문조회 전환 탭 — 각 라우트로 이동한다 */
 export function AuthTabs({
   active,
   variant = "desktop",

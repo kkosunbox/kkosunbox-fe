@@ -2,9 +2,9 @@
 /* eslint-disable @next/next/no-img-element -- 상품 썸네일은 서버의 동적 원격 URL이다. */
 
 import { Fragment, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import type { ProductDto } from "@/features/product/api/types";
 import { CartAddedModal, useAddToCart } from "@/features/cart";
+import { usePurchaseChoice } from "@/features/guest-order";
 import { formatKrwPrice } from "@/shared/lib/format";
 import Stars from "@/widgets/subscribe/plans/ui/reviews/Stars";
 import ProductReviewList from "@/widgets/subscribe/plans/ui/reviews/ProductReviewList";
@@ -30,7 +30,7 @@ function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
 }
 
 export default function IndependentProductDetailPage({ product }: { product: ProductDto }) {
-  const router = useRouter();
+  const { requestPurchase, purchaseChoiceModal } = usePurchaseChoice();
   const cartAction = useAddToCart();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
@@ -48,7 +48,10 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
 
   function handleBuy() {
     if (unavailable) return;
-    router.push(`/purchase/order?productId=${product.id}&quantity=${quantity}`);
+    requestPurchase({
+      memberHref: `/purchase/order?productId=${product.id}&quantity=${quantity}`,
+      guestHref: `/purchase/guest-order?productId=${product.id}&quantity=${quantity}`,
+    });
   }
 
   function handleReviewCountClick() {
@@ -74,6 +77,7 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
 
   return (
     <main className="w-full pb-20 pt-[calc(var(--header-offset)+40px)]">
+      {purchaseChoiceModal}
       {cartAction.cart && (
         <CartAddedModal
           cart={cartAction.cart}

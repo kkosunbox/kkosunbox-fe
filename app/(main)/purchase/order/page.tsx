@@ -21,9 +21,16 @@ export default async function PurchaseOrderPage({
 }) {
   const { tier, quantity: quantityStr, cartItemIds: cartItemIdsParam, productId: productIdParam } = await searchParams;
   const cartItemIds = cartItemIdsParam?.split(",").map(Number).filter((id) => Number.isInteger(id) && id > 0) ?? [];
+  // 회원 주문서 — 비회원은 별도 비회원 주문서(/purchase/guest-order)를 쓰므로 로그인 후 이 주소로 돌아오게 한다.
+  const token = await getServerToken();
+  if (!token) {
+    const query = new URLSearchParams(
+      Object.entries({ tier, quantity: quantityStr, cartItemIds: cartItemIdsParam, productId: productIdParam })
+        .filter((entry): entry is [string, string] => entry[1] !== undefined),
+    ).toString();
+    redirect(`/login?next=${encodeURIComponent(`/purchase/order${query ? `?${query}` : ""}`)}`);
+  }
   if (cartItemIds.length > 0) {
-    const token = await getServerToken();
-    if (!token) redirect(`/login?next=${encodeURIComponent(`/purchase/order?cartItemIds=${cartItemIds.join(",")}`)}`);
     const addresses = await fetchDeliveryAddresses(token);
     return <CartOrderSection cartItemIds={cartItemIds} initialAddresses={addresses} />;
   }
@@ -34,7 +41,6 @@ export default async function PurchaseOrderPage({
     Number.isInteger(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= 99 ? parsedQuantity : 1;
 
   if (requestedProductId) {
-    const token = await getServerToken();
     const [product, addresses] = await Promise.all([
       fetchProduct(requestedProductId, token),
       fetchDeliveryAddresses(token),
@@ -53,8 +59,6 @@ export default async function PurchaseOrderPage({
   }
 
   // 1~99 범위 외 또는 정수 아님 → 기본값 1로 폴백 (상세 페이지를 거치지 않고 직접 접근해도 안전)
-  // 비로그인 방문자도 구매 가능 — 토큰이 없으면 fetchDeliveryAddresses가 빈 배열을 반환한다.
-  const token = await getServerToken();
   const [addresses, products, plans] = await Promise.all([
     fetchDeliveryAddresses(token),
     fetchProducts(token),

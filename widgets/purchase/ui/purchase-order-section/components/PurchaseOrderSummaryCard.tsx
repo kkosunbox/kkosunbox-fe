@@ -14,17 +14,20 @@ interface PurchaseOrderSummaryCardProps {
   agreeOpen: boolean;
   agreeTerms: boolean;
   agreePrivacy: boolean;
-  agreeAge: boolean;
+  /** 생략하면 만 14세 확인 항목을 표시하지 않는다 (비회원 주문) */
+  agreeAge?: boolean;
   agreeAll: boolean;
   onToggleAgreePanel: () => void;
   onToggleTerms: () => void;
   onTogglePrivacy: () => void;
-  onToggleAge: () => void;
+  onToggleAge?: () => void;
   onAgreeAll: () => void;
   submitError: string | null;
   isPaying: boolean;
   paymentReady: boolean;
   onPay: () => void;
+  /** 결제 버튼 위 안내 (예: 최소 주문 금액 미달) — submitError가 없을 때만 표시 */
+  notice?: string | null;
 }
 
 export function PurchaseOrderSummaryCard({
@@ -50,6 +53,7 @@ export function PurchaseOrderSummaryCard({
   isPaying,
   paymentReady,
   onPay,
+  notice,
 }: PurchaseOrderSummaryCardProps) {
   return (
     <SectionCard variant="order" title="결제정보" open={open} onToggle={onToggle}>
@@ -99,6 +103,8 @@ export function PurchaseOrderSummaryCard({
           <p className="text-body-13-m text-red-600" role="alert">
             {submitError}
           </p>
+        ) : notice ? (
+          <p className="text-body-13-m text-[var(--color-text-secondary)]">{notice}</p>
         ) : null}
 
         <button

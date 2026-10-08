@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/features/auth";
 import { getProducts, type ProductDto } from "@/features/product/api";
 import { getErrorMessage } from "@/shared/lib/api";
 import { useModal } from "@/shared/ui";
-import { addCartItem, type CartDto } from "../api";
+import type { CartDto } from "../api";
+import { getCartGateway } from "./cartGateway";
 import { notifyCartUpdated } from "./events";
 import { getCartRecommendationPool } from "./cartAdded";
 
 export function useAddToCart() {
   const { openAlert } = useModal();
+  const { isLoggedIn } = useAuth();
   const [cart, setCart] = useState<CartDto | null>(null);
   const [recommendations, setRecommendations] = useState<ProductDto[]>([]);
   const [pendingProductId, setPendingProductId] = useState<number | null>(null);
@@ -40,7 +43,7 @@ export function useAddToCart() {
     setPendingProductId(productId);
     setError(null);
     try {
-      const updated = await addCartItem({ productId, quantity });
+      const updated = await getCartGateway(isLoggedIn).add(productId, quantity);
       notifyCartUpdated();
       if (currentSession !== session.current) return false;
       setCart(updated);

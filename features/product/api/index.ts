@@ -11,6 +11,12 @@ export {
   getProductOrderReceipt,
   getProductCouponInfo,
   getProductPriceQuote,
+  quoteGuestOrder,
+  createGuestOrder,
+  confirmGuestOrder,
+  lookupGuestOrder,
+  cancelGuestOrder,
+  getGuestOrderReceipt,
 } from "./productApi";
 
 export type {
@@ -39,4 +45,12 @@ export type {
   ProductOrderPlanSummariesResponse,
   QuoteProductPriceRequest,
   QuoteProductPriceResponse,
+  GuestOrderLine,
+  QuoteGuestOrderRequest,
+  GuestOrderQuoteResponse,
+  CreateGuestOrderRequest,
+  CreateGuestOrderResponse,
+  GuestOrderAccessRequest,
+  CancelGuestOrderRequest,
+  GuestProductOrderDetail,
 } from "./types";

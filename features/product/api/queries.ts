@@ -8,6 +8,7 @@ import { logProductFetch, logConfirmRequest, logConfirmSuccess, logConfirmFailur
 import type {
   ConfirmProductOrderRequest,
   GetProductOrdersParams,
+  GuestProductOrderDetail,
   GetProductsParams,
   ProductCategoryDto,
   ProductDto,
@@ -102,6 +103,26 @@ export async function confirmProductOrderServer(
     );
     logConfirmSuccess(order);
     return order;
+  } catch (err) {
+    logConfirmFailure(err);
+    throw err;
+  }
+}
+
+/**
+ * 비회원 결제 승인 (서버 컴포넌트 전용 — successUrl 리다이렉트 처리용).
+ * 이미 처리된 주문은 현재 상태를 다시 돌려주므로 새로고침에도 안전하다. 실패는 그대로 던진다.
+ */
+export async function confirmGuestOrderServer(body: ConfirmProductOrderRequest): Promise<GuestProductOrderDetail> {
+  logConfirmRequest(body);
+  try {
+    const detail = await apiClient.post<GuestProductOrderDetail>(
+      "/v1/guest/products/orders/confirm",
+      body,
+      serverOpts(),
+    );
+    logConfirmSuccess(detail.order);
+    return detail;
   } catch (err) {
     logConfirmFailure(err);
     throw err;

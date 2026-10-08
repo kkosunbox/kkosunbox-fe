@@ -3,7 +3,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteCartItem, getCart, quoteCart, updateCartItem, type CartDto, type CartPriceDto } from "@/features/cart";
+import { useAuth } from "@/features/auth";
+import { getCartGateway, type CartDto, type CartPriceDto } from "@/features/cart";
+import { usePurchaseChoice } from "@/features/guest-order";
 import { notifyCartUpdated } from "@/features/cart/lib/events";
 import { getErrorMessage } from "@/shared/lib/api";
 import { formatKrwPrice } from "@/shared/lib/format";
@@ -33,6 +35,9 @@ function CartCheckbox({ checked, disabled = false, label, onChange }: { checked:
 
 export default function CartPageClient() {
   const router = useRouter();
+  const { isLoggedIn } = useAuth();
+  const gateway = useMemo(() => getCartGateway(isLoggedIn), [isLoggedIn]);
+  const { requestPurchase, purchaseChoiceModal } = usePurchaseChoice();
   const [cart, setCart] = useState<CartDto | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [quote, setQuote] = useState<CartPriceDto | null>(null);
@@ -43,45 +48,50 @@ export default function CartPageClient() {
   const allSelected = orderableIds.length > 0 && orderableIds.every((id) => selected.has(id));
 
   const refresh = useCallback(async () => {
-    const data = await getCart();
+    const data = await gateway.getCart();
     setCart(data);
     setSelected((current) => new Set(data.items.filter((item) => item.isOrderable && current.has(item.id)).map((item) => item.id)));
     notifyCartUpdated();
-  }, []);
+  }, [gateway]);
 
   useEffect(() => {
-    void getCart().then((data) => {
+    void gateway.getCart().then((data) => {
       setCart(data);
       setSelected(new Set(data.items.filter((item) => item.isOrderable).map((item) => item.id)));
     }).catch((err) => setError(getErrorMessage(err))).finally(() => setBusy(false));
-  }, []);
+  }, [gateway]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       if (selectedIds.length === 0) { setQuote(null); return; }
-      void quoteCart({ cartItemIds: selectedIds }).then((data) => { setQuote(data); setError(null); }).catch((err) => { setQuote(null); setError(getErrorMessage(err, "주문 금액을 계산하지 못했습니다.")); });
+      void gateway.quote(selectedIds).then((data) => { setQuote(data); setError(null); }).catch((err) => { setQuote(null); setError(getErrorMessage(err, "주문 금액을 계산하지 못했습니다.")); });
     }, 200);
     return () => window.clearTimeout(timer);
-  }, [selectedIds, cart]);
+  }, [gateway, selectedIds, cart]);
 
   async function changeQuantity(id: number, quantity: number) {
     if (quantity < 1 || quantity > 99) return;
-    try { setCart(await updateCartItem(id, { quantity })); notifyCartUpdated(); } catch (err) { setError(getErrorMessage(err)); }
+    try { setCart(await gateway.update(id, quantity)); notifyCartUpdated(); } catch (err) { setError(getErrorMessage(err)); }
   }
   async function remove(id: number) {
-    try { await deleteCartItem(id); setSelected((current) => { const next = new Set(current); next.delete(id); return next; }); await refresh(); } catch (err) { setError(getErrorMessage(err)); }
+    try { await gateway.remove(id); setSelected((current) => { const next = new Set(current); next.delete(id); return next; }); await refresh(); } catch (err) { setError(getErrorMessage(err)); }
   }
   async function removeSelected() {
     if (!selectedIds.length) return;
-    try { await Promise.all(selectedIds.map(deleteCartItem)); setSelected(new Set()); await refresh(); } catch (err) { setError(getErrorMessage(err)); }
+    try { await Promise.all(selectedIds.map(gateway.remove)); setSelected(new Set()); await refresh(); } catch (err) { setError(getErrorMessage(err)); }
   }
   function proceedToOrder() {
     if (!selectedIds.length) { setError("주문할 상품을 선택해주세요."); return; }
-    router.push(`/purchase/order?cartItemIds=${selectedIds.join(",")}`);
+    // 비회원은 구매 방법 선택 모달 → 회원 구매는 로그인 후 장바구니로 돌아온다(비회원 장바구니가 서버로 합쳐짐).
+    requestPurchase({
+      memberHref: isLoggedIn ? `/purchase/order?cartItemIds=${selectedIds.join(",")}` : "/cart",
+      guestHref: `/purchase/guest-order?cartItemIds=${selectedIds.join(",")}`,
+    });
   }
 
   if (busy) return <LoadingOverlay visible />;
   return <div className="flex flex-1 flex-col bg-white pt-[var(--header-offset)]">
+    {purchaseChoiceModal}
     <PageHeaderBand title="장바구니" description="상품과 수량을 확인하신 후 주문을 진행해 주세요." backControl={<button type="button" onClick={() => router.back()} aria-label="이전 페이지"><Chevron back /></button>} />
     {!cart?.items.length ? <div className="mx-auto flex w-full max-w-[1240px] flex-1 justify-center max-xl:px-6 xl:px-0 pb-[106px] pt-[120px]"><CartEmptyState /></div> : <div className="mx-auto grid w-full max-w-[1240px] flex-1 gap-8 max-xl:px-6 xl:px-0 pb-[106px] pt-8 md:grid-cols-[minmax(0,1fr)_1px_301px] md:gap-x-12">
       <section className="min-w-0" aria-labelledby="cart-products-title">

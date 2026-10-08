@@ -17,6 +17,8 @@ import {
 
 interface CheckoutAddressSectionProps {
   variant?: "default" | "order";
+  /** 섹션 제목 — 기본 "주문고객 / 배송지 정보" */
+  title?: string;
   open: boolean;
   onToggle: () => void;
   selectedAddress: DeliveryAddress | null;
@@ -30,6 +32,7 @@ interface CheckoutAddressSectionProps {
 
 export function CheckoutAddressSection({
   variant = "default",
+  title = "주문고객 / 배송지 정보",
   open,
   onToggle,
   selectedAddress,
@@ -43,7 +46,7 @@ export function CheckoutAddressSection({
   const isOrder = variant === "order";
   const contactInputCls = `${inputCls} ${isOrder ? "" : "md:max-w-[220px]"}`;
   return (
-    <SectionCard variant={variant} title="주문고객 / 배송지 정보" open={open} onToggle={onToggle}>
+    <SectionCard variant={variant} title={title} open={open} onToggle={onToggle}>
       {selectedAddress ? (
         /* ── 저장된 배송지 읽기 전용 뷰 ── */
         <div className="flex flex-col gap-3 pb-1">

@@ -17,7 +17,7 @@ import { CartLink } from "./CartLink";
 import { LogoWhiteIcon } from "./icons";
 import { isTransparentRoute } from "@/shared/config/headerVariants";
 import { useHeaderScroll } from "./useHeaderScroll";
-import { getCartCount } from "@/features/cart";
+import { getCartGateway, isGuestCartStorageEvent } from "@/features/cart";
 import { CART_UPDATED_EVENT } from "@/features/cart/lib/events";
 
 export default function Header() {
@@ -53,11 +53,17 @@ export default function Header() {
   const closeMenu = () => setIsMenuOpen(false);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-    const refresh = () => { void getCartCount().then((data) => setCartCount(data.count)).catch(() => setCartCount(0)); };
+    const gateway = getCartGateway(isLoggedIn);
+    const refresh = () => { void gateway.getCount().then(setCartCount).catch(() => setCartCount(0)); };
+    // 비회원 장바구니는 localStorage라 다른 탭의 변경도 반영한다.
+    const handleStorage = (event: StorageEvent) => { if (!isLoggedIn && isGuestCartStorageEvent(event)) refresh(); };
     refresh();
     window.addEventListener(CART_UPDATED_EVENT, refresh);
-    return () => window.removeEventListener(CART_UPDATED_EVENT, refresh);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener(CART_UPDATED_EVENT, refresh);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, [isLoggedIn]);
 
   return (
@@ -116,7 +122,7 @@ export default function Header() {
               고객센터
             </Link>
             <div className="flex items-center gap-7">
-              {isLoggedIn && <CartLink count={cartCount} isSolid={isSolid} />}
+              <CartLink count={cartCount} isSolid={isSolid} />
               {isAuthLoading ? (
                 <div className="h-8 w-8 rounded-full bg-[var(--color-secondary)] animate-pulse" />
               ) : isLoggedIn ? (

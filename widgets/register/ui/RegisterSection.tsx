@@ -121,24 +121,6 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
         {/* ══════════════════ 모바일·태블릿(<lg) ══════════════════ */}
         <AuthMobileShell active="login">
           <div className="flex flex-col gap-6">
-            {/* 연락처 */}
-            <div className="flex flex-col gap-2">
-              <label htmlFor="reg-phone-mobile" className={authLabelCls}>
-                연락처
-              </label>
-              <input
-                id="reg-phone-mobile"
-                type="tel"
-                inputMode="numeric"
-                maxLength={13}
-                placeholder="연락처를 입력하세요"
-                value={phone}
-                onChange={(e) => updatePhone(e.target.value)}
-                className={authUnderlineInputCls}
-                autoComplete="tel"
-              />
-            </div>
-
             {/* 이메일 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="reg-email-mobile" className={authLabelCls}>
@@ -310,6 +292,24 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               )}
             </div>
 
+            {/* 연락처 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-phone-mobile" className={authLabelCls}>
+                연락처
+              </label>
+              <input
+                id="reg-phone-mobile"
+                type="tel"
+                inputMode="numeric"
+                maxLength={13}
+                placeholder="연락처를 입력하세요"
+                value={phone}
+                onChange={(e) => updatePhone(e.target.value)}
+                className={authUnderlineInputCls}
+                autoComplete="tel"
+              />
+            </div>
+
             {!hasStoredReferralCode && (
               <SignupReferralCodeField
                 value={referralCode}
@@ -369,24 +369,6 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
           tabsGapPx={40}
         >
           <div className="flex flex-col gap-6">
-            {/* 연락처 */}
-            <div className="flex flex-col gap-2">
-              <label htmlFor="reg-phone-desktop" className={authLabelCls}>
-                연락처
-              </label>
-              <input
-                id="reg-phone-desktop"
-                type="tel"
-                inputMode="numeric"
-                maxLength={13}
-                placeholder="연락처를 입력하세요"
-                value={phone}
-                onChange={(e) => updatePhone(e.target.value)}
-                className={authUnderlineInputCls}
-                autoComplete="tel"
-              />
-            </div>
-
             {/* 이메일 */}
             <div className="flex flex-col gap-2">
               <label htmlFor="reg-email-desktop" className={authLabelCls}>
@@ -538,6 +520,24 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
                   비밀번호가 일치하지 않습니다.
                 </p>
               )}
+            </div>
+
+            {/* 연락처 */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="reg-phone-desktop" className={authLabelCls}>
+                연락처
+              </label>
+              <input
+                id="reg-phone-desktop"
+                type="tel"
+                inputMode="numeric"
+                maxLength={13}
+                placeholder="연락처를 입력하세요"
+                value={phone}
+                onChange={(e) => updatePhone(e.target.value)}
+                className={authUnderlineInputCls}
+                autoComplete="tel"
+              />
             </div>
 
             {!hasStoredReferralCode && (

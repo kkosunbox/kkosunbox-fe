@@ -187,7 +187,14 @@ export function PackageShowcaseSection({
               {selected && tier === "Standard" && <span className={styles.popularBadge}>인기 PICK 🌟</span>}
             </div>
             <div className={styles.packageTitleRow}>
-              <h2 id="package-title">{(selected?.name ?? pkg.name).replace(/ BOX$/, "")}</h2>
+              <h2 id="package-title">
+                {selected && !getPrimaryAction ? (
+                  <Link href={`/subscribe/detail?planId=${selected.id}`}
+                    onClick={() => trackSelectItem({ plan_tier: selected.name })}>
+                    {selected.name.replace(/ BOX$/, "")}
+                  </Link>
+                ) : (selected?.name ?? pkg.name).replace(/ BOX$/, "")}
+              </h2>
               <span className={styles.mobileShippingBadge}><Image src={truck} alt="" width={20} height={20} />무료배송</span>
             </div>
             <p className={styles.packageDescription}>{pkg.contents.join(" ")}</p>

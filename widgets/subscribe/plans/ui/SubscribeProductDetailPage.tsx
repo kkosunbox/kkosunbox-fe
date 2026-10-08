@@ -53,7 +53,7 @@ function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
 
 export default function SubscribeProductDetailPage({ initialPlan, plans }: Props) {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState(initialPlan);
+  const selectedPlan = initialPlan;
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
@@ -88,12 +88,6 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const salePrice = discountedUnitPrice * quantity;
   const isSalesPaused = selectedPlan.isSalesPaused;
 
-  function handleSelectPlan(plan: SubscriptionPlanDto) {
-    setSelectedPlan(plan);
-    setQuantity(1);
-    router.replace(`/subscribe/detail?planId=${plan.id}`, { scroll: false });
-  }
-
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
       {reviewState.lightbox ? (
@@ -106,40 +100,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
       ) : null}
       {/* Mobile layout (Figma-aligned) */}
       <div className="md:hidden lg:hidden">
-        <div className="mb-6 w-full" style={{ background: "var(--color-top-band-bg)" }}>
-          <div className="flex h-[46px] w-full min-w-0 items-center max-sm:gap-2 max-sm:px-4 sm:gap-3 sm:px-6">
-            <span className="max-sm:mr-1 max-sm:shrink-0 max-sm:text-body-12-m sm:mr-2 sm:shrink-0 sm:text-body-14-sb text-[var(--color-text-muted)]">
-              구독선택
-            </span>
-            <div
-              className="flex min-w-0 flex-1 gap-1.5 max-sm:flex-nowrap max-sm:overflow-x-auto max-sm:overscroll-x-contain max-sm:[-ms-overflow-style:none] max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden sm:flex-wrap sm:gap-2"
-              role="tablist"
-              aria-label="구독 플랜 선택"
-            >
-              {sortedPlans.map((plan) => {
-                const theme = packageThemeForPlan(plan);
-                const isActive = selectedPlan.id === plan.id;
-                return (
-                  <button
-                    key={plan.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => handleSelectPlan(plan)}
-                    className="max-sm:h-[22px] max-sm:shrink-0 max-sm:rounded-full max-sm:px-2 max-sm:text-body-12-m sm:h-[24px] sm:shrink-0 sm:rounded-full sm:px-3 sm:text-body-14-sb text-white transition-opacity hover:opacity-90"
-                    style={{
-                      background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
-                    }}
-                  >
-                    {plan.slug ?? theme.tierLabel}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="px-6">
+        <div className="px-6 pt-6">
           <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">
             {selectedPlan.imageUrl ? <img src={selectedPlan.imageUrl} alt={`${selectedPlan.name} 대표 이미지`} className="h-full w-full object-cover" /> : <Image
               src={packageThumbnail}
@@ -340,34 +301,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
 
       {/* Desktop layout */}
       <div className="max-md:hidden">
-        {/* Plan selector — full-width dark tab bar */}
-        <div className="mb-[44px] w-full" style={{ background: "var(--color-top-band-bg)" }}>
-          <div className="mx-auto flex h-[46px] w-full max-w-[var(--max-width-content)] items-center gap-3 md:px-6 lg:px-0">
-            <span className="text-body-14-sb text-[var(--color-text-muted)] mr-6">구독선택</span>
-            <div className="flex flex-wrap gap-2">
-              {sortedPlans.map((plan) => {
-                const theme = packageThemeForPlan(plan);
-                const isActive = selectedPlan.id === plan.id;
-                return (
-                  <button
-                    key={plan.id}
-                    type="button"
-                    onClick={() => handleSelectPlan(plan)}
-                    className="rounded-full px-3 h-[24px] text-body-14-sb text-white transition-opacity hover:opacity-90"
-                    style={{
-                      background: isActive ? theme.colorVar : "var(--color-plan-chip-inactive)",
-                    }}
-                  >
-                    {plan.slug ?? theme.tierLabel}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="mx-auto w-full max-w-[var(--max-width-content)]">
-
+        <div className="mx-auto w-full max-w-[var(--max-width-content)] pt-[44px]">
           <div className="grid gap-8 lg:mx-auto lg:w-[1013px] lg:grid-cols-[508px_438px] lg:justify-between lg:gap-0">
             <div className="mx-auto min-w-0 w-full max-w-[508px] lg:mx-0">
               <div className="relative h-[508px] overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">

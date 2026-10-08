@@ -19,11 +19,11 @@ export default function ReferralOfferHeroSection() {
   const discountPct = Math.round(discountRate * 100);
 
   // Figma 1920 기준 일러스트는 x 897(컨테이너 오른쪽보다 10px 바깥까지), 아래 여백은 텍스트와 같은 124px.
-  // 태블릿은 문구 옆 남은 폭에 맞춰 축소, 모바일은 문구 아래 화면 폭으로 놓는다.
+  // 태블릿은 문구 옆 남은 폭에 맞춰 축소, 모바일은 문구 위에 화면 폭으로 놓는다.
   const visual = (
     <div
       aria-hidden="true"
-      className="relative aspect-[693/441] min-w-0 [container-type:inline-size] max-md:mb-10 max-md:mt-6 max-md:w-full md:max-lg:ml-auto md:max-lg:max-w-[693px] md:max-lg:flex-1 lg:-mr-[10px] lg:mb-[124px] lg:w-[693px] lg:shrink-0"
+      className="relative aspect-[693/441] min-w-0 [container-type:inline-size] max-md:mb-6 max-md:mt-4 max-md:w-full md:max-lg:ml-auto md:max-lg:max-w-[693px] md:max-lg:flex-1 lg:-mr-[10px] lg:mb-[124px] lg:w-[693px] lg:shrink-0"
     >
       <Image
         src={offerIllustration}

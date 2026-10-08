@@ -58,9 +58,10 @@ export default function ReferralHeroFrame({ discountPct, visual, animateIntro = 
         aria-hidden="true"
       />
 
-      {/* 768px 이상은 문구 왼쪽·비주얼 오른쪽 구도를 유지하고 비주얼만 축소, 768px 미만은 문구 아래로 쌓는다. */}
-      <div className="relative z-10 mx-auto flex max-md:flex-col max-md:px-5 max-md:pt-[var(--header-height)] md:max-lg:items-center md:max-lg:gap-6 md:max-lg:px-8 md:max-lg:pb-14 md:max-lg:pt-[calc(var(--header-height)_+_56px)] lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between lg:pt-[var(--header-height)]">
-        <div className="shrink-0 max-md:pt-10 md:max-lg:w-[300px] lg:mb-[124px]">
+      {/* 768px 이상은 문구 왼쪽·비주얼 오른쪽 구도를 유지하고 비주얼만 축소, 768px 미만은 비주얼을 문구 위로 쌓는다.
+          (DOM 순서는 문구가 먼저 — 제목·버튼이 스크린리더·검색엔진에 먼저 읽히도록 flex-col-reverse로 순서만 뒤집는다.) */}
+      <div className="relative z-10 mx-auto flex max-md:flex-col-reverse max-md:px-5 max-md:pt-[var(--header-height)] md:max-lg:items-center md:max-lg:gap-6 md:max-lg:px-8 md:max-lg:pb-14 md:max-lg:pt-[calc(var(--header-height)_+_56px)] lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between lg:pt-[var(--header-height)]">
+        <div className="shrink-0 max-md:pb-12 md:max-lg:w-[300px] lg:mb-[124px]">
           <span className={`${introItem} inline-flex h-[29px] items-center rounded-full bg-referral-hero-badge px-[15px] text-[14px] font-medium tracking-[-0.04em] text-white`}>
             정기구독 첫 달 할인 적용
           </span>

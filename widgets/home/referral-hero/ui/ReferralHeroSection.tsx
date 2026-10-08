@@ -93,9 +93,9 @@ export default function ReferralHeroSection() {
   const showPhoto = !!profileImageUrl && failedImageUrl !== profileImageUrl;
 
   // Figma 비주얼 박스(622×549, 데스크탑 기준) 하나만 두고, 감싸는 영역 너비에 맞춰 통째로 비율 축소한다.
-  // 태블릿은 문구 옆, 모바일은 문구 아래에서 같은 구도를 유지한다. 캡션 글자만 최소 크기를 보장한다.
+  // 태블릿은 문구 옆, 모바일은 문구 위에서 같은 구도를 유지한다. 캡션 글자만 최소 크기를 보장한다.
   const visual = (
-    <div className="relative aspect-[622/549] min-w-0 [container-type:inline-size] max-md:mx-auto max-md:mb-10 max-md:mt-8 max-md:w-full max-md:max-w-[440px] md:max-lg:ml-auto md:max-lg:max-w-[622px] md:max-lg:flex-1 lg:mb-[68px] lg:w-[622px] lg:shrink-0">
+    <div className="relative aspect-[622/549] min-w-0 [container-type:inline-size] max-md:mx-auto max-md:mb-8 max-md:mt-6 max-md:w-full max-md:max-w-[440px] md:max-lg:ml-auto md:max-lg:max-w-[622px] md:max-lg:flex-1 lg:mb-[68px] lg:w-[622px] lg:shrink-0">
       <div className={`absolute left-0 top-0 h-[549px] w-[622px] ${styles.visualStage}`}>
         <figure className="absolute right-0 top-0 flex w-[374px] flex-col overflow-hidden rounded-[48px_48px_0_48px] shadow-[0_12px_12px_rgba(0,0,0,0.25)]">
           <div className="relative flex h-[445px] items-center justify-center bg-referral-hero-photo-bg">

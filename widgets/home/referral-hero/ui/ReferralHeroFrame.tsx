@@ -1,17 +1,15 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { useHeroChecklistCta } from "@/widgets/home/hero";
+import heroBg from "../assets/referral-hero-bg.webp";
 import styles from "./ReferralHero.module.css";
 
 interface ReferralHeroFrameProps {
   discountPct: number;
-  /** 섹션 전체에 깔리는 배경 (없으면 `--gradient-referral-hero`) */
-  background?: ReactNode;
   /** 텍스트 오른쪽(모바일·태블릿은 아래)에 흐름대로 놓이는 비주얼 */
-  visual?: ReactNode;
-  /** 컨테이너 밖 섹션 기준 장면 — 데스크탑은 absolute 배경, 모바일·태블릿은 텍스트 아래 흐름 */
-  scene?: ReactNode;
+  visual: ReactNode;
   /** 왼쪽 문구(배지 → 제목 → 설명 → 버튼)를 첫 진입 때 순차 등장시킨다 */
   animateIntro?: boolean;
 }
@@ -20,7 +18,7 @@ interface ReferralHeroFrameProps {
  * 초대 랜딩(`/r/{slug}`) Hero 공통 틀.
  * Figma 1920 기준: 상단 배너 아래 높이 713px, 텍스트는 1240 컨테이너 좌측에 정렬된다.
  */
-export default function ReferralHeroFrame({ discountPct, background, visual, scene, animateIntro = false }: ReferralHeroFrameProps) {
+export default function ReferralHeroFrame({ discountPct, visual, animateIntro = false }: ReferralHeroFrameProps) {
   const handleCta = useHeroChecklistCta();
   const introItem = animateIntro ? styles.introItem : "";
 
@@ -30,7 +28,16 @@ export default function ReferralHeroFrame({ discountPct, background, visual, sce
       className="relative overflow-hidden lg:h-[713px]"
       style={{ background: "var(--gradient-referral-hero)" }}
     >
-      {background}
+      {/* Figma 배경(1920×743)은 상단 배너 영역까지 포함한 크기라 아래에 맞춰 위쪽을 잘라낸다.
+          이미지가 뜨기 전·실패 시에는 섹션의 `--gradient-referral-hero`가 보인다. */}
+      <Image
+        src={heroBg}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-bottom"
+      />
 
       <svg
         viewBox="0 0 786 473"
@@ -51,20 +58,21 @@ export default function ReferralHeroFrame({ discountPct, background, visual, sce
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex pt-[var(--header-height)] max-lg:flex-col max-md:px-5 md:max-lg:px-8 lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between">
-        <div className="max-md:pt-10 md:max-lg:pt-14 lg:mb-[124px]">
+      {/* 768px 이상은 문구 왼쪽·비주얼 오른쪽 구도를 유지하고 비주얼만 축소, 768px 미만은 문구 아래로 쌓는다. */}
+      <div className="relative z-10 mx-auto flex max-md:flex-col max-md:px-5 max-md:pt-[var(--header-height)] md:max-lg:items-center md:max-lg:gap-6 md:max-lg:px-8 md:max-lg:pb-14 md:max-lg:pt-[calc(var(--header-height)_+_56px)] lg:h-full lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:items-end lg:justify-between lg:pt-[var(--header-height)]">
+        <div className="shrink-0 max-md:pt-10 md:max-lg:w-[300px] lg:mb-[124px]">
           <span className={`${introItem} inline-flex h-[29px] items-center rounded-full bg-referral-hero-badge px-[15px] text-[14px] font-medium tracking-[-0.04em] text-white`}>
             정기구독 첫 달 할인 적용
           </span>
           <h1
             id="referral-hero-title"
-            className={`${introItem} mt-[14px] font-extrabold tracking-[-0.04em] text-[var(--color-text)] max-md:text-[30px] max-md:leading-[38px] md:max-lg:text-[40px] md:max-lg:leading-[50px] lg:text-[48px] lg:leading-[58px]`}
+            className={`${introItem} mt-[14px] font-extrabold tracking-[-0.04em] text-[var(--color-text)] max-md:text-[30px] max-md:leading-[38px] md:max-lg:text-[34px] md:max-lg:leading-[44px] lg:text-[48px] lg:leading-[58px]`}
           >
             <span className="text-[var(--color-cta-button)]">꼬순박스 PICK</span>
             <br />
             첫 구독 {discountPct}% 이벤트
           </h1>
-          <p className={`${introItem} font-medium tracking-[-0.02em] text-[var(--color-text)] max-md:mt-4 max-md:text-[15px] md:mt-6 md:text-[18px]`}>
+          <p className={`${introItem} font-medium tracking-[-0.02em] text-[var(--color-text)] max-md:mt-4 max-md:text-[15px] md:max-lg:mt-5 md:max-lg:text-[16px] lg:mt-6 lg:text-[18px]`}>
             지금 회원가입을 하고 첫 구독 할인을 받아보세요.
           </p>
           <button
@@ -78,8 +86,6 @@ export default function ReferralHeroFrame({ discountPct, background, visual, sce
 
         {visual}
       </div>
-
-      {scene}
     </section>
   );
 }

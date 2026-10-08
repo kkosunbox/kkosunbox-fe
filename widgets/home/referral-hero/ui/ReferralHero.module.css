@@ -1,4 +1,28 @@
 /*
+ * 비주얼 비율 축소 — 감싸는 영역(container)의 너비 ÷ 디자인 너비(622px)를 배율로 쓴다.
+ * tan(atan2(길이, 길이))는 두 길이의 비를 단위 없는 숫자로 얻는 표준 CSS 방법이다.
+ * 미지원 브라우저는 앞선 고정 배율로 대체된다.
+ */
+.visualStage {
+  transform-origin: top left;
+  scale: 0.6;
+  scale: tan(atan2(100cqw, 622px));
+}
+
+/* 캡션은 축소돼도 화면상 최소 13px / 11px로 보이게 역보정한다. */
+.captionHandle {
+  font-size: 20px;
+  font-size: max(20px, calc(13px / tan(atan2(100cqw, 622px))));
+  line-height: 1.2;
+}
+
+.captionBody {
+  font-size: 16px;
+  font-size: max(16px, calc(11px / tan(atan2(100cqw, 622px))));
+  line-height: 1.19;
+}
+
+/*
  * 초대 Hero 모션 — transform·opacity만 움직인다.
  * 기기 설정의 "동작 줄이기"가 켜져 있으면 전부 생략한다.
  */

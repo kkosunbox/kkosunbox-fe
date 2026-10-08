@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 90, 100],
   },
+  experimental: {
+    // dev 장시간 실행 시 Turbopack 캐시가 4GB+까지 불어나는 문제 대응.
+    // 하드 상한이 아니라 목표치 — 초과 시 오래된 캐시를 비워 재계산한다.
+    turbopackMemoryLimit: 2 * 1024 * 1024 * 1024,
+  },
   async redirects() {
     return [
       {

@@ -201,6 +201,13 @@
   --color-referral-discount-chip-bg: #FFE7E7;    /* 레퍼럴 플랜 카드 추가할인 칩 배경 */
   --color-referral-discount-chip-text: #C00000;  /* 레퍼럴 플랜 카드 추가할인 칩 텍스트 */
   --color-referral-offer-badge: #5B792F;         /* 레퍼럴 공용 첫 달 할인 Hero 상단 배지 */
+  --color-referral-hero-badge: #4C6E1B;          /* 초대 Hero 상단 배지 (딥 그린) */
+  --color-referral-hero-blob: #FDD59F;           /* 초대 Hero 좌상단 블롭 */
+  --color-referral-hero-caption-bg: #FFF5DB;     /* 초대 Hero 인플루언서 카드 하단 캡션 배경 */
+  --color-referral-hero-photo-bg: #F6E1CD;       /* 초대 Hero 인플루언서 사진 없음/로딩 배경 */
+  --color-referral-coupon-title: #F27A00;        /* 초대 Hero 쿠폰 '첫 구독 특별 할인혜택' */
+  --color-referral-coupon-shadow: #C97A3E;       /* 초대 Hero 쿠폰 카드 그림자 */
+  --color-referral-coupon-face-edge: #FFE7C6;    /* 초대 Hero 쿠폰 카드 면 가장자리 (Figma 반투명 면을 배경 위 합성한 색) */
   --color-modal-desc: rgba(34, 34, 38, 0.82); /* 범용 모달 설명 텍스트 */
 
   /* Status */
@@ -282,6 +289,10 @@
   --gradient-hero-dog-fill: linear-gradient(to right, #F6E8D9 50%, #E1C2A6 50%);
   /* Hero 슬라이드1(맞춤간식) 배경 — 강아지 컷아웃 이미지 뒤에 깔리는 옐로 그라디언트 */
   --gradient-hero-custom-snack: linear-gradient(180deg, #FDEB9A 0%, #FDE692 72.55%, #FED766 100%);
+  --gradient-referral-hero: linear-gradient(90deg, #FEF7E8 0%, #FEF5E3 32%, #FDE9C9 48%, #FDD9AB 66%, #FDD9AB 100%); /* 초대 Hero 배경 */
+  --gradient-referral-hero-header-shade: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%); /* 초대 Hero 투명 헤더 가독성 그늘 */
+  --gradient-referral-coupon-face: radial-gradient(112% 74% at 61% 43%, #FFFFFF 0%, var(--color-referral-coupon-face-edge) 100%); /* 초대 Hero 쿠폰 카드 면 (가운데 흰색 → 가장자리 크림, 불투명) */
+  --gradient-referral-coupon-stroke: linear-gradient(-44deg, #FFFFFF 0%, #FFDAB5 44%, #FFFFFF 100%); /* 초대 Hero 쿠폰 카드 2px 테두리 */
 
 
   --gradient-inquiry-bg: linear-gradient(105deg, var(--color-surface-warm) 0%, #ffffff 40%, var(--color-card-standard) 100%);
@@ -537,6 +548,13 @@
   --color-referral-discount-chip-bg: var(--color-referral-discount-chip-bg);
   --color-referral-discount-chip-text: var(--color-referral-discount-chip-text);
   --color-referral-offer-badge: var(--color-referral-offer-badge);
+  --color-referral-hero-badge: var(--color-referral-hero-badge);
+  --color-referral-hero-blob: var(--color-referral-hero-blob);
+  --color-referral-hero-caption-bg: var(--color-referral-hero-caption-bg);
+  --color-referral-hero-photo-bg: var(--color-referral-hero-photo-bg);
+  --color-referral-coupon-title: var(--color-referral-coupon-title);
+  --color-referral-coupon-shadow: var(--color-referral-coupon-shadow);
+  --color-referral-coupon-face-edge: var(--color-referral-coupon-face-edge);
   --color-modal-desc: var(--color-modal-desc);
 
   /* Status */

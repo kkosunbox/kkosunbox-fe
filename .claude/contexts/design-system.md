@@ -93,6 +93,13 @@
 | `--color-hero-third-cta` | `#89431D` | Hero 슬라이드3 CTA 버튼 |
 | `--color-hero-cta-bg` | `#454545` | Hero CTA 버튼 배경 |
 | `--color-referral-offer-badge` | `#5B792F` | 레퍼럴 공용 첫 달 할인 Hero 상단 배지 |
+| `--color-referral-hero-badge` | `#4C6E1B` | 초대 Hero 상단 배지 |
+| `--color-referral-hero-blob` | `#FDD59F` | 초대 Hero 좌상단 블롭 |
+| `--color-referral-hero-caption-bg` | `#FFF5DB` | 초대 Hero 인플루언서 카드 캡션 배경 |
+| `--color-referral-hero-photo-bg` | `#F6E1CD` | 초대 Hero 인플루언서 사진 없음/로딩 배경 |
+| `--color-referral-coupon-title` | `#F27A00` | 초대 Hero 쿠폰 타이틀 텍스트 |
+| `--color-referral-coupon-shadow` | `#C97A3E` | 초대 Hero 쿠폰 카드 그림자 |
+| `--color-referral-coupon-face-edge` | `#FFE7C6` | 초대 Hero 쿠폰 카드 면 가장자리 |
 
 ### CTA / About
 
@@ -184,6 +191,10 @@
 | `--gradient-hero` | `radial-gradient(#F9D6B5→#ECA265)` | Hero 섹션 배경 |
 | `--gradient-hero-dog-fill` | `linear-gradient(→, #F6E8D9 50% / #E1C2A6 50%)` | Hero 슬라이드3(강아지) 데스크탑 좌우 여백 채움 (하드스톱, 사실상 단색 2분할) |
 | `--gradient-hero-custom-snack` | `linear-gradient(180deg, #FDEB9A→#FDE692→#FED766)` | Hero 슬라이드1(맞춤간식) 배경 (강아지 컷아웃 이미지 뒤) |
+| `--gradient-referral-hero` | `linear-gradient(90deg, #FEF7E8→#FDE9C9→#FDD9AB)` | 초대 Hero 배경 |
+| `--gradient-referral-hero-header-shade` | `linear-gradient(180deg, rgba(0,0,0,.4)→0)` | 초대 Hero 투명 헤더 그늘 |
+| `--gradient-referral-coupon-face` | `radial-gradient(112% 74% at 61% 43%, #FFF→--color-referral-coupon-face-edge)` | 초대 Hero 쿠폰 카드 면 |
+| `--gradient-referral-coupon-stroke` | `linear-gradient(-44deg, #FFF→#FFDAB5→#FFF)` | 초대 Hero 쿠폰 카드 2px 테두리 (마스크로 테두리만 노출) |
 | `--gradient-inquiry-hero` | `linear-gradient(263.72deg, …)` | 문의 페이지 상단 히어로 (블루→피치) |
 | `--gradient-checklist-hero` | `linear-gradient(268.21deg, …)` | 체크리스트 페이지 상단 히어로 (피치→크림) |
 

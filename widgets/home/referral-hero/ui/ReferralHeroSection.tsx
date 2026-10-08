@@ -1,255 +1,153 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @next/next/no-img-element -- 인플루언서 프로필은 API가 제공하는 동적 URL이다. */
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/shared/ui";
+import Image from "next/image";
 import { useReferral } from "@/features/referral/model";
-import referralHeroBg from "../assets/main-hero-referal-bg.webp";
-import referralHeroBgMobile from "../assets/main-hero-referral-bg-mobile.webp";
-import referralHeroBgTablet from "../assets/main-hero-referral-bg-tablet.webp";
-import referralHeroCenterCard from "../assets/main-hero-referal-center-card.webp";
-import referralHeroCenterCard15Percent from "../assets/main-hero-referal-center-card-15-percent.webp";
-import referralHeroSubtitle from "../assets/main-hero-referal-subtitle.svg";
-import referralHeroTitle from "../assets/main-hero-referral-title.svg";
-import referralHeroTitlePc from "../assets/main-hero-referral-title-pc.svg";
-import referralHeroNonPcLeftTopTwinkle from "../assets/main-hero-referral-non-pc-left-top-twinkle.png";
-import referralHeroNonPcLeftBottomTwinkle from "../assets/main-hero-referral-non-pc-left-bottom-twinkle.png";
-import referralHeroNonPcRightTopTwinkle from "../assets/main-hero-referral-non-pc-right-top-twinkle.png";
-import referralHeroNonPcRightBottomTwinkle from "../assets/main-hero-referral-non-pc-right-bottom-twinkle.png";
-import referralHeroLeftTwinkle from "../assets/main-hero-referal-left-twinkle.svg";
-import referralHeroRightTwinkle from "../assets/main-hero-referal-right-twinkle.svg";
-import referralHeroRightTwinkleExtra from "../assets/main-hero-referal-right-twinkle-extra.svg";
+import logo from "@/shared/assets/logo-main.svg";
+import cloverIcon from "../assets/referral-hero-clover.svg";
+import ribbonIcon from "../assets/referral-hero-ribbon.svg";
+import dotIcon from "../assets/referral-hero-dot.svg";
+import couponStem from "../assets/referral-hero-coupon-stem.svg";
+import heroBg from "../assets/referral-hero-bg.webp";
+import ReferralHeroFrame from "./ReferralHeroFrame";
+import styles from "./ReferralHero.module.css";
 
+/**
+ * 마지막 글자를 읽었을 때의 받침 유무로 주격 조사(이/가)를 고른다.
+ * - 한글: 받침 유무 그대로
+ * - 영문 대문자: 알파벳 이름으로 읽는다(TV → 티비 → 가). 엘·엠·엔·알만 받침이 있다.
+ * - 영문 소문자: 단어로 읽는다(kim → 킴 → 이). 모음으로 끝나면 받침 없음.
+ * - 숫자: 읽는 소리(0 영, 1 일, 3 삼, 6 육, 7 칠, 8 팔은 받침 있음)
+ */
+function subjectParticle(name: string): "이" | "가" {
+  const last = name.trim().slice(-1);
+  const code = last.charCodeAt(0);
+  if (code >= 0xac00 && code <= 0xd7a3) return (code - 0xac00) % 28 === 0 ? "가" : "이";
+  if (/[A-Z]/.test(last)) return /[LMNR]/.test(last) ? "이" : "가";
+  if (/[a-z]/.test(last)) return /[aeiouy]/.test(last) ? "가" : "이";
+  if (/[0-9]/.test(last)) return /[013678]/.test(last) ? "이" : "가";
+  return "이";
+}
+
+/**
+ * Figma 쿠폰(340×216 바운딩, 카드 321×154를 7° 회전).
+ * 내부 좌표는 회전 전 카드 기준이며, Figma 3x 원본을 카드 축으로 투영해 측정한 값이다.
+ */
+function ReferralCoupon({ discountPct, className }: { discountPct: number; className: string }) {
+  return (
+    <div aria-hidden="true" className={`absolute h-[216px] w-[340px] ${className}`}>
+      <div className={`absolute left-[8.2px] top-[42.9px] h-[154px] w-[321px] ${styles.couponFloat}`}>
+        <div className="absolute inset-0 rotate-[7deg]">
+          {/* 그림자는 별도 레이어 — 쿠폰이 떠오를 때 opacity만으로 옅어지게 한다. */}
+          <div className={`absolute inset-0 rounded-[12px] shadow-[0_6px_8px_var(--color-referral-coupon-shadow)] ${styles.couponShadow}`} />
+          {/* 면은 가운데 흰색 → 가장자리 크림색. 불투명하게 칠해 뒤 썸네일이 비치지 않게 한다. */}
+          <div
+            className="absolute inset-0 overflow-hidden rounded-[12px]"
+            style={{ background: "var(--gradient-referral-coupon-face)" }}
+          >
+            <div className="absolute inset-y-0 right-0 w-[75px] bg-[var(--color-cta-button)]" />
+          </div>
+          {/* 2px 그라데이션 테두리 — 마스크로 테두리 영역만 남겨 면·탭 위에 얹는다. */}
+          <div
+            className="pointer-events-none absolute inset-0 rounded-[12px] p-[2px]"
+            style={{
+              background: "var(--gradient-referral-coupon-stroke)",
+              mask: "linear-gradient(black, black) content-box exclude, linear-gradient(black, black)",
+              WebkitMask: "linear-gradient(black, black) content-box xor, linear-gradient(black, black)",
+            }}
+          />
+          {/* 리본띠 SVG는 자체로 7.04° 기울어 있어, 카드 안에서는 그만큼 되돌려 카드 기준 수직으로 세운다.
+              회전 기준점은 띠 아래 끝 중심(1.69, 176.7) — Figma처럼 카드 왼쪽 29.75px, 카드 하단(153.4)에서 끝나게 맞춘다.
+              되돌려 세우면 세로 길이가 177.8px로 늘어 Figma(176.8px)보다 위로 1px 솟으므로 세로를 0.994배로 맞춘다. */}
+          <Image
+            src={couponStem}
+            alt=""
+            width={41}
+            height={177}
+            className="absolute left-[28.06px] top-[-23.3px] origin-[1.69px_176.7px] -rotate-[7.04deg] scale-y-[0.994]"
+          />
+          <p
+            className="absolute left-[72px] top-[29.6px] whitespace-nowrap text-[16px] font-bold leading-[19px] tracking-[-0.04em] text-referral-coupon-title"
+            style={{ textShadow: "0 1.3px 0 rgba(255, 255, 255, 0.55)" }}
+          >
+            첫 구독 특별 할인혜택
+          </p>
+          <strong className="absolute left-[139px] top-[94px] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-[family-name:var(--font-gantari)] text-[76px] font-bold leading-[64px] tracking-[-0.04em] text-[var(--color-why-choose-text)]">
+            {discountPct}%
+          </strong>
+          <span className="absolute left-[283.5px] top-[77px] -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-[16px] font-bold tracking-[0.08em] text-white">
+            COUPON
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 인플루언서 프로필 페이지가 공개된 slug의 Hero — 인플루언서 사진 카드 + 첫 구독 쿠폰. */
 export default function ReferralHeroSection() {
-  const router = useRouter();
   const { influencerName, discountRate, profileImageUrl } = useReferral();
   const discountPct = Math.round(discountRate * 100);
-  const cardSrc =
-    discountPct === 15
-      ? referralHeroCenterCard15Percent.src
-      : referralHeroCenterCard.src;
-  const [profileError, setProfileError] = useState(false);
-  const showProfile = !!profileImageUrl && !profileError;
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+  const showPhoto = !!profileImageUrl && failedImageUrl !== profileImageUrl;
 
-  return (
-    <section className="relative overflow-hidden max-lg:h-[585px] lg:h-[674px]">
-      {/* 배경 이미지 — 모바일 (< 768px) */}
-      <img
-        src={referralHeroBgMobile.src}
-        alt=""
-        className="md:hidden absolute inset-0 w-full h-full object-cover object-top"
-        loading="eager"
-        decoding="async"
-      />
-      {/* 배경 이미지 — 태블릿 (768px – 1199px) */}
-      <img
-        src={referralHeroBgTablet.src}
-        alt=""
-        className="max-md:hidden lg:hidden absolute inset-0 w-full h-full object-cover object-center"
-        loading="eager"
-        decoding="async"
-      />
-      {/* 배경 이미지 — 데스크탑 (≥ 1200px) */}
-      <img
-        src={referralHeroBg.src}
-        alt=""
-        className="max-lg:hidden absolute inset-0 w-full h-full object-cover object-center"
-        loading="eager"
-        decoding="async"
-      />
-
-      <div className="relative z-10 h-full mx-auto max-w-[1440px] flex items-stretch px-4 lg:px-0">
-        {/* 왼쪽: 인플루언서 원형 프로필
-            1920px Figma 기준: left 325px, top 229px, size 240px
-            lg viewport(1440px): background clips 240px each side → circle at x=85 from content left */}
-        <div className="max-md:hidden flex-shrink-0 md:flex md:items-start md:justify-center md:pt-[248px] md:w-[220px] lg:block lg:pt-0 lg:w-[330px] lg:pl-[85px]">
-          {showProfile && (
-            <div className="md:w-[170px] md:h-[170px] lg:mt-[185px] lg:w-[240px] lg:h-[240px] rounded-full overflow-hidden ring-4 ring-white/60 shadow-lg">
+  // Figma 비주얼 박스(622×549, 데스크탑 기준). 태블릿은 0.85배 축소, 모바일은 캡션 가독성을 위해 별도 배치.
+  const visual = (
+    <div className="relative shrink-0 max-lg:mt-8 max-lg:self-center max-md:mb-10 max-md:h-[334px] max-md:w-[300px] max-sm:origin-top max-sm:scale-[0.9] md:max-lg:mb-12 md:max-lg:h-[467px] md:max-lg:w-[529px] lg:mb-[68px] lg:h-[549px] lg:w-[622px]">
+      <div className="absolute left-0 top-0 max-md:h-full max-md:w-full md:h-[549px] md:w-[622px] md:max-lg:origin-top-left md:max-lg:scale-[0.85]">
+        <figure className="absolute right-0 top-0 flex flex-col overflow-hidden shadow-[0_12px_12px_rgba(0,0,0,0.25)] max-md:w-[200px] max-md:rounded-[32px_32px_0_32px] md:w-[374px] md:rounded-[48px_48px_0_48px]">
+          <div className="relative flex items-center justify-center bg-referral-hero-photo-bg max-md:h-[250px] md:h-[445px]">
+            {showPhoto ? (
               <img
                 src={profileImageUrl}
                 alt={`${influencerName} 프로필`}
-                className="w-full h-full object-cover object-top"
+                className="absolute inset-0 h-full w-full object-cover object-center"
                 loading="eager"
                 decoding="async"
-                onError={() => setProfileError(true)}
+                onError={() => setFailedImageUrl(profileImageUrl)}
               />
-            </div>
-          )}
-        </div>
-
-        {/* 중앙: 메인 콘텐츠 */}
-        <div className="flex-1 flex flex-col items-center max-md:pt-[58px] md:pt-[108px] lg:pt-[109px] pb-[48px]">
-          {/* 모바일 전용 인플루언서 원형 사진 */}
-          {showProfile && (
-            <div className="md:hidden mb-5 w-[110px] h-[110px] rounded-full overflow-hidden ring-4 ring-white/60 shadow-md">
-              <img
-                src={profileImageUrl}
-                alt={`${influencerName} 프로필`}
-                className="w-full h-full object-cover object-top"
-                loading="eager"
-                decoding="async"
-                onError={() => setProfileError(true)}
-              />
-            </div>
-          )}
-
-          {/* 서브타이틀: [인플루언서명] + "님과 함께하는 특별혜택" SVG */}
-          <div className="flex items-baseline gap-2 flex-wrap justify-center max-md:mb-[8px] md:mb-[6px] lg:mb-3">
-            <span
-              className="font-bold tracking-[-0.04em] text-[var(--color-hero-heading)] max-md:text-[16px] md:text-[20px] lg:text-[28px]"
-              style={{ fontFamily: '"GMarketSans"' }}
-            >
-              [{influencerName}]
+            ) : (
+              <Image src={logo} alt="" className="h-auto w-[45%] opacity-40" />
+            )}
+          </div>
+          <figcaption className="flex flex-col items-center bg-referral-hero-caption-bg text-center max-md:h-[84px] max-md:px-3 max-md:pt-[11px] md:h-[104px] md:px-6 md:pt-[14px]">
+            <strong className="block max-w-full truncate font-[600] tracking-[-0.04em] text-[var(--color-cta-button)] max-md:text-[15px] max-md:leading-[18px] md:text-[20px] md:leading-[24px]">
+              @{influencerName}
+            </strong>
+            <span className="block break-all font-[600] tracking-[-0.04em] text-[var(--color-text)] max-md:mt-1 max-md:text-[11px] max-md:leading-[15px] md:mt-2 md:text-[16px] md:leading-[19px]">
+              반려생활을 함께하는 {influencerName}
+              {subjectParticle(influencerName)}
+              <br />
+              꼬순박스를 추천해요.
             </span>
-            <img
-              src={referralHeroSubtitle.src}
-              alt="님과 함께하는 특별혜택"
-              width={200}
-              height={19}
-              className="max-md:w-[140px] md:w-[170px] lg:w-[200px] h-auto"
-              decoding="async"
-            />
-          </div>
+          </figcaption>
+        </figure>
 
-          {/* 꼬순박스 구독 제목 SVG — 모바일·태블릿 전용 */}
-          <img
-            src={referralHeroTitle.src}
-            alt="꼬순박스 구독"
-            width={245}
-            height={48}
-            className="max-lg:block lg:hidden w-[245px] h-auto max-md:mb-[12px] md:mb-[16px]"
-            loading="eager"
-            decoding="async"
-          />
+        <ReferralCoupon
+          discountPct={discountPct}
+          className="left-0 max-md:top-[126px] max-md:origin-top-left max-md:scale-[0.56] md:top-[247px]"
+        />
 
-          {/* 꼬순박스 구독 제목 SVG — 데스크탑·와이드 전용 */}
-          <img
-            src={referralHeroTitlePc.src}
-            alt="꼬순박스 구독"
-            width={372}
-            height={81}
-            className="max-lg:hidden w-[372px] h-auto mb-6"
-            loading="eager"
-            decoding="async"
-          />
-
-          {/* 카드 + 반짝이 */}
-          <div className="max-md:mb-4 md:mb-[55px] lg:mb-4">
-            {/* 모바일·태블릿 전용: non-PC twinkles */}
-            <div className="lg:hidden relative w-[331px] h-[174px]">
-              <div
-                className="absolute w-[240px]"
-                style={{ left: 39, top: 0, animation: "referralFloat 2.8s ease-in-out -1.4s infinite" }}
-              >
-                <img
-                  src={cardSrc}
-                  alt=""
-                  className="w-full h-auto drop-shadow-lg"
-                  loading="eager"
-                  decoding="async"
-                />
-              </div>
-              <img
-                src={referralHeroNonPcLeftTopTwinkle.src}
-                alt=""
-                className="absolute"
-                style={{ left: 0, top: 38, width: 14, height: 15, animation: "referralTwinklePulse 2s ease-in-out infinite" }}
-                decoding="async"
-              />
-              <img
-                src={referralHeroNonPcLeftBottomTwinkle.src}
-                alt=""
-                className="absolute"
-                style={{ left: 5, top: 70, width: 26, height: 30, animation: "referralFloat 3.2s ease-in-out 0.8s infinite" }}
-                decoding="async"
-              />
-              <img
-                src={referralHeroNonPcRightTopTwinkle.src}
-                alt=""
-                className="absolute"
-                style={{ left: 305, top: 79, width: 26, height: 30, animation: "referralFloat 3.9s ease-in-out 0.5s infinite" }}
-                decoding="async"
-              />
-              <img
-                src={referralHeroNonPcRightBottomTwinkle.src}
-                alt=""
-                className="absolute"
-                style={{ left: 298, top: 109, width: 15, height: 14, animation: "referralTwinklePulse 2.4s ease-in-out 1.2s infinite" }}
-                decoding="async"
-              />
-            </div>
-
-            {/* 데스크탑·와이드 전용: PC twinkles */}
-            <div className="max-lg:hidden flex items-center gap-[35px]">
-              <img
-                src={referralHeroLeftTwinkle.src}
-                alt=""
-                width={37}
-                height={74}
-                className="w-[37px] h-auto"
-                style={{ animation: "referralFloat 2.4s ease-in-out infinite" }}
-                decoding="async"
-              />
-              <div
-                className="relative w-[280px]"
-                style={{ animation: "referralFloat 2.8s ease-in-out -1.4s infinite" }}
-              >
-                <img
-                  src={cardSrc}
-                  alt=""
-                  className="w-full h-auto drop-shadow-lg"
-                  loading="eager"
-                  decoding="async"
-                />
-              </div>
-              <div className="relative">
-                <img
-                  src={referralHeroRightTwinkle.src}
-                  alt=""
-                  width={35}
-                  height={41}
-                  className="relative w-[35px] h-auto"
-                  style={{ top: -6, animation: "referralFloat 3s ease-in-out 0.6s infinite" }}
-                  decoding="async"
-                />
-                <img
-                  src={referralHeroRightTwinkleExtra.src}
-                  alt=""
-                  width={18}
-                  height={21}
-                  className="absolute w-[18px] h-auto"
-                  style={{ left: -24, top: 42, animation: "referralTwinklePulse 2.2s ease-in-out 0.3s infinite" }}
-                  decoding="async"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 혜택 안내 문구 */}
-          <p className="text-[var(--color-hero-heading)] font-semibold max-md:mb-3 md:mb-[26px] lg:mb-3 max-lg:text-[13px] lg:text-[14px]">
-            지금 회원가입하면 첫 구독 시 {discountPct}% 할인 혜택!
-          </p>
-
-          {/* CTA 버튼 */}
-          <Button
-            onClick={() => router.push("/subscribe")}
-            variant="primary"
-            size="lg"
-            style={{
-              background: "var(--color-cta-button)",
-              borderRadius: 12,
-            }}
-            className="text-white font-semibold tracking-[-0.04em] whitespace-nowrap transition-opacity hover:opacity-90 max-md:w-[240px] md:w-[240px] lg:w-[282px] lg:text-[16px]"
-          >
-            꼬순박스 {discountPct}% 할인받기
-          </Button>
-        </div>
-
-        {/* 오른쪽 여백 (배경 이미지 강아지 영역) */}
-        <div className="max-md:hidden flex-shrink-0 md:w-[220px] lg:w-[330px]" />
+        <Image src={dotIcon} alt="" width={16} height={14} className={`absolute ${styles.dotTwinkle} max-md:left-[70px] max-md:top-[50px] max-md:w-[10px] md:left-[183px] md:top-[96px] md:w-[16px]`} />
+        <Image src={cloverIcon} alt="" width={34} height={34} className={`absolute ${styles.cloverWiggle} max-md:left-[18px] max-md:top-[74px] max-md:w-[22px] md:left-[101px] md:top-[142px] md:w-[34px]`} />
+        <Image src={ribbonIcon} alt="" width={94} height={78} className={`absolute ${styles.ribbonSway} max-md:left-[62px] max-md:top-[82px] max-md:w-[56px] md:left-[171px] md:top-[159px] md:w-[94px]`} />
       </div>
-    </section>
+    </div>
   );
+
+  // Figma 배경(1920×743)은 상단 배너 영역까지 포함한 크기라 아래에 맞춰 위쪽을 잘라낸다.
+  const background = (
+    <Image
+      src={heroBg}
+      alt=""
+      fill
+      priority
+      sizes="100vw"
+      className="object-cover object-bottom"
+    />
+  );
+
+  return <ReferralHeroFrame discountPct={discountPct} background={background} visual={visual} animateIntro />;
 }

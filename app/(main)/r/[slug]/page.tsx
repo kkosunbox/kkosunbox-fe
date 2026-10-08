@@ -11,6 +11,8 @@ import { StatsBar } from "@/widgets/home/stats-bar";
 import { ReferralPackagePlansSection } from "@/widgets/home/referral-package-plans";
 import { WhyGallerySection } from "@/widgets/home/why-gallery";
 import { ReviewsSection } from "@/widgets/home/reviews";
+import { HomeRedesign } from "@/widgets/home/redesign";
+import { HOME_REDESIGN_ENABLED } from "@/shared/config/homeRedesign";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -54,11 +56,19 @@ export default async function ReferralLandingPage({ params }: Props) {
           <ReferralOfferHeroSection />
         )}
       </div>
+      {/* 메인과 같은 본문을 쓴다. 초대 할인 문구·요금은 ReferralProvider 값으로 각 섹션이 바꿔 그린다.
+          푸터는 `/r/*`에서 레이아웃의 FooterGate가 렌더한다. */}
       <div className="relative z-[1]">
-        <StatsBar />
-        <ReferralPackagePlansSection />
-        <WhyGallerySection />
-        <ReviewsSection />
+        {HOME_REDESIGN_ENABLED ? (
+          <HomeRedesign />
+        ) : (
+          <>
+            <StatsBar />
+            <ReferralPackagePlansSection />
+            <WhyGallerySection />
+            <ReviewsSection />
+          </>
+        )}
       </div>
     </div>
   );

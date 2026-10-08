@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/features/auth";
-import { useProfile } from "@/features/profile/ui/ProfileProvider";
-import { openChecklistForm } from "@/shared/lib/checklistModal";
+import { useHeroChecklistCta } from "../model/useHeroChecklistCta";
 
 const HOME_HERO_VIDEOS = [
   { src: "/videos/home-hero.mp4", type: "video/mp4" },
@@ -17,9 +14,7 @@ const HERO_SIDE_SHADE_STOPS =
   "rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.38) 32%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0) 78%, rgba(0,0,0,0) 100%";
 
 export default function HeroSection() {
-  const { isLoggedIn } = useAuth();
-  const { profile } = useProfile();
-  const router = useRouter();
+  const handleCta = useHeroChecklistCta();
   const [videoReady, setVideoReady] = useState(false);
   const [posterLoaded, setPosterLoaded] = useState(false);
   const posterRef = useRef<HTMLImageElement>(null);
@@ -35,20 +30,6 @@ export default function HeroSection() {
       setPosterLoaded(true);
     }
   }, []);
-
-  function handleCta() {
-    if (!isLoggedIn) {
-      router.push("/login?next=/checklist");
-      return;
-    }
-
-    if ((profile?.checklistAnswers?.length ?? 0) > 0) {
-      router.push("/checklist/result");
-      return;
-    }
-
-    openChecklistForm();
-  }
 
   return (
     <section

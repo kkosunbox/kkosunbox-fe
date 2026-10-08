@@ -1,0 +1,68 @@
+/*
+ * 초대 Hero 모션 — transform·opacity만 움직인다.
+ * 기기 설정의 "동작 줄이기"가 켜져 있으면 전부 생략한다.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. 쿠폰 둥실 — 있는 듯 없는 듯 아주 작게. 오를 때 그림자가 살짝 옅어진다 (같은 주기·곡선으로 동기화) */
+  .couponFloat {
+    animation: couponFloat 4s ease-in-out infinite;
+  }
+
+  .couponShadow {
+    animation: couponShadow 4s ease-in-out infinite;
+  }
+
+  /* 2. 왼쪽 문구 순차 등장 — 배지 → 제목 → 설명 → 버튼, 첫 진입 1회 */
+  .introItem {
+    animation: introFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .introItem:nth-child(2) { animation-delay: 0.08s; }
+  .introItem:nth-child(3) { animation-delay: 0.16s; }
+  .introItem:nth-child(4) { animation-delay: 0.24s; }
+
+  /* 3. 장식 — 미세하게만. 주기를 어긋나게 해 같이 움직이지 않게 한다 */
+  .cloverWiggle {
+    animation: cloverWiggle 4.4s ease-in-out infinite;
+  }
+
+  .dotTwinkle {
+    animation: dotTwinkle 3.8s ease-in-out infinite;
+  }
+
+  .ribbonSway {
+    transform-origin: 20% 90%;
+    animation: ribbonSway 5.2s ease-in-out infinite;
+  }
+}
+
+@keyframes couponFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes couponShadow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes introFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cloverWiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes dotTwinkle {
+  0%, 100% { opacity: 0.8; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes ribbonSway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}

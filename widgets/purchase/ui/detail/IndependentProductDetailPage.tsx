@@ -4,7 +4,7 @@
 import { Fragment, useRef, useState } from "react";
 import type { ProductDto } from "@/features/product/api/types";
 import { CartAddedModal, useAddToCart } from "@/features/cart";
-import { usePurchaseChoice } from "@/features/guest-order";
+import { MEDIA_MD2_MIN } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
 import Stars from "@/widgets/subscribe/plans/ui/reviews/Stars";
 import ProductReviewList from "@/widgets/subscribe/plans/ui/reviews/ProductReviewList";
@@ -13,6 +13,7 @@ import { useProductReviews } from "@/widgets/subscribe/plans/ui/reviews/useProdu
 import ProductDeliveryInfo from "@/widgets/subscribe/plans/ui/detail/ProductDeliveryInfo";
 import ProductSupportTab from "@/widgets/subscribe/plans/ui/detail/ProductSupportTab";
 import IndependentProductInfoImages from "./IndependentProductInfoImages";
+import PackageSheetHost from "../package/PackageSheetHost";
 
 type TabKey = "info" | "review" | "delivery" | "support";
 
@@ -30,8 +31,9 @@ function tabLabel(tab: (typeof TABS)[number], reviewTotal: number) {
 }
 
 export default function IndependentProductDetailPage({ product }: { product: ProductDto }) {
-  const { requestPurchase, purchaseChoiceModal } = usePurchaseChoice();
   const cartAction = useAddToCart();
+  // 바텀시트를 쓰는 크기(<950px, 단품몰과 같은 기준)에선 담기 후 모달 대신 내 패키지 바텀시트를 띄운다.
+  const [showPackageSheet, setShowPackageSheet] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const tabsRef = useRef<HTMLDivElement | null>(null);
@@ -43,15 +45,9 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
     : null;
 
   function handleAddToCart() {
-    if (!unavailable) void cartAction.add(product.id, quantity);
-  }
-
-  function handleBuy() {
     if (unavailable) return;
-    requestPurchase({
-      memberHref: `/purchase/order?productId=${product.id}&quantity=${quantity}`,
-      guestHref: `/purchase/guest-order?productId=${product.id}&quantity=${quantity}`,
-    });
+    setShowPackageSheet(!window.matchMedia(MEDIA_MD2_MIN).matches);
+    void cartAction.add(product.id, quantity);
   }
 
   function handleReviewCountClick() {
@@ -77,10 +73,11 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
 
   return (
     <main className="w-full pb-20 pt-[calc(var(--header-offset)+40px)]">
-      {purchaseChoiceModal}
-      {cartAction.cart && (
+      {cartAction.cart && showPackageSheet && <PackageSheetHost onMore={cartAction.close} />}
+      {cartAction.cart && !showPackageSheet && (
         <CartAddedModal
           cart={cartAction.cart}
+          policy={cartAction.policy}
           recommendations={cartAction.recommendations}
           pendingProductId={cartAction.pendingProductId}
           error={cartAction.error}
@@ -158,24 +155,14 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
                 +
               </button>
             </div>
-            <div className="mt-8 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                disabled={unavailable || cartAction.pendingProductId !== null}
-                onClick={handleAddToCart}
-                className="h-12 rounded-[8px] border border-[var(--color-cta-button)] font-semibold text-[var(--color-cta-button)] disabled:opacity-40"
-              >
-                장바구니
-              </button>
-              <button
-                type="button"
-                disabled={unavailable}
-                onClick={handleBuy}
-                className="h-12 rounded-[8px] bg-[var(--color-cta-button)] font-semibold text-white disabled:opacity-40"
-              >
-                {product.isSoldOut ? "품절" : product.isSalesPaused ? "판매 중지" : "구매하기"}
-              </button>
-            </div>
+            <button
+              type="button"
+              disabled={unavailable || cartAction.pendingProductId !== null}
+              onClick={handleAddToCart}
+              className="mt-8 h-12 w-full rounded-[8px] bg-[var(--color-cta-button)] font-semibold text-white disabled:opacity-40"
+            >
+              {product.isSoldOut ? "품절" : product.isSalesPaused ? "판매 중지" : "패키지에 담기"}
+            </button>
           </div>
         </div>
 

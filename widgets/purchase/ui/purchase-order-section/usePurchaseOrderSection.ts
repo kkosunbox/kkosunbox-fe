@@ -7,6 +7,7 @@ import type { DeliveryAddress } from "@/features/delivery-address/api/types";
 import { isTossUserCancel } from "@/features/billing/lib/requestTossBillingAuth";
 import { createProductOrder } from "@/features/product/api/productApi";
 import { getErrorMessage } from "@/shared/lib/api";
+import { useOrderPolicy } from "@/shared/lib/orderPolicy";
 import { computePurchaseTotals, validatePurchaseCheckout } from "./purchaseOrderHelpers";
 import { useOrderAgreements } from "./hooks/useOrderAgreements";
 import { usePurchaseCoupon } from "./hooks/usePurchaseCoupon";
@@ -73,10 +74,12 @@ export function usePurchaseOrderSection({
     couponCode: appliedCouponCode,
   });
 
+  const orderPolicy = useOrderPolicy();
   const { basePrice, couponDiscount, totalDiscount, originalShippingFee, shippingFee, total } = computePurchaseTotals({
     unitPrice: purchaseProduct.price,
     quantity,
     quote,
+    baseShippingFee: orderPolicy?.shippingFee,
   });
 
   const { paymentWidget, paymentReady, widgetLoadError, reloadWidget, updateAmount } =

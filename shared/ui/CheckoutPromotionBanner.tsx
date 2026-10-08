@@ -4,8 +4,8 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 export function CheckoutPromotionBanner() {
   return (
     <Image
-      src="/images/checkout-welcome-discount.png"
-      alt="신규회원 구독 15% 할인 — 웰컴 신규회원 할인"
+      src="/images/checkout-subscribe-discount.webp"
+      alt="꼬순박스 구독하면 15% 할인 — 매달 맛있는 간식이 집 앞으로 찾아가요!"
       width={602}
       height={208}
       quality={HIGH_IMAGE_QUALITY}

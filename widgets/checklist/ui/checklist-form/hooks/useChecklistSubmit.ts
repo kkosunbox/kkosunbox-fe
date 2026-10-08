@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type RefObject } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useModal } from "@/shared/ui";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { getProfileImagePresignedUrl, uploadToS3 } from "@/shared/lib/asset";
@@ -22,6 +22,8 @@ import {
   buildUpdateProfileBody,
   fallbackRecommend,
 } from "../../checklist-shared/checklistDomain";
+
+const CHECKLIST_RESULT_PATH = "/checklist/result";
 
 export interface UseChecklistSubmitResult {
   isAnalyzing: boolean;
@@ -54,6 +56,7 @@ export function useChecklistSubmit({
   onClose: () => void;
 }): UseChecklistSubmitResult {
   const router = useRouter();
+  const pathname = usePathname();
   const { isLoggedIn, user } = useAuth();
   const { profile: activeProfile, profiles, refreshProfile, setActiveProfileId } =
     useProfile();
@@ -187,7 +190,10 @@ export function useChecklistSubmit({
       localStorage.setItem(`kkosun_checklist_done_${user.id}`, "true");
     }
 
-    router.push(`/checklist/result?tier=${tier}`);
+    router.push(`${CHECKLIST_RESULT_PATH}?tier=${tier}`);
+    // 결과 페이지에서 "다시하기"로 연 경우 pathname이 바뀌지 않아
+    // 경로 변경 기반 자동 닫힘이 동작하지 않으므로 직접 닫는다.
+    if (pathname === CHECKLIST_RESULT_PATH) onClose();
   }
 
   return { isAnalyzing, isSaving, handleSaveProfile, handleSubmit };

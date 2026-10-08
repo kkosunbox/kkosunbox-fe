@@ -56,6 +56,9 @@
 | `--color-subscription-header-bg` | `#FFF7E8` | 구독관리 페이지 상단 배경 밴드 (구독상세와 동일 색상) |
 | `--color-subscription-detail-header-bg` | `#FFF7E8` | 구독상세 페이지 상단 배경 밴드 |
 | `--color-subscribe-promo-bg` | `#FFF7E8` | 구매관리 하단 구독 유도 배너 배경 |
+| `--color-package-panel-bg` | `#FFF6DF` | 단품몰 내 패키지 패널·모바일 바텀시트 배경 |
+| `--color-package-progress-track` | `#E2E2E2` | 내 패키지 진행바 트랙 |
+| `--color-package-divider` | `#D9D9D9` | 내 패키지 선택상품 구분선 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-product-detail-gif-gap` | `#F8F6E1` | 단품 상세 GIF 하단 피그마 여백 |
 | `--color-drawer-item-active` | `#FFF7EC` | 모바일 드로워 네비 활성 아이템 배경 |

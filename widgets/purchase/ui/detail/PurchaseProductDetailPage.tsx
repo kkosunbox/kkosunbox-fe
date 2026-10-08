@@ -4,7 +4,7 @@
 import { Fragment, useRef, useState } from "react";
 import Image from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
-import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
+import { MEDIA_MAX_MD_SIZES, MEDIA_MD2_MIN } from "@/shared/config/breakpoints";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { ShippingFeeWaiver } from "@/shared/ui";
 import {
@@ -23,7 +23,7 @@ import ProductInfoImages from "@/widgets/subscribe/plans/ui/detail/ProductInfoIm
 import ProductDeliveryInfo from "@/widgets/subscribe/plans/ui/detail/ProductDeliveryInfo";
 import ProductSupportTab from "@/widgets/subscribe/plans/ui/detail/ProductSupportTab";
 import { CartAddedModal, useAddToCart } from "@/features/cart";
-import { usePurchaseChoice } from "@/features/guest-order";
+import PackageSheetHost from "../package/PackageSheetHost";
 
 interface Props {
   pkg: PackageData;
@@ -75,8 +75,9 @@ function ProductPrice({ product }: { product: PackagePurchaseProduct }) {
 }
 
 export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relatedPlanId, productId, isSoldOut, isSalesPaused, imageUrl }: Props) {
-  const { requestPurchase, purchaseChoiceModal } = usePurchaseChoice();
   const cartAction = useAddToCart();
+  // 바텀시트를 쓰는 크기(<950px, 단품몰과 같은 기준)에선 담기 후 모달 대신 내 패키지 바텀시트를 띄운다.
+  const [showPackageSheet, setShowPackageSheet] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<TabKey>("info");
   const mobileTabsRef = useRef<HTMLDivElement | null>(null);
@@ -100,16 +101,10 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
   const total = purchaseProduct.price * quantity;
   const selectedTheme = { tierLabel: TIER_LABEL[pkg.tier], colorVar: pkg.colorVar };
 
-  function handleBuy() {
-    if (isUnavailable || productId === null) return;
-    requestPurchase({
-      memberHref: `/purchase/order?tier=${pkg.tier}&quantity=${quantity}`,
-      guestHref: `/purchase/guest-order?productId=${productId}&quantity=${quantity}`,
-    });
-  }
-
   function handleAddToCart() {
-    if (!isUnavailable && productId !== null) void cartAction.add(productId, quantity);
+    if (isUnavailable || productId === null) return;
+    setShowPackageSheet(!window.matchMedia(MEDIA_MD2_MIN).matches);
+    void cartAction.add(productId, quantity);
   }
 
   const TopBar = (
@@ -128,8 +123,8 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
-      {purchaseChoiceModal}
-      {cartAction.cart && <CartAddedModal cart={cartAction.cart} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={cartAction.add} onReplaceRecommendation={cartAction.replaceRecommendation} onClose={cartAction.close} />}
+      {cartAction.cart && showPackageSheet && <PackageSheetHost onMore={cartAction.close} />}
+      {cartAction.cart && !showPackageSheet && <CartAddedModal cart={cartAction.cart} policy={cartAction.policy} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={cartAction.add} onReplaceRecommendation={cartAction.replaceRecommendation} onClose={cartAction.close} />}
       {reviewState.lightbox ? (
         <ReviewImageLightbox
           urls={reviewState.lightbox.urls}
@@ -253,18 +248,14 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                 {formatKrwPrice(total)}
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={handleAddToCart} disabled={isUnavailable || cartAction.pendingProductId !== null} className="flex h-12 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
             <button
               type="button"
-              onClick={handleBuy}
-              disabled={isUnavailable}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
-              style={{ background: "var(--color-cta-button)" }}
+              onClick={handleAddToCart}
+              disabled={isUnavailable || cartAction.pendingProductId !== null}
+              className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
             >
-              {isSoldOut ? "품절" : isSalesPaused ? "판매 중지" : "구매하기"}
+              {isSoldOut ? "품절" : isSalesPaused ? "판매 중지" : "패키지에 담기"}
             </button>
-            </div>
           </div>
 
           <div ref={mobileTabsRef} className="mt-6 scroll-mt-4 border-b border-[var(--color-text-muted)] pb-3">
@@ -433,18 +424,14 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
                     {formatKrwPrice(total)}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 md:mt-8 lg:mt-8">
-                <button type="button" onClick={handleAddToCart} disabled={isUnavailable || cartAction.pendingProductId !== null} className="flex h-[48px] items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] text-body-16-sb text-[var(--color-cta-button)] disabled:opacity-40">장바구니</button>
                 <button
                   type="button"
-                  onClick={handleBuy}
-                  disabled={isUnavailable}
-                  className="flex h-[48px] w-full items-center justify-center rounded-[8px] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
-                  style={{ background: "var(--color-cta-button)" }}
+                  onClick={handleAddToCart}
+                  disabled={isUnavailable || cartAction.pendingProductId !== null}
+                  className="flex h-[48px] w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-16-sb tracking-[-0.02em] text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40 md:mt-8"
                 >
-                  {isSoldOut ? "품절" : isSalesPaused ? "판매 중지" : "구매하기"}
+                  {isSoldOut ? "품절" : isSalesPaused ? "판매 중지" : "패키지에 담기"}
                 </button>
-                </div>
               </div>
             </div>
           </div>

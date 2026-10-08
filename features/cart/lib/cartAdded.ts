@@ -1,18 +1,8 @@
 import type { CartDto } from "../api/types";
 import type { ProductDto } from "@/features/product/api";
 
-export function getCartShippingProgress(cart: CartDto) {
-  const threshold = Math.max(0, cart.freeShippingThreshold);
-  const amount = Math.max(0, cart.itemsAmount);
-  const isFree = cart.shippingFee === 0;
-  return {
-    amount,
-    threshold,
-    isFree,
-    remaining: isFree ? 0 : Math.max(0, threshold - amount),
-    percent: isFree ? 100 : threshold > 0 ? Math.min(100, (amount / threshold) * 100) : 0,
-  };
-}
+/** 담기 모달 추천에서 제외할 상품 카테고리 이름 (id는 환경마다 달라 이름으로 판별) */
+const EXCLUDED_RECOMMENDATION_CATEGORY_NAMES = new Set(["패키지"]);
 
 export function getCartRecommendations(
   products: ProductDto[],
@@ -38,6 +28,7 @@ export function getCartRecommendationPool(
   const excluded = new Set(excludedProductIds);
   const candidates = products.filter((product) => {
     if (excluded.has(product.id) || product.isSoldOut || product.isSalesPaused ||
+      EXCLUDED_RECOMMENDATION_CATEGORY_NAMES.has(product.category?.name.trim() ?? "") ||
       (product.stockQuantity != null && product.stockQuantity <= 0)) return false;
     excluded.add(product.id);
     return true;

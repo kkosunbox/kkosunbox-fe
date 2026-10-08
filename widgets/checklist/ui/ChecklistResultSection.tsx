@@ -47,6 +47,8 @@ export default function ChecklistResultSection({
 
   return (
     <ChecklistResult
+      // 체크리스트 재제출 시 프로필이 갱신되면 추천 결과를 다시 불러오도록 리마운트한다.
+      key={profile ? `${profile.id}-${profile.updatedAt}` : "guest"}
       petInfo={profile ? profileToPetInfo(profile) : DEFAULT_PET_INFO}
       avatarSrc={profile?.profileImageUrl ?? null}
       userId={user?.id ?? null}

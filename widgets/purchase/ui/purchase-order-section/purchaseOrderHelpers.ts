@@ -24,9 +24,12 @@ export function computePurchaseTotals({
   unitPrice,
   quantity,
   quote,
+  baseShippingFee = PURCHASE_SHIPPING_FEE,
 }: {
   unitPrice: number;
   quantity: number;
+  /** 취소선으로 보여줄 원배송비 — 주문 정책 API 값. 조회 전·실패 시 기본 상수 */
+  baseShippingFee?: number;
   /**
    * `POST /v1/products/{id}/price` 응답 — 쿠폰 할인·최종 결제액(100원 단위 내림)을
    * 서버가 이미 계산해 내려준다. 아직 응답이 없으면(초기 렌더·조회 중) null — 그동안은
@@ -38,7 +41,7 @@ export function computePurchaseTotals({
   const couponDiscount = quote?.couponDiscountAmount ?? 0;
   const totalDiscount = couponDiscount;
   const productTotal = quote?.discountedItemsAmount ?? Math.max(0, basePrice - totalDiscount);
-  const originalShippingFee = PURCHASE_SHIPPING_FEE;
+  const originalShippingFee = baseShippingFee;
   const shippingFee = quote?.shippingFee ?? 0;
   const total = quote?.amount ?? productTotal + shippingFee;
 

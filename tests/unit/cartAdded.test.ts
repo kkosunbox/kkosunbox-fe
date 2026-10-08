@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getCartRecommendationPool, getCartRecommendations, getCartShippingProgress } from "@/features/cart/lib/cartAdded";
+import { getCartRecommendationPool, getCartRecommendations } from "@/features/cart/lib/cartAdded";
+import { getPackageProgress, getPackageProgressPercent, PACKAGE_PANEL_MARKERS } from "@/features/cart/lib/packageProgress";
 import type { CartDto } from "@/features/cart/api/types";
 import type { ProductDto } from "@/features/product/api/types";
 
@@ -13,20 +14,36 @@ const product = (id: number, overrides: Partial<ProductDto> = {}): ProductDto =>
 });
 
 describe("장바구니 담기 모달", () => {
-  it("서버 기준액에 대한 남은 금액과 진행률을 계산한다", () => {
-    expect(getCartShippingProgress(cart)).toMatchObject({ remaining: 11000, percent: 78, isFree: false });
-    expect(getCartShippingProgress({ ...cart, freeShippingThreshold: 60000 }).remaining).toBe(21000);
+  const policy = { minimumOrderAmount: 20000, freeShippingThreshold: 50000, shippingFee: 3000 };
+  const orderable = { ...cart, items: [{ id: 1, productId: 1, productName: "상품", unitPrice: 39000, quantity: 1, itemAmount: 39000, stockQuantity: null, isOrderable: true, createdAt: "" }] };
+
+  it("최소 주문·무료배송까지 남은 금액과 고정 마커 기준 진행률을 계산한다", () => {
+    const progress = getPackageProgress(orderable, policy);
+    expect(progress).toMatchObject({ remainingToMinimum: 0, remainingToFree: 11000, minimumReached: true, isFree: false, shippingFee: 4000 });
+    expect(getPackageProgressPercent(progress, PACKAGE_PANEL_MARKERS)).toBeCloseTo(21.8 + (19000 / 30000) * 56.4);
+    const below = getPackageProgress({ ...orderable, itemsAmount: 10000 }, policy);
+    expect(below).toMatchObject({ minimumReached: false, remainingToMinimum: 10000 });
+    expect(getPackageProgressPercent(below, PACKAGE_PANEL_MARKERS)).toBeCloseTo(10.9);
   });
   it("무료배송은 서버가 확정한 배송비를 따른다", () => {
-    expect(getCartShippingProgress({ ...cart, shippingFee: 0 })).toMatchObject({ remaining: 0, percent: 100, isFree: true });
+    const free = getPackageProgress({ ...orderable, shippingFee: 0 }, policy);
+    expect(free).toMatchObject({ remainingToFree: 0, isFree: true });
+    expect(getPackageProgressPercent(free, PACKAGE_PANEL_MARKERS)).toBe(100);
   });
-  it("기준액을 넘거나 기준액이 0이어도 진행률을 안전하게 표시한다", () => {
-    expect(getCartShippingProgress({ ...cart, itemsAmount: 70000 }).percent).toBe(100);
-    expect(getCartShippingProgress({ ...cart, freeShippingThreshold: 0 }).percent).toBe(0);
+  it("빈 패키지는 주문 불가이며 정책의 기본 배송비를 보여준다", () => {
+    const empty = getPackageProgress({ ...cart, itemsAmount: 0, shippingFee: 0 }, policy);
+    expect(empty).toMatchObject({ minimumReached: false, isFree: false, shippingFee: 3000 });
+    expect(getPackageProgressPercent(empty, PACKAGE_PANEL_MARKERS)).toBe(0);
+    expect(getPackageProgress(null, null)).toMatchObject({ minimumReached: false, orderableIds: [] });
   });
   it("품절·판매중지·재고 0 상품을 제외하고 최대 3개를 추천한다", () => {
     const products = [product(1, { isSoldOut: true }), product(2, { isSalesPaused: true }), product(3, { stockQuantity: 0 }), product(4), product(5), product(6), product(7)];
     expect(getCartRecommendations(products, cart, () => 0.999).map((p) => p.id)).toEqual([4, 5, 6]);
+  });
+  it("패키지 카테고리 상품은 추천하지 않는다", () => {
+    const packageCategory = { id: 6, name: "패키지", sortOrder: 0 };
+    const products = [product(1, { categoryId: 6, category: packageCategory }), product(2), product(3)];
+    expect(getCartRecommendationPool(products, () => 0.999).map((p) => p.id)).toEqual([2, 3]);
   });
   it("방금 담은 상품·장바구니 상품·중복 상품은 추천하지 않는다", () => {
     const withItems: CartDto = {

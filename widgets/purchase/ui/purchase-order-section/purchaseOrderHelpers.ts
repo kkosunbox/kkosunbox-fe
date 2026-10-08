@@ -8,7 +8,6 @@ export const QUANTITY_MIN = 1;
 export const QUANTITY_MAX = 99;
 export const PURCHASE_WIDGET_ELEMENT_ID = "purchase-payment-widget";
 export const PURCHASE_AGREEMENT_ELEMENT_ID = "purchase-payment-agreement";
-export const PURCHASE_AGREEMENTS_PANEL_ID = "purchase-agreements-panel";
 
 export interface PurchaseTotals {
   basePrice: number;
@@ -54,22 +53,16 @@ export type CheckoutGuardResult =
   | { sink: "phoneError"; message: string };
 
 export function validatePurchaseCheckout({
-  agreeAll,
   selectedAddress,
   newAddr,
   hasPaymentWidget,
   productId,
 }: {
-  agreeAll: boolean;
   selectedAddress: DeliveryAddress | null;
   newAddr: NewAddrState;
   hasPaymentWidget: boolean;
   productId: number | null;
 }): CheckoutGuardResult {
-  if (!agreeAll) {
-    return { sink: "submitError", message: "필수 약관에 동의해 주세요." };
-  }
-
   if (!selectedAddress) {
     const rawPhone = digitsOnly(newAddr.phoneNumber);
     if (

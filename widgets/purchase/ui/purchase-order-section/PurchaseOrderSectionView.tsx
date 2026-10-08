@@ -36,7 +36,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
 
       <div className="bg-white">
         <div
-          className="mx-auto w-full max-w-[1288px] px-6 max-md:py-6 md:pt-[52px] md:pb-[110px]"
+          className="mx-auto max-md:w-full max-md:px-6 max-md:py-6 md:pt-[52px] md:pb-[110px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]"
         >
           <div className="grid items-start max-md:gap-y-9 md:grid-cols-[minmax(0,1fr)_1px_280px] md:gap-x-6 lg:grid-cols-[minmax(0,835fr)_1px_minmax(0,300fr)] lg:gap-x-[52px]">
             {/* 좌측 — 제품 · 배송지 · 결제수단 · 배송방법 */}
@@ -93,7 +93,7 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
             <div className="max-md:hidden self-stretch bg-[var(--color-text-muted)]" />
 
             {/* 우측 — 결제 정보 · 약관 · 결제 버튼 */}
-            <div className="flex min-w-0 flex-col gap-6">
+            <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-[calc(var(--header-offset)_+_24px)]">
               <PurchaseOrderSummaryCard
                 open={vm.openSections.summary}
                 onToggle={() => vm.toggleSection("summary")}
@@ -103,16 +103,6 @@ export function PurchaseOrderSectionView({ pkg, purchaseProduct, imageUrl, relat
                 shippingFee={vm.shippingFee}
                 total={vm.total}
                 quantity={vm.quantity}
-                agreeOpen={vm.agreeOpen}
-                agreeTerms={vm.agreeTerms}
-                agreePrivacy={vm.agreePrivacy}
-                agreeAge={vm.agreeAge}
-                agreeAll={vm.agreeAll}
-                onToggleAgreePanel={vm.toggleAgreePanel}
-                onToggleTerms={vm.toggleTerms}
-                onTogglePrivacy={vm.togglePrivacy}
-                onToggleAge={vm.toggleAge}
-                onAgreeAll={vm.handleAgreeAll}
                 submitError={vm.submitError}
                 isPaying={vm.isPaying}
                 paymentReady={vm.paymentReady && !vm.isQuoting}

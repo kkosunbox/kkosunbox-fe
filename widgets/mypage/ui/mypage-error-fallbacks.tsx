@@ -13,8 +13,8 @@ function ErrorMessage() {
 
 export function ProfileSectionErrorFallback() {
   return (
-    <section className="max-lg:pb-6 max-lg:pt-6 lg:h-[258px] lg:pb-3 lg:pt-3">
-      <div className="mx-auto flex h-full w-full max-w-content items-center justify-center max-lg:px-6 lg:px-0">
+    <section className="max-lg:pb-6 max-lg:pt-6 lg:h-full">
+      <div className="mx-auto flex h-full w-full items-center justify-center max-lg:max-w-content max-lg:px-6 lg:min-h-[562px] lg:rounded-[12px] lg:bg-white lg:px-5">
         <ErrorMessage />
       </div>
     </section>
@@ -24,7 +24,7 @@ export function ProfileSectionErrorFallback() {
 export function SubscriptionCardErrorFallback() {
   return (
     <div className="relative max-lg:mb-5 lg:h-[186px]">
-      <div className="flex h-full max-lg:min-h-[199px] items-center justify-center rounded-[20px] bg-[var(--color-surface-light)] px-6 py-5 max-lg:rounded-[16px] lg:h-[186px]">
+      <div className="flex h-full max-lg:min-h-[199px] items-center justify-center rounded-[20px] max-lg:bg-[var(--color-surface-light)] lg:bg-white px-6 py-5 max-lg:rounded-[16px] lg:h-[186px]">
         <ErrorMessage />
       </div>
     </div>

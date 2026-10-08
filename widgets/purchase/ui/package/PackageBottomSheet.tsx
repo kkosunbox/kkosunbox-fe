@@ -14,8 +14,8 @@ interface Props {
   onMore: () => void;
 }
 
-/** 하단 고정 요소가 가리는 높이 — 카카오 상담 버튼이 이 값만큼 올라간다 (KakaoTalkProvider) */
-const INSET_VAR = "--floating-bottom-inset";
+/** 시트가 보이는 동안 <html>에 다는 표시 — 카카오 상담 버튼이 이 값을 보고 숨는다 (KakaoTalkProvider) */
+const OPEN_ATTR = "data-package-sheet";
 
 function ChevronRight() {
   return (
@@ -29,7 +29,14 @@ const TITLE = "text-[16px] font-semibold leading-[19px] tracking-[-0.04em] text-
 const SWITCH = "flex items-center gap-1 text-[14px] font-semibold leading-[17px] tracking-[-0.04em] text-[var(--color-text-emphasis)]";
 const BUTTON = "h-10 rounded-lg text-[14px] font-semibold leading-[1.5] tracking-[-0.02em]";
 /** 올라오기·내려가기 시간 — 닫을 때 이만큼 기다렸다가 호출부에 알린다 */
-const SLIDE_DURATION_MS = 300;
+const SLIDE_DURATION_MS = 350;
+/**
+ * 슬라이드는 translate 속성이 아닌 transform(translate3d)으로 한다 — 모바일 Safari 등은 translate 속성 전환을
+ * GPU로 합성하지 않아 끊긴다. 곡선은 감속형(iOS 시트와 유사).
+ */
+const SLIDE = "[will-change:transform] transition-transform duration-[350ms] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none starting:[transform:translate3d(0,100%,0)]";
+const SLIDE_SHOWN = "[transform:translate3d(0,0,0)]";
+const SLIDE_HIDDEN = "[transform:translate3d(0,100%,0)]";
 
 /** 모바일·태블릿(<950px) 하단 내 패키지 바텀시트 — 그 이상은 PC 패널을 쓴다. 열지 말지는 호출부가 렌더 여부로 정한다 */
 export default function PackageBottomSheet({ pkg, canPurchase, onPurchase, onMore }: Props) {
@@ -42,6 +49,8 @@ export default function PackageBottomSheet({ pkg, canPurchase, onPurchase, onMor
   function handleMore() {
     if (closing) return;
     setClosing(true);
+    // 카카오 상담 버튼은 시트가 내려가는 동안 다시 나타나게 바로 표시를 뗀다.
+    document.documentElement.removeAttribute(OPEN_ATTR);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.setTimeout(onMore, reduceMotion ? 0 : SLIDE_DURATION_MS);
   }
@@ -51,20 +60,27 @@ export default function PackageBottomSheet({ pkg, canPurchase, onPurchase, onMor
     if (!sheet) return;
     const root = document.documentElement;
     const desktop = window.matchMedia(MEDIA_MD2_MIN);
-    // 시트가 가리는 만큼 페이지 끝(푸터)을 띄우고, 카카오 상담 버튼도 시트 위로 올린다.
+    // 시트가 보이는 크기에서만 카카오 상담 버튼을 숨기고, 시트가 가리는 만큼 페이지 끝(푸터)을 띄운다.
+    // 페이지 하단 여백은 전체 레이아웃을 다시 계산하게 하므로 슬라이드가 끝난 뒤에 적용해 모바일에서 끊기지 않게 한다.
+    let slideDone = false;
     const sync = () => {
-      const inset = desktop.matches ? "0px" : `${sheet.offsetHeight}px`;
-      root.style.setProperty(INSET_VAR, inset);
-      document.body.style.paddingBottom = inset;
+      if (desktop.matches) root.removeAttribute(OPEN_ATTR);
+      else root.setAttribute(OPEN_ATTR, "open");
+      if (slideDone) document.body.style.paddingBottom = desktop.matches ? "" : `${sheet.offsetHeight}px`;
     };
+    const slideTimer = window.setTimeout(() => {
+      slideDone = true;
+      sync();
+    }, SLIDE_DURATION_MS);
     const observer = new ResizeObserver(sync);
     observer.observe(sheet);
     desktop.addEventListener("change", sync);
     sync();
     return () => {
+      window.clearTimeout(slideTimer);
       observer.disconnect();
       desktop.removeEventListener("change", sync);
-      root.style.removeProperty(INSET_VAR);
+      root.removeAttribute(OPEN_ATTR);
       document.body.style.paddingBottom = "";
     };
   }, []);
@@ -74,7 +90,7 @@ export default function PackageBottomSheet({ pkg, canPurchase, onPurchase, onMor
     <section
       ref={sheetRef}
       aria-label="내 패키지"
-      className={`md2:hidden fixed inset-x-0 bottom-0 z-40 rounded-t-[20px] transition-[translate] duration-300 ease-out motion-reduce:transition-none starting:translate-y-full ${closing ? "translate-y-full" : "translate-y-0"} bg-[var(--color-package-panel-bg)] shadow-[0_-4px_12px_rgba(0,0,0,0.16)] ${view === "items" ? "pb-[calc(24px+env(safe-area-inset-bottom))]" : "pb-[calc(21px+env(safe-area-inset-bottom))]"}`}
+      className={`md2:hidden fixed inset-x-0 bottom-0 z-40 rounded-t-[20px] ${SLIDE} ${closing ? SLIDE_HIDDEN : SLIDE_SHOWN} bg-[var(--color-package-panel-bg)] shadow-[0_-4px_12px_rgba(0,0,0,0.16)] ${view === "items" ? "pb-[calc(24px+env(safe-area-inset-bottom))]" : "pb-[calc(21px+env(safe-area-inset-bottom))]"}`}
     >
       <div className="mx-auto w-full px-6 pt-[23px] md:max-w-[640px]">
         {view === "summary" ? (

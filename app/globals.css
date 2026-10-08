@@ -89,7 +89,7 @@
   --color-recommend-reason-bg: #FFFBE9; /* 체크리스트 결과 추천이유 패널 배경 (Figma Rectangle 974) */
   --color-recommend-reason-title: #AB4B00; /* 체크리스트 추천이유 ✔ 제목 색상 (Figma) */
   --color-checklist-fallback-bg: #F5F3EC; /* 마이페이지 체크리스트 미작성 폴백 오버레이 배경 */
-  --color-checklist-summary-scrollbar-thumb: #C4C4C4; /* 마이페이지 체크리스트 요약 스크롤 thumb */
+  --color-checklist-summary-scrollbar-thumb: #D0D0D0; /* 마이페이지 체크리스트 요약 스크롤 thumb */
   --color-surface-peach: #FFF3E6; /* Warm Peach — 구독관리 상단 배경 (Figma Rectangle 972) */
   --color-subscription-header-bg: #FFF7E8; /* 구독관리 페이지 상단 배경 밴드 (구독상세와 동일 색상으로 통일) */
   --color-subscription-detail-header-bg: #FFF7E8; /* 구독상세 페이지 상단 배경 밴드 */
@@ -99,7 +99,10 @@
   --color-package-divider: #D9D9D9; /* 내 패키지 선택상품 구분선 */
   --color-surface-light: #F8F8F8;
   --color-product-detail-gif-gap: #F8F6E1; /* 단품 상세 GIF 하단 피그마 여백 */
-  --color-drawer-item-active: #FFF7EC; /* 모바일 드로워 네비 활성 아이템 배경 (Figma Frame 10597) */
+  --color-drawer-item-active: #FFF9E9; /* 모바일 드로워 네비 활성 아이템 배경 (Figma 메뉴 리디자인) */
+  --color-drawer-header-bg: #FFFCF6; /* 모바일 드로워 상단 프로필 영역 배경 */
+  --color-profile-menu-surface: #FFF9E9; /* 프로필 드롭다운 헤더·모바일 드로워 장식 도형 */
+  --color-menu-shortcut-icon: #E9AA70; /* 모바일 드로워 단축 메뉴 아이콘 */
   --color-hero-bg: #F6E1CE;           /* Hero 섹션 배경 (리디자인) */
   --color-hero-truck-bg: #FEDFA2;     /* Hero 슬라이드1 (트럭) 배경 */
   --color-hero-shape: #F2D0B1;        /* Hero 장식 도형 배경 */
@@ -109,6 +112,9 @@
   --color-support-faq-surface: #FFF7E8;   /* Support FAQ 패널 배경 (Figma Secondary-BG) */
   --support-faq-active-color: #FFF2DA;    /* Support 열린 FAQ 아코디언 원본 색상 */
   --color-withdraw-profile-bg: #FDF5E7;   /* 탈퇴 확인 페이지 프로필 배너 배경 */
+  --color-mypage-greeting-surface: #FFF2BF; /* 마이페이지 PC 인사 배너 배경 */
+  --color-checklist-summary-label: #757575; /* 마이페이지 PC 체크리스트 요약 항목 라벨 */
+  --color-profile-edit-badge-bg: #F3F3F3;   /* 마이페이지 PC 프로필 사진 편집 버튼 배경 */
   --color-support-banner-heading: #A96937; /* Support CTA 배너 질문 라인 (Gangwon 스타일 대체 시에도 동일 톤) */
   --color-support-hero-side-bg: #FFF2D8; /* Support 히어로 초광폭(>1920px) 좌우 여백 배경 */
   --color-stats-bar-bg: #101010;  /* Home StatsBar 배경 (구 다크 버전, 리디자인 후 미사용 — 다른 참조 없어 보존만) */
@@ -310,8 +316,6 @@
   --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-checklist-button-border: linear-gradient(90deg, #FEEAD7 0%, #ADCEFF 100%); /* 체크리스트 CTA 외곽선 — 가로 블루→피치 */
   --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
-  --gradient-mobile-menu: linear-gradient(132.82deg, #FFFCF9 25.95%, #FFF7E9 94.09%); /* 모바일 드로워 상단 — 웜 크림 */
-  --gradient-dropdown-header: linear-gradient(90deg, #FFFCF9 0%, #FFFCF9 24%, #FFF4D8 62%, #FFEBBA 100%); /* 데스크톱 프로필 드롭다운 헤더 — 30° 레이어 회전 전 원본 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
   --gradient-modal-danger: #F07050;                                               /* 구독 취소/회원 탈퇴 모달 05/07 — 코럴 오렌지 */
   --gradient-modal-restart: linear-gradient(180deg, #A8D4F5 0%, #EEF6FF 100%);  /* 구독 재시작 모달 06 — 라이트 블루 */
@@ -424,6 +428,9 @@
   --color-surface-light: var(--color-surface-light);
   --color-product-detail-gif-gap: var(--color-product-detail-gif-gap);
   --color-drawer-item-active: var(--color-drawer-item-active);
+  --color-drawer-header-bg: var(--color-drawer-header-bg);
+  --color-profile-menu-surface: var(--color-profile-menu-surface);
+  --color-menu-shortcut-icon: var(--color-menu-shortcut-icon);
   --color-hero-bg: var(--color-hero-bg);
   --color-hero-truck-bg: var(--color-hero-truck-bg);
   --color-why-bg: var(--color-why-bg);
@@ -454,6 +461,9 @@
   --color-support-faq-surface: var(--color-support-faq-surface);
   --color-support-faq-active: var(--support-faq-active-color);
   --color-withdraw-profile-bg: var(--color-withdraw-profile-bg);
+  --color-mypage-greeting-surface: var(--color-mypage-greeting-surface);
+  --color-checklist-summary-label: var(--color-checklist-summary-label);
+  --color-profile-edit-badge-bg: var(--color-profile-edit-badge-bg);
   --color-support-banner-heading: var(--color-support-banner-heading);
   --color-support-hero-side-bg: var(--color-support-hero-side-bg);
   --color-stats-bar-bg: var(--color-stats-bar-bg);

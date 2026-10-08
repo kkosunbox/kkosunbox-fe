@@ -30,6 +30,13 @@ export function openKakaoChannelChat() {
   window.Kakao?.Channel.chat({ channelPublicId: CHANNEL_PUBLIC_ID });
 }
 
+/**
+ * 단품몰 내 패키지 바텀시트가 열려 있으면(<html data-package-sheet="open">) 버튼을 숨긴다.
+ * 버튼 자체는 등장 애니메이션(fill: both)이 opacity를 고정하므로, 안쪽을 흐리게 하고 버튼은 visibility로 가린다.
+ */
+const HIDDEN_WHILE_PACKAGE_SHEET = "[html[data-package-sheet=open]_&]:invisible";
+const FADE_WHILE_PACKAGE_SHEET = "[html[data-package-sheet=open]_&]:opacity-0";
+
 export function KakaoTalkProvider() {
   const pathname = usePathname();
   const isPopup = isPopupRoute(pathname);
@@ -62,10 +69,10 @@ export function KakaoTalkProvider() {
         <button
           type="button"
           onClick={openKakaoChannelChat}
-          className="kakao-widget-enter group fixed bottom-[calc(var(--floating-bottom-inset,0px)+16px)] right-3 z-[50] h-[86px] w-[86px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-[calc(var(--floating-bottom-inset,0px)+24px)] md:right-6"
+          className={`kakao-widget-enter group fixed bottom-4 right-3 z-[50] h-[86px] w-[86px] transition-[visibility] duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-cta-button)] md:bottom-6 md:right-6 ${HIDDEN_WHILE_PACKAGE_SHEET}`}
           aria-label="카카오톡으로 상담하기"
         >
-          <span className="block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-transform duration-200 group-hover:scale-[1.025] group-active:scale-[0.98]">
+          <span className={`block h-full w-full drop-shadow-[0_6px_20px_rgba(78,78,78,0.32)] transition-[transform,opacity] duration-200 group-hover:scale-[1.025] group-active:scale-[0.98] motion-reduce:transition-none ${FADE_WHILE_PACKAGE_SHEET}`}>
             <span className="kakao-speech-float absolute left-1/2 top-[-17.125px] z-10 h-[63.25px] w-[162.15px] -translate-x-1/2 max-md:top-[-12.844px] max-md:h-[47.438px] max-md:w-[121.613px]">
               <Image src="/images/kakao-consult-bubble.png" alt="" fill sizes="(max-width: 767px) 122px, 163px" className="object-contain" priority />
             </span>

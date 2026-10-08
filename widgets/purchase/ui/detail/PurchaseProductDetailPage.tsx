@@ -123,7 +123,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
 
   return (
     <section className="flex min-h-full flex-1 flex-col pt-[var(--header-offset)] md:pb-16 lg:pb-16">
-      {cartAction.cart && showPackageSheet && <PackageSheetHost onMore={cartAction.close} />}
+      {cartAction.cart && showPackageSheet && <PackageSheetHost initialCart={cartAction.cart} onMore={cartAction.close} />}
       {cartAction.cart && !showPackageSheet && <CartAddedModal cart={cartAction.cart} policy={cartAction.policy} recommendations={cartAction.recommendations} pendingProductId={cartAction.pendingProductId} error={cartAction.error} onAdd={cartAction.add} onReplaceRecommendation={cartAction.replaceRecommendation} onClose={cartAction.close} />}
       {reviewState.lightbox ? (
         <ReviewImageLightbox

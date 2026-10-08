@@ -27,50 +27,56 @@ function SectionHeaderSkeleton({ tight = false }: { tight?: boolean }) {
   );
 }
 
-/** ProfileSection 레이아웃과 동일한 구조 (크림 배경, 흰 카드 없음) */
+/** ProfileSection 레이아웃과 동일한 구조 (모바일: 크림 배경 / 데스크탑: 좌측 흰 패널) */
 export function ProfileSectionSkeleton() {
   return (
-    <section className="max-lg:pt-1 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
-      <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
-        <div className="relative max-lg:px-7 max-lg:py-7 lg:flex lg:h-full lg:items-center lg:px-7 lg:py-[26px]">
-          <Bone className="lg:hidden absolute top-4 right-7 h-4 w-14" />
-
-          <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:gap-0">
-            <div className="relative flex min-w-0 flex-1 items-start gap-5 lg:min-h-0 lg:items-center lg:gap-8">
-              <Bone className="max-lg:hidden absolute top-0 right-2 h-4 w-14" />
-              <Bone className="h-[80px] w-[80px] shrink-0 rounded-full lg:h-[124px] lg:w-[124px]" />
-              <div className="min-w-0 flex-1 lg:pr-[84px]">
+    <section className="max-lg:pt-1 max-lg:pb-6 lg:h-full">
+      <div className="mx-auto w-full max-lg:max-w-content max-lg:px-6 lg:h-full">
+        <div className="relative px-7 py-7 lg:hidden">
+          <Bone className="absolute top-4 right-7 h-4 w-14" />
+          <div className="flex w-full flex-col gap-4">
+            <div className="flex min-w-0 flex-1 items-start gap-5">
+              <Bone className="h-[80px] w-[80px] shrink-0 rounded-full" />
+              <div className="min-w-0 flex-1">
                 <div className="flex flex-col gap-[12px]">
-                  <Bone className="h-7 w-32 max-lg:h-5" />
-                  <Bone className="h-5 w-24 max-lg:h-4" />
+                  <Bone className="h-5 w-32" />
+                  <Bone className="h-4 w-24" />
                 </div>
-                <div className="mt-3 flex items-center gap-3 lg:mt-[10px]">
-                  <Bone className="h-5 w-16 max-lg:h-4" />
-                  <Bone className="h-5 w-10 max-lg:h-4" />
-                  <Bone className="h-5 w-14 max-lg:h-4" />
+                <div className="mt-3 flex items-center gap-3">
+                  <Bone className="h-4 w-16" />
+                  <Bone className="h-4 w-10" />
+                  <Bone className="h-4 w-14" />
                 </div>
-                <Bone className="mt-1 h-5 w-full max-w-[280px] max-lg:h-4" />
+                <Bone className="mt-1 h-4 w-full max-w-[280px]" />
               </div>
             </div>
-
-            <div
-              className="max-lg:hidden mx-[20px] h-[148px] w-px bg-[var(--color-text-muted)]"
-              aria-hidden
-            />
-
-            <div className="max-lg:hidden lg:w-[358px] lg:flex-none">
-              <Bone className="mb-2.5 h-4 w-16" />
-              <Bone className="h-[138px] w-full rounded-[12px]" />
-            </div>
           </div>
-
-          <div className="mt-4 border-t border-[var(--color-divider-neutral)] pt-4 lg:hidden">
+          <div className="mt-4 border-t border-[var(--color-divider-neutral)] pt-4">
             <Bone className="mb-2.5 h-4 w-16" />
             <Bone className="h-[120px] w-full rounded-[12px]" />
           </div>
         </div>
+
+        <div className="flex h-full flex-col items-center rounded-[12px] bg-white px-5 pt-12 pb-6 max-lg:hidden">
+          <Bone className="h-[80px] w-[80px] shrink-0 rounded-full" />
+          <Bone className="mt-[30px] h-8 w-28" />
+          <Bone className="mt-[11px] h-5 w-20" />
+          <Bone className="mt-3 h-5 w-40" />
+          <Bone className="mt-3 h-5 w-44" />
+          <Bone className="mt-7 min-h-[183px] w-full flex-1 rounded-[12px]" />
+        </div>
       </div>
     </section>
+  );
+}
+
+/** GreetingBanner — 데스크탑 인사 배너 */
+export function GreetingBannerSkeleton() {
+  return (
+    <div className="flex h-[149px] flex-col justify-center gap-3 rounded-[12px] bg-[var(--color-mypage-greeting-surface)] pl-[38px]">
+      <Bone className="h-4 w-44" />
+      <Bone className="h-7 w-[420px] max-w-[80%]" />
+    </div>
   );
 }
 

@@ -14,10 +14,15 @@ export interface OrderPolicyDto {
 }
 
 let policyPromise: Promise<OrderPolicyDto> | null = null;
+/** 이미 받은 정책 — 다음에 마운트되는 화면이 첫 렌더부터 실제 값을 쓰게 한다 (빈 값 → 실제 값 깜빡임 방지) */
+let cachedPolicy: OrderPolicyDto | null = null;
 
 /** 주문 정책은 화면마다 다시 받을 필요가 없어 한 번만 조회한다. 실패하면 다음 호출에서 다시 시도한다. */
 export function loadOrderPolicy() {
-  policyPromise ??= apiClient.get<OrderPolicyDto>("/v1/products/order-policy").catch((err: unknown) => {
+  policyPromise ??= apiClient.get<OrderPolicyDto>("/v1/products/order-policy").then((data) => {
+    cachedPolicy = data;
+    return data;
+  }, (err: unknown) => {
     policyPromise = null;
     throw err;
   });
@@ -26,8 +31,9 @@ export function loadOrderPolicy() {
 
 /** 주문 정책 — 조회 전이거나 실패하면 null (호출부에서 상수 폴백) */
 export function useOrderPolicy() {
-  const [policy, setPolicy] = useState<OrderPolicyDto | null>(null);
+  const [policy, setPolicy] = useState<OrderPolicyDto | null>(() => cachedPolicy);
   useEffect(() => {
+    if (cachedPolicy) return;
     let active = true;
     void loadOrderPolicy().then((data) => { if (active) setPolicy(data); }).catch(() => {});
     return () => { active = false; };

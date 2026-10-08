@@ -10,6 +10,7 @@ export { default as WithdrawConfirmSection } from "./ui/WithdrawConfirmSection";
 export { default as PointHistorySection } from "./ui/PointHistorySection";
 
 export { ProfileSectionLoader } from "./ui/ProfileSectionLoader";
+export { GreetingBannerLoader } from "./ui/GreetingBannerLoader";
 export { SubscriptionCardLoader } from "./ui/SubscriptionCardLoader";
 export { PaymentCardLoader } from "./ui/PaymentCardLoader";
 export { InquiryCardLoader } from "./ui/InquiryCardLoader";
@@ -17,6 +18,7 @@ export { DeliveryCard } from "./ui/DeliveryCard";
 export { DeliveryCardLoader } from "./ui/DeliveryCardLoader";
 export {
   ProfileSectionSkeleton,
+  GreetingBannerSkeleton,
   SubscriptionCardSkeleton,
   PaymentCardSkeleton,
   DeliveryCardSkeleton,

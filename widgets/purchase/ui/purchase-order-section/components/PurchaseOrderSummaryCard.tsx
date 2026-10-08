@@ -1,6 +1,6 @@
-import { SectionCard, ShippingFeeWaiver } from "@/shared/ui";
+import { SectionCard } from "@/shared/ui";
 import { formatKrwPrice } from "@/shared/lib/format";
-import { PurchaseAgreementsPanel } from "./PurchaseAgreementsPanel";
+import { PurchaseAgreementsPanel, type PurchaseAgreements } from "./PurchaseAgreementsPanel";
 
 interface PurchaseOrderSummaryCardProps {
   open: boolean;
@@ -11,17 +11,8 @@ interface PurchaseOrderSummaryCardProps {
   shippingFee: number;
   total: number;
   quantity: number;
-  agreeOpen: boolean;
-  agreeTerms: boolean;
-  agreePrivacy: boolean;
-  /** 생략하면 만 14세 확인 항목을 표시하지 않는다 (비회원 주문) */
-  agreeAge?: boolean;
-  agreeAll: boolean;
-  onToggleAgreePanel: () => void;
-  onToggleTerms: () => void;
-  onTogglePrivacy: () => void;
-  onToggleAge?: () => void;
-  onAgreeAll: () => void;
+  /** 비회원 주문처럼 명시적 약관 동의가 필요할 때만 전달 — 생략하면 안내 문구만 표시 */
+  agreements?: PurchaseAgreements;
   submitError: string | null;
   isPaying: boolean;
   paymentReady: boolean;
@@ -39,16 +30,7 @@ export function PurchaseOrderSummaryCard({
   shippingFee,
   total,
   quantity,
-  agreeOpen,
-  agreeTerms,
-  agreePrivacy,
-  agreeAge,
-  agreeAll,
-  onToggleAgreePanel,
-  onToggleTerms,
-  onTogglePrivacy,
-  onToggleAge,
-  onAgreeAll,
+  agreements,
   submitError,
   isPaying,
   paymentReady,
@@ -70,7 +52,10 @@ export function PurchaseOrderSummaryCard({
           <div className="flex items-center justify-between">
             <span className="text-body-13-m text-[var(--color-text)]">총 배송비</span>
             {originalShippingFee > shippingFee ? (
-              <ShippingFeeWaiver className="text-[var(--color-text)]" />
+              <span className="inline-flex items-center gap-1 text-body-13-m text-[var(--color-text)]">
+                <span className="text-[var(--color-text-secondary)] line-through">{formatKrwPrice(originalShippingFee)}</span>
+                {formatKrwPrice(shippingFee)}
+              </span>
             ) : (
               <span className="text-body-13-m text-[var(--color-text)]">
                 {formatKrwPrice(shippingFee)}
@@ -86,18 +71,7 @@ export function PurchaseOrderSummaryCard({
           <span className="text-price-20-eb text-[var(--color-text)]">{formatKrwPrice(total)}</span>
         </div>
 
-        <PurchaseAgreementsPanel
-          agreeOpen={agreeOpen}
-          agreeTerms={agreeTerms}
-          agreePrivacy={agreePrivacy}
-          agreeAge={agreeAge}
-          agreeAll={agreeAll}
-          onToggleAgreePanel={onToggleAgreePanel}
-          onToggleTerms={onToggleTerms}
-          onTogglePrivacy={onTogglePrivacy}
-          onToggleAge={onToggleAge}
-          onAgreeAll={onAgreeAll}
-        />
+        <PurchaseAgreementsPanel agreements={agreements} />
 
         {submitError ? (
           <p className="text-body-13-m text-red-600" role="alert">

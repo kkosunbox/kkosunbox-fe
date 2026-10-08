@@ -3,11 +3,13 @@ import ErrorBoundary from "@/shared/ui/ErrorBoundary";
 import {
   MypageSection,
   ProfileSectionLoader,
+  GreetingBannerLoader,
   SubscriptionCardLoader,
   PaymentCardLoader,
   InquiryCardLoader,
   DeliveryCardLoader,
   ProfileSectionSkeleton,
+  GreetingBannerSkeleton,
   SubscriptionCardSkeleton,
   PaymentCardSkeleton,
   DeliveryCardSkeleton,
@@ -26,6 +28,11 @@ export default function MyPage() {
             <ProfileSectionLoader />
           </Suspense>
         </ErrorBoundary>
+      }
+      greetingBanner={
+        <Suspense fallback={<GreetingBannerSkeleton />}>
+          <GreetingBannerLoader />
+        </Suspense>
       }
       subscriptionCard={
         <ErrorBoundary fallback={<SubscriptionCardErrorFallback />}>

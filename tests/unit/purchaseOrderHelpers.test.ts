@@ -106,7 +106,6 @@ describe("computePurchaseTotals", () => {
 
 describe("validatePurchaseCheckout", () => {
   const base = {
-    agreeAll: true,
     selectedAddress: SELECTED_ADDRESS,
     newAddr: EMPTY_ADDR_STATE,
     hasPaymentWidget: true,
@@ -115,11 +114,6 @@ describe("validatePurchaseCheckout", () => {
 
   it("모든 조건 충족 → null(통과)", () => {
     expect(validatePurchaseCheckout(base)).toBeNull();
-  });
-
-  it("약관 미동의 → submitError", () => {
-    const result = validatePurchaseCheckout({ ...base, agreeAll: false });
-    expect(result).toEqual({ sink: "submitError", message: "필수 약관에 동의해 주세요." });
   });
 
   it("배송지 미선택 + 신규 입력도 빈칸 → submitError", () => {

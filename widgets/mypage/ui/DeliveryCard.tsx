@@ -78,16 +78,17 @@ export function DeliveryCard({ summary }: DeliveryCardProps) {
   return (
     <DashboardCard className="lg:h-[208px]">
       <SectionHeader title="배송관리" onLinkClick={openAddressPopup} linkLabel="배송지 관리" spacing="tight" />
-      <div className="grid min-h-0 flex-1 grid-cols-3 gap-4 pt-1 max-lg:-mx-3 max-lg:px-[24px] lg:px-2">
+      {/* 데스크탑: Figma 기준 67px 열 3개를 좌우 28px 안쪽에 양끝 정렬 */}
+      <div className="min-h-0 flex-1 max-lg:-mx-3 max-lg:grid max-lg:grid-cols-3 max-lg:gap-4 max-lg:px-[24px] max-lg:pt-1 lg:flex lg:justify-between lg:px-7 lg:pt-2">
         {DELIVERY_STEPS.map((step, index) => {
           const Icon = DELIVERY_ICON_COMPONENTS[index];
           const count = summary[step.key];
           return (
-            <div key={step.label} className="flex flex-col items-center text-center">
+            <div key={step.label} className="flex flex-col items-center text-center lg:w-[67px]">
               <div className="flex h-10 w-10 items-center justify-center text-[var(--color-text-secondary)] max-lg:mb-4 lg:mb-4 [&_svg]:h-10 [&_svg]:w-10">
                 <Icon />
               </div>
-              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-lg:mb-3 lg:mb-2.5">
+              <Text variant="body-16-sb" mobileVariant="body-14-sb" className="leading-[1.3] text-[var(--color-text)] max-lg:mb-3 lg:mb-2.5 lg:whitespace-nowrap lg:leading-[19px] lg:tracking-[-0.04em] lg:text-[var(--color-text-emphasis)]">
                 {step.label}
               </Text>
               <button
@@ -96,7 +97,7 @@ export function DeliveryCard({ summary }: DeliveryCardProps) {
                 className="hover:opacity-70 transition-opacity"
                 aria-label={`${step.label} ${count}건 배송 현황 보기`}
               >
-                <Text as="span" variant="subtitle-20-b" mobileVariant="subtitle-18-b" className="text-primary md:leading-[22px]">
+                <Text as="span" variant="subtitle-20-b" mobileVariant="subtitle-18-b" className="text-primary md:max-lg:leading-[22px] lg:text-title-24-sb lg:leading-[29px] lg:tracking-[-0.04em]">
                   {count}
                 </Text>
               </button>

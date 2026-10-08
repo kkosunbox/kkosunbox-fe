@@ -314,7 +314,7 @@ export default function GuestOrderCheckoutSection({ source }: { source: GuestOrd
 
             <div className="max-md:hidden self-stretch bg-[var(--color-text-muted)]" />
 
-            <div className="flex min-w-0 flex-col gap-6">
+            <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-[calc(var(--header-offset)_+_24px)]">
               <PurchaseOrderSummaryCard
                 open={openSections.summary}
                 onToggle={() => toggleSection("summary")}
@@ -324,14 +324,15 @@ export default function GuestOrderCheckoutSection({ source }: { source: GuestOrd
                 shippingFee={quote?.shippingFee ?? 0}
                 total={quote?.amount ?? 0}
                 quantity={quote?.totalQuantity ?? 0}
-                agreeOpen={agreeOpen}
-                agreeTerms={agreeTerms}
-                agreePrivacy={agreePrivacy}
-                agreeAll={agreeAll}
-                onToggleAgreePanel={() => setAgreeOpen((open) => !open)}
-                onToggleTerms={() => setAgreeTerms((checked) => !checked)}
-                onTogglePrivacy={() => setAgreePrivacy((checked) => !checked)}
-                onAgreeAll={() => { const next = !agreeAll; setAgreeTerms(next); setAgreePrivacy(next); }}
+                agreements={{
+                  open: agreeOpen,
+                  terms: agreeTerms,
+                  privacy: agreePrivacy,
+                  onTogglePanel: () => setAgreeOpen((open) => !open),
+                  onToggleTerms: () => setAgreeTerms((checked) => !checked),
+                  onTogglePrivacy: () => setAgreePrivacy((checked) => !checked),
+                  onAgreeAll: () => { const next = !agreeAll; setAgreeTerms(next); setAgreePrivacy(next); },
+                }}
                 submitError={submitError ?? (isQuoting ? null : quoteError)}
                 notice={minimumNotice}
                 isPaying={isPaying}

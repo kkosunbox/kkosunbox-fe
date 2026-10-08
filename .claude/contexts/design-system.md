@@ -61,8 +61,14 @@
 | `--color-package-divider` | `#D9D9D9` | 내 패키지 선택상품 구분선 |
 | `--color-surface-light` | `#F8F8F8` | 연한 회색 섹션 배경 |
 | `--color-product-detail-gif-gap` | `#F8F6E1` | 단품 상세 GIF 하단 피그마 여백 |
-| `--color-drawer-item-active` | `#FFF7EC` | 모바일 드로워 네비 활성 아이템 배경 |
+| `--color-drawer-item-active` | `#FFF9E9` | 모바일 드로워 네비 활성 아이템 배경 |
+| `--color-drawer-header-bg` | `#FFFCF6` | 모바일 드로워 상단 프로필 영역 배경 |
+| `--color-profile-menu-surface` | `#FFF9E9` | 프로필 드롭다운 헤더·모바일 드로워 장식 도형 |
+| `--color-menu-shortcut-icon` | `#E9AA70` | 모바일 드로워 단축 메뉴 아이콘 |
 | `--color-support-faq-surface` | `#FFF7E8` | 고객센터 FAQ 패널 배경 |
+| `--color-mypage-greeting-surface` | `#FFF2BF` | 마이페이지 PC 인사 배너 배경 |
+| `--color-checklist-summary-label` | `#757575` | 마이페이지 PC 체크리스트 요약 항목 라벨 |
+| `--color-profile-edit-badge-bg` | `#F3F3F3` | 마이페이지 PC 프로필 사진 편집 버튼 배경 |
 | `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 (`--support-faq-active-color` 원본 참조) |
 | `--color-withdraw-profile-bg` | `#FDF5E7` | 탈퇴 확인 페이지 프로필 배너 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |

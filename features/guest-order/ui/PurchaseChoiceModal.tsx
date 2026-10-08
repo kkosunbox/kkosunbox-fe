@@ -25,8 +25,19 @@ export function PurchaseChoiceModal({ onClose, onGuest, onMember }: Props) {
           aria-label="닫기"
           className="absolute right-5 top-5 flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-70"
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" />
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5"
+              stroke="var(--color-text-secondary)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
 
@@ -34,12 +45,13 @@ export function PurchaseChoiceModal({ onClose, onGuest, onMember }: Props) {
           <h2 className="text-[24px] font-bold leading-[1.2] tracking-[-0.03em] text-[var(--color-text)]">
             회원가입하면
             <br />
-            <span className="text-[var(--color-checkbox-checked)]">더 많은 혜택</span>이 있어요.
+            <span className="text-[var(--color-checkbox-checked)]">
+              더 많은 혜택
+            </span>
+            이 있어요.
           </h2>
           <p className="mt-3 text-[14px] font-medium leading-[1.6] tracking-[-0.04em] text-[var(--color-text-on-warm)]">
             회원가입하고 꼬순박스의 다양한 혜택을 누려보세요.
-            <br />
-            가입하지 않아도 비회원으로 주문할 수 있어요.
           </p>
         </div>
 

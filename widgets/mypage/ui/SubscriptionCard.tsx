@@ -73,16 +73,16 @@ function dotOpacityForDistance(distance: number): number {
 
 function PrevArrowIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
-      <path d="M16 8L10 14L16 20" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden className="text-[var(--color-text-secondary)]">
+      <path d="M17.1113 7.77734L10.1113 13.9996L17.1113 20.2218" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 function NextArrowIcon() {
   return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
-      <path d="M12 8L18 14L12 20" stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden className="text-[var(--color-text-secondary)]">
+      <path d="M10.8887 7.77734L17.8887 13.9996L10.8887 20.2218" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -272,7 +272,7 @@ function SlidePanel({
       <div
         className={[
           "relative z-0 flex min-w-0 flex-1 flex-col justify-center",
-          "max-md:pl-7 max-md:pr-6 max-md:py-4 md:max-lg:pl-10 md:max-lg:pr-6 md:max-lg:py-4 lg:pl-12 lg:pr-6 lg:py-5",
+          "max-md:pl-7 max-md:pr-6 max-md:py-4 md:max-lg:pl-10 md:max-lg:pr-6 md:max-lg:py-4 lg:pl-[51px] lg:pr-6 lg:py-5",
         ].join(" ")}
       >
         {/* 카드 본문 클릭 — 구독/구매 상세 */}
@@ -284,7 +284,7 @@ function SlidePanel({
           className="flex flex-col rounded-[8px] outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-white"
         >
           {/* 텍스트 정보 */}
-          <div className="flex flex-col max-lg:gap-1 lg:gap-1.5">
+          <div className="flex flex-col max-lg:gap-1 lg:gap-2">
             {/* 모바일·태블릿: 뱃지 독립 행 */}
             {view.boxQuantity !== null && (
               <span className="lg:hidden inline-flex self-start h-[14px] items-center rounded-[4px] bg-white/30 px-1 text-body-12-sb leading-[14px] tracking-[-0.04em] text-white uppercase">
@@ -292,11 +292,11 @@ function SlidePanel({
               </span>
             )}
             {/* 타이틀 행 — 데스크탑에서는 뱃지도 함께 표시 */}
-            <div className="flex flex-wrap items-center gap-[10px]">
+            <div className="flex flex-wrap items-center max-lg:gap-[10px] lg:gap-2">
               <Text
                 variant="subtitle-16-sb"
                 mobileVariant="body-14-sb"
-                className="max-lg:text-body-14-sb leading-tight tracking-[-0.04em] text-white"
+                className="max-lg:text-body-14-sb leading-tight tracking-[-0.04em] text-white lg:leading-[19px]"
               >
                 {isSubscriptionSlide
                   ? `${subscription!.plan.name} 구독중`
@@ -313,14 +313,14 @@ function SlidePanel({
                 <Text
                   variant="body-16-m"
                   mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
                 >
                   결제일 : {billingDayLabel(subscription!.nextBillingDate)}
                 </Text>
                 <Text
                   variant="body-16-m"
                   mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
                 >
                   결제금액 :{" "}
                   {view.paymentAmount !== null
@@ -333,14 +333,14 @@ function SlidePanel({
                 <Text
                   variant="body-16-m"
                   mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
                 >
                   총 주문 : {group!.orderCount}건
                 </Text>
                 <Text
                   variant="body-16-m"
                   mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m leading-tight text-white/80"
+                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
                 >
                   최근 주문일 : {formatDate(group!.latestOrder.createdAt)}
                 </Text>
@@ -351,7 +351,7 @@ function SlidePanel({
 
         {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성. 연관 플랜이 없는 구매(단건)는 노출하지 않음 */}
         {view.reviewHref !== null && (
-          <div className="max-lg:mt-2 lg:mt-2.5">
+          <div className="mt-2">
             {view.myReview ? (
               <button
                 type="button"
@@ -394,13 +394,13 @@ function SlidePanel({
         href={view.manageHref}
         prefetch={false}
         tabIndex={hidden ? -1 : undefined}
-        className="absolute right-6 top-5 z-10 max-lg:text-body-13-sb lg:text-body-14-sb text-white underline transition-opacity hover:opacity-80 before:absolute before:-inset-x-1 before:-inset-y-1.5 before:content-['']"
+        className="absolute z-10 max-lg:right-6 max-lg:top-5 max-lg:text-body-13-sb lg:top-6 lg:right-[21px] lg:text-body-14-sb lg:leading-[1.3] text-white underline transition-opacity hover:opacity-80 before:absolute before:-inset-x-1 before:-inset-y-1.5 before:content-['']"
       >
         {view.manageLabel}
       </Link>
 
       {isPaused && (
-        <div className="pointer-events-none absolute top-1/2 z-30 flex h-10 w-[110px] -translate-y-1/2 items-center justify-center rounded-[12px] bg-white/90 max-md:right-[28px] max-md:mt-[3px] md:max-lg:right-4 lg:right-12 max-lg:h-9 max-lg:w-[96px]" aria-hidden="true">
+        <div className="pointer-events-none absolute top-1/2 z-30 flex h-10 w-[110px] -translate-y-1/2 items-center justify-center rounded-[12px] max-lg:bg-white/90 lg:bg-white/[0.86] max-md:right-[28px] max-md:mt-[3px] md:max-lg:right-4 lg:right-[35px] max-lg:h-9 max-lg:w-[96px] lg:h-[37px] lg:w-[102px]" aria-hidden="true">
           <span
             className="h-[17px] w-20 max-lg:h-[15px] max-lg:w-[72px]"
             style={{
@@ -614,7 +614,7 @@ export function SubscriptionCard({
 
   if (total === 0) {
     return (
-      <div className="flex max-lg:min-h-[199px] rounded-[20px] bg-[var(--color-surface-light)] px-6 py-5 max-lg:rounded-[16px] lg:h-[186px]">
+      <div className="flex max-lg:min-h-[199px] rounded-[20px] max-lg:bg-[var(--color-surface-light)] lg:bg-white px-6 py-5 max-lg:rounded-[16px] lg:h-[186px]">
         <SubscriptionEmpty />
       </div>
     );
@@ -854,28 +854,28 @@ export function SubscriptionCard({
 
       {/* 노치 원 + 화살표 버튼 (슬라이드 1개일 때 비활성화) */}
       <div
-        className="absolute left-0 top-1/2 z-10 max-lg:h-8 max-lg:w-8 lg:h-12 lg:w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+        className="absolute left-0 z-10 max-lg:top-1/2 max-lg:h-8 max-lg:w-8 max-lg:bg-white lg:top-[88px] lg:h-12 lg:w-12 lg:bg-support-faq-surface -translate-x-1/2 -translate-y-1/2 rounded-full"
         aria-hidden
       />
       <button
         type="button"
         onClick={() => step(-1)}
         disabled={!hasMultiple}
-        className="absolute left-0 top-1/2 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/50 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40"
+        className="absolute left-0 z-20 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full max-lg:top-1/2 max-lg:bg-white/50 lg:top-[88px] lg:bg-white shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40"
         aria-label="이전 카드"
       >
         <PrevArrowIcon />
       </button>
 
       <div
-        className="absolute right-0 top-1/2 z-10 max-lg:h-8 max-lg:w-8 lg:h-12 lg:w-12 translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+        className="absolute z-10 max-lg:right-0 max-lg:top-1/2 max-lg:h-8 max-lg:w-8 max-lg:bg-white lg:top-[88px] lg:right-[1.5px] lg:h-12 lg:w-12 lg:bg-support-faq-surface translate-x-1/2 -translate-y-1/2 rounded-full"
         aria-hidden
       />
       <button
         type="button"
         onClick={() => step(1)}
         disabled={!hasMultiple}
-        className="absolute right-0 top-1/2 z-20 flex h-7 w-7 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/30 shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40"
+        className="absolute z-20 flex h-7 w-7 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full max-lg:right-0 max-lg:top-1/2 max-lg:bg-white/30 lg:top-[88px] lg:right-[2px] lg:bg-white shadow-[2px_2px_4px_rgba(0,0,0,0.12)] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:opacity-40"
         aria-label="다음 카드"
       >
         <NextArrowIcon />

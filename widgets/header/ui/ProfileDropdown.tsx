@@ -5,19 +5,19 @@ import { useAuth } from "@/features/auth";
 import { useModal } from "@/shared/ui";
 import { getProfileDisplayName } from "@/shared/config/profile";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import { ProfileThumbnail } from "./ProfileThumbnail";
+import { ProfileEditBadge, ProfileThumbnail } from "./ProfileThumbnail";
 import {
   SwitchHorizontalIcon,
   PlusCircleIcon,
 } from "./icons";
 import {
-  DropdownUserIcon,
-  DropdownPinIcon,
-  DropdownClipboardIcon,
-  DropdownOrderIcon,
-  DropdownPointIcon,
-  DropdownLogoutIcon,
-} from "./DropdownMenuIcons";
+  MenuUserCircleIcon,
+  MenuCreditCardIcon,
+  MenuClipboardCheckIcon,
+  MenuDocumentTextIcon,
+  MenuDatabaseIcon,
+  MenuLogoutIcon,
+} from "./MenuIcons";
 
 export function ProfileDropdown({
   hasProfile,
@@ -51,7 +51,7 @@ export function ProfileDropdown({
       "w-full h-[52px] px-6 flex items-center gap-3 text-left tracking-[-0.02em] transition-colors",
       active
         ? "text-body-14-b text-[var(--color-cta-button)]"
-        : "text-body-14-m text-[var(--color-text-tertiary)] hover:text-[var(--color-cta-button)]",
+        : "text-body-14-m text-[var(--color-text-tertiary)] hover:text-[var(--color-cta-button)] [&>svg]:text-[var(--color-border)] hover:[&>svg]:text-[var(--color-cta-button)]",
     ].join(" ");
 
   const handleLogout = async () => {
@@ -69,26 +69,23 @@ export function ProfileDropdown({
     openChecklistForm({ isNewProfile: true });
   };
 
+  const handleEditProfile = () => {
+    onClose();
+    openChecklistForm(hasProfile ? { editProfile: true } : { isNewProfile: true });
+  };
+
   return (
-    <div className="absolute right-0 top-[calc(100%+23px)] z-50 w-72 rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden">
+    <div className="absolute right-0 top-[calc(100%+35px)] z-50 w-72 rounded-[10px] bg-white shadow-[0px_18px_28px_rgba(9,30,66,0.1)] overflow-hidden">
       <div className="flex flex-col pb-[6px]">
-        {/* 프로필 헤더 — 그라디언트 배경 */}
-        <div
-          className="relative flex h-[90px] items-center gap-4 overflow-hidden rounded-[10px_10px_0_0] px-5"
-          style={{ background: "var(--gradient-dropdown-header)" }}
-        >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute right-0 top-1/2 h-[600%] w-[120%] origin-right"
-            style={{
-              background: "var(--gradient-dropdown-header)",
-              transform: "translateY(-50%) rotate(30deg)",
-            }}
-          />
-          <div className="relative z-10 shrink-0 overflow-hidden rounded-full border border-[var(--color-text-muted)]">
-            <ProfileThumbnail imageUrl={profileImageUrl} userId={userId} size="lg" />
+        {/* 프로필 헤더 */}
+        <div className="flex h-[90px] items-center gap-[14px] rounded-[10px_10px_0_0] bg-[var(--color-profile-menu-surface)] px-5">
+          <div className="relative shrink-0">
+            <div className="overflow-hidden rounded-full border border-[var(--color-text-muted)]">
+              <ProfileThumbnail imageUrl={profileImageUrl} userId={userId} size="lg" />
+            </div>
+            <ProfileEditBadge onClick={handleEditProfile} className="-right-0.5 bottom-0" />
           </div>
-          <div className="relative z-10 min-w-0 flex-1">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1 min-w-0">
               {hasProfile ? (
                 <>
@@ -116,29 +113,29 @@ export function ProfileDropdown({
         </div>
 
         <button onClick={() => { onClose(); router.push("/mypage"); }} className={menuItemClass(isMypageActive)}>
-          <DropdownUserIcon />
+          <MenuUserCircleIcon />
           마이페이지
         </button>
         <button onClick={() => { onClose(); openModal("account-info"); }} className={menuItemClass(false)}>
-          <DropdownPinIcon />
+          <MenuCreditCardIcon />
           계정정보
         </button>
         <button onClick={() => { onClose(); router.push("/mypage/subscription"); }} className={menuItemClass(isSubscriptionActive)}>
-          <DropdownOrderIcon />
+          <MenuClipboardCheckIcon />
           구독관리
         </button>
         <button onClick={() => { onClose(); router.push("/orders"); }} className={menuItemClass(isOrdersActive)}>
-          <DropdownClipboardIcon />
+          <MenuDocumentTextIcon />
           주문내역
         </button>
         {isInfluencer && (
           <button onClick={() => { onClose(); router.push("/mypage/point"); }} className={menuItemClass(isPointActive)}>
-            <DropdownPointIcon />
+            <MenuDatabaseIcon />
             MY 포인트
           </button>
         )}
         <button onClick={handleLogout} className={menuItemClass(false)}>
-          <DropdownLogoutIcon />
+          <MenuLogoutIcon />
           로그아웃
         </button>
       </div>

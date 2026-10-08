@@ -36,15 +36,6 @@ export default function OrderSection(props: OrderSectionProps) {
     couponInfo,
     couponError,
     couponDiscount,
-    agreeOpen,
-    onToggleAgreePanel,
-    agreeTerms,
-    onToggleTerms,
-    agreePrivacy,
-    onTogglePrivacy,
-    agreeAge,
-    onToggleAge,
-    agreeAll,
     quantity,
     setQuantity,
     billing,
@@ -72,7 +63,6 @@ export default function OrderSection(props: OrderSectionProps) {
     handleToggleCoupon,
     handleSelectPaymentMethod,
     handleChangeCard,
-    handleAgreeAll,
   } = useOrderSectionState(props);
 
   const leftSections = (
@@ -132,7 +122,7 @@ export default function OrderSection(props: OrderSectionProps) {
   );
 
   const rightColumn = (
-    <div className="flex min-w-0 flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-[calc(var(--header-offset)_+_24px)]">
       <OrderSummarySection
         open={openSections.summary}
         onToggle={() => toggleSection("summary")}
@@ -140,16 +130,6 @@ export default function OrderSection(props: OrderSectionProps) {
         basePrice={basePrice}
         totalDiscount={totalDiscount}
         total={total}
-        agreeOpen={agreeOpen}
-        onToggleAgreePanel={onToggleAgreePanel}
-        agreeTerms={agreeTerms}
-        onToggleTerms={onToggleTerms}
-        agreePrivacy={agreePrivacy}
-        onTogglePrivacy={onTogglePrivacy}
-        agreeAge={agreeAge}
-        onToggleAge={onToggleAge}
-        agreeAll={agreeAll}
-        handleAgreeAll={handleAgreeAll}
         submitError={submitError}
         isPending={isPending}
         isQuoting={isQuoting}

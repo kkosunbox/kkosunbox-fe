@@ -46,15 +46,15 @@ function PetAvatar({
 }) {
   return (
     <div className="relative shrink-0">
-      <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] lg:h-[124px] lg:w-[124px]">
+      <div className="relative h-[80px] w-[80px] overflow-hidden rounded-full ring-1 ring-[var(--color-text-muted)] lg:ring-0">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- 프로필 CDN URL, 도메인 가변
           <img
             src={imageUrl}
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
-            width={124}
-            height={124}
+            width={80}
+            height={80}
           />
         ) : (
           <FallbackAvatar userId={userId} className="absolute inset-0 h-full w-full" />
@@ -64,9 +64,9 @@ function PetAvatar({
         type="button"
         onClick={onEditProfile}
         aria-label="프로필 사진 변경"
-        className="absolute bottom-0 right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-secondary)] transition-opacity hover:opacity-90 lg:h-[40px] lg:w-[40px]"
+        className="absolute bottom-0 right-0 flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[var(--color-surface-light)] text-[var(--color-text-secondary)] transition-opacity hover:opacity-90 lg:h-[26px] lg:w-[26px] lg:bg-[var(--color-profile-edit-badge-bg)]"
       >
-        <PencilIcon className="h-5 w-5 lg:h-8 lg:w-8" />
+        <PencilIcon className="h-5 w-5" />
       </button>
     </div>
   );
@@ -133,18 +133,16 @@ function buildChecklistSummary(
   }));
 }
 
+/** 모바일·태블릿 전용 체크리스트 요약 */
 function ChecklistPanel({
   items,
   hasChecklist,
-  variant,
 }: {
   items: ChecklistSummaryItem[];
   hasChecklist: boolean;
-  variant: "mobile" | "desktop";
 }) {
   const [mobileExpanded, setMobileExpanded] = useState(false);
-  const isMobile = variant === "mobile";
-  const canCollapseOnMobile = isMobile && items.length >= CHECKLIST_MOBILE_EXPAND_THRESHOLD;
+  const canCollapseOnMobile = items.length >= CHECKLIST_MOBILE_EXPAND_THRESHOLD;
   const isMobileExpanded = canCollapseOnMobile && mobileExpanded;
   const displayItems =
     canCollapseOnMobile && !isMobileExpanded
@@ -152,20 +150,8 @@ function ChecklistPanel({
       : items;
 
   return (
-    <div
-      className={
-        isMobile
-          ? "border-t border-[var(--color-divider-neutral)] pt-4"
-          : "flex flex-col justify-center"
-      }
-    >
-      <div
-        className={
-          isMobile
-            ? "relative mb-4"
-            : "mb-2.5 flex items-center justify-between"
-        }
-      >
+    <div className="border-t border-[var(--color-divider-neutral)] pt-4">
+      <div className="relative mb-4">
         <div className="flex items-center gap-2">
           <Text as="h2" variant="body-14-sb-tight" className="text-[var(--color-text)]">
             체크리스트
@@ -183,10 +169,7 @@ function ChecklistPanel({
           <button
             type="button"
             onClick={() => openChecklistForm({ rewrite: true })}
-            className={[
-              "inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80",
-              isMobile ? "absolute top-0 right-0" : "",
-            ].join(" ")}
+            className="absolute top-0 right-0 inline-flex shrink-0 items-center gap-0.5 text-body-13-m text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
           >
             <span>다시 작성하기</span>
             <ChevronRightIcon />
@@ -194,11 +177,10 @@ function ChecklistPanel({
         )}
       </div>
 
-      <div className="relative rounded-[12px] bg-white px-6 py-5 lg:h-[138px]">
+      <div className="relative rounded-[12px] bg-white px-6 py-5">
         <div
           className={[
             "flex flex-col gap-[14px]",
-            isMobile ? "" : "scrollbar-checklist-summary max-h-[98px] overflow-y-auto",
             hasChecklist ? "" : "pointer-events-none select-none opacity-0",
           ].join(" ")}
           aria-hidden={!hasChecklist}
@@ -230,24 +212,102 @@ function ChecklistPanel({
         {!hasChecklist && (
           <>
             <div className="absolute inset-0 rounded-[12px] bg-white backdrop-blur-[3px]" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-3 text-center">
-              <Text variant="body-14-m" className="font-semibold leading-[1.5] text-[var(--color-text-emphasis)]">
-                우리 아이 맞춤 간식을 위해
-                <br />
-                체크리스트를 작성해주세요.
-              </Text>
-              <button
-                type="button"
-                onClick={() => openChecklistForm()}
-                className="inline-flex h-[28px] items-center rounded-[8px] bg-[var(--color-cta-button)] px-4 text-body-13-m text-white transition-opacity hover:opacity-90"
-              >
-                체크리스트 작성하기
-              </button>
-            </div>
+            <ChecklistEmptyPrompt className="absolute inset-0" />
           </>
         )}
       </div>
     </div>
+  );
+}
+
+function ChecklistEmptyPrompt({ className }: { className?: string }) {
+  return (
+    <div className={["flex flex-col items-center justify-center gap-2 px-3 text-center", className].filter(Boolean).join(" ")}>
+      <Text variant="body-14-m" className="font-semibold leading-[1.5] text-[var(--color-text-emphasis)]">
+        우리 아이 맞춤 간식을 위해
+        <br />
+        체크리스트를 작성해주세요.
+      </Text>
+      <button
+        type="button"
+        onClick={() => openChecklistForm()}
+        className="inline-flex h-[28px] items-center rounded-[8px] bg-[var(--color-cta-button)] px-4 text-body-13-m text-white transition-opacity hover:opacity-90"
+      >
+        체크리스트 작성하기
+      </button>
+    </div>
+  );
+}
+
+function RefreshIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="text-[var(--color-text-label)]">
+      <path d="M7.2001 6.40039L9.6001 4.40039L7.2001 2.40039" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path
+        d="M12.0416 6.4668C12.5553 7.35646 12.761 8.39075 12.6269 9.40925C12.4928 10.4278 12.0264 11.3736 11.3 12.1C10.5736 12.8264 9.62779 13.2928 8.60929 13.4269C7.59078 13.561 6.55649 13.3552 5.66683 12.8416C4.77717 12.3279 4.08185 11.5351 3.68872 10.586C3.2956 9.63689 3.22663 8.5846 3.49251 7.59231C3.75839 6.60002 4.34427 5.72319 5.15928 5.09781C5.97428 4.47244 6.97287 4.13346 8.00016 4.13346"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** 데스크탑·와이드 전용 — 프로필 패널 하단 체크리스트 (패널 높이에 맞춰 늘어나고 목록은 내부 스크롤) */
+function ChecklistPanelDesktop({
+  items,
+  hasChecklist,
+}: {
+  items: ChecklistSummaryItem[];
+  hasChecklist: boolean;
+}) {
+  return (
+    <>
+      <div className="mt-7 flex min-h-[183px] flex-1 flex-col rounded-[12px] bg-[var(--color-surface-light)] pt-3 pr-2 pb-5 pl-5">
+        <div className="flex h-6 items-center justify-between gap-2 pr-3">
+          <Text as="h2" variant="body-14-sb-tight" className="tracking-normal text-[var(--color-text)]">
+            체크리스트
+          </Text>
+          {hasChecklist && (
+            <button
+              type="button"
+              onClick={() => openChecklistForm({ rewrite: true })}
+              className="inline-flex h-6 shrink-0 items-center gap-1 rounded-[24px] border border-[var(--color-text-muted)] bg-white px-2 text-caption-12-m-tight text-[var(--color-text)] transition-opacity hover:opacity-80"
+            >
+              <RefreshIcon />
+              <span>다시하기</span>
+            </button>
+          )}
+        </div>
+        <div className="mt-3 mr-3 h-px shrink-0 bg-[var(--color-text-muted)]" aria-hidden />
+
+        {hasChecklist ? (
+          <div className="scrollbar-checklist-summary mt-4 flex min-h-0 flex-1 basis-0 flex-col gap-[14px] overflow-y-auto">
+            {items.map((item, i) => (
+              <div key={`${item.label}-${i}`} className="flex shrink-0 items-center justify-between gap-3">
+                <Text as="span" variant="caption-12-m-tight" className="min-w-0 shrink-0 truncate text-[var(--color-checklist-summary-label)]">
+                  {item.label}
+                </Text>
+                <Text as="span" variant="caption-12-sb-tight" className="min-w-0 truncate text-right text-[var(--color-text)]">
+                  {item.value}
+                </Text>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ChecklistEmptyPrompt className="mt-4 flex-1 pr-3" />
+        )}
+      </div>
+
+      {hasChecklist && (
+        <Link
+          href="/checklist/result"
+          className="mt-3 inline-flex h-6 shrink-0 items-center self-end rounded-[4px] bg-[var(--color-cta-button)] px-2 text-body-13-m text-white transition-opacity hover:opacity-80"
+        >
+          추천상품보기
+        </Link>
+      )}
+    </>
   );
 }
 
@@ -433,7 +493,19 @@ function ProfileSectionMobile({ vm }: { vm: ProfileViewModel }) {
   );
 }
 
-/** 데스크탑·와이드 전용 — 커밋 기준 레이아웃 유지 */
+function ExpandRightIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DesktopMetaDivider() {
+  return <span className="h-[8.5px] w-px shrink-0 bg-[var(--color-text-secondary)]" aria-hidden />;
+}
+
+/** 데스크탑·와이드 전용 — 좌측 세로 프로필 패널 (높이는 우측 컬럼에 맞춰 stretch) */
 function ProfileSectionDesktop({
   vm,
   checklistItems,
@@ -443,117 +515,96 @@ function ProfileSectionDesktop({
   checklistItems: ChecklistSummaryItem[];
   hasChecklist: boolean;
 }) {
+  const metaClass = (empty: boolean) =>
+    empty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]";
+
   return (
-    <div className="relative max-lg:hidden h-full lg:flex lg:items-center lg:px-7 lg:py-[26px]">
-      <div className="relative flex w-full items-center gap-0">
-        {/* 구분선(h-148px) 상단과 맞춤 — 행 items-center 유지, 버튼만 절대 위치 */}
-        <button
-          type="button"
-          onClick={vm.onEditProfile}
-          className="absolute top-[calc(50%-74px)] right-[calc(358px+40px+0.5rem)] z-10 inline-flex shrink-0 items-center gap-1 text-body-14-m text-[var(--color-text-secondary)] transition-colors hover:opacity-80"
-        >
-          <span>정보변경</span>
-          <ChevronRightIcon />
-        </button>
-        <div className="flex min-h-0 min-w-0 flex-1 items-center gap-8">
-          <PetAvatar imageUrl={vm.imageUrl} userId={vm.userId} onEditProfile={vm.onEditProfile} />
-          <div className="min-w-0 flex-1 pr-[84px]">
-            <div className="flex flex-col gap-[12px]">
-              <div className="flex min-w-0 items-center gap-3">
-                <Text
-                  as="h1"
-                  variant="title-24-b"
-                  className="min-w-0 shrink truncate leading-[130%] tracking-[-0.02em] text-[var(--color-text)]"
-                >
-                  {vm.displayName}
-                </Text>
-                {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
-                {vm.isInfluencer && <MyPointButton />}
-              </div>
-              {vm.hasProfile && (
-                <Text
-                  variant="body-16-m"
-                  className={[
-                    "min-w-0 truncate leading-[140%]",
-                    vm.breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
-                  ].join(" ")}
-                >
-                  {vm.breedDisplay}
-                </Text>
-              )}
-            </div>
-            {vm.hasProfile ? (
-              <>
-                <div className="mt-[10px] flex items-center gap-3">
-                  <Text
-                    variant="body-16-m"
-                    className={[
-                      "font-semibold leading-[140%] tracking-[-0.02em]",
-                      vm.birthEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
-                    ].join(" ")}
-                  >
-                    {vm.birthEmpty ? "생년월일" : vm.birth}
-                  </Text>
-                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                  <Text
-                    variant="body-16-m"
-                    className={[
-                      "font-semibold leading-[140%]",
-                      vm.genderEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
-                    ].join(" ")}
-                  >
-                    {vm.genderEmpty ? "성별" : vm.gender}
-                  </Text>
-                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                  <Text
-                    variant="body-16-m"
-                    className={[
-                      "font-semibold leading-[140%]",
-                      vm.weightEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text)]",
-                    ].join(" ")}
-                  >
-                    {vm.weightEmpty ? "몸무게" : vm.weight}
-                  </Text>
-                </div>
-                <Text
-                  variant="body-16-m"
-                  className={[
-                    "mt-3 line-clamp-2 font-semibold leading-[140%]",
-                    vm.specialNotes ? "text-[var(--color-text)]" : "text-[var(--color-profile-meta-empty)]",
-                  ].join(" ")}
-                >
-                  {vm.specialNotes || "강아지의 특징을 입력해주세요."}
-                </Text>
-              </>
-            ) : (
-              <>
-                <div className="mt-[10px] flex items-center gap-3 text-[var(--color-text-placeholder)]">
-                  <Text variant="body-16-m" className="leading-[140%]">
-                    생년월일
-                  </Text>
-                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                  <Text variant="body-16-m" className="leading-[140%]">
-                    성별
-                  </Text>
-                  <span className="h-[8px] w-px bg-[var(--color-text-muted)]" aria-hidden />
-                  <Text variant="body-16-m" className="leading-[140%]">
-                    몸무게
-                  </Text>
-                </div>
-                <Text variant="body-16-m" className="mt-2 text-[var(--color-text-label)]">
-                  정보를 입력해주세요.
-                </Text>
-              </>
+    <div className="relative flex h-full flex-col rounded-[12px] bg-white px-5 pt-12 pb-6 max-lg:hidden">
+      <button
+        type="button"
+        onClick={vm.onEditProfile}
+        className="absolute top-[17px] right-3 inline-flex items-center gap-1 text-body-13-sb leading-[1.3] text-[var(--color-text-secondary)] transition-opacity hover:opacity-80"
+      >
+        <span>정보변경</span>
+        <ExpandRightIcon />
+      </button>
+
+      <div className="flex flex-col items-center px-2 text-center">
+        <PetAvatar imageUrl={vm.imageUrl} userId={vm.userId} onEditProfile={vm.onEditProfile} />
+
+        <div className="mt-[30px] flex max-w-full min-w-0 items-center justify-center gap-3">
+          <Text
+            as="h1"
+            variant="title-24-b"
+            className="min-w-0 shrink truncate leading-[130%] text-[var(--color-text)]"
+          >
+            {vm.displayName}
+          </Text>
+          {vm.hasNamedProfile && <ProfileSwitchButton onClick={vm.onOpenProfileSwitch} />}
+        </div>
+
+        {(vm.hasProfile || vm.isInfluencer) && (
+          <div className="mt-[11px] flex h-6 max-w-full min-w-0 items-center justify-center gap-2.5">
+            {vm.hasProfile && (
+              <Text
+                variant="body-16-m"
+                className={[
+                  "min-w-0 truncate leading-[140%]",
+                  vm.breedEmpty ? "text-[var(--color-profile-meta-empty)]" : "text-[var(--color-text-secondary)]",
+                ].join(" ")}
+              >
+                {vm.breedDisplay}
+              </Text>
             )}
+            {vm.isInfluencer && <MyPointButton />}
           </div>
-        </div>
+        )}
 
-        <div className="mx-[20px] h-[148px] w-px bg-[var(--color-text-muted)]" />
-
-        <div className="w-[358px] flex-none">
-          <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} variant="desktop" />
-        </div>
+        {vm.hasProfile ? (
+          <>
+            <div className="mt-[11px] flex items-center justify-center gap-3">
+              <Text variant="body-16-m" className={`font-semibold leading-[140%] tracking-[-0.02em] ${metaClass(vm.birthEmpty)}`}>
+                {vm.birthEmpty ? "생년월일" : vm.birth}
+              </Text>
+              <DesktopMetaDivider />
+              <Text variant="body-16-m" className={`font-semibold leading-[140%] ${metaClass(vm.genderEmpty)}`}>
+                {vm.genderEmpty ? "성별" : vm.gender}
+              </Text>
+              <DesktopMetaDivider />
+              <Text variant="body-16-m" className={`font-semibold leading-[140%] ${metaClass(vm.weightEmpty)}`}>
+                {vm.weightEmpty ? "몸무게" : vm.weight}
+              </Text>
+            </div>
+            <Text
+              variant="body-16-m"
+              className={`mt-3 line-clamp-2 font-semibold leading-[140%] ${metaClass(!vm.specialNotes)}`}
+            >
+              {vm.specialNotes || "강아지의 특징을 입력해주세요."}
+            </Text>
+          </>
+        ) : (
+          <>
+            <div className="mt-[11px] flex items-center justify-center gap-3 text-[var(--color-text-placeholder)]">
+              <Text variant="body-16-m" className="leading-[140%]">
+                생년월일
+              </Text>
+              <DesktopMetaDivider />
+              <Text variant="body-16-m" className="leading-[140%]">
+                성별
+              </Text>
+              <DesktopMetaDivider />
+              <Text variant="body-16-m" className="leading-[140%]">
+                몸무게
+              </Text>
+            </div>
+            <Text variant="body-16-m" className="mt-3 leading-[140%] text-[var(--color-text-label)]">
+              정보를 입력해주세요.
+            </Text>
+          </>
+        )}
       </div>
+
+      <ChecklistPanelDesktop items={checklistItems} hasChecklist={hasChecklist} />
     </div>
   );
 }
@@ -605,12 +656,12 @@ export function ProfileSection({
   const checklistItems = buildChecklistSummary(profile, checklistQuestions);
 
   return (
-    <section className="max-lg:pt-1 max-lg:pb-6 lg:h-[258px] lg:pt-3 lg:pb-3">
-      <div className="mx-auto w-full max-w-content max-lg:px-6 lg:h-full lg:px-0">
+    <section className="max-lg:pt-1 max-lg:pb-6 lg:h-full">
+      <div className="mx-auto w-full max-lg:max-w-content max-lg:px-6 lg:h-full">
         <ProfileSectionMobile vm={vm} />
         <ProfileSectionDesktop vm={vm} checklistItems={checklistItems} hasChecklist={hasChecklist} />
         <div className="lg:hidden">
-          <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} variant="mobile" />
+          <ChecklistPanel items={checklistItems} hasChecklist={hasChecklist} />
         </div>
       </div>
     </section>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useAgreementState } from "./hooks/useAgreementState";
 import { usePaymentState } from "./hooks/usePaymentState";
 import { useStartDateState } from "./hooks/useStartDateState";
 import { useSubscriptionPriceQuote } from "./hooks/useSubscriptionPriceQuote";
@@ -41,7 +40,6 @@ export function useOrderSectionState({
   const { profile } = useProfile();
   const { markInviteConsumed } = useReferral();
   const [isPending, startTransition] = useTransition();
-  const agreement = useAgreementState();
   const address = useAddressState({ initialAddresses });
   const payment = usePaymentState({ initialBilling });
   const startDate = useStartDateState();
@@ -103,11 +101,6 @@ export function useOrderSectionState({
     // 카드 미등록 시 버튼 자체가 disabled라 정상 UI로는 여기 도달하지 않는다. 방어적 가드.
     if (!payment.billing) {
       setSubmitError("결제 수단을 먼저 등록해 주세요.");
-      return;
-    }
-
-    if (!agreement.agreeAll) {
-      setSubmitError("필수 약관에 동의해 주세요.");
       return;
     }
 
@@ -239,18 +232,6 @@ export function useOrderSectionState({
     totalDiscount,
     total,
     isQuoting,
-
-    // ── agreement ──
-    agreeOpen: agreement.agreeOpen,
-    agreeTerms: agreement.agreeTerms,
-    agreePrivacy: agreement.agreePrivacy,
-    agreeAge: agreement.agreeAge,
-    agreeAll: agreement.agreeAll,
-    onToggleAgreePanel: agreement.onToggleAgreePanel,
-    onToggleTerms: agreement.onToggleTerms,
-    onTogglePrivacy: agreement.onTogglePrivacy,
-    onToggleAge: agreement.onToggleAge,
-    handleAgreeAll: agreement.handleAgreeAll,
 
     // ── submit (모든 그룹 교차) ──
     submitError,

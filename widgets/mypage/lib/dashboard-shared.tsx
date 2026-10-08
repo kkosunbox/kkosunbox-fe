@@ -2,9 +2,9 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import { Text } from "@/shared/ui";
 
-/** 태블릿·데스크톱 마이페이지 대시보드 카드 — Figma 173px 고정 / 모바일 min 199px */
+/** 마이페이지 대시보드 카드 — 데스크탑: 크림 배경 위 흰 카드(Figma 173px 고정) / 모바일·태블릿: 회색 카드 min 199px */
 export const DASHBOARD_CARD_SURFACE_CLASS =
-  "flex flex-col overflow-hidden max-lg:min-h-[199px] max-lg:rounded-[16px] max-lg:bg-[var(--color-surface-light)] max-lg:px-7 max-lg:py-6 lg:h-[173px] lg:rounded-[20px] lg:bg-[var(--color-surface-light)] lg:px-8 lg:py-5";
+  "flex flex-col overflow-hidden max-lg:min-h-[199px] max-lg:rounded-[16px] max-lg:bg-[var(--color-surface-light)] max-lg:px-7 max-lg:py-6 lg:h-[173px] lg:rounded-[20px] lg:bg-white lg:pt-6 lg:pr-[21px] lg:pb-5 lg:pl-8";
 
 /** Figma chip2 — 결제등록/변경 (88×24, padding 4px 8px, bg #2F2F2F) */
 export const PAYMENT_REGISTER_CHIP_BUTTON_CLASS =
@@ -44,7 +44,7 @@ export function SectionHeader({
   spacing?: "default" | "tight" | "wide";
 }) {
   const linkCls =
-    "max-lg:text-body-13-sb lg:text-body-14-sb-tight text-[var(--color-accent)] underline transition-opacity hover:opacity-80";
+    "max-lg:text-body-13-sb max-lg:text-[var(--color-accent)] lg:text-body-14-sb-tight lg:leading-[1.3] lg:tracking-normal lg:text-[var(--color-text-secondary)] underline transition-opacity hover:opacity-80";
 
   const spacingCls =
     spacing === "wide"
@@ -60,7 +60,7 @@ export function SectionHeader({
       <Text
         as="h3"
         variant="subtitle-16-b"
-        className="text-[var(--color-text)]"
+        className="text-[var(--color-text)] lg:leading-[19px]"
       >
         {title}
       </Text>

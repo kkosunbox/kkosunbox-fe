@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import authBanner from "@/shared/assets/auth-banner-renewal.png";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { AuthTabs, type AuthTabKey } from "./AuthTabs";
@@ -38,7 +39,11 @@ export function AuthDesktopShell({
     // 1200~1548px 구간에서는 폼의 최소 너비(401px)를 지키며 배너와 간격만 유연하게 줄인다.
     <div className="max-lg:hidden lg:flex lg:min-h-svh lg:items-center lg:justify-center lg:px-10 lg:py-[75px] min-[1800px]:pl-[229px] min-[1800px]:pr-[142px]">
       <div className="mx-auto flex w-full max-w-[1549px] items-center gap-[clamp(24px,2.24vw,43px)]">
-        <div className="relative aspect-[753/733] min-w-0 max-w-[753px] grow basis-[753px] overflow-hidden rounded-[24px]">
+        <Link
+          href="/"
+          aria-label="꼬순박스 메인으로 이동"
+          className="relative block aspect-[753/733] min-w-0 max-w-[753px] grow basis-[753px] overflow-hidden rounded-[24px]"
+        >
           <Image
             src={authBanner}
             alt=""
@@ -67,7 +72,7 @@ export function AuthDesktopShell({
               정기구독으로 편하게 받아보세요.
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* 우측 카드의 외곽은 최대 753px, 실제 입력 콘텐츠는 시안대로 401px로 유지한다. */}
         <div className="flex min-h-[837px] min-w-[401px] max-w-[753px] grow shrink-[6] basis-[753px] flex-col items-center justify-center rounded-[40px] bg-white">

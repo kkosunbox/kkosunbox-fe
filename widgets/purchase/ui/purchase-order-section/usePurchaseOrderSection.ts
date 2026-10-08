@@ -9,7 +9,6 @@ import { createProductOrder } from "@/features/product/api/productApi";
 import { getErrorMessage } from "@/shared/lib/api";
 import { useOrderPolicy } from "@/shared/lib/orderPolicy";
 import { computePurchaseTotals, validatePurchaseCheckout } from "./purchaseOrderHelpers";
-import { useOrderAgreements } from "./hooks/useOrderAgreements";
 import { usePurchaseCoupon } from "./hooks/usePurchaseCoupon";
 import { usePurchasePaymentWidget } from "./hooks/usePurchasePaymentWidget";
 import { usePurchasePriceQuote } from "./hooks/usePurchasePriceQuote";
@@ -25,7 +24,7 @@ interface UsePurchaseOrderSectionParams {
 
 /**
  * `/purchase/order` 페이지(Section)의 조정자(Coordinator).
- * 단위 훅(agreements·paymentWidget·address) 조립 + openSections·quantity·submitError·isPaying
+ * 단위 훅(paymentWidget·address) 조립 + openSections·quantity·submitError·isPaying
  * 소유 + 결제 오케스트레이션(검증→주문 생성→금액 재동기화→결제 요청)만 담당한다.
  */
 export function usePurchaseOrderSection({
@@ -43,18 +42,6 @@ export function usePurchaseOrderSection({
   });
   const [quantity, setQuantity] = useState(initialQuantity);
   const address = useAddressState({ initialAddresses });
-  const {
-    agreeOpen,
-    agreeTerms,
-    agreePrivacy,
-    agreeAge,
-    agreeAll,
-    handleAgreeAll,
-    toggleAgreePanel,
-    toggleTerms,
-    togglePrivacy,
-    toggleAge,
-  } = useOrderAgreements();
   const coupon = usePurchaseCoupon();
   const [couponEnabled, setCouponEnabled] = useState(true);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -102,7 +89,6 @@ export function usePurchaseOrderSection({
     }
 
     const guard = validatePurchaseCheckout({
-      agreeAll,
       selectedAddress: address.selectedAddress,
       newAddr: address.newAddr,
       hasPaymentWidget: !!paymentWidget,
@@ -162,16 +148,6 @@ export function usePurchaseOrderSection({
     quantity,
     setQuantity,
     address,
-    agreeOpen,
-    agreeTerms,
-    agreePrivacy,
-    agreeAge,
-    agreeAll,
-    handleAgreeAll,
-    toggleAgreePanel,
-    toggleTerms,
-    togglePrivacy,
-    toggleAge,
     submitError,
     isPaying,
     basePrice,

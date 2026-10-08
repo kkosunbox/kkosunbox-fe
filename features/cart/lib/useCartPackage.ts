@@ -15,13 +15,14 @@ import { getPackageProgress } from "./packageProgress";
  * 내 패키지 — 장바구니(회원: 서버 / 비회원: 브라우저)를 패키지 형태로 보여주고 조작한다.
  * 다른 화면(상세 담기, 장바구니 페이지, 다른 탭)의 변경도 장바구니 갱신 이벤트로 따라간다.
  */
-export function useCartPackage() {
+/** @param initialCart 이미 받은 장바구니가 있으면 첫 렌더부터 그 내용을 쓴다 (예: 담기 직후 띄우는 시트) */
+export function useCartPackage(initialCart: CartDto | null = null) {
   const { isLoggedIn } = useAuth();
   const { openAlert } = useModal();
   const gateway = useMemo(() => getCartGateway(isLoggedIn), [isLoggedIn]);
-  const [cart, setCart] = useState<CartDto | null>(null);
+  const [cart, setCart] = useState<CartDto | null>(initialCart);
   const policy = useOrderPolicy();
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(initialCart !== null);
   const [pendingProductId, setPendingProductId] = useState<number | null>(null);
   const [pendingItemIds, setPendingItemIds] = useState<ReadonlySet<number>>(new Set());
   const requestId = useRef(0);

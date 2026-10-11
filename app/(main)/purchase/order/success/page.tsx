@@ -53,13 +53,13 @@ export default async function PurchaseOrderSuccessPage({
 
   return (
     <OrderCompleteSection
+      orderDbId={order.id}
       orderId={orderId}
       createdAt={order.createdAt}
       productName={order.orderName}
       quantity={order.totalQuantity}
       amount={order.amount}
       basePrice={basePrice}
-      productId={order.items[0]?.productId ?? null}
       imageUrl={order.items[0]?.imageUrl ?? null}
       method={order.method}
       tier={tier}

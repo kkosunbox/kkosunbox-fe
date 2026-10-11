@@ -63,7 +63,7 @@ export interface CombinedPaymentDto {
   amount: number;
   refundedAmount?: number;
   itemsAmount?: number;
-  couponDiscountAmount?: number;
+  discountAmount?: number;
   shippingFee?: number;
   status: CombinedPaymentStatus;
   displayStatus: CombinedPaymentDisplayStatus;

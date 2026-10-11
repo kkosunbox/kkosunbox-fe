@@ -16,6 +16,8 @@ function formatOrderDate(iso: string): string {
 }
 
 interface OrderCompleteSectionProps {
+  /** 주문 상세(/orders/product/{id}) 링크용 숫자 주문 ID */
+  orderDbId: number;
   orderId: string;
   createdAt: string;
   productName: string;
@@ -28,20 +30,19 @@ interface OrderCompleteSectionProps {
    * 카탈로그에서 상품을 못 찾으면 null — 이 경우 할인 행을 0원으로 표시한다.
    */
   basePrice: number | null;
-  productId: number | null;
   imageUrl?: string | null;
   method?: string | null;
   tier: PackageTier | null;
 }
 
 export default function OrderCompleteSection({
+  orderDbId,
   orderId,
   createdAt,
   productName,
   quantity,
   amount,
   basePrice,
-  productId,
   imageUrl,
   method,
   tier,
@@ -139,9 +140,9 @@ export default function OrderCompleteSection({
                 <span className="text-body-13-m text-[var(--color-text)]">{formatKrwPrice(orderAmount)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-body-13-m text-[var(--color-text)]">총 쿠폰 할인금액</span>
+                <span className="text-body-13-m text-[var(--color-text)]">총 할인금액</span>
                 <span className="text-body-13-m text-[var(--color-text)]">
-                  -{formatKrwPrice(couponDiscount)}
+                  {couponDiscount > 0 ? "-" : ""}{formatKrwPrice(couponDiscount)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -180,7 +181,7 @@ export default function OrderCompleteSection({
         {/* 액션 버튼 */}
         <div className="mt-8 flex justify-center gap-3 max-sm:flex-col">
           <Link
-            href={productId ? `/mypage/purchase?productId=${productId}` : "/mypage"}
+            href={`/orders/product/${orderDbId}`}
             className="inline-flex h-10 w-40 items-center justify-center rounded-[8px] border border-[var(--color-cta-button)] bg-white text-body-14-sb text-[var(--color-cta-button)] transition-opacity hover:opacity-80 max-sm:w-full"
           >
             주문 상세보기

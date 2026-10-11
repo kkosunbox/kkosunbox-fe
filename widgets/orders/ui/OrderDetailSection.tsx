@@ -109,7 +109,7 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
         })}</div></section>
         <section className={RIGHT}><h2 className={HEADING}>결제정보</h2><dl className="space-y-2 text-body-14-m text-[var(--color-text)]">
           <div className="flex justify-between gap-4"><dt>주문상품금액</dt><dd>{payment.itemsAmount !== undefined ? formatKrwPrice(payment.itemsAmount) : "-"}</dd></div>
-          <div className="flex justify-between gap-4"><dt>총 쿠폰 할인금액</dt><dd>{payment.couponDiscountAmount !== undefined ? `-${formatKrwPrice(payment.couponDiscountAmount)}` : "-"}</dd></div>
+          <div className="flex justify-between gap-4"><dt>총 할인금액</dt><dd>{payment.discountAmount !== undefined ? `${payment.discountAmount > 0 ? "-" : ""}${formatKrwPrice(payment.discountAmount)}` : "-"}</dd></div>
           <div className="flex justify-between gap-4"><dt>배송비</dt><dd>{payment.shippingFee !== undefined ? formatKrwPrice(payment.shippingFee) : "-"}</dd></div>
           <div className="flex items-center justify-between gap-4 border-t border-[var(--color-text-muted)] pt-3"><dt className="font-bold">총 결제금액</dt><dd className="text-price-20-eb">{formatKrwPrice(payment.amount)}</dd></div>
           {!!payment.refundedAmount && <div className="flex justify-between gap-4"><dt>환불금액</dt><dd>{formatKrwPrice(payment.refundedAmount)}</dd></div>}

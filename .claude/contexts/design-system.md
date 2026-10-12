@@ -72,6 +72,12 @@
 | `--color-support-faq-active` | `#FFF2DA` | 고객센터 열린 FAQ 아코디언 배경 (`--support-faq-active-color` 원본 참조) |
 | `--color-withdraw-profile-bg` | `#FDF5E7` | 탈퇴 확인 페이지 프로필 배너 배경 |
 | `--color-support-banner-heading` | `#A96937` | 고객센터 CTA 배너 질문 라인 |
+| `--color-inquiry-banner-heading` | `#43270B` | 내 문의내역 안내 배너 제목 |
+| `--color-inquiry-banner-text` | `#884613` | 내 문의내역 안내 배너 설명 |
+| `--color-inquiry-answer-bg` | `#FFF9ED` | 내 문의내역 펼친 항목 답변 박스 배경 |
+| `--color-inquiry-badge-border` | `#DEDEDE` | 내 문의내역 상태 뱃지 테두리 |
+| `--color-inquiry-done` | `#16AD49` | 내 문의내역 '답변완료' 뱃지 텍스트 |
+| `--color-inquiry-done-bg` | `#F0FFF2` | 내 문의내역 '답변완료' 뱃지 배경 |
 | `--color-recommend-reason-bg` | `#FFFBE9` | 체크리스트 추천이유 패널 배경 |
 | `--color-recommend-reason-title` | `#AB4B00` | 체크리스트 추천이유 ✔ 제목 색상 |
 | `--color-stats-bar-bg` | `#101010` | 메인 StatsBar 배경 |

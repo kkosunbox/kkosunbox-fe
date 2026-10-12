@@ -1,21 +1,27 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { InquiryDto } from "@/features/inquiry/api";
-import { deleteInquiry, getInquiries } from "@/features/inquiry/api";
+import { getInquiries } from "@/features/inquiry/api";
+import { formatInquiryDate } from "@/features/inquiry/lib";
+import { isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { ApiError } from "@/shared/lib/api/types";
 import { useAuth } from "@/features/auth";
-import { PAGE_CONTENT_WRAPPER_FLEX_CLASS } from "@/shared/config/layout";
-import { PawCircleIcon, useModal } from "@/shared/ui";
-import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
-import { InquiryDetailModal, InquiryStatusBadge, isResolved, WAITING_MESSAGE } from "@/features/inquiry/ui";
 import { SupportHero } from "@/widgets/support/shared";
-import InquiryPaw from "../assets/inquiry-paw.webp";
+import InquiryQuestion from "../assets/inquiry-question.webp";
+import InquiryEmpty from "../assets/inquiry-empty.svg";
+import styles from "./InquiryHistorySection.module.css";
 
-const ITEMS_PER_PAGE = 4;
+const PAGE_SIZE = 5;
+
+const FILTERS = [
+  { label: "전체", matches: () => true },
+  { label: "답변완료", matches: (item: InquiryDto) => isResolved(item) },
+  { label: "답변대기중", matches: (item: InquiryDto) => !isResolved(item) },
+] as const;
 
 const IMAGE_URL_REGEX = /\.(jpe?g|png|webp|gif)(\?|$)/i;
 
@@ -23,56 +29,26 @@ function getImageAttachments(row: InquiryDto): string[] {
   return row.attachmentUrls?.filter((url) => IMAGE_URL_REGEX.test(url)) ?? [];
 }
 
-function AttachmentThumbnails({ urls }: { urls: string[] }) {
-  if (urls.length === 0) return null;
-  return (
-    <div className="flex flex-row items-center gap-3">
-      {urls.map((url, idx) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={`${url}-${idx}`}
-          src={url}
-          alt={`첨부 이미지 ${idx + 1}`}
-          className="h-11 w-11 shrink-0 rounded-[4px] border border-[var(--color-text-muted)] object-cover"
-          loading="lazy"
-        />
-      ))}
-    </div>
-  );
-}
+function Chevron({ direction = "down", className }: { direction?: "down" | "left" | "right"; className?: string }) {
+  const path =
+    direction === "left"
+      ? "m12 5-5 5 5 5"
+      : direction === "right"
+        ? "m8 5 5 5-5 5"
+        : "m5 8 5 5 5-5";
 
-function CardCloseIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="var(--color-text-secondary)" strokeWidth="1.5" strokeLinecap="round" />
+    <svg viewBox="0 0 20 20" aria-hidden="true" className={className}>
+      <path d={path} />
     </svg>
   );
 }
 
-function ChevronLeftIcon() {
+function SearchIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path
-        d="M12.5 15L7.5 10L12.5 5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path
-        d="M7.5 5L12.5 10L7.5 15"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="8.5" cy="8.5" r="5.75" />
+      <path d="m13 13 4 4" />
     </svg>
   );
 }
@@ -80,11 +56,11 @@ function ChevronRightIcon() {
 export default function InquiryHistorySection() {
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<InquiryDto[]>([]);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [filter, setFilter] = useState<string>("전체");
+  const [query, setQuery] = useState("");
+  const [openId, setOpenId] = useState<number | null>(null);
   const [fetchState, setFetchState] = useState<"loading" | "ok" | "error" | "unauthorized">("loading");
   const [loadMessage, setLoadMessage] = useState<string | null>(null);
-  const [selectedInquiry, setSelectedInquiry] = useState<InquiryDto | null>(null);
-  const { openAlert } = useModal();
   const { isLoggedIn, isAuthLoading } = useAuth();
 
   /**
@@ -124,208 +100,208 @@ export default function InquiryHistorySection() {
     };
   }, [isAuthLoading, isLoggedIn]);
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / ITEMS_PER_PAGE));
-  const currentPage = Math.min(Math.max(1, page), totalPages);
-  const currentItems = useMemo(
-    () => rows.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
-    [rows, currentPage],
-  );
+  const filteredRows = useMemo(() => {
+    const selectedFilter = FILTERS.find((item) => item.label === filter) ?? FILTERS[0];
+    const normalizedQuery = query.trim().toLowerCase();
 
-  const handleDeleteInquiry = (inquiry: InquiryDto) => {
-    if (deletingId !== null) return;
-    openAlert(
-      deleteConfirmAlertOptions("문의를 삭제하시겠습니까?", async () => {
-        setDeletingId(inquiry.id);
-        try {
-          await deleteInquiry(inquiry.id);
-          setRows((prev) => prev.filter((row) => row.id !== inquiry.id));
-          setSelectedInquiry((prev) => (prev?.id === inquiry.id ? null : prev));
-        } catch (err) {
-          openAlert({
-            title: getErrorMessage(err, "문의 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요."),
-          });
-        } finally {
-          setDeletingId(null);
-        }
-      }, "삭제한 문의는 복구할 수 없습니다."),
-    );
+    return rows
+      .filter((item) => selectedFilter.matches(item))
+      .filter(
+        (item) =>
+          !normalizedQuery ||
+          `${item.title} ${item.content ?? ""} ${item.answer ?? ""}`
+            .toLowerCase()
+            .includes(normalizedQuery),
+      );
+  }, [rows, filter, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+  const currentPage = Math.min(Math.max(1, page), totalPages);
+  const currentItems = filteredRows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const resetResults = () => {
+    setPage(1);
+    setOpenId(null);
+  };
+
+  const goToPage = (next: number) => {
+    setPage(next);
+    setOpenId(null);
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className={styles.page}>
       <SupportHero />
-      <div className="flex flex-1 flex-col max-md:py-6 md:max-lg:pt-6 md:pb-10">
-      <div className={PAGE_CONTENT_WRAPPER_FLEX_CLASS}>
-        <section
-          className="flex min-h-[592px] flex-1 flex-col rounded-[20px] bg-[var(--color-support-faq-surface)] px-5 py-8 max-md:px-4 max-md:py-6 md:px-[45px] lg:px-[45px] md:pb-7 lg:pb-7 md:pt-8 lg:pt-8"
-          aria-label="내 문의내역"
-        >
-          <div className="mb-6 max-md:mb-6 md:mb-8 lg:mb-8">
-            <Link
-              href="/support"
-              className="inline-flex items-center gap-1 text-body-18-sb text-[var(--color-text)]"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 6L9 12L15 18" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <span>내 문의내역</span>
-            </Link>
+
+      <div className={styles.container}>
+        <h1>
+          <Link href="/support" className={styles.title}>
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M20 8L12 16L20 24" />
+            </svg>
+            내 문의내역
+          </Link>
+        </h1>
+
+        <section className={styles.banner} aria-labelledby="inquiry-banner-title">
+          <Image src={InquiryQuestion} alt="" aria-hidden="true" width={92} height={52} />
+          <div>
+            <h2 id="inquiry-banner-title">꼬순박스에 궁금하신 점이 있으신가요?</h2>
+            <p>궁금하신 내용을 남겨주시면 확인 후 빠르게 답변드리겠습니다.</p>
+          </div>
+          <Link href="/inquiry">1:1 문의하기</Link>
+        </section>
+
+        <div className={styles.toolbar}>
+          <div className={styles.filters} role="group" aria-label="문의 답변 상태">
+            {FILTERS.map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                aria-pressed={filter === item.label}
+                onClick={() => {
+                  setFilter(item.label);
+                  resetResults();
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
 
-          {loadState === "loading" && (
-            <p className="py-16 text-center text-body-16-r text-[var(--color-text-secondary)]">
-              문의 내역을 불러오는 중…
-            </p>
-          )}
+          <label className={styles.search}>
+            <SearchIcon />
+            <span className="sr-only">질문 검색</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                resetResults();
+              }}
+              placeholder="질문을 검색하세요"
+            />
+          </label>
+        </div>
 
-          {loadState === "unauthorized" && (
-            <div className="flex flex-col items-center py-16">
-              <p className="text-center text-body-16-r text-[var(--color-text-secondary)]">
-                로그인 후 이용할 수 있습니다.
-              </p>
-              <Link
-                href="/login?next=/support/history"
-                className="mt-4 text-body-14-m text-[var(--color-accent)] underline underline-offset-2"
-              >
-                로그인하기
-              </Link>
-            </div>
-          )}
+        {loadState === "loading" && <p className={styles.status}>문의 내역을 불러오는 중…</p>}
 
-          {loadState === "error" && (
-            <div className="flex flex-col items-center py-16">
-              <p className="text-center text-body-16-r text-[var(--color-text-secondary)]">
-                {loadMessage ?? "문의 내역을 불러오지 못했습니다."}
-              </p>
-            </div>
-          )}
+        {loadState === "unauthorized" && (
+          <div className={styles.status}>
+            <p>로그인 후 이용할 수 있습니다.</p>
+            <Link href="/login?next=/support/history">로그인하기</Link>
+          </div>
+        )}
 
-          {loadState === "ok" && currentItems.length > 0 ? (
-            <ul className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-3">
-              {currentItems.map((item) => {
-                const resolved = isResolved(item);
-                return (
-                  <li
-                    key={item.id}
-                    onClick={() => setSelectedInquiry(item)}
-                    className="relative flex cursor-pointer flex-col gap-3 rounded-[20px] bg-white p-4 transition-shadow hover:shadow-md md:p-4 lg:p-4"
-                  >
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteInquiry(item);
-                      }}
-                      aria-label="문의 삭제"
-                      disabled={deletingId === item.id}
-                      className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center transition-opacity hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <CardCloseIcon />
-                    </button>
-                    <div className="flex items-center gap-2">
-                      <PawCircleIcon />
-                      <InquiryStatusBadge inquiry={item} />
-                    </div>
-                    {/*
-                      제목·답변 모두 길이 상한이 없어 그대로 두면 카드가 무한정 길어지고,
-                      그리드 한 줄 전체가 가장 긴 카드에 맞춰 늘어난다. 카드에서는 잘라 보여주고
-                      전문은 상세 모달에서 확인한다.
-                    */}
-                    <div className="flex flex-col gap-2">
-                      <p className="line-clamp-2 break-words text-body-14-sb text-[var(--color-text)]">
-                        {item.title}
-                      </p>
-                      <AttachmentThumbnails urls={getImageAttachments(item)} />
-                      {resolved ? (
-                        <p className="line-clamp-3 whitespace-pre-wrap break-words text-body-14-m leading-5 text-[var(--color-text)]">
-                          {item.answer!.trim()}
-                        </p>
-                      ) : (
-                        <p className="whitespace-pre-wrap text-body-14-m leading-5 text-[var(--color-text-secondary)] text-center py-4">
-                          {WAITING_MESSAGE}
-                        </p>
+        {loadState === "error" && (
+          <p className={styles.status}>{loadMessage ?? "문의 내역을 불러오지 못했습니다."}</p>
+        )}
+
+        {loadState === "ok" && rows.length === 0 && (
+          <div className={styles.empty}>
+            <Image src={InquiryEmpty} alt="" aria-hidden="true" width={88} height={88} />
+            <h2>문의하신 내역이 없습니다.</h2>
+            <p>꼬순박스 관련 궁금하신 내용을 문의해주세요.</p>
+            <Link href="/inquiry">1:1 문의하기</Link>
+          </div>
+        )}
+
+        {loadState === "ok" && rows.length > 0 && (
+          <section aria-label="내 문의내역">
+            {currentItems.length > 0 ? (
+              <ul className={styles.list}>
+                {currentItems.map((item) => {
+                  const isOpen = openId === item.id;
+                  const resolved = isResolved(item);
+                  const content = item.content?.trim();
+                  const attachments = getImageAttachments(item);
+                  const bodyId = `inquiry-body-${item.id}`;
+
+                  return (
+                    <li key={item.id} className={styles.item} data-open={isOpen}>
+                      <h3>
+                        <button
+                          type="button"
+                          aria-expanded={isOpen}
+                          aria-controls={bodyId}
+                          onClick={() => setOpenId(isOpen ? null : item.id)}
+                        >
+                          <span className={styles.question}>
+                            <em>Q.</em>
+                            <span>{item.title}</span>
+                          </span>
+                          <span className={styles.meta}>
+                            <time dateTime={item.createdAt}>{formatInquiryDate(item.createdAt)}</time>
+                            <span className={styles.badge} data-done={resolved}>
+                              {resolved ? "답변완료" : "답변대기중"}
+                            </span>
+                          </span>
+                          <Chevron className={styles.chevron} />
+                        </button>
+                      </h3>
+                      {isOpen && (
+                        <div id={bodyId} className={styles.body}>
+                          {content && <p>{content}</p>}
+                          {attachments.length > 0 && (
+                            <div className={styles.attachments}>
+                              {attachments.map((url, idx) => (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  key={`${url}-${idx}`}
+                                  src={url}
+                                  alt={`첨부 이미지 ${idx + 1}`}
+                                  loading="lazy"
+                                />
+                              ))}
+                            </div>
+                          )}
+                          <p className={styles.answer} data-waiting={!resolved}>
+                            {resolved ? item.answer!.trim() : WAITING_MESSAGE.replace(/\n/g, " ")}
+                          </p>
+                        </div>
                       )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className={styles.status}>검색 결과가 없습니다.</p>
+            )}
 
-          {loadState === "ok" && rows.length === 0 ? (
-            <div className="flex flex-col items-center py-16 gap-3">
-              <Image
-                src={InquiryPaw}
-                alt=""
-                width={78}
-                height={60}
-                className="mb-1"
-              />
-              <p className="text-subtitle-16-sb tracking-[-0.02em] text-[var(--color-text)]">
-                문의하신 내역이 없어요.
-              </p>
-              <p className="text-body-14-m tracking-[-0.04em] text-[var(--color-text-secondary)] text-center">
-                꼬순박스 이용 중 궁금하거나 불편한 점이 생기면 언제든 문의해주세요!
-              </p>
-              <Link
-                href="/support"
-                className="text-body-14-m text-[var(--color-accent)] underline underline-offset-2"
-              >
-                돌아가기
-              </Link>
-            </div>
-          ) : null}
-
-          {loadState === "ok" && totalPages > 1 && (
-            <nav className="mt-8 flex items-center justify-center gap-2" aria-label="문의 내역 페이지 탐색">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                aria-label="이전 페이지"
-                className="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--color-ui-disabled)] disabled:opacity-40"
-              >
-                <ChevronLeftIcon />
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => {
-                const active = currentPage === p;
-                return (
+            {totalPages > 1 && (
+              <nav className={styles.pagination} aria-label="문의 내역 페이지 탐색">
+                <button
+                  type="button"
+                  aria-label="이전 페이지"
+                  disabled={currentPage === 1}
+                  onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                >
+                  <Chevron direction="left" />
+                </button>
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
                   <button
-                    key={p}
+                    key={number}
                     type="button"
-                    onClick={() => setPage(p)}
-                    aria-label={`${p}페이지`}
-                    aria-current={active ? "page" : undefined}
-                    className={
-                      active
-                        ? "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-body-13-sb leading-4 text-[var(--color-text)]"
-                        : "flex h-6 min-w-[24px] items-center justify-center bg-transparent text-body-13-r leading-4 text-[var(--color-text)]"
-                    }
+                    aria-label={`${number}페이지`}
+                    aria-current={currentPage === number ? "page" : undefined}
+                    onClick={() => goToPage(number)}
                   >
-                    {p}
+                    {number}
                   </button>
-                );
-              })}
-
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                aria-label="다음 페이지"
-                className="flex h-5 w-5 shrink-0 items-center justify-center text-[var(--color-ui-disabled)] disabled:opacity-40"
-              >
-                <ChevronRightIcon />
-              </button>
-            </nav>
-          )}
-        </section>
+                ))}
+                <button
+                  type="button"
+                  aria-label="다음 페이지"
+                  disabled={currentPage === totalPages}
+                  onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                >
+                  <Chevron direction="right" />
+                </button>
+              </nav>
+            )}
+          </section>
+        )}
       </div>
-      </div>
-
-      {selectedInquiry && (
-        <InquiryDetailModal item={selectedInquiry} onClose={() => setSelectedInquiry(null)} />
-      )}
     </div>
   );
 }

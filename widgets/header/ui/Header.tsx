@@ -113,10 +113,10 @@ export default function Header() {
               꼬순박스 소개
             </Link>
             <Link href="/subscribe" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
-              구독몰
+              정기구독
             </Link>
             <Link href="/purchase" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
-              단품몰
+              스토어
             </Link>
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               고객센터

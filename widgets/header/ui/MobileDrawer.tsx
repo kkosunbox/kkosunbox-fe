@@ -26,8 +26,8 @@ import {
 const NAV_ITEMS = [
   { href: "/", label: "홈", Icon: MenuHomeIcon },
   { href: "/about", label: "꼬순박스 소개", Icon: MenuBookmarkIcon },
-  { href: "/subscribe", label: "구독몰", Icon: MenuShoppingBagIcon },
-  { href: "/products", label: "단품몰", Icon: MenuShoppingCartIcon },
+  { href: "/subscribe", label: "정기구독", Icon: MenuShoppingBagIcon },
+  { href: "/products", label: "스토어", Icon: MenuShoppingCartIcon },
   { href: "/support", label: "고객센터", Icon: MenuChatIcon },
 ];
 

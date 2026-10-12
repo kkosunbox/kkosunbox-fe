@@ -16,7 +16,10 @@ export const EPOST_TRACKING_BASE =
 export const ITEMS_PER_PAGE = 10;
 
 export const ROW_GRID =
-  "grid max-lg:grid-cols-[1fr_120px_130px_152px_72px] lg:grid-cols-[1fr_120px_130px_152px_140px] items-center";
+  "grid max-lg:grid-cols-[1fr_120px_110px_130px_60px] lg:grid-cols-[345px_225px_253px_235px_1fr] items-center";
+
+/** 테이블 헤더·행 공통 좌우 여백 (Figma: 구독 컬럼 x=62) */
+export const ROW_PADDING = "max-lg:pl-[30px] lg:pl-[62px] pr-2";
 
 export const ROW_HEIGHT = "h-[49px]";
 
@@ -43,8 +46,8 @@ export function formatKoreanDate(dateStr: string): string {
   return `${year}년 ${month}월 ${day}일`;
 }
 
-// 말일(29~31일) 결제일은 매달 실제 일수가 달라 스킵/보정 문제가 생기므로 선택지에서 제외
-export const BILLING_DAY_OPTIONS = Array.from({ length: 28 }, (_, i) => i + 1);
+// 백엔드 계약(ChangeBillingDayRequest)과 동일하게 매달 1~31일
+export const BILLING_DAY_OPTIONS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export function deriveStartDate(payments: SubscriptionPaymentDto[], fallback: string): string {
   const completed = payments

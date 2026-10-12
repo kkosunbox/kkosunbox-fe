@@ -10,7 +10,7 @@ const SubscriptionDetailSection = dynamic(
   () => import("@/widgets/mypage/ui/SubscriptionDetailSection"),
 );
 
-export const metadata = { title: "구독중인 플랜 | 꼬순박스" };
+export const metadata = { title: "구독 상세보기 | 꼬순박스" };
 
 interface PageProps {
   searchParams: Promise<{ subscriptionId?: string }>;

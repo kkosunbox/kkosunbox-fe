@@ -1,26 +1,27 @@
 "use client";
 
-import { Text } from "@/shared/ui";
-import { TIER_BOX_IMAGES } from "@/entities/package";
-import { BILLING_DAY_OPTIONS, ROW_GRID } from "./helpers";
+import { BILLING_DAY_OPTIONS, ROW_GRID, ROW_PADDING, formatDate } from "./helpers";
 import type { SubscriptionDetailViewModel } from "./useSubscriptionDetailSection";
-import { ChevronLeftIcon, CloseIcon, PencilIcon } from "./components/icons";
+import { ChevronLeftIcon, CloseIcon, DropdownTriangleIcon, PencilIcon } from "./components/icons";
 import { Pagination } from "./components/Pagination";
 import { RecordRow } from "./components/RecordRow";
+import {
+  OVERVIEW_HEADER_LINK_CLASS,
+  OVERVIEW_PRIMARY_BUTTON_CLASS,
+  OVERVIEW_SECONDARY_BUTTON_CLASS,
+  SubscriptionOverviewCard,
+} from "../subscription-overview/SubscriptionOverviewCard";
 
 export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
   const {
     subscription,
     payments,
-    theme,
     isActive,
     isScheduled,
     startDate,
-    endDate,
     records,
     currentPage,
     totalPages,
-    formatDate,
     billingDay,
     isEditingBillingDay,
     handleDeleteRecord,
@@ -39,6 +40,10 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
     setPage,
   } = vm;
 
+  const nextBillingLabel = subscription.nextBillingDate
+    ? formatDate(subscription.nextBillingDate)
+    : "-";
+
   const recordRowProps = {
     planName: subscription.plan.name,
     onCancelPayment: handleCancelPayment,
@@ -47,221 +52,110 @@ export function SubscriptionDetailView(vm: SubscriptionDetailViewModel) {
 
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
-      {/* Upper solid color band — mobile 367px / desktop 258px */}
-      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:h-[296px] md:h-[258px] bg-[var(--color-subscription-detail-header-bg)]" />
+      {/* Upper solid color band — mobile 296px / desktop 148px */}
+      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:h-[296px] md:h-[148px] bg-[var(--color-subscription-detail-header-bg)]" />
 
-      {/* Hero — plan card fits entirely within the 258px band */}
-      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-8 pb-6">
+      {/* Hero — 구독 카드가 밴드 경계에 걸친다 */}
+      <div className="relative mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 pt-8">
         {/* Back + title */}
         <button
           type="button"
           onClick={goBack}
-          className="mb-6 flex items-center gap-1 text-subtitle-18-b text-[var(--color-text)] hover:opacity-70"
+          className="mb-3 flex items-center gap-1 max-md:text-subtitle-18-b md:text-title-20-sb text-[var(--color-text)] hover:opacity-70"
         >
           <ChevronLeftIcon />
-          구독중인 플랜
+          구독 상세보기
         </button>
 
-        {/* Plan summary card — 154px tall, no shadow (colored band provides contrast) */}
-        <div className="flex overflow-hidden rounded-[20px] bg-white max-md:h-[150px] md:h-[154px] lg:h-[154px]">
-          <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[150px] max-md:w-[130px] md:h-[154px] lg:h-[154px] md:w-[166px] lg:w-[166px]">
-            {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
-            <img
-              src={subscription.plan.imageUrl ?? TIER_BOX_IMAGES[theme.tier].src}
-              alt={`${subscription.plan.name} 이미지`}
-              width={TIER_BOX_IMAGES[theme.tier].width}
-              height={TIER_BOX_IMAGES[theme.tier].height}
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover object-center scale-105"
-            />
-            {subscription.isPaused && (
-              <>
-                <div className="absolute inset-0 z-10 scale-105 bg-black/30" aria-hidden="true" />
-                {/* eslint-disable-next-line @next/next/no-img-element -- 첨부 디자인 원본 SVG 유지 */}
-                <img src="/images/subscription-paused.svg" alt="" width="104" height="24" className="absolute left-1/2 top-1/2 z-20 h-auto w-[104px] -translate-x-1/2 -translate-y-1/2 max-md:w-[88px]" aria-hidden="true" />
-              </>
-            )}
-          </div>
-
-          <div className="flex flex-1 flex-col justify-center gap-2 p-4 md:flex-row lg:flex-row md:items-center lg:items-center md:gap-6 lg:gap-6 md:px-8 lg:px-8 md:py-5 lg:py-5">
-            <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <Text variant="subtitle-16-sb" mobileVariant="body-14-sb" className="tracking-[-0.04em] text-[var(--color-text)]">
-                {subscription.plan.name}{isActive ? " 구독중" : ""}
-              </Text>
-
-              {isActive ? (
-                <>
-                  <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                    {formatDate(startDate)} ~
-                  </Text>
-                  {isScheduled ? (
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                      결제일 : 매달 {billingDay}일
-                    </Text>
-                  ) : isEditingBillingDay ? (
-                    <div className="flex max-sm:flex-wrap items-center max-sm:gap-1 sm:gap-1.5">
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                        결제일 :
-                      </Text>
-                      <select
-                        value={billingDay}
-                        onChange={(e) => handleSelectBillingDay(Number(e.target.value))}
-                        aria-label="결제일 선택"
-                        className="h-7 shrink-0 rounded-[6px] border border-[var(--color-border-light)] bg-white px-2 text-body-14-m text-[var(--color-text)] outline-none"
-                      >
-                        {BILLING_DAY_OPTIONS.map((day) => (
-                          <option key={day} value={day}>
-                            {day}일
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={handleCancelEditBillingDay}
-                        aria-label="결제일 수정 취소"
-                        className="flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-text-secondary)] hover:opacity-70"
-                      >
-                        <CloseIcon />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex max-sm:flex-wrap items-center max-sm:gap-1 sm:gap-1.5">
-                      <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                        결제일 : 매달 {billingDay}일
-                      </Text>
-                      <button
-                        type="button"
-                        onClick={handleStartEditBillingDay}
-                        aria-label="결제일 수정"
-                        className="flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-text-secondary)] hover:opacity-70"
-                      >
-                        <PencilIcon />
-                      </button>
-                    </div>
-                  )}
-                  {isScheduled ? null : (
-                    <button
-                      type="button"
-                      onClick={handleTogglePause}
-                      className="shrink-0 self-start text-right text-body-13-sb leading-[130%] text-[var(--color-accent)] underline hover:opacity-80 transition-opacity"
-                    >
-                      {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  {endDate && (
-                    <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                      {formatDate(endDate)}
-                    </Text>
-                  )}
-                  <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                    구독종료
-                  </Text>
-                </>
-              )}
-            </div>
-
-            {/* Desktop-only action buttons */}
-            <div className="max-md:hidden flex shrink-0 items-center gap-2">
-              {isActive ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-                  >
-                    구독 취소
-                  </button>
-                  {isScheduled ? null : (
-                    <button
-                      type="button"
-                      onClick={handleChangeSubscription}
-                      className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-                    >
-                      구독 변경
-                    </button>
-                  )}
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleDeleteRecord}
-                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-                  >
-                    삭제
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleResubscribe}
-                    className="inline-flex h-10 w-[102px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-                  >
-                    구독 재시작
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile-only action buttons */}
-        <div
-          className="md:hidden lg:hidden mt-3 grid gap-2"
-          style={{ gridTemplateColumns: isActive && isScheduled ? "1fr" : "1fr 1fr" }}
-        >
-          {isActive ? (
-            <>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-90"
-              >
-                구독 취소
-              </button>
-              {isScheduled ? null : (
-                <button
-                  type="button"
-                  onClick={handleChangeSubscription}
-                  className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[150%] tracking-[-0.02em] text-white transition-opacity hover:opacity-90"
-                >
-                  구독 변경
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={handleDeleteRecord}
-                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-text-muted)] text-body-14-sb text-white transition-opacity hover:opacity-90"
-              >
+        <SubscriptionOverviewCard
+          subscription={subscription}
+          date={subscription.startDate ?? startDate}
+          headerAction={
+            !isActive ? (
+              <button type="button" onClick={handleDeleteRecord} className={OVERVIEW_HEADER_LINK_CLASS}>
                 삭제
               </button>
-              <button
-                type="button"
-                onClick={handleResubscribe}
-                className="flex h-[40px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white transition-opacity hover:opacity-90"
-              >
+            ) : isScheduled ? null : (
+              <button type="button" onClick={handleTogglePause} className={OVERVIEW_HEADER_LINK_CLASS}>
+                {subscription.isPaused ? "쉬어가기 해제" : "구독 쉬어가기"}
+              </button>
+            )
+          }
+          billingValue={
+            !isActive || isScheduled || subscription.isPaused ? undefined : isEditingBillingDay ? (
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <select
+                    value={billingDay}
+                    onChange={(e) => handleSelectBillingDay(Number(e.target.value))}
+                    aria-label="결제일 선택"
+                    className="h-7 appearance-none rounded-[5px] border border-[var(--color-text-muted)] bg-white pl-3 pr-10 text-body-13-m leading-[140%] text-[var(--color-text-secondary)] outline-none"
+                  >
+                    {BILLING_DAY_OPTIONS.map((day) => (
+                      <option key={day} value={day}>
+                        {day}일
+                      </option>
+                    ))}
+                  </select>
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black">
+                    <DropdownTriangleIcon />
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCancelEditBillingDay}
+                  aria-label="결제일 수정 취소"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-text-secondary)] hover:opacity-70"
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <span className="text-price-20-eb-lh24 text-[var(--color-text)]">{nextBillingLabel}</span>
+                <button
+                  type="button"
+                  onClick={handleStartEditBillingDay}
+                  aria-label="결제일 수정"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center text-[var(--color-text-secondary)] hover:opacity-70"
+                >
+                  <PencilIcon />
+                </button>
+              </div>
+            )
+          }
+          primaryAction={
+            !isActive ? (
+              <button type="button" onClick={handleResubscribe} className={OVERVIEW_PRIMARY_BUTTON_CLASS}>
                 구독 재시작
               </button>
-            </>
-          )}
-        </div>
+            ) : isScheduled ? undefined : (
+              <button type="button" onClick={handleChangeSubscription} className={OVERVIEW_PRIMARY_BUTTON_CLASS}>
+                구독 변경
+              </button>
+            )
+          }
+          secondaryActions={
+            isActive
+              ? [
+                  <button key="cancel" type="button" onClick={handleCancel} className={OVERVIEW_SECONDARY_BUTTON_CLASS}>
+                    구독 취소
+                  </button>,
+                ]
+              : []
+          }
+        />
       </div>
 
       {/* Payment history — flat on white background, 24px gap from band end */}
-      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 max-md:pt-6 md:pt-6 pb-12">
-        <Text as="h2" variant="subtitle-18-b" className="mb-5 text-[var(--color-text)]">
-          구독 상세내역
-        </Text>
+      <div className="relative mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 max-md:pt-6 md:pt-10 pb-12">
+        <h2 className="sr-only">구독 상세내역</h2>
 
         {/* Desktop table */}
         <div className="max-md:hidden">
-          <div className={`${ROW_GRID} h-11 rounded-lg bg-[var(--color-surface-light)] pl-[30px] pr-2`}>
+          <div className={`${ROW_GRID} ${ROW_PADDING} h-11 rounded-lg bg-[var(--color-surface-light)]`}>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">구독</span>
-            <span className="text-body-16-m text-[var(--color-text-tertiary)]">상태</span>
+            <span className="text-body-16-m text-[var(--color-text-tertiary)]">배송</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">금액</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">직접입력</span>
             <span className="text-body-16-m text-[var(--color-text-tertiary)]">영수증</span>

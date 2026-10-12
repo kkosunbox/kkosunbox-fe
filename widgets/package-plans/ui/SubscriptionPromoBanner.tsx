@@ -1,5 +1,5 @@
 import Image from "next/image";
-import subscribeBannerPackage from "../assets/subscribe-banner-package.png";
+import subscribeBannerPackage from "../assets/subscribe-banner-package.webp";
 
 export function SubscriptionPromoBanner() {
   return (
@@ -15,7 +15,7 @@ export function SubscriptionPromoBanner() {
           src={subscribeBannerPackage}
           alt=""
           width={134}
-          height={64}
+          height={63}
           className="h-auto self-end object-contain max-md:w-[110px] md:w-[134px]"
         />
       </div>

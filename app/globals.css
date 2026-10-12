@@ -247,6 +247,15 @@
   --shadow-card-soft: 0px 4px 16px 0px #0000001F;     /* 패키지 섹션 카드 공통 그림자 */
   --shadow-card-selected: 0px 4px 16px 0px #00000033; /* 선택된 카드 강조 그림자 */
 
+  /* 확인 모달 (흰 카드 + 일러스트) — Figma 5936:33471 / 6049:* */
+  --color-modal-body: #555555;          /* 확인 모달 본문 */
+  --color-modal-link: #8A8A8A;          /* 확인 모달 하단 밑줄 링크 */
+  --color-modal-checklist: #E9A830;     /* 체크리스트 거절 안내 모달 강조·버튼 */
+  --color-modal-restart: #60ACEF;       /* 구독 재시작 모달 강조·버튼 */
+  --color-modal-warning: #F1923A;       /* 결제취소·미배송·플랜변경 모달 강조·버튼 */
+  --color-modal-danger: #F21E1E;        /* 계정 탈퇴 모달 강조·버튼 */
+  --shadow-modal-confirm: 0px 4px 12px 4px #0000003D, 0px 6px 20px 0px #4E4E4ECC; /* 확인 모달 카드 그림자 */
+
   /* WhyChoose + Gallery 섹션 */
   --color-why-bg: #584B40;              /* WhyChooseSection · PhotoGallerySection 공통 배경 (웜 브라운) */
   --color-top-band-bg: #8E6642;         /* 주문 가격합산 띠 · 구독상세 플랜선택 띠 배경 */
@@ -313,12 +322,8 @@
   --gradient-subscribe-plans-hero: linear-gradient(268.21deg, rgba(173, 206, 255, 0.5) 3.87%, rgba(254, 234, 215, 0.5) 56.14%);
   /* 파트너 CTA 배너 — 메인 리디자인의 웜 옐로우, 구 피치→블루 그라디언트 사용 금지 */
   --gradient-support-banner: linear-gradient(90deg, #FFF2DA 0%, #FFDDAF 100%);
-  --gradient-modal-checklist: linear-gradient(180deg, #ADCEFF 0%, #FEEAD7 100%); /* 체크리스트 모달 01/03 — 블루→피치 */
   --gradient-checklist-button-border: linear-gradient(90deg, #FEEAD7 0%, #ADCEFF 100%); /* 체크리스트 CTA 외곽선 — 가로 블루→피치 */
-  --gradient-modal-warning: #FCA14E;                                              /* 플랜 변경 경고 모달 02 — 솔리드 오렌지 */
   --gradient-modal-coupon: linear-gradient(132.82deg, #FFF4EB 25.95%, #FFE3B7 94.09%); /* 쿠폰 발급 모달 04 — 웜 크림 */
-  --gradient-modal-danger: #F07050;                                               /* 구독 취소/회원 탈퇴 모달 05/07 — 코럴 오렌지 */
-  --gradient-modal-restart: linear-gradient(180deg, #A8D4F5 0%, #EEF6FF 100%);  /* 구독 재시작 모달 06 — 라이트 블루 */
   --gradient-modal-pause: #ABBEF3;                                               /* 구독 쉬어가기 모달 10 — 소프트 퍼플블루 */
   --gradient-modal-review: linear-gradient(180deg, #FFF2E5 0%, #DAE9FF 100%);  /* 배송완료 리뷰 모달 12 — 웜피치→라이트블루 */
   --gradient-cta-product: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #FFEFDF 0%, #F7DAC2 100%); /* About CTA 상품 카드 배경 */
@@ -443,6 +448,12 @@
   --color-badge-best-bg: var(--color-badge-best-bg);
   --color-badge-count-bg: var(--color-badge-count-bg);
   --color-header-icon: var(--color-header-icon);
+  --color-modal-body: var(--color-modal-body);
+  --color-modal-link: var(--color-modal-link);
+  --color-modal-checklist: var(--color-modal-checklist);
+  --color-modal-restart: var(--color-modal-restart);
+  --color-modal-warning: var(--color-modal-warning);
+  --color-modal-danger: var(--color-modal-danger);
   --color-cta-button: var(--color-cta-button);
   --color-cta-button-soft: var(--color-cta-button-soft);
   --color-banner-bg: var(--color-banner-bg);

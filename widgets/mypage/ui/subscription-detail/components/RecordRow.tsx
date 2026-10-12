@@ -1,14 +1,15 @@
 import type { SubscriptionPaymentDto } from "@/features/subscription/api/types";
 import { isPaymentCancelable } from "@/features/subscription/lib/paymentCancelable";
 import {
+  DISPLAY_STATUS_LABEL,
   EPOST_TRACKING_BASE,
   ROW_GRID,
   ROW_HEIGHT,
+  ROW_PADDING,
   formatDate,
   formatPrice,
 } from "../helpers";
 import { DownloadIcon } from "./icons";
-import { StatusBadge } from "./StatusBadge";
 
 interface RecordRowProps {
   record: SubscriptionPaymentDto;
@@ -34,17 +35,20 @@ export function RecordRow({
   // 결제 대기(pending) 건의 취소 버튼은 기존 동작 그대로 유지한다.
   const canCancelPayment = isPaymentCancelable(record);
 
-  const statusBadge = record.trackingNumber ? (
+  // 배송 상태 — 운송장이 있으면 우체국 배송조회로 연결한다.
+  const deliveryStatusCls =
+    "w-fit text-body-14-m leading-[17px] text-[var(--color-text-label)] underline";
+  const deliveryStatus = record.trackingNumber ? (
     <a
       href={`${EPOST_TRACKING_BASE}?sid1=${encodeURIComponent(record.trackingNumber)}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="hover:opacity-80"
+      className={`${deliveryStatusCls} hover:opacity-80`}
     >
-      <StatusBadge status={record.displayStatus} />
+      {DISPLAY_STATUS_LABEL[record.displayStatus]}
     </a>
   ) : (
-    <StatusBadge status={record.displayStatus} />
+    <span className={deliveryStatusCls}>{DISPLAY_STATUS_LABEL[record.displayStatus]}</span>
   );
 
   if (!desktop) {
@@ -74,7 +78,7 @@ export function RecordRow({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-body-14-m text-[var(--color-text)]">{formatPrice(record.amount)}</span>
-              {statusBadge}
+              {deliveryStatus}
             </div>
             <span className="text-body-14-m text-[var(--color-text)]">{dateStr}</span>
           </div>
@@ -85,7 +89,7 @@ export function RecordRow({
 
   return (
     <li className={`border-b border-[var(--color-text-muted)] ${isOnly ? "" : "last:border-b-0"}`}>
-      <div className={`${ROW_GRID} ${ROW_HEIGHT} pl-[30px] pr-2`}>
+      <div className={`${ROW_GRID} ${ROW_HEIGHT} ${ROW_PADDING}`}>
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-body-14-m text-[var(--color-text)] truncate min-w-0">{pkgName}</span>
           {(record.displayStatus === "pending" || canCancelPayment) && (
@@ -98,7 +102,7 @@ export function RecordRow({
             </button>
           )}
         </div>
-        <div className="flex items-center">{statusBadge}</div>
+        <div className="flex items-center">{deliveryStatus}</div>
         <span className="text-body-14-m text-[var(--color-text)]">{formatPrice(record.amount)}</span>
         <span className="text-body-14-m text-[var(--color-text)]">{dateStr}</span>
         <div className="flex justify-start">

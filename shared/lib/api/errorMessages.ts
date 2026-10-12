@@ -23,6 +23,9 @@ const ERROR_MESSAGES: Record<string, string> = {
   DAILY_LIMIT_EXCEEDED: "일일 발송 한도를 초과했습니다. 내일 다시 시도해주세요.",
   DAILY_LIMIT_REACHED: "일일 발송 한도(5회)를 초과했습니다. 내일 다시 시도해주세요.",
 
+  // 회원 탈퇴
+  ACTIVE_SUBSCRIPTION_EXISTS: "이용 중인 구독이 있어 탈퇴할 수 없습니다.\n구독을 해지한 후 다시 시도해주세요.",
+
   // 비밀번호
   INVALID_PASSWORD: "비밀번호가 올바르지 않습니다.",
   WEAK_PASSWORD: "비밀번호가 보안 조건을 충족하지 않습니다.",

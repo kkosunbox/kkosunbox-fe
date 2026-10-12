@@ -193,6 +193,18 @@
 | `--color-badge-count-bg` | `#D83232` | 헤더 장바구니 개수 뱃지 배경 |
 | `--color-header-icon` | `#555555` | 헤더 아이콘 선 (장바구니 등) |
 
+### 확인 모달 (흰 카드 + 일러스트)
+
+| Token | HEX | 용도 |
+|---|---|---|
+| `--color-modal-body` | `#555555` | 확인 모달 본문 |
+| `--color-modal-link` | `#8A8A8A` | 확인 모달 하단 밑줄 링크 |
+| `--color-modal-checklist` | `#E9A830` | 체크리스트 거절 안내 모달 강조·버튼 |
+| `--color-modal-restart` | `#60ACEF` | 구독 재시작 모달 강조·버튼 |
+| `--color-modal-warning` | `#F1923A` | 결제취소·미배송·플랜변경 모달 강조·버튼 |
+| `--color-modal-danger` | `#F21E1E` | 계정 탈퇴 모달 강조·버튼 |
+| `--shadow-modal-confirm` | `0 4px 12px 4px #0000003D, 0 6px 20px #4E4E4ECC` | 확인 모달 카드 그림자 |
+
 ### Gradient
 
 | Token | 값 | 용도 |

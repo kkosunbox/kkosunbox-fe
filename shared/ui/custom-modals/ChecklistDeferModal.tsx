@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import ModalShell from "../modal/ModalShell";
+import IllustratedConfirmModal from "./IllustratedConfirmModal";
 
 interface Props {
   onClose: () => void;
@@ -11,81 +9,28 @@ interface Props {
 
 export default function ChecklistDeferModal({ onClose }: Props) {
   return (
-    <ModalShell onClose={onClose}>
-      {/* Group */}
-      <div
-        className="relative w-full max-md:max-w-[320px] md:max-w-[388px] lg:max-w-[388px] max-md:-translate-y-[30px] md:-translate-y-[40px] lg:-translate-y-[40px]"
-        style={{ filter: "drop-shadow(0px 6px 20px rgba(78,78,78,0.8))" }}
-      >
-        {/* Upper image — mobile 160px / desktop 210px */}
-        <Image
-          src="/images/modal/custom-modal-03-upper.webp"
-          alt="폴더 아이콘"
-          width={210}
-          height={210}
-          quality={HIGH_IMAGE_QUALITY}
-          className="absolute top-0 left-1/2 -translate-x-1/2 z-10
-                     max-md:w-[160px] max-md:h-[160px] md:w-[210px] lg:w-[210px] md:h-[210px] lg:h-[210px]"
-        />
-
-        {/* Card */}
-        <div
-          className="relative
-                     max-md:mt-[59px] md:mt-[80px] lg:mt-[80px]
-                     rounded-[24px]
-                     max-md:pt-[110px] md:pt-[120px] lg:pt-[120px]
-                     pb-8 px-6
-                     flex flex-col items-center"
-          style={{ background: "var(--gradient-modal-checklist)" }}
-        >
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            aria-label="닫기"
-            className="absolute top-6 right-6 flex items-center justify-center w-6 h-6 hover:opacity-70 transition-opacity"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
-
-          {/* Title image */}
-          <Image
-            src="/images/modal/custom-modal-03-contents.webp"
-            alt="지금 작성하지 않아도 괜찮아요!"
-            width={240}
-            height={116}
-            quality={HIGH_IMAGE_QUALITY}
-            className="h-auto"
-          />
-
-          {/* Body — mobile 13px / desktop 14px, bold blue */}
-          <p className="mt-[22px] max-md:text-[13px] md:text-[14px] lg:text-[14px] font-bold leading-[140%] tracking-[-0.04em] text-[var(--color-link-blue)] text-center">
-            [마이페이지 &gt; 체크리스트 작성하기] 메뉴에서 언제든 아이의 특성을 등록하고 맞춤 솔루션을 확인할 수 있습니다.
-          </p>
-
-          {/* CTA button — mobile 14px / desktop 16px */}
-          <button
-            onClick={onClose}
-            className="mt-8 w-full h-[48px] rounded-[8px] bg-white
-                       max-md:text-[14px] md:text-[16px] lg:text-[16px]
-                       font-semibold leading-[150%] tracking-[-0.02em] text-[var(--color-text)]
-                       hover:opacity-90 transition-opacity"
-          >
-            확인
-          </button>
-
-          {/* Secondary */}
-          <button
-            onClick={() => { onClose(); openChecklistForm(); }}
-            className="mt-4 text-[13px] font-medium leading-[16px] tracking-[-0.04em]
-                       text-[var(--color-text-tertiary)] underline
-                       hover:opacity-70 transition-opacity"
-          >
-            체크리스트 하러가기
-          </button>
-        </div>
-      </div>
-    </ModalShell>
+    <IllustratedConfirmModal
+      onClose={onClose}
+      illustration="checklist"
+      accentColor="var(--color-modal-checklist)"
+      title={
+        <>
+          지금
+          <br />
+          <span className="text-[var(--color-modal-checklist)]">작성하지 않아도</span> 괜찮아요!
+        </>
+      }
+      description={
+        <>
+          [마이페이지 &gt; 체크리스트 작성하기] 메뉴에서 언제든지
+          <br />
+          아이의 특성을 등록하고 맞춤 솔루션을 확인해보세요.
+        </>
+      }
+      primaryLabel="확인"
+      onPrimary={onClose}
+      secondaryLabel="체크리스트 하러가기"
+      onSecondary={() => { onClose(); openChecklistForm(); }}
+    />
   );
 }

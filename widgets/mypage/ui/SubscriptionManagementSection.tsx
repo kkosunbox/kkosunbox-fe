@@ -1,9 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { TIER_BOX_IMAGES } from "@/entities/package";
 import { Text } from "@/shared/ui";
 import { openCenteredPopup } from "@/shared/lib/popup";
 import type { BillingInfo } from "@/features/billing/api/types";
@@ -14,19 +13,21 @@ import {
   getSubscriptionDisplayBucket,
   isScheduledSubscription,
 } from "@/features/subscription/lib/subscriptionDisplayBucket";
-import { getNextBillingDateLabel } from "@/features/subscription/lib/nextBillingDateLabel";
-import {
-  subscriptionPaidAmount,
-  totalSubscriptionPaidAmount,
-} from "@/features/subscription/lib/subscriptionAmount";
-import { formatDateToYMD } from "@/features/order";
+import { totalSubscriptionPaidAmount } from "@/features/subscription/lib/subscriptionAmount";
 import {
   comparePlansForDisplayOrder,
   packageThemeForPlan,
 } from "@/entities/package";
 import { PAYMENT_REGISTER_CHIP_BUTTON_ACCENT_CLASS } from "../lib/dashboard-shared";
+import { Pagination } from "./subscription-detail/components/Pagination";
+import {
+  OVERVIEW_PRIMARY_BUTTON_CLASS,
+  OVERVIEW_SECONDARY_BUTTON_CLASS,
+  SubscriptionOverviewCard,
+} from "./subscription-overview/SubscriptionOverviewCard";
+import { useSubscriptionRowActions } from "./subscription-overview/useSubscriptionRowActions";
 
-type SubscriptionFilter = "all" | "active" | "ended";
+type SubscriptionFilter = "all" | "active" | "paused" | "ended";
 
 /* ─────────────────────────────
    Icons
@@ -41,8 +42,8 @@ function ChevronLeftIcon() {
 
 function ChevronRightIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -73,20 +74,17 @@ function formatPrice(n: number) {
   return n.toLocaleString("ko-KR") + "원";
 }
 
-function formatDate(dateStr: string): string {
-  return dateStr.replace(/-/g, ".");
-}
-
-function billingDayLabel(dateStr: string): string {
-  const day = parseInt(dateStr.slice(8, 10), 10);
-  return `매달 ${day}일`;
-}
-
 /* 가장 가까운 다음 결제일 (오름차순 정렬 첫 항목) */
 function earliestNextBillingDate(subs: UserSubscriptionDto[]): string | null {
   const dates = subs.map((s) => s.nextBillingDate).filter(Boolean);
   if (dates.length === 0) return null;
   return [...dates].sort()[0];
+}
+
+/** 목록 탭 분류 — 구독중(쉬는 중 제외) / 쉬어가기(쉬는 중) / 해지완료 */
+function filterKeyOf(subscription: UserSubscriptionDto): Exclude<SubscriptionFilter, "all"> {
+  if (getSubscriptionDisplayBucket(subscription.status) === "ended") return "ended";
+  return subscription.isPaused ? "paused" : "active";
 }
 
 /* ─────────────────────────────
@@ -95,14 +93,11 @@ function earliestNextBillingDate(subs: UserSubscriptionDto[]): string | null {
 function SubscriptionsSummaryCard({
   activeSubscriptions,
   billableSubscriptions,
-  nextBillingDateLabel,
   hasPlans,
 }: {
   activeSubscriptions: UserSubscriptionDto[];
   /** 쉬는 중(isPaused)이 아닌, 이번 주기에 실제로 청구되는 구독만. "결제 금액" 합계 계산 전용 */
   billableSubscriptions: UserSubscriptionDto[];
-  /** "다음 결제일" 표시용, getNextBillingDateLabel로 이미 과거 날짜 방어까지 끝낸 최종 문자열 */
-  nextBillingDateLabel: string;
   hasPlans: boolean;
 }) {
   const count = activeSubscriptions.length;
@@ -123,13 +118,13 @@ function SubscriptionsSummaryCard({
   }, [activeSubscriptions]);
 
   return (
-    <div className="max-md:p-5 md:flex-1 lg:flex-1 md:px-8 lg:px-8 md:py-8 lg:py-8">
+    <div className="max-md:p-5 md:flex-1 md:px-8 lg:px-11 md:py-8 lg:pt-10 lg:pb-[41px]">
       {aggregatedPlans.length > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-2">
           {aggregatedPlans.map(({ plan, totalQuantity }) => {
             const theme = packageThemeForPlan(plan);
             return (
-              <div key={plan.id} className="inline-flex items-center gap-2">
+              <div key={plan.id} className="inline-flex items-center gap-3">
                 <span
                   className="inline-flex h-6 items-center rounded-full px-3 text-body-14-sb leading-[17px] text-white"
                   style={{ background: theme.colorVar }}
@@ -138,7 +133,7 @@ function SubscriptionsSummaryCard({
                 </span>
                 {totalQuantity > 1 && (
                   <span
-                    className="text-body-14-sb leading-[17px]"
+                    className="text-subtitle-16-b-tight"
                     style={{ color: theme.colorVar }}
                   >
                     {totalQuantity}BOX
@@ -150,7 +145,7 @@ function SubscriptionsSummaryCard({
         </div>
       )}
 
-      <Text as="h3" variant="subtitle-16-b" className="mb-3 text-[var(--color-text)]">
+      <Text as="h3" variant="title-20-b" mobileVariant="subtitle-16-b" className="mb-5 text-[var(--color-text)]">
         {!hasPlans
           ? "구독 정보를 불러올 수 없습니다"
           : count > 0
@@ -159,10 +154,9 @@ function SubscriptionsSummaryCard({
       </Text>
 
       {hasPlans && (
-        <div className="flex flex-col gap-1.5 text-body-14-m text-[var(--color-text-label)]">
-          <p>다음 결제일 : {nextBillingDateLabel}</p>
-          <p>결제 금액 : {totalAmount !== null ? formatPrice(totalAmount) : "-"}</p>
-        </div>
+        <p className="max-md:text-body-14-m md:text-body-16-m text-[var(--color-text-label)]">
+          이번달 결제 금액 : {totalAmount !== null ? formatPrice(totalAmount) : "-"}
+        </p>
       )}
     </div>
   );
@@ -176,7 +170,7 @@ function PaymentInfoCard({
   nextBillingDateLabel,
 }: {
   billingInfo: BillingInfo | null;
-  /** "다음 결제일" 표시용, getNextBillingDateLabel로 이미 과거 날짜 방어까지 끝낸 최종 문자열 */
+  /** "다음 결제일" 표시용 YYYY.MM.DD 문자열 (없으면 "-") */
   nextBillingDateLabel: string;
 }) {
   const router = useRouter();
@@ -216,24 +210,24 @@ function PaymentInfoCard({
   const nextDateDisplay =
     nextBillingDateLabel === "-" ? "-" : `${nextBillingDateLabel} (카드결제)`;
 
-  const labelCls = "w-[80px] shrink-0 text-body-14-m text-[var(--color-text-label)]";
-  const valueCls = "text-body-14-sb text-[var(--color-text)]";
+  const labelCls = "w-[80px] shrink-0 text-body-13-m leading-4 text-[var(--color-text-label)]";
+  const valueCls = "text-body-13-sb leading-4 text-[var(--color-text)]";
 
   return (
-    <div className="flex flex-col max-md:p-5 md:flex-1 lg:flex-1 md:px-8 lg:px-8 md:py-8 lg:py-8">
-      <Text as="h3" variant="subtitle-16-b" className="mb-5 text-[var(--color-text)]">
+    <div className="flex flex-col max-md:p-5 md:flex-1 md:px-8 lg:px-12 md:py-8 lg:py-10">
+      <Text as="h3" variant="subtitle-16-b" className="mb-5 text-[var(--color-text)] lg:mb-[17px]">
         결제관리
       </Text>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col max-md:gap-3 md:gap-4">
         <div className="flex items-center gap-3">
           <span className={labelCls}>결제수단</span>
           <span className={valueCls}>{methodDisplay}</span>
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 md:h-4 md:items-center">
           <span className={labelCls}>간편 결제</span>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 md:h-4 md:items-start">
             <span className={valueCls}>{cardDisplay}</span>
             <button
               type="button"
@@ -255,139 +249,118 @@ function PaymentInfoCard({
 }
 
 /* ─────────────────────────────
-   Subscription Card (구독 전체보기)
+   Subscription Row (구독 카드 + 상태별 버튼)
 ───────────────────────────── */
 function SubscriptionRow({
   subscription,
+  actions,
 }: {
   subscription: UserSubscriptionDto;
+  actions: ReturnType<typeof useSubscriptionRowActions>;
 }) {
-  const { plan, isPaused } = subscription;
-  // isActive는 "지금 결제 중인가"만 나타내 scheduled(시작 예약, 첫 결제 전)를 false로 내려준다.
-  // 표시 분류는 반드시 status 기준(getSubscriptionDisplayBucket)으로 판단한다.
-  const isActive = getSubscriptionDisplayBucket(subscription.status) === "active";
+  const filterKey = filterKeyOf(subscription);
   const isScheduled = isScheduledSubscription(subscription.status);
-  const theme = packageThemeForPlan(plan);
-  const boxQuantity = subscription.quantity || 1;
-  // 결제 이력이 없는 구독(예약 구독 등)은 실결제액 자체가 없어 null — 정가로 대체하지 않는다.
-  const paidAmount = subscriptionPaidAmount(subscription);
-  const badgeColor = isActive ? theme.colorVar : "var(--color-text-secondary)";
   const detailHref = `/mypage/subscription/detail?subscriptionId=${subscription.id}`;
 
-  return (
-    <Link
-      href={detailHref}
-      className="flex items-stretch overflow-hidden rounded-[20px] bg-[var(--color-surface-light)] max-md:h-[120px] max-md:rounded-[16px] transition-opacity hover:opacity-90"
-      aria-label={`${plan.name}${isPaused ? " 쉬는 중" : ""} 구독 상세보기`}
+  const changeButton = (
+    <button
+      type="button"
+      onClick={() => actions.handleChange(subscription.id)}
+      className={OVERVIEW_SECONDARY_BUTTON_CLASS}
     >
-      <div className="relative shrink-0 bg-[var(--color-surface-light)] max-md:h-[120px] max-md:w-[129px] md:min-h-[170px] lg:min-h-[170px] md:w-[182px] lg:w-[182px]">
-        {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 박스 이미지 원본 품질 유지 */}
-        <img
-          src={plan.imageUrl ?? TIER_BOX_IMAGES[theme.tier].src}
-          alt={`${plan.name} 이미지`}
-          width={TIER_BOX_IMAGES[theme.tier].width}
-          height={TIER_BOX_IMAGES[theme.tier].height}
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-center scale-105"
-        />
-        {isPaused && (
-          <>
-            <div className="absolute inset-0 z-10 scale-105 bg-black/30" aria-hidden="true" />
-            {/* eslint-disable-next-line @next/next/no-img-element -- 첨부 디자인 원본 SVG 유지 */}
-            <img src="/images/subscription-paused.svg" alt="" width="104" height="24" className="absolute left-1/2 top-1/2 z-20 h-auto w-[104px] -translate-x-1/2 -translate-y-1/2 max-md:w-[88px]" aria-hidden="true" />
-          </>
-        )}
-      </div>
+      구독변경
+    </button>
+  );
 
-      <div className="flex min-w-0 flex-1 flex-col justify-center max-md:gap-1 md:gap-2 lg:gap-2 max-md:px-4 md:p-5 lg:p-5">
-        {boxQuantity > 1 && (
-          <span
-            className="max-md:text-body-14-sb md:text-subtitle-16-sb leading-tight max-md:mb-1"
-            style={{ color: badgeColor }}
+  // 구독중: 구독변경(예약 구독은 변경 불가) / 쉬어가기: 구독 재개 + 구독변경 / 해지: 구독 재시작
+  const secondaryActions =
+    filterKey === "ended"
+      ? [
+          <button
+            key="restart"
+            type="button"
+            onClick={() => actions.handleRestart(subscription.id)}
+            className={OVERVIEW_SECONDARY_BUTTON_CLASS}
           >
-            {boxQuantity}BOX
-          </span>
-        )}
+            구독 재시작
+          </button>,
+        ]
+      : filterKey === "paused"
+        ? [
+            <button
+              key="resume"
+              type="button"
+              onClick={() => actions.handleResume(subscription.id)}
+              className={OVERVIEW_SECONDARY_BUTTON_CLASS}
+            >
+              구독 재개
+            </button>,
+            changeButton,
+          ]
+        : isScheduled
+          ? []
+          : [changeButton];
 
-        <div className="flex items-center justify-between gap-2">
-          <Text
-            variant="subtitle-16-sb"
-            mobileVariant="body-14-sb"
-            className={`truncate ${isActive ? "text-[var(--color-text)]" : "text-[var(--color-text-secondary)]"}`}
-          >
-            {isActive
-              ? `${plan.name} ${isPaused ? "구독 쉬는 중" : "구독중"}`
-              : plan.name}
-          </Text>
-          <span className="shrink-0 text-[var(--color-text-secondary)]" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M7 4l6 6-6 6" stroke="#999999" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-        </div>
-
-        <Text
-          variant="body-16-m"
-          mobileVariant="body-13-m"
-          className={isActive ? "text-[var(--color-text-label)]" : "text-[var(--color-text-secondary)]"}
+  return (
+    <SubscriptionOverviewCard
+      subscription={subscription}
+      date={subscription.startDate}
+      headerAction={
+        <Link
+          href={detailHref}
+          aria-label={`구독번호 ${subscription.id} 상세보기`}
+          className="shrink-0 text-[var(--color-text)] transition-opacity hover:opacity-70"
         >
-          {!isActive
-            ? "구독종료"
-            : isScheduled
-              ? `결제일 : ${formatDate(subscription.nextBillingDate)}`
-              : `결제일 : ${billingDayLabel(subscription.nextBillingDate)}`}
-        </Text>
-        <Text
-          variant="body-16-m"
-          mobileVariant="body-13-m"
-          className="text-[var(--color-text-label)]"
-        >
-          {!isActive
-            ? "-"
-            : `결제금액 : ${paidAmount !== null ? formatPrice(paidAmount) : "-"}`}
-        </Text>
-      </div>
-    </Link>
+          <ChevronRightIcon />
+        </Link>
+      }
+      primaryAction={
+        <Link href={detailHref} className={OVERVIEW_PRIMARY_BUTTON_CLASS}>
+          구독 상세보기
+        </Link>
+      }
+      secondaryActions={secondaryActions}
+    />
   );
 }
 
 /* ─────────────────────────────
-   Filter (전체 / 구독중 / 구독종료)
+   Filter (전체 / 구독중 / 쉬어가기 / 해지완료)
 ───────────────────────────── */
 function SubscriptionFilterTabs({
   value,
+  counts,
   onChange,
 }: {
   value: SubscriptionFilter;
+  counts: Record<SubscriptionFilter, number>;
   onChange: (next: SubscriptionFilter) => void;
 }) {
   const items: { key: SubscriptionFilter; label: string }[] = [
     { key: "all", label: "전체" },
     { key: "active", label: "구독중" },
-    { key: "ended", label: "구독종료" },
+    { key: "paused", label: "쉬어가기" },
+    { key: "ended", label: "해지완료" },
   ];
 
   return (
-    <div className="flex items-center">
-      {items.map((item, idx) => {
+    <div className="flex flex-wrap items-center gap-2">
+      {items.map((item) => {
         const selected = value === item.key;
         return (
-          <div key={item.key} className="flex items-center">
-            <button
-              type="button"
-              onClick={() => onChange(item.key)}
-              className={`px-2 max-md:text-body-13-m text-body-16-m transition-colors ${
-                selected
-                  ? "max-md:text-body-13-sb text-body-16-sb text-[var(--color-text)]"
-                  : "text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
-              }`}
-            >
-              {item.label}
-            </button>
-            {idx < items.length - 1 && (
-              <span className="text-body-16-m text-[var(--color-text-secondary)]">|</span>
-            )}
-          </div>
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => onChange(item.key)}
+            aria-pressed={selected}
+            className={`inline-flex h-[34px] items-center rounded-full max-md:px-4 md:px-5 text-body-14-sb leading-[17px] transition-colors ${
+              selected
+                ? "bg-[var(--color-cta-button)] font-bold text-white"
+                : "border border-[var(--color-text-muted)] bg-white text-[var(--color-text)] hover:bg-[var(--color-surface-light)]"
+            }`}
+          >
+            {item.label} {counts[item.key]}
+          </button>
         );
       })}
     </div>
@@ -395,66 +368,15 @@ function SubscriptionFilterTabs({
 }
 
 /* ─────────────────────────────
-   Pagination
+   Main Section
 ───────────────────────────── */
 const PAGE_SIZE = 6;
 
-function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}) {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  return (
-    <div className="mt-8 flex items-center justify-center gap-1">
-      <button
-        type="button"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
-        aria-label="이전 페이지"
-      >
-        <ChevronLeftIcon />
-      </button>
-      {pages.map((page) => (
-        <button
-          key={page}
-          type="button"
-          onClick={() => onPageChange(page)}
-          className={`flex h-8 w-8 items-center justify-center rounded-[8px] transition-colors ${
-            page === currentPage
-              ? "text-body-14-sb text-[var(--color-text)]"
-              : "text-body-14-m text-[var(--color-text-label)] hover:bg-[var(--color-surface-warm)]"
-          }`}
-        >
-          {page}
-        </button>
-      ))}
-      <button
-        type="button"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="flex h-8 w-8 items-center justify-center rounded-[8px] text-[var(--color-text-label)] transition-colors hover:bg-[var(--color-surface-warm)] disabled:opacity-30"
-        aria-label="다음 페이지"
-      >
-        <ChevronRightIcon />
-      </button>
-    </div>
-  );
-}
-
-/* ─────────────────────────────
-   Main Section
-───────────────────────────── */
 export default function SubscriptionManagementSection({ subscriptions, plans, billingInfo }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [filter, setFilter] = useState<SubscriptionFilter>("active");
+  const rowActions = useSubscriptionRowActions();
+  const [filter, setFilter] = useState<SubscriptionFilter>("all");
   const [currentPage, setCurrentPage] = useState(1);
 
   function handleFilterChange(next: SubscriptionFilter) {
@@ -486,7 +408,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
   }, []);
 
   // isActive는 scheduled(시작 예약, 첫 결제 전)를 false로 내려주므로 탭 분류엔 쓰지 않는다.
-  // "구독중"/"구독종료" 판단은 항상 status 기반 getSubscriptionDisplayBucket을 거친다.
+  // "구독중"/"해지완료" 판단은 항상 status 기반 getSubscriptionDisplayBucket을 거친다.
   const activeSubscriptions = useMemo(
     () => subscriptions.filter((s) => getSubscriptionDisplayBucket(s.status) === "active"),
     [subscriptions],
@@ -508,118 +430,115 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
     });
   }, [subscriptions]);
 
+  const filterCounts = useMemo(() => {
+    const counts: Record<SubscriptionFilter, number> = {
+      all: subscriptions.length,
+      active: 0,
+      paused: 0,
+      ended: 0,
+    };
+    for (const s of subscriptions) counts[filterKeyOf(s)] += 1;
+    return counts;
+  }, [subscriptions]);
+
   const filteredSubscriptions = useMemo(() => {
-    if (filter === "active") {
-      return sortedSubscriptions.filter((s) => getSubscriptionDisplayBucket(s.status) === "active");
-    }
-    if (filter === "ended") {
-      return sortedSubscriptions.filter((s) => getSubscriptionDisplayBucket(s.status) === "ended");
-    }
-    return sortedSubscriptions;
+    if (filter === "all") return sortedSubscriptions;
+    return sortedSubscriptions.filter((s) => filterKeyOf(s) === filter);
   }, [sortedSubscriptions, filter]);
 
-  const totalPages = Math.ceil(filteredSubscriptions.length / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filteredSubscriptions.length / PAGE_SIZE));
   const pagedSubscriptions = filteredSubscriptions.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
 
   const earliestBillingDate = earliestNextBillingDate(billableSubscriptions);
-  const nextBillingDateLabel = getNextBillingDateLabel(
-    earliestBillingDate,
-    formatDateToYMD(new Date()),
-  );
+  const nextBillingDateLabel = earliestBillingDate
+    ? earliestBillingDate.slice(0, 10).replace(/-/g, ".")
+    : "-";
   const hasPlans = plans.length > 0;
+
+  const emptyMessage =
+    filter === "ended"
+      ? "해지완료된 항목이 없습니다."
+      : filter === "paused"
+        ? "쉬어가기 중인 항목이 없습니다."
+        : "구독 내역이 없습니다.";
 
   return (
     <div className="relative min-h-screen bg-white pt-[var(--header-offset)]">
       {/* Desktop upper solid color band — mobile background follows hero content height */}
-      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:hidden md:h-[258px] bg-[var(--color-page-header-bg)]" />
+      <div className="absolute left-0 right-0 top-[var(--header-offset)] max-md:hidden md:h-[148px] bg-[var(--color-page-header-bg)]" />
 
       {/* Mobile: ivory background wraps the full hero and always leaves 24px below it. */}
       <section className="relative max-md:bg-[var(--color-page-header-bg)] max-md:pb-6">
-        {/* Hero content — desktop overlaps the 258px boundary */}
-        <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-6 md:pt-10 lg:pt-10">
-          {/* Back + title */}
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="mb-6 flex items-center gap-1 text-subtitle-18-b text-[var(--color-text)] hover:opacity-70"
-          >
-            <ChevronLeftIcon />
-            구독관리
-          </button>
+        {/* Hero content — desktop overlaps the 148px boundary */}
+        <div className="relative mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 pt-6 md:pt-10 lg:pt-10">
+          {/* Back + title + 구독 추가하기 */}
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center gap-1 max-md:text-subtitle-18-b md:text-title-24-b text-[var(--color-text)] hover:opacity-70"
+            >
+              <ChevronLeftIcon />
+              구독관리
+            </button>
+            <Link
+              href="/mypage/subscription/change"
+              className="box-border inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-[24px] border border-[var(--color-text-muted)] bg-white px-3 py-2 text-body-13-m leading-4 text-[var(--color-text)] transition-opacity hover:opacity-80"
+            >
+              <AddRoundIcon />
+              구독 추가하기
+            </Link>
+          </div>
 
           {/* Two summary cards — mobile: single card w/ divider, desktop: unified shadow card */}
-          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:flex lg:flex md:rounded-[20px] lg:rounded-[20px] md:bg-white lg:bg-white md:shadow-[0px_4px_12px_0px_#00000014] lg:shadow-[0px_4px_12px_0px_#00000014]">
+          <div className="max-md:overflow-hidden max-md:rounded-[20px] max-md:bg-white md:flex md:rounded-[20px] md:bg-white md:shadow-[0px_4px_24px_0px_#00000014]">
             <SubscriptionsSummaryCard
               activeSubscriptions={activeSubscriptions}
               billableSubscriptions={billableSubscriptions}
-              nextBillingDateLabel={nextBillingDateLabel}
               hasPlans={hasPlans}
             />
             {/* Mobile: horizontal divider */}
-            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden lg:hidden" />
+            <div className="mx-5 border-t border-[var(--color-border-light)] md:hidden" />
             {/* Desktop: vertical divider */}
-            <div className="max-md:hidden w-px shrink-0 bg-[var(--color-border-light)] my-10" />
+            <div className="max-md:hidden my-[35px] w-px shrink-0 bg-[var(--color-border-light)]" />
             <PaymentInfoCard billingInfo={billingInfo} nextBillingDateLabel={nextBillingDateLabel} />
           </div>
         </div>
       </section>
 
-      {/* Subscription list — 구독 전체보기 */}
-      <div className="relative mx-auto max-w-content max-md:px-6 md:px-6 lg:px-0 pt-8 pb-10">
-        <div className="md:px-0 lg:px-0">
-          <div className="mb-6">
-            <div className="flex items-center justify-between gap-3 max-md:mb-3">
-              <div className="flex items-center gap-5">
-                <Text as="h2" variant="subtitle-18-b" className="text-[var(--color-text)]">
-                  구독 전체보기
-                </Text>
-                <Link
-                  href="/mypage/subscription/change"
-                  className="box-border inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-[24px] border border-[var(--color-text-muted)] px-3 py-2 text-body-13-m leading-4 text-[var(--color-text)] transition-opacity hover:opacity-80"
-                >
-                  <AddRoundIcon />
-                  구독 추가
-                </Link>
-              </div>
-              {/* 태블릿·데스크탑: 타이틀 행 우측 */}
-              <div className="max-md:hidden">
-                <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
-              </div>
-            </div>
-            {/* 모바일: 별도 행 우측 정렬 */}
-            <div className="max-md:flex max-md:justify-end md:hidden">
-              <SubscriptionFilterTabs value={filter} onChange={handleFilterChange} />
-            </div>
-          </div>
-
-          {!hasPlans ? (
-            <p className="text-body-14-m text-[var(--color-text-label)] max-md:flex max-md:min-h-[160px] max-md:items-center max-md:justify-center max-md:text-center">
-              플랜 정보를 불러올 수 없습니다.
-            </p>
-          ) : filteredSubscriptions.length === 0 ? (
-            <p className="text-body-14-m text-[var(--color-text-label)] max-md:flex max-md:min-h-[160px] max-md:items-center max-md:justify-center max-md:text-center">
-              {filter === "ended"
-                ? "구독종료된 항목이 없습니다."
-                : "구독 내역이 없습니다."}
-            </p>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-2 md:gap-3 lg:gap-8">
-                {pagedSubscriptions.map((subscription) => (
-                  <SubscriptionRow key={subscription.id} subscription={subscription} />
-                ))}
-              </div>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            </>
-          )}
+      {/* Subscription list */}
+      <div className="relative mx-auto w-full max-w-[1240px] max-xl:px-6 xl:px-0 max-md:pt-6 md:pt-[41px] pb-16">
+        <div className="max-md:mb-5 md:mb-8">
+          <SubscriptionFilterTabs value={filter} counts={filterCounts} onChange={handleFilterChange} />
         </div>
+
+        {!hasPlans ? (
+          <p className="text-body-14-m text-[var(--color-text-label)] max-md:flex max-md:min-h-[160px] max-md:items-center max-md:justify-center max-md:text-center">
+            플랜 정보를 불러올 수 없습니다.
+          </p>
+        ) : filteredSubscriptions.length === 0 ? (
+          <p className="text-body-14-m text-[var(--color-text-label)] max-md:flex max-md:min-h-[160px] max-md:items-center max-md:justify-center max-md:text-center">
+            {emptyMessage}
+          </p>
+        ) : (
+          <>
+            <div className="flex flex-col max-md:gap-4 md:gap-8">
+              {pagedSubscriptions.map((subscription) => (
+                <SubscriptionRow key={subscription.id} subscription={subscription} actions={rowActions} />
+              ))}
+            </div>
+            <Pagination
+              page={currentPage}
+              totalPages={totalPages}
+              onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onSelect={setCurrentPage}
+            />
+          </>
+        )}
       </div>
     </div>
   );

@@ -62,4 +62,13 @@ export function CloseIcon() {
   );
 }
 
+/** Figma dropdown 삼각형 (10×8) */
+export function DropdownTriangleIcon() {
+  return (
+    <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
+      <path d="M5.43 7.3a.5.5 0 0 1-.86 0L.53.75A.5.5 0 0 1 .96 0h8.08a.5.5 0 0 1 .43.75L5.43 7.3Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 export { ChevronIcon };

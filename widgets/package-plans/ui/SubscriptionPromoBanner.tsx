@@ -5,7 +5,7 @@ export function SubscriptionPromoBanner() {
   return (
     <section
       className="min-h-[70px] bg-[var(--color-purchase-banner-bg)]"
-      aria-label="구독몰 안내"
+      aria-label="정기구독 안내"
     >
       <div className="mx-auto flex min-h-[70px] max-w-[1240px] items-center justify-center gap-6 px-6 max-md:gap-3">
         <p className="text-body-16-b tracking-[-0.04em] text-white max-md:text-body-14-b">

@@ -13,6 +13,6 @@ export function CartEmptyState() {
     <EmptyCartIcon />
     <h2 className="mt-6 text-[24px] font-extrabold leading-[29px] tracking-[-0.04em] text-[var(--color-text)]">장바구니에 담긴 상품이 없습니다.</h2>
     <p className="mt-4 text-body-16-m text-[var(--color-text-secondary)]">원하는 상품을 장바구니에 담아보세요!</p>
-    <Link href="/purchase" className="mt-12 inline-flex h-12 w-full max-w-[301px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-sb text-white">쇼핑 계속하기</Link>
+    <Link href="/products" className="mt-12 inline-flex h-12 w-full max-w-[301px] items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-subtitle-16-sb text-white">쇼핑 계속하기</Link>
   </div>;
 }

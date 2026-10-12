@@ -115,7 +115,7 @@ export default function Header() {
             <Link href="/subscribe" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               정기구독
             </Link>
-            <Link href="/purchase" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
+            <Link href="/products" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>
               스토어
             </Link>
             <Link href="/support" className={`max-md:hidden md:hidden lg:block text-body-14-b transition-colors duration-300 ${isSolid ? "text-[var(--color-text)] hover:text-primary" : "text-white hover:text-white/80"}`}>

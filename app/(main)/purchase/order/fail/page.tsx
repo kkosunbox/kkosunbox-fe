@@ -11,5 +11,5 @@ export default async function PurchaseOrderFailPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { code } = await searchParams;
-  redirect(`/purchase?confirmError=${encodeURIComponent(code ?? "PAY_PROCESS_CANCELED")}`);
+  redirect(`/products?confirmError=${encodeURIComponent(code ?? "PAY_PROCESS_CANCELED")}`);
 }

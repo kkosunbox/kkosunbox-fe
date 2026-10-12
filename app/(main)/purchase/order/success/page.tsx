@@ -28,7 +28,7 @@ export default async function PurchaseOrderSuccessPage({
   const { paymentKey, orderId, amount } = await searchParams;
 
   if (!paymentKey || !orderId || !amount) {
-    redirect("/purchase?confirmError=BAD_REQUEST");
+    redirect("/products?confirmError=BAD_REQUEST");
   }
 
   const token = await getServerToken();
@@ -48,7 +48,7 @@ export default async function PurchaseOrderSuccessPage({
     basePrice = confirmedOrder.itemsAmount;
   } catch (err) {
     const code = err instanceof ApiError ? err.code : "UNKNOWN_ERROR";
-    redirect(`/purchase?confirmError=${encodeURIComponent(code)}`);
+    redirect(`/products?confirmError=${encodeURIComponent(code)}`);
   }
 
   return (

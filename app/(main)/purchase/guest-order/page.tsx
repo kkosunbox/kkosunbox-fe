@@ -27,7 +27,7 @@ export default async function GuestOrderPage({
   }
 
   const productId = parsePositiveInt(productIdParam);
-  if (!productId) redirect("/purchase");
+  if (!productId) redirect("/products");
   const quantity = parsePositiveInt(quantityParam);
   const initialQuantity = quantity !== null && quantity <= 99 ? quantity : 1;
   return <GuestOrderCheckoutSection source={{ type: "product", productId, initialQuantity }} />;

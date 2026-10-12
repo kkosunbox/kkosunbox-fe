@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { fetchProductCategories, fetchProductsWithStatus } from "@/features/product/api/queries";
+import { getProductDetailPath } from "@/features/product/lib/productPath";
 import {
   PRODUCT_RETURN_POLICY_JSONLD,
   PRODUCT_SHIPPING_DETAILS_JSONLD,
@@ -9,7 +10,7 @@ import {
 import { JsonLd } from "@/shared/ui";
 import { PurchaseListSection, PurchasePaymentErrorNotice } from "@/widgets/purchase";
 
-const title = "단품몰 | 강아지 수제간식 - 꼬순박스";
+const title = "스토어 | 강아지 수제간식 - 꼬순박스";
 const description = "꼬순박스의 강아지 수제간식과 수제간식 박스를 단품으로 만나보세요.";
 
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ export default async function ProductsPage() {
     name: "꼬순박스 강아지 수제간식",
     url: `${SITE_URL}/products`,
     itemListElement: products.map((product, index) => {
-      const url = `${SITE_URL}/purchase/detail?productId=${product.id}`;
+      const url = `${SITE_URL}${getProductDetailPath(product.id)}`;
       return {
         "@type": "ListItem",
         position: index + 1,
@@ -59,7 +60,7 @@ export default async function ProductsPage() {
 
   return (
     <>
-      <h1 className="sr-only">꼬순박스 강아지 수제간식 단품몰</h1>
+      <h1 className="sr-only">꼬순박스 강아지 수제간식 스토어</h1>
       <JsonLd data={data} />
       <Suspense fallback={null}><PurchasePaymentErrorNotice /></Suspense>
       <PurchaseListSection products={products} categories={categories} initialLoadFailed={loadFailed} />

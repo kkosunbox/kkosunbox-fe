@@ -18,7 +18,7 @@ export default function PurchasePaymentErrorNotice() {
       title: "결제에 실패했습니다",
       description: getMessageByCode(code, "결제 처리 중 오류가 발생했습니다. 다시 시도해주세요."),
     });
-    router.replace("/purchase");
+    router.replace("/products");
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 최초 마운트 시 쿼리 1회만 확인
   }, []);
 

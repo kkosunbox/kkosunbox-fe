@@ -35,7 +35,7 @@ export default async function PurchaseOrderPage({
     return <CartOrderSection cartItemIds={cartItemIds} initialAddresses={addresses} />;
   }
   const requestedProductId = productIdParam ? Number(productIdParam) : null;
-  if (productIdParam && (!requestedProductId || !Number.isInteger(requestedProductId))) redirect("/purchase");
+  if (productIdParam && (!requestedProductId || !Number.isInteger(requestedProductId))) redirect("/products");
   const parsedQuantity = quantityStr ? Number(quantityStr) : 1;
   const initialQuantity =
     Number.isInteger(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= 99 ? parsedQuantity : 1;
@@ -45,7 +45,7 @@ export default async function PurchaseOrderPage({
       fetchProduct(requestedProductId, token),
       fetchDeliveryAddresses(token),
     ]);
-    if (!product || product.isSoldOut || product.isSalesPaused) redirect("/purchase");
+    if (!product || product.isSoldOut || product.isSalesPaused) redirect("/products");
 
     // 단품 주문서도 기존 주문 UI를 재사용하되, 실제 상품 ID·가격은 그대로 전달한다.
     const pkg = { ...PACKAGES[0], name: product.name };

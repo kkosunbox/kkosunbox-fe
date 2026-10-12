@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getSubscriptionPlans, type SubscriptionPlanDto } from "@/features/subscription/api";
 import { useReferral } from "@/features/referral/model";
 import { getProductCategories, getProducts, type ProductCategoryDto, type ProductDto } from "@/features/product/api";
+import { getProductDetailPath } from "@/features/product/lib/productPath";
 import { PackageShowcaseSection } from "@/widgets/package-plans";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { openKakaoChannelChat } from "@/shared/ui";
@@ -101,8 +102,8 @@ function ProductShowcaseSection({ products, categories, loading, error }: { prod
             <span className={styles.productReviewCount}>리뷰 {product.reviewCount.toLocaleString("ko-KR")}건</span>
           </div>
         ) : null;
-        return unavailable ? <article key={product.id}>{content}{rating}</article> : <Link key={product.id} href={`/purchase/detail?productId=${product.id}`}>{content}{rating}</Link>;
-      }) : <p className={styles.empty}>{error ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리에 판매 중인 상품이 없습니다."} <Link href="/products">단품몰에서 확인하기</Link></p>}</div>
+        return unavailable ? <article key={product.id}>{content}{rating}</article> : <Link key={product.id} href={getProductDetailPath(product.id)}>{content}{rating}</Link>;
+      }) : <p className={styles.empty}>{error ? "상품 정보를 불러오지 못했습니다." : "해당 카테고리에 판매 중인 상품이 없습니다."} <Link href="/products">스토어에서 확인하기</Link></p>}</div>
       <nav className={styles.productControls} aria-label="단품 상품 페이지">
         <button type="button" aria-label="이전 상품 페이지" disabled={start === 0} onClick={() => setStart(value => Math.max(0, value - PRODUCT_PAGE_SIZE))}><ProductArrow direction="left" /></button>
         <button type="button" aria-label="다음 상품 페이지" disabled={start >= lastPageStart} onClick={() => setStart(value => Math.min(lastPageStart, value + PRODUCT_PAGE_SIZE))}><ProductArrow direction="right" /></button>

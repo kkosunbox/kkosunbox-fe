@@ -26,7 +26,7 @@ export default async function GuestOrderSuccessPage({
   const { paymentKey, orderId, amount, cartItemIds: cartItemIdsParam } = await searchParams;
 
   if (!paymentKey || !orderId || !amount) {
-    redirect("/purchase?confirmError=BAD_REQUEST");
+    redirect("/products?confirmError=BAD_REQUEST");
   }
 
   let detail;
@@ -34,7 +34,7 @@ export default async function GuestOrderSuccessPage({
     detail = await confirmGuestOrderServer({ orderId, paymentKey, amount: Number(amount) });
   } catch (err) {
     const code = err instanceof ApiError ? err.code : "UNKNOWN_ERROR";
-    redirect(`/purchase?confirmError=${encodeURIComponent(code)}`);
+    redirect(`/products?confirmError=${encodeURIComponent(code)}`);
   }
 
   const cartItemIds = cartItemIdsParam?.split(",").map(Number).filter((id) => Number.isInteger(id) && id > 0) ?? [];

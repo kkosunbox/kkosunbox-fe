@@ -77,7 +77,8 @@ function ReferralField({
 
 function ReferralFields({ referral, stacked }: { referral: MyReferralCode; stacked?: boolean }) {
   return (
-    <div className={stacked ? "mt-4 flex w-full flex-col gap-3" : "flex items-center gap-6"}>
+    // 데스크탑: Figma상 금액(2,270P) 상단과 정렬 — 카드 본문 상단 48px = 패딩 27px + 21px
+    <div className={stacked ? "mt-4 flex w-full flex-col gap-3" : "mt-[21px] flex items-center gap-6"}>
       <ReferralField
         label="초대코드"
         value={referral.referralCode}
@@ -122,7 +123,7 @@ export function BalanceCard({
   };
 
   const pointInfo = (
-    <div className={["flex flex-col gap-0 transition-opacity", isLoading ? "opacity-50" : ""].join(" ")}>
+    <div className={["flex flex-col transition-opacity", mobile ? "gap-0" : "gap-1", isLoading ? "opacity-50" : ""].join(" ")}>
       <span className="text-body-14-m leading-[17px] tracking-[-0.04em] text-[var(--color-text-label)]">
         적립 포인트
       </span>
@@ -151,8 +152,9 @@ export function BalanceCard({
 
   return (
     <div className="overflow-visible rounded-[20px] bg-white">
-      <MonthBanner bannerPadding="pl-8" {...bannerProps} />
-      <div className="flex min-h-[118px] items-center justify-between gap-6 rounded-b-[20px] bg-white px-12 py-4">
+      <MonthBanner bannerPadding="pl-12" compactNav {...bannerProps} />
+      {/* Figma: 본문 118px = 상하 27px + 적립 포인트(17) + 4 + 금액(43) */}
+      <div className="flex min-h-[118px] items-start justify-between gap-6 rounded-b-[20px] bg-white px-12 py-[27px]">
         {pointInfo}
         {referral ? <ReferralFields referral={referral} /> : null}
       </div>

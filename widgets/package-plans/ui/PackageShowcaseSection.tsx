@@ -265,7 +265,7 @@ export function PackageShowcaseSection({
               {error ? "패키지 정보를 불러오지 못했습니다." : "현재 신청 가능한 패키지가 없습니다."}
               {variant !== "home"
                 ? <button type="button" onClick={() => window.location.reload()}>새로고침</button>
-                : <Link href="/subscribe">구독몰에서 확인하기</Link>}
+                : <Link href="/subscribe">정기구독에서 확인하기</Link>}
             </p>
           )}
         </div>

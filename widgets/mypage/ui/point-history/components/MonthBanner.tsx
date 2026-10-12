@@ -10,6 +10,7 @@ export function MonthBanner({
   showPicker,
   selectedYear,
   bannerPadding,
+  compactNav = false,
   isLoading,
   onPrevMonth,
   onNextMonth,
@@ -21,6 +22,8 @@ export function MonthBanner({
   showPicker: boolean;
   selectedYear: number;
   bannerPadding: string;
+  /** 데스크탑 Figma: 20px 아이콘·월 텍스트 사이 12px 간격(hug). 모바일은 기존 32px 터치 영역 유지 */
+  compactNav?: boolean;
   isLoading: boolean;
   onPrevMonth: () => void;
   onNextMonth: () => void;
@@ -32,6 +35,7 @@ export function MonthBanner({
   const navRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLButtonElement>(null);
   const [tailLeft, setTailLeft] = useState(200);
+  const iconButtonSize = compactNav ? "h-5 w-5" : "h-8 w-8";
 
   useEffect(() => {
     if (!showPicker) return;
@@ -60,17 +64,23 @@ export function MonthBanner({
       ref={bannerRef}
       className={`relative flex h-9 items-center rounded-t-[20px] bg-[var(--color-cta-button)] ${bannerPadding}`}
     >
-      <div ref={navRef} className="inline-flex items-center gap-1">
+      <div ref={navRef} className={`inline-flex items-center ${compactNav ? "gap-3" : "gap-1"}`}>
         <button
           type="button"
           onClick={onPrevMonth}
           disabled={isLoading}
           aria-label="이전 달"
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+          className={`${iconButtonSize} flex items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50`}
         >
           <ChevronIcon dir="left" />
         </button>
-        <span className="min-w-[2.5rem] text-center text-subtitle-16-b tracking-[-0.04em] text-white">
+        <span
+          className={
+            compactNav
+              ? "text-subtitle-16-sb tracking-[-0.04em] text-white"
+              : "min-w-[2.5rem] text-center text-subtitle-16-b tracking-[-0.04em] text-white"
+          }
+        >
           {selectedMonth}월
         </span>
         <button
@@ -78,7 +88,7 @@ export function MonthBanner({
           onClick={onNextMonth}
           disabled={isLoading}
           aria-label="다음 달"
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+          className={`${iconButtonSize} flex items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50`}
         >
           <ChevronIcon dir="right" />
         </button>
@@ -89,7 +99,7 @@ export function MonthBanner({
           disabled={isLoading}
           aria-label="달력 열기"
           aria-expanded={showPicker}
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+          className={`${iconButtonSize} flex items-center justify-center text-white transition-opacity hover:opacity-80 disabled:opacity-50`}
         >
           <CalendarIcon />
         </button>

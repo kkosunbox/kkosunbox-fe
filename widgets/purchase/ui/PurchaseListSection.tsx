@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCartPackage } from "@/features/cart";
 import { getProducts } from "@/features/product/api";
+import { getProductDetailPath } from "@/features/product/lib/productPath";
 import type { ProductCategoryDto, ProductDto, ProductSortOrder } from "@/features/product/api/types";
 import { formatKrwPrice } from "@/shared/lib/format";
 import PurchaseBannerCoupon from "@/shared/assets/promotion-coupon.png";
@@ -154,7 +155,7 @@ export default function PurchaseListSection({ products, categories, initialLoadF
       price: product.price,
       originalPrice: product.originalPrice,
       imageUrl: product.imageUrl ?? null,
-      href: `/purchase/detail?productId=${product.id}`,
+      href: getProductDetailPath(product.id),
       isSoldOut: product.isSoldOut,
       isSalesPaused: product.isSalesPaused,
       averageRating: product.averageRating,
@@ -191,7 +192,7 @@ export default function PurchaseListSection({ products, categories, initialLoadF
 
   return (
     <div className="bg-[var(--color-background)] pt-[var(--header-offset)]">
-      <section className="max-md:h-[51px] md:h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="단품몰 안내">
+      <section className="max-md:h-[51px] md:h-[70px] bg-[var(--color-purchase-banner-bg)]" aria-label="스토어 안내">
         <div className="mx-auto flex h-full items-center justify-center max-md:w-full max-md:gap-6 max-md:px-4 md:gap-[31px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px] lg:pl-[82px]">
           <p className="font-bold tracking-[-0.04em] text-white max-md:text-[12px] max-md:leading-[14px] sm:max-md:whitespace-nowrap md:text-[16px] md:leading-[19px]">
             첫 만남은 가볍게, <span className="font-extrabold text-[var(--color-banner-bg)]">꼬순박스를 단품</span>으로 만나보기
@@ -209,7 +210,7 @@ export default function PurchaseListSection({ products, categories, initialLoadF
 
       <section className="mx-auto max-md:w-full max-md:px-6 max-md:pb-16 max-md:pt-4 md:pt-10 md:max-lg:pb-[108px] lg:pb-[69px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
-          <h1 className="font-semibold tracking-[-0.04em] text-black max-md:text-[16px] max-md:leading-[19px] md:text-[28px] md:leading-[33px]">단품몰</h1>
+          <h1 className="font-semibold tracking-[-0.04em] text-black max-md:text-[16px] max-md:leading-[19px] md:text-[28px] md:leading-[33px]">스토어</h1>
           <div className="md:hidden">{sortControls}</div>
         </div>
 

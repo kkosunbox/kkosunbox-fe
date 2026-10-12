@@ -6,15 +6,18 @@ export function Pagination({
   onPrev,
   onNext,
   onSelect,
+  className = "py-5",
 }: {
   page: number;
   totalPages: number;
   onPrev: () => void;
   onNext: () => void;
   onSelect: (p: number) => void;
+  /** 세로 여백 — 기본 py-5, 데스크탑 테이블은 Figma 기준 상단 28px만 둔다 */
+  className?: string;
 }) {
   return (
-    <nav className="flex items-center justify-center gap-2 py-5" aria-label="포인트 내역 페이지 탐색">
+    <nav className={`flex items-center justify-center gap-2 ${className}`} aria-label="포인트 내역 페이지 탐색">
       <button
         onClick={onPrev}
         disabled={page === 1}

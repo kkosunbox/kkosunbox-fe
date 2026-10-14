@@ -91,7 +91,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
                 {label}{" "}
                 <span className="text-[var(--color-text-secondary)]">({required ? "필수" : "선택"})</span>
               </span>
-              {key !== "marketing" && (
+              {(key === "terms" || key === "privacy") && (
                 <button
                   type="button"
                   onClick={() => agree.setTermsModal(key)}

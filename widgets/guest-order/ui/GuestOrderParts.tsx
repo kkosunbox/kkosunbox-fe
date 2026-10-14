@@ -62,7 +62,9 @@ export function GuestOrderInfoCard({ order }: { order: ProductOrderDto }) {
       <section className="min-w-0 md:pr-10">
         <h2 className={GUEST_ORDER_HEADING}>주문상품 정보</h2>
         <div className="space-y-6">
-          {order.items.map((item) => (
+          {order.items.map((item) => {
+            const fullyCancelled = item.refundedQuantity >= item.quantity;
+            return (
             <article key={item.id} className="flex items-center max-md:gap-4 md:gap-9">
               <div className="h-[120px] w-[130px] shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-surface-light)] max-md:h-[100px] max-md:w-[100px]">
                 {item.imageUrl ? <img src={item.imageUrl} alt="" className="h-full w-full object-cover" /> : null}
@@ -72,12 +74,19 @@ export function GuestOrderInfoCard({ order }: { order: ProductOrderDto }) {
                   <h3 className="break-words text-subtitle-16-sb tracking-[-0.04em] text-[var(--color-text-emphasis)]">{item.productName}</h3>
                   <span className="rounded-[5px] bg-[var(--color-border-light)] px-1 text-body-12-m text-[var(--color-text-secondary)]">단품</span>
                 </div>
-                <p className="text-price-16-eb text-[var(--color-text)]">{formatKrwPrice(item.unitPrice)}</p>
-                <p className="text-price-16-m text-[var(--color-text-secondary)]">수량 {item.quantity}개</p>
-                {item.refundedQuantity > 0 && <p className="text-body-13-r text-[var(--color-text-secondary)]">취소 {item.refundedQuantity}개</p>}
+                <p className={`text-price-16-eb ${fullyCancelled ? "text-[var(--color-text-secondary)] line-through" : "text-[var(--color-text)]"}`}>{formatKrwPrice(item.unitPrice)}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-price-16-m text-[var(--color-text-secondary)]">수량 {item.quantity}개</p>
+                  {item.refundedQuantity > 0 && (
+                    <span className="rounded-[5px] border border-[var(--color-modal-danger)] px-1.5 text-body-13-m text-[var(--color-modal-danger)]">
+                      {fullyCancelled ? "전체 취소" : `${item.refundedQuantity}개 취소`}
+                    </span>
+                  )}
+                </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </section>
       <section className={GUEST_ORDER_CARD_RIGHT}>
@@ -85,10 +94,10 @@ export function GuestOrderInfoCard({ order }: { order: ProductOrderDto }) {
         <dl className="space-y-3 text-body-13-m text-[var(--color-text)]">
           <div className="flex justify-between gap-4">
             <dt>주문상품금액</dt>
-            <dd className="flex flex-col items-end gap-3">{order.items.map((item) => <span key={item.id}>{formatKrwPrice(item.itemAmount)}</span>)}</dd>
+            <dd>{formatKrwPrice(order.items.reduce((sum, item) => sum + item.itemAmount, 0))}</dd>
           </div>
-          <div className="flex justify-between gap-4"><dt>총 쿠폰 할인금액</dt><dd>-{formatKrwPrice(order.couponDiscountAmount)}</dd></div>
-          <div className="flex justify-between gap-4"><dt>배송비</dt><dd>{formatKrwPrice(order.shippingFee)}</dd></div>
+          <div className="flex justify-between gap-4"><dt>총 쿠폰 할인금액</dt><dd>-{formatKrwPrice(order.couponDiscountAmount ?? 0)}</dd></div>
+          <div className="flex justify-between gap-4"><dt>배송비</dt><dd>{formatKrwPrice(order.shippingFee ?? 0)}</dd></div>
           <div className="flex items-center justify-between gap-4 border-t border-[var(--color-text-muted)] pt-3">
             <dt className="text-body-14-b">총 결제금액</dt>
             <dd className="text-price-20-eb">{formatKrwPrice(order.amount)}</dd>

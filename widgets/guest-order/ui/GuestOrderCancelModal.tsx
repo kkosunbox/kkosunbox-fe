@@ -12,13 +12,14 @@ interface Props {
   onConfirm: (items?: CancelProductOrderItemRequest[]) => void;
 }
 
-/** 비회원 주문 취소 — 상품별 취소 수량을 골라 부분 취소하거나 남은 전체를 취소한다 */
+/** 비회원 주문 취소 — 상품별 취소 수량을 골라 취소한다. 남은 전량을 고르면 전체 취소로 요청한다 */
 export function GuestOrderCancelModal({ items, busy, onClose, onConfirm }: Props) {
   const cancellable = items.filter((item) => item.remainingQuantity > 0);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const selected = cancellable
     .map((item) => ({ itemId: item.id, quantity: quantities[item.id] ?? 0 }))
     .filter((item) => item.quantity > 0);
+  const allSelected = cancellable.every((item) => quantities[item.id] === item.remainingQuantity);
 
   function change(item: ProductOrderItemDto, delta: number) {
     setQuantities((prev) => ({
@@ -27,15 +28,39 @@ export function GuestOrderCancelModal({ items, busy, onClose, onConfirm }: Props
     }));
   }
 
+  function selectAll() {
+    setQuantities(Object.fromEntries(cancellable.map((item) => [item.id, item.remainingQuantity])));
+  }
+
   return (
     <ModalShell label="주문 취소" onClose={onClose}>
       <div className="relative w-full max-w-[400px] rounded-[20px] bg-white p-6">
-        <h2 className="text-subtitle-18-b text-[var(--color-text)]">주문을 취소할까요?</h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="닫기"
+          className="absolute top-6 right-6 flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-70"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M18 6L6 18M6 6L18 18" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <h2 className="pr-8 text-subtitle-18-b text-[var(--color-text)]">주문을 취소할까요?</h2>
         <p className="mt-2 text-body-14-m text-[var(--color-text-secondary)]">
-          취소할 상품과 수량을 선택하거나, 남은 상품 전체를 취소할 수 있습니다.
+          취소할 상품과 수량을 선택해 주세요.
         </p>
 
-        <ul className="mt-5 divide-y divide-[var(--color-border-light)] border-y border-[var(--color-border-light)]">
+        <div className="mt-5 flex justify-end">
+          <button
+            type="button"
+            onClick={selectAll}
+            disabled={allSelected}
+            className="text-body-13-m text-[var(--color-text-secondary)] underline underline-offset-2 transition-opacity hover:opacity-70 disabled:no-underline disabled:opacity-40"
+          >
+            전체 선택
+          </button>
+        </div>
+        <ul className="mt-2 divide-y divide-[var(--color-border-light)] border-y border-[var(--color-border-light)]">
           {cancellable.map((item) => {
             const quantity = quantities[item.id] ?? 0;
             return (
@@ -57,22 +82,20 @@ export function GuestOrderCancelModal({ items, busy, onClose, onConfirm }: Props
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button
             type="button"
-            disabled={busy}
-            onClick={() => onConfirm()}
-            className="h-12 rounded-[8px] border border-[var(--color-cta-button)] bg-white text-body-14-sb text-[var(--color-cta-button)] disabled:opacity-50"
+            onClick={onClose}
+            className="h-12 rounded-[8px] border border-[var(--color-cta-button)] bg-white text-body-14-sb text-[var(--color-cta-button)]"
           >
-            전체 취소
+            돌아가기
           </button>
           <button
             type="button"
             disabled={busy || selected.length === 0}
-            onClick={() => onConfirm(selected)}
+            onClick={() => onConfirm(allSelected ? undefined : selected)}
             className="h-12 rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb text-white disabled:opacity-40"
           >
-            선택 상품 취소
+            주문취소
           </button>
         </div>
-        <button type="button" onClick={onClose} className="mt-3 h-10 w-full text-body-14-m text-[var(--color-text-secondary)]">돌아가기</button>
       </div>
     </ModalShell>
   );

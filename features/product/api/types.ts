@@ -67,8 +67,10 @@ export interface ProductOrderDto {
   items: ProductOrderItemDto[];
   totalQuantity: number;
   itemsAmount: number;
-  couponDiscountAmount: number;
-  shippingFee: number;
+  /** 비회원 confirm 응답 등에서 누락될 수 있다 */
+  couponDiscountAmount?: number;
+  /** 비회원 confirm 응답 등에서 누락될 수 있다 */
+  shippingFee?: number;
   amount: number;
   refundedAmount: number;
   status: ProductOrderStatus;

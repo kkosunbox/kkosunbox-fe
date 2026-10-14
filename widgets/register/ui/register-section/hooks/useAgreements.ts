@@ -10,23 +10,24 @@ export function useAgreements() {
   const [agreements, setAgreements] = useState<Agreements>({
     terms: false,
     privacy: false,
+    age: false,
     marketing: false,
   });
   const [agreementsOpen, setAgreementsOpen] = useState(true);
-  const [termsModal, setTermsModal] = useState<AgreementKey | null>(null);
+  const [termsModal, setTermsModal] = useState<Exclude<AgreementKey, "age"> | null>(null);
 
   /* ── 전체 동의 ── */
   const allChecked = AGREEMENTS.every(({ key }) => agreements[key]);
 
   function toggleAll() {
     const next = !allChecked;
-    setAgreements({ terms: next, privacy: next, marketing: next });
+    setAgreements({ terms: next, privacy: next, age: next, marketing: next });
   }
   function toggleOne(key: AgreementKey) {
     setAgreements((prev) => ({ ...prev, [key]: !prev[key] }));
   }
   /** 약관 보기 모달에서 끝까지 확인 시 해당 약관 동의 처리 */
-  function acceptTerm(key: AgreementKey) {
+  function acceptTerm(key: Exclude<AgreementKey, "age">) {
     setAgreements((prev) => ({ ...prev, [key]: true }));
   }
 

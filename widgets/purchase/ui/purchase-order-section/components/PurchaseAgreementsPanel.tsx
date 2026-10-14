@@ -8,9 +8,11 @@ export interface PurchaseAgreements {
   open: boolean;
   terms: boolean;
   privacy: boolean;
+  age: boolean;
   onTogglePanel: () => void;
   onToggleTerms: () => void;
   onTogglePrivacy: () => void;
+  onToggleAge: () => void;
   onAgreeAll: () => void;
 }
 
@@ -23,11 +25,11 @@ export function PurchaseAgreementsPanel({ agreements }: { agreements?: PurchaseA
     return <p className="text-body-13-m text-[var(--color-text)] opacity-80">{AGREEMENT_NOTICE}</p>;
   }
 
-  const { open, terms, privacy, onTogglePanel, onToggleTerms, onTogglePrivacy, onAgreeAll } = agreements;
+  const { open, terms, privacy, age, onTogglePanel, onToggleTerms, onTogglePrivacy, onToggleAge, onAgreeAll } = agreements;
   return (
     <div>
       <div className="flex items-center justify-between">
-        <Checkbox checked={terms && privacy} onChange={onAgreeAll} label={AGREEMENT_NOTICE} />
+        <Checkbox checked={terms && privacy && age} onChange={onAgreeAll} label={AGREEMENT_NOTICE} />
         <button
           type="button"
           aria-label={open ? "약관 항목 접기" : "약관 항목 펼치기"}
@@ -68,6 +70,7 @@ export function PurchaseAgreementsPanel({ agreements }: { agreements?: PurchaseA
             </span>
           }
         />
+        <Checkbox checked={age} onChange={onToggleAge} label="만 14세 이상입니다 (필수)" />
       </CollapsiblePanel>
     </div>
   );

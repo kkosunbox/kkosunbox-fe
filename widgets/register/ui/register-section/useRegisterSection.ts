@@ -71,6 +71,7 @@ export function useRegisterSection() {
     pw.passwordsMatch &&
     agree.agreements.terms &&
     agree.agreements.privacy &&
+    agree.agreements.age &&
     !isPending;
 
   /* ── 회원가입 ── */
@@ -78,6 +79,7 @@ export function useRegisterSection() {
     if (!phoneValid) { showError("올바른 휴대전화 번호를 입력해주세요."); return; }
     if (!agree.agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
     if (!agree.agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
+    if (!agree.agreements.age) { showError("만 14세 이상만 가입할 수 있습니다."); return; }
     if (!meetsMinPasswordLength(pw.password)) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
     if (!meetsMaxPasswordLength(pw.password)) {
       showError(`비밀번호는 ${PASSWORD_MAX_LENGTH}자 이하로 입력해주세요.`);

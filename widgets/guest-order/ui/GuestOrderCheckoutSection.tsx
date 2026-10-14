@@ -68,7 +68,8 @@ export default function GuestOrderCheckoutSection({ source }: { source: GuestOrd
   const [agreeOpen, setAgreeOpen] = useState(true);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const agreeAll = agreeTerms && agreePrivacy;
+  const [agreeAge, setAgreeAge] = useState(false);
+  const agreeAll = agreeTerms && agreePrivacy && agreeAge;
 
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
     product: true, orderer: true, delivery: true, payment: true, method: true, summary: true,
@@ -328,10 +329,12 @@ export default function GuestOrderCheckoutSection({ source }: { source: GuestOrd
                   open: agreeOpen,
                   terms: agreeTerms,
                   privacy: agreePrivacy,
+                  age: agreeAge,
                   onTogglePanel: () => setAgreeOpen((open) => !open),
                   onToggleTerms: () => setAgreeTerms((checked) => !checked),
                   onTogglePrivacy: () => setAgreePrivacy((checked) => !checked),
-                  onAgreeAll: () => { const next = !agreeAll; setAgreeTerms(next); setAgreePrivacy(next); },
+                  onToggleAge: () => setAgreeAge((checked) => !checked),
+                  onAgreeAll: () => { const next = !agreeAll; setAgreeTerms(next); setAgreePrivacy(next); setAgreeAge(next); },
                 }}
                 submitError={submitError ?? (isQuoting ? null : quoteError)}
                 notice={minimumNotice}

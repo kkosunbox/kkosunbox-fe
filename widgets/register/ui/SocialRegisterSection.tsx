@@ -17,7 +17,7 @@ import {
 import socialRegisterTitle from "../assets/social-register-title.svg";
 import { SignupReferralCodeField } from "./SignupReferralCodeField";
 
-type AgreementKey = "terms" | "privacy" | "marketing";
+type AgreementKey = "terms" | "privacy" | "age" | "marketing";
 type AgreementState = Record<AgreementKey, boolean>;
 type AgreementSection = {
   title: string;
@@ -31,6 +31,7 @@ const AGREEMENT_SCROLL_VERTICAL_INSET = 13;
 const INITIAL_AGREEMENTS: AgreementState = {
   terms: false,
   privacy: false,
+  age: false,
   marketing: false,
 };
 
@@ -198,7 +199,7 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
 
   const isPhoneValid = /^01\d{8,9}$/.test(toPhoneDigits(phone));
   const allChecked = Object.values(agreements).every(Boolean);
-  const canSubmit = isPhoneValid && agreements.terms && agreements.privacy && !isPending;
+  const canSubmit = isPhoneValid && agreements.terms && agreements.privacy && agreements.age && !isPending;
 
   function toggleAgreement(key: AgreementKey) {
     setAgreements((current) => ({ ...current, [key]: !current[key] }));
@@ -226,6 +227,10 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
     }
     if (!agreements.terms || !agreements.privacy) {
       openAlert({ title: "필수 약관에 동의해주세요." });
+      return;
+    }
+    if (!agreements.age) {
+      openAlert({ title: "만 14세 이상만 가입할 수 있습니다." });
       return;
     }
     showLoading("회원가입을 완료하고 있습니다...");
@@ -306,7 +311,7 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
             aria-checked={allChecked}
             onClick={() => {
               const next = !allChecked;
-              setAgreements({ terms: next, privacy: next, marketing: next });
+              setAgreements({ terms: next, privacy: next, age: next, marketing: next });
             }}
             className="flex items-center gap-2 text-left text-[14px] font-bold leading-[17px] tracking-[-0.04em] text-[var(--color-text)]"
           >
@@ -338,6 +343,13 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
               />
               <AgreementCopy sections={PRIVACY_CONTENT} />
             </div>
+
+            <AgreementToggle
+              checked={agreements.age}
+              label="만 14세 이상입니다"
+              required
+              onChange={() => toggleAgreement("age")}
+            />
 
             <AgreementToggle
               checked={agreements.marketing}

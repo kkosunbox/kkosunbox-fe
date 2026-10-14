@@ -30,6 +30,10 @@ interface OrderCompleteSectionProps {
    * 카탈로그에서 상품을 못 찾으면 null — 이 경우 할인 행을 0원으로 표시한다.
    */
   basePrice: number | null;
+  /** 서버가 확정한 배송비. 무료배송 기준 미달 시 0보다 크다 */
+  shippingFee?: number;
+  /** 서버가 확정한 쿠폰 할인액. 누락 시 금액 차이로 역산한다 */
+  couponDiscountAmount?: number;
   imageUrl?: string | null;
   method?: string | null;
   tier: PackageTier | null;
@@ -43,6 +47,8 @@ export default function OrderCompleteSection({
   quantity,
   amount,
   basePrice,
+  shippingFee = 0,
+  couponDiscountAmount,
   imageUrl,
   method,
   tier,
@@ -51,10 +57,10 @@ export default function OrderCompleteSection({
   const pkg = PACKAGES.find((p) => p.tier === effectiveTier);
   const boxImage = TIER_BOX_IMAGES[effectiveTier];
 
-  // 배송비는 무료배송 이벤트로 항상 0원이므로, 주문상품금액과 실제 결제금액의 차액이 곧 쿠폰 할인액이다.
-  // basePrice를 못 구한 경우(카탈로그 미스)는 할인 없이 결제금액만 보여준다.
-  const orderAmount = basePrice ?? amount;
-  const couponDiscount = Math.max(0, orderAmount - amount);
+  // 쿠폰 할인액은 서버 값 우선, 없으면 (주문상품금액 + 배송비 - 결제금액)으로 역산한다.
+  // basePrice를 못 구한 경우는 할인 없이 결제금액만 보여준다.
+  const orderAmount = basePrice ?? amount - shippingFee;
+  const couponDiscount = couponDiscountAmount ?? Math.max(0, orderAmount + shippingFee - amount);
 
   // 구독완료(SubscriptionManagementSection)와 동일한 빵파레 — 여긴 이 페이지 자체가
   // 결제 성공 직후에만 렌더되는 완료 화면이라 welcome 쿼리 게이팅 없이 마운트 시 1회 실행한다.
@@ -147,7 +153,11 @@ export default function OrderCompleteSection({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-body-13-m text-[var(--color-text)]">배송비</span>
-                <ShippingFeeWaiver className="text-[var(--color-text)]" />
+                {shippingFee > 0 ? (
+                  <span className="text-body-13-m text-[var(--color-text)]">{formatKrwPrice(shippingFee)}</span>
+                ) : (
+                  <ShippingFeeWaiver className="text-[var(--color-text)]" />
+                )}
               </div>
             </div>
 

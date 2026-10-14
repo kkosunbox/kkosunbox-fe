@@ -45,7 +45,11 @@ export default function CartOrderSection({ cartItemIds, initialAddresses }: Cart
   const policy = useOrderPolicy();
   const originalShippingFee = policy?.shippingFee ?? STANDARD_SHIPPING_FEE;
 
-  useExternalMessages({ onAddressSelected: address.handleAddressSelected });
+  useExternalMessages({
+    onAddressSelected: address.handleAddressSelected,
+    onAddressSaved: address.handleAddressSaved,
+    onAddressDeleted: address.handleAddressDeleted,
+  });
 
   useEffect(() => {
     void Promise.all([getCart(), quoteCart({ cartItemIds })])

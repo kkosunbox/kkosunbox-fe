@@ -60,7 +60,13 @@ export default function AddressManager({ initialAddresses, selectionMode = false
     }
   }
 
+  /** 결제화면 등 opener가 보유한 배송지 목록도 팝업의 수정·삭제를 따라가도록 알린다 */
+  const notifyOpener = useCallback((message: Record<string, unknown>) => {
+    window.opener?.postMessage(message, window.location.origin);
+  }, []);
+
   function handleDeleted(id: number) {
+    notifyOpener({ type: "ADDRESS_DELETED", id });
     setAddresses((prev) => prev.filter((a) => a.id !== id));
     if (selectedId === id) {
       setSelectedId(null);
@@ -68,6 +74,13 @@ export default function AddressManager({ initialAddresses, selectionMode = false
   }
 
   function handleSaved(saved: DeliveryAddress) {
+    notifyOpener({ type: "ADDRESS_SAVED", address: saved });
+    // 결제화면에서 선택 중인 배송지를 수정한 경우 — 수정 내용 그대로 선택 확정하고 팝업을 닫는다
+    if (selectionMode && window.opener && saved.id === selectedId) {
+      notifyOpener({ type: "ADDRESS_SELECTED", address: saved });
+      window.close();
+      return;
+    }
     setAddresses((prev) => {
       const idx = prev.findIndex((a) => a.id === saved.id);
       if (idx >= 0) {

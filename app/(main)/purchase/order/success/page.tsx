@@ -60,6 +60,8 @@ export default async function PurchaseOrderSuccessPage({
       quantity={order.totalQuantity}
       amount={order.amount}
       basePrice={basePrice}
+      shippingFee={order.shippingFee}
+      couponDiscountAmount={order.couponDiscountAmount}
       imageUrl={order.items[0]?.imageUrl ?? null}
       method={order.method}
       tier={tier}

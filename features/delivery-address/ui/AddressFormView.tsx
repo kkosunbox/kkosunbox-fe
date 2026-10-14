@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { DeliveryAddress } from "../api/types";
 import {
   createDeliveryAddress,
@@ -12,6 +12,7 @@ import {
   DELIVERY_ADDRESS_DETAIL_MAX_LENGTH,
   DELIVERY_ADDRESS_NICKNAME_MAX_LENGTH,
 } from "@/shared/config/inputLimits";
+import { DeliveryMemoField } from "./DeliveryMemoField";
 
 interface Props {
   editingAddress: DeliveryAddress | null;
@@ -26,13 +27,6 @@ const LABEL_CLS = "w-[54px] shrink-0 text-body-13-m text-[var(--color-text)]";
 /** Text input height: 40px — see `shared/config/input.ts` */
 const INPUT_CLS =
   "h-10 flex-1 min-w-0 rounded-[4px] border border-transparent bg-[var(--color-surface-light)] px-3 text-body-13-m text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-accent-orange)]";
-
-const MEMO_MAX_LENGTH = 40;
-const MEMO_OPTIONS = [
-  "문 앞에 놓아주세요",
-  "부재 시 연락주세요",
-  "배송 전 미리 연락주세요",
-] as const;
 
 export default function AddressFormView({
   editingAddress,
@@ -55,14 +49,6 @@ export default function AddressFormView({
     formatPhoneNumber(digitsOnly(editingAddress?.phoneNumber ?? "")),
   );
   const [memo, setMemo] = useState(editingAddress?.memo ?? "");
-  const [isMemoMenuOpen, setIsMemoMenuOpen] = useState(false);
-  const [isCustomMemo, setIsCustomMemo] = useState(
-    Boolean(editingAddress?.memo) &&
-      !MEMO_OPTIONS.includes(
-        editingAddress?.memo as (typeof MEMO_OPTIONS)[number],
-      ),
-  );
-  const memoInputRef = useRef<HTMLInputElement>(null);
 
   /* 사용 보류 필드 — API/타입에 없음. 필요 시 폼에 다시 연결.
   const [email, setEmail] = useState("");
@@ -301,101 +287,16 @@ export default function AddressFormView({
         </div>
 
         {/* 배송메모 */}
-        <div
-          className="flex items-center gap-3"
-          onBlur={(event) => {
-            if (
-              !event.currentTarget.contains(event.relatedTarget as Node | null)
-            ) {
-              setIsMemoMenuOpen(false);
-            }
-          }}
-        >
-          <label
-            htmlFor="addr-memo"
-            className={`${LABEL_CLS} flex h-10 items-center self-start`}
-          >
+        <div className="flex items-start gap-3">
+          <label htmlFor="addr-memo" className={`${LABEL_CLS} flex h-10 items-center`}>
             배송메모
           </label>
-          <div className="relative min-w-0 flex-1">
-            {isCustomMemo ? (
-              <div className="relative pb-5">
-                <input
-                  ref={memoInputRef}
-                  id="addr-memo"
-                  type="text"
-                  value={memo}
-                  onChange={(event) => setMemo(event.target.value)}
-                  onClick={() => setIsMemoMenuOpen(true)}
-                  placeholder="배송 시 요청사항을 입력해주세요"
-                  maxLength={MEMO_MAX_LENGTH}
-                  className={`${INPUT_CLS} w-full`}
-                />
-                <span className="pointer-events-none absolute bottom-0 right-0 text-body-13-r text-[var(--color-text-secondary)]">
-                  {memo.length}/{MEMO_MAX_LENGTH}자
-                </span>
-              </div>
-            ) : (
-              <button
-                id="addr-memo"
-                type="button"
-                onClick={() => setIsMemoMenuOpen((open) => !open)}
-                aria-haspopup="listbox"
-                aria-expanded={isMemoMenuOpen}
-                className={`${INPUT_CLS} flex w-full items-center text-left`}
-              >
-                <span
-                  className={
-                    memo ? undefined : "text-[var(--color-text-secondary)]"
-                  }
-                >
-                  {memo || "배송 시 요청사항을 입력해주세요"}
-                </span>
-              </button>
-            )}
-
-            {isMemoMenuOpen && (
-              <div
-                role="listbox"
-                aria-label="배송메모 선택"
-                className="absolute left-0 right-0 top-10 z-20 mt-1 overflow-hidden rounded-[8px] bg-white py-1 shadow-[0_13px_61px_rgba(169,169,169,0.36)]"
-              >
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={isCustomMemo}
-                  onClick={() => {
-                    if (!isCustomMemo) setMemo("");
-                    setIsCustomMemo(true);
-                    setIsMemoMenuOpen(false);
-                    requestAnimationFrame(() => memoInputRef.current?.focus());
-                  }}
-                  className="flex h-10 w-full items-center px-5 text-left text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
-                >
-                  직접 입력하기
-                  <span className="ml-1 text-[var(--color-text-secondary)]">
-                    ({memo.length}/{MEMO_MAX_LENGTH}자)
-                  </span>
-                </button>
-                {MEMO_OPTIONS.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    role="option"
-                    aria-selected={!isCustomMemo && memo === option}
-                    onClick={() => {
-                      setMemo(option);
-                      setIsCustomMemo(false);
-                      setIsMemoMenuOpen(false);
-                    }}
-                    className="flex h-10 w-full items-center px-5 text-left text-body-14-m text-[var(--color-text)] transition-colors hover:bg-[var(--color-surface-light)]"
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <DeliveryMemoField
+            id="addr-memo"
+            value={memo}
+            onChange={setMemo}
+            inputClassName={INPUT_CLS}
+          />
         </div>
       </div>
 

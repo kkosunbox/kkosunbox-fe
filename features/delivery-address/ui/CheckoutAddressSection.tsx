@@ -9,6 +9,7 @@ import {
 } from "@/shared/ui";
 import { digitsOnly, formatPhoneNumber, isValidKoreanPhone } from "@/shared/lib/format";
 import { CheckoutAddressCheckIcon as CheckCircleIcon } from "./CheckoutAddressIcon";
+import { DeliveryMemoField } from "./DeliveryMemoField";
 import type { NewAddrState } from "../lib";
 import {
   DELIVERY_RECEIVER_NAME_MAX_LENGTH,
@@ -177,14 +178,13 @@ export function CheckoutAddressSection({
           </FormRow>
           {/* 배송메모 */}
           <FormRow label="배송메모">
-            <input
-              value={newAddr.memo}
-              onChange={(e) => setNewAddr((s) => ({ ...s, memo: e.target.value }))}
-              className={`${inputCls} ${isOrder ? "md:max-w-[328px]" : "md:max-w-[220px]"}`}
-              placeholder="배송 시 요청사항을 입력해주세요"
-              maxLength={50}
-              aria-label="배송메모"
-            />
+            <div className={`flex ${isOrder ? "md:max-w-[328px]" : "md:max-w-[220px]"}`}>
+              <DeliveryMemoField
+                value={newAddr.memo}
+                onChange={(memo) => setNewAddr((s) => ({ ...s, memo }))}
+                inputClassName={inputCls}
+              />
+            </div>
           </FormRow>
         </div>
       )}

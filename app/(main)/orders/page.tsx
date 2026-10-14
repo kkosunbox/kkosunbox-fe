@@ -76,7 +76,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const requestedPage = Number(params.page);
   const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
   const [history, summary] = await Promise.all([fetchCombinedPaymentHistory(token, { orderType, page, limit: 4 }), fetchCombinedPaymentTypeSummary(token)]);
-  const tabs = [{ label: "전체", value: undefined, count: summary.subscriptionCount + summary.productCount }, { label: "구독제품", value: "subscription" as const, count: summary.subscriptionCount }, { label: "단품제품", value: "product" as const, count: summary.productCount }];
+  const tabs = [{ label: "전체", value: undefined, count: summary.subscriptionCount + summary.productCount }, { label: "정기구독", value: "subscription" as const, count: summary.subscriptionCount }, { label: "스토어", value: "product" as const, count: summary.productCount }];
   const totalPages = Math.max(1, Math.ceil(history.total / history.limit));
   const pageHref = (value: number) => `/orders?${orderType ? `orderType=${orderType}&` : ""}page=${value}`;
   if (page > totalPages) redirect(pageHref(totalPages));

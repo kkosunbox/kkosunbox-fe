@@ -47,7 +47,11 @@ export function usePurchaseOrderSection({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPaying, setIsPaying] = useState(false);
 
-  useExternalMessages({ onAddressSelected: address.handleAddressSelected });
+  useExternalMessages({
+    onAddressSelected: address.handleAddressSelected,
+    onAddressSaved: address.handleAddressSaved,
+    onAddressDeleted: address.handleAddressDeleted,
+  });
 
   // 확정(canUse)된 쿠폰 코드만 quote에 실어 보낸다 — 실제 주문 생성 시 보내는 조건과 동일.
   const appliedCouponCode =

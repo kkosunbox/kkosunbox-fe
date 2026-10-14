@@ -108,8 +108,8 @@ export default function OrderHistorySection() {
 
   const tabs = [
     ["all", `전체 ${MOCK_ORDERS.length}`],
-    ["subscription", `구독제품 ${MOCK_ORDERS.filter((o) => o.kind === "subscription").length}`],
-    ["purchase", `단품제품 ${MOCK_ORDERS.filter((o) => o.kind === "purchase").length}`],
+    ["subscription", `정기구독 ${MOCK_ORDERS.filter((o) => o.kind === "subscription").length}`],
+    ["purchase", `스토어 ${MOCK_ORDERS.filter((o) => o.kind === "purchase").length}`],
   ] as const;
 
   return (

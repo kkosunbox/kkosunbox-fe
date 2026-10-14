@@ -22,8 +22,8 @@ function OrderTypeIcon({ subscription }: { subscription: boolean }) {
 
 export function PaymentCard({ summary }: PaymentCardProps) {
   const types = [
-    { value: "subscription", label: "구독제품", count: summary.subscriptionCount },
-    { value: "product", label: "단품제품", count: summary.productCount },
+    { value: "subscription", label: "정기구독", count: summary.subscriptionCount },
+    { value: "product", label: "스토어", count: summary.productCount },
   ] as const;
 
   return (

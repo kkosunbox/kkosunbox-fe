@@ -13,13 +13,11 @@ import {
   cancelGuestOrder,
   getGuestOrderReceipt,
   lookupGuestOrder,
-  type CancelProductOrderItemRequest,
   type GuestProductOrderDetail,
 } from "@/features/product/api";
 import { isErrorCode } from "@/shared/lib/api";
 import { formatPhoneNumber } from "@/shared/lib/format";
 import { LoadingOverlay, PageHeaderBand, useLoadingOverlay, useModal } from "@/shared/ui";
-import { GuestOrderCancelModal } from "./GuestOrderCancelModal";
 import {
   GUEST_ORDER_CARD,
   GUEST_ORDER_CARD_RIGHT,
@@ -30,6 +28,14 @@ import {
 } from "./GuestOrderParts";
 
 const LOOKUP_PATH = "/login/guest";
+
+const ORDER_CANCEL_CONFIRM = {
+  title: "주문을 취소하시겠어요?",
+  description: "주문하신 상품 전체가 한 번에 취소되며,\n결제하신 수단으로 환불됩니다.",
+  primaryLabel: "주문 취소",
+  secondaryLabel: "돌아가기",
+};
+const ORDER_CANCELLED_DESCRIPTION = "결제 수단에 따라 환불 완료까지\n영업일 기준 3~7일이 소요될 수 있습니다.";
 
 function ReceiptIcon() {
   return (
@@ -50,7 +56,6 @@ export default function GuestOrderDetailSection({ orderId }: { orderId: string }
   const [access, setAccess] = useState<GuestOrderAccess | null>(null);
   const [detail, setDetail] = useState<GuestProductOrderDetail | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [cancelOpen, setCancelOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(async (key: GuestOrderAccess) => {
@@ -109,27 +114,17 @@ export default function GuestOrderDetailSection({ orderId }: { orderId: string }
     }
   }
 
-  async function cancel(items?: CancelProductOrderItemRequest[]) {
+  // 부분 취소 없이 남은 상품 전체를 한 번에 취소한다 (회원 주문 상세와 동일).
+  async function cancel() {
     if (!access || busy) return;
     setBusy(true);
     showLoading("주문을 취소하고 있습니다...");
     try {
-      await cancelGuestOrder({ ...access, items });
-      setCancelOpen(false);
+      await cancelGuestOrder(access);
       await load(access);
-      openAlert({ title: "주문이 취소되었습니다." });
+      openAlert({ title: "주문이 취소되었습니다.", description: ORDER_CANCELLED_DESCRIPTION });
     } catch (err) {
-      if (items && isErrorCode(err, "PAYMENT_CANCELLATION_NOT_ALLOWED")) {
-        openAlert({
-          title: "부분 취소가 불가능합니다.",
-          description: "부분 취소 후 배송비가 취소 금액보다 크거나 같습니다. 전액 취소를 이용해주세요.",
-          primaryLabel: "전액 취소",
-          secondaryLabel: "닫기",
-          onPrimary: () => void cancel(),
-        });
-      } else {
-        openAlert({ title: getGuestOrderAccessErrorMessage(err, "주문 취소 중 오류가 발생했습니다.") });
-      }
+      openAlert({ title: getGuestOrderAccessErrorMessage(err, "주문 취소 중 오류가 발생했습니다.") });
     } finally {
       setBusy(false);
       hideLoading();
@@ -138,9 +133,6 @@ export default function GuestOrderDetailSection({ orderId }: { orderId: string }
 
   return (
     <div className="bg-white pt-[var(--header-offset)]">
-      {cancelOpen && (
-        <GuestOrderCancelModal items={order.items} busy={busy} onClose={() => setCancelOpen(false)} onConfirm={(items) => void cancel(items)} />
-      )}
       <PageHeaderBand
         title="비회원 주문 상세정보"
         description="주문하신 상품의 상세정보입니다."
@@ -186,7 +178,7 @@ export default function GuestOrderDetailSection({ orderId }: { orderId: string }
         <button
           type="button"
           disabled={!canCancel || busy}
-          onClick={() => setCancelOpen(true)}
+          onClick={() => openAlert({ ...ORDER_CANCEL_CONFIRM, onPrimary: () => void cancel() })}
           className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {busy ? "처리 중..." : "주문취소"}

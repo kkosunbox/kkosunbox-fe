@@ -11,7 +11,7 @@ import { subscriptionPaidAmount } from "@/features/subscription/lib/subscription
 import type { PlanReviewEligibility, ProductReviewEligibility, ReviewResponse } from "@/features/review/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
-import { packageThemeForPlan, PACKAGES, CURRENT_PURCHASE_TIER } from "@/entities/package";
+import { packageThemeForPlan } from "@/entities/package";
 import { TIER_BOX_IMAGES } from "@/entities/package";
 import type { SubscriptionPlanLike } from "@/entities/package";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
@@ -37,16 +37,9 @@ function slideTransform(sign: number, progress: number): string {
   return `translateX(calc(${pct}% + ${gapPx}px))`;
 }
 
-/** 단건 구매(product) 슬라이드 배경색 — 현재 판매 중인 티어(CURRENT_PURCHASE_TIER) 색상 재사용 */
-const PURCHASE_SLIDE_COLOR_VAR = PACKAGES.find((p) => p.tier === CURRENT_PURCHASE_TIER)!.colorVar;
-
 function billingDayLabel(nextBillingDate: string): string {
   const day = parseInt(nextBillingDate.slice(8, 10), 10);
   return `매월 ${day}일`;
-}
-
-function formatDate(dateTime: string): string {
-  return dateTime.slice(0, 10).replace(/-/g, ".");
 }
 
 function wrapIndex(index: number, total: number): number {
@@ -215,12 +208,10 @@ interface ReviewState {
   editQuery: string;
 }
 
-/** 구독 슬라이드와 단건 구매 슬라이드를 같은 캐러셀에서 다룬다 */
-type CarouselSlide =
-  | { kind: "subscription"; subscription: UserSubscriptionDto }
-  | { kind: "purchase"; group: ProductPurchaseGroup };
+/** 캐러셀 슬라이드 — 진행 중인 구독 1건당 1장 */
+type CarouselSlide = { kind: "subscription"; subscription: UserSubscriptionDto };
 
-/** 슬라이드 하나를 렌더링하는 데 필요한 값 — 구독/구매 분기를 미리 해석해 둔 형태 */
+/** 슬라이드 하나를 렌더링하는 데 필요한 값 */
 interface SlideView {
   colorVar: string;
   detailHref: string;
@@ -256,10 +247,8 @@ function SlidePanel({
   onWrittenReviewClick: (review: ReviewResponse | null) => void;
   onUnavailableReviewClick: () => void;
 }) {
-  const isSubscriptionSlide = slide.kind === "subscription";
-  const subscription = slide.kind === "subscription" ? slide.subscription : null;
-  const group = slide.kind === "purchase" ? slide.group : null;
-  const isPaused = subscription?.isPaused ?? false;
+  const { subscription } = slide;
+  const isPaused = subscription.isPaused;
 
   return (
     <div
@@ -275,7 +264,7 @@ function SlidePanel({
           "max-md:pl-7 max-md:pr-6 max-md:py-4 md:max-lg:pl-10 md:max-lg:pr-6 md:max-lg:py-4 lg:pl-[51px] lg:pr-6 lg:py-5",
         ].join(" ")}
       >
-        {/* 카드 본문 클릭 — 구독/구매 상세 */}
+        {/* 카드 본문 클릭 — 구독 상세 */}
         <Link
           href={view.detailHref}
           prefetch={false}
@@ -298,9 +287,7 @@ function SlidePanel({
                 mobileVariant="body-14-sb"
                 className="max-lg:text-body-14-sb leading-tight tracking-[-0.04em] text-white lg:leading-[19px]"
               >
-                {isSubscriptionSlide
-                  ? `${subscription!.plan.name} 구독중`
-                  : `${group!.productName} 구매`}
+                {`${subscription.plan.name} 구독중`}
               </Text>
               {view.boxQuantity !== null && (
                 <span className="max-lg:hidden inline-flex h-[19px] shrink-0 items-center justify-center rounded-[4px] bg-white/30 px-1 text-body-16-sb capitalize leading-[19px] tracking-[-0.04em] text-white">
@@ -308,48 +295,27 @@ function SlidePanel({
                 </span>
               )}
             </div>
-            {isSubscriptionSlide ? (
-              <>
-                <Text
-                  variant="body-16-m"
-                  mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
-                >
-                  결제일 : {billingDayLabel(subscription!.nextBillingDate)}
-                </Text>
-                <Text
-                  variant="body-16-m"
-                  mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
-                >
-                  결제금액 :{" "}
-                  {view.paymentAmount !== null
-                    ? `${view.paymentAmount.toLocaleString("ko-KR")}원`
-                    : "-"}
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text
-                  variant="body-16-m"
-                  mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
-                >
-                  총 주문 : {group!.orderCount}건
-                </Text>
-                <Text
-                  variant="body-16-m"
-                  mobileVariant="body-13-m"
-                  className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
-                >
-                  최근 주문일 : {formatDate(group!.latestOrder.createdAt)}
-                </Text>
-              </>
-            )}
+            <Text
+              variant="body-16-m"
+              mobileVariant="body-13-m"
+              className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
+            >
+              결제일 : {billingDayLabel(subscription.nextBillingDate)}
+            </Text>
+            <Text
+              variant="body-16-m"
+              mobileVariant="body-13-m"
+              className="max-lg:text-body-13-m max-lg:leading-tight max-lg:text-white/80 lg:leading-[1.4] lg:text-white/50"
+            >
+              결제금액 :{" "}
+              {view.paymentAmount !== null
+                ? `${view.paymentAmount.toLocaleString("ko-KR")}원`
+                : "-"}
+            </Text>
           </div>
         </Link>
 
-        {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성. 연관 플랜이 없는 구매(단건)는 노출하지 않음 */}
+        {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성 */}
         {view.reviewHref !== null && (
           <div className="mt-2">
             {view.myReview ? (
@@ -387,7 +353,7 @@ function SlidePanel({
         )}
       </div>
 
-      {/* 구독관리 / 구매관리 */}
+      {/* 구독관리 */}
       {/* 텍스트만으로는 45×18px로 터치 영역 기준(24×24px) 미달(Lighthouse target-size,
           2026-09-11 실측). 시각적 크기는 그대로 두고 before 의사요소로 히트 영역만 확장한다. */}
       <Link
@@ -435,13 +401,10 @@ export function SubscriptionCard({
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [, startTransition] = useTransition();
 
-  // 구독 슬라이드 뒤에 단건 구매(상품별) 슬라이드를 이어붙인다. 주문이 없는 상품은 슬라이드를 만들지 않는다.
+  // 단건 구매 슬라이드는 노출하지 않는다 — 마이페이지 카드는 구독만 보여준다.
   const slides = useMemo<CarouselSlide[]>(
-    () => [
-      ...subscriptions.map((subscription) => ({ kind: "subscription" as const, subscription })),
-      ...purchaseGroups.map((group) => ({ kind: "purchase" as const, group })),
-    ],
-    [subscriptions, purchaseGroups],
+    () => subscriptions.map((subscription) => ({ kind: "subscription" as const, subscription })),
+    [subscriptions],
   );
   const total = slides.length;
 
@@ -457,18 +420,6 @@ export function SubscriptionCard({
     for (const r of myReviews) if (r.planId !== null) map.set(r.planId, r);
     return map;
   }, [myReviews]);
-
-  const reviewByProduct = useMemo(() => {
-    const map = new Map<number, ReviewResponse>();
-    for (const review of myReviews) if (review.productId !== null) map.set(review.productId, review);
-    return map;
-  }, [myReviews]);
-
-  const eligibilityByProduct = useMemo(() => {
-    const map = new Map<number, ProductReviewEligibility>();
-    for (const item of eligibleProducts) map.set(item.productId, item);
-    return map;
-  }, [eligibleProducts]);
 
   // relatedPlanId(단건 구매) → 리뷰 작성 가능 여부 요약
   const productSummaryByPlan = useMemo(() => {
@@ -487,68 +438,25 @@ export function SubscriptionCard({
     return map;
   }, [subscriptions, productPlanSummaries]);
 
-  // 슬라이드(구독/구매) → 렌더링에 필요한 값 일괄 계산. 평상시엔 현재 슬라이드 1번,
+  // 슬라이드 → 렌더링에 필요한 값 계산. 평상시엔 현재 슬라이드 1번,
   // 전환 중엔 나가는/들어오는 슬라이드 각각 1번씩 호출된다.
-  function viewForSlide(slide: CarouselSlide): SlideView {
-    const isSubscriptionSlide = slide.kind === "subscription";
-    const subscription = slide.kind === "subscription" ? slide.subscription : null;
-    const group = slide.kind === "purchase" ? slide.group : null;
-
-    // 단건 구매 슬라이드도 연관 플랜(relatedPlanId)을 찾을 수 있으면 패키지 종류별 색상을 쓴다.
-    // 매칭 실패 시에만 PURCHASE_SLIDE_COLOR_VAR로 폴백.
-    const purchasePlan = group?.relatedPlanId != null ? planById.get(group.relatedPlanId) ?? null : null;
-    const theme = subscription
-      ? packageThemeForPlan(subscription.plan)
-      : purchasePlan
-        ? packageThemeForPlan(purchasePlan)
-        : null;
-    const colorVar = theme ? theme.colorVar : PURCHASE_SLIDE_COLOR_VAR;
-
-    // 구매는 별도 허브 페이지 없이 마이페이지 카드 자체가 허브 역할 — 카드 클릭/구매관리 링크 모두 상품별 상세로 직행
-    const purchaseHref = group ? `/mypage/purchase?productId=${group.productId}` : "/mypage/purchase";
-    const detailHref = subscription
-      ? `/mypage/subscription/detail?subscriptionId=${subscription.id}`
-      : purchaseHref;
-    // 화면에 보이는 타이틀 텍스트("{플랜명} 구독중")가 aria-label에 그대로 포함돼야 한다
-    // (Lighthouse label-content-name-mismatch, 2026-09-11 실측). "구독 상세 보기"만
-    // 붙이면 "구독중"이라는 문구 자체가 aria-label에 없어 실패했다.
-    const detailAriaLabel = isSubscriptionSlide
-      ? `${subscription!.plan.name} 구독중${subscription!.isPaused ? " (쉬는 중)" : ""}, 상세 보기`
-      : `${group!.productName} 구매 내역 보기`;
-    const manageHref = isSubscriptionSlide ? "/mypage/subscription" : purchaseHref;
-    const manageLabel = isSubscriptionSlide ? "구독관리" : "구매관리";
-
-    const paymentAmount = subscription ? subscriptionPaidAmount(subscription) : null;
-    const boxQuantity = subscription && subscription.quantity > 1 ? subscription.quantity : null;
-
-    // 리뷰 상태 (리뷰는 플랜당 1개 단위). 구독 슬라이드는 plan.id, 구매 슬라이드는 상품의 relatedPlanId 기준
-    const planId = subscription?.plan.id ?? group?.relatedPlanId ?? null;
-    const independentProductId = !isSubscriptionSlide && planId === null ? group?.productId ?? null : null;
-    const reviewHref = planId !== null
-      ? `/mypage/review/write?planId=${planId}`
-      : independentProductId !== null
-        ? `/mypage/review/write?productId=${independentProductId}`
-        : null;
-    const canReview = planId !== null
-      ? (isSubscriptionSlide ? eligibilityByPlan.get(planId)?.canReview : productSummaryByPlan.get(planId)?.canReview) ?? false
-      : (independentProductId !== null ? eligibilityByProduct.get(independentProductId)?.canReview ?? false : false);
-    const myReview = planId !== null
-      ? reviewByPlan.get(planId) ?? null
-      : independentProductId !== null
-        ? reviewByProduct.get(independentProductId) ?? null
-        : null;
-
+  function viewForSlide({ subscription }: CarouselSlide): SlideView {
+    const planId = subscription.plan.id;
     return {
-      colorVar,
-      detailHref,
-      detailAriaLabel,
-      manageHref,
-      manageLabel,
-      paymentAmount,
-      boxQuantity,
-      reviewHref,
-      canReview,
-      myReview,
+      colorVar: packageThemeForPlan(subscription.plan).colorVar,
+      detailHref: `/mypage/subscription/detail?subscriptionId=${subscription.id}`,
+      // 화면에 보이는 타이틀 텍스트("{플랜명} 구독중")가 aria-label에 그대로 포함돼야 한다
+      // (Lighthouse label-content-name-mismatch, 2026-09-11 실측). "구독 상세 보기"만
+      // 붙이면 "구독중"이라는 문구 자체가 aria-label에 없어 실패했다.
+      detailAriaLabel: `${subscription.plan.name} 구독중${subscription.isPaused ? " (쉬는 중)" : ""}, 상세 보기`,
+      manageHref: "/mypage/subscription",
+      manageLabel: "구독관리",
+      paymentAmount: subscriptionPaidAmount(subscription),
+      boxQuantity: subscription.quantity > 1 ? subscription.quantity : null,
+      // 리뷰는 플랜당 1개 단위
+      reviewHref: `/mypage/review/write?planId=${planId}`,
+      canReview: eligibilityByPlan.get(planId)?.canReview ?? false,
+      myReview: reviewByPlan.get(planId) ?? null,
     };
   }
 

@@ -17,6 +17,9 @@ export function CollapsiblePanel({
   innerClassName?: string;
 }) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  // 펼침 애니메이션이 끝난 뒤에는 overflow를 풀어 드롭다운 등 패널 밖으로 넘치는 요소가 잘리지 않게 한다
+  const [isExpandSettled, setIsExpandSettled] = useState(open);
+  const isOverflowVisible = open && (isExpandSettled || prefersReducedMotion);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -33,6 +36,11 @@ export function CollapsiblePanel({
       aria-hidden={!open}
       inert={!open}
       className={className}
+      onTransitionEnd={(e) => {
+        if (e.target === e.currentTarget && e.propertyName === "grid-template-rows") {
+          setIsExpandSettled(open);
+        }
+      }}
       style={{
         display: "grid",
         gridTemplateRows: open ? "1fr" : "0fr",
@@ -42,7 +50,7 @@ export function CollapsiblePanel({
           : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease",
       }}
     >
-      <div className="min-h-0 overflow-hidden">
+      <div className={`min-h-0 ${isOverflowVisible ? "overflow-visible" : "overflow-hidden"}`}>
         {innerClassName ? <div className={innerClassName}>{children}</div> : children}
       </div>
     </div>

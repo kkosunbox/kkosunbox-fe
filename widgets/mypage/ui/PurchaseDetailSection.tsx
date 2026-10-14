@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Text, useModal, useLoadingOverlay } from "@/shared/ui";
-import { getErrorMessage, isErrorCode } from "@/shared/lib/api";
+import { getErrorMessage } from "@/shared/lib/api";
 import { TIER_BOX_IMAGES, CURRENT_PURCHASE_TIER, type PackageTier } from "@/entities/package";
 import { cancelProductOrder, getProductOrderReceipt } from "@/features/product/api/productApi";
 import type { ProductDto, ProductOrderDto, ProductOrderPlanSummaryDto } from "@/features/product/api/types";
@@ -184,6 +185,7 @@ interface Props {
 export default function PurchaseDetailSection({ group, product, orders, planSummaries, tier, productEligibility }: Props) {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
+  const router = useRouter();
   const { openAlert } = useModal();
   const { showLoading, hideLoading } = useLoadingOverlay();
 
@@ -231,37 +233,30 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
     });
   }
 
-  function cancelOrder(orderId: number, itemId?: number, quantity?: number) {
-    showLoading("주문을 환불하고 있습니다...");
+  // 부분 취소 없이 주문에 남은 상품 전체를 한 번에 취소한다.
+  function cancelOrder(orderId: number) {
+    showLoading("주문을 취소하고 있습니다...");
     startTransition(async () => {
       try {
-        await cancelProductOrder(orderId, itemId && quantity ? { items: [{ itemId, quantity }] } : undefined);
-        window.location.reload();
+        await cancelProductOrder(orderId);
+        router.refresh();
+        openAlert({
+          title: "주문이 취소되었습니다.",
+          description: "결제 수단에 따라 환불 완료까지\n영업일 기준 3~7일이 소요될 수 있습니다.",
+        });
       } catch (err) {
-        if (itemId && isErrorCode(err, "PAYMENT_CANCELLATION_NOT_ALLOWED")) {
-          openAlert({
-            title: "부분 취소가 불가능합니다.",
-            description: "부분 취소 후 배송비가 취소 금액보다 크거나 같습니다. 전액 취소를 이용해주세요.",
-            primaryLabel: "전액 취소",
-            secondaryLabel: "닫기",
-            onPrimary: () => cancelOrder(orderId),
-          });
-        } else {
-          openAlert({ title: getErrorMessage(err, "환불 처리 중 오류가 발생했습니다.") });
-        }
+        openAlert({ title: getErrorMessage(err, "주문 취소 중 오류가 발생했습니다.") });
       } finally { hideLoading(); }
     });
   }
 
-  function handleCancelOrder(orderId: number, itemId: number, remainingQuantity: number) {
+  function handleCancelOrder(orderId: number) {
     openAlert({
-      type: "info",
-      title: "상품을 취소할까요?",
-      description: "선택한 상품의 남은 수량을 취소하거나 주문 전체를 취소할 수 있습니다.",
-      primaryLabel: "선택 상품 취소",
-      secondaryLabel: "주문 전체 취소",
-      onPrimary: () => cancelOrder(orderId, itemId, remainingQuantity),
-      onSecondary: () => cancelOrder(orderId),
+      title: "주문을 취소하시겠어요?",
+      description: "주문하신 상품 전체가 한 번에 취소되며,\n결제하신 수단으로 환불됩니다.",
+      primaryLabel: "주문 취소",
+      secondaryLabel: "돌아가기",
+      onPrimary: () => cancelOrder(orderId),
     });
   }
 
@@ -309,7 +304,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
               {canCancel(record) && (
                 <button
                   type="button"
-                  onClick={() => handleCancelOrder(record.id, line.id, line.remainingQuantity)}
+                  onClick={() => handleCancelOrder(record.id)}
                   className="text-body-14-m text-[var(--color-accent)] underline"
                 >
                   주문취소
@@ -344,7 +339,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
             {canCancel(record) && (
               <button
                 type="button"
-                onClick={() => handleCancelOrder(record.id, line.id, line.remainingQuantity)}
+                onClick={() => handleCancelOrder(record.id)}
                 className="text-body-14-m text-[var(--color-accent)] underline hover:opacity-80"
               >
                 주문취소

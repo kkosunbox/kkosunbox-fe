@@ -59,6 +59,8 @@ export function useOrderSectionState({
 
   useExternalMessages({
     onAddressSelected: address.handleAddressSelected,
+    onAddressSaved: address.handleAddressSaved,
+    onAddressDeleted: address.handleAddressDeleted,
     onPaymentSelected: payment.handlePaymentSelected,
   });
 

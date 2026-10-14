@@ -71,7 +71,7 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
     try {
       await cancelProductOrder(payment.id);
       router.refresh();
-      openAlert({ title: "주문이 취소되었습니다." });
+      openAlert({ title: "주문이 취소되었습니다.", description: "결제 수단에 따라 환불 완료까지\n영업일 기준 3~7일이 소요될 수 있습니다." });
     } catch (error) {
       openAlert({ title: getErrorMessage(error, "주문 취소 중 오류가 발생했습니다.") });
     } finally { setBusy(false); }
@@ -116,7 +116,7 @@ export default function OrderDetailSection({ payment }: { payment: CombinedPayme
           <div className="flex justify-between gap-4"><dt>결제방식</dt><dd>{payment.method ?? "-"}</dd></div>
         </dl></section>
       </div>
-      {subscription ? <button type="button" disabled={!payment.subscriptionId || busy} onClick={() => openModal("subscription-cancel", cancelCurrentSubscription)} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "구독 취소"}</button> : <button type="button" disabled={!canCancel || busy} onClick={() => openAlert({ title: "주문을 취소할까요?", description: "주문에 포함된 남은 상품 전체가 취소됩니다.", primaryLabel: "주문취소", secondaryLabel: "돌아가기", onPrimary: cancelOrder })} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "주문취소"}</button>}
+      {subscription ? <button type="button" disabled={!payment.subscriptionId || busy} onClick={() => openModal("subscription-cancel", cancelCurrentSubscription)} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "구독 취소"}</button> : <button type="button" disabled={!canCancel || busy} onClick={() => openAlert({ title: "주문을 취소하시겠어요?", description: "주문하신 상품 전체가 한 번에 취소되며,\n결제하신 수단으로 환불됩니다.", primaryLabel: "주문 취소", secondaryLabel: "돌아가기", onPrimary: cancelOrder })} className="mt-6 rounded-[6px] border border-[var(--color-text-muted)] px-5 py-2 text-body-14-m text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-light)] disabled:cursor-not-allowed disabled:opacity-50">{busy ? "처리 중..." : "주문취소"}</button>}
     </div>
   </div>;
 }

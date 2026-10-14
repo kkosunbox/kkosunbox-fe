@@ -5,7 +5,7 @@ import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import hero from "../assets/brand-story-hero.png";
 import paper from "../assets/ivory-paper-texture-tile-400.png";
 import restingDog from "../assets/brand-story-rest.png";
-import ingredients from "../assets/brand-story-ingredients.png";
+import ingredients from "../assets/brand-story-ingredients.webp";
 import allergy from "../assets/about-section-2-svg-01.svg";
 import skin from "../assets/about-section-2-svg-02.svg";
 import digestion from "../assets/about-section-2-svg-03.svg";

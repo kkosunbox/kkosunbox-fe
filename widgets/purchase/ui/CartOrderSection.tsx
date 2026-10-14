@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- 상품 이미지는 백엔드의 동적 URL이다. */
 
 import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 import { loadPaymentWidget, type PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 import { checkoutCart, getCart, quoteCart, updateCartItem, type CartDto, type CartItemDto, type CartPriceDto } from "@/features/cart";
 import { type DeliveryAddress } from "@/features/delivery-address/api";
@@ -136,6 +137,7 @@ export default function CartOrderSection({ cartItemIds, initialAddresses }: Cart
 
   return (
     <div className="pt-[var(--header-offset)]">
+      <Script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" strategy="afterInteractive" />
       <OrderPriceSummaryBar basePrice={quote?.itemsAmount ?? 0} totalDiscount={quote?.couponDiscountAmount ?? 0} shippingFee={quote?.shippingFee ?? 0} originalShippingFee={originalShippingFee} total={quote?.amount ?? 0} />
       <div className="bg-white">
         <div className="mx-auto max-md:w-full max-md:px-6 max-md:py-6 md:pt-[52px] md:pb-[90px] md:max-lg:w-full md:max-lg:px-5 lg:w-[calc(100%_-_80px)] lg:max-w-[1240px]">

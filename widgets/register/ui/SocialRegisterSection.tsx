@@ -194,6 +194,7 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
   const { showLoading, hideLoading } = useLoadingOverlay();
   const [isPending, startTransition] = useTransition();
   const [phone, setPhone] = useState("");
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [agreements, setAgreements] = useState<AgreementState>(INITIAL_AGREEMENTS);
 
@@ -221,10 +222,8 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
   }
 
   function handleSubmit() {
-    if (!isPhoneValid) {
-      openAlert({ title: "올바른 휴대전화 번호를 입력해주세요." });
-      return;
-    }
+    setPhoneTouched(true);
+    if (!isPhoneValid) return;
     if (!agreements.terms || !agreements.privacy) {
       openAlert({ title: "필수 약관에 동의해주세요." });
       return;
@@ -288,8 +287,10 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
             autoComplete="tel"
             value={phone}
             onChange={(event) => setPhone(formatPhone(event.target.value))}
+            onBlur={() => setPhoneTouched(true)}
+            aria-invalid={phoneTouched && !isPhoneValid}
             placeholder="연락처를 입력하세요"
-            className="mt-4 h-8 w-full max-w-[327px] border-b border-[var(--color-text-muted)] bg-transparent text-[14px] font-medium leading-5 text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-cta-button)]"
+            className="mt-4 h-8 w-full max-w-[327px] border-b border-[var(--color-text-muted)] bg-transparent text-[14px] font-medium leading-5 text-[var(--color-text)] outline-none placeholder:text-[var(--color-text-secondary)] focus:border-[var(--color-cta-button)] aria-invalid:border-[var(--color-input-error)]"
           />
           <p className="mt-3 text-[13px] font-medium leading-4 text-[var(--color-text)]">
             주문/배송 안내 및 알림톡 발송을 위해 사용됩니다.
@@ -372,8 +373,9 @@ export default function SocialRegisterSection({ hasStoredReferralCode }: { hasSt
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={!canSubmit}
-          className="flex items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-[14px] font-[600] leading-[21px] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 md:h-10 md:w-40 md:flex-none max-md:h-12 max-md:flex-1"
+            disabled={isPending}
+            aria-disabled={!canSubmit}
+          className="flex items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-[14px] font-[600] leading-[21px] tracking-[-0.02em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:opacity-40 md:h-10 md:w-40 md:flex-none max-md:h-12 max-md:flex-1"
           >
             가입하기
           </button>

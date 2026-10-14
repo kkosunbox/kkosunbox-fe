@@ -205,6 +205,7 @@
   --color-border: #B0B0B0;         /* Light border — 비활성 라디오·체크박스 테두리 */
   --color-border-light: #EEEEEE;   /* Light divider — 섹션 구분선 */
   --color-input-underline: #D9D9D9; /* Input underline — 로그인/회원가입 밑줄형 입력창 구분선 */
+  --color-input-error: #F21E1E; /* Input error — 필수값 미입력·형식 오류 입력창 밑줄 */
   --color-ui-disabled: #D0D0D0;    /* Disabled — 비활성 UI 요소 (페이지네이션 화살표 등) */
   --color-text-warm: #917F71;      /* Warm Gray — 웜 섹션 서브텍스트 */
   --color-text-on-warm: #555555;   /* 웜 섹션 헤딩 */
@@ -576,6 +577,7 @@
   --color-border: var(--color-border);
   --color-border-light: var(--color-border-light);
   --color-input-underline: var(--color-input-underline);
+  --color-input-error: var(--color-input-error);
   --color-ui-disabled: var(--color-ui-disabled);
   --color-text-warm: var(--color-text-warm);
   --color-text-on-warm: var(--color-text-on-warm);

@@ -106,7 +106,7 @@ export default function AlertModal({
             height={44}
             className="object-contain"
           />
-          <h2 className="text-[18px] font-bold leading-[152%] tracking-[-0.04em] text-[var(--color-text)] text-center">
+          <h2 className="text-[18px] font-bold leading-[152%] tracking-[-0.04em] text-[var(--color-text)] text-center whitespace-pre-line">
             {title}
           </h2>
           {description && (

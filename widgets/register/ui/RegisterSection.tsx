@@ -31,6 +31,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
     updatePhone,
     referralCode,
     setReferralCode,
+    markTouched,
+    invalid,
     email,
     pw,
     agree,
@@ -129,6 +131,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               <div className="flex items-end gap-2">
                 <input
                   id="reg-email-mobile"
+                  onBlur={() => markTouched("email")}
+                  aria-invalid={invalid.email}
                   type="email"
                   maxLength={EMAIL_MAX_LENGTH}
                   placeholder="이메일을 입력해주세요"
@@ -179,6 +183,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
                 <div className="flex items-end gap-2">
                   <input
                     id="reg-otp-mobile"
+                    onBlur={() => markTouched("otp")}
+                    aria-invalid={invalid.otp}
                     type="text"
                     inputMode="numeric"
                     maxLength={8}
@@ -215,6 +221,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               <div className="relative">
                 <input
                   id="reg-pw-mobile"
+                  aria-invalid={pw.passwordInvalid}
                   type={pw.showPw ? "text" : "password"}
                   maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="최소 8자 이상, 영문자, 숫자, 특수문자를 포함하여 입력해주세요."
@@ -265,6 +272,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               <div className="relative">
                 <input
                   id="reg-pw-confirm-mobile"
+                  aria-invalid={pw.passwordConfirmInvalid}
                   type={pw.showPwConfirm ? "text" : "password"}
                   maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="비밀번호를 다시 입력해주세요"
@@ -299,6 +307,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               </label>
               <input
                 id="reg-phone-mobile"
+                onBlur={() => markTouched("phone")}
+                aria-invalid={invalid.phone}
                 type="tel"
                 inputMode="numeric"
                 maxLength={13}
@@ -324,9 +334,10 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
           <div className="mt-8">
             <button
               type="button"
-              disabled={!canSubmit}
+              disabled={isPending}
+              aria-disabled={!canSubmit}
               onClick={handleSignup}
-              className={authMobileCtaButtonCls}
+              className={[authMobileCtaButtonCls, "aria-disabled:opacity-40"].join(" ")}
             >
               {isPending ? "처리 중..." : "회원가입 완료"}
             </button>
@@ -377,6 +388,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               <div className="flex items-end gap-2">
                 <input
                   id="reg-email-desktop"
+                  onBlur={() => markTouched("email")}
+                  aria-invalid={invalid.email}
                   type="email"
                   maxLength={EMAIL_MAX_LENGTH}
                   placeholder="이메일을 입력해주세요"
@@ -426,6 +439,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
                 <div className="flex items-end gap-2">
                   <input
                     id="reg-otp-desktop"
+                    onBlur={() => markTouched("otp")}
+                    aria-invalid={invalid.otp}
                     type="text"
                     inputMode="numeric"
                     maxLength={8}
@@ -466,6 +481,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               <div className="relative">
                 <input
                   id="reg-pw-desktop"
+                  aria-invalid={pw.passwordInvalid}
                   type={pw.showPw ? "text" : "password"}
                   maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="최소 8자 이상, 영문자, 숫자, 특수문자를 포함하여 입력해주세요."
@@ -495,6 +511,7 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               <div className="relative">
                 <input
                   id="reg-pw-confirm-desktop"
+                  aria-invalid={pw.passwordConfirmInvalid}
                   type={pw.showPwConfirm ? "text" : "password"}
                   maxLength={PASSWORD_MAX_LENGTH}
                   placeholder="비밀번호를 다시 입력해주세요"
@@ -529,6 +546,8 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
               </label>
               <input
                 id="reg-phone-desktop"
+                onBlur={() => markTouched("phone")}
+                aria-invalid={invalid.phone}
                 type="tel"
                 inputMode="numeric"
                 maxLength={13}
@@ -552,7 +571,13 @@ export default function RegisterSection({ hasStoredReferralCode }: { hasStoredRe
           <div className="mt-6">{agreementsBlock}</div>
 
           <div className="mt-6">
-            <button type="button" disabled={!canSubmit} onClick={handleSignup} className={authCtaButtonCls}>
+            <button
+              type="button"
+              disabled={isPending}
+              aria-disabled={!canSubmit}
+              onClick={handleSignup}
+              className={[authCtaButtonCls, "aria-disabled:opacity-40"].join(" ")}
+            >
               {isPending ? "처리 중..." : "가입하기"}
             </button>
           </div>

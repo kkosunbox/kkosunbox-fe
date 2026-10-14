@@ -22,6 +22,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   COOLDOWN_PERIOD_NOT_EXPIRED: "재전송 대기 시간이 지나지 않았습니다. 60초 후 다시 시도해주세요.",
   DAILY_LIMIT_EXCEEDED: "일일 발송 한도를 초과했습니다. 내일 다시 시도해주세요.",
   DAILY_LIMIT_REACHED: "일일 발송 한도(5회)를 초과했습니다. 내일 다시 시도해주세요.",
+  VERIFICATION_CODE_ALREADY_SENT: "이미 인증코드가 전송되었습니다.\n메일함을 확인해주세요.",
 
   // 회원 탈퇴
   ACTIVE_SUBSCRIPTION_EXISTS: "이용 중인 구독이 있어 탈퇴할 수 없습니다.\n구독을 해지한 후 다시 시도해주세요.",

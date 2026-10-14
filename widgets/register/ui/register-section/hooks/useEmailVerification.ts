@@ -69,6 +69,9 @@ export function useEmailVerification({
         if (isErrorCode(err, "COOLDOWN_PERIOD_NOT_EXPIRED")) {
           startCountdown();
         }
+        if (isErrorCode(err, "VERIFICATION_CODE_ALREADY_SENT")) {
+          setCodeSent(true);
+        }
         if (isErrorCode(err, "DAILY_LIMIT_REACHED")) {
           setDailyLimitReached(true);
         }

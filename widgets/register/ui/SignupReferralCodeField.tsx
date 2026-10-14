@@ -28,7 +28,8 @@ export function SignupReferralCodeField({
           htmlFor="social-register-referral-code"
           className="block text-[14px] font-bold leading-[17px] tracking-[-0.04em] text-[var(--color-text)]"
         >
-          초대코드
+          초대코드{" "}
+          <span className="font-medium text-[var(--color-text-secondary)]">(선택)</span>
         </label>
         <div className="mt-4 max-w-[327px]">
           <input
@@ -53,7 +54,7 @@ export function SignupReferralCodeField({
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={inputId} className={authLabelCls}>
-        초대코드
+        초대코드 <span className="text-[var(--color-text-secondary)]">(선택)</span>
       </label>
       <input
         id={inputId}

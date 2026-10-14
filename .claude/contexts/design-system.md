@@ -183,6 +183,7 @@
 | `--color-divider-warm` | `#F3DFCF` | Warm Peach — 모바일 섹션 구분선 |
 | `--color-divider-neutral` | `#EAEAEA` | Neutral — 프로필 카드 모바일 구분선 등 |
 | `--color-input-underline` | `#D9D9D9` | Input underline — 로그인/회원가입 밑줄형 입력창 구분선 |
+| `--color-input-error` | `#F21E1E` | Input error — 필수값 미입력·형식 오류 입력창 밑줄 |
 | `--color-link-warm` | `#C3824E` | 로그인 회원가입하기 링크 |
 | `--color-link-blue` | `#1C67D4` | 체크리스트 모달 본문 강조 링크 |
 | `--color-sage` | `#87AB7D` | Sage Green — About CTA 카드 배경 |

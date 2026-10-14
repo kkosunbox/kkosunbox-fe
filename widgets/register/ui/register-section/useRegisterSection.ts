@@ -7,8 +7,6 @@ import { tokenStore } from "@/shared/lib/api/token";
 import { trackSignUp } from "@/shared/lib/analytics";
 import { useAuth } from "@/features/auth";
 import { useModal, useLoadingOverlay } from "@/shared/ui";
-import { meetsMaxPasswordLength, meetsMinPasswordLength, meetsPasswordComplexity } from "./validators";
-import { PASSWORD_MAX_LENGTH } from "./constants";
 import { useEmailVerification } from "./hooks/useEmailVerification";
 import { usePasswordFields } from "./hooks/usePasswordFields";
 import { useAgreements } from "./hooks/useAgreements";
@@ -37,6 +35,14 @@ export function useRegisterSection() {
   const [isPending, start] = useTransition();
   const [phone, setPhone] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  /** 포커스를 벗어난 필수 필드 — 미입력·형식 오류 시 밑줄을 빨간색으로 표시 */
+  const [touched, setTouched] = useState({ email: false, otp: false, phone: false });
+  /** 가입 버튼을 한 번이라도 눌렀는지 — 이메일 미인증도 빨간 밑줄로 표시 */
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
+  function markTouched(key: keyof typeof touched) {
+    setTouched((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
+  }
 
   const phoneDigits = phone.replace(/\D/g, "");
   const phoneValid = /^01\d{8,9}$/.test(phoneDigits);
@@ -64,6 +70,12 @@ export function useRegisterSection() {
   const pw = usePasswordFields({ emailVerified: email.emailVerified });
   const agree = useAgreements();
 
+  const invalid = {
+    email: (touched.email && !email.email.trim()) || (submitAttempted && !email.emailVerified),
+    otp: !email.emailVerified && ((touched.otp && !email.otp.trim()) || (submitAttempted && email.codeSent)),
+    phone: touched.phone && !phoneValid,
+  };
+
   const canSubmit =
     phoneValid &&
     email.emailVerified &&
@@ -76,20 +88,16 @@ export function useRegisterSection() {
 
   /* ── 회원가입 ── */
   function handleSignup() {
-    if (!phoneValid) { showError("올바른 휴대전화 번호를 입력해주세요."); return; }
+    // 필드 오류는 빨간 밑줄로만 표시 — 약관은 밑줄이 없으므로 모달로 안내
+    setSubmitAttempted(true);
+    setTouched({ email: true, otp: email.codeSent, phone: true });
+    pw.revealErrors();
+    const fieldsValid =
+      email.emailVerified && pw.passwordValid && pw.passwordsMatch && phoneValid;
+    if (!fieldsValid) return;
     if (!agree.agreements.terms) { showError("서비스 이용약관에 동의해주세요."); return; }
     if (!agree.agreements.privacy) { showError("개인정보처리방침에 동의해주세요."); return; }
     if (!agree.agreements.age) { showError("만 14세 이상만 가입할 수 있습니다."); return; }
-    if (!meetsMinPasswordLength(pw.password)) { showError("비밀번호는 최소 8자 이상이어야 합니다."); return; }
-    if (!meetsMaxPasswordLength(pw.password)) {
-      showError(`비밀번호는 ${PASSWORD_MAX_LENGTH}자 이하로 입력해주세요.`);
-      return;
-    }
-    if (!meetsPasswordComplexity(pw.password)) {
-      showError("영문자, 숫자, 특수문자를 포함하여 입력해 주세요.");
-      return;
-    }
-    if (pw.password !== pw.passwordConfirm) { showError("비밀번호가 일치하지 않습니다."); return; }
     showLoading("회원가입을 처리하고 있습니다...");
     start(async () => {
       try {
@@ -123,6 +131,8 @@ export function useRegisterSection() {
     updatePhone,
     referralCode,
     setReferralCode,
+    markTouched,
+    invalid,
     email,
     pw,
     agree,

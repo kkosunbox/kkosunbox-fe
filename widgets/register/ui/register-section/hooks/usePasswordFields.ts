@@ -33,6 +33,10 @@ export function usePasswordFields({ emailVerified }: { emailVerified: boolean })
     meetsMaxPasswordLength(password) &&
     meetsPasswordComplexity(password);
   const passwordsMatch = password === passwordConfirm;
+  /** 입력창 밑줄 빨간색 표시용 — 포커스를 벗어난 뒤 미입력·규칙 위반·불일치 */
+  const passwordInvalid = emailVerified && showPasswordRuleErrors && !passwordValid;
+  const passwordConfirmInvalid =
+    emailVerified && showPasswordMismatch && (passwordConfirm.length === 0 || !passwordsMatch);
   /** 라벨 옆 한 줄 경고용 — 길이 미달이 복잡도 미달보다 우선(둘 다 위반이면 길이만 의미 있음) */
   const passwordRuleMessage = ruleMinLenInvalid
     ? `* 비밀번호는 8~${PASSWORD_MAX_LENGTH}자여야 합니다.`
@@ -54,6 +58,11 @@ export function usePasswordFields({ emailVerified }: { emailVerified: boolean })
   function onConfirmBlur() {
     setShowPasswordMismatch(true);
   }
+  /** 가입 버튼 클릭 시 — 포커스 여부와 무관하게 오류 표시 */
+  function revealErrors() {
+    setShowPasswordRuleErrors(true);
+    setShowPasswordMismatch(true);
+  }
 
   return {
     password,
@@ -70,9 +79,12 @@ export function usePasswordFields({ emailVerified }: { emailVerified: boolean })
     passwordMismatch,
     passwordValid,
     passwordsMatch,
+    passwordInvalid,
+    passwordConfirmInvalid,
     onPasswordFocus,
     onPasswordBlur,
     onConfirmFocus,
     onConfirmBlur,
+    revealErrors,
   };
 }

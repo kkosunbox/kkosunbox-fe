@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 import { formatGuestOrderId } from "@/features/guest-order";
 import type { ProductOrderDto } from "@/features/product/api";
 import { formatKrwPrice } from "@/shared/lib/format";
+import { ShippingFeeWaiver } from "@/shared/ui";
 
 const STATUS_LABEL = { pending: "결제 대기", failed: "결제 실패", preparing: "배송준비중", shipping: "배송중", delivered: "배송완료", refunded: "전액 환불", partially_refunded: "부분 환불" } as const;
 const DELIVERY_LABELS = ["배송준비중", "배송중", "배송완료"];
@@ -97,7 +98,7 @@ export function GuestOrderInfoCard({ order }: { order: ProductOrderDto }) {
             <dd>{formatKrwPrice(order.items.reduce((sum, item) => sum + item.itemAmount, 0))}</dd>
           </div>
           <div className="flex justify-between gap-4"><dt>총 쿠폰 할인금액</dt><dd>-{formatKrwPrice(order.couponDiscountAmount ?? 0)}</dd></div>
-          <div className="flex justify-between gap-4"><dt>배송비</dt><dd>{formatKrwPrice(order.shippingFee ?? 0)}</dd></div>
+          <div className="flex justify-between gap-4"><dt>배송비</dt><dd>{order.shippingFee ? formatKrwPrice(order.shippingFee) : <ShippingFeeWaiver />}</dd></div>
           <div className="flex items-center justify-between gap-4 border-t border-[var(--color-text-muted)] pt-3">
             <dt className="text-body-14-b">총 결제금액</dt>
             <dd className="text-price-20-eb">{formatKrwPrice(order.amount)}</dd>

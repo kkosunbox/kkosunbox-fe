@@ -53,7 +53,7 @@ export function OrderProductSection({
               {plan.name}
             </span>
             <span className="text-price-16-eb text-[var(--color-surface-dark)]">
-              월 요금제 {formatPrice(unitPrice)}
+              구독가 {formatPrice(unitPrice)}
             </span>
             <div className="flex items-center gap-3 mt-1">
               <button

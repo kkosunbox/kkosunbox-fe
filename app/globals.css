@@ -224,6 +224,11 @@
   --color-referral-coupon-title: #F27A00;        /* 초대 Hero 쿠폰 '첫 구독 특별 할인혜택' */
   --color-referral-coupon-shadow: #C97A3E;       /* 초대 Hero 쿠폰 카드 그림자 */
   --color-referral-coupon-face-edge: #FFE7C6;    /* 초대 Hero 쿠폰 카드 면 가장자리 (Figma 반투명 면을 배경 위 합성한 색) */
+  --color-referral-offer-price: #C01919;         /* 초대 혜택 박스 첫 달 금액 */
+  --color-referral-offer-border: #ED7E7E;        /* 초대 혜택 박스 테두리 (패키지 쇼케이스) */
+  --color-referral-offer-border-soft: #F39999;   /* 초대 혜택 박스 테두리 (구독 상세 가격 패널) */
+  --color-referral-first-month-chip-bg: #C00000; /* 패키지 쇼케이스 '첫 달 추가할인' 칩 배경 */
+  --color-plan-discount-badge-bg: #FFE8DB;       /* 구독 상세 '구독 N%할인' 배지 배경 */
   --color-modal-desc: rgba(34, 34, 38, 0.82); /* 범용 모달 설명 텍스트 */
 
   /* Status */
@@ -596,6 +601,11 @@
   --color-referral-coupon-title: var(--color-referral-coupon-title);
   --color-referral-coupon-shadow: var(--color-referral-coupon-shadow);
   --color-referral-coupon-face-edge: var(--color-referral-coupon-face-edge);
+  --color-referral-offer-price: var(--color-referral-offer-price);
+  --color-referral-offer-border: var(--color-referral-offer-border);
+  --color-referral-offer-border-soft: var(--color-referral-offer-border-soft);
+  --color-referral-first-month-chip-bg: var(--color-referral-first-month-chip-bg);
+  --color-plan-discount-badge-bg: var(--color-plan-discount-badge-bg);
   --color-modal-desc: var(--color-modal-desc);
 
   /* Status */

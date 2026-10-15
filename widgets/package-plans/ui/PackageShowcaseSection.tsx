@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { SubscriptionPlanDto } from "@/features/subscription/api";
 import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
+import { ReferralFirstMonthOffer } from "@/features/referral/ui";
 import {
   PACKAGES,
   tierFromSubscriptionPlan,
@@ -191,6 +192,7 @@ export function PackageShowcaseSection({
   const pkg = PACKAGES.find((item) => item.tier === tier)!;
   const price = selected ? planDisplayPrice(selected) : null;
   const primaryAction = selected ? getPrimaryAction?.(selected) : undefined;
+  const isPopular = !!selected && tier === "Standard";
   // One card per tier, in the same order as the comparison table.
   const sorted = PACKAGES.flatMap((pkg) => {
     const plan = plans.find(
@@ -285,15 +287,28 @@ export function PackageShowcaseSection({
         <div className={styles.packageHero}>
           <div className={styles.packageCopy}>
             <div className={styles.packageBadges}>
-              <span className={styles.tierBadge} data-tier={tier}>
-                {pkg.name.replace(/ 패키지 BOX$/, "")}
-              </span>
               <span className={styles.shippingBadge}>
                 <Image src={truck} alt="" width={24} height={24} />
                 무료배송
               </span>
-              {selected && tier === "Standard" && (
+              {isPopular && (
                 <span className={styles.popularBadge}>인기 PICK 🌟</span>
+              )}
+              {price?.referralApplied && (
+                <span className={styles.firstMonthBadge}>첫 달 추가할인</span>
+              )}
+            </div>
+            {/* 모바일·태블릿(≤1024px)은 위 뱃지 줄 대신 이 줄에 무료배송·강조 칩을 모아 보여준다 */}
+            <div className={styles.mobileOfferBadges}>
+              <span className={styles.mobileShippingBadge}>
+                <Image src={truck} alt="" width={20} height={20} />
+                무료배송
+              </span>
+              {isPopular && (
+                <span className={styles.popularBadge}>인기 PICK 🌟</span>
+              )}
+              {price?.referralApplied && (
+                <span className={styles.firstMonthBadge}>첫 달 추가할인</span>
               )}
             </div>
             <div className={styles.packageTitleRow}>
@@ -311,10 +326,6 @@ export function PackageShowcaseSection({
                   (selected?.name ?? pkg.name).replace(/ BOX$/, "")
                 )}
               </h2>
-              <span className={styles.mobileShippingBadge}>
-                <Image src={truck} alt="" width={20} height={20} />
-                무료배송
-              </span>
             </div>
             <p className={styles.packageDescription}>
               {pkg.contents.join(" ")}
@@ -330,6 +341,13 @@ export function PackageShowcaseSection({
                   <del>{formatKrwPrice(price.strikePrice)}</del>
                 )}
               </div>
+            )}
+            {price?.referralApplied && price.referralPrice !== null && (
+              <ReferralFirstMonthOffer
+                pct={price.referralPct}
+                price={price.referralPrice}
+                className={styles.referralOffer}
+              />
             )}
             {selected && !selected.isSalesPaused ? (
               primaryAction ? (

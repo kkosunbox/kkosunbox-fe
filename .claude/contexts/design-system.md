@@ -115,6 +115,11 @@
 | `--color-referral-coupon-title` | `#F27A00` | 초대 Hero 쿠폰 타이틀 텍스트 |
 | `--color-referral-coupon-shadow` | `#C97A3E` | 초대 Hero 쿠폰 카드 그림자 |
 | `--color-referral-coupon-face-edge` | `#FFE7C6` | 초대 Hero 쿠폰 카드 면 가장자리 |
+| `--color-referral-offer-price` | `#C01919` | 초대 혜택 박스 첫 달 금액 |
+| `--color-referral-offer-border` | `#ED7E7E` | 초대 혜택 박스 테두리 (패키지 쇼케이스) |
+| `--color-referral-offer-border-soft` | `#F39999` | 초대 혜택 박스 테두리 (구독 상세 가격 패널) |
+| `--color-referral-first-month-chip-bg` | `#C00000` | 패키지 쇼케이스 '첫 달 추가할인' 칩 배경 |
+| `--color-plan-discount-badge-bg` | `#FFE8DB` | 구독 상세 '구독 N%할인' 배지 배경 |
 
 ### CTA / About
 

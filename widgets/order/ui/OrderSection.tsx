@@ -46,6 +46,7 @@ export default function OrderSection(props: OrderSectionProps) {
     isQuoting,
     unitPrice,
     basePrice,
+    referralDiscount,
     totalDiscount,
     total,
     orderPlanTheme,
@@ -128,6 +129,7 @@ export default function OrderSection(props: OrderSectionProps) {
         onToggle={() => toggleSection("summary")}
         quantity={quantity}
         basePrice={basePrice}
+        referralDiscount={referralDiscount}
         totalDiscount={totalDiscount}
         total={total}
         submitError={submitError}
@@ -149,7 +151,7 @@ export default function OrderSection(props: OrderSectionProps) {
       />
       <OrderPriceSummaryBar
         productLabel="구독상품금액"
-        totalLabel="월 요금제"
+        totalLabel="결제 금액"
         basePrice={basePrice}
         totalDiscount={totalDiscount}
         shippingFee={0}

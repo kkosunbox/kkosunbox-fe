@@ -15,8 +15,12 @@ import {
   tierFromSubscriptionPlan,
 } from "@/entities/package";
 import type { SubscriptionPlanDto } from "@/features/subscription/api/types";
-import { ReferralAdditionalDiscountChip } from "@/features/referral/ui";
-import { planDisplayPrice } from "@/features/subscription/lib/planDisplayPrice";
+import { ReferralFirstMonthOffer } from "@/features/referral/ui";
+import {
+  planDisplayPrice,
+  planPaymentAmount,
+  type PlanDisplayPrice,
+} from "@/features/subscription/lib/planDisplayPrice";
 import { MEDIA_MAX_MD_SIZES } from "@/shared/config/breakpoints";
 import { PlanImageBadges, ShippingFeeWaiver } from "@/shared/ui";
 import Stars from "./reviews/Stars";
@@ -34,6 +38,45 @@ interface Props {
 
 function formatWon(value: number) {
   return `${value.toLocaleString("ko-KR")}원`;
+}
+
+/**
+ * 구독가 + 초대 혜택(첫 달 추가 할인) 패널. 모바일·데스크탑이 같은 구조를 쓰고 글자 크기만 다르다.
+ * 초대 혜택이 없으면 구독가 한 줄만 남는다.
+ */
+function PlanPricePanel({ price, className }: { price: PlanDisplayPrice; className?: string }) {
+  return (
+    <div className={["rounded-[12px] bg-[var(--color-surface-light)] px-5 py-3 max-md:px-3", className].filter(Boolean).join(" ")}>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 max-md:px-1">
+        <span className="shrink-0 text-[20px] font-bold leading-[33px] tracking-[-0.05em] text-[var(--color-surface-dark)] max-md:text-[18px]">
+          구독가
+        </span>
+        {price.discountPct !== null && (
+          <span className="shrink-0 rounded-[5px] bg-[var(--color-plan-discount-badge-bg)] px-1.5 py-1 text-[12px] font-bold leading-[14px] text-[var(--color-accent-orange)]">
+            구독 {price.discountPct}%할인
+          </span>
+        )}
+        <span className="ml-auto flex min-w-0 items-center gap-2">
+          {price.strikePrice !== null && (
+            <span className="whitespace-nowrap text-[16px] font-semibold leading-[19px] tracking-[-0.05em] text-[var(--color-text-secondary)] line-through max-md:text-[14px]">
+              {formatWon(price.strikePrice)}
+            </span>
+          )}
+          <span className="whitespace-nowrap text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
+            {formatWon(price.price)}
+          </span>
+        </span>
+      </div>
+      {price.referralPrice !== null && (
+        <ReferralFirstMonthOffer
+          variant="panel"
+          pct={price.referralPct}
+          price={price.referralPrice}
+          className="mt-1.5"
+        />
+      )}
+    </div>
+  );
 }
 
 type TabKey = "info" | "review" | "delivery" | "support";
@@ -80,12 +123,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
   const detailImages = PACKAGE_DETAIL_IMAGES[selectedTier];
   const packageThumbnail = TIER_DETAIL_HERO_IMAGES[selectedTier];
 
-  // 표시 금액은 전부 서버 값 그대로 — 초대 할인가는 플랜 조회 시 `referralCode`로 채워진다.
+  // 표시 단가는 전부 서버 값 그대로 — 초대 할인가는 플랜 조회 시 `referralCode`로 채워진다.
+  // 결제 금액은 초대 할인을 1개에만 적용한 미리보기이고, 확정은 결제 화면 견적이 한다.
   const price = planDisplayPrice(selectedPlan);
-  const originalPrice = price.strikePrice ?? selectedPlan.monthlyPrice;
-  const discountedUnitPrice = price.price;
-  const hasDiscount = price.strikePrice != null;
-  const salePrice = discountedUnitPrice * quantity;
+  const paymentAmount = planPaymentAmount(price, quantity);
   const isSalesPaused = selectedPlan.isSalesPaused;
 
   return (
@@ -120,32 +161,9 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
             ※ 본 이미지는 연출된 이미지로 실제 구성 및 형태와 다소 차이가 있을 수 있습니다.
           </p>
 
-          <div className="mt-[30px] flex items-center gap-2">
-            <h2 className="min-w-0 text-[24px] font-bold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
-              {selectedPlan.name}
-            </h2>
-            {price.referralApplied && (
-              <ReferralAdditionalDiscountChip
-                pct={price.referralPct}
-                className="shrink-0 whitespace-nowrap"
-                inline
-              />
-            )}
-          </div>
-
-          <div className="mt-[12px] flex items-center gap-2">
-            <span className="text-[20px] font-bold leading-6 tracking-[-0.05em] text-[var(--color-surface-dark)]">
-              월 요금제
-            </span>
-            {hasDiscount && (
-              <span className="text-[16px] font-semibold leading-8 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
-                {formatWon(originalPrice)}
-              </span>
-            )}
-            <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
-              {formatWon(discountedUnitPrice)}
-            </span>
-          </div>
+          <h2 className="mt-[30px] min-w-0 text-[24px] font-bold leading-[29px] tracking-[-0.04em] text-[var(--color-text-emphasis)] capitalize">
+            {selectedPlan.name}
+          </h2>
 
           <div className="mt-3 flex items-center gap-2">
             <Stars rating={reviewState.average} size={24} />
@@ -162,6 +180,8 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               {reviewState.total}개 리뷰
             </button>
           </div>
+
+          <PlanPricePanel price={price} className="mt-4" />
 
           <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6 px-1.5">
             <div className="grid grid-cols-[72px_minmax(0,1fr)] items-start gap-x-4">
@@ -220,10 +240,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
           <div className="mt-6 border-t border-[var(--color-text-muted)] pt-6">
             <div className="mb-6 flex items-center justify-between">
               <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)] capitalize">
-                총 합계
+                결제 금액
               </span>
               <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)] capitalize">
-                {formatWon(salePrice)}
+                {formatWon(paymentAmount)}
               </span>
             </div>
             <button
@@ -343,22 +363,7 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
                   {reviewState.total}개 리뷰
                 </button>
               </div>
-              <div className="mb-5 flex items-center gap-2">
-                <span className="text-body-20-sb tracking-[-0.05em] text-[var(--color-surface-dark)]">
-                  월 요금제
-                </span>
-                {hasDiscount && (
-                  <span className="text-[16px] font-semibold leading-8 tracking-[-0.05em] text-[var(--color-text-secondary)] line-through">
-                    {formatWon(originalPrice)}
-                  </span>
-                )}
-                <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-surface-dark)]">
-                  {formatWon(discountedUnitPrice)}
-                </span>
-                {price.referralApplied && (
-                  <ReferralAdditionalDiscountChip pct={price.referralPct} inline />
-                )}
-              </div>
+              <PlanPricePanel price={price} className="mb-5" />
               <div className="mb-8 border-t border-[var(--color-text-muted)] pt-7 px-2">
                 <div className="space-y-4">
                   <div className="grid grid-cols-[56px_minmax(0,1fr)] items-start gap-x-4 md:gap-x-9 lg:gap-x-9 text-body-14-m">
@@ -408,10 +413,10 @@ export default function SubscribeProductDetailPage({ initialPlan, plans }: Props
               <div className="mt-6 border-t border-[var(--color-text-muted)] pt-5">
                 <div className="mb-4 flex items-center justify-between">
                   <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-text)]">
-                    총 합계
+                    결제 금액
                   </span>
                   <span className="text-[20px] font-extrabold leading-8 tracking-[-0.05em] text-[var(--color-text)]">
-                    {formatWon(salePrice)}
+                    {formatWon(paymentAmount)}
                   </span>
                 </div>
                 <button

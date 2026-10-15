@@ -6,6 +6,8 @@ interface OrderSummarySectionProps {
   onToggle: () => void;
   quantity: number;
   basePrice: number;
+  /** 초대 할인액 — 첫 결제 1회만 적용된다. 0이면 초대 혜택 안내를 숨긴다 */
+  referralDiscount: number;
   totalDiscount: number;
   total: number;
   submitError: string | null;
@@ -20,6 +22,7 @@ export function OrderSummarySection({
   onToggle,
   quantity,
   basePrice,
+  referralDiscount,
   totalDiscount,
   total,
   submitError,
@@ -28,6 +31,8 @@ export function OrderSummarySection({
   hasBilling,
   handlePay,
 }: OrderSummarySectionProps) {
+  const hasFirstMonthReferral = referralDiscount > 0;
+
   return (
     <SectionCard variant="order" title="결제정보" open={open} onToggle={onToggle}>
       <div className="flex flex-col gap-5">
@@ -44,6 +49,14 @@ export function OrderSummarySection({
                 -{formatPrice(totalDiscount)}
               </span>
             </div>
+            {hasFirstMonthReferral && (
+              <div className="-mt-2 flex justify-between items-center pl-2">
+                <span className="text-body-13-m text-[var(--color-text-secondary)]">ㄴ 초대 혜택 (첫 달 한정)</span>
+                <span className="text-body-13-m text-[var(--color-referral-offer-price)]">
+                  -{formatPrice(referralDiscount)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center">
               <span className="text-body-13-m text-[var(--color-text)]">총 배송비</span>
               <ShippingFeeWaiver className="text-[var(--color-text)]" />
@@ -53,7 +66,7 @@ export function OrderSummarySection({
           <div className="border-t border-[var(--color-border-light)]" />
 
           <div className="flex justify-between items-center">
-            <span className="text-body-14-b text-[var(--color-text)]">월 요금제</span>
+            <span className="text-body-14-b text-[var(--color-text)]">결제 금액</span>
             <span className="text-price-20-eb text-[var(--color-text)]">{formatPrice(total)}</span>
           </div>
 

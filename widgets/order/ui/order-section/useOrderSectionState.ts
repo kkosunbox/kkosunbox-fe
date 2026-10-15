@@ -81,7 +81,9 @@ export function useOrderSectionState({
   // (초기 렌더·조회 중) 단가 × 수량으로 낙관적 표시만 하고 할인은 0으로 둔다.
   const basePrice = quote?.originalAmount ?? unitPrice * quantity;
   const couponDiscount = quote?.couponDiscountAmount ?? 0;
-  const totalDiscount = couponDiscount + (quote?.referralDiscountAmount ?? 0);
+  // 초대 할인은 첫 결제 1회만 적용된다 — 0보다 크면 결제 금액을 "첫 달" 금액으로 안내한다.
+  const referralDiscount = quote?.referralDiscountAmount ?? 0;
+  const totalDiscount = couponDiscount + referralDiscount;
   const total = quote?.amount ?? Math.max(0, basePrice - totalDiscount);
 
   function toggleSection(key: keyof typeof openSections) {
@@ -231,6 +233,7 @@ export function useOrderSectionState({
     setQuantity,
     basePrice,
     couponDiscount,
+    referralDiscount,
     totalDiscount,
     total,
     isQuoting,

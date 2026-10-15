@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { ChevronIcon } from "@/shared/ui";
 
 export const DELIVERY_MEMO_MAX_LENGTH = 40;
 const MEMO_OPTIONS = [
@@ -49,7 +50,7 @@ export function DeliveryMemoField({ id, value, onChange, inputClassName }: Props
             placeholder={PLACEHOLDER}
             maxLength={DELIVERY_MEMO_MAX_LENGTH}
             aria-label="배송메모"
-            className={`${inputClassName} w-full`}
+            className={`${inputClassName} w-full pr-10`}
           />
           <span className="pointer-events-none absolute bottom-0 right-0 text-body-13-r text-[var(--color-text-secondary)]">
             {value.length}/{DELIVERY_MEMO_MAX_LENGTH}자
@@ -63,13 +64,17 @@ export function DeliveryMemoField({ id, value, onChange, inputClassName }: Props
           aria-haspopup="listbox"
           aria-expanded={isMenuOpen}
           aria-label="배송메모"
-          className={`${inputClassName} flex w-full items-center text-left`}
+          className={`${inputClassName} flex w-full items-center pr-10 text-left`}
         >
-          <span className={value ? undefined : "text-[var(--color-text-secondary)]"}>
+          <span className={`truncate ${value ? "" : "text-[var(--color-text-secondary)]"}`}>
             {value || PLACEHOLDER}
           </span>
         </button>
       )}
+
+      <span className="pointer-events-none absolute right-3 top-0 flex h-10 items-center" aria-hidden="true">
+        <ChevronIcon open={isMenuOpen} size={20} />
+      </span>
 
       {isMenuOpen && (
         <div

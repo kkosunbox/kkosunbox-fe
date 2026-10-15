@@ -32,7 +32,7 @@ export function InquiryCard({ inquiries }: { inquiries: InquiryDto[] }) {
   return (
     <>
       <DashboardCard className="lg:h-[208px]">
-        <SectionHeader title="문의관리" href="/support" linkLabel="문의관리" spacing="wide" />
+        <SectionHeader title="문의관리" href="/support/history" linkLabel="문의관리" spacing="wide" />
 
         <div className="flex min-h-0 flex-1 flex-col">
         {inquiries.length === 0 ? (

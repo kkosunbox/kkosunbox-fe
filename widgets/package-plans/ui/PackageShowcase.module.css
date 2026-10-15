@@ -12,6 +12,9 @@
 .tierBadge[data-tier="Premium"] { background: var(--color-premium); }
 .stars { display: flex; flex-shrink: 0; }
 .stars img { width: 24px; height: 24px; }
+/* 별 모양 회색 트랙 — 소수점 평점에서 채워지지 않은 부분을 보여준다 */
+.starSlot { display: block; background: var(--color-text-muted); mask-size: 100% 100%; mask-repeat: no-repeat; -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; }
+.starSlot img { display: block; }
 .packages { position: relative; padding-top: 95px; background: white; }
 .packageIntro { margin-bottom: 64px; }
 .packagePanel { padding-bottom: 81px; isolation: isolate; }
@@ -54,7 +57,8 @@
 .packageCardCopy > strong { font-size: 16px; font-weight: 600; white-space: nowrap; }
 .cardDiscount { display: flex; gap: 4px; margin-top: 12px; font-weight: 600; }
 .cardDiscount del { color: var(--color-text-tertiary); }
-.cardPrice { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 11px; white-space: nowrap; }
+.cardPrice { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 11px; white-space: nowrap; color: var(--color-text-body-warm); font-weight: 700; }
+.cardPrice b { color: var(--color-text-price); font-weight: 800; }
 .cardAction { margin-top: 10px; font-size: 14px; color: var(--color-text-discount); }
 .cardRating { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--color-text-discount); font-size: 16px; font-weight: 600; }
 .cardRating .stars img { width: 20px; height: 20px; }

@@ -120,16 +120,21 @@ function Stars({ rating = 5 }: { rating?: number }) {
       aria-label={`평점 5점 만점에 ${rating}점`}
     >
       {Array.from({ length: 5 }, (_, index) => (
-        <Image
+        <span
           key={index}
-          src={star}
-          width={24}
-          height={24}
-          alt=""
-          style={{
-            clipPath: `inset(0 ${100 - Math.min(1, Math.max(0, rating - index)) * 100}% 0 0)`,
-          }}
-        />
+          className={styles.starSlot}
+          style={{ maskImage: `url(${star.src})`, WebkitMaskImage: `url(${star.src})` }}
+        >
+          <Image
+            src={star}
+            width={24}
+            height={24}
+            alt=""
+            style={{
+              clipPath: `inset(0 ${100 - Math.min(1, Math.max(0, rating - index)) * 100}% 0 0)`,
+            }}
+          />
+        </span>
       ))}
     </span>
   );
@@ -332,7 +337,7 @@ export function PackageShowcaseSection({
             </p>
             {price && (
               <div className={styles.packagePrice}>
-                <span>월 요금제</span>
+                <span>구독가</span>
                 <span className={styles.packageCurrentPrice}>
                   {!!price.discountPct && <em>{price.discountPct}%</em>}
                   <strong>{formatKrwPrice(price.price)}</strong>
@@ -429,7 +434,7 @@ export function PackageShowcaseSection({
                       )}
                     </span>
                     <span className={styles.cardPrice}>
-                      월 요금제 <b>{formatKrwPrice(cardPrice.price)}</b>
+                      구독가 <b>{formatKrwPrice(cardPrice.price)}</b>
                     </span>
                     {plan.averageRating > 0 && (
                       <span className={styles.cardRating}>

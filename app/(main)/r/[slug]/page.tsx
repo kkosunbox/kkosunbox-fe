@@ -1,7 +1,11 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { fetchReferralPage } from "@/features/referral/api/queries";
-import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
+import { getAuthUser } from "@/features/auth/lib/session";
+import {
+  isSameReferralCode,
+  resolveReferralContext,
+} from "@/features/referral/lib/resolveReferralContext";
 import { ReferralLandingSync } from "@/features/referral/model";
 import {
   ReferralHeroSection,
@@ -33,6 +37,13 @@ export default async function ReferralLandingPage({ params }: Props) {
   const data = await fetchReferralPage(slug);
 
   if (!data || !data.isActive) {
+    redirect("/");
+  }
+
+  // 로그인 유저는 가입 후 추천인을 새로 연결할 수 없으므로, **계정 추천인과 같은 초대 링크**일 때만
+  // 랜딩을 보여준다. 추천인이 없거나 다른 초대면 일반 메인으로 보낸다(`proxy.ts`에서 옮겨온 분기).
+  const user = await getAuthUser();
+  if (user && !isSameReferralCode(user.referrer?.referralCode, data.referralCode)) {
     redirect("/");
   }
 

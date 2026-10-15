@@ -32,11 +32,11 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get(COOKIE_NAME)?.value;
   const authed = Boolean(token);
   const ref = request.nextUrl.searchParams.get("r");
-  const isReferralLanding = /^\/r\/[^/]+\/?$/.test(pathname);
 
   // 로그인 사용자는 이미 가입이 끝났으므로 새 초대코드를 포착하지 않는다.
-  // 가입 전에 저장된 기존 어트리뷰션 쿠키는 첫 구독 미리보기를 위해 그대로 둔다.
-  if (authed && (ref || isReferralLanding)) {
+  // `/r/{slug}` 랜딩은 여기서 보내지 않는다 — 계정 추천인과 같은 초대 링크면 랜딩을 보여줘야 하는데,
+  // 추천인은 유저 조회가 필요해 proxy에서 판단할 수 없다. 랜딩 페이지가 서버에서 비교해 홈으로 보낸다.
+  if (authed && ref) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";

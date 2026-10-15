@@ -148,12 +148,14 @@ export function ReferralProvider({
       //                                  — "서버 적격"이나 "현재 적용 가능"을 뜻하지 않는다.
       //                                    `?r=CODE`가 validate 실패로 요율 0을 받는 경우를 함께 막는다.
       //                                    없으면 "첫 달 0%추가할인" 칩이 렌더된다.
+      //                                  `"account"`(계정 추천인)는 요율을 맥락에 싣지 않으므로 예외다 —
+      //                                  플랜 조회가 코드 유효성을 판정하고 요율·단가를 채워준다.
       //   referralPricingEligible       비로그인 또는 구독 이력이 없는 로그인 사용자
       //   !inviteConsumed                같은 세션에서 방금 소비하지 않음 (전이 구간 가드)
       hasDisplayableReferralOffer:
         effectiveContext.referralSource !== "none" &&
         effectiveContext.referralSource !== "own-slug" &&
-        effectiveContext.discountRate > 0 &&
+        (effectiveContext.discountRate > 0 || effectiveContext.referralSource === "account") &&
         effectiveContext.referralPricingEligible &&
         !inviteConsumed,
       hasInfluencerIdentity: effectiveContext.influencerName !== null,

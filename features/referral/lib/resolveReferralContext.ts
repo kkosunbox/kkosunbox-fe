@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { getAuthUser, getServerToken } from "@/features/auth/lib/session";
+import type { AuthUser } from "@/features/auth/model/types";
 import { probeSubscriptionHistory } from "@/features/subscription/api/queries";
 import { fetchMyReferralCode, fetchReferralPage } from "../api/queries";
 import { INVITE_CODE_COOKIE, INVITE_SLUG_COOKIE, isValidInviteCode } from "./inviteCodeCookie";
@@ -37,19 +38,25 @@ import {
  */
 export const resolveReferralContext = cache(
   async (landingSlug?: string): Promise<ReferralContext> => {
-    // 우선순위: 방금 들어온 랜딩 → 랜딩으로 심어둔 slug 쿠키 → `?r=CODE`로 심어둔 코드 쿠키 →
-    // 로그인 유저 본인이 인플루언서인 경우. 캡처된 초대가 자기 링크보다 앞선다.
+    // 로그인 유저는 쿠키를 보지 않는다 — 결제 할인은 **계정에 귀속된 추천인** 기준으로만
+    // 적용되므로(가입 후 추천인을 새로 연결할 수 없음), 쿠키 기준으로 그리면 화면 가격과
+    // 실제 청구액이 어긋난다. 쿠키는 가입 전 미리보기와 가입 시 어트리뷰션 전달 용도다.
+    // `getAuthUser`는 루트 layout이 이미 호출해 `cache()` 히트이므로 왕복이 늘지 않는다.
+    const user = await getAuthUser();
+    if (user) return resolveForMember(user, landingSlug);
+
+    // 우선순위: 방금 들어온 랜딩 → 랜딩으로 심어둔 slug 쿠키 → `?r=CODE`로 심어둔 코드 쿠키.
     const slug = landingSlug ?? (await readSlugFromCookie());
     const code = slug ? null : await readCodeFromCookie();
-    const ownSlug = slug || code ? null : await detectOwnSlug();
 
     // 초대 맥락이 전혀 없으면 여기서 끝낸다. 이 함수는 `(main)` layout에서 **모든 페이지**마다
     // 도는데, 아무 관련 없는 요청까지 구독 이력을 조회하면 렌더를 막는 왕복이 그대로 늘어난다.
     // (실제로 그렇게 만들었다가 이미지가 많은 상세 페이지의 시각회귀가 불안정해졌다.)
-    if (!slug && !code && !ownSlug) return INERT_REFERRAL_CONTEXT;
+    if (!slug && !code) return INERT_REFERRAL_CONTEXT;
 
     const token = await getServerToken();
     // 판정 불가(null)도 부적격으로 본다 — 위 fail-closed 설명 참고.
+    // 토큰은 있는데 유저 조회에 실패한 경우(만료 등)도 여기로 오며, 이력 조회 실패로 미리보기가 꺼진다.
     const firstSubscriptionEligible = (await probeSubscriptionHistory(token)) === false;
     const base = {
       ...INERT_REFERRAL_CONTEXT,
@@ -57,10 +64,7 @@ export const resolveReferralContext = cache(
       referralPricingEligible: !token || firstSubscriptionEligible,
     };
 
-    // 자기감지(`ownSlug`)로 성립한 맥락은 "초대"가 아니다 — 아무도 이 사용자를 초대하지 않았다.
-    // 마케팅 표시 술어가 이 경로를 제외하므로 출처를 구분해 기록한다.
-    const resolvedSlug = slug ?? ownSlug;
-    if (resolvedSlug) return fromSlug(resolvedSlug, base, slug ? "slug" : "own-slug");
+    if (slug) return fromSlug(slug, base, "slug");
 
     // slug 없이 코드만 있는 레거시 `?r=CODE` 경로. validate API는 폐기되었으므로
     // 코드는 가입 요청에 전달할 어트리뷰션으로만 유지하고, 할인율은 여기서 추정하지 않는다.
@@ -112,7 +116,56 @@ async function readSlugFromCookie(): Promise<string | null> {
 }
 
 /**
- * 쿠키가 없는 로그인 유저가 **자기 초대 링크의 주인**인 경우를 서버에서 감지한다.
+ * 로그인 유저의 초대 맥락 — **계정에 귀속된 추천인(`user.referrer`)이 유일한 기준**이다.
+ * 결제 견적(`POST /v1/subscriptions/price`)이 이 추천인으로만 할인을 계산하기 때문이다.
+ *
+ * - `/r/{slug}` 랜딩: 그 페이지 코드가 계정 추천인과 같을 때만 맥락이 성립한다.
+ *   다르면 맥락 없음으로 끝나고, 랜딩 페이지가 홈으로 보낸다.
+ * - 그 외 페이지: 추천인이 있으면 `"account"`, 없으면 인플루언서 자기감지(`"own-slug"`).
+ */
+async function resolveForMember(user: AuthUser, landingSlug?: string): Promise<ReferralContext> {
+  const referrerCode = user.referrer?.referralCode ?? null;
+  const ownSlug = !referrerCode && !landingSlug ? await detectOwnSlug(user) : null;
+  if (!referrerCode && !ownSlug) return INERT_REFERRAL_CONTEXT;
+
+  const token = await getServerToken();
+  // 판정 불가(null)도 부적격으로 본다 — fail-closed.
+  const firstSubscriptionEligible = (await probeSubscriptionHistory(token)) === false;
+  const base: ReferralContext = {
+    ...INERT_REFERRAL_CONTEXT,
+    firstSubscriptionEligible,
+    referralPricingEligible: firstSubscriptionEligible,
+  };
+
+  // 자기감지로 성립한 맥락은 "초대"가 아니다 — 마케팅 표시 술어가 이 출처를 제외한다.
+  // 자기 코드는 계정 추천인이 아니라 결제에 할인이 들어가지 않으므로 가격 미리보기도 끈다.
+  if (ownSlug) {
+    return { ...(await fromSlug(ownSlug, base, "own-slug")), referralPricingEligible: false };
+  }
+
+  if (landingSlug) {
+    const landing = await fromSlug(landingSlug, base, "slug");
+    return isSameReferralCode(landing.refCode, referrerCode) ? landing : base;
+  }
+
+  // 할인율은 여기서 알 수 없다(추천인 정보에 slug·요율이 없음). 표시 단가와 요율은
+  // `GET /v1/subscriptions/plans?referralCode=...`의 `referralDiscount*`를 그대로 쓴다.
+  return {
+    ...base,
+    referralSource: "account",
+    refCode: referrerCode,
+    isReferral: true,
+    inviteEligible: firstSubscriptionEligible,
+  };
+}
+
+/** 계정 추천인 코드와 랜딩 코드가 같은 초대인가 — 대소문자는 구분하지 않는다(`proxy.ts`와 동일). */
+export function isSameReferralCode(a: string | null | undefined, b: string | null | undefined): boolean {
+  return !!a && !!b && a.toLowerCase() === b.toLowerCase();
+}
+
+/**
+ * 추천인 없는 로그인 유저가 **자기 초대 링크의 주인**인 경우를 서버에서 감지한다.
  * 예전에는 `ReferralProvider`가 클라이언트에서 하던 일인데, 그 경로만 적격 판정을
  * 따로 계산해 서버 값과 어긋났다. 판정을 한곳으로 모으기 위해 서버로 옮겼다.
  *
@@ -120,9 +173,8 @@ async function readSlugFromCookie(): Promise<string | null> {
  * `/v1/referral/me`는 항상 403이다. 게이팅 없이 부르면 로그인 트래픽 전체가 레이아웃 렌더를
  * 막는 헛호출을 하나씩 더 하게 된다(같은 이유로 과거 클라이언트에서도 게이팅을 넣었다).
  */
-async function detectOwnSlug(): Promise<string | null> {
-  const user = await getAuthUser();
-  if (!user?.isInfluencer) return null;
+async function detectOwnSlug(user: AuthUser): Promise<string | null> {
+  if (!user.isInfluencer) return null;
   const mine = await fetchMyReferralCode(await getServerToken());
   return mine?.slug ?? null;
 }

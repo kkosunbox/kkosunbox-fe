@@ -11,13 +11,14 @@
  *
  * - `"slug"`     — `/r/{slug}` 명시 진입 또는 slug 쿠키
  * - `"code"`     — `?r=CODE` (`proxy.ts`)
- * - `"own-slug"` — 쿠키 없는 로그인 인플루언서를 서버가 자기감지한 경우
+ * - `"account"`  — 로그인 유저 계정에 귀속된 추천인(`user.referrer`). 로그인 유저는 쿠키 대신 이것만 본다
+ * - `"own-slug"` — 추천인 없는 로그인 인플루언서를 서버가 자기감지한 경우
  * - `"none"`     — 맥락 없음 / 조회 실패 / 비활성 slug
  *
  * **계정 적격성 판정이 아니다.** 백엔드의 `REFERRAL_SELF_REFERRAL`과 혼동하지 말 것 —
  * 이쪽은 *컨텍스트 생성 경로*, 그쪽은 *계정 적격성 판정*으로 층위가 다르다.
  */
-export type ReferralSource = "none" | "slug" | "code" | "own-slug";
+export type ReferralSource = "none" | "slug" | "code" | "account" | "own-slug";
 
 export interface ReferralContext {
   /**

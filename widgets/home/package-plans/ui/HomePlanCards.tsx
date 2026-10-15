@@ -247,7 +247,7 @@ export default function HomePlanCards({ plans, plansReady }: HomePlanCardsProps)
                   </div>
                   <div className="flex min-h-[50px] items-center justify-between gap-4">
                     <span className="text-[16px] font-bold leading-[19px] tracking-[-0.05em] text-[var(--color-text-body-warm)]">
-                      월 요금제
+                      구독가
                     </span>
                     {price ? (
                       <div className="flex flex-col items-end gap-2">

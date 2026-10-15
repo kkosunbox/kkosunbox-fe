@@ -339,7 +339,7 @@ export default function ReferralPlanPicker({
                         </div>
                         <div className="flex items-baseline justify-between gap-x-2">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
-                            월 요금제
+                            구독가
                           </span>
                           <div className="flex flex-nowrap items-baseline gap-x-2 overflow-visible">
                             {activePrice?.strikePrice != null ? (
@@ -497,7 +497,7 @@ export default function ReferralPlanPicker({
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="max-md:text-price-14-b md:text-price-16-b-tight text-[var(--color-text-body-warm)]">
-                            월 요금제
+                            구독가
                           </span>
                           <span className="whitespace-nowrap max-md:text-price-17-eb md:text-price-20-eb-lh24 text-[var(--color-text-emphasis)]">
                             {formatMonthlyPrice(price!.price)}
@@ -589,7 +589,7 @@ export default function ReferralPlanPicker({
                         </div>
                         <div className="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0">
                           <span className="text-price-16-b-tight text-[var(--color-text-body-warm)]">
-                            월 요금제
+                            구독가
                           </span>
                           <span
                             className={[

@@ -182,9 +182,9 @@ function PackageCard({ plan }: { plan: SubscriptionPlanDto }) {
   const pkg = PACKAGES.find((item) => item.tier === tier);
   if (!pkg) return null;
   return (
-    <Link href={`/subscribe/detail?planId=${plan.id}`} className="group relative flex min-h-[180px] gap-6 rounded-[24px] bg-white p-6 shadow-[0_8px_24px_rgba(0,0,0,0.12)] transition-transform hover:-translate-y-1 max-md:min-h-0 max-md:gap-4 max-md:p-4">
-      {tier === "Standard" && <span className="absolute left-6 top-6 z-10 rounded-br-[8px] rounded-tl-[12px] bg-[var(--color-surface-dark)] px-3 py-1 text-body-12-sb text-white">인기 PICK ✨</span>}
-      <div className="relative h-[132px] w-[146px] shrink-0 overflow-hidden rounded-[12px] max-md:h-[108px] max-md:w-[120px]">
+    <Link href={`/subscribe/detail?planId=${plan.id}`} className="group relative flex min-h-[196px] items-center gap-6 rounded-[24px] bg-white p-6 shadow-[0_4px_16px_3px_rgba(0,0,0,0.12)] transition-transform hover:-translate-y-1 max-md:min-h-0 max-md:gap-4 max-md:p-4">
+      {tier === "Standard" && <span className="absolute left-6 top-6 z-10 h-6 w-20 rounded-br-[12px] rounded-tl-[12px] bg-[var(--color-text)] pl-2 pt-1 text-[12px] font-bold leading-4 tracking-[-0.02em] whitespace-nowrap text-white max-md:left-4 max-md:top-4">인기 PICK 🌟</span>}
+      <div className="relative h-[148px] w-[160px] shrink-0 overflow-hidden rounded-[12px] max-md:h-[108px] max-md:w-[120px]">
         <PackageSummaryThumbnail
           src={PACKAGE_SUMMARY_IMAGES[tier]}
           alt={`${pkg.name} 박스 이미지`}
@@ -192,10 +192,10 @@ function PackageCard({ plan }: { plan: SubscriptionPlanDto }) {
         />
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center">
-        <p className="text-subtitle-16-b text-[var(--color-text)]">{pkg.name}</p>
-        {plan.discountRate ? <p className="mt-3 text-body-14-sb"><span className="text-[var(--color-cta-button)]">{plan.discountRate}%</span> <span className="ml-1 text-[var(--color-text-secondary)] line-through">{formatPrice(plan.originalPrice ?? plan.monthlyPrice)}</span></p> : null}
-        <p className="mt-2 text-body-14-b text-[var(--color-text-body-warm)]">월 요금제 <strong className="ml-2 text-subtitle-18-b text-[var(--color-surface-dark)]">{formatPrice(plan.monthlyPrice)}</strong></p>
-        {plan.averageRating > 0 ? <div className="mt-2"><PlanRatingStars rating={plan.averageRating} size={16} /></div> : null}
+        <p className="text-price-16-sb tracking-[-0.04em] text-[var(--color-text-price)]">{pkg.name}</p>
+        {plan.discountRate ? <p className="mt-3 flex gap-1 text-price-16-sb"><span className="text-[var(--color-cta-button)]">{plan.discountRate}%</span><span className="text-[var(--color-text-secondary)] line-through">{formatPrice(plan.originalPrice ?? plan.monthlyPrice)}</span></p> : null}
+        <p className="mt-[11px] flex gap-3 text-price-16-b-tight text-[var(--color-text-body-warm)]">구독가 <strong className="text-price-16-eb text-[var(--color-text-price)]">{formatPrice(plan.monthlyPrice)}</strong></p>
+        {plan.averageRating > 0 ? <div className="mt-2.5"><PlanRatingStars rating={plan.averageRating} size={20} className="gap-2" labelClassName="text-[18px] font-semibold leading-[21px] tracking-[-0.02em] text-[var(--color-cta-button)]" /></div> : null}
       </div>
     </Link>
   );

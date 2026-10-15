@@ -18,6 +18,8 @@ interface PlanRatingStarsProps {
   rating: number;
   size?: number;
   className?: string;
+  /** 숫자 라벨 스타일 덮어쓰기 — 지정 시 기본 라벨 스타일을 대체한다 */
+  labelClassName?: string;
 }
 
 /** 플랜 평균 평점 별 5개 + 숫자 라벨. fractional fill 지원. */
@@ -25,6 +27,7 @@ export function PlanRatingStars({
   rating,
   size = 18,
   className = "",
+  labelClassName = "text-[14px] font-bold leading-[17px] tracking-[-0.05em] text-[var(--color-cta-button)]",
 }: PlanRatingStarsProps) {
   return (
     <div className={`flex items-center gap-1.5 ${className}`} aria-label={`별점 ${rating}점`}>
@@ -33,7 +36,7 @@ export function PlanRatingStars({
           <Star key={i} fillPercent={Math.max(0, Math.min(100, (rating - i) * 100))} size={size} />
         ))}
       </span>
-      <span className="text-[14px] font-bold leading-[17px] tracking-[-0.05em] text-[var(--color-cta-button)]">
+      <span className={labelClassName}>
         {rating.toFixed(1)}
       </span>
     </div>

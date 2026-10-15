@@ -7,9 +7,11 @@ import ModalShell from "../modal/ModalShell";
 interface Props {
   onClose: () => void;
   onConfirm?: () => void;
+  /** "다음에 하기" 클릭 — 지정하지 않으면 onClose와 동일 */
+  onDefer?: () => void;
 }
 
-export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
+export default function ChecklistRecommendModal({ onClose, onConfirm, onDefer }: Props) {
   return (
     <ModalShell onClose={onClose}>
       {/* Card — white, 좌측 정렬 타이틀 + 중앙 아이콘 */}
@@ -67,7 +69,7 @@ export default function ChecklistRecommendModal({ onClose, onConfirm }: Props) {
 
         {/* Secondary */}
         <button
-          onClick={onClose}
+          onClick={onDefer ?? onClose}
           className="mt-4 self-center text-[13px] font-medium leading-[16px] tracking-[-0.04em]
                      text-[var(--color-modal-sub-action)] underline
                      hover:opacity-70 transition-opacity"

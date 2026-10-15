@@ -485,7 +485,7 @@ export default function SubscriptionManagementSection({ subscriptions, plans, bi
               구독관리
             </button>
             <Link
-              href="/mypage/subscription/change"
+              href="/subscribe"
               className="box-border inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-[24px] border border-[var(--color-text-muted)] bg-white px-3 py-2 text-body-13-m leading-4 text-[var(--color-text)] transition-opacity hover:opacity-80"
             >
               <AddRoundIcon />

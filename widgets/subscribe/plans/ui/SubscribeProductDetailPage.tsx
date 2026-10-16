@@ -83,7 +83,7 @@ type TabKey = "info" | "review" | "delivery" | "support";
 
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "info", label: "구독정보" },
-  { key: "review", label: "구독리뷰" },
+  { key: "review", label: "리뷰" },
   { key: "delivery", label: "배송정보" },
   { key: "support", label: "고객센터" },
 ];

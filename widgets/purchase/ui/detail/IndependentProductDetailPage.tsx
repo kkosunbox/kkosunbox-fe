@@ -5,7 +5,7 @@ import { Fragment, useRef, useState } from "react";
 import type { ProductDto } from "@/features/product/api/types";
 import { CartAddedModal, formatManwon, useAddToCart } from "@/features/cart";
 import { MEDIA_MD2_MIN } from "@/shared/config/breakpoints";
-import { STANDARD_SHIPPING_FEE } from "@/shared/config/shipping";
+import { STANDARD_FREE_SHIPPING_THRESHOLD, STANDARD_SHIPPING_FEE } from "@/shared/config/shipping";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { useOrderPolicy } from "@/shared/lib/orderPolicy";
 import Stars from "@/widgets/subscribe/plans/ui/reviews/Stars";
@@ -52,7 +52,7 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
   const reviews = useProductReviews(null, product.id);
   const orderPolicy = useOrderPolicy();
   const shippingFee = orderPolicy?.shippingFee ?? STANDARD_SHIPPING_FEE;
-  const freeShippingThreshold = orderPolicy?.freeShippingThreshold ?? 0;
+  const freeShippingThreshold = orderPolicy?.freeShippingThreshold ?? STANDARD_FREE_SHIPPING_THRESHOLD;
   const unavailable = product.isSoldOut || product.isSalesPaused;
   const detailThumbnailUrl = product.detailThumbnailUrl ?? product.imageUrl;
   const discountRate = product.originalPrice !== null && product.originalPrice > product.price
@@ -287,10 +287,10 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
       {activeTab === "delivery" && (
         <>
           <div className="md:hidden">
-            <ProductDeliveryInfo variant="mobile" />
+            <ProductDeliveryInfo variant="mobile" shipping="paid" />
           </div>
           <div className="max-md:hidden">
-            <ProductDeliveryInfo variant="desktop" />
+            <ProductDeliveryInfo variant="desktop" shipping="paid" />
           </div>
         </>
       )}

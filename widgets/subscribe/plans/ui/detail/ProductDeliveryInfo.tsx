@@ -1,17 +1,27 @@
 import { ShippingFeeWaiver } from "@/shared/ui";
 import { DELIVERY_INFO_SECTIONS, SHIPPING_FEE_INFO_ITEM } from "./deliveryInfo";
+import PaidShippingFeeText from "./PaidShippingFeeText";
 
-function DeliveryInfoItem({ item }: { item: string }) {
+/** free: 구독·패키지(무료배송), paid: 스토어 단품(기본 배송비 + 기준 금액 이상 무료) */
+type ShippingType = "free" | "paid";
+
+function DeliveryInfoItem({ item, shipping }: { item: string; shipping: ShippingType }) {
   if (item !== SHIPPING_FEE_INFO_ITEM) return item;
 
   return (
     <>
-      배송 비용: <ShippingFeeWaiver />
+      배송 비용: {shipping === "paid" ? <PaidShippingFeeText /> : <ShippingFeeWaiver />}
     </>
   );
 }
 
-export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "desktop" }) {
+export default function ProductDeliveryInfo({
+  variant,
+  shipping = "free",
+}: {
+  variant: "mobile" | "desktop";
+  shipping?: ShippingType;
+}) {
   if (variant === "mobile") {
     return (
       <div className="px-6 py-10">
@@ -31,7 +41,7 @@ export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "
                     className="relative pl-4 text-[14px] font-medium leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
                   >
                     <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
-                    <DeliveryInfoItem item={item} />
+                    <DeliveryInfoItem item={item} shipping={shipping} />
                   </li>
                 ))}
               </ul>
@@ -56,7 +66,7 @@ export default function ProductDeliveryInfo({ variant }: { variant: "mobile" | "
                   className="relative pl-4 text-body-14-m leading-5 tracking-[-0.04em] text-[var(--color-text-secondary)]"
                 >
                   <span className="absolute left-0 top-[8px] h-1 w-1 rounded-full bg-[var(--color-text-secondary)]" />
-                  <DeliveryInfoItem item={item} />
+                  <DeliveryInfoItem item={item} shipping={shipping} />
                 </li>
               ))}
             </ul>

@@ -113,7 +113,7 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
         />
       )}
 
-      <div className="mx-auto w-full max-w-content px-6">
+      <div className="mx-auto w-full max-w-content px-6 lg:px-0">
         <div className="grid gap-8 lg:mx-auto lg:w-[1013px] lg:grid-cols-[507px_438px] lg:justify-between lg:gap-0">
           <div className="mx-auto w-full min-w-0 max-w-[507px] lg:mx-0">
             <div className="aspect-square overflow-hidden rounded-[20px] bg-[var(--color-surface-warm)]">

@@ -3,16 +3,19 @@
 import { useEffect, useRef } from "react";
 import { ModalShell } from "@/shared/ui";
 
-export type ReviewLightboxState = { urls: string[]; index: number };
+/** total: 전체 사진 수(아직 다 불러오지 않은 경우). 없으면 urls.length를 쓴다 */
+export type ReviewLightboxState = { urls: string[]; index: number; total?: number };
 
 export default function ReviewImageLightbox({
   urls,
   index,
+  total,
   onClose,
   onNavigate,
 }: {
   urls: string[];
   index: number;
+  total?: number;
   onClose: () => void;
   onNavigate: (next: number) => void;
 }) {
@@ -55,7 +58,7 @@ export default function ReviewImageLightbox({
       </button>
       {urls.length > 1 ? (
         <span className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-body-13-m text-white">
-          {index + 1} / {urls.length}
+          {index + 1} / {Math.max(total ?? 0, urls.length)}
         </span>
       ) : null}
       {urls.length > 1 ? (

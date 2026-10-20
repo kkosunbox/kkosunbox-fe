@@ -37,6 +37,19 @@ export interface PlanReviewsResponse {
   averageRating: number;
 }
 
+export interface ReviewPhotoItem {
+  reviewId: number;
+  imageUrl: string;
+}
+
+/** 리뷰 사진 모아보기 응답 — total은 전체 사진 수 */
+export interface ReviewPhotosResponse {
+  items: ReviewPhotoItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface MyReviewsResponse {
   items: ReviewResponse[];
 }

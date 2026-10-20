@@ -1,11 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getProductReviews, getReviews } from "@/features/review/api";
 import type { ReviewResponse, ReviewSortOrder } from "@/features/review/api";
 import type { ReviewLightboxState } from "./ReviewImageLightbox";
+import { useReviewPhotos } from "./useReviewPhotos";
 
 export const REVIEWS_PER_PAGE = 10;
+
+/** 상단 사진 라이트박스에서 남은 로드 사진이 이 수 이하가 되면 다음 페이지를 미리 불러온다 */
+const PHOTO_PREFETCH_THRESHOLD = 3;
+
+/** 리뷰 카드 사진은 urls를 그대로 쓰고, 상단 사진 모음은 로드된 사진 목록을 따라가도록 출처를 구분한다 */
+type LightboxSource = { kind: "urls"; urls: string[]; index: number } | { kind: "photos"; index: number };
 
 /**
  * 구독 상품 상세의 리뷰 도메인 상태(패칭·정렬·페이지네이션·라이트박스)를 캡슐화한다.
@@ -20,8 +27,8 @@ export function useProductReviews(initialPlanId: number | null = null, productId
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState<ReviewSortOrder>("LATEST");
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(initialPlanId);
-  const [lightbox, setLightbox] = useState<ReviewLightboxState | null>(null);
-  const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [lightboxSource, setLightboxSource] = useState<LightboxSource | null>(null);
+  const photos = useReviewPhotos(productId !== null ? null : selectedPlanId, productId);
 
   /* 라이트박스가 열린 동안의 body 스크롤 잠금은 globals.css의 `body:has(dialog:modal)`가 담당한다 */
 
@@ -52,27 +59,6 @@ export function useProductReviews(initialPlanId: number | null = null, productId
     fetchReviews(selectedPlanId, page, sort);
   }, [selectedPlanId, page, sort, fetchReviews]);
 
-  // 상단 사진 모음은 목록 정렬/페이지와 무관하게 항상 가장 최신 리뷰 사진을 보여준다.
-  useEffect(() => {
-    let cancelled = false;
-
-    (productId !== null
-      ? getProductReviews(productId, 1, REVIEWS_PER_PAGE, "LATEST")
-      : getReviews(selectedPlanId, 1, REVIEWS_PER_PAGE, "LATEST"))
-      .then((data) => {
-        if (!cancelled) {
-          setReviewImages(data.items.flatMap((review) => review.imageUrls ?? []));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setReviewImages([]);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedPlanId, productId]);
-
   const totalPages = Math.max(1, Math.ceil(total / REVIEWS_PER_PAGE));
 
   // 정렬 변경 시 첫 페이지로 리셋(기존 동작).
@@ -87,14 +73,42 @@ export function useProductReviews(initialPlanId: number | null = null, productId
   }, []);
 
   const openLightbox = useCallback((urls: string[], index: number) => {
-    setLightbox({ urls, index });
+    setLightboxSource({ kind: "urls", urls, index });
   }, []);
 
-  const closeLightbox = useCallback(() => setLightbox(null), []);
+  const closeLightbox = useCallback(() => setLightboxSource(null), []);
 
-  const navigateLightbox = useCallback((next: number) => {
-    setLightbox((s) => (s ? { ...s, index: next } : null));
-  }, []);
+  const { images: photoImages, total: photoTotal, hasMore: hasMorePhotos, loadMore: loadMorePhotos } = photos;
+
+  /** 상단 사진 라이트박스가 로드된 사진 끝에 가까워지면 다음 페이지를 미리 불러온다 */
+  const prefetchPhotosNear = useCallback(
+    (index: number) => {
+      if (hasMorePhotos && index >= photoImages.length - 1 - PHOTO_PREFETCH_THRESHOLD) loadMorePhotos();
+    },
+    [hasMorePhotos, photoImages.length, loadMorePhotos],
+  );
+
+  const openPhotoLightbox = useCallback(
+    (index: number) => {
+      setLightboxSource({ kind: "photos", index });
+      prefetchPhotosNear(index);
+    },
+    [prefetchPhotosNear],
+  );
+
+  const navigateLightbox = useCallback(
+    (next: number) => {
+      setLightboxSource((s) => (s ? { ...s, index: next } : null));
+      if (lightboxSource?.kind === "photos") prefetchPhotosNear(next);
+    },
+    [lightboxSource?.kind, prefetchPhotosNear],
+  );
+
+  const lightbox = useMemo<ReviewLightboxState | null>(() => {
+    if (!lightboxSource) return null;
+    if (lightboxSource.kind === "urls") return { urls: lightboxSource.urls, index: lightboxSource.index };
+    return { urls: photoImages, index: lightboxSource.index, total: photoTotal };
+  }, [lightboxSource, photoImages, photoTotal]);
 
   return {
     reviews,
@@ -109,9 +123,11 @@ export function useProductReviews(initialPlanId: number | null = null, productId
     selectedPlanId,
     changePlan,
     totalPages,
-    reviewImages,
+    reviewImages: photoImages,
+    reviewImageTotal: photoTotal,
     lightbox,
     openLightbox,
+    openPhotoLightbox,
     closeLightbox,
     navigateLightbox,
   };

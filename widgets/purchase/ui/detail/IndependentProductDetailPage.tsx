@@ -78,12 +78,14 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
     reviews: reviews.reviews,
     loading: reviews.loading,
     reviewImages: reviews.reviewImages,
+    reviewImageTotal: reviews.reviewImageTotal,
     page: reviews.page,
     totalPages: reviews.totalPages,
     sort: reviews.sort,
     onChangeSort: reviews.changeSort,
     onChangePage: reviews.setPage,
     onOpenLightbox: reviews.openLightbox,
+    onOpenPhotoLightbox: reviews.openPhotoLightbox,
   };
 
   return (
@@ -105,6 +107,7 @@ export default function IndependentProductDetailPage({ product }: { product: Pro
         <ReviewImageLightbox
           urls={reviews.lightbox.urls}
           index={reviews.lightbox.index}
+          total={reviews.lightbox.total}
           onClose={reviews.closeLightbox}
           onNavigate={reviews.navigateLightbox}
         />

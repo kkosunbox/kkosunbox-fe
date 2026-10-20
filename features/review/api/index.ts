@@ -1,6 +1,7 @@
 export {
   getReviews,
   getProductReviews,
+  getReviewPhotos,
   createReview,
   getEligiblePlans,
   getEligibleProducts,
@@ -15,6 +16,8 @@ export type {
   ReviewProduct,
   ReviewSortOrder,
   PlanReviewsResponse,
+  ReviewPhotoItem,
+  ReviewPhotosResponse,
   MyReviewsResponse,
   PlanReviewEligibility,
   ProductReviewEligibility,

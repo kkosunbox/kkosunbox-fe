@@ -38,13 +38,16 @@ interface ProductReviewListProps {
   onChangePlan: (planId: number | null) => void;
   reviews: UseProductReviewsReturn["reviews"];
   loading: boolean;
+  /** 상단 사진 모음 — 로드된 사진(일부)과 전체 사진 수 */
   reviewImages: string[];
+  reviewImageTotal: number;
   page: number;
   totalPages: number;
   sort: ReviewSortOrder;
   onChangeSort: (value: ReviewSortOrder) => void;
   onChangePage: (page: number) => void;
   onOpenLightbox: (urls: string[], index: number) => void;
+  onOpenPhotoLightbox: (index: number) => void;
 }
 
 function ReviewPlanBadge({ plan }: { plan: { id: number; name: string } }) {
@@ -105,12 +108,14 @@ function MobileReviewList({
   reviews,
   loading,
   reviewImages,
+  reviewImageTotal,
   page,
   totalPages,
   sort,
   onChangeSort,
   onChangePage,
   onOpenLightbox,
+  onOpenPhotoLightbox,
   planFilters,
   selectedPlanId,
   onChangePlan,
@@ -161,7 +166,7 @@ function MobileReviewList({
             <button
               key={idx}
               type="button"
-              onClick={() => onOpenLightbox([...reviewImages], idx)}
+              onClick={() => onOpenPhotoLightbox(idx)}
               className="h-16 w-16 shrink-0 overflow-hidden rounded-[6px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90 active:opacity-80"
               aria-label={`리뷰 사진 ${idx + 1} 크게 보기`}
             >
@@ -172,15 +177,15 @@ function MobileReviewList({
           {reviewImages.length > 3 && (
             <button
               type="button"
-              onClick={() => onOpenLightbox([...reviewImages], 3)}
+              onClick={() => onOpenPhotoLightbox(3)}
               className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[6px] transition-opacity hover:opacity-90 active:opacity-80"
-              aria-label={`리뷰 사진 더보기, ${reviewImages.length - 3}장 추가`}
+              aria-label={`리뷰 사진 더보기, ${reviewImageTotal - 3}장 추가`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={reviewImages[3]} alt="" className="h-full w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-center text-body-13-sb text-white">
                 더보기
-                <br />+{reviewImages.length - 3}
+                <br />+{reviewImageTotal - 3}
               </div>
             </button>
           )}
@@ -314,12 +319,14 @@ function DesktopReviewList({
   reviews,
   loading,
   reviewImages,
+  reviewImageTotal,
   page,
   totalPages,
   sort,
   onChangeSort,
   onChangePage,
   onOpenLightbox,
+  onOpenPhotoLightbox,
   planFilters,
   selectedPlanId,
   onChangePlan,
@@ -370,7 +377,7 @@ function DesktopReviewList({
             <button
               key={idx}
               type="button"
-              onClick={() => onOpenLightbox([...reviewImages], idx)}
+              onClick={() => onOpenPhotoLightbox(idx)}
               className="h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-warm)] transition-opacity hover:opacity-90 active:opacity-80"
               aria-label={`리뷰 사진 ${idx + 1} 크게 보기`}
             >
@@ -381,15 +388,15 @@ function DesktopReviewList({
           {reviewImages.length > 4 && (
             <button
               type="button"
-              onClick={() => onOpenLightbox([...reviewImages], 4)}
+              onClick={() => onOpenPhotoLightbox(4)}
               className="relative h-[100px] w-[100px] shrink-0 overflow-hidden rounded-[8px] transition-opacity hover:opacity-90 active:opacity-80"
-              aria-label={`리뷰 사진 더보기, ${reviewImages.length - 4}장 추가`}
+              aria-label={`리뷰 사진 더보기, ${reviewImageTotal - 4}장 추가`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={reviewImages[4]} alt="" className="h-full w-full object-cover" />
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/60 text-center text-subtitle-16-sb text-white">
                 더보기
-                <br />+{reviewImages.length - 4}
+                <br />+{reviewImageTotal - 4}
               </div>
             </button>
           )}

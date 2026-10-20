@@ -129,6 +129,7 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
         <ReviewImageLightbox
           urls={reviewState.lightbox.urls}
           index={reviewState.lightbox.index}
+          total={reviewState.lightbox.total}
           onClose={reviewState.closeLightbox}
           onNavigate={reviewState.navigateLightbox}
         />
@@ -300,12 +301,14 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
             reviews={reviewState.reviews}
             loading={reviewState.loading}
             reviewImages={reviewState.reviewImages}
+            reviewImageTotal={reviewState.reviewImageTotal}
             page={reviewState.page}
             totalPages={reviewState.totalPages}
             sort={reviewState.sort}
             onChangeSort={reviewState.changeSort}
             onChangePage={reviewState.setPage}
             onOpenLightbox={reviewState.openLightbox}
+            onOpenPhotoLightbox={reviewState.openPhotoLightbox}
           />
         )}
 
@@ -477,12 +480,14 @@ export default function PurchaseProductDetailPage({ pkg, purchaseProduct, relate
               reviews={reviewState.reviews}
               loading={reviewState.loading}
               reviewImages={reviewState.reviewImages}
+              reviewImageTotal={reviewState.reviewImageTotal}
               page={reviewState.page}
               totalPages={reviewState.totalPages}
               sort={reviewState.sort}
               onChangeSort={reviewState.changeSort}
               onChangePage={reviewState.setPage}
               onOpenLightbox={reviewState.openLightbox}
+              onOpenPhotoLightbox={reviewState.openPhotoLightbox}
             />
           )}
 

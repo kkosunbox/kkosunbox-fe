@@ -315,7 +315,7 @@ function SlidePanel({
           </div>
         </Link>
 
-        {/* 리뷰 버튼 — 작성됨: 내 리뷰보러가기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성 */}
+        {/* 리뷰 버튼 — 작성됨: 내 리뷰 보기 / 작성가능: 리뷰쓰러가기 / 미자격: 비활성 */}
         {view.reviewHref !== null && (
           <div className="mt-2">
             {view.myReview ? (
@@ -326,7 +326,7 @@ function SlidePanel({
                 className="inline-flex h-6 items-center rounded-full bg-white px-3 text-body-14-sb leading-[17px] transition-opacity hover:opacity-90"
                 style={{ color: view.colorVar }}
               >
-                내 리뷰보러가기 →
+                내 리뷰 보기 →
               </button>
             ) : view.canReview ? (
               <Link
@@ -479,7 +479,7 @@ export function SubscriptionCard({
     return states;
   }, [myReviews, planById, purchaseGroups]);
 
-  // "내 리뷰보러가기"로 띄우는 모달 — reviewStates 내 활성 인덱스
+  // "내 리뷰 보기"로 띄우는 모달 — reviewStates 내 활성 인덱스
   const [reviewIndex, setReviewIndex] = useState<number | null>(null);
 
   // 활성 슬라이드 인덱스(0..total-1) — 카드 내용의 단일 소스(전환 중이 아닐 때)

@@ -354,10 +354,6 @@
   margin-top: 0;
 }
 
-.grid[data-embedded="true"] {
-  grid-template-columns: 1fr;
-}
-
 @media (max-width: 1199px) {
   .container {
     padding-block: 48px 80px;

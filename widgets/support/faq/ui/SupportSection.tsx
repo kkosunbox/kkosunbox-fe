@@ -140,7 +140,7 @@ export default function SupportSection({
           </label>
         </div>
 
-        <div className={styles.grid} data-embedded={!showBanner}>
+        <div className={styles.grid}>
           <section className={styles.faqArea} aria-label="자주 묻는 질문">
             <div className={styles.list}>
               {visibleItems.length > 0 ? (
@@ -217,22 +217,20 @@ export default function SupportSection({
             )}
           </section>
 
-          {showBanner && (
-            <aside className={styles.contact} aria-labelledby="contact-title">
-              <Image src={logo} alt="꼬순박스" width={132} height={44} />
-              <h2 id="contact-title">더 질문이 있으신가요?</h2>
-              <p>
-                원하는 답변을 찾지 못하셨나요?
-                <br />
-                언제든지 문의해주세요.
-              </p>
-              <button type="button" onClick={openKakaoChannelChat}>
-                카카오톡 상담하기
-              </button>
-              <Link href="/inquiry">1:1 문의하기</Link>
-              <Link href="/support/history">내 문의내역</Link>
-            </aside>
-          )}
+          <aside className={styles.contact} aria-labelledby="contact-title">
+            <Image src={logo} alt="꼬순박스" width={132} height={44} />
+            <h2 id="contact-title">더 질문이 있으신가요?</h2>
+            <p>
+              원하는 답변을 찾지 못하셨나요?
+              <br />
+              언제든지 문의해주세요.
+            </p>
+            <button type="button" onClick={openKakaoChannelChat}>
+              카카오톡 상담하기
+            </button>
+            <Link href="/inquiry">1:1 문의하기</Link>
+            <Link href="/support/history">내 문의내역</Link>
+          </aside>
         </div>
       </div>
     </div>

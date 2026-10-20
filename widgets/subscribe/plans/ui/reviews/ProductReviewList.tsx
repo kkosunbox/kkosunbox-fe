@@ -53,10 +53,8 @@ interface ProductReviewListProps {
 function ReviewPlanBadge({ plan }: { plan: { id: number; name: string } }) {
   const theme = packageThemeForPlan({ ...plan, sortOrder: 0 });
   return (
-    <span
-      className="inline-flex h-5 shrink-0 items-center rounded-full px-3 text-[12px] font-semibold leading-[14px] text-white"
-      style={{ background: theme.colorVar }}
-    >
+    <span className="inline-flex shrink-0 items-center gap-1.5 text-[12px] font-medium leading-[14px] text-[var(--color-text-secondary)]">
+      <span aria-hidden="true" className="text-[var(--color-text-muted)]">|</span>
       {theme.tierLabel}
     </span>
   );
@@ -229,8 +227,8 @@ function MobileReviewList({
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
                   <div className="flex flex-wrap items-center gap-2">
-                    {review.plan && <ReviewPlanBadge plan={review.plan} />}
                     <Stars rating={review.rating} size={24} />
+                    {review.plan && <ReviewPlanBadge plan={review.plan} />}
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
                     {review.snapshotPetName?.trim() && (
@@ -441,8 +439,8 @@ function DesktopReviewList({
                 </div>
                 <div className="flex-1">
                   <div className="mb-[3px] flex flex-wrap items-center gap-2">
-                    {review.plan && <ReviewPlanBadge plan={review.plan} />}
                     <Stars rating={review.rating} size={24} />
+                    {review.plan && <ReviewPlanBadge plan={review.plan} />}
                   </div>
                   <div className="mb-[3px] flex flex-wrap items-center gap-2 text-[14px] leading-[130%]">
                     {review.snapshotPetName?.trim() && (

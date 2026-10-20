@@ -16,7 +16,9 @@ export default function ProductSupportTab({ variant }: { variant: "mobile" | "de
             </svg>
           </Link>
         </div>
-        <SupportSection showBanner={false} />
+        <div className="px-6">
+          <SupportSection showBanner={false} />
+        </div>
       </>
     );
   }
@@ -34,7 +36,9 @@ export default function ProductSupportTab({ variant }: { variant: "mobile" | "de
           </svg>
         </Link>
       </div>
-      <SupportSection showBanner={false} />
+      <div className="md:px-6 lg:px-0">
+        <SupportSection showBanner={false} />
+      </div>
     </>
   );
 }

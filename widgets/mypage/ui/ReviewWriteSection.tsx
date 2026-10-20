@@ -98,13 +98,41 @@ function StarRating({
   );
 }
 
+/** 리뷰 작성 화면 상단에 보여줄 대상 상품 정보 */
+export interface ReviewTargetInfo {
+  name: string;
+  imageUrl: string | null;
+  kind: "subscription" | "product";
+}
+
+function ReviewTargetCard({ target }: { target: ReviewTargetInfo }) {
+  return (
+    <div className="mt-6 flex items-center gap-4 rounded-[12px] border border-[var(--color-text-muted)] p-4">
+      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-[8px] bg-[var(--color-surface-light)]">
+        {/* eslint-disable-next-line @next/next/no-img-element -- 상품/플랜 이미지는 서버의 동적 원격 URL이다. */}
+        {target.imageUrl && <img src={target.imageUrl} alt="" className="h-full w-full object-cover" />}
+      </div>
+      <div className="min-w-0">
+        <p className="text-body-13-r text-[var(--color-text-secondary)]">{target.kind === "subscription" ? "정기구독" : "스토어 구매"}</p>
+        <p className="mt-1 break-words text-body-16-sb text-[var(--color-text)] max-md:text-body-14-sb">{target.name}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function ReviewWriteSection({
+  target = null,
   planId,
   productId,
+  productOrderId = null,
   reviewId = null,
 }: {
+  /** 리뷰 대상 상품 정보 — 없으면 카드를 생략한다 */
+  target?: ReviewTargetInfo | null;
   planId: number | null;
   productId: number | null;
+  /** 독립 상품 리뷰 대상 단건 주문 — 없으면 서버가 미작성 최근 주문을 고른다 */
+  productOrderId?: number | null;
   reviewId?: number | null;
 }) {
   const router = useRouter();
@@ -120,7 +148,11 @@ export default function ReviewWriteSection({
   const isEditMode = reviewId != null;
   const [isLoadingReview, setIsLoadingReview] = useState(isEditMode);
 
-  const targetQuery = planId ? `planId=${planId}` : productId ? `productId=${productId}` : "";
+  const targetQuery = planId
+    ? `planId=${planId}`
+    : productId
+      ? `productId=${productId}${productOrderId ? `&productOrderId=${productOrderId}` : ""}`
+      : "";
   const reviewWriteHref = targetQuery
     ? `/mypage/review/write?${targetQuery}${isEditMode ? `&reviewId=${reviewId}` : ""}`
     : "/mypage/review/write";
@@ -265,7 +297,9 @@ export default function ReviewWriteSection({
           });
         } else if (planId || productId) {
           await createReview({
-            ...(planId ? { planId } : { productId: productId! }),
+            ...(planId
+              ? { planId }
+              : { productId: productId!, ...(productOrderId ? { productOrderId } : {}) }),
             rating,
             content: trimmed,
             imageUrls: imageUrls ?? undefined,
@@ -278,7 +312,8 @@ export default function ReviewWriteSection({
           });
         }
 
-        router.push("/mypage");
+        // 신규 작성은 주문내역(상품별 리뷰 상태 확인)으로, 수정은 기존처럼 마이페이지로 이동
+        router.push(isEditMode ? "/mypage" : "/orders");
         router.refresh();
       } catch (err) {
         openAlert({
@@ -326,6 +361,7 @@ export default function ReviewWriteSection({
               </button>
             }
           >
+            {target && <ReviewTargetCard target={target} />}
             <div className="mt-6 flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <span className={labelClass}>별점</span>
@@ -334,7 +370,7 @@ export default function ReviewWriteSection({
 
               <div className="flex flex-col gap-2">
                 <label htmlFor="review-content" className={labelClass}>상세리뷰</label>
-                <textarea id="review-content" placeholder="꼬순박스의 상세한 리뷰를 작성해주세요." value={content} onChange={(event) => setContent(event.target.value)} rows={7} maxLength={MAX_CONTENT_LENGTH} className={textareaClass} />
+                <textarea id="review-content" placeholder="리뷰 내용을 작성해주세요." value={content} onChange={(event) => setContent(event.target.value)} rows={7} maxLength={MAX_CONTENT_LENGTH} className={textareaClass} />
                 <p className="self-end text-body-13-m leading-4 text-[var(--color-text-secondary)] opacity-80">{content.length}/{MAX_CONTENT_LENGTH}</p>
               </div>
 

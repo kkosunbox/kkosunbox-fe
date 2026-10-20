@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchCombinedPaymentHistory, fetchCombinedPaymentTypeSummary } from "@/features/payment/api/queries";
 import type { CombinedPaymentDto, OrderType } from "@/features/payment/api/types";
+import type { ReviewState } from "@/features/review/api/types";
+import ReviewActionLink from "@/features/review/ui/ReviewActionLink";
 import { getPackageTierBySlug, TIER_BOX_IMAGES, TIER_LABEL, type PackageTier } from "@/entities/package";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
@@ -32,7 +34,7 @@ function StatusBadge({ status }: { status: CombinedPaymentDto["displayStatus"] }
   </span>;
 }
 
-function OrderProduct({ name, imageUrl, slug, subscription, quantity = 1 }: { name: string; imageUrl?: string | null; slug?: string | null; subscription: boolean; quantity?: number }) {
+function OrderProduct({ name, imageUrl, slug, subscription, quantity = 1, review }: { name: string; imageUrl?: string | null; slug?: string | null; subscription: boolean; quantity?: number; review?: ReviewState | null }) {
   const tier = getPackageTierBySlug(slug ?? "") ?? (/프리미엄|premium/i.test(name) ? "Premium" : /스탠다드|standard/i.test(name) ? "Standard" : /베이직|basic/i.test(name) ? "Basic" : null);
   const src = imageUrl || (tier ? TIER_BOX_IMAGES[tier].src : null);
   return <div className="flex min-w-0 items-center max-md:gap-4 md:gap-8">
@@ -41,8 +43,9 @@ function OrderProduct({ name, imageUrl, slug, subscription, quantity = 1 }: { na
     </div>
     <div className="min-w-0">
       {subscription && tier && <span className={`mb-2 inline-flex rounded-full px-3 py-0.5 text-btn-14-m text-white ${TIER_STYLE[tier]}`}>{TIER_LABEL[tier]}</span>}
-      <div className="flex flex-wrap items-center gap-2"><h2 className="break-words text-subtitle-18-b text-[var(--color-text)] max-md:text-body-14-sb">{name}</h2>{!subscription && <span className="shrink-0 rounded bg-[var(--color-surface-light)] px-1 text-btn-12-m text-[var(--color-text-secondary)]">단품</span>}</div>
-      <p className="mt-2 text-body-16-r text-[var(--color-text-secondary)] max-md:text-body-13-r">{subscription ? "구독상품" : "단품상품"}{quantity > 1 ? ` · ${quantity}개` : ""}</p>
+      <h2 className="break-words text-subtitle-18-b text-[var(--color-text)] max-md:text-body-14-sb">{name}</h2>
+      <p className="mt-2 text-body-16-r text-[var(--color-text-secondary)] max-md:text-body-13-r">{subscription ? "정기구독" : "스토어 구매"}{quantity > 1 ? ` · ${quantity}개` : ""}</p>
+      <ReviewActionLink review={review} className="mt-2" />
     </div>
   </div>;
 }
@@ -58,7 +61,7 @@ function OrderCard({ payment }: { payment: CombinedPaymentDto }) {
     </div>
     <div className={`mt-4 flex max-md:flex-col max-md:gap-5 md:items-stretch md:gap-8 ${subscription ? "md:min-h-[148px]" : "md:min-h-[110px]"}`}>
       <div className={`min-w-0 flex-1 ${multiple ? "grid items-center gap-y-6 max-lg:grid-cols-1 lg:grid-cols-2 lg:gap-x-8 lg:[&>div:nth-child(even)]:border-l lg:[&>div:nth-child(even)]:border-[var(--color-text-muted)] lg:[&>div:nth-child(even)]:pl-8" : "flex items-center"}`}>
-        {subscription || payment.items.length === 0 ? <OrderProduct name={payment.name} imageUrl={payment.imageUrl} slug={payment.planSlug} subscription={subscription} /> : payment.items.map((item) => <OrderProduct key={item.id} name={item.productName} imageUrl={item.imageUrl} slug={item.relatedPlanSlug} quantity={item.quantity} subscription={false} />)}
+        {subscription || payment.items.length === 0 ? <OrderProduct name={payment.name} imageUrl={payment.imageUrl} slug={payment.planSlug} subscription={subscription} review={payment.review} /> : payment.items.map((item) => <OrderProduct key={item.id} name={item.productName} imageUrl={item.imageUrl} slug={item.relatedPlanSlug} quantity={item.quantity} subscription={false} review={item.review} />)}
       </div>
       <div className="flex shrink-0 flex-col justify-center border-[var(--color-text-muted)] max-md:border-t max-md:pt-4 md:w-[172px] md:border-l md:pl-[29px]">
         <div className="max-md:flex max-md:items-center max-md:justify-between"><p className="text-body-13-r text-[var(--color-text-secondary)]">총 결제금액</p><p className="text-price-20-eb text-[var(--color-text)]">{formatKrwPrice(payment.amount)}</p></div>

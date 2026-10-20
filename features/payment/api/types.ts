@@ -8,6 +8,7 @@
 // 배송지만 예외로 `features/delivery-address`를 그대로 쓴다(아래 주석 참고).
 
 import type { DeliveryAddress } from "@/features/delivery-address/api/types";
+import type { ReviewState } from "@/features/review/api/types";
 
 /** 주문 유형 — 구독 결제 / 단건 주문 */
 export type OrderType = "subscription" | "product";
@@ -83,6 +84,8 @@ export interface CombinedPaymentDto {
   itemCount?: number;
   /** 구독 ID — 구독 결제만 */
   subscriptionId?: number;
+  /** 구독 결제의 플랜 리뷰 상태 — 단건 주문은 items[].review */
+  review?: ReviewState | null;
   trackingNumber?: string | null;
 }
 
@@ -97,6 +100,8 @@ export interface CombinedPaymentItemDto {
   refundedQuantity: number;
   relatedPlanId?: number | null;
   relatedPlanSlug?: string | null;
+  /** 상품별 리뷰 상태 — 삭제된 상품은 null */
+  review?: ReviewState | null;
 }
 
 // ── 요청 ──────────────────────────────────────────────────────────

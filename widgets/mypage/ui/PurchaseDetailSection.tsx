@@ -263,16 +263,17 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
   function ReviewButton({ className }: { className: string }) {
     const targetHref = relatedPlanId !== null ? `planId=${relatedPlanId}` : product ? `productId=${product.id}` : null;
     if (targetHref === null) return null;
-    if (myReviewId !== null) {
+    // 독립 상품은 주문마다 리뷰를 쓸 수 있으므로 미작성 주문이 있으면 신규 작성을 우선한다.
+    if (canReview) {
       return (
-        <Link href={`/mypage/review/write?${targetHref}&reviewId=${myReviewId}`} className={className}>
+        <Link href={`/mypage/review/write?${targetHref}`} className={className}>
           리뷰쓰기
         </Link>
       );
     }
-    if (canReview) {
+    if (myReviewId !== null) {
       return (
-        <Link href={`/mypage/review/write?${targetHref}`} className={className}>
+        <Link href={`/mypage/review/write?${targetHref}&reviewId=${myReviewId}`} className={className}>
           리뷰쓰기
         </Link>
       );
@@ -433,7 +434,7 @@ export default function PurchaseDetailSection({ group, product, orders, planSumm
                 </Text>
               )}
               <Text variant="body-16-m" mobileVariant="body-13-r" className="text-[var(--color-text-label)]">
-                단품구매
+                스토어 구매
               </Text>
             </div>
 

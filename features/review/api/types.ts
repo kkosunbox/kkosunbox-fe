@@ -81,9 +81,31 @@ export interface ReviewEligibilityResponse {
 export interface CreateReviewRequest {
   planId?: number;
   productId?: number;
+  /** 독립 상품 리뷰 대상 단건 주문 ID — 생략 시 미작성 최근 배송완료 주문 */
+  productOrderId?: number;
   rating: number;
   content: string;
   imageUrls?: string[];
+}
+
+/**
+ * 주문/결제 항목 단위 리뷰 상태 (`GET /v1/payments` items[].review, 구독 결제 review)
+ * 구독·연관 플랜 상품은 planId(플랜당 1개), 독립 상품은 productId + productOrderId(주문마다 1개)
+ */
+export interface ReviewState {
+  planId: number | null;
+  productId: number | null;
+  productOrderId: number | null;
+  canReview: boolean;
+  reviewId: number | null;
+  isEditable: boolean;
+}
+
+/** 배송완료 리뷰 유도 팝업 대상 (`POST /v1/reviews/prompt`) */
+export type ReviewPromptTarget = Pick<ReviewState, "planId" | "productId" | "productOrderId">;
+
+export interface ReviewPromptResponse {
+  target: ReviewPromptTarget | null;
 }
 
 export interface UpdateReviewRequest {

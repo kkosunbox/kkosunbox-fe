@@ -8,6 +8,7 @@ export {
   getMyReviews,
   updateReview,
   deleteReview,
+  consumeReviewPrompt,
 } from "./reviewApi";
 
 export type {
@@ -24,4 +25,7 @@ export type {
   ReviewEligibilityResponse,
   CreateReviewRequest,
   UpdateReviewRequest,
+  ReviewState,
+  ReviewPromptTarget,
+  ReviewPromptResponse,
 } from "./types";

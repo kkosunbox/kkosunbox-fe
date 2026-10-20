@@ -8,6 +8,7 @@ import type {
   ReviewSortOrder,
   CreateReviewRequest,
   UpdateReviewRequest,
+  ReviewPromptResponse,
 } from "./types";
 
 export function getReviews(
@@ -53,6 +54,11 @@ export function getReviewPhotos({
 
 export function createReview(body: CreateReviewRequest) {
   return apiClient.post<ReviewResponse>("/v1/reviews", body);
+}
+
+/** 메인 첫 진입 시 리뷰 유도 팝업 대상 1건 조회. 호출 즉시 서버가 확인 처리하므로 한 번만 뜬다 */
+export function consumeReviewPrompt() {
+  return apiClient.post<ReviewPromptResponse>("/v1/reviews/prompt");
 }
 
 export function getEligiblePlans() {

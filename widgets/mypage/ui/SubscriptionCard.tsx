@@ -480,7 +480,7 @@ export function SubscriptionCard({
     for (const r of myReviews) {
       if (r.planId !== null || r.productId === null) continue;
       const group = purchaseGroups.find((item) => item.productId === r.productId);
-      const name = r.product?.name ?? group?.productName ?? "단품 상품";
+      const name = r.product?.name ?? group?.productName ?? "스토어 상품";
       states.push({
         review: r,
         plan: { id: r.productId, name, sortOrder: 0 },

@@ -162,7 +162,11 @@ export default function SupportSection({
                           <Chevron />
                         </button>
                       </h2>
-                      {isOpen && <p>{item.fullAnswer.replace(/\s*\n+\s*/g, " ")}</p>}
+                      <div className={styles.answerPanel} inert={!isOpen}>
+                        <div className={styles.answerClip}>
+                          <p>{item.fullAnswer.replace(/\s*\n+\s*/g, " ")}</p>
+                        </div>
+                      </div>
                     </article>
                   );
                 })

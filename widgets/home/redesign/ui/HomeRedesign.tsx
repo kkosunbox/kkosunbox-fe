@@ -118,7 +118,7 @@ function FaqSection() {
     <h2 id="faq-title" className={`${styles.heading} text-black`}><span>꼬순박스에 대해</span> 궁금하신가요?</h2><p className={styles.faqDescription}>꼬순박스에 대해 궁금한 것이 있으시면 언제든지 문의해주세요.</p>
     <div className={styles.faqGrid}><div className={styles.faqItems}>{items.map((item, index) => {
       const expanded = open === item.question; const id = `home-faq-${index}`;
-      return <div key={item.question} className={styles.faqItem} data-open={expanded}><h3><button type="button" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(expanded ? null : item.question)}><span><em>Q.</em> {item.question}</span><Image src={chevron} alt="" width={24} height={24} /></button></h3><div id={id} hidden={!expanded} className={styles.answer}>{item.fullAnswer}</div></div>;
+      return <div key={item.question} className={styles.faqItem} data-open={expanded}><h3><button type="button" aria-expanded={expanded} aria-controls={id} onClick={() => setOpen(expanded ? null : item.question)}><span><em>Q.</em> {item.question}</span><Image src={chevron} alt="" width={24} height={24} /></button></h3><div id={id} className={styles.answerPanel} inert={!expanded}><div className={styles.answerClip}><div className={styles.answer}>{item.fullAnswer}</div></div></div></div>;
     })}</div><aside className={styles.contact}><Image src={logo} alt="꼬순박스" width={132} height={44} /><h3>더 질문이 있으신가요?</h3><p>원하는 답변을 찾지 못하셨나요?<br />언제든지 문의해주세요.</p><button type="button" onClick={openKakaoChannelChat}>카카오톡 상담하기</button><Link href="/support">고객센터</Link></aside></div>
   </div></section>;
 }

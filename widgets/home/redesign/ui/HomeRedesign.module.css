@@ -94,12 +94,15 @@
 .faqDescription { margin-top: 4px; font-size: 16px; line-height: 28px; letter-spacing: -.02em; color: black; }
 .faqGrid { display: grid; grid-template-columns: minmax(0, 821fr) minmax(0, 387fr); gap: 32px; align-items: start; margin-top: 32px; }
 .faqItems { display: flex; flex-direction: column; gap: 20px; }
-.faqItem { border-radius: 12px; background: white; box-shadow: 0 4px 24px rgb(0 0 0 / 8%); }
+.faqItem { min-height: 0; border-radius: 12px; background: white; box-shadow: 0 4px 24px rgb(0 0 0 / 8%); transition: min-height .3s ease, background-color .3s ease, box-shadow .3s ease; }
 .faqItem[data-open="true"] { min-height: 134px; background: var(--color-home-faq-active); box-shadow: none; }
 .faqItem button { display: flex; width: 100%; min-height: 72px; padding: 24px; align-items: center; justify-content: space-between; gap: 16px; text-align: left; font-size: 16px; font-weight: 600; line-height: 22px; letter-spacing: -.04em; color: black; }
 .faqItem em { font-style: normal; color: var(--color-text-discount); }
-.faqItem img { width: 24px; height: 24px; flex-shrink: 0; }
+.faqItem img { width: 24px; height: 24px; flex-shrink: 0; transition: transform .3s ease; }
 .faqItem[data-open="true"] img { transform: rotate(180deg); }
+.answerPanel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.faqItem[data-open="true"] .answerPanel { grid-template-rows: 1fr; }
+.answerClip { min-height: 0; overflow: hidden; }
 .answer { padding: 0 24px 24px; font-size: 14px; line-height: 24px; font-weight: 500; letter-spacing: -.04em; color: var(--color-text-sub); }
 .contact { min-height: 512px; padding: 103px 36px 76px; background: white; border: 1px solid var(--color-status-done-bg); border-radius: 12px; box-shadow: 0 4px 16px rgb(0 0 0 / 16%); text-align: center; color: black; }
 .contact > img { width: 132px; height: 44px; margin-inline: auto; object-fit: contain; }
@@ -214,6 +217,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .productControls button, .productControls button svg { transition: none; }
+  .faqItem, .faqItem img, .answerPanel { transition: none; }
   .productControls button:first-child:not(:disabled):hover svg, .productControls button:last-child:not(:disabled):hover svg { transform: none; }
 }
 @media (max-width: 359px) {

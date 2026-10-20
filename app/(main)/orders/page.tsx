@@ -5,7 +5,7 @@ import { getServerToken } from "@/features/auth/lib/session";
 import { fetchCombinedPaymentHistory, fetchCombinedPaymentTypeSummary } from "@/features/payment/api/queries";
 import type { CombinedPaymentDto, OrderType } from "@/features/payment/api/types";
 import type { ReviewState } from "@/features/review/api/types";
-import ReviewActionLink from "@/features/review/ui/ReviewActionLink";
+import OrderReviewAction from "@/widgets/orders/ui/OrderReviewAction";
 import { getPackageTierBySlug, TIER_BOX_IMAGES, TIER_LABEL, type PackageTier } from "@/entities/package";
 import { formatKrwPrice } from "@/shared/lib/format";
 import { NOINDEX_METADATA } from "@/shared/lib/seo";
@@ -45,7 +45,7 @@ function OrderProduct({ name, imageUrl, slug, subscription, quantity = 1, review
       {subscription && tier && <span className={`mb-2 inline-flex rounded-full px-3 py-0.5 text-btn-14-m text-white ${TIER_STYLE[tier]}`}>{TIER_LABEL[tier]}</span>}
       <h2 className="break-words text-subtitle-18-b text-[var(--color-text)] max-md:text-body-14-sb">{name}</h2>
       <p className="mt-2 text-body-16-r text-[var(--color-text-secondary)] max-md:text-body-13-r">{subscription ? "정기구독" : "스토어 구매"}{quantity > 1 ? ` · ${quantity}개` : ""}</p>
-      <ReviewActionLink review={review} className="mt-2" />
+      <OrderReviewAction review={review} productName={name} imageUrl={src} className="mt-2" />
     </div>
   </div>;
 }

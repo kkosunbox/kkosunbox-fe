@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import type { StaticImageData } from "next/image";
 import { ModalShell, Text } from "@/shared/ui";
 import type { ReviewResponse } from "@/features/review/api";
+import { formatReviewDate, type ReviewSubject } from "@/features/review/lib/reviewSubject";
 
 interface Props {
   review: ReviewResponse;
-  planName: string;
-  tierLabel: string;
-  tierColorVar: string;
-  thumbnail: StaticImageData | string;
+  /** 리뷰 대상(구독 플랜 또는 스토어 상품) 표시 정보 */
+  subject: ReviewSubject;
   /** 작성 후 24시간 이내 — 수정 버튼 노출 여부 */
   isEditable: boolean;
   onEdit: () => void;
@@ -20,16 +18,8 @@ interface Props {
   onPrev?: () => void;
   /** 다음 리뷰로 이동 — 리뷰가 2개 이상일 때만 전달 */
   onNext?: () => void;
-}
-
-/** "2026.03.28" 형식 */
-function formatReviewDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso.slice(0, 10).replace(/-/g, ".");
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}.${mm}.${dd}`;
+  /** 현재 위치 (1부터) — 리뷰가 2개 이상일 때만 전달 */
+  position?: { current: number; total: number };
 }
 
 /** 0.5 단위 별점 표시 (full / half / empty) */
@@ -65,7 +55,7 @@ function NavChevronIcon({ dir }: { dir: "left" | "right" }) {
   const path = dir === "left" ? "M16 8L10 14L16 20" : "M12 8L18 14L12 20";
   return (
     <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <path d={path} stroke="#999999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={path} stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -107,18 +97,19 @@ function ReviewActionButtons({
   );
 }
 
+const NAV_BUTTON_CLASS =
+  "flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition-opacity hover:opacity-80";
+
 export default function MyReviewModal({
   review,
-  planName,
-  tierLabel,
-  tierColorVar,
-  thumbnail,
+  subject,
   isEditable,
   onEdit,
   onDelete,
   onClose,
   onPrev,
   onNext,
+  position,
 }: Props) {
   const images = review.imageUrls ?? [];
   // 리뷰 전환 시 부모가 review.id를 key로 전달 → 컴포넌트가 리마운트되며 0으로 초기화됨
@@ -134,6 +125,8 @@ export default function MyReviewModal({
   }, [onPrev, onNext]);
 
   const mainImageUrl = images[activeImage] ?? images[0] ?? null;
+  const thumbnailSrc = subject.thumbnail === null ? null : typeof subject.thumbnail === "string" ? subject.thumbnail : subject.thumbnail.src;
+  const positionLabel = position ? `${position.current} / ${position.total}` : null;
 
   return (
     <ModalShell
@@ -147,6 +140,11 @@ export default function MyReviewModal({
           <div className="flex items-center justify-between py-4">
             <Text variant="subtitle-16-b" className="text-white">
               나의 리뷰
+              {positionLabel && (
+                <span className="ml-2 text-body-14-m text-white opacity-80" aria-label={`${position!.total}개 중 ${position!.current}번째`}>
+                  {positionLabel}
+                </span>
+              )}
             </Text>
             <button
               type="button"
@@ -155,7 +153,7 @@ export default function MyReviewModal({
               className="flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-70"
             >
               <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
+                <path d="M12.5 1.5L1.5 12.5M1.5 1.5L12.5 12.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
           </div>
@@ -167,25 +165,22 @@ export default function MyReviewModal({
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-4">
               <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-[12px] bg-[var(--color-surface-light)] md:h-[88px] md:w-[88px]">
-                {/* eslint-disable-next-line @next/next/no-img-element -- 플랜 썸네일 원본 품질 유지 */}
-                <img
-                  src={typeof thumbnail === "string" ? thumbnail : thumbnail.src}
-                  alt={`${planName} 이미지`}
-                  width={typeof thumbnail === "string" ? 88 : thumbnail.width}
-                  height={typeof thumbnail === "string" ? 88 : thumbnail.height}
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover object-center scale-105"
-                />
+                {thumbnailSrc && (
+                  // eslint-disable-next-line @next/next/no-img-element -- 플랜 썸네일 원본 품질 유지, 상품 이미지는 원격 URL
+                  <img
+                    src={thumbnailSrc}
+                    alt={`${subject.name} 이미지`}
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover object-center scale-105"
+                  />
+                )}
               </div>
               <div className="flex min-w-0 flex-col gap-2">
-                <span
-                  className="inline-flex h-6 w-fit items-center rounded-full px-3 text-body-14-sb leading-[1] text-white"
-                  style={{ background: tierColorVar }}
-                >
-                  {tierLabel}
-                </span>
                 <Text variant="subtitle-16-sb" className="truncate text-[var(--color-text)]">
-                  {planName}
+                  {subject.name}
+                </Text>
+                <Text variant="body-14-m" mobileVariant="body-13-r" className="text-[var(--color-text-secondary)]">
+                  {subject.caption}
                 </Text>
               </div>
             </div>
@@ -270,27 +265,47 @@ export default function MyReviewModal({
             {review.content}
           </p>
 
+          {/* 수정 기간이 지나면 버튼이 사라지는 이유를 알려준다 */}
+          {!isEditable && (
+            <p className="mt-6 text-body-13-r text-[var(--color-text-secondary)]">
+              리뷰는 작성 후 24시간 이내에만 수정할 수 있어요.
+            </p>
+          )}
         </div>
 
-        {isEditable && (
-          <div className="shrink-0 px-6 pb-[calc(36px+env(safe-area-inset-bottom,0px))] md:hidden">
-            <button
-              type="button"
-              onClick={onEdit}
-              className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90"
-            >
-              리뷰 수정하기
-            </button>
+        {/* 모바일 하단 — 이전/다음(본문을 가리지 않도록 하단 배치) + 수정 버튼 */}
+        {(isEditable || onPrev || onNext) && (
+          <div className="flex shrink-0 flex-col gap-4 px-6 pb-[calc(36px+env(safe-area-inset-bottom,0px))] md:hidden">
+            {(onPrev || onNext) && (
+              <div className="flex items-center justify-center gap-6">
+                <button type="button" onClick={onPrev} disabled={!onPrev} aria-label="이전 리뷰" className={`${NAV_BUTTON_CLASS} disabled:opacity-40`}>
+                  <NavChevronIcon dir="left" />
+                </button>
+                {positionLabel && <span className="text-body-14-m text-[var(--color-text-secondary)]">{positionLabel}</span>}
+                <button type="button" onClick={onNext} disabled={!onNext} aria-label="다음 리뷰" className={`${NAV_BUTTON_CLASS} disabled:opacity-40`}>
+                  <NavChevronIcon dir="right" />
+                </button>
+              </div>
+            )}
+            {isEditable && (
+              <button
+                type="button"
+                onClick={onEdit}
+                className="flex h-12 w-full items-center justify-center rounded-[8px] bg-[var(--color-cta-button)] text-body-14-sb leading-[1] text-white transition-opacity hover:opacity-90"
+              >
+                리뷰 수정하기
+              </button>
+            )}
           </div>
         )}
 
-        {/* 이전/다음 리뷰 — 리뷰가 2개 이상일 때만 노출 */}
+        {/* 데스크탑 이전/다음 — 카드 좌우 */}
         {onPrev && (
           <button
             type="button"
             onClick={onPrev}
             aria-label="이전 리뷰"
-            className="absolute left-2 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition-opacity hover:opacity-80 md:left-4"
+            className={`absolute left-4 top-1/2 z-20 -translate-y-1/2 max-md:hidden ${NAV_BUTTON_CLASS}`}
           >
             <NavChevronIcon dir="left" />
           </button>
@@ -300,7 +315,7 @@ export default function MyReviewModal({
             type="button"
             onClick={onNext}
             aria-label="다음 리뷰"
-            className="absolute right-2 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0px_2px_8px_rgba(0,0,0,0.16)] transition-opacity hover:opacity-80 md:right-4"
+            className={`absolute right-4 top-1/2 z-20 -translate-y-1/2 max-md:hidden ${NAV_BUTTON_CLASS}`}
           >
             <NavChevronIcon dir="right" />
           </button>

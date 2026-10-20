@@ -8,15 +8,15 @@ import { useModal } from "@/shared/ui/modal/ModalProvider";
 import { deleteReview } from "@/features/review/api";
 import type { UserSubscriptionDto } from "@/features/subscription/api/types";
 import { subscriptionPaidAmount } from "@/features/subscription/lib/subscriptionAmount";
-import type { PlanReviewEligibility, ProductReviewEligibility, ReviewResponse } from "@/features/review/api";
+import type { PlanReviewEligibility, ReviewResponse } from "@/features/review/api";
 import { getErrorMessage } from "@/shared/lib/api/errorMessages";
 import { deleteConfirmAlertOptions } from "@/shared/lib/modal/alertPresets";
 import { packageThemeForPlan } from "@/entities/package";
-import { TIER_BOX_IMAGES } from "@/entities/package";
 import type { SubscriptionPlanLike } from "@/entities/package";
 import type { ProductPurchaseGroup } from "@/features/product/lib/groupOrdersByProduct";
 import type { ProductOrderPlanSummaryDto } from "@/features/product/api/types";
 import MyReviewModal from "./MyReviewModal";
+import { buildReviewSubject, isReviewEditable, type ReviewSubject } from "@/features/review/lib/reviewSubject";
 
 /* 도트 인디케이터 슬라이드 설정 */
 const DOT_PITCH = 16; // 점 사이 간격(px)
@@ -203,7 +203,7 @@ function SubscriptionCarouselIndicator({
 
 interface ReviewState {
   review: ReviewResponse;
-  plan: SubscriptionPlanLike;
+  subject: ReviewSubject;
   isEditable: boolean;
   editQuery: string;
 }
@@ -387,14 +387,12 @@ export function SubscriptionCard({
   myReviews = [],
   purchaseGroups = [],
   productPlanSummaries = [],
-  eligibleProducts = [],
 }: {
   subscriptions: UserSubscriptionDto[];
   eligiblePlans?: PlanReviewEligibility[];
   myReviews?: ReviewResponse[];
   purchaseGroups?: ProductPurchaseGroup[];
   productPlanSummaries?: ProductOrderPlanSummaryDto[];
-  eligibleProducts?: ProductReviewEligibility[];
 }) {
   const router = useRouter();
   const { openAlert } = useModal();
@@ -420,13 +418,6 @@ export function SubscriptionCard({
     for (const r of myReviews) if (r.planId !== null) map.set(r.planId, r);
     return map;
   }, [myReviews]);
-
-  // relatedPlanId(단건 구매) → 리뷰 작성 가능 여부 요약
-  const productSummaryByPlan = useMemo(() => {
-    const map = new Map<number, ProductOrderPlanSummaryDto>();
-    for (const s of productPlanSummaries) map.set(s.planId, s);
-    return map;
-  }, [productPlanSummaries]);
 
   // planId → plan (리뷰 모달에서 플랜 정보를 조회). 구독 중이 아닌 단건 구매 연관 플랜도 포함
   const planById = useMemo(() => {
@@ -469,27 +460,24 @@ export function SubscriptionCard({
       if (!plan) continue;
       states.push({
         review: r,
-        plan,
+        subject: buildReviewSubject(r, { plan }),
         editQuery: `planId=${r.planId}`,
-        isEditable:
-          eligibilityByPlan.get(r.planId)?.isEditable ??
-          productSummaryByPlan.get(r.planId)?.isEditable ??
-          false,
+        isEditable: isReviewEditable(r.createdAt),
       });
     }
     for (const r of myReviews) {
       if (r.planId !== null || r.productId === null) continue;
       const group = purchaseGroups.find((item) => item.productId === r.productId);
-      const name = r.product?.name ?? group?.productName ?? "스토어 상품";
       states.push({
         review: r,
-        plan: { id: r.productId, name, sortOrder: 0 },
+        // 스토어 상품은 등급 뱃지 없이 상품 이미지·주문일로 표시한다 (같은 상품의 주문별 리뷰 구분)
+        subject: buildReviewSubject(r, { productName: group?.productName }),
         editQuery: `productId=${r.productId}`,
-        isEditable: eligibleProducts.find((item) => item.productId === r.productId)?.isEditable ?? false,
+        isEditable: isReviewEditable(r.createdAt),
       });
     }
     return states;
-  }, [myReviews, planById, eligibilityByPlan, productSummaryByPlan, purchaseGroups, eligibleProducts]);
+  }, [myReviews, planById, purchaseGroups]);
 
   // "내 리뷰보러가기"로 띄우는 모달 — reviewStates 내 활성 인덱스
   const [reviewIndex, setReviewIndex] = useState<number | null>(null);
@@ -707,7 +695,6 @@ export function SubscriptionCard({
     e.stopPropagation();
   }
 
-  const reviewTheme = activeReviewState ? packageThemeForPlan(activeReviewState.plan) : null;
 
   return (
     <>
@@ -791,20 +778,18 @@ export function SubscriptionCard({
 
     </div>
 
-      {activeReviewState && reviewTheme && (
+      {activeReviewState && reviewIndex !== null && (
         <MyReviewModal
           key={activeReviewState.review.id}
           review={activeReviewState.review}
-          planName={activeReviewState.plan.name}
-          tierLabel={activeReviewState.plan.slug ?? reviewTheme.tierLabel}
-          tierColorVar={reviewTheme.colorVar}
-          thumbnail={activeReviewState.plan.imageUrl ?? TIER_BOX_IMAGES[reviewTheme.tier]}
+          subject={activeReviewState.subject}
           isEditable={activeReviewState.isEditable}
           onEdit={handleEditReview}
           onDelete={handleDeleteReview}
           onClose={() => setReviewIndex(null)}
           onPrev={canNavigateReviews ? handlePrevReview : undefined}
           onNext={canNavigateReviews ? handleNextReview : undefined}
+          position={canNavigateReviews ? { current: reviewIndex + 1, total: reviewStates.length } : undefined}
         />
       )}
     </>

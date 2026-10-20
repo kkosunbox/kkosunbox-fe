@@ -25,6 +25,8 @@ export interface ReviewResponse {
   snapshotPetProfileImageUrl: string | null;
   snapshotUserEmail: string | null;
   userId: number | null;
+  /** 독립 상품 리뷰의 주문 시각 (내 리뷰 조회만) — 같은 상품의 주문별 리뷰 구분용 */
+  orderedAt?: string | null;
 }
 
 export interface ReviewProduct { id: number; name: string; imageUrl?: string | null }

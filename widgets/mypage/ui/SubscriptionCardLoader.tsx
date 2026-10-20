@@ -2,7 +2,7 @@ import "server-only";
 import { getServerToken } from "@/features/auth/lib/session";
 import { fetchSubscriptions } from "@/features/subscription/api/queries";
 import { getSubscriptionDisplayBucket } from "@/features/subscription/lib/subscriptionDisplayBucket";
-import { fetchEligiblePlans, fetchEligibleProducts, fetchMyReviews } from "@/features/review/api/queries";
+import { fetchEligiblePlans, fetchMyReviews } from "@/features/review/api/queries";
 import {
   fetchProductOrders,
   fetchProducts,
@@ -13,11 +13,10 @@ import { SubscriptionCard } from "./SubscriptionCard";
 
 export async function SubscriptionCardLoader() {
   const token = await getServerToken();
-  const [allSubscriptions, eligiblePlans, eligibleProducts, myReviews, productOrders, products, productPlanSummaries] =
+  const [allSubscriptions, eligiblePlans, myReviews, productOrders, products, productPlanSummaries] =
     await Promise.all([
       fetchSubscriptions(token),
       fetchEligiblePlans(token),
-      fetchEligibleProducts(token),
       fetchMyReviews(token),
       fetchProductOrders(token, { limit: 100 }),
       fetchProducts(token),
@@ -35,7 +34,6 @@ export async function SubscriptionCardLoader() {
       myReviews={myReviews}
       purchaseGroups={purchaseGroups}
       productPlanSummaries={productPlanSummaries}
-      eligibleProducts={eligibleProducts}
     />
   );
 }

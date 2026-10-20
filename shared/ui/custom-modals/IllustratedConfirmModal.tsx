@@ -5,7 +5,7 @@ import Image from "next/image";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import ModalShell from "../modal/ModalShell";
 
-export type ConfirmModalIllustration = "checklist" | "restart" | "warning" | "withdraw";
+export type ConfirmModalIllustration = "checklist" | "restart" | "warning" | "withdraw" | "review";
 
 /**
  * Figma 기준 본문 하단(154px) ~ 버튼 상단(307px) 153px 영역 안 일러스트 배치.
@@ -16,6 +16,7 @@ const ILLUSTRATIONS: Record<ConfirmModalIllustration, { src: string; width: numb
   restart: { src: "/images/modal/confirm-restart.webp", width: 126, height: 126, className: "pt-[7px]" },
   warning: { src: "/images/modal/confirm-warning.webp", width: 139, height: 131, className: "pt-1" },
   withdraw: { src: "/images/modal/confirm-withdraw.webp", width: 139, height: 131, className: "pt-1" },
+  review: { src: "/images/modal/confirm-review.webp", width: 139, height: 131, className: "pt-1" },
 };
 
 interface Props {

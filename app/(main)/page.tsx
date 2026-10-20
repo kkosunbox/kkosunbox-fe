@@ -5,6 +5,7 @@ import { HomePackagePlansSection } from "@/widgets/home/package-plans";
 import { WhyGallerySection } from "@/widgets/home/why-gallery";
 import { ReviewsSection } from "@/widgets/home/reviews";
 import { HomeRedesign } from "@/widgets/home/redesign";
+import { DeliveryReviewPrompt } from "@/widgets/home/review-prompt";
 import { FooterSection } from "@/widgets/footer";
 import { HOME_REDESIGN_ENABLED } from "@/shared/config/homeRedesign";
 
@@ -34,6 +35,7 @@ export default function Home() {
       <h1 className="sr-only">
         꼬순박스 — 100% 국내산 휴먼그레이드 강아지 수제간식 정기구독
       </h1>
+      <DeliveryReviewPrompt />
       <div className="relative z-0">
         <HomeHero />
       </div>

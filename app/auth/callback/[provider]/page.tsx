@@ -63,13 +63,14 @@ export default function OAuthCallbackPage() {
           tokenStore.setTokens(result.accessToken, result.refreshToken);
         }
         if (result.user) setUser(result.user);
+        // 카카오 SDK는 로드 시점의 URL을 상담 "이전 페이지"로 고정 저장하므로,
+        // SPA 이동 대신 전체 페이지 로드로 이동해 콜백 URL(code/state)이 남지 않게 한다.
         // 신규 여부와 무관하게 서버의 실제 가입 완료 상태를 기준으로 판정한다.
         if (result.user && requiresSignupCompletion(result.user)) {
-          router.replace("/register/social");
+          window.location.replace("/register/social");
           return;
         }
-        router.refresh();
-        router.replace(consumeOAuthReturnPath() ?? "/");
+        window.location.replace(consumeOAuthReturnPath() ?? "/");
       },
       () => {
         setApiError("소셜 로그인 중 오류가 발생했습니다.");

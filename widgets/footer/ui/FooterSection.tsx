@@ -21,7 +21,7 @@ const FOOTER_LINKS = [
 
 const COMPANY_INFO_LINES = [
   "PetBridge Core Co. Ltd.  |  Business Registration No. : 355-87-03780",
-  "CEO: Jin-young Oh  |  Address : #508-38, 5F, Ace Plaza, 288-31, Gimpohangang 11-ro,",
+  "CEO: Jin-yeong Oh  |  Address : #508-38, 5F, Ace Plaza, 288-31, Gimpohangang 11-ro,",
   "Gimpo-si, Gyeonggi-do, Republic of Korea",
 ] as const;
 

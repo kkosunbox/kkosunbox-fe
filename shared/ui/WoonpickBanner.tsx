@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { trackEvent } from "@/shared/lib/analytics";
 import woonpickBadge from "@/shared/assets/woonpick-badge.webp";
 import woonpickSideRail from "@/shared/assets/woonpick-side-rail.webp";
+import woonpickClose from "@/shared/assets/woonpick-close.svg";
 
 /** 운Pick 광고 노출 위치 — UTM `utm_content`와 GA 이벤트 `placement`에 그대로 쓰인다. */
 export type WoonpickPlacement = "side_rail" | "checklist_result" | "order_complete";
@@ -80,26 +81,13 @@ function readRailDismissed(): boolean {
   }
 }
 
-/** 홈은 전체 폭 히어로를 덮지 않도록 히어로를 지나간 뒤부터 노출한다. */
-function useRailScrollGate(isHome: boolean): boolean {
-  const [passedHero, setPassedHero] = useState(false);
-  useEffect(() => {
-    if (!isHome) return;
-    const update = () => setPassedHero(window.scrollY > window.innerHeight * 0.7);
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, [isHome]);
-  return !isHome || passedHero;
-}
-
 /**
- * 운Pick 광고 — 와이드 데스크탑(≥1680px) 우측 빈 영역 고정 날개 배너.
- * 본문 컨테이너(최대 1240px) 오른쪽 바깥에 붙어 콘텐츠를 가리지 않는다. 닫으면 세션 동안 숨긴다.
+ * 운Pick 광고 — 와이드 데스크탑(≥1760px) 우측 빈 영역 고정 날개 배너.
+ * 본문(최대 1240px) 바깥에 24px 간격으로 배치하고, 헤더 아래 띠배너(70px)와도 간격을 둔다.
+ * 홈·소개에서는 노출하지 않으며, 닫으면 세션 동안 숨긴다.
  */
 export function WoonpickSideRail() {
-  const isHome = usePathname() === "/";
-  const scrollReady = useRailScrollGate(isHome);
+  const pathname = usePathname();
   const [dismissed, setDismissed] = useState(true);
 
   // sessionStorage는 클라이언트에서만 읽을 수 있어 마운트 후 동기화한다(SSR에서는 숨김으로 시작).
@@ -115,36 +103,38 @@ export function WoonpickSideRail() {
     }
   };
 
-  const visible = !dismissed && scrollReady;
+  if (dismissed || pathname === "/" || pathname === "/about" || pathname.startsWith("/about/")) {
+    return null;
+  }
 
   return (
     <aside
       aria-label="광고"
-      className={`fixed left-[calc(50%_+_644px)] top-[calc(var(--header-offset)_+_24px)] z-40 hidden w-[180px] transition-opacity duration-300 min-[1680px]:block ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      className="fixed left-[calc(50%_+_644px)] top-[calc(var(--header-offset)_+_104px)] z-40 w-[207px] max-[1760px]:hidden"
     >
       <a
         href={buildWoonpickHref("side_rail")}
         target="_blank"
         rel="noopener noreferrer sponsored"
         onClick={() => trackWoonpickClick("side_rail")}
-        tabIndex={visible ? 0 : -1}
         className="block overflow-hidden rounded-[16px] shadow-[0_8px_24px_var(--color-woonpick-cta-shadow)] transition-transform hover:-translate-y-0.5"
       >
         <Image
           src={woonpickSideRail}
           alt="댕냥이와 나, 어떤 사이일까? 운PICK에서 반려동물 궁합 확인하기"
-          width={180}
-          height={337}
+          width={207}
+          height={387}
+          sizes="207px"
           className="h-auto w-full"
         />
       </a>
       <button
         type="button"
         onClick={dismiss}
-        tabIndex={visible ? 0 : -1}
-        className="mt-2 w-full text-center text-body-13-m text-[var(--color-text-secondary)] hover:underline"
+        aria-label="운Pick 광고 닫기"
+        className="absolute -right-[13px] -top-4 flex size-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-woonpick-navy)]"
       >
-        닫기
+        <Image src={woonpickClose} alt="" width={24} height={24} aria-hidden="true" />
       </button>
     </aside>
   );

@@ -15,6 +15,7 @@ export default function PackagePanel({ pkg, canPurchase, onPurchase }: Props) {
   const { progress } = pkg;
   return (
     <aside
+      data-woonpick-rail-anchor
       aria-labelledby="package-panel-title"
       className="sticky top-[calc(var(--header-offset)+24px)] w-[348px] shrink-0 rounded-xl bg-[var(--color-package-panel-bg)] px-6 pb-6 pt-5 shadow-[0_4px_12px_rgba(0,0,0,0.12)]"
     >

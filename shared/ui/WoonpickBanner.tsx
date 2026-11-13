@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { trackEvent } from "@/shared/lib/analytics";
 import woonpickBadge from "@/shared/assets/woonpick-badge.webp";
 import woonpickSideRail from "@/shared/assets/woonpick-side-rail.webp";
@@ -83,16 +83,45 @@ function readRailDismissed(): boolean {
 
 /**
  * 운Pick 광고 — 와이드 데스크탑(≥1760px) 우측 빈 영역 고정 날개 배너.
- * 본문(최대 1240px) 바깥에 24px 간격으로 배치하고, 헤더 아래 띠배너(70px)와도 간격을 둔다.
+ * 본문(최대 1240px) 바깥에 24px 간격으로 배치하고, 지정된 콘텐츠 박스 상단에 정렬한다.
  * 홈·소개에서는 노출하지 않으며, 닫으면 세션 동안 숨긴다.
  */
 export function WoonpickSideRail() {
   const pathname = usePathname();
   const [dismissed, setDismissed] = useState(true);
+  const railRef = useRef<HTMLElement>(null);
 
   // sessionStorage는 클라이언트에서만 읽을 수 있어 마운트 후 동기화한다(SSR에서는 숨김으로 시작).
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setDismissed(readRailDismissed()), []);
+
+  useLayoutEffect(() => {
+    const rail = railRef.current;
+    const anchor = document.querySelector<HTMLElement>("[data-woonpick-rail-anchor]");
+    if (!rail || !anchor) return;
+
+    const update = () => {
+      rail.style.setProperty("--woonpick-rail-anchor", `${anchor.getBoundingClientRect().top}px`);
+    };
+    let frame = 0;
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+    update();
+    const observer = new ResizeObserver(scheduleUpdate);
+    observer.observe(document.body);
+    observer.observe(anchor);
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      rail.style.removeProperty("--woonpick-rail-anchor");
+    };
+  }, [pathname, dismissed]);
 
   const dismiss = () => {
     setDismissed(true);
@@ -109,8 +138,9 @@ export function WoonpickSideRail() {
 
   return (
     <aside
+      ref={railRef}
       aria-label="광고"
-      className="fixed left-[calc(50%_+_644px)] top-[calc(var(--header-offset)_+_104px)] z-40 w-[207px] max-[1760px]:hidden"
+      className="fixed left-[calc(50%_+_644px)] top-[max(calc(var(--header-offset)_+_24px),var(--woonpick-rail-anchor,calc(var(--header-offset)_+_104px)))] z-40 w-[207px] max-[1760px]:hidden"
     >
       <a
         href={buildWoonpickHref("side_rail")}

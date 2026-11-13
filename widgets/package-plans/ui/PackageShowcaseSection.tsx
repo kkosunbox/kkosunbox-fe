@@ -266,7 +266,7 @@ export function PackageShowcaseSection({
           );
         })}
       </div>
-      <div className={`${styles.container} ${styles.packagePanel}`}>
+      <div data-woonpick-rail-anchor className={`${styles.container} ${styles.packagePanel}`}>
         <PackageBackdrop tier={tier} />
         <nav
           className={styles.mobilePackageControls}

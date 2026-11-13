@@ -312,6 +312,9 @@
   --color-hero-tagline: #C37132;        /* Hero 해시태그 문구 텍스트 */
   --color-hero-third-tagline: #813800;  /* Hero 슬라이드3 해시태그 */
   --color-hero-third-cta: #89431D;      /* Hero 슬라이드3 CTA 버튼 */
+  --color-woonpick-navy: #003560;       /* 운Pick 광고 배너 — CTA 텍스트·제목 (Figma 6262:14995) */
+  --color-woonpick-navy-soft: #002C6F;  /* 운Pick 광고 배너 — 부제 텍스트 */
+  --color-woonpick-cta-shadow: rgba(21, 96, 207, 0.35); /* 운Pick 광고 배너 — CTA 알약 그림자 */
 
   /* Gradient */
   --gradient-hero: radial-gradient(27.89% 55.81% at 62.94% 51.94%, #F9D6B5 0%, #ECA265 100%);
@@ -323,6 +326,7 @@
   --gradient-referral-hero-header-shade: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%); /* 초대 Hero 투명 헤더 가독성 그늘 */
   --gradient-referral-coupon-face: radial-gradient(112% 74% at 61% 43%, #FFFFFF 0%, var(--color-referral-coupon-face-edge) 100%); /* 초대 Hero 쿠폰 카드 면 (가운데 흰색 → 가장자리 크림, 불투명) */
   --gradient-referral-coupon-stroke: linear-gradient(-44deg, #FFFFFF 0%, #FFDAB5 44%, #FFFFFF 100%); /* 초대 Hero 쿠폰 카드 2px 테두리 */
+  --gradient-woonpick-banner: linear-gradient(115deg, #5FB8F4 0%, #9AD3FA 55%, #E3F3FF 100%); /* 운Pick 광고 가로 카드 배경 (하늘색 시안 톤) */
 
 
   --gradient-inquiry-bg: linear-gradient(105deg, var(--color-surface-warm) 0%, #ffffff 40%, var(--color-card-standard) 100%);

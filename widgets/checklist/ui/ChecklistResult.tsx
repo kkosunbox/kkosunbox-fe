@@ -18,7 +18,7 @@ import { getSubscriptionPlans } from "@/features/subscription/api/subscriptionAp
 import type { RecommendReasonDto, SubscriptionPlanDto } from "@/features/subscription/api/types";
 import { trackChecklistCtaClick } from "@/shared/lib/analytics";
 import { openChecklistForm } from "@/shared/lib/checklistModal";
-import { FallbackAvatar, useModal } from "@/shared/ui";
+import { FallbackAvatar, useModal, WoonpickInlineBanner } from "@/shared/ui";
 import basicImage from "@/widgets/checklist/assets/checklist-result-basic.png";
 import checklistResultBannerImage from "@/widgets/checklist/assets/checklist-result-banner.png";
 import premiumImage from "@/widgets/checklist/assets/checklist-result-premium.png";
@@ -269,6 +269,7 @@ export default function ChecklistResult({ petInfo, avatarSrc, userId, recommende
               <p className="mt-10 rounded-[20px] bg-white p-8 text-center text-body-14-r text-[var(--color-text-secondary)] shadow-[0_8px_24px_rgba(0,0,0,0.08)]">상품 정보를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.</p>
             ) : null}
           </div>
+          <WoonpickInlineBanner placement="checklist_result" className="mt-[76px] max-md:mt-12" />
         </div>
       </div>
     </section>

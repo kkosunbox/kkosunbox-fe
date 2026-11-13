@@ -4,6 +4,7 @@ import { FooterGate } from "@/widgets/footer";
 import { HOME_REDESIGN_ENABLED } from "@/shared/config/homeRedesign";
 import ChecklistFormModal from "@/widgets/checklist/ui/ChecklistFormModal";
 import { ReferralProvider } from "@/features/referral/model";
+import { WoonpickSideRail } from "@/shared/ui";
 import { resolveReferralContext } from "@/features/referral/lib/resolveReferralContext";
 // import { CursorPaw } from "@/shared/ui";
 
@@ -27,6 +28,7 @@ export default async function MainLayout({
         <Header />
         <ChecklistFormModal />
         <main className="flex flex-1 flex-col">{children}</main>
+        <WoonpickSideRail />
         <FooterGate hideOnRedesignedHome={HOME_REDESIGN_ENABLED} />
       </div>
     </ReferralProvider>

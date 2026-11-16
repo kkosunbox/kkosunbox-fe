@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Text } from "@/shared/ui";
+import { Text, WoonpickInlineBanner } from "@/shared/ui";
 
 interface MypageSectionProps {
   profileSection: ReactNode;
@@ -50,6 +50,7 @@ export default function MypageSection({
                 {deliveryCard}
                 {inquiryCard}
               </div>
+              <WoonpickInlineBanner placement="mypage" className="mt-7" />
             </div>
           </section>
         </div>

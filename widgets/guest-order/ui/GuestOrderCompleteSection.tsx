@@ -7,7 +7,6 @@ import { removeGuestCartItems } from "@/features/cart";
 import { normalizeGuestOrderId, saveGuestOrderAccess } from "@/features/guest-order";
 import type { GuestProductOrderDetail } from "@/features/product/api";
 import { SubscriptionPromoBanner } from "@/widgets/package-plans";
-import { WoonpickInlineBanner } from "@/shared/ui";
 import lookupNoticeIcon from "../assets/guest-order-lookup-notice.webp";
 import { GuestOrderInfoCard, GuestOrderNumberBar } from "./GuestOrderParts";
 
@@ -82,7 +81,6 @@ export default function GuestOrderCompleteSection({ detail, cartItemIds }: Props
             쇼핑 계속하기
           </Link>
         </div>
-        <WoonpickInlineBanner placement="guest_order_complete" className="mt-10" />
       </div>
     </div>
   );

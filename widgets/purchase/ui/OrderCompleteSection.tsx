@@ -7,7 +7,7 @@ import Link from "next/link";
 import { PACKAGES, TIER_BOX_IMAGES, TIER_LABEL, CURRENT_PURCHASE_TIER, type PackageTier } from "@/entities/package";
 import { HIGH_IMAGE_QUALITY } from "@/shared/config/imageQuality";
 import { formatKrwPrice } from "@/shared/lib/format";
-import { ShippingFeeWaiver, WoonpickInlineBanner } from "@/shared/ui";
+import { ShippingFeeWaiver } from "@/shared/ui";
 import orderCompleteHeroIcon from "../assets/order-complete-hero-icon.svg";
 import orderCompleteDeliveryIcon from "../assets/order-complete-delivery-icon.png";
 
@@ -203,7 +203,6 @@ export default function OrderCompleteSection({
             쇼핑 계속하기
           </Link>
         </div>
-        <WoonpickInlineBanner placement="order_complete" className="mt-10" />
       </div>
     </div>
   );
